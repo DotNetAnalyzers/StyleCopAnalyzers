@@ -3,6 +3,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup>

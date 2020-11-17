@@ -179,7 +179,8 @@ namespace StyleCop.Analyzers.CodeGeneration
                 identifier: SyntaxFactory.Identifier(node.WrapperName),
                 parameterList: SyntaxFactory.ParameterList(),
                 initializer: null,
-                body: SyntaxFactory.Block(staticCtorStatements)));
+                body: SyntaxFactory.Block(staticCtorStatements),
+                expressionBody: null));
 
             // private IArgumentOperationWrapper(IOperation operation)
             // {
@@ -203,7 +204,8 @@ namespace StyleCop.Analyzers.CodeGeneration
                             SyntaxKind.SimpleMemberAccessExpression,
                             expression: SyntaxFactory.ThisExpression(),
                             name: SyntaxFactory.IdentifierName("operation")),
-                        right: SyntaxFactory.IdentifierName("operation"))))));
+                        right: SyntaxFactory.IdentifierName("operation")))),
+                expressionBody: null));
 
             // public IOperation WrappedOperation => this.operation;
             members = members.Add(SyntaxFactory.PropertyDeclaration(
@@ -679,7 +681,8 @@ namespace StyleCop.Analyzers.CodeGeneration
                 identifier: SyntaxFactory.Identifier("OperationWrapperHelper"),
                 parameterList: SyntaxFactory.ParameterList(),
                 initializer: null,
-                body: SyntaxFactory.Block(staticCtorStatements));
+                body: SyntaxFactory.Block(staticCtorStatements),
+                expressionBody: null);
 
             // internal static Type GetWrappedType(Type wrapperType)
             // {
@@ -831,7 +834,7 @@ namespace StyleCop.Analyzers.CodeGeneration
 
                     if (!operationKinds.TryGetValue(node.Attribute("Name").Value, out var kinds))
                     {
-                        kinds = ImmutableArray<(string name, int value, string extraDescription)>.Empty;
+                        kinds = ImmutableArray<(string name, int value, string? extraDescription)>.Empty;
                     }
 
                     var interfaceData = new InterfaceData(this, node, kinds);
@@ -847,7 +850,7 @@ namespace StyleCop.Analyzers.CodeGeneration
 
                     if (!operationKinds.TryGetValue(node.Attribute("Name").Value, out var kinds))
                     {
-                        kinds = ImmutableArray<(string name, int value, string extraDescription)>.Empty;
+                        kinds = ImmutableArray<(string name, int value, string? extraDescription)>.Empty;
                     }
 
                     var interfaceData = new InterfaceData(this, node, kinds);
@@ -859,11 +862,11 @@ namespace StyleCop.Analyzers.CodeGeneration
 
             public ReadOnlyDictionary<string, InterfaceData> Interfaces { get; }
 
-            private static ImmutableDictionary<string, ImmutableArray<(string name, int value, string extraDescription)>> GetOperationKinds(XDocument document)
+            private static ImmutableDictionary<string, ImmutableArray<(string name, int value, string? extraDescription)>> GetOperationKinds(XDocument document)
             {
                 var skippedOperationKinds = GetSkippedOperationKinds(document);
 
-                var builder = ImmutableDictionary.CreateBuilder<string, ImmutableArray<(string name, int value, string extraDescription)>>();
+                var builder = ImmutableDictionary.CreateBuilder<string, ImmutableArray<(string name, int value, string? extraDescription)>>();
 
                 int operationKind = 0;
                 foreach (var node in document.XPathSelectElements("/Tree/AbstractNode|/Tree/Node"))
@@ -886,7 +889,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                         }
                         else if (explicitKind.XPathSelectElements("Entry").Any())
                         {
-                            var nodeBuilder = ImmutableArray.CreateBuilder<(string name, int value, string extraDescription)>();
+                            var nodeBuilder = ImmutableArray.CreateBuilder<(string name, int value, string? extraDescription)>();
                             foreach (var entry in explicitKind.XPathSelectElements("Entry"))
                             {
                                 if (entry.Attribute("EditorBrowsable")?.Value == "false")
@@ -918,7 +921,7 @@ namespace StyleCop.Analyzers.CodeGeneration
 
                     var nodeName = node.Attribute("Name").Value;
                     var kindName = nodeName.Substring("I".Length, nodeName.Length - "I".Length - "Operation".Length);
-                    builder.Add(nodeName, ImmutableArray.Create((kindName, operationKind, (string)null)));
+                    builder.Add(nodeName, ImmutableArray.Create((kindName, operationKind, (string?)null)));
                 }
 
                 return builder.ToImmutable();
@@ -955,7 +958,7 @@ namespace StyleCop.Analyzers.CodeGeneration
         {
             private readonly DocumentData documentData;
 
-            public InterfaceData(DocumentData documentData, XElement node, ImmutableArray<(string name, int value, string extraDescription)> operationKinds)
+            public InterfaceData(DocumentData documentData, XElement node, ImmutableArray<(string name, int value, string? extraDescription)> operationKinds)
             {
                 this.documentData = documentData;
 
@@ -968,7 +971,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 this.Properties = node.XPathSelectElements("Property").Select(property => new PropertyData(property)).ToImmutableArray();
             }
 
-            public ImmutableArray<(string name, int value, string extraDescription)> OperationKinds { get; }
+            public ImmutableArray<(string name, int value, string? extraDescription)> OperationKinds { get; }
 
             public string InterfaceName { get; }
 
@@ -982,7 +985,7 @@ namespace StyleCop.Analyzers.CodeGeneration
 
             public ImmutableArray<PropertyData> Properties { get; }
 
-            public InterfaceData BaseInterface
+            public InterfaceData? BaseInterface
             {
                 get
                 {

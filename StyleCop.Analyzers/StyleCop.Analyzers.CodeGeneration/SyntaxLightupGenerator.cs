@@ -48,15 +48,18 @@ namespace StyleCop.Analyzers.CodeGeneration
         {
             foreach (var node in syntaxData.Nodes)
             {
-                if (node.WrapperName is not null)
-                {
-                    this.GenerateSyntaxWrapper(in context, syntaxData, node);
-                }
+                this.GenerateSyntaxWrapper(in context, syntaxData, node);
             }
         }
 
         private void GenerateSyntaxWrapper(in GeneratorExecutionContext context, SyntaxData syntaxData, NodeData nodeData)
         {
+            if (nodeData.WrapperName is null)
+            {
+                // No need to generate a wrapper for this type
+                return;
+            }
+
             var concreteBase = syntaxData.TryGetConcreteBase(nodeData)?.Name ?? nameof(SyntaxNode);
 
             var members = SyntaxFactory.List<MemberDeclarationSyntax>();
@@ -163,7 +166,8 @@ namespace StyleCop.Analyzers.CodeGeneration
                             SyntaxKind.SimpleMemberAccessExpression,
                             expression: SyntaxFactory.ThisExpression(),
                             name: SyntaxFactory.IdentifierName("node")),
-                        right: SyntaxFactory.IdentifierName("node"))))));
+                        right: SyntaxFactory.IdentifierName("node")))),
+                expressionBody: null));
 
             // public SyntaxNode SyntaxNode => this.node;
             members = members.Add(SyntaxFactory.PropertyDeclaration(
@@ -553,7 +557,8 @@ namespace StyleCop.Analyzers.CodeGeneration
                 identifier: SyntaxFactory.Identifier("SyntaxWrapperHelper"),
                 parameterList: SyntaxFactory.ParameterList(),
                 initializer: null,
-                body: SyntaxFactory.Block(staticCtorStatements));
+                body: SyntaxFactory.Block(staticCtorStatements),
+                expressionBody: null);
 
             // internal static Type GetWrappedType(Type wrapperType)
             // {
@@ -655,7 +660,7 @@ namespace StyleCop.Analyzers.CodeGeneration
 
             public ImmutableArray<NodeData> Nodes { get; }
 
-            public NodeData TryGetConcreteType(NodeData node)
+            public NodeData? TryGetConcreteType(NodeData? node)
             {
                 for (var current = node; current is not null; current = this.TryGetNode(current.BaseName))
                 {
@@ -669,12 +674,12 @@ namespace StyleCop.Analyzers.CodeGeneration
                 return null;
             }
 
-            public NodeData TryGetConcreteBase(NodeData node)
+            public NodeData? TryGetConcreteBase(NodeData node)
             {
                 return this.TryGetConcreteType(this.TryGetNode(node.BaseName));
             }
 
-            public NodeData TryGetNode(string name)
+            public NodeData? TryGetNode(string name)
             {
                 this.nameToNode.TryGetValue(name, out var node);
                 return node;
@@ -715,7 +720,7 @@ namespace StyleCop.Analyzers.CodeGeneration
 
             public string Name { get; }
 
-            public string WrapperName { get; }
+            public string? WrapperName { get; }
 
             public string BaseName { get; }
 
