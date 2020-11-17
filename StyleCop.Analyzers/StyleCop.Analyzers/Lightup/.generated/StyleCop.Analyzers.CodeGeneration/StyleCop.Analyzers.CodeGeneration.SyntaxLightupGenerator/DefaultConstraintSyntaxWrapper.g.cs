@@ -16,6 +16,13 @@ namespace StyleCop.Analyzers.Lightup
         private readonly TypeParameterConstraintSyntax node;
         private static readonly Func<TypeParameterConstraintSyntax, SyntaxToken> DefaultKeywordAccessor;
         private static readonly Func<TypeParameterConstraintSyntax, SyntaxToken, TypeParameterConstraintSyntax> WithDefaultKeywordAccessor;
+        static DefaultConstraintSyntaxWrapper()
+        {
+            WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(DefaultConstraintSyntaxWrapper));
+            DefaultKeywordAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<TypeParameterConstraintSyntax, SyntaxToken>(WrappedType, nameof(DefaultKeyword));
+            WithDefaultKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeParameterConstraintSyntax, SyntaxToken>(WrappedType, nameof(DefaultKeyword));
+        }
+
         private DefaultConstraintSyntaxWrapper(TypeParameterConstraintSyntax node)
         {
             this.node = node;

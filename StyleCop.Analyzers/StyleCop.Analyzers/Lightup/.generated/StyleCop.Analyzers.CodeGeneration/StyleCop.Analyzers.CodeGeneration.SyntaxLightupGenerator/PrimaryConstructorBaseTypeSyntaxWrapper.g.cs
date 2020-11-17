@@ -17,6 +17,14 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<BaseTypeSyntax, ArgumentListSyntax> ArgumentListAccessor;
         private static readonly Func<BaseTypeSyntax, TypeSyntax, BaseTypeSyntax> WithTypeAccessor;
         private static readonly Func<BaseTypeSyntax, ArgumentListSyntax, BaseTypeSyntax> WithArgumentListAccessor;
+        static PrimaryConstructorBaseTypeSyntaxWrapper()
+        {
+            WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(PrimaryConstructorBaseTypeSyntaxWrapper));
+            ArgumentListAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<BaseTypeSyntax, ArgumentListSyntax>(WrappedType, nameof(ArgumentList));
+            WithTypeAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<BaseTypeSyntax, TypeSyntax>(WrappedType, nameof(BaseTypeSyntax.Type));
+            WithArgumentListAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<BaseTypeSyntax, ArgumentListSyntax>(WrappedType, nameof(ArgumentList));
+        }
+
         private PrimaryConstructorBaseTypeSyntaxWrapper(BaseTypeSyntax node)
         {
             this.node = node;

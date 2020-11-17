@@ -18,6 +18,15 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode> UnmanagedCallingConventionListAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithManagedOrUnmanagedKeywordAccessor;
         private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode, CSharpSyntaxNode> WithUnmanagedCallingConventionListAccessor;
+        static FunctionPointerCallingConventionSyntaxWrapper()
+        {
+            WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(FunctionPointerCallingConventionSyntaxWrapper));
+            ManagedOrUnmanagedKeywordAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(ManagedOrUnmanagedKeyword));
+            UnmanagedCallingConventionListAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, CSharpSyntaxNode>(WrappedType, nameof(UnmanagedCallingConventionList));
+            WithManagedOrUnmanagedKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(ManagedOrUnmanagedKeyword));
+            WithUnmanagedCallingConventionListAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, CSharpSyntaxNode>(WrappedType, nameof(UnmanagedCallingConventionList));
+        }
+
         private FunctionPointerCallingConventionSyntaxWrapper(CSharpSyntaxNode node)
         {
             this.node = node;

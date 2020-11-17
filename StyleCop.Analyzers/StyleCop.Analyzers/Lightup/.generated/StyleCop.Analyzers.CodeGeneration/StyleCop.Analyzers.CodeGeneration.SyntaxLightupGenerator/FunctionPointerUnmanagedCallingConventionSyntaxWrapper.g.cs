@@ -16,6 +16,13 @@ namespace StyleCop.Analyzers.Lightup
         private readonly CSharpSyntaxNode node;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> NameAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithNameAccessor;
+        static FunctionPointerUnmanagedCallingConventionSyntaxWrapper()
+        {
+            WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(FunctionPointerUnmanagedCallingConventionSyntaxWrapper));
+            NameAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(Name));
+            WithNameAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(Name));
+        }
+
         private FunctionPointerUnmanagedCallingConventionSyntaxWrapper(CSharpSyntaxNode node)
         {
             this.node = node;

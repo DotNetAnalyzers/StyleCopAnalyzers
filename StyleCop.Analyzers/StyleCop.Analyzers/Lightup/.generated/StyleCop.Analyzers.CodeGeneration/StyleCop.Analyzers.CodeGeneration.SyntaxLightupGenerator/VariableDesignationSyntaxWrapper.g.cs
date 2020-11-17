@@ -14,6 +14,11 @@ namespace StyleCop.Analyzers.Lightup
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.VariableDesignationSyntax";
         private static readonly Type WrappedType;
         private readonly CSharpSyntaxNode node;
+        static VariableDesignationSyntaxWrapper()
+        {
+            WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(VariableDesignationSyntaxWrapper));
+        }
+
         private VariableDesignationSyntaxWrapper(CSharpSyntaxNode node)
         {
             this.node = node;

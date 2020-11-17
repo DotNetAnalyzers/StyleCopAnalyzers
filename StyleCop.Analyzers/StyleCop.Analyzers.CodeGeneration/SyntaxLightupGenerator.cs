@@ -6,6 +6,8 @@ namespace StyleCop.Analyzers.CodeGeneration
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
     using System.Text;
@@ -143,6 +145,146 @@ namespace StyleCop.Analyzers.CodeGeneration
                                 }))),
                         variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(field.WithAccessorName)))));
             }
+
+            // WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(SyntaxWrapper));
+            var staticCtorStatements = SyntaxFactory.SingletonList<StatementSyntax>(
+                SyntaxFactory.ExpressionStatement(SyntaxFactory.AssignmentExpression(
+                    SyntaxKind.SimpleAssignmentExpression,
+                    left: SyntaxFactory.IdentifierName("WrappedType"),
+                    right: SyntaxFactory.InvocationExpression(
+                        expression: SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            expression: SyntaxFactory.IdentifierName("SyntaxWrapperHelper"),
+                            name: SyntaxFactory.IdentifierName("GetWrappedType")),
+                        argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(
+                            SyntaxFactory.TypeOfExpression(SyntaxFactory.IdentifierName(nodeData.WrapperName)))))))));
+
+            foreach (var field in nodeData.Fields)
+            {
+                if (field.IsSkipped)
+                {
+                    continue;
+                }
+
+                if (field.IsOverride)
+                {
+                    // The 'get' accessor is skipped for override fields
+                    continue;
+                }
+
+                SimpleNameSyntax helperName;
+                if (field.IsWrappedSeparatedSyntaxList(syntaxData, out var elementNode))
+                {
+                    Debug.Assert(elementNode.WrapperName is not null, $"Assertion failed: {nameof(elementNode)}.{nameof(elementNode.WrapperName)} is not null");
+
+                    // CreateSeparatedSyntaxListPropertyAccessor<SyntaxNode, T>
+                    helperName = SyntaxFactory.GenericName(
+                        identifier: SyntaxFactory.Identifier("CreateSeparatedSyntaxListPropertyAccessor"),
+                        typeArgumentList: SyntaxFactory.TypeArgumentList(SyntaxFactory.SeparatedList<TypeSyntax>(
+                            new[]
+                            {
+                                SyntaxFactory.IdentifierName(concreteBase),
+                                SyntaxFactory.IdentifierName(elementNode.WrapperName),
+                            })));
+                }
+                else
+                {
+                    // CreateSyntaxPropertyAccessor<SyntaxNode, T>
+                    helperName = SyntaxFactory.GenericName(
+                        identifier: SyntaxFactory.Identifier("CreateSyntaxPropertyAccessor"),
+                        typeArgumentList: SyntaxFactory.TypeArgumentList(SyntaxFactory.SeparatedList(
+                            new[]
+                            {
+                                SyntaxFactory.IdentifierName(concreteBase),
+                                SyntaxFactory.ParseTypeName(field.GetAccessorResultType(syntaxData)),
+                            })));
+                }
+
+                // ReturnTypeAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<StatementSyntax, TypeSyntax>(WrappedType, nameof(ReturnType));
+                staticCtorStatements = staticCtorStatements.Add(SyntaxFactory.ExpressionStatement(SyntaxFactory.AssignmentExpression(
+                    SyntaxKind.SimpleAssignmentExpression,
+                    left: SyntaxFactory.IdentifierName(field.AccessorName),
+                    right: SyntaxFactory.InvocationExpression(
+                        expression: SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            expression: SyntaxFactory.IdentifierName("LightupHelpers"),
+                            name: helperName),
+                        argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(
+                            new[]
+                            {
+                                SyntaxFactory.Argument(SyntaxFactory.IdentifierName("WrappedType")),
+                                SyntaxFactory.Argument(SyntaxFactory.InvocationExpression(
+                                    expression: SyntaxFactory.IdentifierName("nameof"),
+                                    argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(field.GetPropertyNameExpression(syntaxData)))))),
+                            }))))));
+            }
+
+            foreach (var field in nodeData.Fields)
+            {
+                if (field.IsSkipped)
+                {
+                    continue;
+                }
+
+                SimpleNameSyntax helperName;
+                if (field.IsWrappedSeparatedSyntaxList(syntaxData, out var elementNode))
+                {
+                    Debug.Assert(elementNode.WrapperName is not null, $"Assertion failed: {nameof(elementNode)}.{nameof(elementNode.WrapperName)} is not null");
+
+                    // CreateSeparatedSyntaxListWithPropertyAccessor<SyntaxNode, T>
+                    helperName = SyntaxFactory.GenericName(
+                        identifier: SyntaxFactory.Identifier("CreateSeparatedSyntaxListWithPropertyAccessor"),
+                        typeArgumentList: SyntaxFactory.TypeArgumentList(SyntaxFactory.SeparatedList<TypeSyntax>(
+                            new[]
+                            {
+                                SyntaxFactory.IdentifierName(concreteBase),
+                                SyntaxFactory.IdentifierName(elementNode.WrapperName),
+                            })));
+                }
+                else
+                {
+                    // CreateSyntaxWithPropertyAccessor<SyntaxNode, T>
+                    helperName = SyntaxFactory.GenericName(
+                        identifier: SyntaxFactory.Identifier("CreateSyntaxWithPropertyAccessor"),
+                        typeArgumentList: SyntaxFactory.TypeArgumentList(SyntaxFactory.SeparatedList(
+                            new[]
+                            {
+                                SyntaxFactory.IdentifierName(concreteBase),
+                                SyntaxFactory.ParseTypeName(field.GetAccessorResultType(syntaxData)),
+                            })));
+                }
+
+                // WithReturnTypeAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<StatementSyntax, TypeSyntax>(WrappedType, nameof(ReturnType));
+                staticCtorStatements = staticCtorStatements.Add(SyntaxFactory.ExpressionStatement(SyntaxFactory.AssignmentExpression(
+                    SyntaxKind.SimpleAssignmentExpression,
+                    left: SyntaxFactory.IdentifierName(field.WithAccessorName),
+                    right: SyntaxFactory.InvocationExpression(
+                        expression: SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            expression: SyntaxFactory.IdentifierName("LightupHelpers"),
+                            name: helperName),
+                        argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(
+                            new[]
+                            {
+                                SyntaxFactory.Argument(SyntaxFactory.IdentifierName("WrappedType")),
+                                SyntaxFactory.Argument(SyntaxFactory.InvocationExpression(
+                                    expression: SyntaxFactory.IdentifierName("nameof"),
+                                    argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(field.GetPropertyNameExpression(syntaxData)))))),
+                            }))))));
+            }
+
+            // static SyntaxWrapper()
+            // {
+            //     WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(SyntaxWrapper));
+            // }
+            members = members.Add(SyntaxFactory.ConstructorDeclaration(
+                attributeLists: default,
+                modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.StaticKeyword)),
+                identifier: SyntaxFactory.Identifier(nodeData.WrapperName),
+                parameterList: SyntaxFactory.ParameterList(),
+                initializer: null,
+                body: SyntaxFactory.Block(staticCtorStatements),
+                expressionBody: null));
 
             // private SyntaxNodeWrapper(SyntaxNode node)
             // {
@@ -713,7 +855,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 }
 
                 this.BaseName = element.Attribute("Base").Value;
-                this.Fields = element.XPathSelectElements("descendant::Field").Select(field => new FieldData(field)).ToImmutableArray();
+                this.Fields = element.XPathSelectElements("descendant::Field").Select(field => new FieldData(this, field)).ToImmutableArray();
             }
 
             public NodeKind Kind { get; }
@@ -725,12 +867,21 @@ namespace StyleCop.Analyzers.CodeGeneration
             public string BaseName { get; }
 
             public ImmutableArray<FieldData> Fields { get; }
+
+            internal FieldData? TryGetField(string name)
+            {
+                return this.Fields.SingleOrDefault(field => field.Name == name);
+            }
         }
 
         private sealed class FieldData
         {
-            public FieldData(XElement element)
+            private readonly NodeData nodeData;
+
+            public FieldData(NodeData nodeData, XElement element)
             {
+                this.nodeData = nodeData;
+
                 this.Name = element.Attribute("Name").Value;
 
                 var type = element.Attribute("Type").Value;
@@ -758,6 +909,52 @@ namespace StyleCop.Analyzers.CodeGeneration
 
             public bool IsOverride { get; }
 
+            public NodeData GetDeclaringNode(SyntaxData syntaxData)
+            {
+                for (var current = this.nodeData; current is not null; current = syntaxData.TryGetNode(current.BaseName))
+                {
+                    var currentField = current.TryGetField(this.Name);
+                    if (currentField is { IsOverride: false })
+                    {
+                        return currentField.nodeData;
+                    }
+                }
+
+                throw new NotSupportedException("Unable to find declaring node.");
+            }
+
+            public NameSyntax GetPropertyNameExpression(SyntaxData syntaxData)
+            {
+                var declaringNode = this.GetDeclaringNode(syntaxData);
+                if (declaringNode == this.nodeData)
+                {
+                    return SyntaxFactory.IdentifierName(this.Name);
+                }
+                else
+                {
+                    return SyntaxFactory.QualifiedName(
+                        SyntaxFactory.IdentifierName(declaringNode.WrapperName ?? declaringNode.Name),
+                        SyntaxFactory.IdentifierName(this.Name));
+                }
+            }
+
+            public bool IsWrappedSeparatedSyntaxList(SyntaxData syntaxData, [NotNullWhen(true)] out NodeData? element)
+            {
+                if (this.Type.StartsWith("SeparatedSyntaxList<") && this.Type.EndsWith(">"))
+                {
+                    var elementTypeName = this.Type.Substring("SeparatedSyntaxList<".Length, this.Type.Length - "SeparatedSyntaxList<".Length - ">".Length);
+                    var elementTypeNode = syntaxData.TryGetNode(elementTypeName);
+                    if (elementTypeNode is { WrapperName: not null })
+                    {
+                        element = elementTypeNode;
+                        return true;
+                    }
+                }
+
+                element = null;
+                return false;
+            }
+
             public string GetAccessorResultType(SyntaxData syntaxData)
             {
                 var typeNode = syntaxData.TryGetNode(this.Type);
@@ -766,17 +963,22 @@ namespace StyleCop.Analyzers.CodeGeneration
                     return syntaxData.TryGetConcreteType(typeNode)?.Name ?? nameof(SyntaxNode);
                 }
 
-                if (this.Type.StartsWith("SeparatedSyntaxList<") && this.Type.EndsWith(">"))
+                if (this.IsWrappedSeparatedSyntaxList(syntaxData, out var elementTypeNode))
                 {
-                    var elementTypeName = this.Type.Substring("SeparatedSyntaxList<".Length, this.Type.Length - "SeparatedSyntaxList<".Length - ">".Length);
-                    var elementTypeNode = syntaxData.TryGetNode(elementTypeName);
-                    if (elementTypeNode is { WrapperName: not null })
-                    {
-                        return $"SeparatedSyntaxListWrapper<{elementTypeNode.WrapperName}>";
-                    }
+                    return $"SeparatedSyntaxListWrapper<{elementTypeNode.WrapperName}>";
                 }
 
                 return this.Type;
+            }
+
+            public string? GetAccessorResultElementType(SyntaxData syntaxData)
+            {
+                if (this.IsWrappedSeparatedSyntaxList(syntaxData, out var elementTypeNode))
+                {
+                    return elementTypeNode.WrapperName;
+                }
+
+                return null;
             }
         }
     }

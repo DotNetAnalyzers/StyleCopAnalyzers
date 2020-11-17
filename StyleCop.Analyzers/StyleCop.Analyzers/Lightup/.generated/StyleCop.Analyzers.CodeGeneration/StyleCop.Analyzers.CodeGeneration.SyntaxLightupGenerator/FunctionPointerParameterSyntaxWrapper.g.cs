@@ -17,6 +17,14 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<CSharpSyntaxNode, SyntaxList<AttributeListSyntax>, CSharpSyntaxNode> WithAttributeListsAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxTokenList, CSharpSyntaxNode> WithModifiersAccessor;
         private static readonly Func<CSharpSyntaxNode, TypeSyntax, CSharpSyntaxNode> WithTypeAccessor;
+        static FunctionPointerParameterSyntaxWrapper()
+        {
+            WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(FunctionPointerParameterSyntaxWrapper));
+            WithAttributeListsAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxList<AttributeListSyntax>>(WrappedType, nameof(BaseParameterSyntaxWrapper.AttributeLists));
+            WithModifiersAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxTokenList>(WrappedType, nameof(BaseParameterSyntaxWrapper.Modifiers));
+            WithTypeAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, TypeSyntax>(WrappedType, nameof(BaseParameterSyntaxWrapper.Type));
+        }
+
         private FunctionPointerParameterSyntaxWrapper(CSharpSyntaxNode node)
         {
             this.node = node;

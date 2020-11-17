@@ -8,18 +8,6 @@ namespace StyleCop.Analyzers.Lightup
 
     internal partial struct RangeExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
     {
-        static RangeExpressionSyntaxWrapper()
-        {
-            WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(RangeExpressionSyntaxWrapper));
-            LeftOperandAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<ExpressionSyntax, ExpressionSyntax>(WrappedType, nameof(LeftOperand));
-            OperatorTokenAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<ExpressionSyntax, SyntaxToken>(WrappedType, nameof(OperatorToken));
-            RightOperandAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<ExpressionSyntax, ExpressionSyntax>(WrappedType, nameof(RightOperand));
-
-            WithLeftOperandAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, ExpressionSyntax>(WrappedType, nameof(LeftOperand));
-            WithOperatorTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, SyntaxToken>(WrappedType, nameof(OperatorToken));
-            WithRightOperandAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, ExpressionSyntax>(WrappedType, nameof(RightOperand));
-        }
-
         public ExpressionSyntax LeftOperand
         {
             get
