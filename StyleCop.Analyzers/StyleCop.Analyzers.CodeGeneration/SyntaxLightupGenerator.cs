@@ -276,6 +276,34 @@ namespace StyleCop.Analyzers.CodeGeneration
                                 })))))),
                 expressionBody: null));
 
+            if (nodeData.Kind == NodeKind.Abstract)
+            {
+                // internal static SyntaxWrapper FromUpcast(CSharpSyntaxNode node)
+                // {
+                //     return new SyntaxWrapper(node);
+                // }
+                members = members.Add(SyntaxFactory.MethodDeclaration(
+                    attributeLists: default,
+                    modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.InternalKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword)),
+                    returnType: SyntaxFactory.IdentifierName(nodeData.WrapperName),
+                    explicitInterfaceSpecifier: null,
+                    identifier: SyntaxFactory.Identifier("FromUpcast"),
+                    typeParameterList: null,
+                    parameterList: SyntaxFactory.ParameterList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Parameter(
+                        attributeLists: default,
+                        modifiers: default,
+                        type: SyntaxFactory.IdentifierName(concreteBase),
+                        identifier: SyntaxFactory.Identifier("node"),
+                        @default: null))),
+                    constraintClauses: default,
+                    body: SyntaxFactory.Block(
+                        SyntaxFactory.ReturnStatement(SyntaxFactory.ObjectCreationExpression(
+                            type: SyntaxFactory.IdentifierName(nodeData.WrapperName),
+                            argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(SyntaxFactory.IdentifierName("node")))),
+                            initializer: null))),
+                    expressionBody: null));
+            }
+
             var wrapperStruct = SyntaxFactory.StructDeclaration(
                 attributeLists: default,
                 modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.InternalKeyword), SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword), SyntaxFactory.Token(SyntaxKind.PartialKeyword)),

@@ -44,5 +44,10 @@ namespace StyleCop.Analyzers.Lightup
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
+
+        internal static CommonForEachStatementSyntaxWrapper FromUpcast(StatementSyntax node)
+        {
+            return new CommonForEachStatementSyntaxWrapper(node);
+        }
     }
 }

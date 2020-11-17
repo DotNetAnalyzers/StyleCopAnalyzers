@@ -3,8 +3,6 @@
 
 namespace StyleCop.Analyzers.Lightup
 {
-    using System;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
 
     internal partial struct VariableDesignationSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
@@ -12,11 +10,6 @@ namespace StyleCop.Analyzers.Lightup
         static VariableDesignationSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(VariableDesignationSyntaxWrapper));
-        }
-
-        internal static VariableDesignationSyntaxWrapper FromUpcast(CSharpSyntaxNode node)
-        {
-            return new VariableDesignationSyntaxWrapper(node);
         }
     }
 }

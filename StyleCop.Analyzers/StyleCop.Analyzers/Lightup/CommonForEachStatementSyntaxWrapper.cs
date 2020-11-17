@@ -142,10 +142,5 @@ namespace StyleCop.Analyzers.Lightup
         {
             return new CommonForEachStatementSyntaxWrapper(WithStatementAccessor(this.SyntaxNode, statement));
         }
-
-        internal static CommonForEachStatementSyntaxWrapper FromUpcast(StatementSyntax node)
-        {
-            return new CommonForEachStatementSyntaxWrapper(node);
-        }
     }
 }

@@ -3,8 +3,6 @@
 
 namespace StyleCop.Analyzers.Lightup
 {
-    using System;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
 
     internal partial struct PatternSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
@@ -12,11 +10,6 @@ namespace StyleCop.Analyzers.Lightup
         static PatternSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(PatternSyntaxWrapper));
-        }
-
-        internal static PatternSyntaxWrapper FromUpcast(CSharpSyntaxNode node)
-        {
-            return new PatternSyntaxWrapper(node);
         }
     }
 }
