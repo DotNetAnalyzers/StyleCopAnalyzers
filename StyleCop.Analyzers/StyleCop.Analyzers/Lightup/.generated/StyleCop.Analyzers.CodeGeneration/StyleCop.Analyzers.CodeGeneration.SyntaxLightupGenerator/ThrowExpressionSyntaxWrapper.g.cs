@@ -13,11 +13,11 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.ThrowExpressionSyntax";
         private static readonly Type WrappedType;
-        private readonly ExpressionSyntax node;
         private static readonly Func<ExpressionSyntax, SyntaxToken> ThrowKeywordAccessor;
         private static readonly Func<ExpressionSyntax, ExpressionSyntax> ExpressionAccessor;
         private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithThrowKeywordAccessor;
         private static readonly Func<ExpressionSyntax, ExpressionSyntax, ExpressionSyntax> WithExpressionAccessor;
+        private readonly ExpressionSyntax node;
         static ThrowExpressionSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(ThrowExpressionSyntaxWrapper));

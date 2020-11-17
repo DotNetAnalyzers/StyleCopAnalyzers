@@ -13,9 +13,9 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.SingleVariableDesignationSyntax";
         private static readonly Type WrappedType;
-        private readonly CSharpSyntaxNode node;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> IdentifierAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithIdentifierAccessor;
+        private readonly CSharpSyntaxNode node;
         static SingleVariableDesignationSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(SingleVariableDesignationSyntaxWrapper));

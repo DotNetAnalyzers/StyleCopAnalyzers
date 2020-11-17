@@ -13,7 +13,6 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax";
         private static readonly Type WrappedType;
-        private readonly StatementSyntax node;
         private static readonly Func<StatementSyntax, SyntaxToken> AwaitKeywordAccessor;
         private static readonly Func<StatementSyntax, SyntaxToken> ForEachKeywordAccessor;
         private static readonly Func<StatementSyntax, SyntaxToken> OpenParenTokenAccessor;
@@ -28,6 +27,7 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<StatementSyntax, ExpressionSyntax, StatementSyntax> WithExpressionAccessor;
         private static readonly Func<StatementSyntax, SyntaxToken, StatementSyntax> WithCloseParenTokenAccessor;
         private static readonly Func<StatementSyntax, StatementSyntax, StatementSyntax> WithStatementAccessor;
+        private readonly StatementSyntax node;
         static CommonForEachStatementSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(CommonForEachStatementSyntaxWrapper));

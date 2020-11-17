@@ -13,13 +13,13 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.PropertyPatternClauseSyntax";
         private static readonly Type WrappedType;
-        private readonly CSharpSyntaxNode node;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> OpenBraceTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>> SubpatternsAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> CloseBraceTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithOpenBraceTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>, CSharpSyntaxNode> WithSubpatternsAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithCloseBraceTokenAccessor;
+        private readonly CSharpSyntaxNode node;
         static PropertyPatternClauseSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(PropertyPatternClauseSyntaxWrapper));

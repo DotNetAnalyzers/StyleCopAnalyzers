@@ -13,7 +13,6 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.NullableDirectiveTriviaSyntax";
         private static readonly Type WrappedType;
-        private readonly DirectiveTriviaSyntax node;
         private static readonly Func<DirectiveTriviaSyntax, SyntaxToken> NullableKeywordAccessor;
         private static readonly Func<DirectiveTriviaSyntax, SyntaxToken> SettingTokenAccessor;
         private static readonly Func<DirectiveTriviaSyntax, SyntaxToken> TargetTokenAccessor;
@@ -23,6 +22,7 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<DirectiveTriviaSyntax, SyntaxToken, DirectiveTriviaSyntax> WithTargetTokenAccessor;
         private static readonly Func<DirectiveTriviaSyntax, SyntaxToken, DirectiveTriviaSyntax> WithEndOfDirectiveTokenAccessor;
         private static readonly Func<DirectiveTriviaSyntax, bool, DirectiveTriviaSyntax> WithIsActiveAccessor;
+        private readonly DirectiveTriviaSyntax node;
         static NullableDirectiveTriviaSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(NullableDirectiveTriviaSyntaxWrapper));

@@ -13,13 +13,13 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.BinaryPatternSyntax";
         private static readonly Type WrappedType;
-        private readonly CSharpSyntaxNode node;
         private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode> LeftAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> OperatorTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode> RightAccessor;
         private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode, CSharpSyntaxNode> WithLeftAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithOperatorTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode, CSharpSyntaxNode> WithRightAccessor;
+        private readonly CSharpSyntaxNode node;
         static BinaryPatternSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(BinaryPatternSyntaxWrapper));

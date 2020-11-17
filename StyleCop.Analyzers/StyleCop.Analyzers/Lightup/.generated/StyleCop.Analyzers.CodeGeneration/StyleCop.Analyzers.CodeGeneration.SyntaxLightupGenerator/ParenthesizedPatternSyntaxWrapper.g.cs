@@ -13,13 +13,13 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedPatternSyntax";
         private static readonly Type WrappedType;
-        private readonly CSharpSyntaxNode node;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> OpenParenTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode> PatternAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> CloseParenTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithOpenParenTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode, CSharpSyntaxNode> WithPatternAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithCloseParenTokenAccessor;
+        private readonly CSharpSyntaxNode node;
         static ParenthesizedPatternSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(ParenthesizedPatternSyntaxWrapper));

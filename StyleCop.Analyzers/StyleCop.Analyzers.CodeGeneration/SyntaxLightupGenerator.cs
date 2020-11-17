@@ -85,14 +85,6 @@ namespace StyleCop.Analyzers.CodeGeneration
                     type: SyntaxFactory.IdentifierName("Type"),
                     variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator("WrappedType")))));
 
-            // private readonly SyntaxNode node;
-            members = members.Add(SyntaxFactory.FieldDeclaration(
-                attributeLists: default,
-                modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PrivateKeyword), SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)),
-                declaration: SyntaxFactory.VariableDeclaration(
-                    type: SyntaxFactory.IdentifierName(concreteBase),
-                    variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator("node")))));
-
             foreach (var field in nodeData.Fields)
             {
                 if (field.IsSkipped)
@@ -145,6 +137,14 @@ namespace StyleCop.Analyzers.CodeGeneration
                                 }))),
                         variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(field.WithAccessorName)))));
             }
+
+            // private readonly SyntaxNode node;
+            members = members.Add(SyntaxFactory.FieldDeclaration(
+                attributeLists: default,
+                modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PrivateKeyword), SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)),
+                declaration: SyntaxFactory.VariableDeclaration(
+                    type: SyntaxFactory.IdentifierName(concreteBase),
+                    variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator("node")))));
 
             // WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(SyntaxWrapper));
             var staticCtorStatements = SyntaxFactory.SingletonList<StatementSyntax>(
