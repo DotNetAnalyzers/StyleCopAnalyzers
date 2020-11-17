@@ -8,16 +8,6 @@ namespace StyleCop.Analyzers.Lightup
 
     internal partial struct ForEachVariableStatementSyntaxWrapper : ISyntaxWrapper<StatementSyntax>
     {
-        public static explicit operator ForEachVariableStatementSyntaxWrapper(CommonForEachStatementSyntaxWrapper node)
-        {
-            return (ForEachVariableStatementSyntaxWrapper)node.SyntaxNode;
-        }
-
-        public static implicit operator CommonForEachStatementSyntaxWrapper(ForEachVariableStatementSyntaxWrapper wrapper)
-        {
-            return CommonForEachStatementSyntaxWrapper.FromUpcast(wrapper.node);
-        }
-
         public ForEachVariableStatementSyntaxWrapper WithAwaitKeyword(SyntaxToken awaitKeyword)
         {
             return new ForEachVariableStatementSyntaxWrapper(WithAwaitKeywordAccessor(this.SyntaxNode, awaitKeyword));

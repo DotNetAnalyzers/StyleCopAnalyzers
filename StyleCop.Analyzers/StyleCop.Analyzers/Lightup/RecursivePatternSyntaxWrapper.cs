@@ -8,16 +8,6 @@ namespace StyleCop.Analyzers.Lightup
 
     internal partial struct RecursivePatternSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
-        public static explicit operator RecursivePatternSyntaxWrapper(PatternSyntaxWrapper node)
-        {
-            return (RecursivePatternSyntaxWrapper)node.SyntaxNode;
-        }
-
-        public static implicit operator PatternSyntaxWrapper(RecursivePatternSyntaxWrapper wrapper)
-        {
-            return PatternSyntaxWrapper.FromUpcast(wrapper.node);
-        }
-
         public RecursivePatternSyntaxWrapper AddPositionalPatternClauseSubpatterns(params SubpatternSyntaxWrapper[] items)
         {
             var positionalPatternClause = this.PositionalPatternClause;

@@ -433,6 +433,35 @@ namespace StyleCop.Analyzers.CodeGeneration
                     semicolonToken: default));
             }
 
+            for (var baseNode = syntaxData.TryGetNode(nodeData.BaseName); baseNode?.WrapperName is not null; baseNode = syntaxData.TryGetNode(baseNode.BaseName))
+            {
+                // public static explicit operator SyntaxWrapper(BaseSyntaxWrapper node)
+                // {
+                //     return (SyntaxWrapper)node.SyntaxNode;
+                // }
+                members = members.Add(SyntaxFactory.ConversionOperatorDeclaration(
+                    attributeLists: default,
+                    modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword)),
+                    implicitOrExplicitKeyword: SyntaxFactory.Token(SyntaxKind.ExplicitKeyword),
+                    operatorKeyword: SyntaxFactory.Token(SyntaxKind.OperatorKeyword),
+                    type: SyntaxFactory.IdentifierName(nodeData.WrapperName),
+                    parameterList: SyntaxFactory.ParameterList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Parameter(
+                        attributeLists: default,
+                        modifiers: default,
+                        type: SyntaxFactory.IdentifierName(baseNode.WrapperName),
+                        identifier: SyntaxFactory.Identifier("node"),
+                        @default: null))),
+                    body: SyntaxFactory.Block(SyntaxFactory.ReturnStatement(
+                        SyntaxFactory.CastExpression(
+                            type: SyntaxFactory.IdentifierName(nodeData.WrapperName),
+                            expression: SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                expression: SyntaxFactory.IdentifierName("node"),
+                                name: SyntaxFactory.IdentifierName("SyntaxNode"))))),
+                    expressionBody: null,
+                    semicolonToken: default));
+            }
+
             // public static explicit operator WhenClauseSyntaxWrapper(SyntaxNode node)
             // {
             //     if (node == null)
@@ -520,6 +549,39 @@ namespace StyleCop.Analyzers.CodeGeneration
                         initializer: null))),
                 expressionBody: null,
                 semicolonToken: default));
+
+            for (var baseNode = syntaxData.TryGetNode(nodeData.BaseName); baseNode?.WrapperName is not null; baseNode = syntaxData.TryGetNode(baseNode.BaseName))
+            {
+                // public static implicit operator BaseSyntaxWrapper(SyntaxWrapper wrapper)
+                // {
+                //     return BaseSyntaxWrapper.FromUpcast(wrapper.node);
+                // }
+                members = members.Add(SyntaxFactory.ConversionOperatorDeclaration(
+                    attributeLists: default,
+                    modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword)),
+                    implicitOrExplicitKeyword: SyntaxFactory.Token(SyntaxKind.ImplicitKeyword),
+                    operatorKeyword: SyntaxFactory.Token(SyntaxKind.OperatorKeyword),
+                    type: SyntaxFactory.IdentifierName(baseNode.WrapperName),
+                    parameterList: SyntaxFactory.ParameterList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Parameter(
+                        attributeLists: default,
+                        modifiers: default,
+                        type: SyntaxFactory.IdentifierName(nodeData.WrapperName),
+                        identifier: SyntaxFactory.Identifier("wrapper"),
+                        @default: null))),
+                    body: SyntaxFactory.Block(SyntaxFactory.ReturnStatement(
+                        SyntaxFactory.InvocationExpression(
+                            expression: SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                expression: SyntaxFactory.IdentifierName(baseNode.WrapperName),
+                                name: SyntaxFactory.IdentifierName("FromUpcast")),
+                            argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    expression: SyntaxFactory.IdentifierName("wrapper"),
+                                    name: SyntaxFactory.IdentifierName("node")))))))),
+                    expressionBody: null,
+                    semicolonToken: default));
+            }
 
             // public static implicit operator CSharpSyntaxNode(SyntaxWrapper wrapper)
             // {

@@ -8,16 +8,6 @@ namespace StyleCop.Analyzers.Lightup
 
     internal partial struct VarPatternSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
-        public static explicit operator VarPatternSyntaxWrapper(PatternSyntaxWrapper node)
-        {
-            return (VarPatternSyntaxWrapper)node.SyntaxNode;
-        }
-
-        public static implicit operator PatternSyntaxWrapper(VarPatternSyntaxWrapper wrapper)
-        {
-            return PatternSyntaxWrapper.FromUpcast(wrapper.node);
-        }
-
         public VarPatternSyntaxWrapper WithVarKeyword(SyntaxToken varKeyword)
         {
             return new VarPatternSyntaxWrapper(WithVarKeywordAccessor(this.SyntaxNode, varKeyword));

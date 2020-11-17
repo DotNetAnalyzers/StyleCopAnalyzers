@@ -109,6 +109,11 @@ namespace StyleCop.Analyzers.Lightup
             }
         }
 
+        public static explicit operator ForEachVariableStatementSyntaxWrapper(CommonForEachStatementSyntaxWrapper node)
+        {
+            return (ForEachVariableStatementSyntaxWrapper)node.SyntaxNode;
+        }
+
         public static explicit operator ForEachVariableStatementSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)
@@ -122,6 +127,11 @@ namespace StyleCop.Analyzers.Lightup
             }
 
             return new ForEachVariableStatementSyntaxWrapper((StatementSyntax)node);
+        }
+
+        public static implicit operator CommonForEachStatementSyntaxWrapper(ForEachVariableStatementSyntaxWrapper wrapper)
+        {
+            return CommonForEachStatementSyntaxWrapper.FromUpcast(wrapper.node);
         }
 
         public static implicit operator StatementSyntax(ForEachVariableStatementSyntaxWrapper wrapper)

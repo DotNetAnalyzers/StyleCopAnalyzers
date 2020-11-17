@@ -37,6 +37,11 @@ namespace StyleCop.Analyzers.Lightup
             }
         }
 
+        public static explicit operator DiscardDesignationSyntaxWrapper(VariableDesignationSyntaxWrapper node)
+        {
+            return (DiscardDesignationSyntaxWrapper)node.SyntaxNode;
+        }
+
         public static explicit operator DiscardDesignationSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)
@@ -50,6 +55,11 @@ namespace StyleCop.Analyzers.Lightup
             }
 
             return new DiscardDesignationSyntaxWrapper((CSharpSyntaxNode)node);
+        }
+
+        public static implicit operator VariableDesignationSyntaxWrapper(DiscardDesignationSyntaxWrapper wrapper)
+        {
+            return VariableDesignationSyntaxWrapper.FromUpcast(wrapper.node);
         }
 
         public static implicit operator CSharpSyntaxNode(DiscardDesignationSyntaxWrapper wrapper)

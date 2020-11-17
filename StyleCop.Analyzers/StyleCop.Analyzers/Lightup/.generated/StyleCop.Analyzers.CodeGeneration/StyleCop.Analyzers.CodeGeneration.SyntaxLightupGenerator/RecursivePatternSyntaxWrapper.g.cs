@@ -73,6 +73,16 @@ namespace StyleCop.Analyzers.Lightup
             }
         }
 
+        public static explicit operator RecursivePatternSyntaxWrapper(PatternSyntaxWrapper node)
+        {
+            return (RecursivePatternSyntaxWrapper)node.SyntaxNode;
+        }
+
+        public static explicit operator RecursivePatternSyntaxWrapper(ExpressionOrPatternSyntaxWrapper node)
+        {
+            return (RecursivePatternSyntaxWrapper)node.SyntaxNode;
+        }
+
         public static explicit operator RecursivePatternSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)
@@ -86,6 +96,16 @@ namespace StyleCop.Analyzers.Lightup
             }
 
             return new RecursivePatternSyntaxWrapper((CSharpSyntaxNode)node);
+        }
+
+        public static implicit operator PatternSyntaxWrapper(RecursivePatternSyntaxWrapper wrapper)
+        {
+            return PatternSyntaxWrapper.FromUpcast(wrapper.node);
+        }
+
+        public static implicit operator ExpressionOrPatternSyntaxWrapper(RecursivePatternSyntaxWrapper wrapper)
+        {
+            return ExpressionOrPatternSyntaxWrapper.FromUpcast(wrapper.node);
         }
 
         public static implicit operator CSharpSyntaxNode(RecursivePatternSyntaxWrapper wrapper)

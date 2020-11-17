@@ -49,6 +49,16 @@ namespace StyleCop.Analyzers.Lightup
             }
         }
 
+        public static explicit operator RelationalPatternSyntaxWrapper(PatternSyntaxWrapper node)
+        {
+            return (RelationalPatternSyntaxWrapper)node.SyntaxNode;
+        }
+
+        public static explicit operator RelationalPatternSyntaxWrapper(ExpressionOrPatternSyntaxWrapper node)
+        {
+            return (RelationalPatternSyntaxWrapper)node.SyntaxNode;
+        }
+
         public static explicit operator RelationalPatternSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)
@@ -62,6 +72,16 @@ namespace StyleCop.Analyzers.Lightup
             }
 
             return new RelationalPatternSyntaxWrapper((CSharpSyntaxNode)node);
+        }
+
+        public static implicit operator PatternSyntaxWrapper(RelationalPatternSyntaxWrapper wrapper)
+        {
+            return PatternSyntaxWrapper.FromUpcast(wrapper.node);
+        }
+
+        public static implicit operator ExpressionOrPatternSyntaxWrapper(RelationalPatternSyntaxWrapper wrapper)
+        {
+            return ExpressionOrPatternSyntaxWrapper.FromUpcast(wrapper.node);
         }
 
         public static implicit operator CSharpSyntaxNode(RelationalPatternSyntaxWrapper wrapper)

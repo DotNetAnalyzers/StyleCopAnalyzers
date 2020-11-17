@@ -55,6 +55,11 @@ namespace StyleCop.Analyzers.Lightup
             }
         }
 
+        public static explicit operator ImplicitObjectCreationExpressionSyntaxWrapper(BaseObjectCreationExpressionSyntaxWrapper node)
+        {
+            return (ImplicitObjectCreationExpressionSyntaxWrapper)node.SyntaxNode;
+        }
+
         public static explicit operator ImplicitObjectCreationExpressionSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)
@@ -68,6 +73,11 @@ namespace StyleCop.Analyzers.Lightup
             }
 
             return new ImplicitObjectCreationExpressionSyntaxWrapper((ExpressionSyntax)node);
+        }
+
+        public static implicit operator BaseObjectCreationExpressionSyntaxWrapper(ImplicitObjectCreationExpressionSyntaxWrapper wrapper)
+        {
+            return BaseObjectCreationExpressionSyntaxWrapper.FromUpcast(wrapper.node);
         }
 
         public static implicit operator ExpressionSyntax(ImplicitObjectCreationExpressionSyntaxWrapper wrapper)

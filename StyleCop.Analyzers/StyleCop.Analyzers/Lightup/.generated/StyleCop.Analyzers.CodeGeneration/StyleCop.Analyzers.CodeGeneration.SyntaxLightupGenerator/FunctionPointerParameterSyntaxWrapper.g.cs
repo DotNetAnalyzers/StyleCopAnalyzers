@@ -55,6 +55,11 @@ namespace StyleCop.Analyzers.Lightup
             }
         }
 
+        public static explicit operator FunctionPointerParameterSyntaxWrapper(BaseParameterSyntaxWrapper node)
+        {
+            return (FunctionPointerParameterSyntaxWrapper)node.SyntaxNode;
+        }
+
         public static explicit operator FunctionPointerParameterSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)
@@ -68,6 +73,11 @@ namespace StyleCop.Analyzers.Lightup
             }
 
             return new FunctionPointerParameterSyntaxWrapper((CSharpSyntaxNode)node);
+        }
+
+        public static implicit operator BaseParameterSyntaxWrapper(FunctionPointerParameterSyntaxWrapper wrapper)
+        {
+            return BaseParameterSyntaxWrapper.FromUpcast(wrapper.node);
         }
 
         public static implicit operator CSharpSyntaxNode(FunctionPointerParameterSyntaxWrapper wrapper)
