@@ -3,18 +3,12 @@
 
 namespace StyleCop.Analyzers.Lightup
 {
-    using System;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal partial struct TupleElementSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
-        private static readonly Func<CSharpSyntaxNode, SyntaxToken> IdentifierAccessor;
-        private static readonly Func<CSharpSyntaxNode, TypeSyntax> TypeAccessor;
-        private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithIdentifierAccessor;
-        private static readonly Func<CSharpSyntaxNode, TypeSyntax, CSharpSyntaxNode> WithTypeAccessor;
-
         static TupleElementSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(TupleElementSyntaxWrapper));

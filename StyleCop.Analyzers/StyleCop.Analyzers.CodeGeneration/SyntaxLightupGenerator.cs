@@ -88,6 +88,59 @@ namespace StyleCop.Analyzers.CodeGeneration
                     type: SyntaxFactory.IdentifierName(concreteBase),
                     variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator("node")))));
 
+            foreach (var field in nodeData.Fields)
+            {
+                if (field.IsSkipped)
+                {
+                    continue;
+                }
+
+                if (field.IsOverride)
+                {
+                    // The 'get' accessor is skipped for override fields
+                    continue;
+                }
+
+                // private static readonly Func<CSharpSyntaxNode, T> FieldAccessor;
+                members = members.Add(SyntaxFactory.FieldDeclaration(
+                    attributeLists: default,
+                    modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PrivateKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword), SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)),
+                    declaration: SyntaxFactory.VariableDeclaration(
+                        type: SyntaxFactory.GenericName(
+                            identifier: SyntaxFactory.Identifier("Func"),
+                            typeArgumentList: SyntaxFactory.TypeArgumentList(SyntaxFactory.SeparatedList(
+                                new[]
+                                {
+                                    SyntaxFactory.IdentifierName(concreteBase),
+                                    SyntaxFactory.ParseTypeName(field.GetAccessorResultType(syntaxData)),
+                                }))),
+                        variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(field.AccessorName)))));
+            }
+
+            foreach (var field in nodeData.Fields)
+            {
+                if (field.IsSkipped)
+                {
+                    continue;
+                }
+
+                // private static readonly Func<CSharpSyntaxNode, T, CSharpSyntaxNode> WithFieldAccessor;
+                members = members.Add(SyntaxFactory.FieldDeclaration(
+                    attributeLists: default,
+                    modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PrivateKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword), SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)),
+                    declaration: SyntaxFactory.VariableDeclaration(
+                        type: SyntaxFactory.GenericName(
+                            identifier: SyntaxFactory.Identifier("Func"),
+                            typeArgumentList: SyntaxFactory.TypeArgumentList(SyntaxFactory.SeparatedList(
+                                new[]
+                                {
+                                    SyntaxFactory.IdentifierName(concreteBase),
+                                    SyntaxFactory.ParseTypeName(field.GetAccessorResultType(syntaxData)),
+                                    SyntaxFactory.IdentifierName(concreteBase),
+                                }))),
+                        variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(field.WithAccessorName)))));
+            }
+
             // private SyntaxNodeWrapper(SyntaxNode node)
             // {
             //     this.node = node;
@@ -602,9 +655,9 @@ namespace StyleCop.Analyzers.CodeGeneration
 
             public ImmutableArray<NodeData> Nodes { get; }
 
-            public NodeData TryGetConcreteBase(NodeData node)
+            public NodeData TryGetConcreteType(NodeData node)
             {
-                for (var current = this.TryGetNode(node.BaseName); current is not null; current = this.TryGetNode(current.BaseName))
+                for (var current = node; current is not null; current = this.TryGetNode(current.BaseName))
                 {
                     if (current.WrapperName is null)
                     {
@@ -616,7 +669,12 @@ namespace StyleCop.Analyzers.CodeGeneration
                 return null;
             }
 
-            private NodeData TryGetNode(string name)
+            public NodeData TryGetConcreteBase(NodeData node)
+            {
+                return this.TryGetConcreteType(this.TryGetNode(node.BaseName));
+            }
+
+            public NodeData TryGetNode(string name)
             {
                 this.nameToNode.TryGetValue(name, out var node);
                 return node;
@@ -650,7 +708,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 }
 
                 this.BaseName = element.Attribute("Base").Value;
-                this.Fields = element.XPathSelectElements("Field").Select(field => new FieldData(field)).ToImmutableArray();
+                this.Fields = element.XPathSelectElements("descendant::Field").Select(field => new FieldData(field)).ToImmutableArray();
             }
 
             public NodeKind Kind { get; }
@@ -669,15 +727,52 @@ namespace StyleCop.Analyzers.CodeGeneration
             public FieldData(XElement element)
             {
                 this.Name = element.Attribute("Name").Value;
-                this.Type = element.Attribute("Type").Value;
+
+                var type = element.Attribute("Type").Value;
+                this.Type = type switch
+                {
+                    "SyntaxList<SyntaxToken>" => nameof(SyntaxTokenList),
+                    _ => type,
+                };
+
                 this.IsOverride = element.Attribute("Override")?.Value == "true";
+
+                this.AccessorName = this.Name + "Accessor";
+                this.WithAccessorName = "With" + this.Name + "Accessor";
             }
 
+            public bool IsSkipped => false;
+
             public string Name { get; }
+
+            public string AccessorName { get; }
+
+            public string WithAccessorName { get; }
 
             public string Type { get; }
 
             public bool IsOverride { get; }
+
+            public string GetAccessorResultType(SyntaxData syntaxData)
+            {
+                var typeNode = syntaxData.TryGetNode(this.Type);
+                if (typeNode is not null)
+                {
+                    return syntaxData.TryGetConcreteType(typeNode)?.Name ?? nameof(SyntaxNode);
+                }
+
+                if (this.Type.StartsWith("SeparatedSyntaxList<") && this.Type.EndsWith(">"))
+                {
+                    var elementTypeName = this.Type.Substring("SeparatedSyntaxList<".Length, this.Type.Length - "SeparatedSyntaxList<".Length - ">".Length);
+                    var elementTypeNode = syntaxData.TryGetNode(elementTypeName);
+                    if (elementTypeNode is { WrapperName: not null })
+                    {
+                        return $"SeparatedSyntaxListWrapper<{elementTypeNode.WrapperName}>";
+                    }
+                }
+
+                return this.Type;
+            }
         }
     }
 }

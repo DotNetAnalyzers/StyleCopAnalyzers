@@ -3,21 +3,11 @@
 
 namespace StyleCop.Analyzers.Lightup
 {
-    using System;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal partial struct ImplicitStackAllocArrayCreationExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
     {
-        private static readonly Func<ExpressionSyntax, SyntaxToken> StackAllocKeywordAccessor;
-        private static readonly Func<ExpressionSyntax, SyntaxToken> OpenBracketTokenAccessor;
-        private static readonly Func<ExpressionSyntax, SyntaxToken> CloseBracketTokenAccessor;
-        private static readonly Func<ExpressionSyntax, InitializerExpressionSyntax> InitializerAccessor;
-        private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithStackAllocKeywordAccessor;
-        private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithOpenBracketTokenAccessor;
-        private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithCloseBracketTokenAccessor;
-        private static readonly Func<ExpressionSyntax, InitializerExpressionSyntax, ExpressionSyntax> WithInitializerAccessor;
-
         static ImplicitStackAllocArrayCreationExpressionSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(ImplicitStackAllocArrayCreationExpressionSyntaxWrapper));

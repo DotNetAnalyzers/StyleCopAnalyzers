@@ -14,6 +14,20 @@ namespace StyleCop.Analyzers.Lightup
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax";
         private static readonly Type WrappedType;
         private readonly StatementSyntax node;
+        private static readonly Func<StatementSyntax, SyntaxToken> AwaitKeywordAccessor;
+        private static readonly Func<StatementSyntax, SyntaxToken> ForEachKeywordAccessor;
+        private static readonly Func<StatementSyntax, SyntaxToken> OpenParenTokenAccessor;
+        private static readonly Func<StatementSyntax, SyntaxToken> InKeywordAccessor;
+        private static readonly Func<StatementSyntax, ExpressionSyntax> ExpressionAccessor;
+        private static readonly Func<StatementSyntax, SyntaxToken> CloseParenTokenAccessor;
+        private static readonly Func<StatementSyntax, StatementSyntax> StatementAccessor;
+        private static readonly Func<StatementSyntax, SyntaxToken, StatementSyntax> WithAwaitKeywordAccessor;
+        private static readonly Func<StatementSyntax, SyntaxToken, StatementSyntax> WithForEachKeywordAccessor;
+        private static readonly Func<StatementSyntax, SyntaxToken, StatementSyntax> WithOpenParenTokenAccessor;
+        private static readonly Func<StatementSyntax, SyntaxToken, StatementSyntax> WithInKeywordAccessor;
+        private static readonly Func<StatementSyntax, ExpressionSyntax, StatementSyntax> WithExpressionAccessor;
+        private static readonly Func<StatementSyntax, SyntaxToken, StatementSyntax> WithCloseParenTokenAccessor;
+        private static readonly Func<StatementSyntax, StatementSyntax, StatementSyntax> WithStatementAccessor;
         private CommonForEachStatementSyntaxWrapper(StatementSyntax node)
         {
             this.node = node;

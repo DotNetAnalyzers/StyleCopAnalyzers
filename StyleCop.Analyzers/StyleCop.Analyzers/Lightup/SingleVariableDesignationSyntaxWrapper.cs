@@ -3,15 +3,11 @@
 
 namespace StyleCop.Analyzers.Lightup
 {
-    using System;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
 
     internal partial struct SingleVariableDesignationSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
-        private static readonly Func<CSharpSyntaxNode, SyntaxToken> IdentifierAccessor;
-        private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithIdentifierAccessor;
-
         static SingleVariableDesignationSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(SingleVariableDesignationSyntaxWrapper));

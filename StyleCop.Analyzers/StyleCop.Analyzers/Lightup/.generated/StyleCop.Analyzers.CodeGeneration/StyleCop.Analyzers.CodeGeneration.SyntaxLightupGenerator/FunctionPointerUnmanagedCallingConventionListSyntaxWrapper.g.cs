@@ -14,6 +14,12 @@ namespace StyleCop.Analyzers.Lightup
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.FunctionPointerUnmanagedCallingConventionListSyntax";
         private static readonly Type WrappedType;
         private readonly CSharpSyntaxNode node;
+        private static readonly Func<CSharpSyntaxNode, SyntaxToken> OpenBracketTokenAccessor;
+        private static readonly Func<CSharpSyntaxNode, SeparatedSyntaxListWrapper<FunctionPointerUnmanagedCallingConventionSyntaxWrapper>> CallingConventionsAccessor;
+        private static readonly Func<CSharpSyntaxNode, SyntaxToken> CloseBracketTokenAccessor;
+        private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithOpenBracketTokenAccessor;
+        private static readonly Func<CSharpSyntaxNode, SeparatedSyntaxListWrapper<FunctionPointerUnmanagedCallingConventionSyntaxWrapper>, CSharpSyntaxNode> WithCallingConventionsAccessor;
+        private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithCloseBracketTokenAccessor;
         private FunctionPointerUnmanagedCallingConventionListSyntaxWrapper(CSharpSyntaxNode node)
         {
             this.node = node;

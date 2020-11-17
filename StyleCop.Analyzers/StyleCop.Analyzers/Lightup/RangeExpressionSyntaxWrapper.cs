@@ -3,20 +3,11 @@
 
 namespace StyleCop.Analyzers.Lightup
 {
-    using System;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal partial struct RangeExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
     {
-        private static readonly Func<ExpressionSyntax, ExpressionSyntax> LeftOperandAccessor;
-        private static readonly Func<ExpressionSyntax, SyntaxToken> OperatorTokenAccessor;
-        private static readonly Func<ExpressionSyntax, ExpressionSyntax> RightOperandAccessor;
-
-        private static readonly Func<ExpressionSyntax, ExpressionSyntax, ExpressionSyntax> WithLeftOperandAccessor;
-        private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithOperatorTokenAccessor;
-        private static readonly Func<ExpressionSyntax, ExpressionSyntax, ExpressionSyntax> WithRightOperandAccessor;
-
         static RangeExpressionSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(RangeExpressionSyntaxWrapper));

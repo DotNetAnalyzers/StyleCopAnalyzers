@@ -3,19 +3,11 @@
 
 namespace StyleCop.Analyzers.Lightup
 {
-    using System;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal partial struct RefTypeSyntaxWrapper : ISyntaxWrapper<TypeSyntax>
     {
-        private static readonly Func<TypeSyntax, SyntaxToken> RefKeywordAccessor;
-        private static readonly Func<TypeSyntax, SyntaxToken> ReadOnlyKeywordAccessor;
-        private static readonly Func<TypeSyntax, TypeSyntax> TypeAccessor;
-        private static readonly Func<TypeSyntax, SyntaxToken, TypeSyntax> WithRefKeywordAccessor;
-        private static readonly Func<TypeSyntax, SyntaxToken, TypeSyntax> WithReadOnlyKeywordAccessor;
-        private static readonly Func<TypeSyntax, TypeSyntax, TypeSyntax> WithTypeAccessor;
-
         static RefTypeSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(RefTypeSyntaxWrapper));

@@ -14,6 +14,14 @@ namespace StyleCop.Analyzers.Lightup
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax";
         private static readonly Type WrappedType;
         private readonly CSharpSyntaxNode node;
+        private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode> PatternAccessor;
+        private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode> WhenClauseAccessor;
+        private static readonly Func<CSharpSyntaxNode, SyntaxToken> EqualsGreaterThanTokenAccessor;
+        private static readonly Func<CSharpSyntaxNode, ExpressionSyntax> ExpressionAccessor;
+        private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode, CSharpSyntaxNode> WithPatternAccessor;
+        private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode, CSharpSyntaxNode> WithWhenClauseAccessor;
+        private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithEqualsGreaterThanTokenAccessor;
+        private static readonly Func<CSharpSyntaxNode, ExpressionSyntax, CSharpSyntaxNode> WithExpressionAccessor;
         private SwitchExpressionArmSyntaxWrapper(CSharpSyntaxNode node)
         {
             this.node = node;

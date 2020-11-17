@@ -14,6 +14,14 @@ namespace StyleCop.Analyzers.Lightup
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax";
         private static readonly Type WrappedType;
         private readonly ExpressionSyntax node;
+        private static readonly Func<ExpressionSyntax, SyntaxToken> StackAllocKeywordAccessor;
+        private static readonly Func<ExpressionSyntax, SyntaxToken> OpenBracketTokenAccessor;
+        private static readonly Func<ExpressionSyntax, SyntaxToken> CloseBracketTokenAccessor;
+        private static readonly Func<ExpressionSyntax, InitializerExpressionSyntax> InitializerAccessor;
+        private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithStackAllocKeywordAccessor;
+        private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithOpenBracketTokenAccessor;
+        private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithCloseBracketTokenAccessor;
+        private static readonly Func<ExpressionSyntax, InitializerExpressionSyntax, ExpressionSyntax> WithInitializerAccessor;
         private ImplicitStackAllocArrayCreationExpressionSyntaxWrapper(ExpressionSyntax node)
         {
             this.node = node;

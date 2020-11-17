@@ -3,18 +3,11 @@
 
 namespace StyleCop.Analyzers.Lightup
 {
-    using System;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal partial struct DeclarationExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
     {
-        private static readonly Func<ExpressionSyntax, TypeSyntax> TypeAccessor;
-        private static readonly Func<ExpressionSyntax, CSharpSyntaxNode> DesignationAccessor;
-        private static readonly Func<ExpressionSyntax, TypeSyntax, ExpressionSyntax> WithTypeAccessor;
-        private static readonly Func<ExpressionSyntax, CSharpSyntaxNode, ExpressionSyntax> WithDesignationAccessor;
-
         static DeclarationExpressionSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(DeclarationExpressionSyntaxWrapper));

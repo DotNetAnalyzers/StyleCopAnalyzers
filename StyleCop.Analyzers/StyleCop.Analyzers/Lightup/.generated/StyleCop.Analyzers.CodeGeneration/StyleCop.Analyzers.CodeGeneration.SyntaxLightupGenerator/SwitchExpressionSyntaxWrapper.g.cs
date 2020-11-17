@@ -14,6 +14,16 @@ namespace StyleCop.Analyzers.Lightup
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax";
         private static readonly Type WrappedType;
         private readonly ExpressionSyntax node;
+        private static readonly Func<ExpressionSyntax, ExpressionSyntax> GoverningExpressionAccessor;
+        private static readonly Func<ExpressionSyntax, SyntaxToken> SwitchKeywordAccessor;
+        private static readonly Func<ExpressionSyntax, SyntaxToken> OpenBraceTokenAccessor;
+        private static readonly Func<ExpressionSyntax, SeparatedSyntaxListWrapper<SwitchExpressionArmSyntaxWrapper>> ArmsAccessor;
+        private static readonly Func<ExpressionSyntax, SyntaxToken> CloseBraceTokenAccessor;
+        private static readonly Func<ExpressionSyntax, ExpressionSyntax, ExpressionSyntax> WithGoverningExpressionAccessor;
+        private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithSwitchKeywordAccessor;
+        private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithOpenBraceTokenAccessor;
+        private static readonly Func<ExpressionSyntax, SeparatedSyntaxListWrapper<SwitchExpressionArmSyntaxWrapper>, ExpressionSyntax> WithArmsAccessor;
+        private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithCloseBraceTokenAccessor;
         private SwitchExpressionSyntaxWrapper(ExpressionSyntax node)
         {
             this.node = node;

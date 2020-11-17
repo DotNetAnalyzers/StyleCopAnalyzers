@@ -14,6 +14,10 @@ namespace StyleCop.Analyzers.Lightup
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.VarPatternSyntax";
         private static readonly Type WrappedType;
         private readonly CSharpSyntaxNode node;
+        private static readonly Func<CSharpSyntaxNode, SyntaxToken> VarKeywordAccessor;
+        private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode> DesignationAccessor;
+        private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithVarKeywordAccessor;
+        private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode, CSharpSyntaxNode> WithDesignationAccessor;
         private VarPatternSyntaxWrapper(CSharpSyntaxNode node)
         {
             this.node = node;

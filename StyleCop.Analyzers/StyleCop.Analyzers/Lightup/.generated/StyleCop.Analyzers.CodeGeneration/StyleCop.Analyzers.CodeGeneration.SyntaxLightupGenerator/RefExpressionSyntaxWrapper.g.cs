@@ -14,6 +14,10 @@ namespace StyleCop.Analyzers.Lightup
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.RefExpressionSyntax";
         private static readonly Type WrappedType;
         private readonly ExpressionSyntax node;
+        private static readonly Func<ExpressionSyntax, SyntaxToken> RefKeywordAccessor;
+        private static readonly Func<ExpressionSyntax, ExpressionSyntax> ExpressionAccessor;
+        private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithRefKeywordAccessor;
+        private static readonly Func<ExpressionSyntax, ExpressionSyntax, ExpressionSyntax> WithExpressionAccessor;
         private RefExpressionSyntaxWrapper(ExpressionSyntax node)
         {
             this.node = node;

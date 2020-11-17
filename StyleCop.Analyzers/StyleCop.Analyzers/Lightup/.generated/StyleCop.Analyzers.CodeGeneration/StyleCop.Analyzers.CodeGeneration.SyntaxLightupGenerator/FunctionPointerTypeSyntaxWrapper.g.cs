@@ -14,6 +14,14 @@ namespace StyleCop.Analyzers.Lightup
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.FunctionPointerTypeSyntax";
         private static readonly Type WrappedType;
         private readonly TypeSyntax node;
+        private static readonly Func<TypeSyntax, SyntaxToken> DelegateKeywordAccessor;
+        private static readonly Func<TypeSyntax, SyntaxToken> AsteriskTokenAccessor;
+        private static readonly Func<TypeSyntax, CSharpSyntaxNode> CallingConventionAccessor;
+        private static readonly Func<TypeSyntax, CSharpSyntaxNode> ParameterListAccessor;
+        private static readonly Func<TypeSyntax, SyntaxToken, TypeSyntax> WithDelegateKeywordAccessor;
+        private static readonly Func<TypeSyntax, SyntaxToken, TypeSyntax> WithAsteriskTokenAccessor;
+        private static readonly Func<TypeSyntax, CSharpSyntaxNode, TypeSyntax> WithCallingConventionAccessor;
+        private static readonly Func<TypeSyntax, CSharpSyntaxNode, TypeSyntax> WithParameterListAccessor;
         private FunctionPointerTypeSyntaxWrapper(TypeSyntax node)
         {
             this.node = node;

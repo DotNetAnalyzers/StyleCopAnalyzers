@@ -3,32 +3,12 @@
 
 namespace StyleCop.Analyzers.Lightup
 {
-    using System;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal partial struct LocalFunctionStatementSyntaxWrapper : ISyntaxWrapper<StatementSyntax>
     {
-        private static readonly Func<StatementSyntax, SyntaxTokenList> ModifiersAccessor;
-        private static readonly Func<StatementSyntax, TypeSyntax> ReturnTypeAccessor;
-        private static readonly Func<StatementSyntax, SyntaxToken> IdentifierAccessor;
-        private static readonly Func<StatementSyntax, TypeParameterListSyntax> TypeParameterListAccessor;
-        private static readonly Func<StatementSyntax, ParameterListSyntax> ParameterListAccessor;
-        private static readonly Func<StatementSyntax, SyntaxList<TypeParameterConstraintClauseSyntax>> ConstraintClausesAccessor;
-        private static readonly Func<StatementSyntax, BlockSyntax> BodyAccessor;
-        private static readonly Func<StatementSyntax, ArrowExpressionClauseSyntax> ExpressionBodyAccessor;
-        private static readonly Func<StatementSyntax, SyntaxToken> SemicolonTokenAccessor;
-        private static readonly Func<StatementSyntax, SyntaxTokenList, StatementSyntax> WithModifiersAccessor;
-        private static readonly Func<StatementSyntax, TypeSyntax, StatementSyntax> WithReturnTypeAccessor;
-        private static readonly Func<StatementSyntax, SyntaxToken, StatementSyntax> WithIdentifierAccessor;
-        private static readonly Func<StatementSyntax, TypeParameterListSyntax, StatementSyntax> WithTypeParameterListAccessor;
-        private static readonly Func<StatementSyntax, ParameterListSyntax, StatementSyntax> WithParameterListAccessor;
-        private static readonly Func<StatementSyntax, SyntaxList<TypeParameterConstraintClauseSyntax>, StatementSyntax> WithConstraintClausesAccessor;
-        private static readonly Func<StatementSyntax, BlockSyntax, StatementSyntax> WithBodyAccessor;
-        private static readonly Func<StatementSyntax, ArrowExpressionClauseSyntax, StatementSyntax> WithExpressionBodyAccessor;
-        private static readonly Func<StatementSyntax, SyntaxToken, StatementSyntax> WithSemicolonTokenAccessor;
-
         static LocalFunctionStatementSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(LocalFunctionStatementSyntaxWrapper));

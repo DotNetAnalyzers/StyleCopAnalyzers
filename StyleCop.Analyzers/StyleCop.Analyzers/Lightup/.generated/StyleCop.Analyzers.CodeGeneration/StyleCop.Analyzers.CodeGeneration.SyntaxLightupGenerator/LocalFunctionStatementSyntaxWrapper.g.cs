@@ -14,6 +14,25 @@ namespace StyleCop.Analyzers.Lightup
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.LocalFunctionStatementSyntax";
         private static readonly Type WrappedType;
         private readonly StatementSyntax node;
+        private static readonly Func<StatementSyntax, SyntaxTokenList> ModifiersAccessor;
+        private static readonly Func<StatementSyntax, TypeSyntax> ReturnTypeAccessor;
+        private static readonly Func<StatementSyntax, SyntaxToken> IdentifierAccessor;
+        private static readonly Func<StatementSyntax, TypeParameterListSyntax> TypeParameterListAccessor;
+        private static readonly Func<StatementSyntax, ParameterListSyntax> ParameterListAccessor;
+        private static readonly Func<StatementSyntax, SyntaxList<TypeParameterConstraintClauseSyntax>> ConstraintClausesAccessor;
+        private static readonly Func<StatementSyntax, BlockSyntax> BodyAccessor;
+        private static readonly Func<StatementSyntax, ArrowExpressionClauseSyntax> ExpressionBodyAccessor;
+        private static readonly Func<StatementSyntax, SyntaxToken> SemicolonTokenAccessor;
+        private static readonly Func<StatementSyntax, SyntaxList<AttributeListSyntax>, StatementSyntax> WithAttributeListsAccessor;
+        private static readonly Func<StatementSyntax, SyntaxTokenList, StatementSyntax> WithModifiersAccessor;
+        private static readonly Func<StatementSyntax, TypeSyntax, StatementSyntax> WithReturnTypeAccessor;
+        private static readonly Func<StatementSyntax, SyntaxToken, StatementSyntax> WithIdentifierAccessor;
+        private static readonly Func<StatementSyntax, TypeParameterListSyntax, StatementSyntax> WithTypeParameterListAccessor;
+        private static readonly Func<StatementSyntax, ParameterListSyntax, StatementSyntax> WithParameterListAccessor;
+        private static readonly Func<StatementSyntax, SyntaxList<TypeParameterConstraintClauseSyntax>, StatementSyntax> WithConstraintClausesAccessor;
+        private static readonly Func<StatementSyntax, BlockSyntax, StatementSyntax> WithBodyAccessor;
+        private static readonly Func<StatementSyntax, ArrowExpressionClauseSyntax, StatementSyntax> WithExpressionBodyAccessor;
+        private static readonly Func<StatementSyntax, SyntaxToken, StatementSyntax> WithSemicolonTokenAccessor;
         private LocalFunctionStatementSyntaxWrapper(StatementSyntax node)
         {
             this.node = node;

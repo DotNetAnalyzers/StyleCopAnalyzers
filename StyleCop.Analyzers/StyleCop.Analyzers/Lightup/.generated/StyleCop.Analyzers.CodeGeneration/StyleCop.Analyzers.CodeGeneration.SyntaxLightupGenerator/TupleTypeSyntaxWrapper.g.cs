@@ -14,6 +14,12 @@ namespace StyleCop.Analyzers.Lightup
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax";
         private static readonly Type WrappedType;
         private readonly TypeSyntax node;
+        private static readonly Func<TypeSyntax, SyntaxToken> OpenParenTokenAccessor;
+        private static readonly Func<TypeSyntax, SeparatedSyntaxListWrapper<TupleElementSyntaxWrapper>> ElementsAccessor;
+        private static readonly Func<TypeSyntax, SyntaxToken> CloseParenTokenAccessor;
+        private static readonly Func<TypeSyntax, SyntaxToken, TypeSyntax> WithOpenParenTokenAccessor;
+        private static readonly Func<TypeSyntax, SeparatedSyntaxListWrapper<TupleElementSyntaxWrapper>, TypeSyntax> WithElementsAccessor;
+        private static readonly Func<TypeSyntax, SyntaxToken, TypeSyntax> WithCloseParenTokenAccessor;
         private TupleTypeSyntaxWrapper(TypeSyntax node)
         {
             this.node = node;

@@ -14,6 +14,10 @@ namespace StyleCop.Analyzers.Lightup
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.UnaryPatternSyntax";
         private static readonly Type WrappedType;
         private readonly CSharpSyntaxNode node;
+        private static readonly Func<CSharpSyntaxNode, SyntaxToken> OperatorTokenAccessor;
+        private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode> PatternAccessor;
+        private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithOperatorTokenAccessor;
+        private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode, CSharpSyntaxNode> WithPatternAccessor;
         private UnaryPatternSyntaxWrapper(CSharpSyntaxNode node)
         {
             this.node = node;

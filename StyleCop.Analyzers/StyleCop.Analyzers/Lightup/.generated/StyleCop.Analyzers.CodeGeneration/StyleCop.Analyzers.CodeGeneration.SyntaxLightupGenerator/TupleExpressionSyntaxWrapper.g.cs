@@ -14,6 +14,12 @@ namespace StyleCop.Analyzers.Lightup
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax";
         private static readonly Type WrappedType;
         private readonly ExpressionSyntax node;
+        private static readonly Func<ExpressionSyntax, SyntaxToken> OpenParenTokenAccessor;
+        private static readonly Func<ExpressionSyntax, SeparatedSyntaxList<ArgumentSyntax>> ArgumentsAccessor;
+        private static readonly Func<ExpressionSyntax, SyntaxToken> CloseParenTokenAccessor;
+        private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithOpenParenTokenAccessor;
+        private static readonly Func<ExpressionSyntax, SeparatedSyntaxList<ArgumentSyntax>, ExpressionSyntax> WithArgumentsAccessor;
+        private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithCloseParenTokenAccessor;
         private TupleExpressionSyntaxWrapper(ExpressionSyntax node)
         {
             this.node = node;
