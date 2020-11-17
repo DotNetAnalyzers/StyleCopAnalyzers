@@ -63,7 +63,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         private static readonly Action<SyntaxNodeAnalysisContext> HandleSwitchExpressionAction = HandleSwitchExpression;
 
         private static readonly ImmutableArray<SyntaxKind> ObjectInitializerKinds =
-            ImmutableArray.Create(SyntaxKind.ObjectInitializerExpression, SyntaxKind.ArrayInitializerExpression, SyntaxKind.CollectionInitializerExpression);
+            ImmutableArray.Create(SyntaxKind.ObjectInitializerExpression, SyntaxKind.ArrayInitializerExpression, SyntaxKind.CollectionInitializerExpression, SyntaxKindEx.WithInitializerExpression);
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
