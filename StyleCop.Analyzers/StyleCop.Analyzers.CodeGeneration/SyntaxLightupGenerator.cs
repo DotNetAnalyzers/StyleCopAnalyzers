@@ -326,6 +326,113 @@ namespace StyleCop.Analyzers.CodeGeneration
                 initializer: null,
                 semicolonToken: SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
 
+            // public T Field
+            // {
+            //     get
+            //     {
+            //         return ...;
+            //     }
+            // }
+            foreach (var field in nodeData.Fields)
+            {
+                if (field.IsSkipped)
+                {
+                    continue;
+                }
+
+                TypeSyntax propertyType = SyntaxFactory.ParseTypeName(field.GetAccessorResultType(syntaxData));
+                ExpressionSyntax returnExpression;
+                if (field.IsOverride)
+                {
+                    var declaringNode = field.GetDeclaringNode(syntaxData);
+                    if (declaringNode.WrapperName is not null)
+                    {
+                        // ((CommonForEachStatementSyntaxWrapper)this).OpenParenToken
+                        returnExpression = SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            expression: SyntaxFactory.ParenthesizedExpression(
+                                SyntaxFactory.CastExpression(
+                                    type: SyntaxFactory.IdentifierName(declaringNode.WrapperName ?? declaringNode.Name),
+                                    expression: SyntaxFactory.ThisExpression())),
+                            name: SyntaxFactory.IdentifierName(field.Name));
+                    }
+                    else
+                    {
+                        // this.SyntaxNode.OpenParenToken
+                        returnExpression = SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            expression: SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                expression: SyntaxFactory.ThisExpression(),
+                                name: SyntaxFactory.IdentifierName("SyntaxNode")),
+                            name: SyntaxFactory.IdentifierName(field.Name));
+                    }
+                }
+                else if (field.IsWrappedSeparatedSyntaxList(syntaxData, out var elementNode))
+                {
+                    // PatternAccessor(this.SyntaxNode)
+                    returnExpression = SyntaxFactory.InvocationExpression(
+                        expression: SyntaxFactory.IdentifierName(field.AccessorName),
+                        argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                expression: SyntaxFactory.ThisExpression(),
+                                name: SyntaxFactory.IdentifierName("SyntaxNode"))))));
+                }
+                else if (syntaxData.TryGetNode(field.Type) is { } fieldNodeType)
+                {
+                    // PatternAccessor(this.SyntaxNode)
+                    returnExpression = SyntaxFactory.InvocationExpression(
+                        expression: SyntaxFactory.IdentifierName(field.AccessorName),
+                        argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                expression: SyntaxFactory.ThisExpression(),
+                                name: SyntaxFactory.IdentifierName("SyntaxNode"))))));
+
+                    if (fieldNodeType.WrapperName is not null)
+                    {
+                        // (PatternSyntaxWrapper)...
+                        propertyType = SyntaxFactory.IdentifierName(fieldNodeType.WrapperName);
+                        returnExpression = SyntaxFactory.CastExpression(
+                            type: SyntaxFactory.IdentifierName(fieldNodeType.WrapperName),
+                            expression: returnExpression);
+                    }
+                }
+                else
+                {
+                    // PatternAccessor(this.SyntaxNode)
+                    returnExpression = SyntaxFactory.InvocationExpression(
+                        expression: SyntaxFactory.IdentifierName(field.AccessorName),
+                        argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                expression: SyntaxFactory.ThisExpression(),
+                                name: SyntaxFactory.IdentifierName("SyntaxNode"))))));
+                }
+
+                // public T Field
+                // {
+                //     get
+                //     {
+                //         return ...;
+                //     }
+                // }
+                members = members.Add(SyntaxFactory.PropertyDeclaration(
+                    attributeLists: default,
+                    modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)),
+                    type: propertyType,
+                    explicitInterfaceSpecifier: null,
+                    identifier: SyntaxFactory.Identifier(field.Name),
+                    accessorList: SyntaxFactory.AccessorList(SyntaxFactory.SingletonList(SyntaxFactory.AccessorDeclaration(
+                        SyntaxKind.GetAccessorDeclaration,
+                        SyntaxFactory.Block(
+                            SyntaxFactory.ReturnStatement(returnExpression))))),
+                    expressionBody: null,
+                    initializer: null,
+                    semicolonToken: default));
+            }
+
             // public static explicit operator WhenClauseSyntaxWrapper(SyntaxNode node)
             // {
             //     if (node == null)

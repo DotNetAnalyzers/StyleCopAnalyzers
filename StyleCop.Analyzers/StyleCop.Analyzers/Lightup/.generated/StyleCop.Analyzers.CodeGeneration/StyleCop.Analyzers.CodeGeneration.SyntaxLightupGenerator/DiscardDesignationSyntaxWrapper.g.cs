@@ -29,6 +29,14 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
+        public SyntaxToken UnderscoreToken
+        {
+            get
+            {
+                return UnderscoreTokenAccessor(this.SyntaxNode);
+            }
+        }
+
         public static explicit operator DiscardDesignationSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

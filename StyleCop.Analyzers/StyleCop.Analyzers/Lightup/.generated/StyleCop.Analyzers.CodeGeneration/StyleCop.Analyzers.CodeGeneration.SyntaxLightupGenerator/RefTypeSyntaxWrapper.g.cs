@@ -37,6 +37,30 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public TypeSyntax SyntaxNode => this.node;
+        public SyntaxToken RefKeyword
+        {
+            get
+            {
+                return RefKeywordAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SyntaxToken ReadOnlyKeyword
+        {
+            get
+            {
+                return ReadOnlyKeywordAccessor(this.SyntaxNode);
+            }
+        }
+
+        public TypeSyntax Type
+        {
+            get
+            {
+                return TypeAccessor(this.SyntaxNode);
+            }
+        }
+
         public static explicit operator RefTypeSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

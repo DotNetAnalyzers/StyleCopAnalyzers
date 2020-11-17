@@ -9,22 +9,6 @@ namespace StyleCop.Analyzers.Lightup
 
     internal partial struct TupleElementSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
-        public SyntaxToken Identifier
-        {
-            get
-            {
-                return IdentifierAccessor(this.SyntaxNode);
-            }
-        }
-
-        public TypeSyntax Type
-        {
-            get
-            {
-                return TypeAccessor(this.SyntaxNode);
-            }
-        }
-
         public TupleElementSyntaxWrapper WithIdentifier(SyntaxToken identifier)
         {
             return new TupleElementSyntaxWrapper(WithIdentifierAccessor(this.SyntaxNode, identifier));

@@ -8,22 +8,6 @@ namespace StyleCop.Analyzers.Lightup
 
     internal partial struct CasePatternSwitchLabelSyntaxWrapper : ISyntaxWrapper<SwitchLabelSyntax>
     {
-        public PatternSyntaxWrapper Pattern
-        {
-            get
-            {
-                return (PatternSyntaxWrapper)PatternAccessor(this.SyntaxNode);
-            }
-        }
-
-        public WhenClauseSyntaxWrapper WhenClause
-        {
-            get
-            {
-                return (WhenClauseSyntaxWrapper)WhenClauseAccessor(this.SyntaxNode);
-            }
-        }
-
         public CasePatternSwitchLabelSyntaxWrapper WithKeyword(SyntaxToken keyword)
         {
             return new CasePatternSwitchLabelSyntaxWrapper(WithKeywordAccessor(this.SyntaxNode, keyword));

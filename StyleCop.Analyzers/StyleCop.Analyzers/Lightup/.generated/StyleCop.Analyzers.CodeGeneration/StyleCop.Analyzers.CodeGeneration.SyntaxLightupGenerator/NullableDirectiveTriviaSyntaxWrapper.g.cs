@@ -43,6 +43,54 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public DirectiveTriviaSyntax SyntaxNode => this.node;
+        public SyntaxToken HashToken
+        {
+            get
+            {
+                return this.SyntaxNode.HashToken;
+            }
+        }
+
+        public SyntaxToken NullableKeyword
+        {
+            get
+            {
+                return NullableKeywordAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SyntaxToken SettingToken
+        {
+            get
+            {
+                return SettingTokenAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SyntaxToken TargetToken
+        {
+            get
+            {
+                return TargetTokenAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SyntaxToken EndOfDirectiveToken
+        {
+            get
+            {
+                return this.SyntaxNode.EndOfDirectiveToken;
+            }
+        }
+
+        public bool IsActive
+        {
+            get
+            {
+                return this.SyntaxNode.IsActive;
+            }
+        }
+
         public static explicit operator NullableDirectiveTriviaSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

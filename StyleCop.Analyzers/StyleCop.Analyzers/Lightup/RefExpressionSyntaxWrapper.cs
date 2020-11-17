@@ -8,22 +8,6 @@ namespace StyleCop.Analyzers.Lightup
 
     internal partial struct RefExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
     {
-        public SyntaxToken RefKeyword
-        {
-            get
-            {
-                return RefKeywordAccessor(this.SyntaxNode);
-            }
-        }
-
-        public ExpressionSyntax Expression
-        {
-            get
-            {
-                return ExpressionAccessor(this.SyntaxNode);
-            }
-        }
-
         public RefExpressionSyntaxWrapper WithRefKeyword(SyntaxToken refKeyword)
         {
             return new RefExpressionSyntaxWrapper(WithRefKeywordAccessor(this.SyntaxNode, refKeyword));

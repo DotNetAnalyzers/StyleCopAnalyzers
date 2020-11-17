@@ -31,6 +31,22 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public BaseTypeSyntax SyntaxNode => this.node;
+        public TypeSyntax Type
+        {
+            get
+            {
+                return this.SyntaxNode.Type;
+            }
+        }
+
+        public ArgumentListSyntax ArgumentList
+        {
+            get
+            {
+                return ArgumentListAccessor(this.SyntaxNode);
+            }
+        }
+
         public static explicit operator PrimaryConstructorBaseTypeSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

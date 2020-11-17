@@ -45,6 +45,46 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public ExpressionSyntax SyntaxNode => this.node;
+        public ExpressionSyntax GoverningExpression
+        {
+            get
+            {
+                return GoverningExpressionAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SyntaxToken SwitchKeyword
+        {
+            get
+            {
+                return SwitchKeywordAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SyntaxToken OpenBraceToken
+        {
+            get
+            {
+                return OpenBraceTokenAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SeparatedSyntaxListWrapper<SwitchExpressionArmSyntaxWrapper> Arms
+        {
+            get
+            {
+                return ArmsAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SyntaxToken CloseBraceToken
+        {
+            get
+            {
+                return CloseBraceTokenAccessor(this.SyntaxNode);
+            }
+        }
+
         public static explicit operator SwitchExpressionSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

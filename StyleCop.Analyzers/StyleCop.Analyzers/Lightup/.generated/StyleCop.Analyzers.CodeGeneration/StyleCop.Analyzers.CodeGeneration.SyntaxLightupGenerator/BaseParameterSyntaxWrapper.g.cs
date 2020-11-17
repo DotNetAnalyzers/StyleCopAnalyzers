@@ -37,6 +37,30 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
+        public SyntaxList<AttributeListSyntax> AttributeLists
+        {
+            get
+            {
+                return AttributeListsAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SyntaxTokenList Modifiers
+        {
+            get
+            {
+                return ModifiersAccessor(this.SyntaxNode);
+            }
+        }
+
+        public TypeSyntax Type
+        {
+            get
+            {
+                return TypeAccessor(this.SyntaxNode);
+            }
+        }
+
         public static explicit operator BaseParameterSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

@@ -29,6 +29,14 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
+        public SyntaxToken Name
+        {
+            get
+            {
+                return NameAccessor(this.SyntaxNode);
+            }
+        }
+
         public static explicit operator FunctionPointerUnmanagedCallingConventionSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

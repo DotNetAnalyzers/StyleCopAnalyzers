@@ -33,6 +33,22 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public ExpressionSyntax SyntaxNode => this.node;
+        public SyntaxToken RefKeyword
+        {
+            get
+            {
+                return RefKeywordAccessor(this.SyntaxNode);
+            }
+        }
+
+        public ExpressionSyntax Expression
+        {
+            get
+            {
+                return ExpressionAccessor(this.SyntaxNode);
+            }
+        }
+
         public static explicit operator RefExpressionSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

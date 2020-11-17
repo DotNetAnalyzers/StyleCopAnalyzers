@@ -33,6 +33,22 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
+        public NameColonSyntax NameColon
+        {
+            get
+            {
+                return NameColonAccessor(this.SyntaxNode);
+            }
+        }
+
+        public PatternSyntaxWrapper Pattern
+        {
+            get
+            {
+                return (PatternSyntaxWrapper)PatternAccessor(this.SyntaxNode);
+            }
+        }
+
         public static explicit operator SubpatternSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

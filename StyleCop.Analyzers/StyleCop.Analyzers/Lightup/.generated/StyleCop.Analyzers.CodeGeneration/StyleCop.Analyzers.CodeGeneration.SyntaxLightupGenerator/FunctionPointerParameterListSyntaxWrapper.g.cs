@@ -37,6 +37,30 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
+        public SyntaxToken LessThanToken
+        {
+            get
+            {
+                return LessThanTokenAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SeparatedSyntaxListWrapper<FunctionPointerParameterSyntaxWrapper> Parameters
+        {
+            get
+            {
+                return ParametersAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SyntaxToken GreaterThanToken
+        {
+            get
+            {
+                return GreaterThanTokenAccessor(this.SyntaxNode);
+            }
+        }
+
         public static explicit operator FunctionPointerParameterListSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

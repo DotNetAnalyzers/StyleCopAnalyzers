@@ -8,30 +8,6 @@ namespace StyleCop.Analyzers.Lightup
 
     internal partial struct TupleTypeSyntaxWrapper : ISyntaxWrapper<TypeSyntax>
     {
-        public SyntaxToken OpenParenToken
-        {
-            get
-            {
-                return OpenParenTokenAccessor(this.SyntaxNode);
-            }
-        }
-
-        public SeparatedSyntaxListWrapper<TupleElementSyntaxWrapper> Elements
-        {
-            get
-            {
-                return ElementsAccessor(this.SyntaxNode);
-            }
-        }
-
-        public SyntaxToken CloseParenToken
-        {
-            get
-            {
-                return CloseParenTokenAccessor(this.SyntaxNode);
-            }
-        }
-
         public TupleTypeSyntaxWrapper AddElements(params TupleElementSyntaxWrapper[] items)
         {
             return new TupleTypeSyntaxWrapper(this.WithElements(this.Elements.AddRange(items)));

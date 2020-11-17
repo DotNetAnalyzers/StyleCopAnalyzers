@@ -41,6 +41,38 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public ExpressionSyntax SyntaxNode => this.node;
+        public SyntaxToken StackAllocKeyword
+        {
+            get
+            {
+                return StackAllocKeywordAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SyntaxToken OpenBracketToken
+        {
+            get
+            {
+                return OpenBracketTokenAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SyntaxToken CloseBracketToken
+        {
+            get
+            {
+                return CloseBracketTokenAccessor(this.SyntaxNode);
+            }
+        }
+
+        public InitializerExpressionSyntax Initializer
+        {
+            get
+            {
+                return InitializerAccessor(this.SyntaxNode);
+            }
+        }
+
         public static explicit operator ImplicitStackAllocArrayCreationExpressionSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

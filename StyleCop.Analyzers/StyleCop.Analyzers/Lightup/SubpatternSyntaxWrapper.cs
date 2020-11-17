@@ -8,22 +8,6 @@ namespace StyleCop.Analyzers.Lightup
 
     internal partial struct SubpatternSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
-        public NameColonSyntax NameColon
-        {
-            get
-            {
-                return NameColonAccessor(this.SyntaxNode);
-            }
-        }
-
-        public PatternSyntaxWrapper Pattern
-        {
-            get
-            {
-                return (PatternSyntaxWrapper)PatternAccessor(this.SyntaxNode);
-            }
-        }
-
         public SubpatternSyntaxWrapper WithNameColon(NameColonSyntax nameColon)
         {
             return new SubpatternSyntaxWrapper(WithNameColonAccessor(this.SyntaxNode, nameColon));

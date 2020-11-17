@@ -33,6 +33,22 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
+        public TypeSyntax Type
+        {
+            get
+            {
+                return TypeAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SyntaxToken Identifier
+        {
+            get
+            {
+                return IdentifierAccessor(this.SyntaxNode);
+            }
+        }
+
         public static explicit operator TupleElementSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

@@ -33,6 +33,22 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
+        public SyntaxToken OperatorToken
+        {
+            get
+            {
+                return OperatorTokenAccessor(this.SyntaxNode);
+            }
+        }
+
+        public ExpressionSyntax Expression
+        {
+            get
+            {
+                return ExpressionAccessor(this.SyntaxNode);
+            }
+        }
+
         public static explicit operator RelationalPatternSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

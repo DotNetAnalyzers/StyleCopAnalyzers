@@ -29,6 +29,14 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public TypeParameterConstraintSyntax SyntaxNode => this.node;
+        public SyntaxToken DefaultKeyword
+        {
+            get
+            {
+                return DefaultKeywordAccessor(this.SyntaxNode);
+            }
+        }
+
         public static explicit operator DefaultConstraintSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

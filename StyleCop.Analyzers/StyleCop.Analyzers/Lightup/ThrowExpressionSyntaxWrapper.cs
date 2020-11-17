@@ -8,22 +8,6 @@ namespace StyleCop.Analyzers.Lightup
 
     internal partial struct ThrowExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
     {
-        public SyntaxToken ThrowKeyword
-        {
-            get
-            {
-                return ThrowKeywordAccessor(this.SyntaxNode);
-            }
-        }
-
-        public ExpressionSyntax Expression
-        {
-            get
-            {
-                return ExpressionAccessor(this.SyntaxNode);
-            }
-        }
-
         public ThrowExpressionSyntaxWrapper WithThrowKeyword(SyntaxToken throwKeyword)
         {
             return new ThrowExpressionSyntaxWrapper(WithThrowKeywordAccessor(this.SyntaxNode, throwKeyword));

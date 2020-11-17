@@ -8,30 +8,6 @@ namespace StyleCop.Analyzers.Lightup
 
     internal partial struct PositionalPatternClauseSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
-        public SyntaxToken OpenParenToken
-        {
-            get
-            {
-                return OpenParenTokenAccessor(this.SyntaxNode);
-            }
-        }
-
-        public SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper> Subpatterns
-        {
-            get
-            {
-                return SubpatternsAccessor(this.SyntaxNode);
-            }
-        }
-
-        public SyntaxToken CloseParenToken
-        {
-            get
-            {
-                return CloseParenTokenAccessor(this.SyntaxNode);
-            }
-        }
-
         public PositionalPatternClauseSyntaxWrapper AddSubpatterns(params SubpatternSyntaxWrapper[] items)
         {
             return new PositionalPatternClauseSyntaxWrapper(this.WithSubpatterns(this.Subpatterns.AddRange(items)));

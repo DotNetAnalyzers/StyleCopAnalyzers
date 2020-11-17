@@ -41,6 +41,38 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
+        public TypeSyntax Type
+        {
+            get
+            {
+                return TypeAccessor(this.SyntaxNode);
+            }
+        }
+
+        public PositionalPatternClauseSyntaxWrapper PositionalPatternClause
+        {
+            get
+            {
+                return (PositionalPatternClauseSyntaxWrapper)PositionalPatternClauseAccessor(this.SyntaxNode);
+            }
+        }
+
+        public PropertyPatternClauseSyntaxWrapper PropertyPatternClause
+        {
+            get
+            {
+                return (PropertyPatternClauseSyntaxWrapper)PropertyPatternClauseAccessor(this.SyntaxNode);
+            }
+        }
+
+        public VariableDesignationSyntaxWrapper Designation
+        {
+            get
+            {
+                return (VariableDesignationSyntaxWrapper)DesignationAccessor(this.SyntaxNode);
+            }
+        }
+
         public static explicit operator RecursivePatternSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

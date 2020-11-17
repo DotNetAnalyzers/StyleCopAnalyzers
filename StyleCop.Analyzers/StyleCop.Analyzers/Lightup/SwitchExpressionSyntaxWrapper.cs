@@ -8,46 +8,6 @@ namespace StyleCop.Analyzers.Lightup
 
     internal partial struct SwitchExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
     {
-        public ExpressionSyntax GoverningExpression
-        {
-            get
-            {
-                return GoverningExpressionAccessor(this.SyntaxNode);
-            }
-        }
-
-        public SeparatedSyntaxListWrapper<SwitchExpressionArmSyntaxWrapper> Arms
-        {
-            get
-            {
-                return ArmsAccessor(this.SyntaxNode);
-            }
-        }
-
-        public SyntaxToken OpenBraceToken
-        {
-            get
-            {
-                return OpenBraceTokenAccessor(this.SyntaxNode);
-            }
-        }
-
-        public SyntaxToken SwitchKeyword
-        {
-            get
-            {
-                return SwitchKeywordAccessor(this.SyntaxNode);
-            }
-        }
-
-        public SyntaxToken CloseBraceToken
-        {
-            get
-            {
-                return CloseBraceTokenAccessor(this.SyntaxNode);
-            }
-        }
-
         public SwitchExpressionSyntaxWrapper AddArms(params SwitchExpressionArmSyntaxWrapper[] arms)
         {
             return new SwitchExpressionSyntaxWrapper(this.WithArms(this.Arms.AddRange(arms)));

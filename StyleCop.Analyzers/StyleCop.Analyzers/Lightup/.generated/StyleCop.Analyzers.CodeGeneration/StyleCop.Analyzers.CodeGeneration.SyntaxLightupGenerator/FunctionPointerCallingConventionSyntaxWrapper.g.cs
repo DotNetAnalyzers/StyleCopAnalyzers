@@ -33,6 +33,22 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
+        public SyntaxToken ManagedOrUnmanagedKeyword
+        {
+            get
+            {
+                return ManagedOrUnmanagedKeywordAccessor(this.SyntaxNode);
+            }
+        }
+
+        public FunctionPointerUnmanagedCallingConventionListSyntaxWrapper UnmanagedCallingConventionList
+        {
+            get
+            {
+                return (FunctionPointerUnmanagedCallingConventionListSyntaxWrapper)UnmanagedCallingConventionListAccessor(this.SyntaxNode);
+            }
+        }
+
         public static explicit operator FunctionPointerCallingConventionSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

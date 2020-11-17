@@ -9,22 +9,6 @@ namespace StyleCop.Analyzers.Lightup
 
     internal partial struct WhenClauseSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
-        public SyntaxToken WhenKeyword
-        {
-            get
-            {
-                return WhenKeywordAccessor(this.SyntaxNode);
-            }
-        }
-
-        public ExpressionSyntax Condition
-        {
-            get
-            {
-                return ConditionAccessor(this.SyntaxNode);
-            }
-        }
-
         public WhenClauseSyntaxWrapper WithWhenKeyword(SyntaxToken whenKeyword)
         {
             return new WhenClauseSyntaxWrapper(WithWhenKeywordAccessor(this.SyntaxNode, whenKeyword));

@@ -7,22 +7,6 @@ namespace StyleCop.Analyzers.Lightup
 
     internal partial struct DeclarationExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
     {
-        public TypeSyntax Type
-        {
-            get
-            {
-                return TypeAccessor(this.SyntaxNode);
-            }
-        }
-
-        public VariableDesignationSyntaxWrapper Designation
-        {
-            get
-            {
-                return (VariableDesignationSyntaxWrapper)DesignationAccessor(this.SyntaxNode);
-            }
-        }
-
         public DeclarationExpressionSyntaxWrapper WithType(TypeSyntax type)
         {
             return new DeclarationExpressionSyntaxWrapper(WithTypeAccessor(this.SyntaxNode, type));

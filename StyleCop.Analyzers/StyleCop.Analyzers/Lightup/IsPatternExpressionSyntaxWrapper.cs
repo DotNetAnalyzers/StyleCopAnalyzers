@@ -8,30 +8,6 @@ namespace StyleCop.Analyzers.Lightup
 
     internal partial struct IsPatternExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
     {
-        public ExpressionSyntax Expression
-        {
-            get
-            {
-                return ExpressionAccessor(this.SyntaxNode);
-            }
-        }
-
-        public SyntaxToken IsKeyword
-        {
-            get
-            {
-                return IsKeywordAccessor(this.SyntaxNode);
-            }
-        }
-
-        public PatternSyntaxWrapper Pattern
-        {
-            get
-            {
-                return (PatternSyntaxWrapper)PatternAccessor(this.SyntaxNode);
-            }
-        }
-
         public IsPatternExpressionSyntaxWrapper WithExpression(ExpressionSyntax expression)
         {
             return new IsPatternExpressionSyntaxWrapper(WithExpressionAccessor(this.SyntaxNode, expression));

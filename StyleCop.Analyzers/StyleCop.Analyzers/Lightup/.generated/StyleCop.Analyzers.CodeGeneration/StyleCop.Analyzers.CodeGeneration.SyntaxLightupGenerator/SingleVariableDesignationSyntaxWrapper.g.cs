@@ -29,6 +29,14 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
+        public SyntaxToken Identifier
+        {
+            get
+            {
+                return IdentifierAccessor(this.SyntaxNode);
+            }
+        }
+
         public static explicit operator SingleVariableDesignationSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

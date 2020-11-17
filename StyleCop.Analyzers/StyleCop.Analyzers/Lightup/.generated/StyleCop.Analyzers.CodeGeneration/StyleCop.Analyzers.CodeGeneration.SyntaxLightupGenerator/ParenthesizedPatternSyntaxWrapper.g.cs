@@ -37,6 +37,30 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
+        public SyntaxToken OpenParenToken
+        {
+            get
+            {
+                return OpenParenTokenAccessor(this.SyntaxNode);
+            }
+        }
+
+        public PatternSyntaxWrapper Pattern
+        {
+            get
+            {
+                return (PatternSyntaxWrapper)PatternAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SyntaxToken CloseParenToken
+        {
+            get
+            {
+                return CloseParenTokenAccessor(this.SyntaxNode);
+            }
+        }
+
         public static explicit operator ParenthesizedPatternSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

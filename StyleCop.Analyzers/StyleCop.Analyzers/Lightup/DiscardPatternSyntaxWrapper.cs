@@ -8,14 +8,6 @@ namespace StyleCop.Analyzers.Lightup
 
     internal partial struct DiscardPatternSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
-        public SyntaxToken UnderscoreToken
-        {
-            get
-            {
-                return UnderscoreTokenAccessor(this.SyntaxNode);
-            }
-        }
-
         public static explicit operator DiscardPatternSyntaxWrapper(PatternSyntaxWrapper node)
         {
             return (DiscardPatternSyntaxWrapper)node.SyntaxNode;

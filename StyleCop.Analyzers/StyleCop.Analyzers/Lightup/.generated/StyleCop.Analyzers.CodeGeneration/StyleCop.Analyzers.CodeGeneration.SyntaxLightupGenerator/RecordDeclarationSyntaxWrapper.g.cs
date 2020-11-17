@@ -51,6 +51,102 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public TypeDeclarationSyntax SyntaxNode => this.node;
+        public SyntaxList<AttributeListSyntax> AttributeLists
+        {
+            get
+            {
+                return this.SyntaxNode.AttributeLists;
+            }
+        }
+
+        public SyntaxTokenList Modifiers
+        {
+            get
+            {
+                return this.SyntaxNode.Modifiers;
+            }
+        }
+
+        public SyntaxToken Keyword
+        {
+            get
+            {
+                return this.SyntaxNode.Keyword;
+            }
+        }
+
+        public SyntaxToken Identifier
+        {
+            get
+            {
+                return this.SyntaxNode.Identifier;
+            }
+        }
+
+        public TypeParameterListSyntax TypeParameterList
+        {
+            get
+            {
+                return this.SyntaxNode.TypeParameterList;
+            }
+        }
+
+        public ParameterListSyntax ParameterList
+        {
+            get
+            {
+                return ParameterListAccessor(this.SyntaxNode);
+            }
+        }
+
+        public BaseListSyntax BaseList
+        {
+            get
+            {
+                return this.SyntaxNode.BaseList;
+            }
+        }
+
+        public SyntaxList<TypeParameterConstraintClauseSyntax> ConstraintClauses
+        {
+            get
+            {
+                return this.SyntaxNode.ConstraintClauses;
+            }
+        }
+
+        public SyntaxToken OpenBraceToken
+        {
+            get
+            {
+                return this.SyntaxNode.OpenBraceToken;
+            }
+        }
+
+        public SyntaxList<MemberDeclarationSyntax> Members
+        {
+            get
+            {
+                return this.SyntaxNode.Members;
+            }
+        }
+
+        public SyntaxToken CloseBraceToken
+        {
+            get
+            {
+                return this.SyntaxNode.CloseBraceToken;
+            }
+        }
+
+        public SyntaxToken SemicolonToken
+        {
+            get
+            {
+                return this.SyntaxNode.SemicolonToken;
+            }
+        }
+
         public static explicit operator RecordDeclarationSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

@@ -8,30 +8,6 @@ namespace StyleCop.Analyzers.Lightup
 
     internal partial struct RangeExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
     {
-        public ExpressionSyntax LeftOperand
-        {
-            get
-            {
-                return LeftOperandAccessor(this.SyntaxNode);
-            }
-        }
-
-        public SyntaxToken OperatorToken
-        {
-            get
-            {
-                return OperatorTokenAccessor(this.SyntaxNode);
-            }
-        }
-
-        public ExpressionSyntax RightOperand
-        {
-            get
-            {
-                return RightOperandAccessor(this.SyntaxNode);
-            }
-        }
-
         public RangeExpressionSyntaxWrapper WithLeftOperand(ExpressionSyntax leftOperand)
         {
             return new RangeExpressionSyntaxWrapper(WithLeftOperandAccessor(this.SyntaxNode, leftOperand));

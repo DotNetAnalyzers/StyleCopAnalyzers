@@ -8,14 +8,6 @@ namespace StyleCop.Analyzers.Lightup
 
     internal partial struct ConstantPatternSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
-        public ExpressionSyntax Expression
-        {
-            get
-            {
-                return ExpressionAccessor(this.SyntaxNode);
-            }
-        }
-
         public static explicit operator ConstantPatternSyntaxWrapper(PatternSyntaxWrapper node)
         {
             return (ConstantPatternSyntaxWrapper)node.SyntaxNode;

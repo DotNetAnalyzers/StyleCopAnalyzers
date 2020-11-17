@@ -33,6 +33,22 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
+        public SyntaxToken VarKeyword
+        {
+            get
+            {
+                return VarKeywordAccessor(this.SyntaxNode);
+            }
+        }
+
+        public VariableDesignationSyntaxWrapper Designation
+        {
+            get
+            {
+                return (VariableDesignationSyntaxWrapper)DesignationAccessor(this.SyntaxNode);
+            }
+        }
+
         public static explicit operator VarPatternSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

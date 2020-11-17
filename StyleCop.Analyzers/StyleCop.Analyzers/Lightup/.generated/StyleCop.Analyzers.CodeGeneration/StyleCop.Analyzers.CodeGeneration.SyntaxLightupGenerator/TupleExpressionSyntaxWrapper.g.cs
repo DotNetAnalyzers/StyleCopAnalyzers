@@ -37,6 +37,30 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public ExpressionSyntax SyntaxNode => this.node;
+        public SyntaxToken OpenParenToken
+        {
+            get
+            {
+                return OpenParenTokenAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SeparatedSyntaxList<ArgumentSyntax> Arguments
+        {
+            get
+            {
+                return ArgumentsAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SyntaxToken CloseParenToken
+        {
+            get
+            {
+                return CloseParenTokenAccessor(this.SyntaxNode);
+            }
+        }
+
         public static explicit operator TupleExpressionSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

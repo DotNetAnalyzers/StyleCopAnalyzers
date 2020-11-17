@@ -29,6 +29,14 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
+        public ExpressionSyntax Expression
+        {
+            get
+            {
+                return ExpressionAccessor(this.SyntaxNode);
+            }
+        }
+
         public static explicit operator ConstantPatternSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

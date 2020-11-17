@@ -41,6 +41,38 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public TypeSyntax SyntaxNode => this.node;
+        public SyntaxToken DelegateKeyword
+        {
+            get
+            {
+                return DelegateKeywordAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SyntaxToken AsteriskToken
+        {
+            get
+            {
+                return AsteriskTokenAccessor(this.SyntaxNode);
+            }
+        }
+
+        public FunctionPointerCallingConventionSyntaxWrapper CallingConvention
+        {
+            get
+            {
+                return (FunctionPointerCallingConventionSyntaxWrapper)CallingConventionAccessor(this.SyntaxNode);
+            }
+        }
+
+        public FunctionPointerParameterListSyntaxWrapper ParameterList
+        {
+            get
+            {
+                return (FunctionPointerParameterListSyntaxWrapper)ParameterListAccessor(this.SyntaxNode);
+            }
+        }
+
         public static explicit operator FunctionPointerTypeSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

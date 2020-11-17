@@ -37,6 +37,30 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public ExpressionSyntax SyntaxNode => this.node;
+        public ExpressionSyntax Expression
+        {
+            get
+            {
+                return ExpressionAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SyntaxToken WithKeyword
+        {
+            get
+            {
+                return WithKeywordAccessor(this.SyntaxNode);
+            }
+        }
+
+        public InitializerExpressionSyntax Initializer
+        {
+            get
+            {
+                return InitializerAccessor(this.SyntaxNode);
+            }
+        }
+
         public static explicit operator WithExpressionSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

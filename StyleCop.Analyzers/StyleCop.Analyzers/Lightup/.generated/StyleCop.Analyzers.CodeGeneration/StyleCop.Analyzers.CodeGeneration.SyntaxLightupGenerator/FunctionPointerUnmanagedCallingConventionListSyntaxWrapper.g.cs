@@ -37,6 +37,30 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
+        public SyntaxToken OpenBracketToken
+        {
+            get
+            {
+                return OpenBracketTokenAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SeparatedSyntaxListWrapper<FunctionPointerUnmanagedCallingConventionSyntaxWrapper> CallingConventions
+        {
+            get
+            {
+                return CallingConventionsAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SyntaxToken CloseBracketToken
+        {
+            get
+            {
+                return CloseBracketTokenAccessor(this.SyntaxNode);
+            }
+        }
+
         public static explicit operator FunctionPointerUnmanagedCallingConventionListSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

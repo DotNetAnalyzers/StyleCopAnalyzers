@@ -8,30 +8,6 @@ namespace StyleCop.Analyzers.Lightup
 
     internal partial struct PropertyPatternClauseSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
-        public SyntaxToken OpenBraceToken
-        {
-            get
-            {
-                return OpenBraceTokenAccessor(this.SyntaxNode);
-            }
-        }
-
-        public SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper> Subpatterns
-        {
-            get
-            {
-                return SubpatternsAccessor(this.SyntaxNode);
-            }
-        }
-
-        public SyntaxToken CloseBraceToken
-        {
-            get
-            {
-                return CloseBraceTokenAccessor(this.SyntaxNode);
-            }
-        }
-
         public PropertyPatternClauseSyntaxWrapper AddSubpatterns(params SubpatternSyntaxWrapper[] items)
         {
             return new PropertyPatternClauseSyntaxWrapper(this.WithSubpatterns(this.Subpatterns.AddRange(items)));

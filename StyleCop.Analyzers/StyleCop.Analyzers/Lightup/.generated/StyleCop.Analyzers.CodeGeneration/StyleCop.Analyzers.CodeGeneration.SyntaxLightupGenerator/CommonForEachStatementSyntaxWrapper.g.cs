@@ -53,6 +53,62 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public StatementSyntax SyntaxNode => this.node;
+        public SyntaxToken AwaitKeyword
+        {
+            get
+            {
+                return AwaitKeywordAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SyntaxToken ForEachKeyword
+        {
+            get
+            {
+                return ForEachKeywordAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SyntaxToken OpenParenToken
+        {
+            get
+            {
+                return OpenParenTokenAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SyntaxToken InKeyword
+        {
+            get
+            {
+                return InKeywordAccessor(this.SyntaxNode);
+            }
+        }
+
+        public ExpressionSyntax Expression
+        {
+            get
+            {
+                return ExpressionAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SyntaxToken CloseParenToken
+        {
+            get
+            {
+                return CloseParenTokenAccessor(this.SyntaxNode);
+            }
+        }
+
+        public StatementSyntax Statement
+        {
+            get
+            {
+                return StatementAccessor(this.SyntaxNode);
+            }
+        }
+
         public static explicit operator CommonForEachStatementSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

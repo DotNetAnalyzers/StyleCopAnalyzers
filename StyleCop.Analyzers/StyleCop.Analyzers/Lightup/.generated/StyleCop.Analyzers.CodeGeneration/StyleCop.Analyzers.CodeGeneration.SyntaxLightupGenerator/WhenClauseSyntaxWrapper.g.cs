@@ -33,6 +33,22 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
+        public SyntaxToken WhenKeyword
+        {
+            get
+            {
+                return WhenKeywordAccessor(this.SyntaxNode);
+            }
+        }
+
+        public ExpressionSyntax Condition
+        {
+            get
+            {
+                return ConditionAccessor(this.SyntaxNode);
+            }
+        }
+
         public static explicit operator WhenClauseSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

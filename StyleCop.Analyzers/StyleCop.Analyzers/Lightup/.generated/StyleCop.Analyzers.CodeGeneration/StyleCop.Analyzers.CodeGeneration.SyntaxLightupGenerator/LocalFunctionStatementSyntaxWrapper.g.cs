@@ -63,6 +63,78 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public StatementSyntax SyntaxNode => this.node;
+        public SyntaxTokenList Modifiers
+        {
+            get
+            {
+                return ModifiersAccessor(this.SyntaxNode);
+            }
+        }
+
+        public TypeSyntax ReturnType
+        {
+            get
+            {
+                return ReturnTypeAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SyntaxToken Identifier
+        {
+            get
+            {
+                return IdentifierAccessor(this.SyntaxNode);
+            }
+        }
+
+        public TypeParameterListSyntax TypeParameterList
+        {
+            get
+            {
+                return TypeParameterListAccessor(this.SyntaxNode);
+            }
+        }
+
+        public ParameterListSyntax ParameterList
+        {
+            get
+            {
+                return ParameterListAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SyntaxList<TypeParameterConstraintClauseSyntax> ConstraintClauses
+        {
+            get
+            {
+                return ConstraintClausesAccessor(this.SyntaxNode);
+            }
+        }
+
+        public BlockSyntax Body
+        {
+            get
+            {
+                return BodyAccessor(this.SyntaxNode);
+            }
+        }
+
+        public ArrowExpressionClauseSyntax ExpressionBody
+        {
+            get
+            {
+                return ExpressionBodyAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SyntaxToken SemicolonToken
+        {
+            get
+            {
+                return SemicolonTokenAccessor(this.SyntaxNode);
+            }
+        }
+
         public static explicit operator LocalFunctionStatementSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

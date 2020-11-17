@@ -8,38 +8,6 @@ namespace StyleCop.Analyzers.Lightup
 
     internal partial struct ImplicitStackAllocArrayCreationExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
     {
-        public SyntaxToken StackAllocKeyword
-        {
-            get
-            {
-                return StackAllocKeywordAccessor(this.SyntaxNode);
-            }
-        }
-
-        public SyntaxToken OpenBracketToken
-        {
-            get
-            {
-                return OpenBracketTokenAccessor(this.SyntaxNode);
-            }
-        }
-
-        public SyntaxToken CloseBracketToken
-        {
-            get
-            {
-                return CloseBracketTokenAccessor(this.SyntaxNode);
-            }
-        }
-
-        public InitializerExpressionSyntax Initializer
-        {
-            get
-            {
-                return InitializerAccessor(this.SyntaxNode);
-            }
-        }
-
         public ImplicitStackAllocArrayCreationExpressionSyntaxWrapper WithStackAllocKeyword(SyntaxToken stackAllocKeyword)
         {
             return new ImplicitStackAllocArrayCreationExpressionSyntaxWrapper(WithStackAllocKeywordAccessor(this.SyntaxNode, stackAllocKeyword));

@@ -8,14 +8,6 @@ namespace StyleCop.Analyzers.Lightup
 
     internal partial struct SingleVariableDesignationSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
-        public SyntaxToken Identifier
-        {
-            get
-            {
-                return IdentifierAccessor(this.SyntaxNode);
-            }
-        }
-
         public static explicit operator SingleVariableDesignationSyntaxWrapper(VariableDesignationSyntaxWrapper node)
         {
             return (SingleVariableDesignationSyntaxWrapper)node.SyntaxNode;

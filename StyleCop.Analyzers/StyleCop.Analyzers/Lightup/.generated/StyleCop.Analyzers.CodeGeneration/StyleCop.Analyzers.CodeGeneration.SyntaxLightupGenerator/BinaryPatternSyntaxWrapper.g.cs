@@ -37,6 +37,30 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
+        public PatternSyntaxWrapper Left
+        {
+            get
+            {
+                return (PatternSyntaxWrapper)LeftAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SyntaxToken OperatorToken
+        {
+            get
+            {
+                return OperatorTokenAccessor(this.SyntaxNode);
+            }
+        }
+
+        public PatternSyntaxWrapper Right
+        {
+            get
+            {
+                return (PatternSyntaxWrapper)RightAccessor(this.SyntaxNode);
+            }
+        }
+
         public static explicit operator BinaryPatternSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

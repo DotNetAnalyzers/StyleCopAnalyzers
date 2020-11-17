@@ -45,6 +45,70 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public StatementSyntax SyntaxNode => this.node;
+        public SyntaxToken AwaitKeyword
+        {
+            get
+            {
+                return ((CommonForEachStatementSyntaxWrapper)this).AwaitKeyword;
+            }
+        }
+
+        public SyntaxToken ForEachKeyword
+        {
+            get
+            {
+                return ((CommonForEachStatementSyntaxWrapper)this).ForEachKeyword;
+            }
+        }
+
+        public SyntaxToken OpenParenToken
+        {
+            get
+            {
+                return ((CommonForEachStatementSyntaxWrapper)this).OpenParenToken;
+            }
+        }
+
+        public ExpressionSyntax Variable
+        {
+            get
+            {
+                return VariableAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SyntaxToken InKeyword
+        {
+            get
+            {
+                return ((CommonForEachStatementSyntaxWrapper)this).InKeyword;
+            }
+        }
+
+        public ExpressionSyntax Expression
+        {
+            get
+            {
+                return ((CommonForEachStatementSyntaxWrapper)this).Expression;
+            }
+        }
+
+        public SyntaxToken CloseParenToken
+        {
+            get
+            {
+                return ((CommonForEachStatementSyntaxWrapper)this).CloseParenToken;
+            }
+        }
+
+        public StatementSyntax Statement
+        {
+            get
+            {
+                return ((CommonForEachStatementSyntaxWrapper)this).Statement;
+            }
+        }
+
         public static explicit operator ForEachVariableStatementSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

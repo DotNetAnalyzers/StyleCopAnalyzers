@@ -37,6 +37,38 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public SwitchLabelSyntax SyntaxNode => this.node;
+        public SyntaxToken Keyword
+        {
+            get
+            {
+                return this.SyntaxNode.Keyword;
+            }
+        }
+
+        public PatternSyntaxWrapper Pattern
+        {
+            get
+            {
+                return (PatternSyntaxWrapper)PatternAccessor(this.SyntaxNode);
+            }
+        }
+
+        public WhenClauseSyntaxWrapper WhenClause
+        {
+            get
+            {
+                return (WhenClauseSyntaxWrapper)WhenClauseAccessor(this.SyntaxNode);
+            }
+        }
+
+        public SyntaxToken ColonToken
+        {
+            get
+            {
+                return this.SyntaxNode.ColonToken;
+            }
+        }
+
         public static explicit operator CasePatternSwitchLabelSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)
