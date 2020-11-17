@@ -21,7 +21,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(PrimaryConstructorBaseTypeSyntaxWrapper));
             ArgumentListAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<BaseTypeSyntax, ArgumentListSyntax>(WrappedType, nameof(ArgumentList));
-            WithTypeAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<BaseTypeSyntax, TypeSyntax>(WrappedType, nameof(BaseTypeSyntax.Type));
+            WithTypeAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<BaseTypeSyntax, TypeSyntax>(WrappedType, nameof(Type));
             WithArgumentListAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<BaseTypeSyntax, ArgumentListSyntax>(WrappedType, nameof(ArgumentList));
         }
 

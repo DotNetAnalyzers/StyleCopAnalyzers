@@ -215,7 +215,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                                 SyntaxFactory.Argument(SyntaxFactory.IdentifierName("WrappedType")),
                                 SyntaxFactory.Argument(SyntaxFactory.InvocationExpression(
                                     expression: SyntaxFactory.IdentifierName("nameof"),
-                                    argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(field.GetPropertyNameExpression(syntaxData)))))),
+                                    argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(SyntaxFactory.IdentifierName(field.Name)))))),
                             }))))));
             }
 
@@ -269,7 +269,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                                 SyntaxFactory.Argument(SyntaxFactory.IdentifierName("WrappedType")),
                                 SyntaxFactory.Argument(SyntaxFactory.InvocationExpression(
                                     expression: SyntaxFactory.IdentifierName("nameof"),
-                                    argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(field.GetPropertyNameExpression(syntaxData)))))),
+                                    argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(SyntaxFactory.IdentifierName(field.Name)))))),
                             }))))));
             }
 
@@ -366,6 +366,14 @@ namespace StyleCop.Analyzers.CodeGeneration
                                 expression: SyntaxFactory.ThisExpression(),
                                 name: SyntaxFactory.IdentifierName("SyntaxNode")),
                             name: SyntaxFactory.IdentifierName(field.Name));
+
+                        if (declaringNode.TryGetField(field.Name) is { IsExtensionField: true })
+                        {
+                            // this.SyntaxNode.OpenParenToken()
+                            returnExpression = SyntaxFactory.InvocationExpression(
+                                expression: returnExpression,
+                                argumentList: SyntaxFactory.ArgumentList());
+                        }
                     }
                 }
                 else if (field.IsWrappedSeparatedSyntaxList(syntaxData, out var elementNode))
@@ -1011,10 +1019,10 @@ namespace StyleCop.Analyzers.CodeGeneration
 
                 this.Name = element.Attribute("Name").Value;
 
-                var existingType = context.Compilation.GetTypeByMetadataName($"Microsoft.CodeAnalysis.CSharp.Syntax.{this.Name}")
+                this.ExistingType = context.Compilation.GetTypeByMetadataName($"Microsoft.CodeAnalysis.CSharp.Syntax.{this.Name}")
                     ?? context.Compilation.GetTypeByMetadataName($"Microsoft.CodeAnalysis.CSharp.{this.Name}")
                     ?? context.Compilation.GetTypeByMetadataName($"Microsoft.CodeAnalysis.{this.Name}");
-                if (existingType?.DeclaredAccessibility == Accessibility.Public)
+                if (this.ExistingType?.DeclaredAccessibility == Accessibility.Public)
                 {
                     this.WrapperName = null;
                 }
@@ -1030,6 +1038,8 @@ namespace StyleCop.Analyzers.CodeGeneration
             public NodeKind Kind { get; }
 
             public string Name { get; }
+
+            public INamedTypeSymbol? ExistingType { get; }
 
             public string? WrapperName { get; }
 
@@ -1078,6 +1088,18 @@ namespace StyleCop.Analyzers.CodeGeneration
 
             public bool IsOverride { get; }
 
+            /// <summary>
+            /// Gets a value indicating whether this field is implemented as an extension method in the lightup layer.
+            /// </summary>
+            public bool IsExtensionField
+            {
+                get
+                {
+                    return this.nodeData.ExistingType is not null
+                        && this.nodeData.ExistingType.GetMembers(this.Name).IsEmpty;
+                }
+            }
+
             public NodeData GetDeclaringNode(SyntaxData syntaxData)
             {
                 for (var current = this.nodeData; current is not null; current = syntaxData.TryGetNode(current.BaseName))
@@ -1090,21 +1112,6 @@ namespace StyleCop.Analyzers.CodeGeneration
                 }
 
                 throw new NotSupportedException("Unable to find declaring node.");
-            }
-
-            public NameSyntax GetPropertyNameExpression(SyntaxData syntaxData)
-            {
-                var declaringNode = this.GetDeclaringNode(syntaxData);
-                if (declaringNode == this.nodeData)
-                {
-                    return SyntaxFactory.IdentifierName(this.Name);
-                }
-                else
-                {
-                    return SyntaxFactory.QualifiedName(
-                        SyntaxFactory.IdentifierName(declaringNode.WrapperName ?? declaringNode.Name),
-                        SyntaxFactory.IdentifierName(this.Name));
-                }
             }
 
             public bool IsWrappedSeparatedSyntaxList(SyntaxData syntaxData, [NotNullWhen(true)] out NodeData? element)
