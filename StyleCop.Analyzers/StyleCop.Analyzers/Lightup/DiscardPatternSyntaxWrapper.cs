@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Lightup
 
         static DiscardPatternSyntaxWrapper()
         {
-            WrappedType = WrapperHelper.GetWrappedType(typeof(DiscardPatternSyntaxWrapper));
+            WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(DiscardPatternSyntaxWrapper));
             UnderscoreTokenAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(UnderscoreToken));
             WithUnderscoreTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(UnderscoreToken));
         }

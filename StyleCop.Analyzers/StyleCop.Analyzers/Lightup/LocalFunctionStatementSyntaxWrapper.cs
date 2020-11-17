@@ -31,7 +31,7 @@ namespace StyleCop.Analyzers.Lightup
 
         static LocalFunctionStatementSyntaxWrapper()
         {
-            WrappedType = WrapperHelper.GetWrappedType(typeof(LocalFunctionStatementSyntaxWrapper));
+            WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(LocalFunctionStatementSyntaxWrapper));
             ModifiersAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<StatementSyntax, SyntaxTokenList>(WrappedType, nameof(Modifiers));
             ReturnTypeAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<StatementSyntax, TypeSyntax>(WrappedType, nameof(ReturnType));
             IdentifierAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<StatementSyntax, SyntaxToken>(WrappedType, nameof(Identifier));

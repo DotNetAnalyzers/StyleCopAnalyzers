@@ -11,7 +11,7 @@ namespace StyleCop.Analyzers.Lightup
     {
         static VariableDesignationSyntaxWrapper()
         {
-            WrappedType = WrapperHelper.GetWrappedType(typeof(VariableDesignationSyntaxWrapper));
+            WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(VariableDesignationSyntaxWrapper));
         }
 
         internal static VariableDesignationSyntaxWrapper FromUpcast(CSharpSyntaxNode node)

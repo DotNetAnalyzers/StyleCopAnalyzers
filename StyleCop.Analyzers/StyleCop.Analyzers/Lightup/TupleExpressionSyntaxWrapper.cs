@@ -18,7 +18,7 @@ namespace StyleCop.Analyzers.Lightup
 
         static TupleExpressionSyntaxWrapper()
         {
-            WrappedType = WrapperHelper.GetWrappedType(typeof(TupleExpressionSyntaxWrapper));
+            WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(TupleExpressionSyntaxWrapper));
             OpenParenTokenAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<ExpressionSyntax, SyntaxToken>(WrappedType, nameof(OpenParenToken));
             ArgumentsAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<ExpressionSyntax, SeparatedSyntaxList<ArgumentSyntax>>(WrappedType, nameof(Arguments));
             CloseParenTokenAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<ExpressionSyntax, SyntaxToken>(WrappedType, nameof(CloseParenToken));

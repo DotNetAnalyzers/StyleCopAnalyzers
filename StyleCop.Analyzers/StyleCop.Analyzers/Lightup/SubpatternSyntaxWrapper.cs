@@ -18,7 +18,7 @@ namespace StyleCop.Analyzers.Lightup
 
         static SubpatternSyntaxWrapper()
         {
-            WrappedType = WrapperHelper.GetWrappedType(typeof(SubpatternSyntaxWrapper));
+            WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(SubpatternSyntaxWrapper));
             NameColonAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, NameColonSyntax>(WrappedType, nameof(NameColon));
             PatternAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, CSharpSyntaxNode>(WrappedType, nameof(Pattern));
 

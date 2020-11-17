@@ -22,7 +22,7 @@ namespace StyleCop.Analyzers.Lightup
 
         static ForEachVariableStatementSyntaxWrapper()
         {
-            WrappedType = WrapperHelper.GetWrappedType(typeof(ForEachVariableStatementSyntaxWrapper));
+            WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(ForEachVariableStatementSyntaxWrapper));
             VariableAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<StatementSyntax, ExpressionSyntax>(WrappedType, nameof(Variable));
 
             WithAwaitKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<StatementSyntax, SyntaxToken>(WrappedType, nameof(AwaitKeyword));

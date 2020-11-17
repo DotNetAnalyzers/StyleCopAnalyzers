@@ -41,6 +41,7 @@ namespace StyleCop.Analyzers.CodeGeneration
 
             var syntaxData = new SyntaxData(in context, XDocument.Parse(syntaxText.ToString()));
             this.GenerateSyntaxWrappers(in context, syntaxData);
+            this.GenerateSyntaxWrapperHelper(in context, syntaxData.Nodes);
         }
 
         private void GenerateSyntaxWrappers(in GeneratorExecutionContext context, SyntaxData syntaxData)
@@ -309,6 +310,250 @@ namespace StyleCop.Analyzers.CodeGeneration
                     SyntaxFactory.CarriageReturnLineFeed);
 
             context.AddSource(nodeData.WrapperName + ".g.cs", SourceText.From(wrapperNamespace.ToFullString(), Encoding.UTF8));
+        }
+
+        private void GenerateSyntaxWrapperHelper(in GeneratorExecutionContext context, ImmutableArray<NodeData> wrapperTypes)
+        {
+            // private static readonly ImmutableDictionary<Type, Type> WrappedTypes;
+            var wrappedTypes = SyntaxFactory.FieldDeclaration(
+                attributeLists: default,
+                modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PrivateKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword), SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)),
+                declaration: SyntaxFactory.VariableDeclaration(
+                    type: SyntaxFactory.GenericName(
+                        identifier: SyntaxFactory.Identifier("ImmutableDictionary"),
+                        typeArgumentList: SyntaxFactory.TypeArgumentList(
+                            SyntaxFactory.SeparatedList<TypeSyntax>(
+                                new[]
+                                {
+                                    SyntaxFactory.IdentifierName("Type"),
+                                    SyntaxFactory.IdentifierName("Type"),
+                                }))),
+                    variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier("WrappedTypes")))));
+
+            // var csharpCodeAnalysisAssembly = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly;
+            // var builder = ImmutableDictionary.CreateBuilder<Type, Type>();
+            var staticCtorStatements = SyntaxFactory.List<StatementSyntax>()
+                .Add(SyntaxFactory.LocalDeclarationStatement(SyntaxFactory.VariableDeclaration(
+                    type: SyntaxFactory.IdentifierName("var"),
+                    variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(
+                        identifier: SyntaxFactory.Identifier("csharpCodeAnalysisAssembly"),
+                        argumentList: null,
+                        initializer: SyntaxFactory.EqualsValueClause(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                expression: SyntaxFactory.InvocationExpression(
+                                    SyntaxFactory.MemberAccessExpression(
+                                        SyntaxKind.SimpleMemberAccessExpression,
+                                        expression: SyntaxFactory.TypeOfExpression(SyntaxFactory.IdentifierName("CSharpSyntaxNode")),
+                                        name: SyntaxFactory.IdentifierName("GetTypeInfo"))),
+                                name: SyntaxFactory.IdentifierName("Assembly"))))))))
+                .Add(SyntaxFactory.LocalDeclarationStatement(SyntaxFactory.VariableDeclaration(
+                    type: SyntaxFactory.IdentifierName("var"),
+                    variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(
+                        identifier: SyntaxFactory.Identifier("builder"),
+                        argumentList: null,
+                        initializer: SyntaxFactory.EqualsValueClause(
+                            SyntaxFactory.InvocationExpression(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    expression: SyntaxFactory.IdentifierName("ImmutableDictionary"),
+                                    name: SyntaxFactory.GenericName(
+                                        identifier: SyntaxFactory.Identifier("CreateBuilder"),
+                                        typeArgumentList: SyntaxFactory.TypeArgumentList(
+                                            SyntaxFactory.SeparatedList<TypeSyntax>(
+                                                new[]
+                                                {
+                                                    SyntaxFactory.IdentifierName("Type"),
+                                                    SyntaxFactory.IdentifierName("Type"),
+                                                })))))))))));
+
+            foreach (var node in wrapperTypes.OrderBy(node => node.Name, StringComparer.OrdinalIgnoreCase))
+            {
+                if (node.WrapperName is null)
+                {
+                    continue;
+                }
+
+                if (node.Name == nameof(CommonForEachStatementSyntax))
+                {
+                    // Prior to C# 7, ForEachStatementSyntax was the base type for all foreach statements. If
+                    // the CommonForEachStatementSyntax type isn't found at runtime, we fall back to using this type instead.
+                    //
+                    // var forEachStatementSyntaxType = csharpCodeAnalysisAssembly.GetType(CommonForEachStatementSyntaxWrapper.WrappedTypeName)
+                    //     ?? csharpCodeAnalysisAssembly.GetType(CommonForEachStatementSyntaxWrapper.FallbackWrappedTypeName);
+                    staticCtorStatements = staticCtorStatements.Add(
+                        SyntaxFactory.LocalDeclarationStatement(SyntaxFactory.VariableDeclaration(
+                            type: SyntaxFactory.IdentifierName("var"),
+                            variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(
+                                identifier: SyntaxFactory.Identifier("forEachStatementSyntaxType"),
+                                argumentList: null,
+                                initializer: SyntaxFactory.EqualsValueClause(
+                                    SyntaxFactory.BinaryExpression(
+                                        SyntaxKind.CoalesceExpression,
+                                        left: SyntaxFactory.InvocationExpression(
+                                            expression: SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                expression: SyntaxFactory.IdentifierName("csharpCodeAnalysisAssembly"),
+                                                name: SyntaxFactory.IdentifierName("GetType")),
+                                            argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    expression: SyntaxFactory.IdentifierName(node.WrapperName),
+                                                    name: SyntaxFactory.IdentifierName("WrappedTypeName")))))),
+                                        right: SyntaxFactory.InvocationExpression(
+                                            expression: SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                expression: SyntaxFactory.IdentifierName("csharpCodeAnalysisAssembly"),
+                                                name: SyntaxFactory.IdentifierName("GetType")),
+                                            argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    expression: SyntaxFactory.IdentifierName(node.WrapperName),
+                                                    name: SyntaxFactory.IdentifierName("FallbackWrappedTypeName")))))))))))));
+
+                    // builder.Add(typeof(CommonForEachStatementSyntaxWrapper), forEachStatementSyntaxType);
+                    staticCtorStatements = staticCtorStatements.Add(SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            expression: SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                expression: SyntaxFactory.IdentifierName("builder"),
+                                name: SyntaxFactory.IdentifierName("Add")),
+                            argumentList: SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SeparatedList(
+                                    new[]
+                                    {
+                                        SyntaxFactory.Argument(SyntaxFactory.TypeOfExpression(SyntaxFactory.IdentifierName(node.WrapperName))),
+                                        SyntaxFactory.Argument(SyntaxFactory.IdentifierName("forEachStatementSyntaxType")),
+                                    })))));
+
+                    continue;
+                }
+
+                // builder.Add(typeof(ConstantPatternSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ConstantPatternSyntaxWrapper.WrappedTypeName));
+                staticCtorStatements = staticCtorStatements.Add(SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(
+                        expression: SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            expression: SyntaxFactory.IdentifierName("builder"),
+                            name: SyntaxFactory.IdentifierName("Add")),
+                        argumentList: SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SeparatedList(
+                                new[]
+                                {
+                                    SyntaxFactory.Argument(SyntaxFactory.TypeOfExpression(SyntaxFactory.IdentifierName(node.WrapperName))),
+                                    SyntaxFactory.Argument(
+                                        SyntaxFactory.InvocationExpression(
+                                            expression: SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                expression: SyntaxFactory.IdentifierName("csharpCodeAnalysisAssembly"),
+                                                name: SyntaxFactory.IdentifierName("GetType")),
+                                            argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    expression: SyntaxFactory.IdentifierName(node.WrapperName),
+                                                    name: SyntaxFactory.IdentifierName("WrappedTypeName"))))))),
+                                })))));
+            }
+
+            // WrappedTypes = builder.ToImmutable();
+            staticCtorStatements = staticCtorStatements.Add(SyntaxFactory.ExpressionStatement(
+                SyntaxFactory.AssignmentExpression(
+                    SyntaxKind.SimpleAssignmentExpression,
+                    left: SyntaxFactory.IdentifierName("WrappedTypes"),
+                    right: SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            expression: SyntaxFactory.IdentifierName("builder"),
+                            name: SyntaxFactory.IdentifierName("ToImmutable"))))));
+
+            var staticCtor = SyntaxFactory.ConstructorDeclaration(
+                attributeLists: default,
+                modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.StaticKeyword)),
+                identifier: SyntaxFactory.Identifier("SyntaxWrapperHelper"),
+                parameterList: SyntaxFactory.ParameterList(),
+                initializer: null,
+                body: SyntaxFactory.Block(staticCtorStatements));
+
+            // internal static Type GetWrappedType(Type wrapperType)
+            // {
+            //     if (WrappedTypes.TryGetValue(wrapperType, out Type wrappedType))
+            //     {
+            //         return wrappedType;
+            //     }
+            //
+            //     return null;
+            // }
+            var getWrappedType = SyntaxFactory.MethodDeclaration(
+                attributeLists: default,
+                modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.InternalKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword)),
+                returnType: SyntaxFactory.IdentifierName("Type"),
+                explicitInterfaceSpecifier: null,
+                identifier: SyntaxFactory.Identifier("GetWrappedType"),
+                typeParameterList: null,
+                parameterList: SyntaxFactory.ParameterList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Parameter(
+                    attributeLists: default,
+                    modifiers: default,
+                    type: SyntaxFactory.IdentifierName("Type"),
+                    identifier: SyntaxFactory.Identifier("wrapperType"),
+                    @default: null))),
+                constraintClauses: default,
+                body: SyntaxFactory.Block(
+                    SyntaxFactory.IfStatement(
+                        condition: SyntaxFactory.InvocationExpression(
+                            expression: SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                expression: SyntaxFactory.IdentifierName("WrappedTypes"),
+                                name: SyntaxFactory.IdentifierName("TryGetValue")),
+                            argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(
+                                new[]
+                                {
+                                    SyntaxFactory.Argument(SyntaxFactory.IdentifierName("wrapperType")),
+                                    SyntaxFactory.Argument(
+                                        nameColon: null,
+                                        refKindKeyword: SyntaxFactory.Token(SyntaxKind.OutKeyword),
+                                        expression: SyntaxFactory.DeclarationExpression(
+                                            type: SyntaxFactory.IdentifierName("Type"),
+                                            designation: SyntaxFactory.SingleVariableDesignation(SyntaxFactory.Identifier("wrappedType")))),
+                                }))),
+                        statement: SyntaxFactory.Block(
+                            SyntaxFactory.ReturnStatement(SyntaxFactory.IdentifierName("wrappedType")))),
+                    SyntaxFactory.ReturnStatement(SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression))),
+                expressionBody: null);
+
+            var wrapperHelperClass = SyntaxFactory.ClassDeclaration(
+                attributeLists: default,
+                modifiers: SyntaxTokenList.Create(SyntaxFactory.Token(SyntaxKind.InternalKeyword)).Add(SyntaxFactory.Token(SyntaxKind.StaticKeyword)),
+                identifier: SyntaxFactory.Identifier("SyntaxWrapperHelper"),
+                typeParameterList: null,
+                baseList: null,
+                constraintClauses: default,
+                members: SyntaxFactory.List<MemberDeclarationSyntax>()
+                    .Add(wrappedTypes)
+                    .Add(staticCtor)
+                    .Add(getWrappedType));
+            var wrapperNamespace = SyntaxFactory.NamespaceDeclaration(
+                name: SyntaxFactory.ParseName("StyleCop.Analyzers.Lightup"),
+                externs: default,
+                usings: SyntaxFactory.List<UsingDirectiveSyntax>()
+                    .Add(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System")))
+                    .Add(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Collections.Immutable")))
+                    .Add(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Reflection")))
+                    .Add(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("Microsoft.CodeAnalysis")))
+                    .Add(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("Microsoft.CodeAnalysis.CSharp"))),
+                members: SyntaxFactory.SingletonList<MemberDeclarationSyntax>(wrapperHelperClass));
+
+            wrapperNamespace = wrapperNamespace
+                .NormalizeWhitespace()
+                .WithLeadingTrivia(
+                    SyntaxFactory.Comment("// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved."),
+                    SyntaxFactory.CarriageReturnLineFeed,
+                    SyntaxFactory.Comment("// Licensed under the MIT License. See LICENSE in the project root for license information."),
+                    SyntaxFactory.CarriageReturnLineFeed,
+                    SyntaxFactory.CarriageReturnLineFeed)
+                .WithTrailingTrivia(
+                    SyntaxFactory.CarriageReturnLineFeed);
+
+            context.AddSource("SyntaxWrapperHelper.g.cs", SourceText.From(wrapperNamespace.ToFullString(), Encoding.UTF8));
         }
 
         private sealed class SyntaxData

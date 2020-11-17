@@ -19,7 +19,7 @@ namespace StyleCop.Analyzers.Lightup
 
         static IsPatternExpressionSyntaxWrapper()
         {
-            WrappedType = WrapperHelper.GetWrappedType(typeof(IsPatternExpressionSyntaxWrapper));
+            WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(IsPatternExpressionSyntaxWrapper));
             ExpressionAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<ExpressionSyntax, ExpressionSyntax>(WrappedType, nameof(Expression));
             IsKeywordAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<ExpressionSyntax, SyntaxToken>(WrappedType, nameof(IsKeyword));
             PatternAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<ExpressionSyntax, CSharpSyntaxNode>(WrappedType, nameof(Pattern));

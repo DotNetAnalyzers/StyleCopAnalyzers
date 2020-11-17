@@ -17,7 +17,7 @@ namespace StyleCop.Analyzers.Lightup
 
         static VarPatternSyntaxWrapper()
         {
-            WrappedType = WrapperHelper.GetWrappedType(typeof(VarPatternSyntaxWrapper));
+            WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(VarPatternSyntaxWrapper));
             VarKeywordAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(VarKeyword));
             DesignationAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, CSharpSyntaxNode>(WrappedType, nameof(Designation));
 

@@ -18,7 +18,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
 
             foreach (var wrapperType in wrapperTypes)
             {
-                var wrappedType = WrapperHelper.GetWrappedType(wrapperType);
+                var wrappedType = SyntaxWrapperHelper.GetWrappedType(wrapperType);
                 Assert.NotNull(wrapperType);
             }
         }

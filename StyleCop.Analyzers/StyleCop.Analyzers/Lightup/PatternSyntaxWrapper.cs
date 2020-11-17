@@ -11,7 +11,7 @@ namespace StyleCop.Analyzers.Lightup
     {
         static PatternSyntaxWrapper()
         {
-            WrappedType = WrapperHelper.GetWrappedType(typeof(PatternSyntaxWrapper));
+            WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(PatternSyntaxWrapper));
         }
 
         internal static PatternSyntaxWrapper FromUpcast(CSharpSyntaxNode node)

@@ -18,7 +18,7 @@ namespace StyleCop.Analyzers.Lightup
 
         static ParenthesizedVariableDesignationSyntaxWrapper()
         {
-            WrappedType = WrapperHelper.GetWrappedType(typeof(ParenthesizedVariableDesignationSyntaxWrapper));
+            WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(ParenthesizedVariableDesignationSyntaxWrapper));
             OpenParenTokenAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(OpenParenToken));
             VariablesAccessor = LightupHelpers.CreateSeparatedSyntaxListPropertyAccessor<CSharpSyntaxNode, VariableDesignationSyntaxWrapper>(WrappedType, nameof(Variables));
             CloseParenTokenAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(CloseParenToken));

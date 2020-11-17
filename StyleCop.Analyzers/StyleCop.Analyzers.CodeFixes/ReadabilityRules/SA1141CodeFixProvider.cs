@@ -104,7 +104,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static SyntaxNode TransformGenericNameToTuple(SemanticModel semanticModel, GenericNameSyntax genericName)
         {
-            var implementationType = typeof(SeparatedSyntaxListWrapper<>.AutoWrapSeparatedSyntaxList<>).MakeGenericType(typeof(TupleElementSyntaxWrapper), WrapperHelper.GetWrappedType(typeof(TupleElementSyntaxWrapper)));
+            var implementationType = typeof(SeparatedSyntaxListWrapper<>.AutoWrapSeparatedSyntaxList<>).MakeGenericType(typeof(TupleElementSyntaxWrapper), SyntaxWrapperHelper.GetWrappedType(typeof(TupleElementSyntaxWrapper)));
             var tupleElements = (SeparatedSyntaxListWrapper<TupleElementSyntaxWrapper>)Activator.CreateInstance(implementationType);
 
             foreach (var typeArgument in genericName.TypeArgumentList.Arguments)

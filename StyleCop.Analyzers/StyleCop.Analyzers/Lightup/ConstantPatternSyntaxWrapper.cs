@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Lightup
 
         static ConstantPatternSyntaxWrapper()
         {
-            WrappedType = WrapperHelper.GetWrappedType(typeof(ConstantPatternSyntaxWrapper));
+            WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(ConstantPatternSyntaxWrapper));
             ExpressionAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, ExpressionSyntax>(WrappedType, nameof(Expression));
             WithExpressionAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, ExpressionSyntax>(WrappedType, nameof(Expression));
         }
