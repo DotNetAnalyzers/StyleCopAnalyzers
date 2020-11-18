@@ -73,5 +73,15 @@ namespace StyleCop.Analyzers.Lightup
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
+
+        public ThrowExpressionSyntaxWrapper WithThrowKeyword(SyntaxToken throwKeyword)
+        {
+            return new ThrowExpressionSyntaxWrapper(WithThrowKeywordAccessor(this.SyntaxNode, throwKeyword));
+        }
+
+        public ThrowExpressionSyntaxWrapper WithExpression(ExpressionSyntax expression)
+        {
+            return new ThrowExpressionSyntaxWrapper(WithExpressionAccessor(this.SyntaxNode, expression));
+        }
     }
 }

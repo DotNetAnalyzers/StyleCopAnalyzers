@@ -61,5 +61,10 @@ namespace StyleCop.Analyzers.Lightup
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
+
+        public FunctionPointerUnmanagedCallingConventionSyntaxWrapper WithName(SyntaxToken name)
+        {
+            return new FunctionPointerUnmanagedCallingConventionSyntaxWrapper(WithNameAccessor(this.SyntaxNode, name));
+        }
     }
 }

@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Lightup
 {
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal partial struct TupleExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
@@ -11,21 +10,6 @@ namespace StyleCop.Analyzers.Lightup
         public TupleExpressionSyntaxWrapper AddArguments(params ArgumentSyntax[] items)
         {
             return new TupleExpressionSyntaxWrapper(this.WithArguments(this.Arguments.AddRange(items)));
-        }
-
-        public TupleExpressionSyntaxWrapper WithOpenParenToken(SyntaxToken openParenToken)
-        {
-            return new TupleExpressionSyntaxWrapper(WithOpenParenTokenAccessor(this.SyntaxNode, openParenToken));
-        }
-
-        public TupleExpressionSyntaxWrapper WithArguments(SeparatedSyntaxList<ArgumentSyntax> arguments)
-        {
-            return new TupleExpressionSyntaxWrapper(WithArgumentsAccessor(this.SyntaxNode, arguments));
-        }
-
-        public TupleExpressionSyntaxWrapper WithCloseParenToken(SyntaxToken closeParenToken)
-        {
-            return new TupleExpressionSyntaxWrapper(WithCloseParenTokenAccessor(this.SyntaxNode, closeParenToken));
         }
     }
 }

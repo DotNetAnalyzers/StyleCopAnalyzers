@@ -89,5 +89,20 @@ namespace StyleCop.Analyzers.Lightup
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
+
+        public ImplicitObjectCreationExpressionSyntaxWrapper WithNewKeyword(SyntaxToken newKeyword)
+        {
+            return new ImplicitObjectCreationExpressionSyntaxWrapper(WithNewKeywordAccessor(this.SyntaxNode, newKeyword));
+        }
+
+        public ImplicitObjectCreationExpressionSyntaxWrapper WithArgumentList(ArgumentListSyntax argumentList)
+        {
+            return new ImplicitObjectCreationExpressionSyntaxWrapper(WithArgumentListAccessor(this.SyntaxNode, argumentList));
+        }
+
+        public ImplicitObjectCreationExpressionSyntaxWrapper WithInitializer(InitializerExpressionSyntax initializer)
+        {
+            return new ImplicitObjectCreationExpressionSyntaxWrapper(WithInitializerAccessor(this.SyntaxNode, initializer));
+        }
     }
 }

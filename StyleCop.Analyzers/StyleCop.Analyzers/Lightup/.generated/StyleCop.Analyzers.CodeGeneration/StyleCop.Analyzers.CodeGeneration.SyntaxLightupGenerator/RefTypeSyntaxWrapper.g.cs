@@ -85,5 +85,20 @@ namespace StyleCop.Analyzers.Lightup
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
+
+        public RefTypeSyntaxWrapper WithRefKeyword(SyntaxToken refKeyword)
+        {
+            return new RefTypeSyntaxWrapper(WithRefKeywordAccessor(this.SyntaxNode, refKeyword));
+        }
+
+        public RefTypeSyntaxWrapper WithReadOnlyKeyword(SyntaxToken readOnlyKeyword)
+        {
+            return new RefTypeSyntaxWrapper(WithReadOnlyKeywordAccessor(this.SyntaxNode, readOnlyKeyword));
+        }
+
+        public RefTypeSyntaxWrapper WithType(TypeSyntax type)
+        {
+            return new RefTypeSyntaxWrapper(WithTypeAccessor(this.SyntaxNode, type));
+        }
     }
 }

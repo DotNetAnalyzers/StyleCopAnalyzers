@@ -61,5 +61,10 @@ namespace StyleCop.Analyzers.Lightup
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
+
+        public DefaultConstraintSyntaxWrapper WithDefaultKeyword(SyntaxToken defaultKeyword)
+        {
+            return new DefaultConstraintSyntaxWrapper(WithDefaultKeywordAccessor(this.SyntaxNode, defaultKeyword));
+        }
     }
 }

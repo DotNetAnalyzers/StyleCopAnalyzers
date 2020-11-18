@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.Lightup
 {
     using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal partial struct RecursivePatternSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
@@ -28,26 +27,6 @@ namespace StyleCop.Analyzers.Lightup
             }
 
             return this.WithPropertyPatternClause(propertyPatternClause.WithSubpatterns(propertyPatternClause.Subpatterns.AddRange(items)));
-        }
-
-        public RecursivePatternSyntaxWrapper WithType(TypeSyntax type)
-        {
-            return new RecursivePatternSyntaxWrapper(WithTypeAccessor(this.SyntaxNode, type));
-        }
-
-        public RecursivePatternSyntaxWrapper WithPositionalPatternClause(PositionalPatternClauseSyntaxWrapper positionalPatternClause)
-        {
-            return new RecursivePatternSyntaxWrapper(WithPositionalPatternClauseAccessor(this.SyntaxNode, positionalPatternClause));
-        }
-
-        public RecursivePatternSyntaxWrapper WithPropertyPatternClause(PropertyPatternClauseSyntaxWrapper propertyPatternClause)
-        {
-            return new RecursivePatternSyntaxWrapper(WithPropertyPatternClauseAccessor(this.SyntaxNode, propertyPatternClause));
-        }
-
-        public RecursivePatternSyntaxWrapper WithDesignation(VariableDesignationSyntaxWrapper designation)
-        {
-            return new RecursivePatternSyntaxWrapper(WithDesignationAccessor(this.SyntaxNode, designation));
         }
     }
 }

@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Lightup
 {
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal partial struct SwitchExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
@@ -11,31 +10,6 @@ namespace StyleCop.Analyzers.Lightup
         public SwitchExpressionSyntaxWrapper AddArms(params SwitchExpressionArmSyntaxWrapper[] arms)
         {
             return new SwitchExpressionSyntaxWrapper(this.WithArms(this.Arms.AddRange(arms)));
-        }
-
-        public SwitchExpressionSyntaxWrapper WithArms(SeparatedSyntaxListWrapper<SwitchExpressionArmSyntaxWrapper> arms)
-        {
-            return new SwitchExpressionSyntaxWrapper(WithArmsAccessor(this.SyntaxNode, arms));
-        }
-
-        public SwitchExpressionSyntaxWrapper WithCloseBraceToken(SyntaxToken closeBraceToken)
-        {
-            return new SwitchExpressionSyntaxWrapper(WithCloseBraceTokenAccessor(this.SyntaxNode, closeBraceToken));
-        }
-
-        public SwitchExpressionSyntaxWrapper WithGoverningExpression(ExpressionSyntax expression)
-        {
-            return new SwitchExpressionSyntaxWrapper(WithGoverningExpressionAccessor(this.SyntaxNode, expression));
-        }
-
-        public SwitchExpressionSyntaxWrapper WithOpenBraceToken(SyntaxToken openBraceToken)
-        {
-            return new SwitchExpressionSyntaxWrapper(WithOpenBraceTokenAccessor(this.SyntaxNode, openBraceToken));
-        }
-
-        public SwitchExpressionSyntaxWrapper WithSwitchKeyword(SyntaxToken switchKeyword)
-        {
-            return new SwitchExpressionSyntaxWrapper(WithSwitchKeywordAccessor(this.SyntaxNode, switchKeyword));
         }
     }
 }

@@ -105,5 +105,20 @@ namespace StyleCop.Analyzers.Lightup
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
+
+        public BinaryPatternSyntaxWrapper WithLeft(PatternSyntaxWrapper left)
+        {
+            return new BinaryPatternSyntaxWrapper(WithLeftAccessor(this.SyntaxNode, left));
+        }
+
+        public BinaryPatternSyntaxWrapper WithOperatorToken(SyntaxToken operatorToken)
+        {
+            return new BinaryPatternSyntaxWrapper(WithOperatorTokenAccessor(this.SyntaxNode, operatorToken));
+        }
+
+        public BinaryPatternSyntaxWrapper WithRight(PatternSyntaxWrapper right)
+        {
+            return new BinaryPatternSyntaxWrapper(WithRightAccessor(this.SyntaxNode, right));
+        }
     }
 }

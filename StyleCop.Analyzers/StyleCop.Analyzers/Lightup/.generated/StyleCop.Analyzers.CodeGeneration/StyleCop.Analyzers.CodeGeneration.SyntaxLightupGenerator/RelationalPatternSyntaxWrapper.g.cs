@@ -93,5 +93,15 @@ namespace StyleCop.Analyzers.Lightup
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
+
+        public RelationalPatternSyntaxWrapper WithOperatorToken(SyntaxToken operatorToken)
+        {
+            return new RelationalPatternSyntaxWrapper(WithOperatorTokenAccessor(this.SyntaxNode, operatorToken));
+        }
+
+        public RelationalPatternSyntaxWrapper WithExpression(ExpressionSyntax expression)
+        {
+            return new RelationalPatternSyntaxWrapper(WithExpressionAccessor(this.SyntaxNode, expression));
+        }
     }
 }

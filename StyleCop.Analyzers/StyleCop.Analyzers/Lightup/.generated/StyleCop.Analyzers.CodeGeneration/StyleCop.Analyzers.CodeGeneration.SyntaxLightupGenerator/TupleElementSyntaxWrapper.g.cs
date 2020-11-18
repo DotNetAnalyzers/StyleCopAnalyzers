@@ -73,5 +73,15 @@ namespace StyleCop.Analyzers.Lightup
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
+
+        public TupleElementSyntaxWrapper WithType(TypeSyntax type)
+        {
+            return new TupleElementSyntaxWrapper(WithTypeAccessor(this.SyntaxNode, type));
+        }
+
+        public TupleElementSyntaxWrapper WithIdentifier(SyntaxToken identifier)
+        {
+            return new TupleElementSyntaxWrapper(WithIdentifierAccessor(this.SyntaxNode, identifier));
+        }
     }
 }

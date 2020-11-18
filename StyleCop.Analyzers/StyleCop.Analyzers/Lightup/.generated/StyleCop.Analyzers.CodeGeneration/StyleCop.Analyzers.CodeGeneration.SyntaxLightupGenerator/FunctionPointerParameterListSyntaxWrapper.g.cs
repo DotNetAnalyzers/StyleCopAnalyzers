@@ -85,5 +85,20 @@ namespace StyleCop.Analyzers.Lightup
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
+
+        public FunctionPointerParameterListSyntaxWrapper WithLessThanToken(SyntaxToken lessThanToken)
+        {
+            return new FunctionPointerParameterListSyntaxWrapper(WithLessThanTokenAccessor(this.SyntaxNode, lessThanToken));
+        }
+
+        public FunctionPointerParameterListSyntaxWrapper WithParameters(SeparatedSyntaxListWrapper<FunctionPointerParameterSyntaxWrapper> parameters)
+        {
+            return new FunctionPointerParameterListSyntaxWrapper(WithParametersAccessor(this.SyntaxNode, parameters));
+        }
+
+        public FunctionPointerParameterListSyntaxWrapper WithGreaterThanToken(SyntaxToken greaterThanToken)
+        {
+            return new FunctionPointerParameterListSyntaxWrapper(WithGreaterThanTokenAccessor(this.SyntaxNode, greaterThanToken));
+        }
     }
 }

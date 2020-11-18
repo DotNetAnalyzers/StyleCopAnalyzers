@@ -81,5 +81,10 @@ namespace StyleCop.Analyzers.Lightup
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
+
+        public DiscardPatternSyntaxWrapper WithUnderscoreToken(SyntaxToken underscoreToken)
+        {
+            return new DiscardPatternSyntaxWrapper(WithUnderscoreTokenAccessor(this.SyntaxNode, underscoreToken));
+        }
     }
 }

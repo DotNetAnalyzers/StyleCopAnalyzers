@@ -86,6 +86,21 @@ namespace StyleCop.Analyzers.Lightup
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
+        public BaseParameterSyntaxWrapper WithAttributeLists(SyntaxList<AttributeListSyntax> attributeLists)
+        {
+            return new BaseParameterSyntaxWrapper(WithAttributeListsAccessor(this.SyntaxNode, attributeLists));
+        }
+
+        public BaseParameterSyntaxWrapper WithModifiers(SyntaxTokenList modifiers)
+        {
+            return new BaseParameterSyntaxWrapper(WithModifiersAccessor(this.SyntaxNode, modifiers));
+        }
+
+        public BaseParameterSyntaxWrapper WithType(TypeSyntax type)
+        {
+            return new BaseParameterSyntaxWrapper(WithTypeAccessor(this.SyntaxNode, type));
+        }
+
         internal static BaseParameterSyntaxWrapper FromUpcast(CSharpSyntaxNode node)
         {
             return new BaseParameterSyntaxWrapper(node);

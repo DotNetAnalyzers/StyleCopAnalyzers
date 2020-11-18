@@ -73,5 +73,15 @@ namespace StyleCop.Analyzers.Lightup
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
+
+        public SubpatternSyntaxWrapper WithNameColon(NameColonSyntax nameColon)
+        {
+            return new SubpatternSyntaxWrapper(WithNameColonAccessor(this.SyntaxNode, nameColon));
+        }
+
+        public SubpatternSyntaxWrapper WithPattern(PatternSyntaxWrapper pattern)
+        {
+            return new SubpatternSyntaxWrapper(WithPatternAccessor(this.SyntaxNode, pattern));
+        }
     }
 }

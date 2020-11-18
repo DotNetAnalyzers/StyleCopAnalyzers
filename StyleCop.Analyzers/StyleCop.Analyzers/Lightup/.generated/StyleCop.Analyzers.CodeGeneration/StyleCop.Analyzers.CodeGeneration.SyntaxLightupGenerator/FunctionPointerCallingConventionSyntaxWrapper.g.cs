@@ -73,5 +73,15 @@ namespace StyleCop.Analyzers.Lightup
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
+
+        public FunctionPointerCallingConventionSyntaxWrapper WithManagedOrUnmanagedKeyword(SyntaxToken managedOrUnmanagedKeyword)
+        {
+            return new FunctionPointerCallingConventionSyntaxWrapper(WithManagedOrUnmanagedKeywordAccessor(this.SyntaxNode, managedOrUnmanagedKeyword));
+        }
+
+        public FunctionPointerCallingConventionSyntaxWrapper WithUnmanagedCallingConventionList(FunctionPointerUnmanagedCallingConventionListSyntaxWrapper unmanagedCallingConventionList)
+        {
+            return new FunctionPointerCallingConventionSyntaxWrapper(WithUnmanagedCallingConventionListAccessor(this.SyntaxNode, unmanagedCallingConventionList));
+        }
     }
 }

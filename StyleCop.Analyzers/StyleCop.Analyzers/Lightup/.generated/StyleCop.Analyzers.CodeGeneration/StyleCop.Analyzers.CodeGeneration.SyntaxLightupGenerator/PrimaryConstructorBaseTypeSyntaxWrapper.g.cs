@@ -71,5 +71,15 @@ namespace StyleCop.Analyzers.Lightup
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
+
+        public PrimaryConstructorBaseTypeSyntaxWrapper WithType(TypeSyntax type)
+        {
+            return new PrimaryConstructorBaseTypeSyntaxWrapper(WithTypeAccessor(this.SyntaxNode, type));
+        }
+
+        public PrimaryConstructorBaseTypeSyntaxWrapper WithArgumentList(ArgumentListSyntax argumentList)
+        {
+            return new PrimaryConstructorBaseTypeSyntaxWrapper(WithArgumentListAccessor(this.SyntaxNode, argumentList));
+        }
     }
 }

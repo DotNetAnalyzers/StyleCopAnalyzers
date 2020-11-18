@@ -73,5 +73,15 @@ namespace StyleCop.Analyzers.Lightup
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
+
+        public WhenClauseSyntaxWrapper WithWhenKeyword(SyntaxToken whenKeyword)
+        {
+            return new WhenClauseSyntaxWrapper(WithWhenKeywordAccessor(this.SyntaxNode, whenKeyword));
+        }
+
+        public WhenClauseSyntaxWrapper WithCondition(ExpressionSyntax condition)
+        {
+            return new WhenClauseSyntaxWrapper(WithConditionAccessor(this.SyntaxNode, condition));
+        }
     }
 }

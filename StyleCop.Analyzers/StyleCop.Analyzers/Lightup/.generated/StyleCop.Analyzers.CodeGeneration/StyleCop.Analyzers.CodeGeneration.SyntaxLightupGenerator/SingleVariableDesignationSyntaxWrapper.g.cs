@@ -71,5 +71,10 @@ namespace StyleCop.Analyzers.Lightup
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
+
+        public SingleVariableDesignationSyntaxWrapper WithIdentifier(SyntaxToken identifier)
+        {
+            return new SingleVariableDesignationSyntaxWrapper(WithIdentifierAccessor(this.SyntaxNode, identifier));
+        }
     }
 }

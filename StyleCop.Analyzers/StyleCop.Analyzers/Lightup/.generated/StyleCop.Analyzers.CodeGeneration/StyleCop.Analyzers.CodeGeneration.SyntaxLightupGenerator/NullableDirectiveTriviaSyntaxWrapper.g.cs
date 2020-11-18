@@ -115,5 +115,35 @@ namespace StyleCop.Analyzers.Lightup
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
+
+        public NullableDirectiveTriviaSyntaxWrapper WithHashToken(SyntaxToken hashToken)
+        {
+            return new NullableDirectiveTriviaSyntaxWrapper(WithHashTokenAccessor(this.SyntaxNode, hashToken));
+        }
+
+        public NullableDirectiveTriviaSyntaxWrapper WithNullableKeyword(SyntaxToken nullableKeyword)
+        {
+            return new NullableDirectiveTriviaSyntaxWrapper(WithNullableKeywordAccessor(this.SyntaxNode, nullableKeyword));
+        }
+
+        public NullableDirectiveTriviaSyntaxWrapper WithSettingToken(SyntaxToken settingToken)
+        {
+            return new NullableDirectiveTriviaSyntaxWrapper(WithSettingTokenAccessor(this.SyntaxNode, settingToken));
+        }
+
+        public NullableDirectiveTriviaSyntaxWrapper WithTargetToken(SyntaxToken targetToken)
+        {
+            return new NullableDirectiveTriviaSyntaxWrapper(WithTargetTokenAccessor(this.SyntaxNode, targetToken));
+        }
+
+        public NullableDirectiveTriviaSyntaxWrapper WithEndOfDirectiveToken(SyntaxToken endOfDirectiveToken)
+        {
+            return new NullableDirectiveTriviaSyntaxWrapper(WithEndOfDirectiveTokenAccessor(this.SyntaxNode, endOfDirectiveToken));
+        }
+
+        public NullableDirectiveTriviaSyntaxWrapper WithIsActive(bool isActive)
+        {
+            return new NullableDirectiveTriviaSyntaxWrapper(WithIsActiveAccessor(this.SyntaxNode, isActive));
+        }
     }
 }

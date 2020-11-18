@@ -85,5 +85,20 @@ namespace StyleCop.Analyzers.Lightup
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
+
+        public IsPatternExpressionSyntaxWrapper WithExpression(ExpressionSyntax expression)
+        {
+            return new IsPatternExpressionSyntaxWrapper(WithExpressionAccessor(this.SyntaxNode, expression));
+        }
+
+        public IsPatternExpressionSyntaxWrapper WithIsKeyword(SyntaxToken isKeyword)
+        {
+            return new IsPatternExpressionSyntaxWrapper(WithIsKeywordAccessor(this.SyntaxNode, isKeyword));
+        }
+
+        public IsPatternExpressionSyntaxWrapper WithPattern(PatternSyntaxWrapper pattern)
+        {
+            return new IsPatternExpressionSyntaxWrapper(WithPatternAccessor(this.SyntaxNode, pattern));
+        }
     }
 }

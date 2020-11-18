@@ -85,5 +85,20 @@ namespace StyleCop.Analyzers.Lightup
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
+
+        public FunctionPointerUnmanagedCallingConventionListSyntaxWrapper WithOpenBracketToken(SyntaxToken openBracketToken)
+        {
+            return new FunctionPointerUnmanagedCallingConventionListSyntaxWrapper(WithOpenBracketTokenAccessor(this.SyntaxNode, openBracketToken));
+        }
+
+        public FunctionPointerUnmanagedCallingConventionListSyntaxWrapper WithCallingConventions(SeparatedSyntaxListWrapper<FunctionPointerUnmanagedCallingConventionSyntaxWrapper> callingConventions)
+        {
+            return new FunctionPointerUnmanagedCallingConventionListSyntaxWrapper(WithCallingConventionsAccessor(this.SyntaxNode, callingConventions));
+        }
+
+        public FunctionPointerUnmanagedCallingConventionListSyntaxWrapper WithCloseBracketToken(SyntaxToken closeBracketToken)
+        {
+            return new FunctionPointerUnmanagedCallingConventionListSyntaxWrapper(WithCloseBracketTokenAccessor(this.SyntaxNode, closeBracketToken));
+        }
     }
 }

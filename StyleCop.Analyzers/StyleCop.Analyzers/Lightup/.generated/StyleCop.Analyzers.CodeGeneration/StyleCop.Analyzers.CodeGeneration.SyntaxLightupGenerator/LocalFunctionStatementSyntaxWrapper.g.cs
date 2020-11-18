@@ -167,5 +167,55 @@ namespace StyleCop.Analyzers.Lightup
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
+
+        public LocalFunctionStatementSyntaxWrapper WithAttributeLists(SyntaxList<AttributeListSyntax> attributeLists)
+        {
+            return new LocalFunctionStatementSyntaxWrapper(WithAttributeListsAccessor(this.SyntaxNode, attributeLists));
+        }
+
+        public LocalFunctionStatementSyntaxWrapper WithModifiers(SyntaxTokenList modifiers)
+        {
+            return new LocalFunctionStatementSyntaxWrapper(WithModifiersAccessor(this.SyntaxNode, modifiers));
+        }
+
+        public LocalFunctionStatementSyntaxWrapper WithReturnType(TypeSyntax returnType)
+        {
+            return new LocalFunctionStatementSyntaxWrapper(WithReturnTypeAccessor(this.SyntaxNode, returnType));
+        }
+
+        public LocalFunctionStatementSyntaxWrapper WithIdentifier(SyntaxToken identifier)
+        {
+            return new LocalFunctionStatementSyntaxWrapper(WithIdentifierAccessor(this.SyntaxNode, identifier));
+        }
+
+        public LocalFunctionStatementSyntaxWrapper WithTypeParameterList(TypeParameterListSyntax typeParameterList)
+        {
+            return new LocalFunctionStatementSyntaxWrapper(WithTypeParameterListAccessor(this.SyntaxNode, typeParameterList));
+        }
+
+        public LocalFunctionStatementSyntaxWrapper WithParameterList(ParameterListSyntax parameterList)
+        {
+            return new LocalFunctionStatementSyntaxWrapper(WithParameterListAccessor(this.SyntaxNode, parameterList));
+        }
+
+        public LocalFunctionStatementSyntaxWrapper WithConstraintClauses(SyntaxList<TypeParameterConstraintClauseSyntax> constraintClauses)
+        {
+            return new LocalFunctionStatementSyntaxWrapper(WithConstraintClausesAccessor(this.SyntaxNode, constraintClauses));
+        }
+
+        public LocalFunctionStatementSyntaxWrapper WithBody(BlockSyntax body)
+        {
+            return new LocalFunctionStatementSyntaxWrapper(WithBodyAccessor(this.SyntaxNode, body));
+        }
+
+        public LocalFunctionStatementSyntaxWrapper WithExpressionBody(ArrowExpressionClauseSyntax expressionBody)
+        {
+            return new LocalFunctionStatementSyntaxWrapper(WithExpressionBodyAccessor(this.SyntaxNode, expressionBody));
+        }
+
+        public LocalFunctionStatementSyntaxWrapper WithSemicolonToken(SyntaxToken semicolonToken)
+        {
+            return new LocalFunctionStatementSyntaxWrapper(WithSemicolonTokenAccessor(this.SyntaxNode, semicolonToken));
+        }
     }
 }

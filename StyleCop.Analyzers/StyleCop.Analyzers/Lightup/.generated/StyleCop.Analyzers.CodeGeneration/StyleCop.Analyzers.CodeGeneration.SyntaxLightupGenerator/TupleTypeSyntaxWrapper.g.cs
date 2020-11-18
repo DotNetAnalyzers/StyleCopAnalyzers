@@ -85,5 +85,20 @@ namespace StyleCop.Analyzers.Lightup
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
+
+        public TupleTypeSyntaxWrapper WithOpenParenToken(SyntaxToken openParenToken)
+        {
+            return new TupleTypeSyntaxWrapper(WithOpenParenTokenAccessor(this.SyntaxNode, openParenToken));
+        }
+
+        public TupleTypeSyntaxWrapper WithElements(SeparatedSyntaxListWrapper<TupleElementSyntaxWrapper> elements)
+        {
+            return new TupleTypeSyntaxWrapper(WithElementsAccessor(this.SyntaxNode, elements));
+        }
+
+        public TupleTypeSyntaxWrapper WithCloseParenToken(SyntaxToken closeParenToken)
+        {
+            return new TupleTypeSyntaxWrapper(WithCloseParenTokenAccessor(this.SyntaxNode, closeParenToken));
+        }
     }
 }

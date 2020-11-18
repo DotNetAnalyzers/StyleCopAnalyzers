@@ -81,5 +81,10 @@ namespace StyleCop.Analyzers.Lightup
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
+
+        public TypePatternSyntaxWrapper WithType(TypeSyntax type)
+        {
+            return new TypePatternSyntaxWrapper(WithTypeAccessor(this.SyntaxNode, type));
+        }
     }
 }

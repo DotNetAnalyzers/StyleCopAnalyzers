@@ -171,5 +171,65 @@ namespace StyleCop.Analyzers.Lightup
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
+
+        public RecordDeclarationSyntaxWrapper WithAttributeLists(SyntaxList<AttributeListSyntax> attributeLists)
+        {
+            return new RecordDeclarationSyntaxWrapper(WithAttributeListsAccessor(this.SyntaxNode, attributeLists));
+        }
+
+        public RecordDeclarationSyntaxWrapper WithModifiers(SyntaxTokenList modifiers)
+        {
+            return new RecordDeclarationSyntaxWrapper(WithModifiersAccessor(this.SyntaxNode, modifiers));
+        }
+
+        public RecordDeclarationSyntaxWrapper WithKeyword(SyntaxToken keyword)
+        {
+            return new RecordDeclarationSyntaxWrapper(WithKeywordAccessor(this.SyntaxNode, keyword));
+        }
+
+        public RecordDeclarationSyntaxWrapper WithIdentifier(SyntaxToken identifier)
+        {
+            return new RecordDeclarationSyntaxWrapper(WithIdentifierAccessor(this.SyntaxNode, identifier));
+        }
+
+        public RecordDeclarationSyntaxWrapper WithTypeParameterList(TypeParameterListSyntax typeParameterList)
+        {
+            return new RecordDeclarationSyntaxWrapper(WithTypeParameterListAccessor(this.SyntaxNode, typeParameterList));
+        }
+
+        public RecordDeclarationSyntaxWrapper WithParameterList(ParameterListSyntax parameterList)
+        {
+            return new RecordDeclarationSyntaxWrapper(WithParameterListAccessor(this.SyntaxNode, parameterList));
+        }
+
+        public RecordDeclarationSyntaxWrapper WithBaseList(BaseListSyntax baseList)
+        {
+            return new RecordDeclarationSyntaxWrapper(WithBaseListAccessor(this.SyntaxNode, baseList));
+        }
+
+        public RecordDeclarationSyntaxWrapper WithConstraintClauses(SyntaxList<TypeParameterConstraintClauseSyntax> constraintClauses)
+        {
+            return new RecordDeclarationSyntaxWrapper(WithConstraintClausesAccessor(this.SyntaxNode, constraintClauses));
+        }
+
+        public RecordDeclarationSyntaxWrapper WithOpenBraceToken(SyntaxToken openBraceToken)
+        {
+            return new RecordDeclarationSyntaxWrapper(WithOpenBraceTokenAccessor(this.SyntaxNode, openBraceToken));
+        }
+
+        public RecordDeclarationSyntaxWrapper WithMembers(SyntaxList<MemberDeclarationSyntax> members)
+        {
+            return new RecordDeclarationSyntaxWrapper(WithMembersAccessor(this.SyntaxNode, members));
+        }
+
+        public RecordDeclarationSyntaxWrapper WithCloseBraceToken(SyntaxToken closeBraceToken)
+        {
+            return new RecordDeclarationSyntaxWrapper(WithCloseBraceTokenAccessor(this.SyntaxNode, closeBraceToken));
+        }
+
+        public RecordDeclarationSyntaxWrapper WithSemicolonToken(SyntaxToken semicolonToken)
+        {
+            return new RecordDeclarationSyntaxWrapper(WithSemicolonTokenAccessor(this.SyntaxNode, semicolonToken));
+        }
     }
 }

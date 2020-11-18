@@ -652,6 +652,62 @@ namespace StyleCop.Analyzers.CodeGeneration
                                 })))))),
                 expressionBody: null));
 
+            foreach (var field in nodeData.Fields)
+            {
+                if (field.IsSkipped)
+                {
+                    continue;
+                }
+
+                string valueName = char.ToLowerInvariant(field.Name[0]) + field.Name.Substring(1);
+
+                ExpressionSyntax convertedValue = SyntaxFactory.IdentifierName(valueName);
+
+                TypeSyntax propertyType = SyntaxFactory.ParseTypeName(field.GetAccessorResultType(syntaxData));
+                if (syntaxData.TryGetNode(field.Type) is { WrapperName: { } wrapperName })
+                {
+                    propertyType = SyntaxFactory.IdentifierName(wrapperName);
+                }
+
+                ExpressionSyntax returnExpression = SyntaxFactory.InvocationExpression(
+                    expression: SyntaxFactory.IdentifierName(field.WithAccessorName),
+                    argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(
+                        new[]
+                        {
+                            SyntaxFactory.Argument(SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                expression: SyntaxFactory.ThisExpression(),
+                                name: SyntaxFactory.IdentifierName("SyntaxNode"))),
+                            SyntaxFactory.Argument(convertedValue),
+                        })));
+
+                // public SyntaxWrapper WithField(T value)
+                // {
+                //     return new SyntaxWrapper(...);
+                // }
+                members = members.Add(SyntaxFactory.MethodDeclaration(
+                    attributeLists: default,
+                    modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)),
+                    returnType: SyntaxFactory.IdentifierName(nodeData.WrapperName),
+                    explicitInterfaceSpecifier: null,
+                    identifier: SyntaxFactory.Identifier("With" + field.Name),
+                    typeParameterList: null,
+                    parameterList: SyntaxFactory.ParameterList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Parameter(
+                        attributeLists: default,
+                        modifiers: default,
+                        type: propertyType,
+                        identifier: SyntaxFactory.Identifier(valueName),
+                        @default: null))),
+                    constraintClauses: default,
+                    body: SyntaxFactory.Block(SyntaxFactory.ReturnStatement(
+                        SyntaxFactory.ObjectCreationExpression(
+                            type: SyntaxFactory.IdentifierName(nodeData.WrapperName),
+                            argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(returnExpression))),
+                            initializer: null))),
+                    expressionBody: null,
+                    semicolonToken: default));
+            }
+
             if (nodeData.Kind == NodeKind.Abstract)
             {
                 // internal static SyntaxWrapper FromUpcast(CSharpSyntaxNode node)
