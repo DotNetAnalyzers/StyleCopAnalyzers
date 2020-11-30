@@ -9,7 +9,6 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.SpacingRules;
     using StyleCop.Analyzers.Test.Verifiers;
-    using TestHelper;
     using Xunit;
 
     /// <summary>

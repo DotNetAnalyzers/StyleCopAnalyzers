@@ -5,12 +5,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
-    using Microsoft.CodeAnalysis.Text;
-
-    using TestHelper;
     using Xunit;
 
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<

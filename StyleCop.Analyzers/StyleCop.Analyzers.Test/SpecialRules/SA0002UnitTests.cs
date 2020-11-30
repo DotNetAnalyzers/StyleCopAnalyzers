@@ -14,7 +14,6 @@ namespace StyleCop.Analyzers.Test.SpecialRules
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Settings;
     using StyleCop.Analyzers.SpecialRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.SpecialRules.SA0002InvalidSettingsFile>;
 

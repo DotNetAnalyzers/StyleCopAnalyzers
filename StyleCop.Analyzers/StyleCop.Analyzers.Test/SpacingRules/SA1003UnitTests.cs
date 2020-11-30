@@ -7,7 +7,6 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
-    using TestHelper;
     using Xunit;
 
     using static StyleCop.Analyzers.SpacingRules.SA1003SymbolsMustBeSpacedCorrectly;

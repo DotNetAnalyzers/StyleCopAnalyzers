@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Settings
 {
-    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;

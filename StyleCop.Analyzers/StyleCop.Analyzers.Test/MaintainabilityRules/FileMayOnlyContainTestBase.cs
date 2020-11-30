@@ -10,7 +10,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Testing;
-    using Microsoft.CodeAnalysis.Testing.Verifiers;
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
 

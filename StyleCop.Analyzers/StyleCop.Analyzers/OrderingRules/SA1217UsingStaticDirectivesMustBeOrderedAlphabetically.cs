@@ -5,7 +5,6 @@ namespace StyleCop.Analyzers.OrderingRules
 {
     using System;
     using System.Collections.Immutable;
-    using System.Globalization;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;

@@ -9,7 +9,6 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Test.Verifiers;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1618GenericTypeParametersMustBeDocumented>;
 

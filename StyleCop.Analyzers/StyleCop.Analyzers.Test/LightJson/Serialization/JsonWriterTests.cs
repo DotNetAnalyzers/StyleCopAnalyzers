@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.LightJson.Serialization
 {
-    using System;
     using global::LightJson;
     using global::LightJson.Serialization;
     using Xunit;

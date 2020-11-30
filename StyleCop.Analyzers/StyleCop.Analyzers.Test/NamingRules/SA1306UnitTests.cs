@@ -7,7 +7,6 @@ namespace StyleCop.Analyzers.Test.NamingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.NamingRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.NamingRules.SA1306FieldNamesMustBeginWithLowerCaseLetter,

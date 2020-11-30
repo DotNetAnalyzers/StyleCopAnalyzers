@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using LightJson;
 

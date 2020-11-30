@@ -10,7 +10,6 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
 

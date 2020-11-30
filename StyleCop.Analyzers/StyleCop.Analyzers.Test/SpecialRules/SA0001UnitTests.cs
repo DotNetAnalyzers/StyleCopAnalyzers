@@ -8,7 +8,6 @@ namespace StyleCop.Analyzers.Test.SpecialRules
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpecialRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.SpecialRules.SA0001XmlCommentAnalysisDisabled>;
 

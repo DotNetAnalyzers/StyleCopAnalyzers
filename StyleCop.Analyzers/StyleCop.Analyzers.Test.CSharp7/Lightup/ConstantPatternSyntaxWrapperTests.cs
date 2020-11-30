@@ -6,7 +6,6 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
     using System;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
-    using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
     using Xunit;
 

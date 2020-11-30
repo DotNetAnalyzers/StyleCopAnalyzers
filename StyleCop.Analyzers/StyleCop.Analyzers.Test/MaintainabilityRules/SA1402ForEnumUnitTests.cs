@@ -6,7 +6,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
-    using TestHelper;
     using Xunit;
 
     public class SA1402ForEnumUnitTests : SA1402ForNonBlockDeclarationUnitTestsBase
