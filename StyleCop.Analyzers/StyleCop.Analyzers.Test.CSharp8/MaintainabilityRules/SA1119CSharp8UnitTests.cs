@@ -152,5 +152,23 @@ public class Foo
 
             await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestStackAllocExpressionInExpressionAsync()
+        {
+            const string testCode = @"public class TestClass
+{
+    public unsafe void TestMethod()
+    {
+        var ptr1 = stackalloc byte[1];
+        var span1 = (stackalloc byte[1]);
+        var ptr2 = stackalloc[] { 0 };
+        var span2 = (stackalloc[] { 0 });
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
