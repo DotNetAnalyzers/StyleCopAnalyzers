@@ -9,6 +9,8 @@ namespace StyleCop.Analyzers.Lightup
     {
         public const SyntaxKind DotDotToken = (SyntaxKind)8222;
         public const SyntaxKind QuestionQuestionEqualsToken = (SyntaxKind)8284;
+        public const SyntaxKind ManagedKeyword = (SyntaxKind)8445;
+        public const SyntaxKind UnmanagedKeyword = (SyntaxKind)8446;
         public const SyntaxKind NullableKeyword = (SyntaxKind)8486;
         public const SyntaxKind EnableKeyword = (SyntaxKind)8487;
         public const SyntaxKind WarningsKeyword = (SyntaxKind)8488;
@@ -49,6 +51,8 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind ImplicitStackAllocArrayCreationExpression = (SyntaxKind)9053;
         public const SyntaxKind SuppressNullableWarningExpression = (SyntaxKind)9054;
         public const SyntaxKind NullableDirectiveTrivia = (SyntaxKind)9055;
+        public const SyntaxKind FunctionPointerType = (SyntaxKind)9056;
+        public const SyntaxKind FunctionPointerParameter = (SyntaxKind)9057;
         public const SyntaxKind WithInitializerExpression = (SyntaxKind)9062;
         public const SyntaxKind RecordDeclaration = (SyntaxKind)9063;
         public const SyntaxKind FunctionPointerUnmanagedCallingConventionList = (SyntaxKind)9066;
