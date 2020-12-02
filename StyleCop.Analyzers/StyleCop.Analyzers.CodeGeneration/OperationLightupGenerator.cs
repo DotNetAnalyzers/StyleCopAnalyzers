@@ -684,6 +684,11 @@ namespace StyleCop.Analyzers.CodeGeneration
                 body: SyntaxFactory.Block(staticCtorStatements),
                 expressionBody: null);
 
+            // /// <summary>
+            // /// Gets the type that is wrapped by the given wrapper.
+            // /// </summary>
+            // /// <param name="wrapperType">Type of the wrapper for which the wrapped type should be retrieved.</param>
+            // /// <returns>The wrapped type, or null if there is no info.</returns>
             // internal static Type GetWrappedType(Type wrapperType)
             // {
             //     if (WrappedTypes.TryGetValue(wrapperType, out Type wrappedType))
@@ -729,6 +734,25 @@ namespace StyleCop.Analyzers.CodeGeneration
                             SyntaxFactory.ReturnStatement(SyntaxFactory.IdentifierName("wrappedType")))),
                     SyntaxFactory.ReturnStatement(SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression))),
                 expressionBody: null);
+
+            getWrappedType = getWrappedType.WithLeadingTrivia(SyntaxFactory.TriviaList(
+                SyntaxFactory.Trivia(SyntaxFactory.DocumentationComment(
+                    SyntaxFactory.XmlText(" "),
+                    SyntaxFactory.XmlSummaryElement(
+                        SyntaxFactory.XmlNewLine(Environment.NewLine),
+                        SyntaxFactory.XmlText(" Gets the type that is wrapped by the given wrapper."),
+                        SyntaxFactory.XmlNewLine(Environment.NewLine),
+                        SyntaxFactory.XmlText(" ")),
+                    SyntaxFactory.XmlNewLine(Environment.NewLine),
+                    SyntaxFactory.XmlText(" "),
+                    SyntaxFactory.XmlParamElement(
+                        "wrapperType",
+                        SyntaxFactory.XmlText("Type of the wrapper for which the wrapped type should be retrieved.")),
+                    SyntaxFactory.XmlNewLine(Environment.NewLine),
+                    SyntaxFactory.XmlText(" "),
+                    SyntaxFactory.XmlReturnsElement(
+                        SyntaxFactory.XmlText("The wrapped type, or null if there is no info.")),
+                    SyntaxFactory.XmlNewLine(Environment.NewLine).WithoutTrailingTrivia()))));
 
             var wrapperHelperClass = SyntaxFactory.ClassDeclaration(
                 attributeLists: default,
