@@ -16,7 +16,9 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<CSharpSyntaxNode, SyntaxList<AttributeListSyntax>, CSharpSyntaxNode> WithAttributeListsAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxTokenList, CSharpSyntaxNode> WithModifiersAccessor;
         private static readonly Func<CSharpSyntaxNode, TypeSyntax, CSharpSyntaxNode> WithTypeAccessor;
+
         private readonly CSharpSyntaxNode node;
+
         static FunctionPointerParameterSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(FunctionPointerParameterSyntaxWrapper));
@@ -31,6 +33,7 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
+
         public SyntaxList<AttributeListSyntax> AttributeLists
         {
             get

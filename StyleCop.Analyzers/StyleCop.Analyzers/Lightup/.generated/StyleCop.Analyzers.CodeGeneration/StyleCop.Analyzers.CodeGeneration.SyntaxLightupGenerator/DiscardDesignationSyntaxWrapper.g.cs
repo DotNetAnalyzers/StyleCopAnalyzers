@@ -13,9 +13,12 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.DiscardDesignationSyntax";
         private static readonly Type WrappedType;
+
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> UnderscoreTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithUnderscoreTokenAccessor;
+
         private readonly CSharpSyntaxNode node;
+
         static DiscardDesignationSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(DiscardDesignationSyntaxWrapper));
@@ -29,6 +32,7 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
+
         public SyntaxToken UnderscoreToken
         {
             get

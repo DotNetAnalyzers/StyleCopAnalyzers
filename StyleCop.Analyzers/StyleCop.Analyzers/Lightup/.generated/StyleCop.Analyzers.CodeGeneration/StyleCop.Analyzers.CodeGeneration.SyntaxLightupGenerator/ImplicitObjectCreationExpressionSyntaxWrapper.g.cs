@@ -16,7 +16,9 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithNewKeywordAccessor;
         private static readonly Func<ExpressionSyntax, ArgumentListSyntax, ExpressionSyntax> WithArgumentListAccessor;
         private static readonly Func<ExpressionSyntax, InitializerExpressionSyntax, ExpressionSyntax> WithInitializerAccessor;
+
         private readonly ExpressionSyntax node;
+
         static ImplicitObjectCreationExpressionSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(ImplicitObjectCreationExpressionSyntaxWrapper));
@@ -31,6 +33,7 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public ExpressionSyntax SyntaxNode => this.node;
+
         public SyntaxToken NewKeyword
         {
             get

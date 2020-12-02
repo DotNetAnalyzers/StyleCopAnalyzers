@@ -12,10 +12,12 @@ namespace StyleCop.Analyzers.Lightup
     internal static class SyntaxWrapperHelper
     {
         private static readonly ImmutableDictionary<Type, Type> WrappedTypes;
+
         static SyntaxWrapperHelper()
         {
             var csharpCodeAnalysisAssembly = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly;
             var builder = ImmutableDictionary.CreateBuilder<Type, Type>();
+
             builder.Add(typeof(BaseObjectCreationExpressionSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(BaseObjectCreationExpressionSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(BaseParameterSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(BaseParameterSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(BinaryPatternSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(BinaryPatternSyntaxWrapper.WrappedTypeName));
@@ -67,6 +69,7 @@ namespace StyleCop.Analyzers.Lightup
             builder.Add(typeof(VarPatternSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(VarPatternSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(WhenClauseSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(WhenClauseSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(WithExpressionSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(WithExpressionSyntaxWrapper.WrappedTypeName));
+
             WrappedTypes = builder.ToImmutable();
         }
 

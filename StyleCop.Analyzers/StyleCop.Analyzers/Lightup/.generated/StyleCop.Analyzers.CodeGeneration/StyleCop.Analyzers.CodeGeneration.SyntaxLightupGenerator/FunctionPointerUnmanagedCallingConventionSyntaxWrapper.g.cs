@@ -13,9 +13,12 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.FunctionPointerUnmanagedCallingConventionSyntax";
         private static readonly Type WrappedType;
+
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> NameAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithNameAccessor;
+
         private readonly CSharpSyntaxNode node;
+
         static FunctionPointerUnmanagedCallingConventionSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(FunctionPointerUnmanagedCallingConventionSyntaxWrapper));
@@ -29,6 +32,7 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
+
         public SyntaxToken Name
         {
             get

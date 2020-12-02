@@ -85,6 +85,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                     type: SyntaxFactory.IdentifierName("Type"),
                     variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator("WrappedType")))));
 
+            bool first = true;
             foreach (var field in nodeData.Fields)
             {
                 if (field.IsSkipped)
@@ -99,7 +100,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 }
 
                 // private static readonly Func<CSharpSyntaxNode, T> FieldAccessor;
-                members = members.Add(SyntaxFactory.FieldDeclaration(
+                FieldDeclarationSyntax fieldAccessor = SyntaxFactory.FieldDeclaration(
                     attributeLists: default,
                     modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PrivateKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword), SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)),
                     declaration: SyntaxFactory.VariableDeclaration(
@@ -111,7 +112,15 @@ namespace StyleCop.Analyzers.CodeGeneration
                                     SyntaxFactory.IdentifierName(concreteBase),
                                     SyntaxFactory.ParseTypeName(field.GetAccessorResultType(syntaxData)),
                                 }))),
-                        variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(field.AccessorName)))));
+                        variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(field.AccessorName))));
+
+                if (first)
+                {
+                    fieldAccessor = fieldAccessor.WithLeadingBlankLine();
+                    first = false;
+                }
+
+                members = members.Add(fieldAccessor);
             }
 
             foreach (var field in nodeData.Fields)
@@ -144,7 +153,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PrivateKeyword), SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)),
                 declaration: SyntaxFactory.VariableDeclaration(
                     type: SyntaxFactory.IdentifierName(concreteBase),
-                    variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator("node")))));
+                    variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator("node")))).WithLeadingBlankLine());
 
             // WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(SyntaxWrapper));
             var staticCtorStatements = SyntaxFactory.SingletonList<StatementSyntax>(
@@ -284,7 +293,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 parameterList: SyntaxFactory.ParameterList(),
                 initializer: null,
                 body: SyntaxFactory.Block(staticCtorStatements),
-                expressionBody: null));
+                expressionBody: null).WithLeadingBlankLine());
 
             // private SyntaxNodeWrapper(SyntaxNode node)
             // {
@@ -333,6 +342,7 @@ namespace StyleCop.Analyzers.CodeGeneration
             //         return ...;
             //     }
             // }
+            first = true;
             foreach (var field in nodeData.Fields)
             {
                 if (field.IsSkipped)
@@ -426,7 +436,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 //         return ...;
                 //     }
                 // }
-                members = members.Add(SyntaxFactory.PropertyDeclaration(
+                PropertyDeclarationSyntax property = SyntaxFactory.PropertyDeclaration(
                     attributeLists: default,
                     modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)),
                     type: propertyType,
@@ -438,7 +448,15 @@ namespace StyleCop.Analyzers.CodeGeneration
                             SyntaxFactory.ReturnStatement(returnExpression))))),
                     expressionBody: null,
                     initializer: null,
-                    semicolonToken: default));
+                    semicolonToken: default);
+
+                if (first)
+                {
+                    property = property.WithLeadingBlankLine();
+                    first = false;
+                }
+
+                members = members.Add(property);
             }
 
             for (var baseNode = syntaxData.TryGetNode(nodeData.BaseName); baseNode?.WrapperName is not null; baseNode = syntaxData.TryGetNode(baseNode.BaseName))
@@ -447,7 +465,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 // {
                 //     return (SyntaxWrapper)node.SyntaxNode;
                 // }
-                members = members.Add(SyntaxFactory.ConversionOperatorDeclaration(
+                ConversionOperatorDeclarationSyntax wrapperConversion = SyntaxFactory.ConversionOperatorDeclaration(
                     attributeLists: default,
                     modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword)),
                     implicitOrExplicitKeyword: SyntaxFactory.Token(SyntaxKind.ExplicitKeyword),
@@ -467,7 +485,15 @@ namespace StyleCop.Analyzers.CodeGeneration
                                 expression: SyntaxFactory.IdentifierName("node"),
                                 name: SyntaxFactory.IdentifierName("SyntaxNode"))))),
                     expressionBody: null,
-                    semicolonToken: default));
+                    semicolonToken: default);
+
+                if (first)
+                {
+                    wrapperConversion = wrapperConversion.WithLeadingBlankLine();
+                    first = false;
+                }
+
+                members = members.Add(wrapperConversion);
             }
 
             // public static explicit operator WhenClauseSyntaxWrapper(SyntaxNode node)
@@ -484,7 +510,7 @@ namespace StyleCop.Analyzers.CodeGeneration
             //
             //     return new WhenClauseSyntaxWrapper((CSharpSyntaxNode)node);
             // }
-            members = members.Add(SyntaxFactory.ConversionOperatorDeclaration(
+            var nodeConversion = SyntaxFactory.ConversionOperatorDeclaration(
                 attributeLists: default,
                 modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword)),
                 implicitOrExplicitKeyword: SyntaxFactory.Token(SyntaxKind.ExplicitKeyword),
@@ -556,7 +582,15 @@ namespace StyleCop.Analyzers.CodeGeneration
                                 expression: SyntaxFactory.IdentifierName("node"))))),
                         initializer: null))),
                 expressionBody: null,
-                semicolonToken: default));
+                semicolonToken: default);
+
+            if (first)
+            {
+                nodeConversion = nodeConversion.WithLeadingBlankLine();
+                first = false;
+            }
+
+            members = members.Add(nodeConversion);
 
             for (var baseNode = syntaxData.TryGetNode(nodeData.BaseName); baseNode?.WrapperName is not null; baseNode = syntaxData.TryGetNode(baseNode.BaseName))
             {
@@ -827,6 +861,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                                                     SyntaxFactory.IdentifierName("Type"),
                                                 })))))))))));
 
+            bool first = true;
             foreach (var node in wrapperTypes.OrderBy(node => node.Name, StringComparer.OrdinalIgnoreCase))
             {
                 if (node.WrapperName is null)
@@ -890,7 +925,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 }
 
                 // builder.Add(typeof(ConstantPatternSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ConstantPatternSyntaxWrapper.WrappedTypeName));
-                staticCtorStatements = staticCtorStatements.Add(SyntaxFactory.ExpressionStatement(
+                ExpressionStatementSyntax statement = SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.InvocationExpression(
                         expression: SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
@@ -912,7 +947,15 @@ namespace StyleCop.Analyzers.CodeGeneration
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     expression: SyntaxFactory.IdentifierName(node.WrapperName),
                                                     name: SyntaxFactory.IdentifierName("WrappedTypeName"))))))),
-                                })))));
+                                }))));
+
+                if (first)
+                {
+                    statement = statement.WithLeadingBlankLine();
+                    first = false;
+                }
+
+                staticCtorStatements = staticCtorStatements.Add(statement);
             }
 
             // WrappedTypes = builder.ToImmutable();
@@ -924,7 +967,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                         SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
                             expression: SyntaxFactory.IdentifierName("builder"),
-                            name: SyntaxFactory.IdentifierName("ToImmutable"))))));
+                            name: SyntaxFactory.IdentifierName("ToImmutable"))))).WithLeadingBlankLine());
 
             var staticCtor = SyntaxFactory.ConstructorDeclaration(
                 attributeLists: default,
@@ -933,7 +976,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 parameterList: SyntaxFactory.ParameterList(),
                 initializer: null,
                 body: SyntaxFactory.Block(staticCtorStatements),
-                expressionBody: null);
+                expressionBody: null).WithLeadingBlankLine();
 
             // /// <summary>
             // /// Gets the type that is wrapped by the given wrapper.

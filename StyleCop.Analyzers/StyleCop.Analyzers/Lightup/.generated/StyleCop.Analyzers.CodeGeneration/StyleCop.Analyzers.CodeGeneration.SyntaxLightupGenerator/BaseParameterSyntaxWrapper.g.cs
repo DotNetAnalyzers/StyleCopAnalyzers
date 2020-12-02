@@ -13,13 +13,16 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.BaseParameterSyntax";
         private static readonly Type WrappedType;
+
         private static readonly Func<CSharpSyntaxNode, SyntaxList<AttributeListSyntax>> AttributeListsAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxTokenList> ModifiersAccessor;
         private static readonly Func<CSharpSyntaxNode, TypeSyntax> TypeAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxList<AttributeListSyntax>, CSharpSyntaxNode> WithAttributeListsAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxTokenList, CSharpSyntaxNode> WithModifiersAccessor;
         private static readonly Func<CSharpSyntaxNode, TypeSyntax, CSharpSyntaxNode> WithTypeAccessor;
+
         private readonly CSharpSyntaxNode node;
+
         static BaseParameterSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(BaseParameterSyntaxWrapper));
@@ -37,6 +40,7 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
+
         public SyntaxList<AttributeListSyntax> AttributeLists
         {
             get

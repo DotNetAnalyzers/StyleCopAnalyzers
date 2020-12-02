@@ -13,13 +13,16 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.RefTypeSyntax";
         private static readonly Type WrappedType;
+
         private static readonly Func<TypeSyntax, SyntaxToken> RefKeywordAccessor;
         private static readonly Func<TypeSyntax, SyntaxToken> ReadOnlyKeywordAccessor;
         private static readonly Func<TypeSyntax, TypeSyntax> TypeAccessor;
         private static readonly Func<TypeSyntax, SyntaxToken, TypeSyntax> WithRefKeywordAccessor;
         private static readonly Func<TypeSyntax, SyntaxToken, TypeSyntax> WithReadOnlyKeywordAccessor;
         private static readonly Func<TypeSyntax, TypeSyntax, TypeSyntax> WithTypeAccessor;
+
         private readonly TypeSyntax node;
+
         static RefTypeSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(RefTypeSyntaxWrapper));
@@ -37,6 +40,7 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public TypeSyntax SyntaxNode => this.node;
+
         public SyntaxToken RefKeyword
         {
             get

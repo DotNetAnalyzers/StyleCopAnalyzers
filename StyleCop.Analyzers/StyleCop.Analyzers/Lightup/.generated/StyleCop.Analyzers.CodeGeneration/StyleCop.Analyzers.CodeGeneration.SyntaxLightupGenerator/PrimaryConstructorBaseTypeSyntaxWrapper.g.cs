@@ -13,10 +13,13 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.PrimaryConstructorBaseTypeSyntax";
         private static readonly Type WrappedType;
+
         private static readonly Func<BaseTypeSyntax, ArgumentListSyntax> ArgumentListAccessor;
         private static readonly Func<BaseTypeSyntax, TypeSyntax, BaseTypeSyntax> WithTypeAccessor;
         private static readonly Func<BaseTypeSyntax, ArgumentListSyntax, BaseTypeSyntax> WithArgumentListAccessor;
+
         private readonly BaseTypeSyntax node;
+
         static PrimaryConstructorBaseTypeSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(PrimaryConstructorBaseTypeSyntaxWrapper));
@@ -31,6 +34,7 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public BaseTypeSyntax SyntaxNode => this.node;
+
         public TypeSyntax Type
         {
             get

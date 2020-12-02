@@ -13,13 +13,16 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax";
         private static readonly Type WrappedType;
+
         private static readonly Func<TypeSyntax, SyntaxToken> OpenParenTokenAccessor;
         private static readonly Func<TypeSyntax, SeparatedSyntaxListWrapper<TupleElementSyntaxWrapper>> ElementsAccessor;
         private static readonly Func<TypeSyntax, SyntaxToken> CloseParenTokenAccessor;
         private static readonly Func<TypeSyntax, SyntaxToken, TypeSyntax> WithOpenParenTokenAccessor;
         private static readonly Func<TypeSyntax, SeparatedSyntaxListWrapper<TupleElementSyntaxWrapper>, TypeSyntax> WithElementsAccessor;
         private static readonly Func<TypeSyntax, SyntaxToken, TypeSyntax> WithCloseParenTokenAccessor;
+
         private readonly TypeSyntax node;
+
         static TupleTypeSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(TupleTypeSyntaxWrapper));
@@ -37,6 +40,7 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public TypeSyntax SyntaxNode => this.node;
+
         public SyntaxToken OpenParenToken
         {
             get

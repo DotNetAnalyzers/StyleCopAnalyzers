@@ -13,11 +13,14 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.UnaryPatternSyntax";
         private static readonly Type WrappedType;
+
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> OperatorTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode> PatternAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithOperatorTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode, CSharpSyntaxNode> WithPatternAccessor;
+
         private readonly CSharpSyntaxNode node;
+
         static UnaryPatternSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(UnaryPatternSyntaxWrapper));
@@ -33,6 +36,7 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
+
         public SyntaxToken OperatorToken
         {
             get

@@ -13,6 +13,7 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax";
         private static readonly Type WrappedType;
+
         private static readonly Func<StatementSyntax, ExpressionSyntax> VariableAccessor;
         private static readonly Func<StatementSyntax, SyntaxList<AttributeListSyntax>, StatementSyntax> WithAttributeListsAccessor;
         private static readonly Func<StatementSyntax, SyntaxToken, StatementSyntax> WithAwaitKeywordAccessor;
@@ -23,7 +24,9 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<StatementSyntax, ExpressionSyntax, StatementSyntax> WithExpressionAccessor;
         private static readonly Func<StatementSyntax, SyntaxToken, StatementSyntax> WithCloseParenTokenAccessor;
         private static readonly Func<StatementSyntax, StatementSyntax, StatementSyntax> WithStatementAccessor;
+
         private readonly StatementSyntax node;
+
         static ForEachVariableStatementSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(ForEachVariableStatementSyntaxWrapper));
@@ -45,6 +48,7 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public StatementSyntax SyntaxNode => this.node;
+
         public SyntaxList<AttributeListSyntax> AttributeLists
         {
             get

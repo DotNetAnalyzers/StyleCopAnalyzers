@@ -13,11 +13,14 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.SubpatternSyntax";
         private static readonly Type WrappedType;
+
         private static readonly Func<CSharpSyntaxNode, NameColonSyntax> NameColonAccessor;
         private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode> PatternAccessor;
         private static readonly Func<CSharpSyntaxNode, NameColonSyntax, CSharpSyntaxNode> WithNameColonAccessor;
         private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode, CSharpSyntaxNode> WithPatternAccessor;
+
         private readonly CSharpSyntaxNode node;
+
         static SubpatternSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(SubpatternSyntaxWrapper));
@@ -33,6 +36,7 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
+
         public NameColonSyntax NameColon
         {
             get

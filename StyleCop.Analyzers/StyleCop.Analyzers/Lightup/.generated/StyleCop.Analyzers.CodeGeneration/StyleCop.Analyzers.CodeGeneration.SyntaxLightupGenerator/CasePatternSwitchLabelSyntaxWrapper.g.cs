@@ -13,13 +13,16 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax";
         private static readonly Type WrappedType;
+
         private static readonly Func<SwitchLabelSyntax, CSharpSyntaxNode> PatternAccessor;
         private static readonly Func<SwitchLabelSyntax, CSharpSyntaxNode> WhenClauseAccessor;
         private static readonly Func<SwitchLabelSyntax, SyntaxToken, SwitchLabelSyntax> WithKeywordAccessor;
         private static readonly Func<SwitchLabelSyntax, CSharpSyntaxNode, SwitchLabelSyntax> WithPatternAccessor;
         private static readonly Func<SwitchLabelSyntax, CSharpSyntaxNode, SwitchLabelSyntax> WithWhenClauseAccessor;
         private static readonly Func<SwitchLabelSyntax, SyntaxToken, SwitchLabelSyntax> WithColonTokenAccessor;
+
         private readonly SwitchLabelSyntax node;
+
         static CasePatternSwitchLabelSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(CasePatternSwitchLabelSyntaxWrapper));
@@ -37,6 +40,7 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public SwitchLabelSyntax SyntaxNode => this.node;
+
         public SyntaxToken Keyword
         {
             get

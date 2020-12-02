@@ -13,13 +13,16 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.PositionalPatternClauseSyntax";
         private static readonly Type WrappedType;
+
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> OpenParenTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>> SubpatternsAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> CloseParenTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithOpenParenTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>, CSharpSyntaxNode> WithSubpatternsAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithCloseParenTokenAccessor;
+
         private readonly CSharpSyntaxNode node;
+
         static PositionalPatternClauseSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(PositionalPatternClauseSyntaxWrapper));
@@ -37,6 +40,7 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
+
         public SyntaxToken OpenParenToken
         {
             get

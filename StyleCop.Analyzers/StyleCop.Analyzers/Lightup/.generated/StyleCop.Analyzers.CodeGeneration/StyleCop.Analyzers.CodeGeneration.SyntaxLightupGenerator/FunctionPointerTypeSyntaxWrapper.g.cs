@@ -13,6 +13,7 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.FunctionPointerTypeSyntax";
         private static readonly Type WrappedType;
+
         private static readonly Func<TypeSyntax, SyntaxToken> DelegateKeywordAccessor;
         private static readonly Func<TypeSyntax, SyntaxToken> AsteriskTokenAccessor;
         private static readonly Func<TypeSyntax, CSharpSyntaxNode> CallingConventionAccessor;
@@ -21,7 +22,9 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<TypeSyntax, SyntaxToken, TypeSyntax> WithAsteriskTokenAccessor;
         private static readonly Func<TypeSyntax, CSharpSyntaxNode, TypeSyntax> WithCallingConventionAccessor;
         private static readonly Func<TypeSyntax, CSharpSyntaxNode, TypeSyntax> WithParameterListAccessor;
+
         private readonly TypeSyntax node;
+
         static FunctionPointerTypeSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(FunctionPointerTypeSyntaxWrapper));
@@ -41,6 +44,7 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public TypeSyntax SyntaxNode => this.node;
+
         public SyntaxToken DelegateKeyword
         {
             get

@@ -13,6 +13,7 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.RecordDeclarationSyntax";
         private static readonly Type WrappedType;
+
         private static readonly Func<TypeDeclarationSyntax, ParameterListSyntax> ParameterListAccessor;
         private static readonly Func<TypeDeclarationSyntax, SyntaxList<AttributeListSyntax>, TypeDeclarationSyntax> WithAttributeListsAccessor;
         private static readonly Func<TypeDeclarationSyntax, SyntaxTokenList, TypeDeclarationSyntax> WithModifiersAccessor;
@@ -26,7 +27,9 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<TypeDeclarationSyntax, SyntaxList<MemberDeclarationSyntax>, TypeDeclarationSyntax> WithMembersAccessor;
         private static readonly Func<TypeDeclarationSyntax, SyntaxToken, TypeDeclarationSyntax> WithCloseBraceTokenAccessor;
         private static readonly Func<TypeDeclarationSyntax, SyntaxToken, TypeDeclarationSyntax> WithSemicolonTokenAccessor;
+
         private readonly TypeDeclarationSyntax node;
+
         static RecordDeclarationSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(RecordDeclarationSyntaxWrapper));
@@ -51,6 +54,7 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public TypeDeclarationSyntax SyntaxNode => this.node;
+
         public SyntaxList<AttributeListSyntax> AttributeLists
         {
             get

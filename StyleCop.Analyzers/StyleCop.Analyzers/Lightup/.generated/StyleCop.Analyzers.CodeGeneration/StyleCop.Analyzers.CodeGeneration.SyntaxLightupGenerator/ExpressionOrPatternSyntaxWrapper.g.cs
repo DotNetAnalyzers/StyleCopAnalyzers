@@ -13,7 +13,9 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionOrPatternSyntax";
         private static readonly Type WrappedType;
+
         private readonly CSharpSyntaxNode node;
+
         static ExpressionOrPatternSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(ExpressionOrPatternSyntaxWrapper));
@@ -25,6 +27,7 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
+
         public static explicit operator ExpressionOrPatternSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

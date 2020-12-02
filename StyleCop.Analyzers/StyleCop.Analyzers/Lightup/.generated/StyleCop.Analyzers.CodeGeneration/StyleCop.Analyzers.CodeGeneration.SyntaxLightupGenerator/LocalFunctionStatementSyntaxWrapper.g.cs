@@ -13,6 +13,7 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.LocalFunctionStatementSyntax";
         private static readonly Type WrappedType;
+
         private static readonly Func<StatementSyntax, SyntaxTokenList> ModifiersAccessor;
         private static readonly Func<StatementSyntax, TypeSyntax> ReturnTypeAccessor;
         private static readonly Func<StatementSyntax, SyntaxToken> IdentifierAccessor;
@@ -32,7 +33,9 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<StatementSyntax, BlockSyntax, StatementSyntax> WithBodyAccessor;
         private static readonly Func<StatementSyntax, ArrowExpressionClauseSyntax, StatementSyntax> WithExpressionBodyAccessor;
         private static readonly Func<StatementSyntax, SyntaxToken, StatementSyntax> WithSemicolonTokenAccessor;
+
         private readonly StatementSyntax node;
+
         static LocalFunctionStatementSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(LocalFunctionStatementSyntaxWrapper));
@@ -63,6 +66,7 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public StatementSyntax SyntaxNode => this.node;
+
         public SyntaxList<AttributeListSyntax> AttributeLists
         {
             get

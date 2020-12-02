@@ -13,9 +13,12 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.DefaultConstraintSyntax";
         private static readonly Type WrappedType;
+
         private static readonly Func<TypeParameterConstraintSyntax, SyntaxToken> DefaultKeywordAccessor;
         private static readonly Func<TypeParameterConstraintSyntax, SyntaxToken, TypeParameterConstraintSyntax> WithDefaultKeywordAccessor;
+
         private readonly TypeParameterConstraintSyntax node;
+
         static DefaultConstraintSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(DefaultConstraintSyntaxWrapper));
@@ -29,6 +32,7 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public TypeParameterConstraintSyntax SyntaxNode => this.node;
+
         public SyntaxToken DefaultKeyword
         {
             get

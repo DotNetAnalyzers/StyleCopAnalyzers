@@ -13,11 +13,14 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.RefExpressionSyntax";
         private static readonly Type WrappedType;
+
         private static readonly Func<ExpressionSyntax, SyntaxToken> RefKeywordAccessor;
         private static readonly Func<ExpressionSyntax, ExpressionSyntax> ExpressionAccessor;
         private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithRefKeywordAccessor;
         private static readonly Func<ExpressionSyntax, ExpressionSyntax, ExpressionSyntax> WithExpressionAccessor;
+
         private readonly ExpressionSyntax node;
+
         static RefExpressionSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(RefExpressionSyntaxWrapper));
@@ -33,6 +36,7 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public ExpressionSyntax SyntaxNode => this.node;
+
         public SyntaxToken RefKeyword
         {
             get

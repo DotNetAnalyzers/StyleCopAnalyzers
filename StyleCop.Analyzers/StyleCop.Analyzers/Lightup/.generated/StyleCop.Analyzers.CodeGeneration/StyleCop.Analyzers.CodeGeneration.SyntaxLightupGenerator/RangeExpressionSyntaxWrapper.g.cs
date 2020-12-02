@@ -13,13 +13,16 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.RangeExpressionSyntax";
         private static readonly Type WrappedType;
+
         private static readonly Func<ExpressionSyntax, ExpressionSyntax> LeftOperandAccessor;
         private static readonly Func<ExpressionSyntax, SyntaxToken> OperatorTokenAccessor;
         private static readonly Func<ExpressionSyntax, ExpressionSyntax> RightOperandAccessor;
         private static readonly Func<ExpressionSyntax, ExpressionSyntax, ExpressionSyntax> WithLeftOperandAccessor;
         private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithOperatorTokenAccessor;
         private static readonly Func<ExpressionSyntax, ExpressionSyntax, ExpressionSyntax> WithRightOperandAccessor;
+
         private readonly ExpressionSyntax node;
+
         static RangeExpressionSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(RangeExpressionSyntaxWrapper));
@@ -37,6 +40,7 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public ExpressionSyntax SyntaxNode => this.node;
+
         public ExpressionSyntax LeftOperand
         {
             get
