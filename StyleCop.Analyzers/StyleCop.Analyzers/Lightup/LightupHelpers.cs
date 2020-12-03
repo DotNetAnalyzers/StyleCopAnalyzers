@@ -449,7 +449,7 @@ namespace StyleCop.Analyzers.Lightup
 
         private static bool ValidatePropertyType(Type returnType, Type actualType)
         {
-            var requiredType = WrapperHelper.GetWrappedType(returnType) ?? returnType;
+            var requiredType = SyntaxWrapperHelper.GetWrappedType(returnType) ?? returnType;
             return requiredType == actualType;
         }
     }

@@ -34,6 +34,7 @@
 
   <ItemGroup>
     <AdditionalFiles Include="Lightup\OperationInterfaces.xml" />
+    <AdditionalFiles Include="Lightup\Syntax.xml" />
   </ItemGroup>
 
   <ItemGroup>
