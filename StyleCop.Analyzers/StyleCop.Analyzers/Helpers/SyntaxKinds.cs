@@ -23,7 +23,8 @@ namespace StyleCop.Analyzers.Helpers
                 SyntaxKind.ClassDeclaration,
                 SyntaxKind.StructDeclaration,
                 SyntaxKind.InterfaceDeclaration,
-                SyntaxKind.EnumDeclaration);
+                SyntaxKind.EnumDeclaration,
+                SyntaxKindEx.RecordDeclaration);
 
         /// <summary>
         /// Gets a collection of <see cref="SyntaxKind"/> values which appear in the syntax tree as a

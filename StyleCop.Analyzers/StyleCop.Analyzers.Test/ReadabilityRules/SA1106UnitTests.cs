@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1106CodeMustNotContainEmptyStatements,
@@ -306,17 +307,14 @@ class TestClass
         }
 
         [Theory]
-        [InlineData("class Foo { }")]
-        [InlineData("struct Foo { }")]
-        [InlineData("interface IFoo { }")]
-        [InlineData("enum Foo { }")]
-        [InlineData("namespace Foo { }")]
-        public async Task TestMemberAsync(string declaration)
+        [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        [InlineData("namespace")]
+        public async Task TestMemberAsync(string declarationKeyword)
         {
-            var testCode = declaration + ";";
-            var fixedCode = declaration;
+            var testCode = declarationKeyword + " Foo { }{|#0:;|}";
+            var fixedCode = declarationKeyword + " Foo { }";
 
-            DiagnosticResult expected = Diagnostic().WithLocation(1, declaration.Length + 1);
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }

@@ -4,17 +4,17 @@
 namespace StyleCop.Analyzers.Test.Helpers
 {
     using System.Collections.Generic;
+    using System.Linq;
     using StyleCop.Analyzers.Lightup;
 
     public static class CommonMemberData
     {
-        public static IEnumerable<object[]> TypeDeclarationKeywords
+        public static IEnumerable<object[]> DataTypeDeclarationKeywords
         {
             get
             {
                 yield return new[] { "class" };
                 yield return new[] { "struct" };
-                yield return new[] { "interface" };
                 if (LightupHelpers.SupportsCSharp9)
                 {
                     yield return new[] { "record" };
@@ -22,16 +22,21 @@ namespace StyleCop.Analyzers.Test.Helpers
             }
         }
 
+        public static IEnumerable<object[]> TypeDeclarationKeywords
+        {
+            get
+            {
+                return DataTypeDeclarationKeywords
+                    .Concat(new[] { new[] { "interface" } });
+            }
+        }
+
         public static IEnumerable<object[]> BaseTypeDeclarationKeywords
         {
             get
             {
-                foreach (var keyword in TypeDeclarationKeywords)
-                {
-                    yield return keyword;
-                }
-
-                yield return new[] { "enum" };
+                return TypeDeclarationKeywords
+                    .Concat(new[] { new[] { "enum" } });
             }
         }
     }

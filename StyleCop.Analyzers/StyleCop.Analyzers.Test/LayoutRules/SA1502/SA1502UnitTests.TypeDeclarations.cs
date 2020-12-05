@@ -3,11 +3,11 @@
 
 namespace StyleCop.Analyzers.Test.LayoutRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.LayoutRules.SA1502ElementMustNotBeOnASingleLine,
@@ -18,22 +18,13 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     /// </summary>
     public partial class SA1502UnitTests
     {
-        public static IEnumerable<object[]> TokensToTest
-        {
-            get
-            {
-                yield return new[] { "class" };
-                yield return new[] { "struct" };
-            }
-        }
-
         /// <summary>
         /// Verifies that a correct empty type will pass without diagnostic.
         /// </summary>
         /// <param name="token">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TokensToTest))]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestValidEmptyTypeAsync(string token)
         {
             var testCode = @"public ##PH## Foo 
@@ -49,7 +40,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="token">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TokensToTest))]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestEmptyTypeOnSingleLineAsync(string token)
         {
             var testCode = "public ##PH## Foo { }";
@@ -64,7 +55,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="token">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TokensToTest))]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeOnSingleLineAsync(string token)
         {
             var testCode = "public ##PH## Foo { private int bar; }";
@@ -79,7 +70,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="token">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TokensToTest))]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeWithBlockOnSingleLineAsync(string token)
         {
             var testCode = @"public ##PH## Foo
@@ -95,7 +86,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="token">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TokensToTest))]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeWithBlockStartOnSameLineAsync(string token)
         {
             var testCode = @"public ##PH## Foo { 
@@ -111,7 +102,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="token">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TokensToTest))]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestEmptyTypeOnSingleLineCodeFixAsync(string token)
         {
             var testCode = "public ##PH## Foo { }";
@@ -130,7 +121,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="token">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TokensToTest))]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeOnSingleLineCodeFixAsync(string token)
         {
             var testCode = "public ##PH## Foo { private int bar; }";
@@ -150,7 +141,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="token">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TokensToTest))]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeOnSingleLineWithMultipleStatementsCodeFixAsync(string token)
         {
             var testCode = "public ##PH## Foo { private int bar; private bool baz; }";
@@ -170,7 +161,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="token">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TokensToTest))]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeWithBlockOnSingleLineCodeFixAsync(string token)
         {
             var testCode = @"public ##PH## Foo
@@ -191,7 +182,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="token">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TokensToTest))]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeWithLotsOfTriviaCodeFixAsync(string token)
         {
             var testCode = @"public ##PH## Foo /* TR1 */ { /* TR2 */ private int bar; /* TR3 */ private int baz; /* TR4 */ } /* TR5 */";
