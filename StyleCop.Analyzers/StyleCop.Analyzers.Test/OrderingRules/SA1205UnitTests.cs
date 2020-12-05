@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.OrderingRules;
@@ -96,6 +97,13 @@ namespace StyleCop.Analyzers.Test.OrderingRules
                 yield return new object[] { "protected internal", "interface" };
                 yield return new object[] { "private", "interface" };
 
+                if (LightupHelpers.SupportsCSharp72)
+                {
+                    yield return new object[] { "private protected", "class" };
+                    yield return new object[] { "private protected", "struct" };
+                    yield return new object[] { "private protected", "interface" };
+                }
+
                 if (LightupHelpers.SupportsCSharp9)
                 {
                     yield return new object[] { "public", "record" };
@@ -103,6 +111,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
                     yield return new object[] { "internal", "record" };
                     yield return new object[] { "protected internal", "record" };
                     yield return new object[] { "private", "record" };
+                    yield return new object[] { "private protected", "record" };
                 }
             }
         }
@@ -225,7 +234,14 @@ internal static partial class TestPartial
 }}
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            var languageVersion = (LightupHelpers.SupportsCSharp8, LightupHelpers.SupportsCSharp72) switch
+            {
+                // Make sure to use C# 7.2 if supported, unless we are going to default to something greater
+                (false, true) => LanguageVersionEx.CSharp7_2,
+                _ => (LanguageVersion?)null,
+            };
+
+            await VerifyCSharpDiagnosticAsync(languageVersion, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -294,7 +310,14 @@ public class Foo
 }}
 ";
 
-            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(8, 14 + typeKeyword.Length), fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            var languageVersion = (LightupHelpers.SupportsCSharp8, LightupHelpers.SupportsCSharp72) switch
+            {
+                // Make sure to use C# 7.2 if supported, unless we are going to default to something greater
+                (false, true) => LanguageVersionEx.CSharp7_2,
+                _ => (LanguageVersion?)null,
+            };
+
+            await VerifyCSharpFixAsync(languageVersion, testCode, Diagnostic().WithLocation(8, 14 + typeKeyword.Length), fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -26,6 +26,7 @@ namespace StyleCop.Analyzers.OrderingRules
         private static readonly ImmutableArray<SyntaxKind> InternalAccessibilityKeywords = ImmutableArray.Create(SyntaxKind.InternalKeyword);
         private static readonly ImmutableArray<SyntaxKind> ProtectedAccessibilityKeywords = ImmutableArray.Create(SyntaxKind.ProtectedKeyword);
         private static readonly ImmutableArray<SyntaxKind> ProtectedOrInternalAccessibilityKeywords = ImmutableArray.Create(SyntaxKind.ProtectedKeyword, SyntaxKind.InternalKeyword);
+        private static readonly ImmutableArray<SyntaxKind> ProtectedAndInternalAccessibilityKeywords = ImmutableArray.Create(SyntaxKind.PrivateKeyword, SyntaxKind.ProtectedKeyword);
         private static readonly ImmutableArray<SyntaxKind> PrivateAccessibilityKeywords = ImmutableArray.Create(SyntaxKind.PrivateKeyword);
         private static readonly ImmutableArray<SyntaxKind> UnexpectedAccessibilityKeywords = ImmutableArray.Create<SyntaxKind>();
 
@@ -89,6 +90,8 @@ namespace StyleCop.Analyzers.OrderingRules
                 return ProtectedAccessibilityKeywords;
             case Accessibility.ProtectedOrInternal:
                 return ProtectedOrInternalAccessibilityKeywords;
+            case Accessibility.ProtectedAndInternal:
+                return ProtectedAndInternalAccessibilityKeywords;
             case Accessibility.Private:
                 return PrivateAccessibilityKeywords;
             default:
