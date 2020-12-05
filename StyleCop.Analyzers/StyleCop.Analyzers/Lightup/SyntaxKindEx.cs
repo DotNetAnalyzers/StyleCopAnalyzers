@@ -44,6 +44,7 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind SwitchExpression = (SyntaxKind)9025;
         public const SyntaxKind SwitchExpressionArm = (SyntaxKind)9026;
         public const SyntaxKind VarPattern = (SyntaxKind)9027;
+        public const SyntaxKind ParenthesizedPattern = (SyntaxKind)9028;
         public const SyntaxKind DeclarationExpression = (SyntaxKind)9040;
         public const SyntaxKind RefExpression = (SyntaxKind)9050;
         public const SyntaxKind RefType = (SyntaxKind)9051;
