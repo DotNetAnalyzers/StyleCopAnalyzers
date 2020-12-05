@@ -127,12 +127,12 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                         return;
                     }
 
-                    if (IsSwitchExpressionPrecededByTypeCast(node))
+                    if (IsSwitchOrWithExpressionPrecededByTypeCast(node))
                     {
                         return;
                     }
 
-                    if (IsSwitchExpressionExpressionOfMemberAccess(node))
+                    if (IsSwitchOrWithExpressionExpressionOfMemberAccess(node))
                     {
                         return;
                     }
@@ -216,9 +216,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             return false;
         }
 
-        private static bool IsSwitchExpressionPrecededByTypeCast(ParenthesizedExpressionSyntax node)
+        private static bool IsSwitchOrWithExpressionPrecededByTypeCast(ParenthesizedExpressionSyntax node)
         {
-            if (!node.Expression.IsKind(SyntaxKindEx.SwitchExpression))
+            if (!node.Expression.IsKind(SyntaxKindEx.SwitchExpression)
+                && !node.Expression.IsKind(SyntaxKindEx.WithExpression))
             {
                 return false;
             }
@@ -233,9 +234,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             return previousToken.IsKind(SyntaxKind.CloseParenToken) && previousToken.Parent.IsKind(SyntaxKind.CastExpression);
         }
 
-        private static bool IsSwitchExpressionExpressionOfMemberAccess(ParenthesizedExpressionSyntax node)
+        private static bool IsSwitchOrWithExpressionExpressionOfMemberAccess(ParenthesizedExpressionSyntax node)
         {
-            if (!node.Expression.IsKind(SyntaxKindEx.SwitchExpression))
+            if (!node.Expression.IsKind(SyntaxKindEx.SwitchExpression)
+                && !node.Expression.IsKind(SyntaxKindEx.WithExpression))
             {
                 return false;
             }
