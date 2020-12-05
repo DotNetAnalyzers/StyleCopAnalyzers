@@ -13,6 +13,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1400AccessModifierMustBeDeclared"/>.
@@ -80,6 +81,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
             case SyntaxKind.StructDeclaration:
                 updatedDeclarationNode = HandleStructDeclaration((StructDeclarationSyntax)declarationNode);
+                break;
+
+            case SyntaxKindEx.RecordDeclaration:
+                updatedDeclarationNode = HandleRecordDeclaration((RecordDeclarationSyntaxWrapper)declarationNode);
                 break;
 
             case SyntaxKind.DelegateDeclaration:
@@ -191,6 +196,23 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             return node
                 .WithKeyword(triviaToken)
                 .WithModifiers(modifiers)
+                .WithoutFormatting();
+        }
+
+        private static SyntaxNode HandleRecordDeclaration(RecordDeclarationSyntaxWrapper node)
+        {
+            SyntaxToken triviaToken = node.Keyword;
+            if (triviaToken.IsMissing)
+            {
+                return null;
+            }
+
+            SyntaxKind defaultVisibility = IsNestedType(node) ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword;
+            SyntaxTokenList modifiers = DeclarationModifiersHelper.AddModifier(node.Modifiers, ref triviaToken, defaultVisibility);
+            return node
+                .WithKeyword(triviaToken)
+                .WithModifiers(modifiers)
+                .SyntaxNode
                 .WithoutFormatting();
         }
 
@@ -355,6 +377,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 case SyntaxKind.InterfaceDeclaration:
                 case SyntaxKind.EnumDeclaration:
                 case SyntaxKind.StructDeclaration:
+                case SyntaxKindEx.RecordDeclaration:
                 case SyntaxKind.DelegateDeclaration:
                 case SyntaxKind.EventDeclaration:
                 case SyntaxKind.EventFieldDeclaration:
