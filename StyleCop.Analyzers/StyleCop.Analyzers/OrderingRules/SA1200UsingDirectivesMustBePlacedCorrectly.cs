@@ -222,7 +222,11 @@ namespace StyleCop.Analyzers.OrderingRules
                     return;
 
                 case SyntaxKind.AttributeList:
-                    // suppress SA1200 if file contains an attribute in the global namespace
+                    // Suppress SA1200 if file contains an attribute in the global namespace
+                    return;
+
+                case SyntaxKind.GlobalStatement:
+                    // Suppress SA1200 if file contains top-level statements
                     return;
 
                 case SyntaxKind.UsingDirective:
