@@ -3,12 +3,11 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
-    using StyleCop.Analyzers.Lightup;
+    using StyleCop.Analyzers.Test.Helpers;
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1605PartialElementDocumentationMustHaveSummary>;
@@ -28,35 +27,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 }
 ";
 
-        public static IEnumerable<object[]> TypeDeclarationKeywords
-        {
-            get
-            {
-                yield return new[] { "class" };
-                yield return new[] { "struct" };
-                yield return new[] { "interface" };
-                if (LightupHelpers.SupportsCSharp9)
-                {
-                    yield return new[] { "record" };
-                }
-            }
-        }
-
-        public static IEnumerable<object[]> BaseTypeDeclarationKeywords
-        {
-            get
-            {
-                foreach (var keyword in TypeDeclarationKeywords)
-                {
-                    yield return keyword;
-                }
-
-                yield return new[] { "enum" };
-            }
-        }
-
         [Theory]
-        [MemberData(nameof(TypeDeclarationKeywords))]
+        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeNoDocumentationAsync(string typeName)
         {
             var testCode = @"
@@ -67,7 +39,7 @@ partial {0} TypeName
         }
 
         [Theory]
-        [MemberData(nameof(TypeDeclarationKeywords))]
+        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeWithSummaryDocumentationAsync(string typeName)
         {
             var testCode = @"
@@ -81,7 +53,7 @@ partial {0} TypeName
         }
 
         [Theory]
-        [MemberData(nameof(TypeDeclarationKeywords))]
+        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeWithContentDocumentationAsync(string typeName)
         {
             var testCode = @"
@@ -95,7 +67,7 @@ partial {0} TypeName
         }
 
         [Theory]
-        [MemberData(nameof(TypeDeclarationKeywords))]
+        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeWithInheritedDocumentationAsync(string typeName)
         {
             var testCode = @"
@@ -107,7 +79,7 @@ partial {0} TypeName
         }
 
         [Theory]
-        [MemberData(nameof(TypeDeclarationKeywords))]
+        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeWithoutDocumentationAsync(string typeName)
         {
             var testCode = @"
@@ -123,7 +95,7 @@ TypeName
         }
 
         [Theory]
-        [MemberData(nameof(BaseTypeDeclarationKeywords))]
+        [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestNonPartialTypeWithoutDocumentationAsync(string typeName)
         {
             var testCode = @"

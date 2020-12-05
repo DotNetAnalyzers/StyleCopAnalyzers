@@ -3,12 +3,11 @@
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
-    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.ReadabilityRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1137ElementsShouldHaveTheSameIndentation,
@@ -19,35 +18,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     /// </summary>
     public class SA1137UnitTests
     {
-        public static IEnumerable<object[]> TypeDeclarationKeywords
-        {
-            get
-            {
-                yield return new[] { "class" };
-                yield return new[] { "struct" };
-                yield return new[] { "interface" };
-                if (LightupHelpers.SupportsCSharp9)
-                {
-                    yield return new[] { "record" };
-                }
-            }
-        }
-
-        public static IEnumerable<object[]> BaseTypeDeclarationKeywords
-        {
-            get
-            {
-                foreach (var keyword in TypeDeclarationKeywords)
-                {
-                    yield return keyword;
-                }
-
-                yield return new[] { "enum" };
-            }
-        }
-
         [Theory]
-        [MemberData(nameof(BaseTypeDeclarationKeywords))]
+        [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestNamespaceDeclarationAsync(string baseTypeKind)
         {
             string testCode = $@"
@@ -174,7 +146,7 @@ class MyAttribute : Attribute {{ }}
         }
 
         [Theory]
-        [MemberData(nameof(TypeDeclarationKeywords))]
+        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeDeclarationConstraintClausesAsync(string typeKind)
         {
             string testCode = $@"
@@ -243,7 +215,7 @@ where T3 : new()
         }
 
         [Theory]
-        [MemberData(nameof(TypeDeclarationKeywords))]
+        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeDeclarationMembersAsync(string typeKind)
         {
             string fieldType = typeKind switch
