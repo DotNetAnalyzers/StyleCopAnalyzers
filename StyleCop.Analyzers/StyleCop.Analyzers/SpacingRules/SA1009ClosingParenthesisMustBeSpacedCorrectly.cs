@@ -171,7 +171,8 @@ namespace StyleCop.Analyzers.SpacingRules
                 bool requireSpace =
                     nextToken.Parent.IsKind(SyntaxKind.ConditionalExpression)
                     || nextToken.Parent.IsKind(SyntaxKind.BaseConstructorInitializer)
-                    || nextToken.Parent.IsKind(SyntaxKind.ThisConstructorInitializer);
+                    || nextToken.Parent.IsKind(SyntaxKind.ThisConstructorInitializer)
+                    || nextToken.Parent.IsKind(SyntaxKind.BaseList);
                 precedesStickyCharacter = !requireSpace;
                 break;
 
