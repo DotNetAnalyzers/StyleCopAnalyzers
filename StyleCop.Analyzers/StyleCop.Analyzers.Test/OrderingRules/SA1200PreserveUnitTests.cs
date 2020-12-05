@@ -17,7 +17,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     /// </summary>
     public class SA1200PreserveUnitTests
     {
-        private const string TestSettings = @"
+        protected const string TestSettings = @"
 {
   ""settings"": {
     ""orderingRules"": {
