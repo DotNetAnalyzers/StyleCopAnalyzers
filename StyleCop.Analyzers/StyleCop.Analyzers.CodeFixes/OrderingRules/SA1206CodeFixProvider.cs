@@ -95,7 +95,8 @@ namespace StyleCop.Analyzers.OrderingRules
             return AdjustTrivia(
                 accessModifiers
                     .Concat(staticModifiers)
-                    .Concat(otherModifiers), modifiers);
+                    .Concat(otherModifiers),
+                modifiers);
         }
 
         /// <summary>

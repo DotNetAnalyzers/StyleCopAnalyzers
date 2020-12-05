@@ -259,7 +259,8 @@ public class ClassName
         {
             string validStatament = string.Format(
                 @"var i = new int[1];
-            i[0]{0};", operatorText);
+            i[0]{0};",
+                operatorText);
 
             await this.TestWhitespaceInStatementOrDeclAsync(validStatament, null, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
@@ -271,11 +272,13 @@ public class ClassName
         {
             string invalidStatament = string.Format(
                 @"var i = new int[1];
-            i[0] {0};", operatorText);
+            i[0] {0};",
+                operatorText);
 
             string fixedStatament = string.Format(
                 @"var i = new int[1];
-            i[0]{0};", operatorText);
+            i[0]{0};",
+                operatorText);
 
             DiagnosticResult expected = Diagnostic().WithLocation(8, 16).WithArguments(" not", "followed");
 
