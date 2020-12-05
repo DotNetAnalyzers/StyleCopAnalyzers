@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1619GenericTypeParametersMustBeDocumentedPartialClass>;
@@ -27,6 +28,11 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
                 yield return new object[] { "class     Foo<Ta, T\\u0062> { }" };
                 yield return new object[] { "struct    Foo<Ta, T\\u0062> { }" };
                 yield return new object[] { "interface Foo<Ta, T\\u0062> { }" };
+                if (LightupHelpers.SupportsCSharp9)
+                {
+                    yield return new object[] { "record    Foo<Ta, Tb> { }" };
+                    yield return new object[] { "record    Foo<Ta, T\\u0062> { }" };
+                }
             }
         }
 

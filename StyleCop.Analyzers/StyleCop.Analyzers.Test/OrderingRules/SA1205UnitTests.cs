@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.OrderingRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -45,6 +46,14 @@ namespace StyleCop.Analyzers.Test.OrderingRules
                 yield return new object[] { "class" };
                 yield return new object[] { "struct" };
                 yield return new object[] { "interface" };
+                if (LightupHelpers.SupportsCSharp9)
+                {
+                    yield return new object[] { "public partial record" };
+                    yield return new object[] { "internal partial record" };
+                    yield return new object[] { "public sealed partial record" };
+                    yield return new object[] { "internal sealed partial record" };
+                    yield return new object[] { "record" };
+                }
             }
         }
 
@@ -57,6 +66,11 @@ namespace StyleCop.Analyzers.Test.OrderingRules
                 yield return new object[] { "static partial class" };
                 yield return new object[] { "partial struct" };
                 yield return new object[] { "partial interface" };
+                if (LightupHelpers.SupportsCSharp9)
+                {
+                    yield return new object[] { "partial record" };
+                    yield return new object[] { "sealed partial record" };
+                }
             }
         }
 
@@ -81,6 +95,15 @@ namespace StyleCop.Analyzers.Test.OrderingRules
                 yield return new object[] { "internal", "interface" };
                 yield return new object[] { "protected internal", "interface" };
                 yield return new object[] { "private", "interface" };
+
+                if (LightupHelpers.SupportsCSharp9)
+                {
+                    yield return new object[] { "public", "record" };
+                    yield return new object[] { "protected", "record" };
+                    yield return new object[] { "internal", "record" };
+                    yield return new object[] { "protected internal", "record" };
+                    yield return new object[] { "private", "record" };
+                }
             }
         }
 

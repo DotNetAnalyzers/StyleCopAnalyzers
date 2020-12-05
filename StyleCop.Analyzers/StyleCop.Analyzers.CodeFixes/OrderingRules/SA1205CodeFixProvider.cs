@@ -13,6 +13,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// Implements code fixes for <see cref="SA1205PartialElementsMustDeclareAccess"/>.
@@ -108,6 +109,8 @@ namespace StyleCop.Analyzers.OrderingRules
                 return ((InterfaceDeclarationSyntax)node).WithModifiers(modifiers);
             case SyntaxKind.StructDeclaration:
                 return ((StructDeclarationSyntax)node).WithModifiers(modifiers);
+            case SyntaxKindEx.RecordDeclaration:
+                return ((RecordDeclarationSyntaxWrapper)node).WithModifiers(modifiers);
             }
 
             return node;
@@ -125,6 +128,8 @@ namespace StyleCop.Analyzers.OrderingRules
                 return ((InterfaceDeclarationSyntax)node).WithKeyword(keyword);
             case SyntaxKind.StructDeclaration:
                 return ((StructDeclarationSyntax)node).WithKeyword(keyword);
+            case SyntaxKindEx.RecordDeclaration:
+                return ((RecordDeclarationSyntaxWrapper)node).WithKeyword(keyword);
             }
 
             return node;

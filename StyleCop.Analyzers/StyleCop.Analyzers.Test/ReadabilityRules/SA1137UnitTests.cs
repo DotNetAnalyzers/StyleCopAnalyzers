@@ -3,9 +3,11 @@
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.ReadabilityRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -17,11 +19,35 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     /// </summary>
     public class SA1137UnitTests
     {
+        public static IEnumerable<object[]> TypeDeclarationKeywords
+        {
+            get
+            {
+                yield return new[] { "class" };
+                yield return new[] { "struct" };
+                yield return new[] { "interface" };
+                if (LightupHelpers.SupportsCSharp9)
+                {
+                    yield return new[] { "record" };
+                }
+            }
+        }
+
+        public static IEnumerable<object[]> BaseTypeDeclarationKeywords
+        {
+            get
+            {
+                foreach (var keyword in TypeDeclarationKeywords)
+                {
+                    yield return keyword;
+                }
+
+                yield return new[] { "enum" };
+            }
+        }
+
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
-        [InlineData("interface")]
-        [InlineData("enum")]
+        [MemberData(nameof(BaseTypeDeclarationKeywords))]
         public async Task TestNamespaceDeclarationAsync(string baseTypeKind)
         {
             string testCode = $@"
@@ -148,9 +174,7 @@ class MyAttribute : Attribute {{ }}
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
-        [InlineData("interface")]
+        [MemberData(nameof(TypeDeclarationKeywords))]
         public async Task TestTypeDeclarationConstraintClausesAsync(string typeKind)
         {
             string testCode = $@"
@@ -219,11 +243,20 @@ where T3 : new()
         }
 
         [Theory]
-        [InlineData("class", "int", " { }")]
-        [InlineData("struct", "int", " { }")]
-        [InlineData("interface", "event System.EventHandler", ";")]
-        public async Task TestTypeDeclarationMembersAsync(string typeKind, string fieldType, string methodBody)
+        [MemberData(nameof(TypeDeclarationKeywords))]
+        public async Task TestTypeDeclarationMembersAsync(string typeKind)
         {
+            string fieldType = typeKind switch
+            {
+                "interface" => "event System.EventHandler",
+                _ => "int",
+            };
+            string methodBody = typeKind switch
+            {
+                "interface" => ";",
+                _ => " { }",
+            };
+
             string testCode = $@"
 {typeKind} Container1
 {{
