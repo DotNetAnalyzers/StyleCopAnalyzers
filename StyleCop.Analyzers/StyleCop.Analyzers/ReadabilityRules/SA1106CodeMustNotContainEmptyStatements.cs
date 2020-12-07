@@ -56,7 +56,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var declaration = (BaseTypeDeclarationSyntax)context.Node;
 
-            if (declaration.SemicolonToken.IsKind(SyntaxKind.SemicolonToken))
+            if (declaration.SemicolonToken.IsKind(SyntaxKind.SemicolonToken)
+                && !declaration.OpenBraceToken.IsKind(SyntaxKind.None))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.SemicolonToken.GetLocation()));
             }
