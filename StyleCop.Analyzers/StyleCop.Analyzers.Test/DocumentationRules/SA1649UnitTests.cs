@@ -43,22 +43,18 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         /// <param name="typeKeyword">The type keyword to use during the test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        [MemberData(nameof(CommonMemberData.AllTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task VerifyWrongFileNameAsync(string typeKeyword)
         {
             var testCode = $@"namespace TestNamespace
 {{
-    public {typeKeyword} {{|#0:TestType|}}
-    {{
-    }}
+    {GetTypeDeclaration(typeKeyword, "TestType", diagnosticKey: 0)}
 }}
 ";
 
             var fixedCode = $@"namespace TestNamespace
 {{
-    public {typeKeyword} TestType
-    {{
-    }}
+    {GetTypeDeclaration(typeKeyword, "TestType")}
 }}
 ";
 
@@ -73,22 +69,18 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         /// <param name="typeKeyword">The type keyword to use during the test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        [MemberData(nameof(CommonMemberData.AllTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task VerifyWrongFileNameMultipleExtensionsAsync(string typeKeyword)
         {
             var testCode = $@"namespace TestNamespace
 {{
-    public {typeKeyword} {{|#0:TestType|}}
-    {{
-    }}
+    {GetTypeDeclaration(typeKeyword, "TestType", diagnosticKey: 0)}
 }}
 ";
 
             var fixedCode = $@"namespace TestNamespace
 {{
-    public {typeKeyword} TestType
-    {{
-    }}
+    {GetTypeDeclaration(typeKeyword, "TestType")}
 }}
 ";
 
@@ -103,22 +95,18 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         /// <param name="typeKeyword">The type keyword to use during the test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        [MemberData(nameof(CommonMemberData.AllTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task VerifyWrongFileNameNoExtensionAsync(string typeKeyword)
         {
             var testCode = $@"namespace TestNamespace
 {{
-    public {typeKeyword} {{|#0:TestType|}}
-    {{
-    }}
+    {GetTypeDeclaration(typeKeyword, "TestType", diagnosticKey: 0)}
 }}
 ";
 
             var fixedCode = $@"namespace TestNamespace
 {{
-    public {typeKeyword} TestType
-    {{
-    }}
+    {GetTypeDeclaration(typeKeyword, "TestType")}
 }}
 ";
 
@@ -132,14 +120,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         /// <param name="typeKeyword">The type keyword to use during the test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        [MemberData(nameof(CommonMemberData.AllTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task VerifyCaseInsensitivityAsync(string typeKeyword)
         {
             var testCode = $@"namespace TestNamespace
 {{
-    public {typeKeyword} TestType
-    {{
-    }}
+    {GetTypeDeclaration(typeKeyword, "TestType")}
 }}
 ";
 
@@ -157,17 +143,62 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         {
             var testCode = $@"namespace TestNamespace
 {{
-    public {typeKeyword} TestType
+    public enum IgnoredEnum {{ }}
+    public delegate void IgnoredDelegate();
+
+    {GetTypeDeclaration(typeKeyword, "TestType", diagnosticKey: 0)}
+
+    {GetTypeDeclaration(typeKeyword, "TestType2")}
+}}
+";
+            var fixedCode = $@"namespace TestNamespace
+{{
+    public enum IgnoredEnum {{ }}
+    public delegate void IgnoredDelegate();
+
+    {GetTypeDeclaration(typeKeyword, "TestType")}
+
+    {GetTypeDeclaration(typeKeyword, "TestType2")}
+}}
+";
+
+            var expectedDiagnostic = Diagnostic().WithLocation(0);
+            await VerifyCSharpFixAsync("TestType2.cs", testCode, StyleCopSettings, expectedDiagnostic, "TestType.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3234, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3234")]
+        public async Task VerifyMultipleEnumTypesIgnoredAsync()
+        {
+            var testCode = $@"namespace TestNamespace
+{{
+    public enum TestType
     {{
     }}
 
-    public {typeKeyword} TestType2
+    public enum TestType2
     {{
     }}
 }}
 ";
 
-            await VerifyCSharpDiagnosticAsync("TestType.cs", testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            // File names are not checked for 'enum' if more than one is present
+            await VerifyCSharpDiagnosticAsync("TestType2.cs", testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3234, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3234")]
+        public async Task VerifyMultipleDelegateTypesIgnoredAsync()
+        {
+            var testCode = $@"namespace TestNamespace
+{{
+    public delegate void TestType();
+    public delegate void TestType2();
+}}
+";
+
+            // File names are not checked for 'delegate' if more than one is present
+            await VerifyCSharpDiagnosticAsync("TestType2.cs", testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -279,6 +310,20 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 ";
 
             await VerifyCSharpDiagnosticAsync("Test0.cs", testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        private static string GetTypeDeclaration(string typeKind, string typeName, int? diagnosticKey = null)
+        {
+            if (diagnosticKey is not null)
+            {
+                typeName = $"{{|#{diagnosticKey}:{typeName}|}}";
+            }
+
+            return typeKind switch
+            {
+                "delegate" => $"public delegate void {typeName}();",
+                _ => $"public {typeKind} {typeName} {{ }}",
+            };
         }
 
         private static Task VerifyCSharpDiagnosticAsync(string fileName, string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
