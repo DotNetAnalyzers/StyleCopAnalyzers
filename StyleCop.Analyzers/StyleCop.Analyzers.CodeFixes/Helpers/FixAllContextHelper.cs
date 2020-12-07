@@ -55,7 +55,8 @@ namespace StyleCop.Analyzers.Helpers
                         {
                             var projectDiagnostics = await GetAllDiagnosticsAsync(fixAllContext, projectToFix).ConfigureAwait(false);
                             diagnostics.TryAdd(projectToFix.Id, projectDiagnostics);
-                        }, fixAllContext.CancellationToken);
+                        },
+                        fixAllContext.CancellationToken);
                 }
 
                 await Task.WhenAll(tasks).ConfigureAwait(false);
