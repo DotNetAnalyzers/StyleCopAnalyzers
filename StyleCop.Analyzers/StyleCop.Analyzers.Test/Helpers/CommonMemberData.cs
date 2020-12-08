@@ -39,5 +39,14 @@ namespace StyleCop.Analyzers.Test.Helpers
                     .Concat(new[] { new[] { "enum" } });
             }
         }
+
+        public static IEnumerable<object[]> AllTypeDeclarationKeywords
+        {
+            get
+            {
+                return BaseTypeDeclarationKeywords
+                    .Concat(new[] { new[] { "delegate" } });
+            }
+        }
     }
 }
