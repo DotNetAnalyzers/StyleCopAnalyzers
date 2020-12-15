@@ -126,6 +126,11 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static void CheckViolation(SyntaxNodeAnalysisContext context, SyntaxToken openBraceToken, SyntaxToken closeBraceToken)
         {
+            if (openBraceToken.IsKind(SyntaxKind.None) || closeBraceToken.IsKind(SyntaxKind.None))
+            {
+                return;
+            }
+
             var openingBraceLineSpan = openBraceToken.GetLineSpan();
             var closingBraceLineSpan = closeBraceToken.GetLineSpan();
 

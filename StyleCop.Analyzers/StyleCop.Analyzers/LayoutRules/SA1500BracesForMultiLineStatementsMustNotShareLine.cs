@@ -140,6 +140,11 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static void CheckBraces(SyntaxNodeAnalysisContext context, SyntaxToken openBraceToken, SyntaxToken closeBraceToken)
         {
+            if (openBraceToken.IsKind(SyntaxKind.None) || closeBraceToken.IsKind(SyntaxKind.None))
+            {
+                return;
+            }
+
             bool checkCloseBrace = true;
             int openBraceTokenLine = openBraceToken.GetLine();
 
