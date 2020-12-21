@@ -861,7 +861,6 @@ namespace StyleCop.Analyzers.CodeGeneration
                                                     SyntaxFactory.IdentifierName("Type"),
                                                 })))))))))));
 
-            bool first = true;
             foreach (var node in wrapperTypes.OrderBy(node => node.Name, StringComparer.OrdinalIgnoreCase))
             {
                 if (node.WrapperName is null)
@@ -924,8 +923,67 @@ namespace StyleCop.Analyzers.CodeGeneration
                     continue;
                 }
 
+                if (node.Name == nameof(BaseObjectCreationExpressionSyntax))
+                {
+                    // Prior to C# 9, ObjectCreationExpressionSyntax was the base type for all object creation
+                    // statements. If the BaseObjectCreationExpressionSyntax type isn't found at runtime, we fall back
+                    // to using this type instead.
+                    //
+                    // var objectCreationExpressionSyntaxType = csharpCodeAnalysisAssembly.GetType(BaseObjectCreationExpressionSyntaxWrapper.WrappedTypeName)
+                    //     ?? csharpCodeAnalysisAssembly.GetType(BaseObjectCreationExpressionSyntaxWrapper.FallbackWrappedTypeName);
+                    LocalDeclarationStatementSyntax localStatement =
+                        SyntaxFactory.LocalDeclarationStatement(SyntaxFactory.VariableDeclaration(
+                            type: SyntaxFactory.IdentifierName("var"),
+                            variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(
+                                identifier: SyntaxFactory.Identifier("objectCreationExpressionSyntaxType"),
+                                argumentList: null,
+                                initializer: SyntaxFactory.EqualsValueClause(
+                                    SyntaxFactory.BinaryExpression(
+                                        SyntaxKind.CoalesceExpression,
+                                        left: SyntaxFactory.InvocationExpression(
+                                            expression: SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                expression: SyntaxFactory.IdentifierName("csharpCodeAnalysisAssembly"),
+                                                name: SyntaxFactory.IdentifierName("GetType")),
+                                            argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    expression: SyntaxFactory.IdentifierName(node.WrapperName),
+                                                    name: SyntaxFactory.IdentifierName("WrappedTypeName")))))),
+                                        right: SyntaxFactory.InvocationExpression(
+                                            expression: SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                expression: SyntaxFactory.IdentifierName("csharpCodeAnalysisAssembly"),
+                                                name: SyntaxFactory.IdentifierName("GetType")),
+                                            argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    expression: SyntaxFactory.IdentifierName(node.WrapperName),
+                                                    name: SyntaxFactory.IdentifierName("FallbackWrappedTypeName"))))))))))));
+
+                    // This is the first line of the statements that initialize 'builder', so start it with a blank line
+                    staticCtorStatements = staticCtorStatements.Add(localStatement.WithLeadingBlankLine());
+
+                    // builder.Add(typeof(BaseObjectCreationExpressionSyntaxWrapper), objectCreationExpressionSyntaxType);
+                    staticCtorStatements = staticCtorStatements.Add(SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            expression: SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                expression: SyntaxFactory.IdentifierName("builder"),
+                                name: SyntaxFactory.IdentifierName("Add")),
+                            argumentList: SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SeparatedList(
+                                    new[]
+                                    {
+                                        SyntaxFactory.Argument(SyntaxFactory.TypeOfExpression(SyntaxFactory.IdentifierName(node.WrapperName))),
+                                        SyntaxFactory.Argument(SyntaxFactory.IdentifierName("objectCreationExpressionSyntaxType")),
+                                    })))));
+
+                    continue;
+                }
+
                 // builder.Add(typeof(ConstantPatternSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ConstantPatternSyntaxWrapper.WrappedTypeName));
-                ExpressionStatementSyntax statement = SyntaxFactory.ExpressionStatement(
+                staticCtorStatements = staticCtorStatements.Add(SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.InvocationExpression(
                         expression: SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
@@ -947,15 +1005,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                                                     SyntaxKind.SimpleMemberAccessExpression,
                                                     expression: SyntaxFactory.IdentifierName(node.WrapperName),
                                                     name: SyntaxFactory.IdentifierName("WrappedTypeName"))))))),
-                                }))));
-
-                if (first)
-                {
-                    statement = statement.WithLeadingBlankLine();
-                    first = false;
-                }
-
-                staticCtorStatements = staticCtorStatements.Add(statement);
+                                })))));
             }
 
             // WrappedTypes = builder.ToImmutable();
