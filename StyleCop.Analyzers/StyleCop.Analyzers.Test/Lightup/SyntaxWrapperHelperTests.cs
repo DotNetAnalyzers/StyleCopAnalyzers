@@ -44,6 +44,12 @@ namespace StyleCop.Analyzers.Test.Lightup
                 Assert.False(LightupHelpers.SupportsCSharp7);
                 Assert.Same(typeof(ForEachStatementSyntax), SyntaxWrapperHelper.GetWrappedType(wrapperType));
             }
+            else if (wrapperType == typeof(BaseObjectCreationExpressionSyntaxWrapper))
+            {
+                // Special case for C# 6-8 analysis compatibility
+                Assert.False(LightupHelpers.SupportsCSharp9);
+                Assert.Same(typeof(ObjectCreationExpressionSyntax), SyntaxWrapperHelper.GetWrappedType(wrapperType));
+            }
             else
             {
                 Assert.Null(SyntaxWrapperHelper.GetWrappedType(wrapperType));
