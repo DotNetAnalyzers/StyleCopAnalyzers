@@ -34,15 +34,10 @@ return 0;
             await new CSharpTest(LanguageVersion.CSharp9)
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
-                TestCode = testCode,
-                SolutionTransforms =
+                TestState =
                 {
-                    (solution, projectId) =>
-                    {
-                        var project = solution.GetProject(projectId);
-                        var options = project.CompilationOptions;
-                        return solution.WithProjectCompilationOptions(projectId, options.WithOutputKind(OutputKind.ConsoleApplication));
-                    },
+                    OutputKind = OutputKind.ConsoleApplication,
+                    Sources = { testCode },
                 },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }

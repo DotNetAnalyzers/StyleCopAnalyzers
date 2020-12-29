@@ -37,25 +37,20 @@ return 0;
             await new CSharpTest(LanguageVersion.CSharp9)
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
-                TestCode = testCode,
-                ExpectedDiagnostics =
+                TestState =
                 {
-                    // /0/Test0.cs(3,1): warning SA1516: Elements should be separated by blank line
-                    Diagnostic().WithLocation(0),
-
-                    // /0/Test0.cs(3,1): warning SA1516: Elements should be separated by blank line
-                    Diagnostic().WithLocation(0),
-                },
-                FixedCode = fixedCode,
-                SolutionTransforms =
-                {
-                    (solution, projectId) =>
+                    OutputKind = OutputKind.ConsoleApplication,
+                    Sources = { testCode },
+                    ExpectedDiagnostics =
                     {
-                        var project = solution.GetProject(projectId);
-                        var options = project.CompilationOptions;
-                        return solution.WithProjectCompilationOptions(projectId, options.WithOutputKind(OutputKind.ConsoleApplication));
+                        // /0/Test0.cs(3,1): warning SA1516: Elements should be separated by blank line
+                        Diagnostic().WithLocation(0),
+
+                        // /0/Test0.cs(3,1): warning SA1516: Elements should be separated by blank line
+                        Diagnostic().WithLocation(0),
                     },
                 },
+                FixedCode = fixedCode,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
