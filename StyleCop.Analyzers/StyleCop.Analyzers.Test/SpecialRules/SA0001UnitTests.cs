@@ -28,14 +28,10 @@ namespace StyleCop.Analyzers.Test.SpecialRules
 
             await new CSharpTest
             {
-                TestCode = testCode,
-                SolutionTransforms =
+                TestState =
                 {
-                    (solution, projectId) =>
-                    {
-                        var project = solution.GetProject(projectId);
-                        return solution.WithProjectParseOptions(projectId, project.ParseOptions.WithDocumentationMode(documentationMode));
-                    },
+                    DocumentationMode = documentationMode,
+                    Sources = { testCode },
                 },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
@@ -54,15 +50,11 @@ namespace StyleCop.Analyzers.Test.SpecialRules
 
             await new CSharpTest
             {
-                TestCode = testCode,
-                ExpectedDiagnostics = { expected },
-                SolutionTransforms =
+                TestState =
                 {
-                    (solution, projectId) =>
-                    {
-                        var project = solution.GetProject(projectId);
-                        return solution.WithProjectParseOptions(projectId, project.ParseOptions.WithDocumentationMode(documentationMode));
-                    },
+                    DocumentationMode = documentationMode,
+                    Sources = { testCode },
+                    ExpectedDiagnostics = { expected },
                 },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
