@@ -880,5 +880,57 @@ public class TestClass
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3279, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3279")]
+        public async Task TestDelegateUsedAsSecondNamedArgumentAsync()
+        {
+            var testCode = @"
+using System;
+using System.Linq;
+public class TypeName
+{
+    public void Test()
+    {
+        string[] capture = new string[] { ""test"" };
+        Test2(resolve: delegate
+        {
+            return capture.Single(v => v == ""test"");
+        });
+    }
+
+    private void Test2(string description = null, Func<object, string> resolve = null)
+    {
+        resolve(0);
+    }
+}";
+
+            string fixedCode = @"
+using System;
+using System.Linq;
+public class TypeName
+{
+    public void Test()
+    {
+        string[] capture = new string[] { ""test"" };
+        Test2(resolve: arg =>
+        {
+            return capture.Single(v => v == ""test"");
+        });
+    }
+
+    private void Test2(string description = null, Func<object, string> resolve = null)
+    {
+        resolve(0);
+    }
+}";
+
+            var expected = new[]
+            {
+                Diagnostic().WithSpan(9, 24, 9, 32),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
