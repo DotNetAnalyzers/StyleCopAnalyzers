@@ -98,8 +98,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         internal static int FindArgumentIndex(SymbolInfo originalSymbolInfo, ArgumentSyntax argumentSyntax, BaseArgumentListSyntax argumentListSyntax)
         {
+            // if delegate is passed as named argument of method try to find its position by argument name
             if (originalSymbolInfo.Symbol.Kind == SymbolKind.Method
-                && originalSymbolInfo.Symbol is IMethodSymbol methodSymbol)
+                && originalSymbolInfo.Symbol is IMethodSymbol methodSymbol
+                && argumentSyntax.NameColon != null)
             {
                 var calledMethodParameters = methodSymbol.Parameters;
                 var argumentIdentifier = argumentSyntax.NameColon.Name.Identifier.ValueText;
