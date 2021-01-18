@@ -86,7 +86,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag) is XmlEmptyElementSyntax includeElement)
             {
-                var declaration = baseType is null ? context.ContainingSymbol : context.SemanticModel.GetDeclaredSymbol(baseType, context.CancellationToken);
+                var declaration = context.SemanticModel.GetDeclaredSymbol(context.Node, context.CancellationToken);
                 if (declaration == null)
                 {
                     return;
