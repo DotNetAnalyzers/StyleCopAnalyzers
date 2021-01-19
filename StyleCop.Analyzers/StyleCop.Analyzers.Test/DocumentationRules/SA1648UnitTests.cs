@@ -311,6 +311,7 @@ public class TestClass : ITest
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         [WorkItem(3291, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3291")]
+        [WorkItem(3291, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3291")]
         public async Task TestIncorrectDocumentedDelegateInheritDocAsync()
         {
             var testCode = @"
@@ -336,6 +337,7 @@ public class TestClass
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(3291, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3291")]
         [WorkItem(3291, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3291")]
         public async Task TestIncorrectDelegateInheritDocAsync()
         {
