@@ -310,6 +310,7 @@ public class TestClass : ITest
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(3291, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3291")]
         public async Task TestIncorrectDocumentedDelegateInheritDocAsync()
         {
             var testCode = @"
@@ -321,12 +322,12 @@ public delegate bool TestDelegate(int value);
 /// <summary>Test class</summary>
 public class TestClass
 {
-  /// <include file='DelegateInheritDoc.xml' path='/TestDelegate/*'/>
+  /// {|#0:<include file='DelegateInheritDoc.xml' path='/TestDelegate/*'/>|}
   public delegate bool TestDelegate(int value);
 }
 ";
 
-            var expected = Diagnostic().WithLocation(10, 7);
+            var expected = Diagnostic().WithLocation(0);
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -335,6 +336,7 @@ public class TestClass
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(3291, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3291")]
         public async Task TestIncorrectDelegateInheritDocAsync()
         {
             var testCode = @"
@@ -343,12 +345,12 @@ public delegate bool TestDelegate(int value);
 /// <summary>Test class</summary>
 public class TestClass
 {
-  /// <include file='DelegateInheritDoc.xml' path='/TestDelegate/*'/>
+  /// {|#0:<include file='DelegateInheritDoc.xml' path='/TestDelegate/*'/>|}
   public delegate bool TestDelegate(int value);
 }
 ";
 
-            var expected = Diagnostic().WithLocation(7, 7);
+            var expected = Diagnostic().WithLocation(0);
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
