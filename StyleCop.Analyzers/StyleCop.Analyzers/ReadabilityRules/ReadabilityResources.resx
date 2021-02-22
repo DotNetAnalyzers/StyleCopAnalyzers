@@ -561,6 +561,15 @@
   <data name="SA1142Title" xml:space="preserve">
     <value>Refer to tuple fields by name</value>
   </data>
+  <data name="SA1143Description" xml:space="preserve">
+    <value>There is no implicit conversion between collection element and iterator variable, this can result in runtime exception.</value>
+  </data>
+  <data name="SA1143MessageFormat" xml:space="preserve">
+    <value>Cannot implicitly convert type '{0}' to '{1}'</value>
+  </data>
+  <data name="SA1143Title" xml:space="preserve">
+    <value>Use implicitly assignable foreach variable type</value>
+  </data>
   <data name="SX1101CodeFix" xml:space="preserve">
     <value>Remove 'this.' prefix</value>
   </data>

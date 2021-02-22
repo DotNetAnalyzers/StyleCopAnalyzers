@@ -1394,6 +1394,33 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There is no implicit conversion between collection element and iterator variable, this can result in runtime exception..
+        /// </summary>
+        internal static string SA1143Description {
+            get {
+                return ResourceManager.GetString("SA1143Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot implicitly convert type &apos;{0}&apos; to &apos;{1}&apos;.
+        /// </summary>
+        internal static string SA1143MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1143MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use implicitly assignable foreach variable type.
+        /// </summary>
+        internal static string SA1143Title {
+            get {
+                return ResourceManager.GetString("SA1143Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove &apos;this.&apos; prefix.
         /// </summary>
         internal static string SX1101CodeFix {
