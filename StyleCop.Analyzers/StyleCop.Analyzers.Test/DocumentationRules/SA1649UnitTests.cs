@@ -320,6 +320,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         public async Task VerifyWithSuppressMessageAttributeAsync()
         {
             var testCode = @"
+                            using System.Diagnostics.CodeAnalysis;
                             [SuppressMessage(""StyleCop.CSharp.DocumentationRules"", ""SA1649:FileNameMustMatchTypeName"", Justification = ""Reviewed."")]
 
                             public class Class2
