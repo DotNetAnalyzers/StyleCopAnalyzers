@@ -126,6 +126,11 @@ namespace StyleCop.Analyzers.SpacingRules
                     allowTrailingSpace = true;
                     break;
 
+                case SyntaxKind.AsteriskToken:
+                    allowTrailingNoSpace = nextToken.Parent.IsKind(SyntaxKind.PointerType);
+                    allowTrailingSpace = true;
+                    break;
+
                 case SyntaxKind.QuestionToken:
                     allowTrailingNoSpace = nextToken.Parent.IsKind(SyntaxKind.NullableType);
                     allowTrailingSpace = true;
