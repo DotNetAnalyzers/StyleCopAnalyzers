@@ -136,6 +136,13 @@ namespace StyleCop.Analyzers.SpacingRules
                     allowTrailingSpace = true;
                     break;
 
+                // values[x as T<int>]
+                //                  ^^
+                case SyntaxKind.CloseBracketToken when nextToken.Parent.IsKind(SyntaxKind.BracketedArgumentList):
+                    allowTrailingNoSpace = true;
+                    allowTrailingSpace = false;
+                    break;
+
                 default:
                     allowTrailingNoSpace = false;
                     allowTrailingSpace = true;

@@ -381,5 +381,54 @@ class ClassName
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3312, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3312")]
+        public async Task TestSpacingInIndexAsync()
+        {
+            var testCode = @"using System;
+using System.Collections.Generic;
+
+public class TestClass
+{
+    private Dictionary<object, object> values;
+
+    public void TestMethod2(object input)
+    {
+        var x = values[input as List<int>];
+        x = values[input as List<int {|#0:>|}];
+        x = values[input as List<int{|#1:>|} ];
+        x = values[input as List<int {|#2:>|} ];
+    }
+}
+";
+
+            var fixedCode = @"using System;
+using System.Collections.Generic;
+
+public class TestClass
+{
+    private Dictionary<object, object> values;
+
+    public void TestMethod2(object input)
+    {
+        var x = values[input as List<int>];
+        x = values[input as List<int>];
+        x = values[input as List<int>];
+        x = values[input as List<int>];
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DescriptorNotPreceded).WithLocation(0),
+                Diagnostic(DescriptorNotFollowed).WithLocation(1),
+                Diagnostic(DescriptorNotPreceded).WithLocation(2),
+                Diagnostic(DescriptorNotFollowed).WithLocation(2),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
