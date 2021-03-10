@@ -313,6 +313,36 @@ public class ClassName
         }
 
         /// <summary>
+        /// Verifies that included documentation with missing documentation file produces no diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3150, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3150")]
+        public async Task VerifyIncludedMissingDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <include file='MissingFile.xml' path='/TestClass/TestMethod/*' />
+    public void TestMethod(string {|#0:param1|}, string {|#1:param2|}, string {|#2:param3|})
+    {
+    }
+}";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0).WithArguments("param1"),
+                Diagnostic().WithLocation(1).WithArguments("param2"),
+                Diagnostic().WithLocation(2).WithArguments("param3"),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that included documentation with missing elements documented produces the expected diagnostics.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
