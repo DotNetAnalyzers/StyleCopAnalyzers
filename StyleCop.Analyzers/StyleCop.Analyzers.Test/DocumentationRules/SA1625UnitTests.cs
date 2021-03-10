@@ -322,6 +322,21 @@ public class TestClass2 {{ }}
         }
 
         [Fact]
+        [WorkItem(3150, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3150")]
+        public async Task VerifyThatMissingIncludedDocumentationDoesNotReportADiagnosticAsync()
+        {
+            var testCode = $@"
+public class TestClass
+{{
+    /// <include file='MissingFile.xml' path='/TestClass/Test/*' />
+    public void Test() {{ }}
+}}
+public class TestClass2 {{ }}
+";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task VerifyThatTheAnalyzerDoesNotCrashOnIncludedInheritDocAsync()
         {
             var testCode = $@"
