@@ -234,29 +234,37 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             if (hasIncludedDocumentation)
             {
-                var declaration = context.SemanticModel.GetDeclaredSymbol(node, context.CancellationToken);
-                var rawDocumentation = declaration?.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
-                var completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
-
-                if (this.inheritDocSuppressesWarnings &&
-                    completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.InheritdocXmlTag))
+                var declaration = node switch
                 {
-                    // Ignore nodes with an <inheritdoc/> tag in the included XML.
+                    BaseFieldDeclarationSyntax baseFieldDeclaration => baseFieldDeclaration.Declaration.Variables.FirstOrDefault() ?? node,
+                    _ => node,
+                };
+
+                var declaredSymbol = context.SemanticModel.GetDeclaredSymbol(declaration, context.CancellationToken);
+                if (declaredSymbol is not null)
+                {
+                    var rawDocumentation = declaredSymbol?.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
+                    var completeDocumentation = XElement.Parse(rawDocumentation ?? "<doc></doc>", LoadOptions.None);
+
+                    if (this.inheritDocSuppressesWarnings &&
+                        completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.InheritdocXmlTag))
+                    {
+                        // Ignore nodes with an <inheritdoc/> tag in the included XML.
+                        return;
+                    }
+
+                    this.HandleCompleteDocumentation(context, needsComment, completeDocumentation, locations);
                     return;
                 }
-
-                this.HandleCompleteDocumentation(context, needsComment, completeDocumentation, locations);
             }
-            else
-            {
-                IEnumerable<XmlNodeSyntax> matchingXmlElements = string.IsNullOrEmpty(this.matchElementName)
-                    ? documentation.Content
-                        .Where(x => x is XmlElementSyntax || x is XmlEmptyElementSyntax)
-                        .Where(x => !string.Equals(x.GetName()?.ToString(), XmlCommentHelper.IncludeXmlTag, StringComparison.Ordinal))
-                    : documentation.Content.GetXmlElements(this.matchElementName);
 
-                this.HandleXmlElement(context, settings, needsComment, matchingXmlElements, locations);
-            }
+            IEnumerable<XmlNodeSyntax> matchingXmlElements = string.IsNullOrEmpty(this.matchElementName)
+                ? documentation.Content
+                    .Where(x => x is XmlElementSyntax || x is XmlEmptyElementSyntax)
+                    .Where(x => !string.Equals(x.GetName()?.ToString(), XmlCommentHelper.IncludeXmlTag, StringComparison.Ordinal))
+                : documentation.Content.GetXmlElements(this.matchElementName);
+
+            this.HandleXmlElement(context, settings, needsComment, matchingXmlElements, locations);
         }
     }
 }

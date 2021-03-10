@@ -222,6 +222,35 @@ public class ClassName
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(3150, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3150")]
+        public async Task TestFieldWithIncludedSummaryDocumentationAsync()
+        {
+            var testCode = @"
+public class ClassName
+{
+    /// <include file='FieldWithSummary.xml' path='/FieldName/*' />
+    public int FieldName;
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3150, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3150")]
+        public async Task TestFieldWithIncludedDefaultSummaryDocumentationAsync()
+        {
+            var testCode = @"
+public class ClassName
+{
+    /// <include file='FieldWithDefaultSummary.xml' path='/FieldName/*' />
+    public {|#0:int FieldName|};
+}";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
             => VerifyCSharpDiagnosticAsync(source, new[] { expected }, cancellationToken);
 
@@ -245,6 +274,20 @@ public class ClassName
   </summary>
 </ClassName>
 ";
+            string fieldContentWithSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<FieldName>
+  <summary>
+    Foo
+  </summary>
+</FieldName>
+";
+            string fieldContentWithDefaultSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<FieldName>
+  <summary>
+    Summary description for the ClassName class.
+  </summary>
+</FieldName>
+";
 
             var test = new StyleCopDiagnosticVerifier<SA1608ElementDocumentationMustNotHaveDefaultSummary>.CSharpTest
             {
@@ -254,6 +297,8 @@ public class ClassName
                     { "ClassWithoutSummary.xml", contentWithoutSummary },
                     { "ClassWithSummary.xml", contentWithSummary },
                     { "ClassWithDefaultSummary.xml", contentWithDefaultSummary },
+                    { "FieldWithSummary.xml", fieldContentWithSummary },
+                    { "FieldWithDefaultSummary.xml", fieldContentWithDefaultSummary },
                 },
             };
 
