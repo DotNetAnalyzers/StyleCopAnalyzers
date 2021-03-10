@@ -305,6 +305,57 @@ public class TestClass : ITest
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that a delegate declaration that includes the inheritdoc will produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3291, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3291")]
+        [WorkItem(3291, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3291")]
+        public async Task TestIncorrectDocumentedDelegateInheritDocAsync()
+        {
+            var testCode = @"
+/// <summary>Foo</summary>
+/// <param name=""value"">some param</param>
+/// <returns>something</returns>
+public delegate bool TestDelegate(int value);
+
+/// <summary>Test class</summary>
+public class TestClass
+{
+  /// {|#0:<include file='DelegateInheritDoc.xml' path='/TestDelegate/*'/>|}
+  public delegate bool TestDelegate(int value);
+}
+";
+
+            var expected = Diagnostic().WithLocation(0);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a delegate declaration that includes the inheritdoc will produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3291, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3291")]
+        [WorkItem(3291, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3291")]
+        public async Task TestIncorrectDelegateInheritDocAsync()
+        {
+            var testCode = @"
+public delegate bool TestDelegate(int value);
+
+/// <summary>Test class</summary>
+public class TestClass
+{
+  /// {|#0:<include file='DelegateInheritDoc.xml' path='/TestDelegate/*'/>|}
+  public delegate bool TestDelegate(int value);
+}
+";
+
+            var expected = Diagnostic().WithLocation(0);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
             => VerifyCSharpDiagnosticAsync(source, new[] { expected }, cancellationToken);
 
@@ -330,6 +381,11 @@ public class TestClass : ITest
   </TestMethod>
 </TestClass>
 ";
+            string contentDelegateInheritDoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestDelegate>
+    <inheritdoc/>
+</TestDelegate>
+";
 
             var test = new StyleCopDiagnosticVerifier<SA1648InheritDocMustBeUsedWithInheritingClass>.CSharpTest
             {
@@ -337,6 +393,7 @@ public class TestClass : ITest
                 {
                     { "ClassInheritDoc.xml", contentClassInheritDoc },
                     { "MethodInheritDoc.xml", contentMethodInheritDoc },
+                    { "DelegateInheritDoc.xml", contentDelegateInheritDoc },
                 },
             };
 
