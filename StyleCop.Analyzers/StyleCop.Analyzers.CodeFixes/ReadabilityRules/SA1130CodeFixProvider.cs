@@ -174,7 +174,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var originalInvocableExpression = argumentListSyntax.Parent;
 
             var originalSymbolInfo = semanticModel.GetSymbolInfo(originalInvocableExpression);
-            var argumentIndex = SA1130UseLambdaSyntax.FindArgumentIndex(originalSymbolInfo, argumentSyntax, argumentListSyntax);
+            var argumentIndex = SA1130UseLambdaSyntax.FindParameterIndex(originalSymbolInfo, argumentSyntax, argumentListSyntax);
             var parameterList = SA1130UseLambdaSyntax.GetDelegateParameterList(originalSymbolInfo.Symbol, argumentIndex);
             return parameterList.Parameters.Select(p => p.Identifier.ToString()).ToImmutableArray();
         }

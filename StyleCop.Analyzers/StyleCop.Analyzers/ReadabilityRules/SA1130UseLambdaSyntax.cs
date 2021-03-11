@@ -96,12 +96,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
             return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList(syntaxParameters));
         }
 
-        internal static int FindArgumentIndex(SymbolInfo originalSymbolInfo, ArgumentSyntax argumentSyntax, BaseArgumentListSyntax argumentListSyntax)
+        internal static int FindParameterIndex(SymbolInfo originalSymbolInfo, ArgumentSyntax argumentSyntax, BaseArgumentListSyntax argumentListSyntax)
         {
             // if delegate is passed as named argument of method try to find its position by argument name
-            if (originalSymbolInfo.Symbol.Kind == SymbolKind.Method
-                && originalSymbolInfo.Symbol is IMethodSymbol methodSymbol
-                && argumentSyntax.NameColon != null)
+            if (argumentSyntax.NameColon != null
+                && originalSymbolInfo.Symbol is IMethodSymbol methodSymbol)
             {
                 var calledMethodParameters = methodSymbol.Parameters;
                 var argumentIdentifier = argumentSyntax.NameColon.Name.Identifier.ValueText;
@@ -160,7 +159,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return false;
                 }
 
-                var argumentIndex = FindArgumentIndex(originalSymbolInfo, argumentSyntax, argumentListSyntax);
+                var argumentIndex = FindParameterIndex(originalSymbolInfo, argumentSyntax, argumentListSyntax);
 
                 // Determine the parameter list from the method that is invoked, as delegates without parameters are allowed, but they cannot be replaced by a lambda without parameters.
                 var parameterList = GetDelegateParameterList(originalSymbolInfo.Symbol, argumentIndex);
