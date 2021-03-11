@@ -126,9 +126,21 @@ namespace StyleCop.Analyzers.SpacingRules
                     allowTrailingSpace = true;
                     break;
 
+                case SyntaxKind.AsteriskToken:
+                    allowTrailingNoSpace = nextToken.Parent.IsKind(SyntaxKind.PointerType);
+                    allowTrailingSpace = true;
+                    break;
+
                 case SyntaxKind.QuestionToken:
                     allowTrailingNoSpace = nextToken.Parent.IsKind(SyntaxKind.NullableType);
                     allowTrailingSpace = true;
+                    break;
+
+                // values[x as T<int>]
+                //                  ^^
+                case SyntaxKind.CloseBracketToken when nextToken.Parent.IsKind(SyntaxKind.BracketedArgumentList):
+                    allowTrailingNoSpace = true;
+                    allowTrailingSpace = false;
                     break;
 
                 default:

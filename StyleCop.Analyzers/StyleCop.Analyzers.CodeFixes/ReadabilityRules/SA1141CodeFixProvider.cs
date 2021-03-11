@@ -77,7 +77,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 break;
             }
 
-            var newSyntaxRoot = syntaxRoot.ReplaceNode(node, newNode).WithAdditionalAnnotations(Simplifier.Annotation);
+            var newSyntaxRoot = syntaxRoot.ReplaceNode(node, newNode.WithAdditionalAnnotations(Simplifier.Annotation));
             return document.WithSyntaxRoot(newSyntaxRoot.WithoutFormatting());
         }
 

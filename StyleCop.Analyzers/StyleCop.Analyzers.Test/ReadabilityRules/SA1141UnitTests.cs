@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
@@ -20,7 +21,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     public class SA1141UnitTests
     {
         /// <summary>
-        /// Verifies that usage of the ValueTuple type will not produce a diagnostic.
+        /// Verifies that usage of <see cref="ValueTuple{T1, T2}"/> will not produce a diagnostic.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [Fact]

@@ -312,6 +312,25 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await VerifyCSharpDiagnosticAsync("Test0.cs", testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that no diagnostic is generated if an appropriate SuppressMessageAttribute is provided.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyWithSuppressMessageAttributeAsync()
+        {
+            var testCode = @"
+                            using System.Diagnostics.CodeAnalysis;
+                            [SuppressMessage(""StyleCop.CSharp.DocumentationRules"", ""SA1649:FileNameMustMatchTypeName"", Justification = ""Reviewed."")]
+
+                            public class Class2
+                            {
+                            }
+                            ";
+
+            await VerifyCSharpDiagnosticAsync("Class1.cs", testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         private static string GetTypeDeclaration(string typeKind, string typeName, int? diagnosticKey = null)
         {
             if (diagnosticKey is not null)

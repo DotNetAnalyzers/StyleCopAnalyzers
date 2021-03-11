@@ -316,6 +316,20 @@ public class TestClass
         }
 
         [Fact]
+        [WorkItem(3150, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3150")]
+        public async Task TestIncludedMissingFileAsync()
+        {
+            var testCode = @"
+/// <include file='MissingFile.xml' path='/TestClass/*'/>
+public class TestClass
+{
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(2680, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2680")]
         public async Task TestReportingAfterEmptyElementAsync()
         {
