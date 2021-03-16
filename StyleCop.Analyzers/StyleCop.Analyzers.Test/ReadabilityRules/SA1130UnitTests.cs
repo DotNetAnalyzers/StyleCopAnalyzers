@@ -892,10 +892,9 @@ public class TypeName
 {
     public void Test()
     {
-        string[] capture = new string[] { ""test"" };
         Test2(resolve: delegate
         {
-            return capture.Single(v => v == ""test"");
+            return """";
         });
     }
 
@@ -912,10 +911,9 @@ public class TypeName
 {
     public void Test()
     {
-        string[] capture = new string[] { ""test"" };
         Test2(resolve: arg =>
         {
-            return capture.Single(v => v == ""test"");
+            return """";
         });
     }
 
@@ -927,7 +925,7 @@ public class TypeName
 
             var expected = new[]
             {
-                Diagnostic().WithSpan(9, 24, 9, 32),
+                Diagnostic().WithSpan(8, 24, 8, 32),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
