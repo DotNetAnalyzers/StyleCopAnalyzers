@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.LayoutRules
 {
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -27,7 +28,7 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
@@ -48,22 +49,43 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
+            var newRoot = await GetTransformedDocumentAsync(document, ImmutableArray.Create(diagnostic), cancellationToken).ConfigureAwait(false);
+            return document.WithSyntaxRoot(newRoot);
+        }
+
+        private static async Task<SyntaxNode> GetTransformedDocumentAsync(Document document, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken)
+        {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
-            var documentationHeader = syntaxRoot.FindTrivia(diagnostic.Location.SourceSpan.Start);
-            var triviaList = documentationHeader.Token.LeadingTrivia;
-            var documentationHeaderIndex = triviaList.IndexOf(documentationHeader);
+            var documentationHeaders = diagnostics.Select(diagnostic => syntaxRoot.FindTrivia(diagnostic.Location.SourceSpan.Start)).ToArray();
+            return syntaxRoot.ReplaceTokens(
+                documentationHeaders.Select(header => header.Token),
+                (originalToken, rewrittenToken) =>
+                {
+                    var triviaList = rewrittenToken.LeadingTrivia;
+                    var documentationHeaderIndex = originalToken.LeadingTrivia.IndexOf(originalToken.LeadingTrivia.First(documentationHeaders.Contains));
 
-            // Keep any leading whitespace with the documentation header
-            var index = documentationHeaderIndex - 1;
-            while ((index >= 0) && triviaList[index].IsKind(SyntaxKind.WhitespaceTrivia))
-            {
-                index--;
-            }
+                    // Keep any leading whitespace with the documentation header
+                    var index = documentationHeaderIndex - 1;
+                    while ((index >= 0) && triviaList[index].IsKind(SyntaxKind.WhitespaceTrivia))
+                    {
+                        index--;
+                    }
 
-            var newLeadingTrivia = documentationHeader.Token.LeadingTrivia.Insert(index + 1, SyntaxFactory.CarriageReturnLineFeed);
-            var newSyntaxRoot = syntaxRoot.ReplaceToken(documentationHeader.Token, documentationHeader.Token.WithLeadingTrivia(newLeadingTrivia));
-            return document.WithSyntaxRoot(newSyntaxRoot);
+                    var newLeadingTrivia = rewrittenToken.LeadingTrivia.Insert(index + 1, SyntaxFactory.CarriageReturnLineFeed);
+                    return rewrittenToken.WithLeadingTrivia(newLeadingTrivia);
+                });
+        }
+
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; } =
+                new FixAll();
+
+            protected override string CodeActionTitle => LayoutResources.SA1514CodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+                => await GetTransformedDocumentAsync(document, diagnostics, fixAllContext.CancellationToken).ConfigureAwait(false);
         }
     }
 }
