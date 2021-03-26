@@ -123,7 +123,6 @@ namespace StyleCop.Analyzers.Test.Settings
       ""documentExposedElements"": {valueText},
       ""documentInternalElements"": {valueText},
       ""documentPrivateElements"": {valueText},
-      ""documentInterfaces"": {valueText},
       ""documentPrivateFields"": {valueText}
     }}
   }}
@@ -136,8 +135,36 @@ namespace StyleCop.Analyzers.Test.Settings
             Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentExposedElements);
             Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentInternalElements);
             Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentPrivateElements);
-            Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentInterfaces);
             Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentPrivateFields);
+        }
+
+        /// <summary>
+        /// Verifies that the settings are properly read.
+        /// </summary>
+        /// <param name="value">The value for testing the settings.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("true")]
+        [InlineData("false")]
+        [InlineData("all")]
+        [InlineData("none")]
+        [InlineData("exposed")]
+        public async Task VerifyInheritanceDocumentationSettingsAsync(string value)
+        {
+            var settings = $@"
+{{
+  ""settings"": {{
+    ""documentationRules"": {{
+      ""documentInterfaces"": ""{value}""
+    }}
+  }}
+}}
+";
+            var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+
+            Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentInterfaces);
         }
 
         /// <summary>

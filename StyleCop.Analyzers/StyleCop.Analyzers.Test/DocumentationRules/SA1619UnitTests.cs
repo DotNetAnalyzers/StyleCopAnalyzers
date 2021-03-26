@@ -145,7 +145,7 @@ public partial ##";
   ""settings"": {{
     ""documentationRules"": {{
       ""documentExposedElements"": false,
-      ""{interfaceSettingName}"": false
+      ""{interfaceSettingName}"": ""false""
     }}
   }}
 }}
