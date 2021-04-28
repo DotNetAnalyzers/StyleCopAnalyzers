@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
     using global::LightJson;
@@ -90,6 +91,16 @@ namespace StyleCop.Analyzers.Test.Verifiers
             private const int DefaultIndentationSize = 4;
             private const int DefaultTabSize = 4;
             private const bool DefaultUseTabs = false;
+
+            static CSharpTest()
+            {
+                // If we have outdated defaults from the host unit test application targeting an older .NET Framework,
+                // use more reasonable TLS protocol version for outgoing connections.
+                if (ServicePointManager.SecurityProtocol == (SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls))
+                {
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                }
+            }
 
             public CSharpTest()
                 : this(languageVersion: null)
