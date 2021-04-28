@@ -61,7 +61,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var propertyDeclaration = (PropertyDeclarationSyntax)context.Node;
             var propertyType = context.SemanticModel.GetTypeInfo(propertyDeclaration.Type.StripRefFromType());
-            var settings = context.Options.GetStyleCopSettings(context.CancellationToken);
+            var settings = context.GetStyleCopSettings(context.CancellationToken);
             var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
             var resourceManager = DocumentationResources.ResourceManager;
 

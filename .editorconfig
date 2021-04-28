@@ -12,6 +12,8 @@ indent_size = 4
 
 # Sort using and Import directives with System.* appearing first
 dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = false
+csharp_using_directive_placement = inside_namespace:none
 
 # Always use "this." and "Me." when applicable; let StyleCop Analyzers provide the warning and fix
 dotnet_style_qualification_for_field = true:none

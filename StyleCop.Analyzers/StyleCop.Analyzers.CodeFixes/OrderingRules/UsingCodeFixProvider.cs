@@ -80,8 +80,8 @@ namespace StyleCop.Analyzers.OrderingRules
             var fileHeader = GetFileHeader(syntaxRoot);
             var compilationUnit = (CompilationUnitSyntax)syntaxRoot;
 
-            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, semanticModel.SyntaxTree, cancellationToken);
             var usingDirectivesPlacement = forcePreservePlacement ? UsingDirectivesPlacement.Preserve : DeterminePlacement(compilationUnit, settings);
 
             var usingsHelper = new UsingsSorter(settings, semanticModel, compilationUnit, fileHeader);
