@@ -99,6 +99,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
             public CSharpTest(LanguageVersion? languageVersion)
             {
                 this.ReferenceAssemblies = GenericAnalyzerTest.ReferenceAssemblies;
+                this.LanguageVersion = languageVersion;
 
                 this.OptionsTransforms.Add(options =>
                     options
@@ -108,15 +109,6 @@ namespace StyleCop.Analyzers.Test.Verifiers
 
                 this.TestState.AdditionalFilesFactories.Add(GenerateSettingsFile);
                 this.CodeActionValidationMode = CodeActionValidationMode.None;
-
-                if (languageVersion != null)
-                {
-                    this.SolutionTransforms.Add((solution, projectId) =>
-                    {
-                        var parseOptions = (CSharpParseOptions)solution.GetProject(projectId).ParseOptions;
-                        return solution.WithProjectParseOptions(projectId, parseOptions.WithLanguageVersion(languageVersion.Value));
-                    });
-                }
 
                 this.SolutionTransforms.Add((solution, projectId) =>
                 {
@@ -237,6 +229,8 @@ namespace StyleCop.Analyzers.Test.Verifiers
             /// </value>
             public List<string> ExplicitlyEnabledDiagnostics { get; } = new List<string>();
 
+            private LanguageVersion? LanguageVersion { get; }
+
             protected override CompilationOptions CreateCompilationOptions()
             {
                 var compilationOptions = base.CreateCompilationOptions();
@@ -248,6 +242,17 @@ namespace StyleCop.Analyzers.Test.Verifiers
                 }
 
                 return compilationOptions.WithSpecificDiagnosticOptions(specificDiagnosticOptions);
+            }
+
+            protected override ParseOptions CreateParseOptions()
+            {
+                var parseOptions = base.CreateParseOptions();
+                if (this.LanguageVersion is { } languageVersion)
+                {
+                    parseOptions = ((CSharpParseOptions)parseOptions).WithLanguageVersion(languageVersion);
+                }
+
+                return parseOptions;
             }
 
             protected override IEnumerable<CodeFixProvider> GetCodeFixProviders()
