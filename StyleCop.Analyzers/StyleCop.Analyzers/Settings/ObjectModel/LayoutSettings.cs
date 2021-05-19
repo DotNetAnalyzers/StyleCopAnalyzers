@@ -19,12 +19,18 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         private readonly bool allowConsecutiveUsings;
 
         /// <summary>
+        /// This is the backing field of the <see cref="AllowDoWhileOnClosingBrace"/> property.
+        /// </summary>
+        private readonly bool allowDoWhileOnClosingBrace;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="LayoutSettings"/> class.
         /// </summary>
         protected internal LayoutSettings()
         {
             this.newlineAtEndOfFile = OptionSetting.Allow;
             this.allowConsecutiveUsings = true;
+            this.allowDoWhileOnClosingBrace = false;
         }
 
         /// <summary>
@@ -37,6 +43,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         {
             OptionSetting? newlineAtEndOfFile = null;
             bool? allowConsecutiveUsings = null;
+            bool? allowDoWhileOnClosingBrace = null;
 
             foreach (var kvp in layoutSettingsObject)
             {
@@ -48,6 +55,10 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
                 case "allowConsecutiveUsings":
                     allowConsecutiveUsings = kvp.ToBooleanValue();
+                    break;
+
+                case "allowDoWhileOnClosingBrace":
+                    allowDoWhileOnClosingBrace = kvp.ToBooleanValue();
                     break;
 
                 default:
@@ -63,9 +74,11 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             };
 
             allowConsecutiveUsings ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.layout.allowConsecutiveUsings");
+            allowDoWhileOnClosingBrace ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.layout.allowDoWhileOnClosingBrace");
 
             this.newlineAtEndOfFile = newlineAtEndOfFile.GetValueOrDefault(OptionSetting.Allow);
             this.allowConsecutiveUsings = allowConsecutiveUsings.GetValueOrDefault(true);
+            this.allowDoWhileOnClosingBrace = allowDoWhileOnClosingBrace.GetValueOrDefault(false);
         }
 
         public OptionSetting NewlineAtEndOfFile =>
@@ -73,5 +86,8 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
         public bool AllowConsecutiveUsings =>
             this.allowConsecutiveUsings;
+
+        public bool AllowDoWhileOnClosingBrace =>
+            this.allowDoWhileOnClosingBrace;
     }
 }
