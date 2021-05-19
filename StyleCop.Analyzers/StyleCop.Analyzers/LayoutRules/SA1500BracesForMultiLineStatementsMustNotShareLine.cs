@@ -290,9 +290,8 @@ namespace StyleCop.Analyzers.LayoutRules
                     // may want to allow that and not have SA1500 report it as a style error.
                     if (context.GetStyleCopSettings(context.CancellationToken).LayoutRules.AllowDoWhileOnClosingBrace)
                     {
-                        var openBracePreviousToken = openBraceToken.GetPreviousToken(includeZeroWidth: true);
-
-                        if (openBracePreviousToken.IsKind(SyntaxKind.DoKeyword))
+                        if (openBraceToken.Parent.IsKind(SyntaxKind.Block)
+                            && openBraceToken.Parent.Parent.IsKind(SyntaxKind.DoStatement))
                         {
                             return;
                         }
