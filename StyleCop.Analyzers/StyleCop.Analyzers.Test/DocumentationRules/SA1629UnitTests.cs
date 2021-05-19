@@ -8,7 +8,6 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Test.Verifiers;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1629DocumentationTextMustEndWithAPeriod>;
 
@@ -308,6 +307,20 @@ public class TestClass
         {
             var testCode = @"
 /// <include file='InvalidClassInheritDoc.xml' path='/TestClass/*'/>
+public class TestClass
+{
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3150, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3150")]
+        public async Task TestIncludedMissingFileAsync()
+        {
+            var testCode = @"
+/// <include file='MissingFile.xml' path='/TestClass/*'/>
 public class TestClass
 {
 }

@@ -8,7 +8,6 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System.Collections.Immutable;
     using System.Globalization;
     using System.Linq;
-    using System.Resources;
     using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -120,7 +119,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var objectPool = SharedPools.Default<HashSet<string>>();
             HashSet<string> documentationTexts = objectPool.Allocate();
-            var settings = context.Options.GetStyleCopSettings(context.CancellationToken);
+            var settings = context.GetStyleCopSettings(context.CancellationToken);
             var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
             var resourceManager = DocumentationResources.ResourceManager;
 

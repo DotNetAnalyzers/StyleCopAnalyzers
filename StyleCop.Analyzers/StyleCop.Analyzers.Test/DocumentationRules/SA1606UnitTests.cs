@@ -7,8 +7,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using StyleCop.Analyzers.Test.Verifiers;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1606ElementDocumentationMustHaveSummaryText>;
 
@@ -18,10 +18,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     public class SA1606UnitTests
     {
         [Theory]
-        [InlineData("enum")]
-        [InlineData("class")]
-        [InlineData("struct")]
-        [InlineData("interface")]
+        [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeNoDocumentationAsync(string typeName)
         {
             var testCode = @"
@@ -32,10 +29,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         }
 
         [Theory]
-        [InlineData("enum")]
-        [InlineData("class")]
-        [InlineData("struct")]
-        [InlineData("interface")]
+        [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeWithDocumentationAsync(string typeName)
         {
             var testCode = @"
@@ -49,10 +43,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         }
 
         [Theory]
-        [InlineData("enum")]
-        [InlineData("class")]
-        [InlineData("struct")]
-        [InlineData("interface")]
+        [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeWithInheritedDocumentationAsync(string typeName)
         {
             var testCode = @"
@@ -64,10 +55,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         }
 
         [Theory]
-        [InlineData("enum")]
-        [InlineData("class")]
-        [InlineData("struct")]
-        [InlineData("interface")]
+        [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeWithoutDocumentationAsync(string typeName)
         {
             var testCode = @"
@@ -85,16 +73,14 @@ TypeName
         }
 
         [Theory]
-        [InlineData("partial class")]
-        [InlineData("partial struct")]
-        [InlineData("partial interface")]
+        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestPartialTypeWithoutDocumentationAsync(string typeName)
         {
             var testCode = @"
 /// <summary>
 /// 
 /// </summary>
-{0}
+partial {0}
 TypeName
 {{
 }}";

@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.LayoutRules
 {
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -30,7 +31,7 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
@@ -51,15 +52,31 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
-            var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.End);
+            var newRoot = await GetTransformedDocumentAsync(document, ImmutableArray.Create(diagnostic), cancellationToken).ConfigureAwait(false);
+            return document.WithSyntaxRoot(newRoot);
+        }
 
-            var newTrivia = token.LeadingTrivia.Insert(0, SyntaxFactory.CarriageReturnLineFeed);
-            var newToken = token.WithLeadingTrivia(newTrivia);
-            var newSyntaxRoot = syntaxRoot.ReplaceToken(token, newToken);
-            var newDocument = document.WithSyntaxRoot(newSyntaxRoot);
+        private static async Task<SyntaxNode> GetTransformedDocumentAsync(Document document, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken)
+        {
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            return root.ReplaceTokens(
+                diagnostics.Select(diagnostic => root.FindToken(diagnostic.Location.SourceSpan.End)),
+                (originalToken, rewrittenToken) =>
+                {
+                    var newTrivia = rewrittenToken.LeadingTrivia.Insert(0, SyntaxFactory.CarriageReturnLineFeed);
+                    return rewrittenToken.WithLeadingTrivia(newTrivia);
+                });
+        }
 
-            return newDocument;
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; } =
+                new FixAll();
+
+            protected override string CodeActionTitle => LayoutResources.SA1513CodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+                => await GetTransformedDocumentAsync(document, diagnostics, fixAllContext.CancellationToken).ConfigureAwait(false);
         }
     }
 }

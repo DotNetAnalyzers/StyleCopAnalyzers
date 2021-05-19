@@ -3,15 +3,35 @@
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.ReadabilityRules.SA1118ParameterMustNotSpanMultipleLines>;
 
     public class SA1118UnitTests
     {
+        public static IEnumerable<object[]> ArrayCreationExpressions { get; } = new List<object[]>
+        {
+            new object[]
+            {
+                @"new[]
+                {
+                    0,
+                    1
+                }",
+            },
+            new object[]
+            {
+                @"new int[]
+                {
+                    0,
+                    1
+                }",
+            },
+        };
+
         [Fact]
         public async Task TestMethodCallWithTwoParametersSecondSpansMoreThanOneLineAsync()
         {
@@ -276,7 +296,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestLambdaCallSecondParameterIsAnonynousMethodAsync()
+        public async Task TestLambdaCallSecondParameterIsAnonymousMethodAsync()
         {
             var testCode = @"
 class Foo
@@ -341,7 +361,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestAttributeSecondParameterSpandsMultipleLinesAsync()
+        public async Task TestAttributeSecondParameterSpansMultipleLinesAsync()
         {
             var testCode = @"
 [System.AttributeUsage(System.AttributeTargets.Class,AllowMultiple = true)]
@@ -362,6 +382,28 @@ public class Foo
             DiagnosticResult expected = Diagnostic().WithLocation(11, 16);
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(ArrayCreationExpressions))]
+        public async Task TestArrayCreationSpansMultipleLinesAsync(string arrayCreationExpression)
+        {
+            var testCode = $@"
+class Foo
+{{
+    public void Fun(int i, int[] j)
+    {{
+    }}
+
+    public void Bar()
+    {{
+        Fun(
+            1,
+            {arrayCreationExpression});
+    }}
+}}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

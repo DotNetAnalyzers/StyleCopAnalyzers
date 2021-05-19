@@ -64,7 +64,9 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly DiagnosticDescriptor ParenthesisDescriptor =
+#pragma warning disable RS2000 // Add analyzer diagnostic IDs to analyzer release.
             new DiagnosticDescriptor(ParenthesesDiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Hidden, AnalyzerConstants.EnabledByDefault, Description, HelpLink, customTags: new[] { WellKnownDiagnosticTags.Unnecessary, WellKnownDiagnosticTags.NotConfigurable });
+#pragma warning restore RS2000 // Add analyzer diagnostic IDs to analyzer release.
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> ParenthesizedExpressionAction = HandleParenthesizedExpression;
@@ -125,7 +127,19 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                         return;
                     }
 
-                    if (IsSwitchExpressionPrecededByTypeCast(node))
+                    if (IsSwitchOrWithExpressionPrecededByTypeCast(node))
+                    {
+                        return;
+                    }
+
+                    if (IsSwitchOrWithExpressionExpressionOfMemberAccess(node))
+                    {
+                        return;
+                    }
+
+                    if ((node.Expression.IsKind(SyntaxKind.StackAllocArrayCreationExpression)
+                        || node.Expression.IsKind(SyntaxKindEx.ImplicitStackAllocArrayCreationExpression))
+                        && node.Parent.IsKind(SyntaxKind.EqualsValueClause))
                     {
                         return;
                     }
@@ -202,9 +216,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             return false;
         }
 
-        private static bool IsSwitchExpressionPrecededByTypeCast(ParenthesizedExpressionSyntax node)
+        private static bool IsSwitchOrWithExpressionPrecededByTypeCast(ParenthesizedExpressionSyntax node)
         {
-            if (!node.Expression.IsKind(SyntaxKindEx.SwitchExpression))
+            if (!node.Expression.IsKind(SyntaxKindEx.SwitchExpression)
+                && !node.Expression.IsKind(SyntaxKindEx.WithExpression))
             {
                 return false;
             }
@@ -217,6 +232,23 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             }
 
             return previousToken.IsKind(SyntaxKind.CloseParenToken) && previousToken.Parent.IsKind(SyntaxKind.CastExpression);
+        }
+
+        private static bool IsSwitchOrWithExpressionExpressionOfMemberAccess(ParenthesizedExpressionSyntax node)
+        {
+            if (!node.Expression.IsKind(SyntaxKindEx.SwitchExpression)
+                && !node.Expression.IsKind(SyntaxKindEx.WithExpression))
+            {
+                return false;
+            }
+
+            return node.Parent switch
+            {
+                MemberAccessExpressionSyntax memberAccessExpression => memberAccessExpression.Expression == node,
+                ConditionalAccessExpressionSyntax conditionalAccessExpression => conditionalAccessExpression.Expression == node,
+                ElementAccessExpressionSyntax elementAccessExpression => elementAccessExpression.Expression == node,
+                _ => false,
+            };
         }
 
         private static void ReportDiagnostic(SyntaxNodeAnalysisContext context, ParenthesizedExpressionSyntax node)

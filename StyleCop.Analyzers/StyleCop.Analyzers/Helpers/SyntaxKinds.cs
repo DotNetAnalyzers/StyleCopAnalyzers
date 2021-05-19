@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Helpers
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Lightup;
 
     internal static class SyntaxKinds
     {
@@ -22,7 +23,8 @@ namespace StyleCop.Analyzers.Helpers
                 SyntaxKind.ClassDeclaration,
                 SyntaxKind.StructDeclaration,
                 SyntaxKind.InterfaceDeclaration,
-                SyntaxKind.EnumDeclaration);
+                SyntaxKind.EnumDeclaration,
+                SyntaxKindEx.RecordDeclaration);
 
         /// <summary>
         /// Gets a collection of <see cref="SyntaxKind"/> values which appear in the syntax tree as a
@@ -36,7 +38,8 @@ namespace StyleCop.Analyzers.Helpers
             ImmutableArray.Create(
                 SyntaxKind.ClassDeclaration,
                 SyntaxKind.StructDeclaration,
-                SyntaxKind.InterfaceDeclaration);
+                SyntaxKind.InterfaceDeclaration,
+                SyntaxKindEx.RecordDeclaration);
 
         /// <summary>
         /// Gets a collection of <see cref="SyntaxKind"/> values which appear in the syntax tree as a

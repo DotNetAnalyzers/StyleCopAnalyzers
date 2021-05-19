@@ -27,6 +27,13 @@ namespace StyleCop.Analyzers.NamingRules
             ImmutableArray.Create(SA1314TypeParameterNamesMustBeginWithT.DiagnosticId);
 
         /// <inheritdoc/>
+        public override FixAllProvider GetFixAllProvider()
+        {
+            // Fix All is not yet supported
+            return null;
+        }
+
+        /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)

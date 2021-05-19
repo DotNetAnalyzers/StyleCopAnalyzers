@@ -185,7 +185,13 @@ namespace StyleCop.Analyzers.SpacingRules
                 break;
 
             case SyntaxKindEx.PositionalPatternClause:
-                haveLeadingSpace = prevToken.IsKind(SyntaxKind.IsKeyword);
+                haveLeadingSpace = prevToken.IsKind(SyntaxKind.IsKeyword)
+                    || prevToken.IsKind(SyntaxKind.CommaToken);
+                break;
+
+            case SyntaxKindEx.ParenthesizedPattern:
+                var partOfCastExpression = prevToken.IsKind(SyntaxKind.CloseParenToken) && prevToken.Parent.IsKind(SyntaxKind.CastExpression);
+                haveLeadingSpace = !partOfCastExpression;
                 break;
 
             case SyntaxKind.ArgumentList:
@@ -215,7 +221,7 @@ namespace StyleCop.Analyzers.SpacingRules
 
                 partOfUnaryExpression = prevToken.Parent is PrefixUnaryExpressionSyntax;
                 startOfIndexer = prevToken.IsKind(SyntaxKind.OpenBracketToken);
-                var partOfCastExpression = prevToken.IsKind(SyntaxKind.CloseParenToken) && prevToken.Parent.IsKind(SyntaxKind.CastExpression);
+                partOfCastExpression = prevToken.IsKind(SyntaxKind.CloseParenToken) && prevToken.Parent.IsKind(SyntaxKind.CastExpression);
 
                 haveLeadingSpace = !partOfUnaryExpression && !startOfIndexer && !partOfCastExpression;
                 break;

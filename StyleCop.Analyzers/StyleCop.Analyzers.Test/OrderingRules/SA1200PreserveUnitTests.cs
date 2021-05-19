@@ -5,12 +5,10 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
     using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.Test.Verifiers;
-    using TestHelper;
     using Xunit;
 
     /// <summary>
@@ -19,7 +17,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     /// </summary>
     public class SA1200PreserveUnitTests
     {
-        private const string TestSettings = @"
+        protected const string TestSettings = @"
 {
   ""settings"": {
     ""orderingRules"": {

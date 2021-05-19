@@ -14,7 +14,6 @@ namespace StyleCop.Analyzers.Test.SpecialRules
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Settings;
     using StyleCop.Analyzers.SpecialRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.SpecialRules.SA0002InvalidSettingsFile>;
 
@@ -407,6 +406,14 @@ namespace NamespaceName { }
             public override void RegisterSyntaxTreeAction(Action<SyntaxTreeAnalysisContext> action)
             {
                 throw new NotImplementedException();
+            }
+
+            public override void ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags analysisMode)
+            {
+            }
+
+            public override void EnableConcurrentExecution()
+            {
             }
         }
     }

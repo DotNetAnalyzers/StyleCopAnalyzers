@@ -280,7 +280,7 @@
     <value>Using static directives should be placed at the correct location</value>
   </data>
   <data name="SA1216Title" xml:space="preserve">
-    <value>Using static directives should be placed at the correct location.</value>
+    <value>Using static directives should be placed at the correct location</value>
   </data>
   <data name="SA1217Description" xml:space="preserve">
     <value>All using static directives should be ordered alphabetically.</value>

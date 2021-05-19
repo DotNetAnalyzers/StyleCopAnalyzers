@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.SpacingRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A closing square bracket within a C# statement is not spaced correctly.
@@ -111,6 +112,11 @@ namespace StyleCop.Analyzers.SpacingRules
                 case SyntaxKind.PlusPlusToken:
                 case SyntaxKind.MinusMinusToken:
                     precedesSpecialCharacter = true;
+                    suppressFollowingSpaceError = false;
+                    break;
+
+                case SyntaxKind.LessThanToken:
+                    precedesSpecialCharacter = token.Parent.IsKind(SyntaxKindEx.FunctionPointerUnmanagedCallingConventionList);
                     suppressFollowingSpaceError = false;
                     break;
 

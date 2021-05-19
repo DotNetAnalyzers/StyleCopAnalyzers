@@ -54,7 +54,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
 
-            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
+            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
             var indentationTrivia = QueryIndentationHelpers.GetQueryIndentationTrivia(settings.Indentation, token);
 
             var precedingToken = token.GetPreviousToken();

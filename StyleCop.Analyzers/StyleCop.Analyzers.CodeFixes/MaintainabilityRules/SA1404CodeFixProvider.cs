@@ -50,7 +50,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                         CodeAction.Create(
                             MaintainabilityResources.SA1404CodeFix,
                             token => AddJustificationToAttributeAsync(context.Document, root, attribute),
-                            nameof(SA1404CodeFixProvider) + "-Add"), diagnostic);
+                            nameof(SA1404CodeFixProvider) + "-Add"),
+                        diagnostic);
                     return;
                 }
 
@@ -60,7 +61,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                         CodeAction.Create(
                             MaintainabilityResources.SA1404CodeFix,
                             token => UpdateValueOfArgumentAsync(context.Document, root, argument),
-                            nameof(SA1404CodeFixProvider) + "-Update"), diagnostic);
+                            nameof(SA1404CodeFixProvider) + "-Update"),
+                        diagnostic);
                     return;
                 }
             }

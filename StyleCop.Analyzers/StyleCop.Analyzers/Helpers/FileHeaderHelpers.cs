@@ -5,7 +5,6 @@ namespace StyleCop.Analyzers.Helpers
 {
     using System;
     using System.Linq;
-    using System.Text;
     using System.Xml;
     using System.Xml.Linq;
     using Microsoft.CodeAnalysis;

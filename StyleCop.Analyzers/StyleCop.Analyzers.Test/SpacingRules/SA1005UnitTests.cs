@@ -271,14 +271,10 @@ public class Bar
             // Verify that this works if the project was configured to treat documentation comments as regular comments
             await new CSharpTest
             {
-                TestCode = testCode,
-                SolutionTransforms =
+                TestState =
                 {
-                    (solution, projectId) =>
-                    {
-                        var project = solution.GetProject(projectId);
-                        return solution.WithProjectParseOptions(projectId, project.ParseOptions.WithDocumentationMode(DocumentationMode.None));
-                    },
+                    DocumentationMode = DocumentationMode.None,
+                    Sources = { testCode },
                 },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }

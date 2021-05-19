@@ -20,7 +20,7 @@ namespace TestHelper
         internal const string DiagnosticId = "SA9999";
         private const string Title = "Exclusion test";
         private const string MessageFormat = "Exclusion test";
-        private const string Description = "Exclusion test";
+        private const string Description = "Exclusion test.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA9999.md";
 
         private static readonly DiagnosticDescriptor Descriptor =

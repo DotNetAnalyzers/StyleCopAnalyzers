@@ -7,7 +7,6 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.OrderingRules.SA1202ElementsMustBeOrderedByAccess,
@@ -880,8 +879,11 @@ public class TestClass : TestInterface
             // We don't care about the syntax errors.
             var expected = new[]
             {
-                DiagnosticResult.CompilerError("CS1585").WithMessage("Member modifier 'public' must precede the member type and name").WithLocation(5, 5),
-                DiagnosticResult.CompilerError("CS1519").WithMessage("Invalid token '}' in class, struct, or interface member declaration").WithLocation(6, 1),
+                // /0/Test0.cs(5,5): error CS1585: Member modifier 'public' must precede the member type and name
+                DiagnosticResult.CompilerError("CS1585").WithLocation(5, 5).WithArguments("public"),
+
+                // /0/Test0.cs(6,1): error CS1519: Invalid token '}' in class, record, struct, or interface member declaration
+                DiagnosticResult.CompilerError("CS1519").WithLocation(6, 1).WithArguments("}"),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -905,8 +907,11 @@ public class TestClass : TestInterface
             // We don't care about the syntax errors.
             DiagnosticResult[] expected =
             {
-                DiagnosticResult.CompilerError("CS1585").WithMessage("Member modifier 'public' must precede the member type and name").WithLocation(5, 5),
-                DiagnosticResult.CompilerError("CS1519").WithMessage("Invalid token '}' in class, struct, or interface member declaration").WithLocation(6, 1),
+                // /0/Test0.cs(5,5): error CS1585: Member modifier 'public' must precede the member type and name
+                DiagnosticResult.CompilerError("CS1585").WithLocation(5, 5).WithArguments("public"),
+
+                // /0/Test0.cs(6,1): error CS1519: Invalid token '}' in class, record, struct, or interface member declaration
+                DiagnosticResult.CompilerError("CS1519").WithLocation(6, 1).WithArguments("}"),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

@@ -8,8 +8,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Test.Verifiers;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1625ElementDocumentationMustNotBeCopiedAndPasted>;
 
@@ -29,6 +29,10 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
                 yield return new[] { "public struct Test { }" };
                 yield return new[] { "public enum Test { }" };
                 yield return new[] { "public delegate void Test();" };
+                if (LightupHelpers.SupportsCSharp9)
+                {
+                    yield return new[] { "public record Test { }" };
+                }
             }
         }
 
@@ -310,6 +314,21 @@ public class TestClass
 public class TestClass
 {{
     /// <include file='CorrectWithEmptyElements.xml' path='/TestClass/Test/*' />
+    public void Test() {{ }}
+}}
+public class TestClass2 {{ }}
+";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3150, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3150")]
+        public async Task VerifyThatMissingIncludedDocumentationDoesNotReportADiagnosticAsync()
+        {
+            var testCode = $@"
+public class TestClass
+{{
+    /// <include file='MissingFile.xml' path='/TestClass/Test/*' />
     public void Test() {{ }}
 }}
 public class TestClass2 {{ }}

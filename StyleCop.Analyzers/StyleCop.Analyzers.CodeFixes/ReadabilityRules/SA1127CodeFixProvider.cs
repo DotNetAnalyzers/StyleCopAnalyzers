@@ -60,7 +60,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var afterEndToken = endToken.GetNextToken();
 
             var parentIndentation = GetParentIndentation(whereToken);
-            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
+            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
             var indentationTrivia = SyntaxFactory.Whitespace(parentIndentation + IndentationHelper.GenerateIndentationString(settings.Indentation, 1));
 
             var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>()

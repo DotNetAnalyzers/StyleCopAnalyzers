@@ -5,7 +5,6 @@ namespace StyleCop.Analyzers.NamingRules
 {
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -27,6 +26,13 @@ namespace StyleCop.Analyzers.NamingRules
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(SA1302InterfaceNamesMustBeginWithI.DiagnosticId);
+
+        /// <inheritdoc/>
+        public override FixAllProvider GetFixAllProvider()
+        {
+            // Fix All is not yet supported
+            return null;
+        }
 
         /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)

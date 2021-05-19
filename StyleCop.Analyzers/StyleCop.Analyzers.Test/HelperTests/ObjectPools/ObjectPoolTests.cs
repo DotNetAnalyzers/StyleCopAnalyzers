@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.HelperTests.ObjectPools
 {
-    using System;
     using StyleCop.Analyzers.Helpers.ObjectPools;
     using Xunit;
 

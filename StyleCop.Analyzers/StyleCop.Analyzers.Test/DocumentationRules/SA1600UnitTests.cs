@@ -21,12 +21,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         protected virtual LanguageVersion LanguageVersion => LanguageVersion.CSharp6;
 
         [Theory]
-        [InlineData("public string TestMember;", 15)]
-        [InlineData("public string TestMember { get; set; }", 15)]
-        [InlineData("public void TestMember() { }", 13)]
-        [InlineData("public string this[int a] { get { return \"a\"; } set { } }", 15)]
-        [InlineData("public event EventHandler TestMember { add { } remove { } }", 27)]
-        public async Task TestRegressionMethodGlobalNamespaceAsync(string code, int column)
+        [InlineData("public string {|#0:TestMember|};")]
+        [InlineData("public string {|#0:TestMember|} { get; set; }")]
+        [InlineData("public void {|#0:TestMember|}() { }")]
+        [InlineData("public string {|#0:this|}[int a] { get { return \"a\"; } set { } }")]
+        [InlineData("public event EventHandler {|#0:TestMember|} { add { } remove { } }")]
+        public async Task TestRegressionMethodGlobalNamespaceAsync(string code)
         {
             // This test is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1416
             var testCode = $@"
@@ -34,12 +34,7 @@ using System;
 
 {code}";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS0116").WithMessage("A namespace cannot directly contain members such as fields or methods").WithLocation(4, column),
-                Diagnostic().WithLocation(4, column),
-            };
-
+            var expected = this.GetExpectedResultTestRegressionMethodGlobalNamespace(code);
             await VerifyCSharpDiagnosticAsync(this.LanguageVersion, testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -1387,6 +1382,15 @@ public class OuterClass
                 };
 
             await VerifyCSharpDiagnosticAsync(this.LanguageVersion, string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestRegressionMethodGlobalNamespace(string code)
+        {
+            return new[]
+            {
+                DiagnosticResult.CompilerError("CS0116").WithMessage("A namespace cannot directly contain members such as fields or methods").WithLocation(0),
+                Diagnostic().WithLocation(0),
+            };
         }
 
         protected virtual async Task TestTypeWithoutDocumentationAsync(string type, bool isInterface)

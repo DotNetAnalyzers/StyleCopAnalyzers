@@ -11,6 +11,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -120,9 +121,6 @@ namespace StyleCop.Analyzers.OrderingRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly ImmutableArray<SyntaxKind> TypeDeclarationKinds =
-            ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration);
-
         // extern alias and usings are missing here because the compiler itself is enforcing the right order.
         private static readonly ImmutableArray<SyntaxKind> OuterOrder = ImmutableArray.Create(
             SyntaxKind.NamespaceDeclaration,
@@ -156,11 +154,13 @@ namespace StyleCop.Analyzers.OrderingRules
             [SyntaxKind.InterfaceDeclaration] = "interface",
             [SyntaxKind.StructDeclaration] = "struct",
             [SyntaxKind.ClassDeclaration] = "class",
+            [SyntaxKindEx.RecordDeclaration] = "record",
             [SyntaxKind.FieldDeclaration] = "field",
             [SyntaxKind.ConstructorDeclaration] = "constructor",
             [SyntaxKind.DestructorDeclaration] = "destructor",
             [SyntaxKind.DelegateDeclaration] = "delegate",
             [SyntaxKind.EventDeclaration] = "event",
+            [SyntaxKind.EventFieldDeclaration] = "event",
             [SyntaxKind.EnumDeclaration] = "enum",
             [SyntaxKind.InterfaceDeclaration] = "interface",
             [SyntaxKind.PropertyDeclaration] = "property",
@@ -186,7 +186,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
             context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
             context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
-            context.RegisterSyntaxNodeAction(TypeDeclarationAction, TypeDeclarationKinds);
+            context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
         }
 
         private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
@@ -287,12 +287,10 @@ namespace StyleCop.Analyzers.OrderingRules
                 }
 
                 var elementSyntaxKind = members[i].Kind();
-                elementSyntaxKind = elementSyntaxKind == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : elementSyntaxKind;
-                int index = order.IndexOf(elementSyntaxKind);
+                int index = order.IndexOf(GetSyntaxKindForOrdering(elementSyntaxKind));
 
                 var nextElementSyntaxKind = members[i + 1].Kind();
-                nextElementSyntaxKind = nextElementSyntaxKind == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : nextElementSyntaxKind;
-                int nextIndex = order.IndexOf(nextElementSyntaxKind);
+                int nextIndex = order.IndexOf(GetSyntaxKindForOrdering(nextElementSyntaxKind));
 
                 if (index > nextIndex)
                 {
@@ -303,6 +301,16 @@ namespace StyleCop.Analyzers.OrderingRules
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(members[i + 1]), nextElementMemberName, elementMemberName));
                 }
             }
+        }
+
+        private static SyntaxKind GetSyntaxKindForOrdering(SyntaxKind syntaxKind)
+        {
+            return syntaxKind switch
+            {
+                SyntaxKind.EventFieldDeclaration => SyntaxKind.EventDeclaration,
+                SyntaxKindEx.RecordDeclaration => SyntaxKind.ClassDeclaration,
+                _ => syntaxKind,
+            };
         }
     }
 }

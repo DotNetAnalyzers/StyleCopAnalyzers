@@ -6,27 +6,27 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
     internal enum TopLevelType
     {
         /// <summary>
-        /// Classes are considered top-level types
+        /// Classes are considered top-level types.
         /// </summary>
         Class,
 
         /// <summary>
-        /// Interfaces are considered top-level types
+        /// Interfaces are considered top-level types.
         /// </summary>
         Interface,
 
         /// <summary>
-        /// Structs are considered top-level types
+        /// Structs are considered top-level types.
         /// </summary>
         Struct,
 
         /// <summary>
-        /// Delegates are considered top-level types
+        /// Delegates are considered top-level types.
         /// </summary>
         Delegate,
 
         /// <summary>
-        /// Enums are considered top-level types
+        /// Enums are considered top-level types.
         /// </summary>
         Enum,
     }

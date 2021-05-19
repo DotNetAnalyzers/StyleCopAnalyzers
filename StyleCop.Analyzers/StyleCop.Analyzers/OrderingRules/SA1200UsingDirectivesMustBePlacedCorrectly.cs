@@ -222,7 +222,11 @@ namespace StyleCop.Analyzers.OrderingRules
                     return;
 
                 case SyntaxKind.AttributeList:
-                    // suppress SA1200 if file contains an attribute in the global namespace
+                    // Suppress SA1200 if file contains an attribute in the global namespace
+                    return;
+
+                case SyntaxKind.GlobalStatement:
+                    // Suppress SA1200 if file contains top-level statements
                     return;
 
                 case SyntaxKind.UsingDirective:
@@ -261,7 +265,9 @@ namespace StyleCop.Analyzers.OrderingRules
             foreach (UsingDirectiveSyntax directive in syntax.Usings)
             {
                 // Using directive should appear outside a namespace declaration
+#pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
                 context.ReportDiagnostic(Diagnostic.Create(DescriptorOutside, directive.GetLocation()));
+#pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
             }
         }
     }

@@ -57,9 +57,9 @@ namespace StyleCop.Analyzers.OrderingRules
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
-            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
-            var elementOrder = settings.OrderingRules.ElementOrder;
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
+            var elementOrder = settings.OrderingRules.ElementOrder;
 
             var memberDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<MemberDeclarationSyntax>();
             if (memberDeclaration == null)
@@ -263,9 +263,9 @@ namespace StyleCop.Analyzers.OrderingRules
                     return null;
                 }
 
-                var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, fixAllContext.CancellationToken);
+                var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, fixAllContext.CancellationToken);
                 var elementOrder = settings.OrderingRules.ElementOrder;
-                var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
 
                 var trackedDiagnosticMembers = new List<MemberDeclarationSyntax>();
                 foreach (var diagnostic in diagnostics)

@@ -10,7 +10,6 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using StyleCop.Analyzers.OrderingRules;
     using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.Test.Verifiers;
-    using TestHelper;
     using Xunit;
 
     /// <summary>
@@ -19,7 +18,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     /// </summary>
     public class SA1200OutsideNamespaceUnitTests
     {
-        private const string TestSettings = @"
+        protected const string TestSettings = @"
 {
   ""settings"": {
     ""orderingRules"": {

@@ -3,12 +3,11 @@
 
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
-    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Linq;
     using System.Text.RegularExpressions;
     using LightJson;
+    using StyleCop.Analyzers.Lightup;
 
     internal class DocumentationSettings
     {
@@ -50,7 +49,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <summary>
         /// This is the backing field for the <see cref="Variables"/> property.
         /// </summary>
-        private readonly ImmutableDictionary<string, string>.Builder variables;
+        private readonly ImmutableDictionary<string, string> variables;
 
         /// <summary>
         /// This is the backing field for the <see cref="XmlHeader"/> property.
@@ -110,7 +109,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.companyName = DefaultCompanyName;
             this.copyrightText = DefaultCopyrightText;
             this.headerDecoration = null;
-            this.variables = ImmutableDictionary<string, string>.Empty.ToBuilder();
+            this.variables = ImmutableDictionary<string, string>.Empty;
             this.xmlHeader = true;
 
             this.documentExposedElements = true;
@@ -130,46 +129,63 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// Initializes a new instance of the <see cref="DocumentationSettings"/> class.
         /// </summary>
         /// <param name="documentationSettingsObject">The JSON object containing the settings.</param>
-        protected internal DocumentationSettings(JsonObject documentationSettingsObject)
-            : this()
+        /// <param name="analyzerConfigOptions">The <strong>.editorconfig</strong> options to use if
+        /// <strong>stylecop.json</strong> does not provide values.</param>
+        protected internal DocumentationSettings(JsonObject documentationSettingsObject, AnalyzerConfigOptionsWrapper analyzerConfigOptions)
         {
+            bool? documentExposedElements = null;
+            bool? documentInternalElements = null;
+            bool? documentPrivateElements = null;
+            bool? documentInterfaces = null;
+            bool? documentPrivateFields = null;
+            string companyName = null;
+            string copyrightText = null;
+            string headerDecoration = null;
+            ImmutableDictionary<string, string>.Builder variables = null;
+            bool? xmlHeader = null;
+            FileNamingConvention? fileNamingConvention = null;
+            string documentationCulture = null;
+            ImmutableArray<string>.Builder excludeFromPunctuationCheck = null;
+
             foreach (var kvp in documentationSettingsObject)
             {
                 switch (kvp.Key)
                 {
                 case "documentExposedElements":
-                    this.documentExposedElements = kvp.ToBooleanValue();
+                    documentExposedElements = kvp.ToBooleanValue();
                     break;
 
                 case "documentInternalElements":
-                    this.documentInternalElements = kvp.ToBooleanValue();
+                    documentInternalElements = kvp.ToBooleanValue();
                     break;
 
                 case "documentPrivateElements":
-                    this.documentPrivateElements = kvp.ToBooleanValue();
+                    documentPrivateElements = kvp.ToBooleanValue();
                     break;
 
                 case "documentInterfaces":
-                    this.documentInterfaces = kvp.ToBooleanValue();
+                    documentInterfaces = kvp.ToBooleanValue();
                     break;
 
                 case "documentPrivateFields":
-                    this.documentPrivateFields = kvp.ToBooleanValue();
+                    documentPrivateFields = kvp.ToBooleanValue();
                     break;
 
                 case "companyName":
-                    this.companyName = kvp.ToStringValue();
+                    companyName = kvp.ToStringValue();
                     break;
+
                 case "copyrightText":
-                    this.copyrightText = kvp.ToStringValue();
+                    copyrightText = kvp.ToStringValue();
                     break;
 
                 case "headerDecoration":
-                    this.headerDecoration = kvp.ToStringValue();
+                    headerDecoration = kvp.ToStringValue();
                     break;
 
                 case "variables":
                     kvp.AssertIsObject();
+                    variables = ImmutableDictionary.CreateBuilder<string, string>();
                     foreach (var child in kvp.Value.AsJsonObject)
                     {
                         string name = child.Key;
@@ -181,38 +197,73 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
                         string value = child.ToStringValue();
 
-                        this.variables.Add(name, value);
+                        variables.Add(name, value);
                     }
 
                     break;
 
                 case "xmlHeader":
-                    this.xmlHeader = kvp.ToBooleanValue();
+                    xmlHeader = kvp.ToBooleanValue();
                     break;
 
                 case "fileNamingConvention":
-                    this.fileNamingConvention = kvp.ToEnumValue<FileNamingConvention>();
+                    fileNamingConvention = kvp.ToEnumValue<FileNamingConvention>();
                     break;
 
                 case "documentationCulture":
-                    this.documentationCulture = kvp.ToStringValue();
+                    documentationCulture = kvp.ToStringValue();
                     break;
 
                 case "excludeFromPunctuationCheck":
                     kvp.AssertIsArray();
-                    var excludedTags = ImmutableArray.CreateBuilder<string>();
+                    excludeFromPunctuationCheck = ImmutableArray.CreateBuilder<string>();
                     foreach (var value in kvp.Value.AsJsonArray)
                     {
-                        excludedTags.Add(value.AsString);
+                        excludeFromPunctuationCheck.Add(value.AsString);
                     }
 
-                    this.excludeFromPunctuationCheck = excludedTags.ToImmutable();
                     break;
 
                 default:
                     break;
                 }
             }
+
+            documentExposedElements ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.documentExposedElements");
+            documentInternalElements ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.documentInternalElements");
+            documentPrivateElements ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.documentPrivateElements");
+            documentInterfaces ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.documentInterfaces");
+            documentPrivateFields ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.documentPrivateFields");
+
+            companyName ??= AnalyzerConfigHelper.TryGetStringValue(analyzerConfigOptions, "stylecop.documentation.companyName");
+            copyrightText ??= AnalyzerConfigHelper.TryGetStringValue(analyzerConfigOptions, "stylecop.documentation.copyrightText")
+                ?? AnalyzerConfigHelper.TryGetStringValue(analyzerConfigOptions, "file_header_template");
+            headerDecoration ??= AnalyzerConfigHelper.TryGetStringValue(analyzerConfigOptions, "stylecop.documentation.headerDecoration");
+
+            xmlHeader ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.xmlHeader");
+            fileNamingConvention ??= AnalyzerConfigHelper.TryGetStringValue(analyzerConfigOptions, "stylecop.documentation.fileNamingConvention") switch
+            {
+                "stylecop" => FileNamingConvention.StyleCop,
+                "metadata" => FileNamingConvention.Metadata,
+                _ => null,
+            };
+
+            documentationCulture ??= AnalyzerConfigHelper.TryGetStringValue(analyzerConfigOptions, "stylecop.documentation.documentationCulture");
+            excludeFromPunctuationCheck ??= AnalyzerConfigHelper.TryGetStringListValue(analyzerConfigOptions, "stylecop.documentation.excludeFromPunctuationCheck")?.ToBuilder();
+
+            this.documentExposedElements = documentExposedElements.GetValueOrDefault(true);
+            this.documentInternalElements = documentInternalElements.GetValueOrDefault(true);
+            this.documentPrivateElements = documentPrivateElements.GetValueOrDefault(false);
+            this.documentInterfaces = documentInterfaces.GetValueOrDefault(true);
+            this.documentPrivateFields = documentPrivateFields.GetValueOrDefault(false);
+            this.companyName = companyName ?? DefaultCompanyName;
+            this.copyrightText = copyrightText ?? DefaultCopyrightText;
+            this.headerDecoration = headerDecoration;
+            this.variables = variables?.ToImmutable() ?? ImmutableDictionary<string, string>.Empty;
+            this.xmlHeader = xmlHeader.GetValueOrDefault(true);
+            this.fileNamingConvention = fileNamingConvention.GetValueOrDefault(FileNamingConvention.StyleCop);
+            this.documentationCulture = documentationCulture ?? DefaultDocumentationCulture;
+            this.excludeFromPunctuationCheck = excludeFromPunctuationCheck?.ToImmutable() ?? DefaultExcludeFromPunctuationCheck;
         }
 
         public string CompanyName
@@ -235,7 +286,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         {
             get
             {
-                return this.variables.ToImmutable();
+                return this.variables;
             }
         }
 

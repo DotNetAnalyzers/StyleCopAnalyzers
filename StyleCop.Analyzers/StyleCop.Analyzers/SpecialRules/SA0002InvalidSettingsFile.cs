@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.SpecialRules
     using System;
     using System.Collections.Immutable;
     using System.Globalization;
+    using System.Linq;
     using LightJson.Serialization;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -27,7 +28,9 @@ namespace StyleCop.Analyzers.SpecialRules
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpecialResources.SA0002Description), SpecialResources.ResourceManager, typeof(SpecialResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
+#pragma warning disable RS1033 // Define diagnostic description correctly (Description ends with formatted exception text)
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpecialRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+#pragma warning restore RS1033 // Define diagnostic description correctly
 
         private static readonly Action<CompilationAnalysisContext> CompilationAction = HandleCompilation;
 
@@ -38,6 +41,9 @@ namespace StyleCop.Analyzers.SpecialRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+
             context.RegisterCompilationAction(CompilationAction);
         }
 
@@ -45,7 +51,7 @@ namespace StyleCop.Analyzers.SpecialRules
         {
             try
             {
-                SettingsHelper.GetStyleCopSettings(context.Options, DeserializationFailureBehavior.ThrowException, context.CancellationToken);
+                SettingsHelper.GetStyleCopSettings(context.Options, context.Compilation?.SyntaxTrees.FirstOrDefault(), DeserializationFailureBehavior.ThrowException, context.CancellationToken);
             }
             catch (Exception ex) when (ex is JsonParseException || ex is InvalidSettingsException)
             {

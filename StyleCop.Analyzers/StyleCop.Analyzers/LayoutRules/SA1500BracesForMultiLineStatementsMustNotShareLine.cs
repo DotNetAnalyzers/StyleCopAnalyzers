@@ -140,6 +140,11 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static void CheckBraces(SyntaxNodeAnalysisContext context, SyntaxToken openBraceToken, SyntaxToken closeBraceToken)
         {
+            if (openBraceToken.IsKind(SyntaxKind.None) || closeBraceToken.IsKind(SyntaxKind.None))
+            {
+                return;
+            }
+
             bool checkCloseBrace = true;
             int openBraceTokenLine = openBraceToken.GetLine();
 
@@ -283,7 +288,7 @@ namespace StyleCop.Analyzers.LayoutRules
                     // Because the default Visual Studio code completion snippet for a do-while loop
                     // places the while expression on the same line as the closing brace, some users
                     // may want to allow that and not have SA1500 report it as a style error.
-                    if (context.Options.GetStyleCopSettings(context.CancellationToken).LayoutRules.AllowDoWhileOnClosingBrace)
+                    if (context.GetStyleCopSettings(context.CancellationToken).LayoutRules.AllowDoWhileOnClosingBrace)
                     {
                         var openBracePreviousToken = openBraceToken.GetPreviousToken(includeZeroWidth: true);
 

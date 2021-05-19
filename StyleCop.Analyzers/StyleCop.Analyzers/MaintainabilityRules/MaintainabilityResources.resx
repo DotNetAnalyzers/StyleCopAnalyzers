@@ -256,7 +256,7 @@
     <value>Change encoding from '{0}' to UTF-8 with byte order mark</value>
   </data>
   <data name="SA1412Description" xml:space="preserve">
-    <value>Source files should be saved using the UTF-8 encoding with a byte order mark</value>
+    <value>Source files should be saved using the UTF-8 encoding with a byte order mark.</value>
   </data>
   <data name="SA1412MessageFormat" xml:space="preserve">
     <value>Store files as UTF-8 with byte order mark</value>

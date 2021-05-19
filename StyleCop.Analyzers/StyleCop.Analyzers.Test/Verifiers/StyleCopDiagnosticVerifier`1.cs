@@ -62,14 +62,20 @@ namespace StyleCop.Analyzers.Test.Verifiers
 
             public CSharpTest(LanguageVersion? languageVersion)
             {
-                if (languageVersion != null)
+                this.LanguageVersion = languageVersion;
+            }
+
+            private LanguageVersion? LanguageVersion { get; }
+
+            protected override ParseOptions CreateParseOptions()
+            {
+                var parseOptions = base.CreateParseOptions();
+                if (this.LanguageVersion is { } languageVersion)
                 {
-                    this.SolutionTransforms.Add((solution, projectId) =>
-                    {
-                        var parseOptions = (CSharpParseOptions)solution.GetProject(projectId).ParseOptions;
-                        return solution.WithProjectParseOptions(projectId, parseOptions.WithLanguageVersion(languageVersion.Value));
-                    });
+                    parseOptions = ((CSharpParseOptions)parseOptions).WithLanguageVersion(languageVersion);
                 }
+
+                return parseOptions;
             }
         }
     }

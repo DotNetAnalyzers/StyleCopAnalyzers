@@ -123,6 +123,11 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static void AnalyzeCloseBrace(SyntaxNodeAnalysisContext context, SyntaxToken closeBraceToken)
         {
+            if (closeBraceToken.IsKind(SyntaxKind.None))
+            {
+                return;
+            }
+
             var previousToken = closeBraceToken.GetPreviousToken();
             if ((closeBraceToken.GetLineSpan().StartLinePosition.Line - previousToken.GetLineSpan().EndLinePosition.Line) < 2)
             {

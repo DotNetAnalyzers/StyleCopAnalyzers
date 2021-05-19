@@ -9,7 +9,6 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using StyleCop.Analyzers.OrderingRules;
     using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.Test.Verifiers;
-    using TestHelper;
     using Xunit;
     using static CombinedUsingDirectivesVerifier;
 

@@ -366,10 +366,16 @@ namespace StyleCop.Analyzers.LayoutRules
                 return node.GetLeadingTrivia()[0].GetLocation();
             }
 
+            // Prefer the first token which is a direct child, but fall back to the first descendant token
             var firstToken = node.ChildTokens().FirstOrDefault();
+            if (firstToken.IsKind(SyntaxKind.None))
+            {
+                firstToken = node.GetFirstToken();
+            }
+
             if (firstToken != default)
             {
-                return node.ChildTokens().First().GetLocation();
+                return firstToken.GetLocation();
             }
 
             return Location.None;

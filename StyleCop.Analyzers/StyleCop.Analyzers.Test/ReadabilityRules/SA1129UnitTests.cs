@@ -8,7 +8,6 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1129DoNotUseDefaultValueTypeConstructor,
@@ -91,9 +90,9 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     public void TestMethod()
     {
-        var v1 = new TestStruct();
+        var v1 = {|#0:new TestStruct()|};
 
-        System.Console.WriteLine(new TestStruct());
+        System.Console.WriteLine({|#1:new TestStruct()|});
     }
 
     private struct TestStruct
@@ -121,8 +120,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(5, 18),
-                Diagnostic().WithLocation(7, 34),
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
@@ -139,11 +138,11 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     public void TestMethod()
     {
-        var v1 = /* c1 */ new TestStruct(); // c2
+        var v1 = /* c1 */ {|#0:new TestStruct()|}; // c2
 
         var v2 =
 #if true
-            new TestStruct();
+            {|#1:new TestStruct()|};
 #else
             new TestStruct() { TestProperty = 3 };
 #endif
@@ -179,8 +178,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(5, 27),
-                Diagnostic().WithLocation(9, 13),
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
@@ -198,7 +197,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     public T TestMethod1<T>()
         where T : struct
     {
-        return new T();
+        return {|#0:new T()|};
     }
 
     public T TestMethod2<T>()
@@ -227,7 +226,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(6, 16),
+                Diagnostic().WithLocation(0),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
@@ -451,7 +450,7 @@ public class TestClass
 {{
     public void TestMethod()
     {{
-        var v1 = new MyEnum();
+        var v1 = {{|#0:new MyEnum()|}};
     }}
 
     private enum MyEnum {{ {declarationBody} }}
@@ -469,7 +468,7 @@ public class TestClass
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(5, 18),
+                Diagnostic().WithLocation(0),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
@@ -492,7 +491,7 @@ public class TestClass
 {{
     public void TestMethod()
     {{
-        var v1 = new MyEnum();
+        var v1 = {{|#0:new MyEnum()|}};
     }}
 
     private enum MyEnum {{ {declarationBody} }}
@@ -510,7 +509,7 @@ public class TestClass
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(5, 18),
+                Diagnostic().WithLocation(0),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);

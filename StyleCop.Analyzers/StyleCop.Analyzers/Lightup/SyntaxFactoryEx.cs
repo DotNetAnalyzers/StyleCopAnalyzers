@@ -27,7 +27,7 @@ namespace StyleCop.Analyzers.Lightup
         static SyntaxFactoryEx()
         {
             var positionalPatternClauseMethods = typeof(SyntaxFactory).GetTypeInfo().GetDeclaredMethods(nameof(PositionalPatternClause));
-            var positionalPatternClauseMethod = positionalPatternClauseMethods.FirstOrDefault(method => method.GetParameters().Length == 1 && method.GetParameters()[0].ParameterType == typeof(SeparatedSyntaxList<>).MakeGenericType(WrapperHelper.GetWrappedType(typeof(SubpatternSyntaxWrapper))));
+            var positionalPatternClauseMethod = positionalPatternClauseMethods.FirstOrDefault(method => method.GetParameters().Length == 1 && method.GetParameters()[0].ParameterType == typeof(SeparatedSyntaxList<>).MakeGenericType(SyntaxWrapperHelper.GetWrappedType(typeof(SubpatternSyntaxWrapper))));
             if (positionalPatternClauseMethod is object)
             {
                 var subpatternsParameter = Expression.Parameter(typeof(SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>), "subpatterns");
@@ -49,7 +49,7 @@ namespace StyleCop.Analyzers.Lightup
 
             positionalPatternClauseMethod = positionalPatternClauseMethods.FirstOrDefault(method => method.GetParameters().Length == 3
                 && method.GetParameters()[0].ParameterType == typeof(SyntaxToken)
-                && method.GetParameters()[1].ParameterType == typeof(SeparatedSyntaxList<>).MakeGenericType(WrapperHelper.GetWrappedType(typeof(SubpatternSyntaxWrapper)))
+                && method.GetParameters()[1].ParameterType == typeof(SeparatedSyntaxList<>).MakeGenericType(SyntaxWrapperHelper.GetWrappedType(typeof(SubpatternSyntaxWrapper)))
                 && method.GetParameters()[2].ParameterType == typeof(SyntaxToken));
             if (positionalPatternClauseMethod is object)
             {
@@ -79,7 +79,7 @@ namespace StyleCop.Analyzers.Lightup
             }
 
             var propertyPatternClauseMethods = typeof(SyntaxFactory).GetTypeInfo().GetDeclaredMethods(nameof(PropertyPatternClause));
-            var propertyPatternClauseMethod = propertyPatternClauseMethods.FirstOrDefault(method => method.GetParameters().Length == 1 && method.GetParameters()[0].ParameterType == typeof(SeparatedSyntaxList<>).MakeGenericType(WrapperHelper.GetWrappedType(typeof(SubpatternSyntaxWrapper))));
+            var propertyPatternClauseMethod = propertyPatternClauseMethods.FirstOrDefault(method => method.GetParameters().Length == 1 && method.GetParameters()[0].ParameterType == typeof(SeparatedSyntaxList<>).MakeGenericType(SyntaxWrapperHelper.GetWrappedType(typeof(SubpatternSyntaxWrapper))));
             if (propertyPatternClauseMethod is object)
             {
                 var subpatternsParameter = Expression.Parameter(typeof(SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>), "subpatterns");
@@ -101,7 +101,7 @@ namespace StyleCop.Analyzers.Lightup
 
             propertyPatternClauseMethod = propertyPatternClauseMethods.FirstOrDefault(method => method.GetParameters().Length == 3
                 && method.GetParameters()[0].ParameterType == typeof(SyntaxToken)
-                && method.GetParameters()[1].ParameterType == typeof(SeparatedSyntaxList<>).MakeGenericType(WrapperHelper.GetWrappedType(typeof(SubpatternSyntaxWrapper)))
+                && method.GetParameters()[1].ParameterType == typeof(SeparatedSyntaxList<>).MakeGenericType(SyntaxWrapperHelper.GetWrappedType(typeof(SubpatternSyntaxWrapper)))
                 && method.GetParameters()[2].ParameterType == typeof(SyntaxToken));
             if (propertyPatternClauseMethod is object)
             {
@@ -202,7 +202,7 @@ namespace StyleCop.Analyzers.Lightup
             }
 
             var tupleTypeMethods = typeof(SyntaxFactory).GetTypeInfo().GetDeclaredMethods(nameof(TupleType));
-            var tupleTypeMethod = tupleTypeMethods.FirstOrDefault(method => method.GetParameters().Length == 1 && method.GetParameters()[0].ParameterType == typeof(SeparatedSyntaxList<>).MakeGenericType(WrapperHelper.GetWrappedType(typeof(TupleElementSyntaxWrapper))));
+            var tupleTypeMethod = tupleTypeMethods.FirstOrDefault(method => method.GetParameters().Length == 1 && method.GetParameters()[0].ParameterType == typeof(SeparatedSyntaxList<>).MakeGenericType(SyntaxWrapperHelper.GetWrappedType(typeof(TupleElementSyntaxWrapper))));
             if (tupleTypeMethod is object)
             {
                 var elementsParameter = Expression.Parameter(typeof(SeparatedSyntaxListWrapper<TupleElementSyntaxWrapper>), "elements");
@@ -224,7 +224,7 @@ namespace StyleCop.Analyzers.Lightup
 
             tupleTypeMethod = tupleTypeMethods.FirstOrDefault(method => method.GetParameters().Length == 3
                 && method.GetParameters()[0].ParameterType == typeof(SyntaxToken)
-                && method.GetParameters()[1].ParameterType == typeof(SeparatedSyntaxList<>).MakeGenericType(WrapperHelper.GetWrappedType(typeof(TupleElementSyntaxWrapper)))
+                && method.GetParameters()[1].ParameterType == typeof(SeparatedSyntaxList<>).MakeGenericType(SyntaxWrapperHelper.GetWrappedType(typeof(TupleElementSyntaxWrapper)))
                 && method.GetParameters()[2].ParameterType == typeof(SyntaxToken));
             if (tupleTypeMethod is object)
             {

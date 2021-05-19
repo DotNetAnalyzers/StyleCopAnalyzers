@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
-    using TestHelper;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1137ElementsShouldHaveTheSameIndentation,
@@ -19,10 +19,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     public class SA1137UnitTests
     {
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
-        [InlineData("interface")]
-        [InlineData("enum")]
+        [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestNamespaceDeclarationAsync(string baseTypeKind)
         {
             string testCode = $@"
@@ -149,9 +146,7 @@ class MyAttribute : Attribute {{ }}
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
-        [InlineData("interface")]
+        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeDeclarationConstraintClausesAsync(string typeKind)
         {
             string testCode = $@"
@@ -220,11 +215,20 @@ where T3 : new()
         }
 
         [Theory]
-        [InlineData("class", "int", " { }")]
-        [InlineData("struct", "int", " { }")]
-        [InlineData("interface", "event System.EventHandler", ";")]
-        public async Task TestTypeDeclarationMembersAsync(string typeKind, string fieldType, string methodBody)
+        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestTypeDeclarationMembersAsync(string typeKind)
         {
+            string fieldType = typeKind switch
+            {
+                "interface" => "event System.EventHandler",
+                _ => "int",
+            };
+            string methodBody = typeKind switch
+            {
+                "interface" => ";",
+                _ => " { }",
+            };
+
             string testCode = $@"
 {typeKind} Container1
 {{

@@ -56,7 +56,7 @@ struct TestStruct
 }}
 ";
             DiagnosticResult expected = Diagnostic().WithLocation(8, 18);
-            await VerifyCSharpFixAsync(LanguageVersion.Latest, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_1, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
