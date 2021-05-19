@@ -373,7 +373,24 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         while (x == 0)
         {
             x = 1;
-        } while (x == 0)
+        [|}|] while (x == 0)
+        {
+            x = 1;
+        }
+    }
+}";
+
+            var fixedCode = @"public class Foo
+{
+    private void Bar()
+    {
+        var x = 0;
+
+        while (x == 0)
+        {
+            x = 1;
+        }
+        while (x == 0)
         {
             x = 1;
         }
@@ -383,10 +400,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
             var test = new CSharpTest
             {
                 TestCode = testCode,
-                ExpectedDiagnostics =
-                {
-                    Diagnostic().WithLocation(10, 9),
-                },
+                FixedCode = fixedCode,
                 Settings = testSettings,
             };
 
@@ -423,7 +437,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 
         do
         {
-            x = 1; } while (x == 0);
+            x = 1; [|}|] while (x == 0);
     }
 }";
 
@@ -443,10 +457,6 @@ namespace StyleCop.Analyzers.Test.LayoutRules
             var test = new CSharpTest
             {
                 TestCode = testCode,
-                ExpectedDiagnostics =
-                {
-                    Diagnostic().WithLocation(9, 20),
-                },
                 FixedCode = fixedTestCode,
                 Settings = testSettings,
             };
