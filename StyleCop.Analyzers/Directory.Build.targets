@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
 
+  <PropertyGroup>
+    <SkipAddAllResxFilesAsAdditionalFiles>true</SkipAddAllResxFilesAsAdditionalFiles>
+  </PropertyGroup>
+
   <ItemGroup>
-    <!-- Enable code generation for resource files -->
+    <!-- Enable code generation for resource files. -->
     <CodeGenerationEmbeddedResource Include="@(EmbeddedResource)" Exclude="**\*.??-??.resx" />
-    <EmbeddedResource Update="@(CodeGenerationEmbeddedResource)" Generator="ResXFileCodeGenerator" />
+    <AdditionalFiles Include="@(CodeGenerationEmbeddedResource)" GenerateSource="true" />
+
+    <NonCodeGenerationEmbeddedResource Include="@(EmbeddedResource)" Exclude="@(CodeGenerationEmbeddedResource)" />
+    <AdditionalFiles Include="@(NonCodeGenerationEmbeddedResource)" GenerateSource="false" />
   </ItemGroup>
 
-  <!-- Special handling for embedded resources and generated files to show as nested in Solution Explorer -->
+  <!-- Special handling for embedded resources to show as nested in Solution Explorer -->
   <ItemGroup>
-    <!-- Update designer files for *.resx files -->
-    <Compile Update="@(CodeGenerationEmbeddedResource->'%(RecursiveDir)%(Filename).Designer.cs')" DependentUpon="$([System.IO.Path]::ChangeExtension($([System.IO.Path]::GetFileNameWithoutExtension(%(Identity))), '.resx'))" />
-
     <!-- Localized embedded resources are just dependent on the parent RESX -->
     <EmbeddedResource Update="**\*.??-??.resx" DependentUpon="$([System.IO.Path]::ChangeExtension($([System.IO.Path]::GetFileNameWithoutExtension(%(Identity))), '.resx'))" />
   </ItemGroup>
