@@ -75,5 +75,37 @@ class Foo
                 TestCode = testCode,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3339, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3339")]
+        public async Task TestNewExpressionAsync()
+        {
+            var testCode = @"
+     public class MyClass
+    {
+        public class MyObject
+        {
+            public string MyValue { get; init; }
+        }
+
+        public void MyTestFunction()
+        {
+            MyCallingFunction(0, new()
+            {
+                MyValue = ""Test""
+            });
+        }
+
+        public void MyCallingFunction(int index, MyObject myObject)
+        {
+        }
+    }";
+
+            await new CSharpTest(LanguageVersion.CSharp9)
+            {
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                TestCode = testCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

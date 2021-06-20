@@ -29,7 +29,7 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
@@ -40,7 +40,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         LayoutResources.SA1509CodeFix,
-                        token => this.GetTransformedDocumentAsync(context.Document, diagnostic, token),
+                        token => GetTransformedDocumentAsync(context.Document, diagnostic, token),
                         nameof(SA1509CodeFixProvider)),
                     diagnostic);
             }
@@ -48,25 +48,33 @@ namespace StyleCop.Analyzers.LayoutRules
             return SpecializedTasks.CompletedTask;
         }
 
-        private async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
-            var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-
-            var openBrace = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-            var leadingTrivia = openBrace.LeadingTrivia;
-
-            var newTriviaList = SyntaxFactory.TriviaList();
-
-            var previousEmptyLines = this.GetPreviousEmptyLines(openBrace).ToList();
-            newTriviaList = newTriviaList.AddRange(leadingTrivia.Except(previousEmptyLines));
-
-            var newOpenBrace = openBrace.WithLeadingTrivia(newTriviaList);
-            var newSyntaxRoot = syntaxRoot.ReplaceToken(openBrace, newOpenBrace);
-
-            return document.WithSyntaxRoot(newSyntaxRoot);
+            var newRoot = await GetTransformedDocumentAsync(document, ImmutableArray.Create(diagnostic), cancellationToken).ConfigureAwait(false);
+            return document.WithSyntaxRoot(newRoot);
         }
 
-        private IEnumerable<SyntaxTrivia> GetPreviousEmptyLines(SyntaxToken openBrace)
+        private static async Task<SyntaxNode> GetTransformedDocumentAsync(Document document, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken)
+        {
+            var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            return syntaxRoot.ReplaceTokens(
+                diagnostics.Select(diagnostic => syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start)),
+                (originalToken, rewrittenToken) =>
+                {
+                    var openBrace = rewrittenToken;
+                    var leadingTrivia = openBrace.LeadingTrivia;
+
+                    var newTriviaList = SyntaxFactory.TriviaList();
+
+                    var previousEmptyLines = GetPreviousEmptyLines(openBrace).ToList();
+                    newTriviaList = newTriviaList.AddRange(leadingTrivia.Except(previousEmptyLines));
+
+                    var newOpenBrace = openBrace.WithLeadingTrivia(newTriviaList);
+                    return newOpenBrace;
+                });
+        }
+
+        private static IEnumerable<SyntaxTrivia> GetPreviousEmptyLines(SyntaxToken openBrace)
         {
             var result = new List<SyntaxTrivia>();
 
@@ -91,6 +99,17 @@ namespace StyleCop.Analyzers.LayoutRules
             }
 
             return result;
+        }
+
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; } =
+                new FixAll();
+
+            protected override string CodeActionTitle => LayoutResources.SA1509CodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+                => await GetTransformedDocumentAsync(document, diagnostics, fixAllContext.CancellationToken).ConfigureAwait(false);
         }
     }
 }
