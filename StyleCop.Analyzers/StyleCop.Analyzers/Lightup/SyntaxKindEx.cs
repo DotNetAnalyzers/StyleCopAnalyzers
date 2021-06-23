@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Lightup
     {
         public const SyntaxKind DotDotToken = (SyntaxKind)8222;
         public const SyntaxKind QuestionQuestionEqualsToken = (SyntaxKind)8284;
+        public const SyntaxKind InitKeyword = (SyntaxKind)8443;
         public const SyntaxKind ManagedKeyword = (SyntaxKind)8445;
         public const SyntaxKind UnmanagedKeyword = (SyntaxKind)8446;
         public const SyntaxKind NullableKeyword = (SyntaxKind)8486;
@@ -45,6 +46,11 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind SwitchExpressionArm = (SyntaxKind)9026;
         public const SyntaxKind VarPattern = (SyntaxKind)9027;
         public const SyntaxKind ParenthesizedPattern = (SyntaxKind)9028;
+        public const SyntaxKind RelationalPattern = (SyntaxKind)9029;
+        public const SyntaxKind TypePattern = (SyntaxKind)9030;
+        public const SyntaxKind OrPattern = (SyntaxKind)9031;
+        public const SyntaxKind AndPattern = (SyntaxKind)9032;
+        public const SyntaxKind NotPattern = (SyntaxKind)9033;
         public const SyntaxKind DeclarationExpression = (SyntaxKind)9040;
         public const SyntaxKind RefExpression = (SyntaxKind)9050;
         public const SyntaxKind RefType = (SyntaxKind)9051;
@@ -54,6 +60,7 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind NullableDirectiveTrivia = (SyntaxKind)9055;
         public const SyntaxKind FunctionPointerType = (SyntaxKind)9056;
         public const SyntaxKind FunctionPointerParameter = (SyntaxKind)9057;
+        public const SyntaxKind InitAccessorDeclaration = (SyntaxKind)9060;
         public const SyntaxKind WithExpression = (SyntaxKind)9061;
         public const SyntaxKind WithInitializerExpression = (SyntaxKind)9062;
         public const SyntaxKind RecordDeclaration = (SyntaxKind)9063;
