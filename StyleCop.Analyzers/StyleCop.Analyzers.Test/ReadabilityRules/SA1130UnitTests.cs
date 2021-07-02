@@ -880,5 +880,86 @@ public class TestClass
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3279, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3279")]
+        public async Task TestDelegateUsedAsSecondNamedArgumentAsync()
+        {
+            var testCode = @"
+using System;
+using System.Linq;
+public class TypeName
+{
+    public void Test()
+    {
+        Test2(resolve: delegate
+        {
+            return """";
+        });
+    }
+
+    private void Test2(string description = null, Func<object, string> resolve = null)
+    {
+        resolve(0);
+    }
+}";
+
+            string fixedCode = @"
+using System;
+using System.Linq;
+public class TypeName
+{
+    public void Test()
+    {
+        Test2(resolve: arg =>
+        {
+            return """";
+        });
+    }
+
+    private void Test2(string description = null, Func<object, string> resolve = null)
+    {
+        resolve(0);
+    }
+}";
+
+            var expected = new[]
+            {
+                Diagnostic().WithSpan(8, 24, 8, 32),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3279, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3279")]
+        public async Task VerifyThatUnknownNamedParameterWontCauseCrashAsync()
+        {
+            var testCode = @"
+using System;
+using System.Linq;
+public class TypeName
+{
+    public void Test()
+    {
+        Test2(unknownParam: delegate
+        {
+            return """";
+        });
+    }
+
+    private void Test2(string description = null, Func<object, string> resolve = null)
+    {
+        resolve(0);
+    }
+}";
+
+            var expected = DiagnosticResult.CompilerError("CS1739")
+                .WithMessage("The best overload for 'Test2' does not have a parameter named 'unknownParam'")
+                .WithSpan(8, 15, 8, 27)
+                .WithArguments("Test2", "unknownParam");
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
