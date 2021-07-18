@@ -545,6 +545,23 @@ public interface ITest
         }
 
         [Theory]
+        [InlineData("a")]
+        [InlineData("see")]
+        [InlineData("seealso")]
+        public async Task TestFullSentenceLinkAsync(string tag)
+        {
+            var testCode = $@"
+/// <summary>
+/// <{tag} href=""someurl"">Periods aren't required to glow white at the end of a full-sentence link.</{tag}>
+/// </summary>
+public interface ITest
+{{
+}}
+";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, default).ConfigureAwait(false);
+        }
+
+        [Theory]
         [InlineData(",")]
         [InlineData(";")]
         public async Task TestSentenceEndingWithTypoAndParenthesisAsync(string typo)
