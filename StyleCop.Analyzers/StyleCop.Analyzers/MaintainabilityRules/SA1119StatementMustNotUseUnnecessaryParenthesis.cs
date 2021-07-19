@@ -117,6 +117,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                     && !node.Expression.IsKind(SyntaxKind.CoalesceExpression)
                     && !node.Expression.IsKind(SyntaxKind.QueryExpression)
                     && !node.Expression.IsKind(SyntaxKind.AwaitExpression)
+                    && !node.Expression.IsKind(SyntaxKindEx.RangeExpression)
                     && !node.IsKind(SyntaxKind.ConstructorDeclaration))
                 {
                     if (node.Expression.IsKind(SyntaxKind.ConditionalAccessExpression)
