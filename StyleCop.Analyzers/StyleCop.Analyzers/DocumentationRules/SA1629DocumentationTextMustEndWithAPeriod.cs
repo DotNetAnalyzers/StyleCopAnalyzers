@@ -125,10 +125,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                         if (!string.IsNullOrEmpty(textWithoutTrailingWhitespace))
                         {
-                            if (!textWithoutTrailingWhitespace.EndsWith(".", StringComparison.Ordinal)
-                                && !textWithoutTrailingWhitespace.EndsWith(".)", StringComparison.Ordinal)
-                                && (startingWithFinalParagraph || !textWithoutTrailingWhitespace.EndsWith(":", StringComparison.Ordinal))
-                                && !textWithoutTrailingWhitespace.EndsWith("-or-", StringComparison.Ordinal))
+                            if (IsMissingRequiredPeriod(textWithoutTrailingWhitespace, startingWithFinalParagraph))
                             {
                                 int spanStart = textToken.SpanStart + textWithoutTrailingWhitespace.Length;
                                 ImmutableDictionary<string, string> properties = null;
@@ -162,10 +159,15 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
                 else if (xmlElement.Content[i].IsInlineElement() && !currentParagraphDone)
                 {
-                    // Treat empty XML elements as a "word not ending with a period"
-                    var location = Location.Create(xmlElement.SyntaxTree, new TextSpan(xmlElement.Content[i].Span.End, 1));
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
-                    currentParagraphDone = true;
+                    var lastTextElement = XmlCommentHelper.TryGetLastTextElementWithContent(xmlElement.Content[i]);
+
+                    if (lastTextElement is null // Treat empty XML elements as a "word not ending with a period"
+                        || IsMissingRequiredPeriod(lastTextElement.TextTokens.Last().Text.TrimEnd(' ', '\r', '\n'), startingWithFinalParagraph))
+                    {
+                        var location = Location.Create(xmlElement.SyntaxTree, new TextSpan(xmlElement.Content[i].Span.End, 1));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                        currentParagraphDone = true;
+                    }
                 }
                 else if (xmlElement.Content[i] is XmlElementSyntax childXmlElement)
                 {
@@ -197,6 +199,14 @@ namespace StyleCop.Analyzers.DocumentationRules
                     }
                 }
             }
+        }
+
+        private static bool IsMissingRequiredPeriod(string textWithoutTrailingWhitespace, bool startingWithFinalParagraph)
+        {
+            return !textWithoutTrailingWhitespace.EndsWith(".", StringComparison.Ordinal)
+                && !textWithoutTrailingWhitespace.EndsWith(".)", StringComparison.Ordinal)
+                && (startingWithFinalParagraph || !textWithoutTrailingWhitespace.EndsWith(":", StringComparison.Ordinal))
+                && !textWithoutTrailingWhitespace.EndsWith("-or-", StringComparison.Ordinal);
         }
     }
 }

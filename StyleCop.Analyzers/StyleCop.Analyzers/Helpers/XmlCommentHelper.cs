@@ -192,6 +192,37 @@ namespace StyleCop.Analyzers.Helpers
         }
 
         /// <summary>
+        /// Returns the last <see cref="XmlTextSyntax"/> which is not simply empty or whitespace.
+        /// </summary>
+        /// <param name="node">The XML content to search.</param>
+        /// <returns>The last <see cref="XmlTextSyntax"/> which is not simply empty or whitespace, or
+        /// <see langword="null"/> if no such element exists.</returns>
+        internal static XmlTextSyntax TryGetLastTextElementWithContent(XmlNodeSyntax node)
+        {
+            if (node is XmlEmptyElementSyntax)
+            {
+                return null;
+            }
+            else if (node is XmlTextSyntax xmlText)
+            {
+                return !IsConsideredEmpty(node) ? xmlText : null;
+            }
+            else if (node is XmlElementSyntax xmlElement)
+            {
+                for (var i = xmlElement.Content.Count - 1; i >= 0; i--)
+                {
+                    var nestedContent = TryGetFirstTextElementWithContent(xmlElement.Content[i]);
+                    if (nestedContent != null)
+                    {
+                        return nestedContent;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Checks if a <see cref="SyntaxTrivia"/> contains a <see cref="DocumentationCommentTriviaSyntax"/> and returns
         /// <see langword="true"/> if it is considered empty.
         /// </summary>
