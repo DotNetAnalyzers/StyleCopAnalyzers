@@ -113,6 +113,7 @@ namespace StyleCop.Analyzers.OrderingRules
             case SyntaxKind.StructDeclaration:
                 return ((StructDeclarationSyntax)node).WithModifiers(modifiers);
             case SyntaxKindEx.RecordDeclaration:
+            case SyntaxKindEx.RecordStructDeclaration:
                 return ((RecordDeclarationSyntaxWrapper)node).WithModifiers(modifiers);
             }
 
@@ -132,6 +133,7 @@ namespace StyleCop.Analyzers.OrderingRules
             case SyntaxKind.StructDeclaration:
                 return ((StructDeclarationSyntax)node).WithKeyword(keyword);
             case SyntaxKindEx.RecordDeclaration:
+            case SyntaxKindEx.RecordStructDeclaration:
                 return ((RecordDeclarationSyntaxWrapper)node).WithKeyword(keyword);
             }
 

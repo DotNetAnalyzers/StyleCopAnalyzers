@@ -15,9 +15,16 @@ namespace StyleCop.Analyzers.Test.Helpers
             {
                 yield return new[] { "class" };
                 yield return new[] { "struct" };
+
                 if (LightupHelpers.SupportsCSharp9)
                 {
                     yield return new[] { "record" };
+                }
+
+                if (LightupHelpers.SupportsCSharp10)
+                {
+                    yield return new[] { "record class" };
+                    yield return new[] { "record struct" };
                 }
             }
         }

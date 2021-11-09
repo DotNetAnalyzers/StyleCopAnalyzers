@@ -78,6 +78,7 @@ namespace StyleCop.Analyzers.NamingRules
             context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
             context.RegisterSyntaxNodeAction(ClassDeclarationAction, SyntaxKind.ClassDeclaration);
             context.RegisterSyntaxNodeAction(RecordDeclarationAction, SyntaxKindEx.RecordDeclaration);
+            context.RegisterSyntaxNodeAction(RecordDeclarationAction, SyntaxKindEx.RecordStructDeclaration);
             context.RegisterSyntaxNodeAction(EnumDeclarationAction, SyntaxKind.EnumDeclaration);
             context.RegisterSyntaxNodeAction(EnumMemberDeclarationAction, SyntaxKind.EnumMemberDeclaration);
             context.RegisterSyntaxNodeAction(StructDeclarationAction, SyntaxKind.StructDeclaration);
@@ -216,7 +217,7 @@ namespace StyleCop.Analyzers.NamingRules
         {
             var parameterDeclaration = (ParameterSyntax)context.Node;
             if (!parameterDeclaration.Parent.IsKind(SyntaxKind.ParameterList)
-                || !parameterDeclaration.Parent.Parent.IsKind(SyntaxKindEx.RecordDeclaration))
+                || (!parameterDeclaration.Parent.Parent.IsKind(SyntaxKindEx.RecordDeclaration) && !parameterDeclaration.Parent.Parent.IsKind(SyntaxKindEx.RecordStructDeclaration)))
             {
                 // Only positional parameters of records are treated as properties
                 return;

@@ -309,6 +309,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.EnumDeclaration:
             case SyntaxKindEx.RecordDeclaration:
+            case SyntaxKindEx.RecordStructDeclaration:
                 elements.AddRange(((BaseTypeDeclarationSyntax)member).AttributeLists);
                 break;
 
