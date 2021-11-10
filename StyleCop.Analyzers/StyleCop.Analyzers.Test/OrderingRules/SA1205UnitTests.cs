@@ -55,6 +55,19 @@ namespace StyleCop.Analyzers.Test.OrderingRules
                     yield return new object[] { "internal sealed partial record" };
                     yield return new object[] { "record" };
                 }
+
+                if (LightupHelpers.SupportsCSharp10)
+                {
+                    yield return new object[] { "public partial record class" };
+                    yield return new object[] { "internal partial record class" };
+                    yield return new object[] { "public sealed partial record class" };
+                    yield return new object[] { "internal sealed partial record class" };
+                    yield return new object[] { "record class" };
+
+                    yield return new object[] { "public partial record struct" };
+                    yield return new object[] { "internal partial record struct" };
+                    yield return new object[] { "record struct" };
+                }
             }
         }
 
@@ -71,6 +84,14 @@ namespace StyleCop.Analyzers.Test.OrderingRules
                 {
                     yield return new object[] { "partial record" };
                     yield return new object[] { "sealed partial record" };
+                }
+
+                if (LightupHelpers.SupportsCSharp10)
+                {
+                    yield return new object[] { "partial record class" };
+                    yield return new object[] { "sealed partial record class" };
+
+                    yield return new object[] { "partial record struct" };
                 }
             }
         }
@@ -112,6 +133,23 @@ namespace StyleCop.Analyzers.Test.OrderingRules
                     yield return new object[] { "protected internal", "record" };
                     yield return new object[] { "private", "record" };
                     yield return new object[] { "private protected", "record" };
+                }
+
+                if (LightupHelpers.SupportsCSharp10)
+                {
+                    yield return new object[] { "public", "record class" };
+                    yield return new object[] { "protected", "record class" };
+                    yield return new object[] { "internal", "record class" };
+                    yield return new object[] { "protected internal", "record class" };
+                    yield return new object[] { "private", "record class" };
+                    yield return new object[] { "private protected", "record class" };
+
+                    yield return new object[] { "public", "record struct" };
+                    yield return new object[] { "protected", "record struct" };
+                    yield return new object[] { "internal", "record struct" };
+                    yield return new object[] { "protected internal", "record struct" };
+                    yield return new object[] { "private", "record struct" };
+                    yield return new object[] { "private protected", "record struct" };
                 }
             }
         }

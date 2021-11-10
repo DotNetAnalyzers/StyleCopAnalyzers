@@ -155,6 +155,7 @@ namespace StyleCop.Analyzers.OrderingRules
             [SyntaxKind.StructDeclaration] = "struct",
             [SyntaxKind.ClassDeclaration] = "class",
             [SyntaxKindEx.RecordDeclaration] = "record",
+            [SyntaxKindEx.RecordStructDeclaration] = "record struct",
             [SyntaxKind.FieldDeclaration] = "field",
             [SyntaxKind.ConstructorDeclaration] = "constructor",
             [SyntaxKind.DestructorDeclaration] = "destructor",
@@ -309,6 +310,7 @@ namespace StyleCop.Analyzers.OrderingRules
             {
                 SyntaxKind.EventFieldDeclaration => SyntaxKind.EventDeclaration,
                 SyntaxKindEx.RecordDeclaration => SyntaxKind.ClassDeclaration,
+                SyntaxKindEx.RecordStructDeclaration => SyntaxKind.StructDeclaration,
                 _ => syntaxKind,
             };
         }

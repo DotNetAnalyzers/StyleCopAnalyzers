@@ -65,7 +65,8 @@ namespace StyleCop.Analyzers.NamingRules
                 return;
             }
 
-            if (syntax.Parent.Parent.IsKind(SyntaxKindEx.RecordDeclaration))
+            if (syntax.Parent.Parent.IsKind(SyntaxKindEx.RecordDeclaration)
+                || syntax.Parent.Parent.IsKind(SyntaxKindEx.RecordStructDeclaration))
             {
                 // Positional parameters of a record are treated as properties for naming conventions
                 return;

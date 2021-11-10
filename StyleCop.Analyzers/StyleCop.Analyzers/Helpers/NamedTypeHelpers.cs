@@ -87,6 +87,7 @@ namespace StyleCop.Analyzers.Helpers
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.StructDeclaration:
             case SyntaxKindEx.RecordDeclaration:
+            case SyntaxKindEx.RecordStructDeclaration:
                 return ((TypeDeclarationSyntax)member).Identifier.Text;
 
             case SyntaxKind.EnumDeclaration:

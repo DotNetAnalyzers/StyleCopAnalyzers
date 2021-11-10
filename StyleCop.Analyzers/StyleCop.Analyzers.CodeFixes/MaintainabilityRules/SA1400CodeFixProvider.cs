@@ -84,6 +84,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 break;
 
             case SyntaxKindEx.RecordDeclaration:
+            case SyntaxKindEx.RecordStructDeclaration:
                 updatedDeclarationNode = HandleRecordDeclaration((RecordDeclarationSyntaxWrapper)declarationNode);
                 break;
 
@@ -378,6 +379,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 case SyntaxKind.EnumDeclaration:
                 case SyntaxKind.StructDeclaration:
                 case SyntaxKindEx.RecordDeclaration:
+                case SyntaxKindEx.RecordStructDeclaration:
                 case SyntaxKind.DelegateDeclaration:
                 case SyntaxKind.EventDeclaration:
                 case SyntaxKind.EventFieldDeclaration:

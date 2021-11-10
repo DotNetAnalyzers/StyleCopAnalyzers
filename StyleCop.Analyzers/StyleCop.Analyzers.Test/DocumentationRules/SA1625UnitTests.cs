@@ -33,6 +33,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
                 {
                     yield return new[] { "public record Test { }" };
                 }
+
+                if (LightupHelpers.SupportsCSharp10)
+                {
+                    yield return new[] { "public record class Test { }" };
+                    yield return new[] { "public record struct Test { }" };
+                }
             }
         }
 
