@@ -19,7 +19,7 @@ namespace StyleCop.Analyzers.CodeGeneration
     using Microsoft.CodeAnalysis.Text;
 
     [Generator]
-    internal sealed class SyntaxLightupGenerator : ISourceGenerator
+    internal sealed class SyntaxLightupGenerator : IIncrementalGenerator
     {
         private enum NodeKind
         {
@@ -28,25 +28,29 @@ namespace StyleCop.Analyzers.CodeGeneration
             Concrete,
         }
 
-        public void Initialize(GeneratorInitializationContext context)
+        public void Initialize(IncrementalGeneratorInitializationContext context)
         {
+            var compilation = context.CompilationProvider;
+            var syntaxFiles = context.AdditionalTextsProvider.Where(static x => Path.GetFileName(x.Path) == "Syntax.xml");
+            context.RegisterSourceOutput(
+                syntaxFiles.Combine(compilation),
+                (context, value) => this.Execute(in context, value.Right, value.Left));
         }
 
-        public void Execute(GeneratorExecutionContext context)
+        private void Execute(in SourceProductionContext context, Compilation compilation, AdditionalText syntaxFile)
         {
-            var syntaxFile = context.AdditionalFiles.Single(x => Path.GetFileName(x.Path) == "Syntax.xml");
             var syntaxText = syntaxFile.GetText(context.CancellationToken);
             if (syntaxText is null)
             {
                 throw new InvalidOperationException("Failed to read Syntax.xml");
             }
 
-            var syntaxData = new SyntaxData(in context, XDocument.Parse(syntaxText.ToString()));
+            var syntaxData = new SyntaxData(compilation, XDocument.Parse(syntaxText.ToString()));
             this.GenerateSyntaxWrappers(in context, syntaxData);
             this.GenerateSyntaxWrapperHelper(in context, syntaxData.Nodes);
         }
 
-        private void GenerateSyntaxWrappers(in GeneratorExecutionContext context, SyntaxData syntaxData)
+        private void GenerateSyntaxWrappers(in SourceProductionContext context, SyntaxData syntaxData)
         {
             foreach (var node in syntaxData.Nodes)
             {
@@ -54,7 +58,7 @@ namespace StyleCop.Analyzers.CodeGeneration
             }
         }
 
-        private void GenerateSyntaxWrapper(in GeneratorExecutionContext context, SyntaxData syntaxData, NodeData nodeData)
+        private void GenerateSyntaxWrapper(in SourceProductionContext context, SyntaxData syntaxData, NodeData nodeData)
         {
             if (nodeData.WrapperName is null)
             {
@@ -806,7 +810,7 @@ namespace StyleCop.Analyzers.CodeGeneration
             context.AddSource(nodeData.WrapperName + ".g.cs", SourceText.From(wrapperNamespace.ToFullString(), Encoding.UTF8));
         }
 
-        private void GenerateSyntaxWrapperHelper(in GeneratorExecutionContext context, ImmutableArray<NodeData> wrapperTypes)
+        private void GenerateSyntaxWrapperHelper(in SourceProductionContext context, ImmutableArray<NodeData> wrapperTypes)
         {
             // private static readonly ImmutableDictionary<Type, Type> WrappedTypes;
             var wrappedTypes = SyntaxFactory.FieldDeclaration(
@@ -1138,12 +1142,12 @@ namespace StyleCop.Analyzers.CodeGeneration
         {
             private readonly Dictionary<string, NodeData> nameToNode;
 
-            public SyntaxData(in GeneratorExecutionContext context, XDocument document)
+            public SyntaxData(Compilation compilation, XDocument document)
             {
                 var nodesBuilder = ImmutableArray.CreateBuilder<NodeData>();
                 foreach (var element in document.XPathSelectElement("/Tree[@Root='SyntaxNode']").XPathSelectElements("PredefinedNode|AbstractNode|Node"))
                 {
-                    nodesBuilder.Add(new NodeData(in context, element));
+                    nodesBuilder.Add(new NodeData(compilation, element));
                 }
 
                 this.Nodes = nodesBuilder.ToImmutable();
@@ -1180,7 +1184,7 @@ namespace StyleCop.Analyzers.CodeGeneration
 
         private sealed class NodeData
         {
-            public NodeData(in GeneratorExecutionContext context, XElement element)
+            public NodeData(Compilation compilation, XElement element)
             {
                 this.Kind = element.Name.LocalName switch
                 {
@@ -1192,9 +1196,9 @@ namespace StyleCop.Analyzers.CodeGeneration
 
                 this.Name = element.Attribute("Name").Value;
 
-                this.ExistingType = context.Compilation.GetTypeByMetadataName($"Microsoft.CodeAnalysis.CSharp.Syntax.{this.Name}")
-                    ?? context.Compilation.GetTypeByMetadataName($"Microsoft.CodeAnalysis.CSharp.{this.Name}")
-                    ?? context.Compilation.GetTypeByMetadataName($"Microsoft.CodeAnalysis.{this.Name}");
+                this.ExistingType = compilation.GetTypeByMetadataName($"Microsoft.CodeAnalysis.CSharp.Syntax.{this.Name}")
+                    ?? compilation.GetTypeByMetadataName($"Microsoft.CodeAnalysis.CSharp.{this.Name}")
+                    ?? compilation.GetTypeByMetadataName($"Microsoft.CodeAnalysis.{this.Name}");
                 if (this.ExistingType?.DeclaredAccessibility == Accessibility.Public)
                 {
                     this.WrapperName = null;
