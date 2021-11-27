@@ -36,11 +36,12 @@ namespace TestNamespace
     using System;
     public class TestClass
     {
-        public string TestMethod()
+        public void TestMethod()
         {
             string str = ""test"";
             int finalLen = 4;
-            return str[.. (finalLen - 1)];
+            var test1 = str[.. (finalLen - 1)];
+            var test2 = .. (int)finalLen;
         }
     }
 }
@@ -52,18 +53,20 @@ namespace TestNamespace
     using System;
     public class TestClass
     {
-        public string TestMethod()
+        public void TestMethod()
         {
             string str = ""test"";
             int finalLen = 4;
-            return str[..(finalLen - 1)];
+            var test1 = str[..(finalLen - 1)];
+            var test2 = ..(int)finalLen;
         }
     }
 }
 ";
             var expectedResults = new DiagnosticResult[]
             {
-                Diagnostic(DescriptorNotPreceded).WithLocation(28, 27),
+                Diagnostic(DescriptorNotPreceded).WithLocation(28, 32),
+                Diagnostic(DescriptorNotPreceded).WithLocation(29, 28),
             };
 
             await VerifyCSharpFixAsync(
