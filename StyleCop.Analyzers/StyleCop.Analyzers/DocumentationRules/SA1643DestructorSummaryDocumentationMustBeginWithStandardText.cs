@@ -5,10 +5,10 @@ namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
     using System.Collections.Immutable;
-    using System.Globalization;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The XML documentation header for a C# finalizer does not contain the appropriate summary text.
@@ -78,7 +78,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static void HandleDestructor(SyntaxNodeAnalysisContext context)
         {
             var settings = context.GetStyleCopSettings(context.CancellationToken);
-            var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
+            var culture = ResourceManagerHelper.GetCultureInfo(settings.DocumentationRules.DocumentationCulture);
             var resourceManager = DocumentationResources.ResourceManager;
 
             HandleDeclaration(
