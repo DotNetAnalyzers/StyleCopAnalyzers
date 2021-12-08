@@ -30,7 +30,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
         [Fact]
         public async Task TestAfterRangeExpressionAsync()
         {
-            var testCode = SpecialTypeDefinitions.IndexAndRange + @"
+            var testCode = @"
 namespace TestNamespace
 {
     using System;
@@ -40,13 +40,13 @@ namespace TestNamespace
         {
             string str = ""test"";
             int finalLen = 4;
-            return str[.. (finalLen - 1)];
+            return str[.. {|#0:(|}finalLen - 1)];
         }
     }
 }
 ";
 
-            var fixedCode = SpecialTypeDefinitions.IndexAndRange + @"
+            var fixedCode = @"
 namespace TestNamespace
 {
     using System;
@@ -61,17 +61,14 @@ namespace TestNamespace
     }
 }
 ";
-            var expectedResults = new DiagnosticResult[]
-            {
-                Diagnostic(DescriptorNotPreceded).WithLocation(28, 27),
-            };
 
-            await VerifyCSharpFixAsync(
-                LanguageVersion.CSharp8,
-                testCode,
-                expectedResults,
-                fixedCode,
-                CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest(LanguageVersion.CSharp8)
+            {
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp31,
+                TestCode = testCode,
+                ExpectedDiagnostics = { Diagnostic(DescriptorNotPreceded).WithLocation(0) },
+                FixedCode = fixedCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
