@@ -67,7 +67,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void CheckUsingDeclaration(SyntaxNodeAnalysisContext context, UsingDirectiveSyntax usingDirective)
         {
-            if (!usingDirective.Parent.IsKind(SyntaxKind.NamespaceDeclaration))
+            if (!usingDirective.Parent.IsKind(SyntaxKind.NamespaceDeclaration)
+                && !usingDirective.Parent.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration))
             {
                 // Usings outside of a namespace are always qualified.
                 return;
@@ -104,7 +105,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     break;
 
                 case SymbolKind.NamedType:
-                    var containingNamespace = ((NamespaceDeclarationSyntax)usingDirective.Parent).Name.ToString();
+                    var containingNamespace = ((BaseNamespaceDeclarationSyntaxWrapper)usingDirective.Parent).Name.ToString();
                     if (containingNamespace != symbol.ContainingNamespace.ToString())
                     {
                         context.ReportDiagnostic(Diagnostic.Create(DescriptorType, usingDirective.GetLocation(), symbolString));
