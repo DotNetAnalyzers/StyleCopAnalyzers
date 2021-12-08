@@ -10,8 +10,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <LangVersion>9</LangVersion>
-    <WarningLevel>5</WarningLevel>
+    <LangVersion>10</LangVersion>
+    <WarningLevel>99</WarningLevel>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(BuildingInsideVisualStudio)' != 'true'">
@@ -47,12 +47,12 @@
     <PackageReference Include="DotNetAnalyzers.DocumentationAnalyzers" Version="1.0.0-beta.46" PrivateAssets="all" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.304" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.2" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeStyle" Version="3.8.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeStyle" Version="4.0.1" PrivateAssets="all" />
   </ItemGroup>
 
   <!-- C# Compiler -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.Net.Compilers.Toolset" Version="3.8.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Net.Compilers.Toolset" Version="4.0.1" PrivateAssets="all" />
   </ItemGroup>
 
   <!-- Public API -->
