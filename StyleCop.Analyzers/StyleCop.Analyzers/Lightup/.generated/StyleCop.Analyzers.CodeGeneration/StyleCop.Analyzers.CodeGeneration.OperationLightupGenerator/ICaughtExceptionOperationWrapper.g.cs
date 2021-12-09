@@ -9,7 +9,7 @@ namespace StyleCop.Analyzers.Lightup
 
     internal readonly struct ICaughtExceptionOperationWrapper : IOperationWrapper
     {
-        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.ICaughtExceptionOperation";
+        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.FlowAnalysis.ICaughtExceptionOperation";
         private static readonly Type WrappedType;
         private readonly IOperation operation;
         static ICaughtExceptionOperationWrapper()

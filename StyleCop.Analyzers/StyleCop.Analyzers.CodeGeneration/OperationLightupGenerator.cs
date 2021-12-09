@@ -70,7 +70,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                     variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(
                         identifier: SyntaxFactory.Identifier("WrappedTypeName"),
                         argumentList: null,
-                        initializer: SyntaxFactory.EqualsValueClause(SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal("Microsoft.CodeAnalysis.Operations." + node.InterfaceName))))))));
+                        initializer: SyntaxFactory.EqualsValueClause(SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal($"Microsoft.CodeAnalysis.{node.Namespace}.{node.InterfaceName}"))))))));
 
             // private static readonly Type WrappedType;
             members = members.Add(SyntaxFactory.FieldDeclaration(
@@ -989,6 +989,7 @@ namespace StyleCop.Analyzers.CodeGeneration
 
                 this.OperationKinds = operationKinds;
                 this.InterfaceName = node.Attribute("Name").Value;
+                this.Namespace = node.Attribute("Namespace")?.Value ?? "Operations";
                 this.Name = this.InterfaceName.Substring("I".Length, this.InterfaceName.Length - "I".Length - "Operation".Length);
                 this.WrapperName = this.InterfaceName + "Wrapper";
                 this.BaseInterfaceName = node.Attribute("Base").Value;
@@ -999,6 +1000,8 @@ namespace StyleCop.Analyzers.CodeGeneration
             public ImmutableArray<(string name, int value, string? extraDescription)> OperationKinds { get; }
 
             public string InterfaceName { get; }
+
+            public string Namespace { get; }
 
             public string Name { get; }
 

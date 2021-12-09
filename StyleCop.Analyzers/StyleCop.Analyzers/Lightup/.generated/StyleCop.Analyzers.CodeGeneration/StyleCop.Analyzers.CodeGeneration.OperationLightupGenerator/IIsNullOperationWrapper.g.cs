@@ -9,7 +9,7 @@ namespace StyleCop.Analyzers.Lightup
 
     internal readonly struct IIsNullOperationWrapper : IOperationWrapper
     {
-        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IIsNullOperation";
+        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.FlowAnalysis.IIsNullOperation";
         private static readonly Type WrappedType;
         private static readonly Func<IOperation, IOperation> OperandAccessor;
         private readonly IOperation operation;
