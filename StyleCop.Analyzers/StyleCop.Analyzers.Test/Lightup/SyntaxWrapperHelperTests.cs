@@ -50,6 +50,12 @@ namespace StyleCop.Analyzers.Test.Lightup
                 Assert.False(LightupHelpers.SupportsCSharp9);
                 Assert.Same(typeof(ObjectCreationExpressionSyntax), SyntaxWrapperHelper.GetWrappedType(wrapperType));
             }
+            else if (wrapperType == typeof(BaseNamespaceDeclarationSyntaxWrapper))
+            {
+                // Special case for C# 6-9 analysis compatibility
+                Assert.False(LightupHelpers.SupportsCSharp10);
+                Assert.Same(typeof(NamespaceDeclarationSyntax), SyntaxWrapperHelper.GetWrappedType(wrapperType));
+            }
             else
             {
                 Assert.Null(SyntaxWrapperHelper.GetWrappedType(wrapperType));

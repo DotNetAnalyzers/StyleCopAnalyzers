@@ -9,7 +9,7 @@ namespace StyleCop.Analyzers.Lightup
 
     internal readonly struct IStaticLocalInitializationSemaphoreOperationWrapper : IOperationWrapper
     {
-        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IStaticLocalInitializationSemaphoreOperation";
+        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.FlowAnalysis.IStaticLocalInitializationSemaphoreOperation";
         private static readonly Type WrappedType;
         private static readonly Func<IOperation, ILocalSymbol> LocalAccessor;
         private readonly IOperation operation;

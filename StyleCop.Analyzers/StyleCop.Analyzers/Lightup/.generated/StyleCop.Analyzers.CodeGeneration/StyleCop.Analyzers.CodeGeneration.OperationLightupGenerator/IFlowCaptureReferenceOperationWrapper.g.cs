@@ -9,7 +9,7 @@ namespace StyleCop.Analyzers.Lightup
 
     internal readonly struct IFlowCaptureReferenceOperationWrapper : IOperationWrapper
     {
-        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IFlowCaptureReferenceOperation";
+        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.FlowAnalysis.IFlowCaptureReferenceOperation";
         private static readonly Type WrappedType;
         private readonly IOperation operation;
         static IFlowCaptureReferenceOperationWrapper()

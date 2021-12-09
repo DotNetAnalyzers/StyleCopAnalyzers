@@ -242,9 +242,10 @@ namespace StyleCop.Analyzers.LayoutRules
                          IsPartOf<EqualsValueClauseSyntax>(token) ||
                          IsPartOf<AssignmentExpressionSyntax>(token) ||
                          IsPartOf<ReturnStatementSyntax>(token) ||
+                         IsPartOf<ThrowStatementSyntax>(token) ||
                          IsPartOf<ObjectCreationExpressionSyntax>(token)))
                     {
-                        // the close brace is part of a variable initialization statement or a return statement
+                        // the close brace is part of a variable initialization statement or a return/throw statement
                         return;
                     }
 

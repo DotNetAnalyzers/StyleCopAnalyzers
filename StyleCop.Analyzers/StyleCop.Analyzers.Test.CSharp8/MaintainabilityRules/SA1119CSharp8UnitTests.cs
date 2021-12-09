@@ -170,5 +170,78 @@ public class Foo
 
             await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3370, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3370")]
+        public async Task TestRangeFollowedByMemberCallAsync()
+        {
+            const string testCode = @"using System;
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var array = (1..10).ToString();
+    }
+}
+";
+
+            await new CSharpTest(LanguageVersion.CSharp8)
+            {
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp31,
+                TestCode = testCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3370, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3370")]
+        public async Task TestRangeAsync()
+        {
+            const string testCode = @"using System;
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var a = new int[0];
+        var b = a[(..)];
+        var range = (1..10);
+    }
+}
+";
+
+            const string fixedCode = @"using System;
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var a = new int[0];
+        var b = a[..];
+        var range = 1..10;
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DiagnosticId).WithSpan(8, 19, 8, 23),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(8, 19),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(8, 22),
+                Diagnostic(DiagnosticId).WithSpan(9, 21, 9, 28),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(9, 21),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(9, 27),
+            };
+
+            var test = new CSharpTest(LanguageVersion.CSharp8)
+            {
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp31,
+                TestCode = testCode,
+                FixedCode = fixedCode,
+            };
+            test.ExpectedDiagnostics.AddRange(expected);
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

@@ -8,7 +8,6 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp7.SpacingRules;
-    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
 
     using static StyleCop.Analyzers.SpacingRules.SA1003SymbolsMustBeSpacedCorrectly;
@@ -27,9 +26,10 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(3386, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3386")]
         public async Task TestRangeExpressionAsync()
         {
-            var testCode = SpecialTypeDefinitions.IndexAndRange + @"
+            var testCode = @"
 namespace TestNamespace
 {
     using System;
@@ -37,13 +37,13 @@ namespace TestNamespace
     {
         public void TestMethod()
         {
-            var test1 = .. (int)1;
+            var test1 = .. {|#0:(|}int)1;
         }
     }
 }
 ";
 
-            var fixedCode = SpecialTypeDefinitions.IndexAndRange + @"
+            var fixedCode = @"
 namespace TestNamespace
 {
     using System;
@@ -56,17 +56,14 @@ namespace TestNamespace
     }
 }
 ";
-            var expectedResults = new DiagnosticResult[]
-            {
-                Diagnostic(DescriptorNotPrecededByWhitespace).WithLocation(26, 28).WithArguments("(int)"),
-            };
 
-            await VerifyCSharpFixAsync(
-                LanguageVersion.CSharp8,
-                testCode,
-                expectedResults,
-                fixedCode,
-                CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest(LanguageVersion.CSharp8)
+            {
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp31,
+                TestCode = testCode,
+                ExpectedDiagnostics = { Diagnostic(DescriptorNotPrecededByWhitespace).WithLocation(0).WithArguments("(int)") },
+                FixedCode = fixedCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

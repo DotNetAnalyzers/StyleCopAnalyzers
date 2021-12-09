@@ -8,7 +8,6 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp7.SpacingRules;
-    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
 
     using static StyleCop.Analyzers.SpacingRules.SA1008OpeningParenthesisMustBeSpacedCorrectly;
@@ -28,9 +27,10 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(3386, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3386")]
         public async Task TestAfterRangeExpressionAsync()
         {
-            var testCode = SpecialTypeDefinitions.IndexAndRange + @"
+            var testCode = @"
 namespace TestNamespace
 {
     using System;
@@ -40,14 +40,14 @@ namespace TestNamespace
         {
             string str = ""test"";
             int finalLen = 4;
-            var test1 = str[.. (finalLen - 1)];
-            var test2 = .. (int)finalLen;
+            var test1 = str[.. {|#0:(|}finalLen - 1)];
+            var test2 = .. {|#1:(|}int)finalLen;
         }
     }
 }
 ";
 
-            var fixedCode = SpecialTypeDefinitions.IndexAndRange + @"
+            var fixedCode = @"
 namespace TestNamespace
 {
     using System;
@@ -63,18 +63,18 @@ namespace TestNamespace
     }
 }
 ";
-            var expectedResults = new DiagnosticResult[]
-            {
-                Diagnostic(DescriptorNotPreceded).WithLocation(28, 32),
-                Diagnostic(DescriptorNotPreceded).WithLocation(29, 28),
-            };
 
-            await VerifyCSharpFixAsync(
-                LanguageVersion.CSharp8,
-                testCode,
-                expectedResults,
-                fixedCode,
-                CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest(LanguageVersion.CSharp8)
+            {
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp31,
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic(DescriptorNotPreceded).WithLocation(0),
+                    Diagnostic(DescriptorNotPreceded).WithLocation(1),
+                },
+                FixedCode = fixedCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]

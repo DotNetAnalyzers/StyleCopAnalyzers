@@ -19,15 +19,16 @@ namespace StyleCop.Analyzers.CodeGeneration
     using Microsoft.CodeAnalysis.Text;
 
     [Generator]
-    internal sealed class OperationLightupGenerator : ISourceGenerator
+    internal sealed class OperationLightupGenerator : IIncrementalGenerator
     {
-        public void Initialize(GeneratorInitializationContext context)
+        public void Initialize(IncrementalGeneratorInitializationContext context)
         {
+            var operationInterfacesFiles = context.AdditionalTextsProvider.Where(static x => Path.GetFileName(x.Path) == "OperationInterfaces.xml");
+            context.RegisterSourceOutput(operationInterfacesFiles, this.Execute);
         }
 
-        public void Execute(GeneratorExecutionContext context)
+        private void Execute(SourceProductionContext context, AdditionalText operationInterfacesFile)
         {
-            var operationInterfacesFile = context.AdditionalFiles.Single(x => Path.GetFileName(x.Path) == "OperationInterfaces.xml");
             var operationInterfacesText = operationInterfacesFile.GetText(context.CancellationToken);
             if (operationInterfacesText is null)
             {
@@ -38,7 +39,7 @@ namespace StyleCop.Analyzers.CodeGeneration
             this.GenerateOperationInterfaces(in context, operationInterfaces);
         }
 
-        private void GenerateOperationInterfaces(in GeneratorExecutionContext context, XDocument operationInterfaces)
+        private void GenerateOperationInterfaces(in SourceProductionContext context, XDocument operationInterfaces)
         {
             var tree = operationInterfaces.XPathSelectElement("/Tree");
             if (tree is null)
@@ -56,7 +57,7 @@ namespace StyleCop.Analyzers.CodeGeneration
             this.GenerateOperationKindEx(in context, documentData.Interfaces.Values.ToImmutableArray());
         }
 
-        private void GenerateOperationInterface(in GeneratorExecutionContext context, InterfaceData node)
+        private void GenerateOperationInterface(in SourceProductionContext context, InterfaceData node)
         {
             var members = SyntaxFactory.List<MemberDeclarationSyntax>();
 
@@ -69,7 +70,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                     variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(
                         identifier: SyntaxFactory.Identifier("WrappedTypeName"),
                         argumentList: null,
-                        initializer: SyntaxFactory.EqualsValueClause(SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal("Microsoft.CodeAnalysis.Operations." + node.InterfaceName))))))));
+                        initializer: SyntaxFactory.EqualsValueClause(SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal($"Microsoft.CodeAnalysis.{node.Namespace}.{node.InterfaceName}"))))))));
 
             // private static readonly Type WrappedType;
             members = members.Add(SyntaxFactory.FieldDeclaration(
@@ -581,7 +582,7 @@ namespace StyleCop.Analyzers.CodeGeneration
             context.AddSource(node.WrapperName + ".g.cs", SourceText.From(wrapperNamespace.ToFullString(), Encoding.UTF8));
         }
 
-        private void GenerateOperationWrapperHelper(in GeneratorExecutionContext context, ImmutableArray<InterfaceData> wrapperTypes)
+        private void GenerateOperationWrapperHelper(in SourceProductionContext context, ImmutableArray<InterfaceData> wrapperTypes)
         {
             // private static readonly ImmutableDictionary<Type, Type> WrappedTypes;
             var wrappedTypes = SyntaxFactory.FieldDeclaration(
@@ -789,7 +790,7 @@ namespace StyleCop.Analyzers.CodeGeneration
             context.AddSource("OperationWrapperHelper.g.cs", SourceText.From(wrapperNamespace.ToFullString(), Encoding.UTF8));
         }
 
-        private void GenerateOperationKindEx(in GeneratorExecutionContext context, ImmutableArray<InterfaceData> wrapperTypes)
+        private void GenerateOperationKindEx(in SourceProductionContext context, ImmutableArray<InterfaceData> wrapperTypes)
         {
             var operationKinds = wrapperTypes
                 .SelectMany(type => type.OperationKinds)
@@ -988,6 +989,7 @@ namespace StyleCop.Analyzers.CodeGeneration
 
                 this.OperationKinds = operationKinds;
                 this.InterfaceName = node.Attribute("Name").Value;
+                this.Namespace = node.Attribute("Namespace")?.Value ?? "Operations";
                 this.Name = this.InterfaceName.Substring("I".Length, this.InterfaceName.Length - "I".Length - "Operation".Length);
                 this.WrapperName = this.InterfaceName + "Wrapper";
                 this.BaseInterfaceName = node.Attribute("Base").Value;
@@ -998,6 +1000,8 @@ namespace StyleCop.Analyzers.CodeGeneration
             public ImmutableArray<(string name, int value, string? extraDescription)> OperationKinds { get; }
 
             public string InterfaceName { get; }
+
+            public string Namespace { get; }
 
             public string Name { get; }
 

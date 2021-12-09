@@ -18,7 +18,9 @@ namespace StyleCop.Analyzers.Lightup
             var csharpCodeAnalysisAssembly = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly;
             var builder = ImmutableDictionary.CreateBuilder<Type, Type>();
             builder.Add(typeof(BaseExpressionColonSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(BaseExpressionColonSyntaxWrapper.WrappedTypeName));
-            builder.Add(typeof(BaseNamespaceDeclarationSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(BaseNamespaceDeclarationSyntaxWrapper.WrappedTypeName));
+
+            var baseNamespaceDeclarationSyntaxType = csharpCodeAnalysisAssembly.GetType(BaseNamespaceDeclarationSyntaxWrapper.WrappedTypeName) ?? csharpCodeAnalysisAssembly.GetType(BaseNamespaceDeclarationSyntaxWrapper.FallbackWrappedTypeName);
+            builder.Add(typeof(BaseNamespaceDeclarationSyntaxWrapper), baseNamespaceDeclarationSyntaxType);
 
             var objectCreationExpressionSyntaxType = csharpCodeAnalysisAssembly.GetType(BaseObjectCreationExpressionSyntaxWrapper.WrappedTypeName) ?? csharpCodeAnalysisAssembly.GetType(BaseObjectCreationExpressionSyntaxWrapper.FallbackWrappedTypeName);
             builder.Add(typeof(BaseObjectCreationExpressionSyntaxWrapper), objectCreationExpressionSyntaxType);

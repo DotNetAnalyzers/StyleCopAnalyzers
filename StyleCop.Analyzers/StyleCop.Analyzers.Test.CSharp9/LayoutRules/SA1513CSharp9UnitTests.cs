@@ -3,9 +3,37 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.LayoutRules
 {
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.LayoutRules;
+    using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1513ClosingBraceMustBeFollowedByBlankLine,
+        StyleCop.Analyzers.LayoutRules.SA1513CodeFixProvider>;
 
     public class SA1513CSharp9UnitTests : SA1513CSharp8UnitTests
     {
+        [Fact]
+        [WorkItem(3410, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3410")]
+        public async Task TestThrowSwitchExpressionValueAsync()
+        {
+            var testCode = @"using System;
+
+public class Foo
+{
+    public void Baz(string arg)
+    {
+        throw arg switch
+        {
+            """" => new ArgumentException(),
+            _ => new Exception()
+        };
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
