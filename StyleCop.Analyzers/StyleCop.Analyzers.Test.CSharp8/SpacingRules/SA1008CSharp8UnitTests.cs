@@ -8,7 +8,6 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp7.SpacingRules;
-    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
 
     using static StyleCop.Analyzers.SpacingRules.SA1008OpeningParenthesisMustBeSpacedCorrectly;
@@ -28,6 +27,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(3386, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3386")]
         public async Task TestAfterRangeExpressionAsync()
         {
             var testCode = @"
@@ -36,11 +36,12 @@ namespace TestNamespace
     using System;
     public class TestClass
     {
-        public string TestMethod()
+        public void TestMethod()
         {
             string str = ""test"";
             int finalLen = 4;
-            return str[.. {|#0:(|}finalLen - 1)];
+            var test1 = str[.. {|#0:(|}finalLen - 1)];
+            var test2 = .. {|#1:(|}int)finalLen;
         }
     }
 }
@@ -52,11 +53,12 @@ namespace TestNamespace
     using System;
     public class TestClass
     {
-        public string TestMethod()
+        public void TestMethod()
         {
             string str = ""test"";
             int finalLen = 4;
-            return str[..(finalLen - 1)];
+            var test1 = str[..(finalLen - 1)];
+            var test2 = ..(int)finalLen;
         }
     }
 }
@@ -66,7 +68,11 @@ namespace TestNamespace
             {
                 ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp31,
                 TestCode = testCode,
-                ExpectedDiagnostics = { Diagnostic(DescriptorNotPreceded).WithLocation(0) },
+                ExpectedDiagnostics =
+                {
+                    Diagnostic(DescriptorNotPreceded).WithLocation(0),
+                    Diagnostic(DescriptorNotPreceded).WithLocation(1),
+                },
                 FixedCode = fixedCode,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }

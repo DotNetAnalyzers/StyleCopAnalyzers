@@ -231,8 +231,9 @@ namespace StyleCop.Analyzers.SpacingRules
                 startOfIndexer = prevToken.IsKind(SyntaxKind.OpenBracketToken);
                 var consecutiveCast = prevToken.IsKind(SyntaxKind.CloseParenToken) && prevToken.Parent.IsKind(SyntaxKind.CastExpression);
                 var partOfInterpolation = prevToken.IsKind(SyntaxKind.OpenBraceToken) && prevToken.Parent.IsKind(SyntaxKind.Interpolation);
+                var partOfRange = prevToken.IsKind(SyntaxKindEx.DotDotToken);
 
-                haveLeadingSpace = !partOfUnaryExpression && !startOfIndexer && !consecutiveCast && !partOfInterpolation;
+                haveLeadingSpace = !partOfUnaryExpression && !startOfIndexer && !consecutiveCast && !partOfInterpolation && !partOfRange;
                 break;
 
             case SyntaxKind.ParameterList:
