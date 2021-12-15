@@ -29,6 +29,23 @@ namespace StyleCop.Analyzers.Test.Helpers
             }
         }
 
+        public static IEnumerable<object[]> RecordTypeDeclarationKeywords
+        {
+            get
+            {
+                if (LightupHelpers.SupportsCSharp9)
+                {
+                    yield return new[] { "record" };
+                }
+
+                if (LightupHelpers.SupportsCSharp10)
+                {
+                    yield return new[] { "record class" };
+                    yield return new[] { "record struct" };
+                }
+            }
+        }
+
         public static IEnumerable<object[]> TypeDeclarationKeywords
         {
             get
