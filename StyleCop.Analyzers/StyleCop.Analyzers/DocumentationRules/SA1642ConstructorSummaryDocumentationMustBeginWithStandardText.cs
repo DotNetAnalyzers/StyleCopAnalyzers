@@ -125,7 +125,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             var constructorDeclarationSyntax = (ConstructorDeclarationSyntax)context.Node;
 
             var settings = context.GetStyleCopSettings(context.CancellationToken);
-            var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
+            var culture = settings.DocumentationRules.DocumentationCultureInfo;
             var resourceManager = DocumentationResources.ResourceManager;
 
             bool isStruct = constructorDeclarationSyntax.Parent?.IsKind(SyntaxKind.StructDeclaration) ?? false;

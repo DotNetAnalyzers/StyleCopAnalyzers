@@ -4,6 +4,7 @@
 namespace StyleCop.Analyzers.Test.Settings
 {
     using System.Collections.Immutable;
+    using System.Globalization;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -27,6 +28,8 @@ namespace StyleCop.Analyzers.Test.Settings
 
             Assert.Equal("PlaceholderCompany", styleCopSettings.DocumentationRules.CompanyName);
             Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
+            Assert.Equal("en-US", styleCopSettings.DocumentationRules.DocumentationCulture);
+            Assert.Same(CultureInfo.InvariantCulture, styleCopSettings.DocumentationRules.DocumentationCultureInfo);
             Assert.True(styleCopSettings.NamingRules.AllowCommonHungarianPrefixes);
             Assert.Empty(styleCopSettings.NamingRules.AllowedHungarianPrefixes);
             Assert.Empty(styleCopSettings.NamingRules.AllowedNamespaceComponents);
@@ -43,6 +46,27 @@ namespace StyleCop.Analyzers.Test.Settings
             Assert.NotNull(styleCopSettings.SpacingRules);
             Assert.NotNull(styleCopSettings.ReadabilityRules);
             Assert.NotNull(styleCopSettings.MaintainabilityRules);
+        }
+
+        [Fact]
+        [WorkItem(3402, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3402")]
+        public async Task VerifyDefaultCultureIsReadCorrectlyAsync()
+        {
+            var settings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""documentationCulture"": ""en-US""
+    },
+  }
+}
+";
+            var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+
+            Assert.Equal("en-US", styleCopSettings.DocumentationRules.DocumentationCulture);
+            Assert.Same(CultureInfo.InvariantCulture, styleCopSettings.DocumentationRules.DocumentationCultureInfo);
         }
 
         /// <summary>

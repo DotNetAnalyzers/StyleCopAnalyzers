@@ -83,7 +83,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             bool isStruct = typeDeclaration.IsKind(SyntaxKind.StructDeclaration);
             var settings = document.Project.AnalyzerOptions.GetStyleCopSettings(methodDeclaration.SyntaxTree, cancellationToken);
-            var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
+            var culture = settings.DocumentationRules.DocumentationCultureInfo;
             var resourceManager = DocumentationResources.ResourceManager;
 
             if (methodDeclaration is ConstructorDeclarationSyntax)
