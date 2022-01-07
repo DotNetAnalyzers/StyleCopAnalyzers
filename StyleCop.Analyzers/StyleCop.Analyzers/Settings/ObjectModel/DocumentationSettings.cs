@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Globalization;
     using System.Text.RegularExpressions;
     using LightJson;
     using StyleCop.Analyzers.Lightup;
@@ -92,6 +93,11 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         private readonly string documentationCulture;
 
         /// <summary>
+        /// This is backing field for the <see cref="DocumentationCultureInfo"/> property.
+        /// </summary>
+        private readonly CultureInfo documentationCultureInfo;
+
+        /// <summary>
         /// This is the backing field for the <see cref="ExcludeFromPunctuationCheck"/> property.
         /// </summary>
         private readonly ImmutableArray<string> excludeFromPunctuationCheck;
@@ -121,6 +127,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.fileNamingConvention = FileNamingConvention.StyleCop;
 
             this.documentationCulture = DefaultDocumentationCulture;
+            this.documentationCultureInfo = CultureInfo.InvariantCulture;
 
             this.excludeFromPunctuationCheck = DefaultExcludeFromPunctuationCheck;
         }
@@ -263,6 +270,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.xmlHeader = xmlHeader.GetValueOrDefault(true);
             this.fileNamingConvention = fileNamingConvention.GetValueOrDefault(FileNamingConvention.StyleCop);
             this.documentationCulture = documentationCulture ?? DefaultDocumentationCulture;
+            this.documentationCultureInfo = this.documentationCulture == DefaultDocumentationCulture ? CultureInfo.InvariantCulture : new CultureInfo(this.documentationCulture);
             this.excludeFromPunctuationCheck = excludeFromPunctuationCheck?.ToImmutable() ?? DefaultExcludeFromPunctuationCheck;
         }
 
@@ -321,6 +329,9 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
         public ImmutableArray<string> ExcludeFromPunctuationCheck
             => this.excludeFromPunctuationCheck;
+
+        public CultureInfo DocumentationCultureInfo
+            => this.documentationCultureInfo;
 
         public string GetCopyrightText(string fileName)
         {

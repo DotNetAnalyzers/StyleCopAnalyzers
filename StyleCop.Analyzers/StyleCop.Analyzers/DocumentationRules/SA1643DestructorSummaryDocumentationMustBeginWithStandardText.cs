@@ -78,7 +78,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static void HandleDestructor(SyntaxNodeAnalysisContext context)
         {
             var settings = context.GetStyleCopSettings(context.CancellationToken);
-            var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
+            var culture = settings.DocumentationRules.DocumentationCultureInfo;
             var resourceManager = DocumentationResources.ResourceManager;
 
             HandleDeclaration(
