@@ -70,6 +70,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
+            if (!objectCreation.Constructor.IsImplicitlyDeclared)
+            {
+                // The value type includes an explicit parameterless constructor
+                return;
+            }
+
             if (objectCreation.Initializer.WrappedOperation != null)
             {
                 return;
