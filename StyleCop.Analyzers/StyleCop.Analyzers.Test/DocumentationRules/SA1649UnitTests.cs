@@ -17,7 +17,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     /// </summary>
     public class SA1649UnitTests
     {
-        private const string MetadataSettings = @"
+        protected const string MetadataSettings = @"
 {
   ""settings"": {
     ""documentationRules"": {
@@ -27,7 +27,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 }
 ";
 
-        private const string StyleCopSettings = @"
+        protected const string StyleCopSettings = @"
 {
   ""settings"": {
     ""documentationRules"": {
@@ -331,7 +331,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await VerifyCSharpDiagnosticAsync("Class1.cs", testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private static string GetTypeDeclaration(string typeKind, string typeName, int? diagnosticKey = null)
+        protected static string GetTypeDeclaration(string typeKind, string typeName, int? diagnosticKey = null)
         {
             if (diagnosticKey is not null)
             {
@@ -345,7 +345,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             };
         }
 
-        private static Task VerifyCSharpDiagnosticAsync(string fileName, string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        protected static Task VerifyCSharpDiagnosticAsync(string fileName, string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
             var test = new StyleCopCodeFixVerifier<SA1649FileNameMustMatchTypeName, SA1649CodeFixProvider>.CSharpTest()
             {
@@ -356,10 +356,10 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             return test.RunAsync(cancellationToken);
         }
 
-        private static Task VerifyCSharpFixAsync(string oldFileName, string source, string testSettings, DiagnosticResult expected, string newFileName, string fixedSource, CancellationToken cancellationToken)
+        protected static Task VerifyCSharpFixAsync(string oldFileName, string source, string testSettings, DiagnosticResult expected, string newFileName, string fixedSource, CancellationToken cancellationToken)
             => VerifyCSharpFixAsync(oldFileName, source, testSettings, new[] { expected }, newFileName, fixedSource, cancellationToken);
 
-        private static Task VerifyCSharpFixAsync(string oldFileName, string source, string testSettings, DiagnosticResult[] expected, string newFileName, string fixedSource, CancellationToken cancellationToken)
+        protected static Task VerifyCSharpFixAsync(string oldFileName, string source, string testSettings, DiagnosticResult[] expected, string newFileName, string fixedSource, CancellationToken cancellationToken)
         {
             var test = new StyleCopCodeFixVerifier<SA1649FileNameMustMatchTypeName, SA1649CodeFixProvider>.CSharpTest()
             {
