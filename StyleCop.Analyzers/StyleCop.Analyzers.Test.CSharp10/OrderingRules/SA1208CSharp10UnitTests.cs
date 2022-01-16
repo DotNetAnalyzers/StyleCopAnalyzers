@@ -3,9 +3,45 @@
 
 namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
 {
+    using System.Threading;
+    using System.Threading.Tasks;
     using StyleCop.Analyzers.Test.CSharp9.OrderingRules;
+    using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.OrderingRules.SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives,
+        StyleCop.Analyzers.OrderingRules.UsingCodeFixProvider>;
 
     public class SA1208CSharp10UnitTests : SA1208CSharp9UnitTests
     {
+        [Fact]
+        public async Task TestWhenSystemUsingDirectivesAreNotOnTopInFileScopedNamespaceAsync()
+        {
+            await new CSharpTest
+            {
+                TestSources =
+                {
+                    "namespace Xyz {}",
+                    "namespace AnotherNamespace {}",
+                    @"
+namespace Test;
+
+using Xyz;
+using System;
+using System.IO;
+using AnotherNamespace;
+using System.Threading.Tasks;
+
+class A
+{
+}",
+                },
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation("/0/Test2.cs", 5, 1).WithArguments("System", "Xyz"),
+                    Diagnostic().WithLocation("/0/Test2.cs", 6, 1).WithArguments("System.IO", "Xyz"),
+                    Diagnostic().WithLocation("/0/Test2.cs", 8, 1).WithArguments("System.Threading.Tasks", "Xyz"),
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
