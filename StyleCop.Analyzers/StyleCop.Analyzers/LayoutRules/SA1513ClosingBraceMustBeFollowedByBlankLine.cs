@@ -176,6 +176,13 @@ namespace StyleCop.Analyzers.LayoutRules
 
             private void AnalyzeCloseBrace(SyntaxToken token)
             {
+                if (token.Parent.IsKind(SyntaxKind.Interpolation))
+                {
+                    // The text after an interpolation is part of a string literal, and therefore does not require a
+                    // blank line in source.
+                    return;
+                }
+
                 var nextToken = token.GetNextToken(true, true);
 
                 if (nextToken.HasLeadingTrivia
