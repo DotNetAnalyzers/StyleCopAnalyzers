@@ -991,5 +991,25 @@ public class TestClass3
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3442, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3442")]
+        public async Task NestedInterpolatedStringAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod(string extraSupport)
+    {
+        string suffix = $@""{(string.IsNullOrEmpty(extraSupport) ? string.Empty : $@""
+        {extraSupport}"")}
+    }}
+}}"";
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
