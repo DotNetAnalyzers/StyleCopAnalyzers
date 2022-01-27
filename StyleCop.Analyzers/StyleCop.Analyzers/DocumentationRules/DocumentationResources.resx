@@ -120,6 +120,9 @@
   <data name="ConstructorDocumentationCodeFix" xml:space="preserve">
     <value>Generate constructor documentation</value>
   </data>
+  <data name="DelegateDocumentationCodeFix" xml:space="preserve">
+    <value>Generate delegate documentation</value>
+  </data>
   <data name="DestructorDocumentationCodeFix" xml:space="preserve">
     <value>Generate destructor documentation</value>
   </data>
@@ -129,11 +132,35 @@
   <data name="DestructorStandardTextSecondPart" xml:space="preserve">
     <value> class.</value>
   </data>
+  <data name="IndexerDocumentationCodeFix" xml:space="preserve">
+    <value>Generate indexer documentation</value>
+  </data>
   <data name="InheritdocCodeFix" xml:space="preserve">
     <value>Inherit documentation</value>
   </data>
   <data name="MethodDocumentationCodeFix" xml:space="preserve">
     <value>Generate method documentation</value>
+  </data>
+  <data name="EventDocumentationCodeFix" xml:space="preserve">
+    <value>Generate event documentation</value>
+  </data>
+  <data name="FieldDocumentationCodeFix" xml:space="preserve">
+    <value>Generate field documentation</value>
+  </data>
+  <data name="EnumDocumentationCodeFix" xml:space="preserve">
+    <value>Generate enum documentation</value>
+  </data>
+  <data name="StructDocumentationCodeFix" xml:space="preserve">
+    <value>Generate struct documentation</value>
+  </data>
+  <data name="InterfaceDocumentationCodeFix" xml:space="preserve">
+    <value>Generate interface documentation</value>
+  </data>
+  <data name="ClassDocumentationCodeFix" xml:space="preserve">
+    <value>Generate class documentation</value>
+  </data>
+  <data name="PropertyDocumentationCodeFix" xml:space="preserve">
+    <value>Generate property documentation</value>
   </data>
   <data name="NonPrivateConstructorStandardTextFirstPart" xml:space="preserve">
     <value>Initializes a new instance of the </value>
@@ -698,5 +725,20 @@
   </data>
   <data name="TypeTextStruct" xml:space="preserve">
     <value>struct</value>
+  </data>
+  <data name="IndexerReturnDocumentation" xml:space="preserve">
+    <value>The element at the specified index.</value>
+  </data>
+  <data name="EventDocumentationPrefix" xml:space="preserve">
+    <value>Occurs when </value>
+  </data>
+  <data name="ParameterDocumentationCodeFix" xml:space="preserve">
+    <value>Generate parameter documentation</value>
+  </data>
+  <data name="TypeParameterDocumentationCodeFix" xml:space="preserve">
+    <value>Generate type parameter documentation</value>
+  </data>
+  <data name="EnumMemberDocumentationCodeFix" xml:space="preserve">
+    <value>Generate enum member documentation</value>
   </data>
 </root>

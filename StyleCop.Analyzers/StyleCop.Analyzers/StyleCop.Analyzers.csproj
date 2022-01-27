@@ -43,10 +43,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference
-      Include="..\StyleCop.Analyzers.CodeGeneration\StyleCop.Analyzers.CodeGeneration.csproj"
-      SetTargetFramework="TargetFramework=netstandard2.0"
-      OutputItemType="Analyzer"
+    <ProjectReference 
+      Include="..\StyleCop.Analyzers.CodeGeneration\StyleCop.Analyzers.CodeGeneration.csproj" 
+      SetTargetFramework="TargetFramework=netstandard2.0" 
+      OutputItemType="Analyzer" 
       ReferenceOutputAssembly="false" />
   </ItemGroup>
 

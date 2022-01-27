@@ -20,7 +20,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class DocumentationResources {
@@ -62,11 +62,29 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Generate class documentation.
+        /// </summary>
+        internal static string ClassDocumentationCodeFix {
+            get {
+                return ResourceManager.GetString("ClassDocumentationCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Generate constructor documentation.
         /// </summary>
         internal static string ConstructorDocumentationCodeFix {
             get {
                 return ResourceManager.GetString("ConstructorDocumentationCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generate delegate documentation.
+        /// </summary>
+        internal static string DelegateDocumentationCodeFix {
+            get {
+                return ResourceManager.GetString("DelegateDocumentationCodeFix", resourceCulture);
             }
         }
         
@@ -98,11 +116,83 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Generate enum documentation.
+        /// </summary>
+        internal static string EnumDocumentationCodeFix {
+            get {
+                return ResourceManager.GetString("EnumDocumentationCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generate enum member documentation.
+        /// </summary>
+        internal static string EnumMemberDocumentationCodeFix {
+            get {
+                return ResourceManager.GetString("EnumMemberDocumentationCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generate event documentation.
+        /// </summary>
+        internal static string EventDocumentationCodeFix {
+            get {
+                return ResourceManager.GetString("EventDocumentationCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Occurs when .
+        /// </summary>
+        internal static string EventDocumentationPrefix {
+            get {
+                return ResourceManager.GetString("EventDocumentationPrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generate field documentation.
+        /// </summary>
+        internal static string FieldDocumentationCodeFix {
+            get {
+                return ResourceManager.GetString("FieldDocumentationCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generate indexer documentation.
+        /// </summary>
+        internal static string IndexerDocumentationCodeFix {
+            get {
+                return ResourceManager.GetString("IndexerDocumentationCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The element at the specified index..
+        /// </summary>
+        internal static string IndexerReturnDocumentation {
+            get {
+                return ResourceManager.GetString("IndexerReturnDocumentation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Inherit documentation.
         /// </summary>
         internal static string InheritdocCodeFix {
             get {
                 return ResourceManager.GetString("InheritdocCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generate interface documentation.
+        /// </summary>
+        internal static string InterfaceDocumentationCodeFix {
+            get {
+                return ResourceManager.GetString("InterfaceDocumentationCodeFix", resourceCulture);
             }
         }
         
@@ -134,6 +224,15 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Generate parameter documentation.
+        /// </summary>
+        internal static string ParameterDocumentationCodeFix {
+            get {
+                return ResourceManager.GetString("ParameterDocumentationCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The parameter is not used..
         /// </summary>
         internal static string ParameterNotUsed {
@@ -157,6 +256,15 @@ namespace StyleCop.Analyzers.DocumentationRules {
         internal static string PrivateConstructorStandardTextSecondPart {
             get {
                 return ResourceManager.GetString("PrivateConstructorStandardTextSecondPart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generate property documentation.
+        /// </summary>
+        internal static string PropertyDocumentationCodeFix {
+            get {
+                return ResourceManager.GetString("PropertyDocumentationCodeFix", resourceCulture);
             }
         }
         
@@ -1772,6 +1880,15 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Generate struct documentation.
+        /// </summary>
+        internal static string StructDocumentationCodeFix {
+            get {
+                return ResourceManager.GetString("StructDocumentationCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A .
         /// </summary>
         internal static string TaskReturnElementFirstPart {
@@ -1786,6 +1903,15 @@ namespace StyleCop.Analyzers.DocumentationRules {
         internal static string TaskReturnElementSecondPart {
             get {
                 return ResourceManager.GetString("TaskReturnElementSecondPart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generate type parameter documentation.
+        /// </summary>
+        internal static string TypeParameterDocumentationCodeFix {
+            get {
+                return ResourceManager.GetString("TypeParameterDocumentationCodeFix", resourceCulture);
             }
         }
         
