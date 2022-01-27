@@ -274,7 +274,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             string newLineText = GetNewLineText(document);
             var documentationNode = EventDocumentationHelper.CreateEventDocumentation(identifier, newLineText);
-            return CreateCommentAndReplaceInDocument(document, root, eventDeclaration, newLineText, documentationNode);
+            return CreateCommentAndReplaceInDocumentAsync(document, root, eventDeclaration, newLineText, documentationNode);
         }
 
         private static Task<Document> GetIndexerDocumentationTransformedDocumentAsync(
@@ -291,7 +291,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             documentationNodes.AddRange(MethodDocumentationHelper.CreateParametersDocumentation(newLineText, indexerDeclaration.ParameterList?.Parameters.ToArray()));
             documentationNodes.AddRange(MethodDocumentationHelper.CreateReturnDocumentation(newLineText, XmlSyntaxFactory.Text(DocumentationResources.IndexerReturnDocumentation)));
 
-            return CreateCommentAndReplaceInDocument(document, root, indexerDeclaration, newLineText, documentationNodes.ToArray());
+            return CreateCommentAndReplaceInDocumentAsync(document, root, indexerDeclaration, newLineText, documentationNodes.ToArray());
         }
 
         private static Task<Document> GetCommonTypeDocumentationTransformedDocumentAsync(
@@ -308,7 +308,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             documentationNods.Add(CommonDocumentationHelper.CreateSummaryNode(documentationText, newLineText));
             documentationNods.AddRange(additionalDocumentation);
 
-            return CreateCommentAndReplaceInDocument(document, root, declaration, newLineText, documentationNods.ToArray());
+            return CreateCommentAndReplaceInDocumentAsync(document, root, declaration, newLineText, documentationNods.ToArray());
         }
 
         private static Task<Document> GetCommonGenericTypeDocumentationTransformedDocumentAsync(
@@ -331,7 +331,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             string newLineText = GetNewLineText(document);
 
             var propertyDocumentationNode = PropertyDocumentationHelper.CreatePropertySummeryComment(propertyDeclaration, semanticModel, cancellationToken, newLineText);
-            return CreateCommentAndReplaceInDocument(document, root, propertyDeclaration, newLineText, propertyDocumentationNode);
+            return CreateCommentAndReplaceInDocumentAsync(document, root, propertyDeclaration, newLineText, propertyDocumentationNode);
         }
 
         private static Task<Document> GetConstructorOrDestructorDocumentationTransformedDocumentAsync(Document document, SyntaxNode root, BaseMethodDeclarationSyntax declaration, CancellationToken cancellationToken)
@@ -351,7 +351,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             var parametersDocumentation = MethodDocumentationHelper.CreateParametersDocumentation(newLineText, declaration.ParameterList?.Parameters.ToArray());
             documentationNodes.AddRange(parametersDocumentation);
 
-            return CreateCommentAndReplaceInDocument(document, root, declaration, newLineText, documentationNodes.ToArray());
+            return CreateCommentAndReplaceInDocumentAsync(document, root, declaration, newLineText, documentationNodes.ToArray());
         }
 
         private static Task<Document> GetMethodDocumentationTransformedDocumentAsync(
@@ -415,10 +415,10 @@ namespace StyleCop.Analyzers.DocumentationRules
             documentationNodes.AddRange(MethodDocumentationHelper.CreateReturnDocumentation(semanticModel, returnType, cancellationToken, newLineText));
             documentationNodes.AddRange(additionalDocumentation);
 
-            return CreateCommentAndReplaceInDocument(document, root, declaration, newLineText, documentationNodes.ToArray());
+            return CreateCommentAndReplaceInDocumentAsync(document, root, declaration, newLineText, documentationNodes.ToArray());
         }
 
-        private static Task<Document> CreateCommentAndReplaceInDocument(
+        private static Task<Document> CreateCommentAndReplaceInDocumentAsync(
             Document document,
             SyntaxNode root,
             SyntaxNode declarationNode,
