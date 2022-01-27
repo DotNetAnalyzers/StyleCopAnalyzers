@@ -8,7 +8,6 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System.Composition;
     using System.Linq;
     using System.Threading.Tasks;
-    using Lightup;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -16,6 +15,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Formatting;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1618CodeFixProvider))]
     [Shared]
