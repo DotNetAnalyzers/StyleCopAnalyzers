@@ -16,6 +16,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -134,7 +135,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
             if (usingDirectivesPlacement == UsingDirectivesPlacement.InsideNamespace)
             {
-                var rootNamespace = compilationUnit.Members.OfType<NamespaceDeclarationSyntax>().First();
+                var rootNamespace = compilationUnit.Members.First(member => BaseNamespaceDeclarationSyntaxWrapper.IsInstance(member));
                 var indentationLevel = IndentationHelper.GetIndentationSteps(indentationSettings, rootNamespace);
                 usingsIndentation = IndentationHelper.GenerateIndentationString(indentationSettings, indentationLevel + 1);
             }
@@ -185,9 +186,9 @@ namespace StyleCop.Analyzers.OrderingRules
         {
             var result = 0;
 
-            foreach (var namespaceDeclaration in members.OfType<NamespaceDeclarationSyntax>())
+            foreach (var namespaceDeclaration in members.Where(member => BaseNamespaceDeclarationSyntaxWrapper.IsInstance(member)))
             {
-                result += 1 + CountNamespaces(namespaceDeclaration.Members);
+                result += 1 + CountNamespaces(((BaseNamespaceDeclarationSyntaxWrapper)namespaceDeclaration).Members);
             }
 
             return result;
@@ -267,7 +268,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
         private static SyntaxNode AddUsingsToNamespace(SyntaxNode newSyntaxRoot, UsingsSorter usingsHelper, string usingsIndentation, bool hasConditionalDirectives)
         {
-            var rootNamespace = ((CompilationUnitSyntax)newSyntaxRoot).Members.OfType<NamespaceDeclarationSyntax>().First();
+            var rootNamespace = (BaseNamespaceDeclarationSyntaxWrapper)((CompilationUnitSyntax)newSyntaxRoot).Members.First(member => BaseNamespaceDeclarationSyntaxWrapper.IsInstance(member));
             var withTrailingBlankLine = hasConditionalDirectives || rootNamespace.Members.Any() || rootNamespace.Externs.Any();
 
             var groupedUsings = usingsHelper.GenerateGroupedUsings(TreeTextSpan.Empty, usingsIndentation, withTrailingBlankLine, qualifyNames: false);

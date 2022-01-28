@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -40,6 +41,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CompilationUnitAction = HandleCompilationUnit;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> NamespaceDeclarationAction = HandleNamespaceDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> FileScopedNamespaceDeclarationAction = HandleFileScopedNamespaceDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -53,6 +55,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
             context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
             context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeAction(FileScopedNamespaceDeclarationAction, SyntaxKindEx.FileScopedNamespaceDeclaration);
         }
 
         private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
@@ -77,9 +80,19 @@ namespace StyleCop.Analyzers.OrderingRules
             }
 
             var namespaceDeclaration = (NamespaceDeclarationSyntax)context.Node;
-
             var usings = namespaceDeclaration.Usings;
+            ProcessUsingsAndReportDiagnostic(usings, context);
+        }
 
+        private static void HandleFileScopedNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        {
+            if (!settings.OrderingRules.SystemUsingDirectivesFirst)
+            {
+                return;
+            }
+
+            var namespaceDeclaration = (FileScopedNamespaceDeclarationSyntaxWrapper)context.Node;
+            var usings = namespaceDeclaration.Usings;
             ProcessUsingsAndReportDiagnostic(usings, context);
         }
 
