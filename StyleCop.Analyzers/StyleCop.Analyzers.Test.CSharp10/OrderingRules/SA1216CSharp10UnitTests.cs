@@ -42,11 +42,13 @@ using System;
                 FixedSources =
                 {
                     @"namespace Foo;
+
 using System;
 using static System.Math;
 using Execute = System.Action;
 ",
                     @"namespace Bar;
+
 using System;
 using static System.Array;
 using static System.Math;

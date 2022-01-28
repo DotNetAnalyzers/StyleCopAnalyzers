@@ -36,10 +36,12 @@ using System;
                 FixedSources =
                 {
                     @"namespace Food;
+
 using System;
 using System.Threading;
 ",
                     @"namespace Bar;
+
 using Bar;
 using Food;
 using System;

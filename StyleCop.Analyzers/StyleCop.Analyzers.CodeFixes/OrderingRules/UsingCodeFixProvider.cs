@@ -225,8 +225,9 @@ namespace StyleCop.Analyzers.OrderingRules
                     }
 
                     var indentation = IndentationHelper.GenerateIndentationString(indentationSettings, indentationSteps);
+                    var withLeadingBlankLine = usingList[0].Parent.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration);
 
-                    var modifiedUsings = usingsHelper.GenerateGroupedUsings(usingList, indentation, false, qualifyNames);
+                    var modifiedUsings = usingsHelper.GenerateGroupedUsings(usingList, indentation, withLeadingBlankLine, withTrailingBlankLine: false, qualifyNames);
 
                     for (var i = 0; i < usingList.Count; i++)
                     {
@@ -254,7 +255,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
                     var indentation = IndentationHelper.GenerateIndentationString(indentationSettings, indentationSteps);
 
-                    var modifiedUsings = usingsHelper.GenerateGroupedUsings(childSpan, indentation, false, qualifyNames: false);
+                    var modifiedUsings = usingsHelper.GenerateGroupedUsings(childSpan, indentation, false, false, qualifyNames: false);
 
                     for (var i = 0; i < originalUsings.Count; i++)
                     {
@@ -274,9 +275,10 @@ namespace StyleCop.Analyzers.OrderingRules
         private static SyntaxNode AddUsingsToNamespace(SyntaxNode newSyntaxRoot, UsingsSorter usingsHelper, string usingsIndentation, bool hasConditionalDirectives)
         {
             var rootNamespace = (BaseNamespaceDeclarationSyntaxWrapper)((CompilationUnitSyntax)newSyntaxRoot).Members.First(member => BaseNamespaceDeclarationSyntaxWrapper.IsInstance(member));
+            var withLeadingBlankLine = rootNamespace.SyntaxNode.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration);
             var withTrailingBlankLine = hasConditionalDirectives || rootNamespace.Members.Any() || rootNamespace.Externs.Any();
 
-            var groupedUsings = usingsHelper.GenerateGroupedUsings(TreeTextSpan.Empty, usingsIndentation, withTrailingBlankLine, qualifyNames: false);
+            var groupedUsings = usingsHelper.GenerateGroupedUsings(TreeTextSpan.Empty, usingsIndentation, withLeadingBlankLine, withTrailingBlankLine, qualifyNames: false);
             groupedUsings = groupedUsings.AddRange(rootNamespace.Usings);
 
             var newRootNamespace = rootNamespace.WithUsings(groupedUsings);
@@ -290,7 +292,7 @@ namespace StyleCop.Analyzers.OrderingRules
             var newCompilationUnit = (CompilationUnitSyntax)newSyntaxRoot;
             var withTrailingBlankLine = hasConditionalDirectives || newCompilationUnit.AttributeLists.Any() || newCompilationUnit.Members.Any() || newCompilationUnit.Externs.Any();
 
-            var groupedUsings = usingsHelper.GenerateGroupedUsings(TreeTextSpan.Empty, usingsIndentation, withTrailingBlankLine, qualifyNames: true);
+            var groupedUsings = usingsHelper.GenerateGroupedUsings(TreeTextSpan.Empty, usingsIndentation, withLeadingBlankLine: false, withTrailingBlankLine, qualifyNames: true);
             groupedUsings = groupedUsings.AddRange(newCompilationUnit.Usings);
             newSyntaxRoot = newCompilationUnit.WithUsings(groupedUsings);
 

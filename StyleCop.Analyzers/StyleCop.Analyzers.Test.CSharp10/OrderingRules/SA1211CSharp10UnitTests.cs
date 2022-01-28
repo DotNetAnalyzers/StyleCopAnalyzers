@@ -50,11 +50,13 @@ using @int = System.Int32;
                 FixedSources =
                 {
                     @"namespace Foo;
+
 using System;
 using character = System.Char;
 using \u0069nt = System.Int32;
 ",
                     @"namespace Bar;
+
 using System;
 using MemoryStream = System.IO.MemoryStream;
 using Stream = System.IO.Stream;
@@ -62,6 +64,7 @@ using StringBuilder = System.Text.StringBuilder;
 using StringWriter = System.IO.StringWriter;
 ",
                     @"namespace Spam;
+
 using System;
 using Character = System.Char;
 using @int = System.Int32;

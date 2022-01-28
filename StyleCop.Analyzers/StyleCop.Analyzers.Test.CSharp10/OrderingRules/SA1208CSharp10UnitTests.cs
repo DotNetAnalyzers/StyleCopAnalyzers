@@ -21,8 +21,8 @@ namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
             {
                 TestSources =
                 {
-                    "namespace Xyz {}",
-                    "namespace AnotherNamespace {}",
+                    "namespace Xyz;",
+                    "namespace AnotherNamespace;",
                     @"
 namespace Test;
 
@@ -38,10 +38,11 @@ class A
                 },
                 FixedSources =
                 {
-                    "namespace Xyz {}",
-                    "namespace AnotherNamespace {}",
+                    "namespace Xyz;",
+                    "namespace AnotherNamespace;",
                     @"
 namespace Test;
+
 using System;
 using System.IO;
 using System.Threading.Tasks;
