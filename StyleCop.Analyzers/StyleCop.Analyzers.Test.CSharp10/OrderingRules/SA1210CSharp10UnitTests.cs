@@ -37,10 +37,12 @@ using System;
                 FixedSources =
                 {
                     @"namespace Foo;
+
 using System;
 using System.Threading;
 ",
                     @"namespace Bar;
+
 using System;
 using System.Threading;
 using Bar;

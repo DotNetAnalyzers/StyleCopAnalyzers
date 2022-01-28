@@ -31,6 +31,7 @@ class A
 }
 ";
             var fixedTestCodeNamespace = @"namespace Test;
+
 using System.IO;
 using System.Net;
 using System.Threading;

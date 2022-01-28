@@ -25,6 +25,7 @@ namespace TestNamespace;
 ";
 
             var fixedTestCode = @"namespace TestNamespace;
+
 using System;
 using System.Threading;
 ";
