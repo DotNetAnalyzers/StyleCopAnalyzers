@@ -11,6 +11,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -41,7 +42,7 @@ namespace StyleCop.Analyzers.OrderingRules
             ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration);
 
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CompilationUnitAction = HandleCompilationUnit;
-        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> NamespaceDeclarationAction = HandleNamespaceDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> BaseNamespaceDeclarationAction = HandleBaseNamespaceDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> TypeDeclarationAction = HandleTypeDeclaration;
 
         /// <inheritdoc/>
@@ -55,7 +56,7 @@ namespace StyleCop.Analyzers.OrderingRules
             context.EnableConcurrentExecution();
 
             context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
-            context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeAction(BaseNamespaceDeclarationAction, SyntaxKinds.BaseNamespaceDeclaration);
             context.RegisterSyntaxNodeAction(TypeDeclarationAction, TypeDeclarationKinds);
         }
 
@@ -73,7 +74,7 @@ namespace StyleCop.Analyzers.OrderingRules
             HandleMemberList(context, elementOrder, staticIndex, compilationUnit.Members);
         }
 
-        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        private static void HandleBaseNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             var elementOrder = settings.OrderingRules.ElementOrder;
             int staticIndex = elementOrder.IndexOf(OrderingTrait.Static);
@@ -82,9 +83,9 @@ namespace StyleCop.Analyzers.OrderingRules
                 return;
             }
 
-            var compilationUnit = (NamespaceDeclarationSyntax)context.Node;
+            var baseNamespaceDeclaration = (BaseNamespaceDeclarationSyntaxWrapper)context.Node;
 
-            HandleMemberList(context, elementOrder, staticIndex, compilationUnit.Members);
+            HandleMemberList(context, elementOrder, staticIndex, baseNamespaceDeclaration.Members);
         }
 
         private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)

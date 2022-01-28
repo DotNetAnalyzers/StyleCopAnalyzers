@@ -40,8 +40,7 @@ namespace StyleCop.Analyzers.OrderingRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CompilationUnitAction = HandleCompilationUnit;
-        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> NamespaceDeclarationAction = HandleNamespaceDeclaration;
-        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> FileScopedNamespaceDeclarationAction = HandleFileScopedNamespaceDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> BaseNamespaceDeclarationAction = HandleBaseNamespaceDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -54,8 +53,7 @@ namespace StyleCop.Analyzers.OrderingRules
             context.EnableConcurrentExecution();
 
             context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
-            context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
-            context.RegisterSyntaxNodeAction(FileScopedNamespaceDeclarationAction, SyntaxKindEx.FileScopedNamespaceDeclaration);
+            context.RegisterSyntaxNodeAction(BaseNamespaceDeclarationAction, SyntaxKinds.BaseNamespaceDeclaration);
         }
 
         private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
@@ -72,26 +70,14 @@ namespace StyleCop.Analyzers.OrderingRules
             ProcessUsingsAndReportDiagnostic(usings, context);
         }
 
-        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        private static void HandleBaseNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             if (!settings.OrderingRules.SystemUsingDirectivesFirst)
             {
                 return;
             }
 
-            var namespaceDeclaration = (NamespaceDeclarationSyntax)context.Node;
-            var usings = namespaceDeclaration.Usings;
-            ProcessUsingsAndReportDiagnostic(usings, context);
-        }
-
-        private static void HandleFileScopedNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
-        {
-            if (!settings.OrderingRules.SystemUsingDirectivesFirst)
-            {
-                return;
-            }
-
-            var namespaceDeclaration = (FileScopedNamespaceDeclarationSyntaxWrapper)context.Node;
+            var namespaceDeclaration = (BaseNamespaceDeclarationSyntaxWrapper)context.Node;
             var usings = namespaceDeclaration.Usings;
             ProcessUsingsAndReportDiagnostic(usings, context);
         }

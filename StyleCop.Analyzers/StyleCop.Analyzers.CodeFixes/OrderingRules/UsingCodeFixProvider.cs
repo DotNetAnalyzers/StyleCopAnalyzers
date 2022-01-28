@@ -137,7 +137,12 @@ namespace StyleCop.Analyzers.OrderingRules
             {
                 var rootNamespace = compilationUnit.Members.First(member => BaseNamespaceDeclarationSyntaxWrapper.IsInstance(member));
                 var indentationLevel = IndentationHelper.GetIndentationSteps(indentationSettings, rootNamespace);
-                usingsIndentation = IndentationHelper.GenerateIndentationString(indentationSettings, indentationLevel + 1);
+                if (!rootNamespace.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration))
+                {
+                    indentationLevel++;
+                }
+
+                usingsIndentation = IndentationHelper.GenerateIndentationString(indentationSettings, indentationLevel);
             }
             else
             {

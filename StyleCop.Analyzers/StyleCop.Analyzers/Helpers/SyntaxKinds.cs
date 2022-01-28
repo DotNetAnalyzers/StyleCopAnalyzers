@@ -12,6 +12,19 @@ namespace StyleCop.Analyzers.Helpers
     {
         /// <summary>
         /// Gets a collection of <see cref="SyntaxKind"/> values which appear in the syntax tree as a
+        /// <see cref="BaseNamespaceDeclarationSyntaxWrapper"/>.
+        /// </summary>
+        /// <value>
+        /// A collection of <see cref="SyntaxKind"/> values which appear in the syntax tree as a
+        /// <see cref="BaseNamespaceDeclarationSyntaxWrapper"/>.
+        /// </value>
+        public static ImmutableArray<SyntaxKind> BaseNamespaceDeclaration { get; } =
+            ImmutableArray.Create(
+                SyntaxKind.NamespaceDeclaration,
+                SyntaxKindEx.FileScopedNamespaceDeclaration);
+
+        /// <summary>
+        /// Gets a collection of <see cref="SyntaxKind"/> values which appear in the syntax tree as a
         /// <see cref="BaseTypeDeclarationSyntax"/>.
         /// </summary>
         /// <value>

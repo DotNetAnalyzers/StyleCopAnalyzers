@@ -123,6 +123,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
         // extern alias and usings are missing here because the compiler itself is enforcing the right order.
         private static readonly ImmutableArray<SyntaxKind> OuterOrder = ImmutableArray.Create(
+            SyntaxKindEx.FileScopedNamespaceDeclaration,
             SyntaxKind.NamespaceDeclaration,
             SyntaxKind.DelegateDeclaration,
             SyntaxKind.EnumDeclaration,
@@ -149,6 +150,7 @@ namespace StyleCop.Analyzers.OrderingRules
         private static readonly Dictionary<SyntaxKind, string> MemberNames = new Dictionary<SyntaxKind, string>
         {
             [SyntaxKind.NamespaceDeclaration] = "namespace",
+            [SyntaxKindEx.FileScopedNamespaceDeclaration] = "namespace",
             [SyntaxKind.DelegateDeclaration] = "delegate",
             [SyntaxKind.EnumDeclaration] = "enum",
             [SyntaxKind.InterfaceDeclaration] = "interface",
@@ -172,7 +174,7 @@ namespace StyleCop.Analyzers.OrderingRules
         };
 
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CompilationUnitAction = HandleCompilationUnit;
-        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> NamespaceDeclarationAction = HandleNamespaceDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> BaseNamespaceDeclarationAction = HandleBaseNamespaceDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> TypeDeclarationAction = HandleTypeDeclaration;
 
         /// <inheritdoc/>
@@ -186,7 +188,7 @@ namespace StyleCop.Analyzers.OrderingRules
             context.EnableConcurrentExecution();
 
             context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
-            context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeAction(BaseNamespaceDeclarationAction, SyntaxKinds.BaseNamespaceDeclaration);
             context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
         }
 
@@ -218,7 +220,7 @@ namespace StyleCop.Analyzers.OrderingRules
             HandleMemberList(context, elementOrder, kindIndex, compilationUnit.Members, OuterOrder);
         }
 
-        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        private static void HandleBaseNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             var elementOrder = settings.OrderingRules.ElementOrder;
             int kindIndex = elementOrder.IndexOf(OrderingTrait.Kind);
@@ -227,9 +229,9 @@ namespace StyleCop.Analyzers.OrderingRules
                 return;
             }
 
-            var compilationUnit = (NamespaceDeclarationSyntax)context.Node;
+            var baseNamespaceDeclaration = (BaseNamespaceDeclarationSyntaxWrapper)context.Node;
 
-            HandleMemberList(context, elementOrder, kindIndex, compilationUnit.Members, OuterOrder);
+            HandleMemberList(context, elementOrder, kindIndex, baseNamespaceDeclaration.Members, OuterOrder);
         }
 
         private static void HandleMemberList(SyntaxNodeAnalysisContext context, ImmutableArray<OrderingTrait> elementOrder, int kindIndex, SyntaxList<MemberDeclarationSyntax> members, ImmutableArray<SyntaxKind> order)

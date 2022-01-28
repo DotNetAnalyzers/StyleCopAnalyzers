@@ -249,6 +249,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 case SyntaxKind.DelegateDeclaration:
                 case SyntaxKind.EnumDeclaration:
                 case SyntaxKind.NamespaceDeclaration:
+                case SyntaxKindEx.FileScopedNamespaceDeclaration:
                     return false;
 
                 case SyntaxKind.FieldDeclaration:

@@ -51,7 +51,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         {
             var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
 
-            var descentNodes = syntaxRoot.DescendantNodes(descendIntoChildren: node => node != null && !node.IsKind(SyntaxKind.ClassDeclaration));
+            // No need to check file-scoped namespaces because the compiler only allows one per file
+            var descentNodes = syntaxRoot.DescendantNodes(descendIntoChildren: node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration));
 
             bool foundNode = false;
 
