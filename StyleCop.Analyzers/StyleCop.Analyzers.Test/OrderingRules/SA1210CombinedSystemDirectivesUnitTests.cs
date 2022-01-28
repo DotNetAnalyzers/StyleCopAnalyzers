@@ -18,6 +18,16 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     /// </summary>
     public class SA1210CombinedSystemDirectivesUnitTests
     {
+        protected const string CombinedUsingDirectivesTestSettings = @"
+{
+  ""settings"": {
+    ""orderingRules"": {
+      ""systemUsingDirectivesFirst"": false
+    }
+  }
+}
+";
+
         [Fact]
         public async Task TestProperOrderedUsingDirectivesInNamespaceDeclarationAsync()
         {
@@ -212,16 +222,6 @@ using Microsoft.CodeAnalysis;
 
         private static Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
         {
-            const string CombinedUsingDirectivesTestSettings = @"
-{
-  ""settings"": {
-    ""orderingRules"": {
-      ""systemUsingDirectivesFirst"": false
-    }
-  }
-}
-";
-
             var test = new StyleCopCodeFixVerifier<SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace, UsingCodeFixProvider>.CSharpTest
             {
                 TestCode = source,
