@@ -10,6 +10,8 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -176,7 +178,7 @@ namespace StyleCop.Analyzers.OrderingRules
 #pragma warning restore SA1202 // Elements should be ordered by access
 
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CompilationUnitAction = HandleCompilationUnit;
-        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> NamespaceDeclarationAction = HandleNamespaceDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> BaseNamespaceDeclarationAction = HandleBaseNamespaceDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -189,7 +191,7 @@ namespace StyleCop.Analyzers.OrderingRules
             context.EnableConcurrentExecution();
 
             context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
-            context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeAction(BaseNamespaceDeclarationAction, SyntaxKinds.BaseNamespaceDeclaration);
         }
 
         /// <summary>
@@ -235,6 +237,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
                 case SyntaxKind.ExternAliasDirective:
                 case SyntaxKind.NamespaceDeclaration:
+                case SyntaxKindEx.FileScopedNamespaceDeclaration:
                 default:
                     continue;
                 }
@@ -254,14 +257,14 @@ namespace StyleCop.Analyzers.OrderingRules
         /// </summary>
         /// <param name="context">The analysis context.</param>
         /// <param name="settings">The effective StyleCop analysis settings.</param>
-        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        private static void HandleBaseNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             if (settings.OrderingRules.UsingDirectivesPlacement != UsingDirectivesPlacement.OutsideNamespace)
             {
                 return;
             }
 
-            NamespaceDeclarationSyntax syntax = (NamespaceDeclarationSyntax)context.Node;
+            BaseNamespaceDeclarationSyntaxWrapper syntax = (BaseNamespaceDeclarationSyntaxWrapper)context.Node;
             foreach (UsingDirectiveSyntax directive in syntax.Usings)
             {
                 // Using directive should appear outside a namespace declaration
