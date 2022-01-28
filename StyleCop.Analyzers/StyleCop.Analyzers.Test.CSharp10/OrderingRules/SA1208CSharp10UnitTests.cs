@@ -14,6 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
     public class SA1208CSharp10UnitTests : SA1208CSharp9UnitTests
     {
         [Fact]
+        [WorkItem(3437, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3437")]
         public async Task TestWhenSystemUsingDirectivesAreNotOnTopInFileScopedNamespaceAsync()
         {
             await new CSharpTest
@@ -26,10 +27,26 @@ namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
 namespace Test;
 
 using Xyz;
+{|#0:using System;|}
+{|#1:using System.IO;|}
+using AnotherNamespace;
+{|#2:using System.Threading.Tasks;|}
+
+class A
+{
+}",
+                },
+                FixedSources =
+                {
+                    "namespace Xyz {}",
+                    "namespace AnotherNamespace {}",
+                    @"
+namespace Test;
 using System;
 using System.IO;
-using AnotherNamespace;
 using System.Threading.Tasks;
+using AnotherNamespace;
+using Xyz;
 
 class A
 {
@@ -37,9 +54,9 @@ class A
                 },
                 ExpectedDiagnostics =
                 {
-                    Diagnostic().WithLocation("/0/Test2.cs", 5, 1).WithArguments("System", "Xyz"),
-                    Diagnostic().WithLocation("/0/Test2.cs", 6, 1).WithArguments("System.IO", "Xyz"),
-                    Diagnostic().WithLocation("/0/Test2.cs", 8, 1).WithArguments("System.Threading.Tasks", "Xyz"),
+                    Diagnostic().WithLocation(0).WithArguments("System", "Xyz"),
+                    Diagnostic().WithLocation(1).WithArguments("System.IO", "Xyz"),
+                    Diagnostic().WithLocation(2).WithArguments("System.Threading.Tasks", "Xyz"),
                 },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
