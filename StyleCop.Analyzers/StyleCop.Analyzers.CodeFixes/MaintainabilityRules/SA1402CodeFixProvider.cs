@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
@@ -14,6 +15,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1402FileMayOnlyContainASingleType"/>.
@@ -88,6 +90,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                     case SyntaxKind.DelegateDeclaration:
                         nodesToRemoveFromExtracted.Add(child);
                         break;
+
+                    case SyntaxKindEx.FileScopedNamespaceDeclaration:
+                        // Only one file-scoped namespace is allowed per syntax tree
+                        throw new InvalidOperationException("This location is not reachable");
 
                     default:
                         break;
