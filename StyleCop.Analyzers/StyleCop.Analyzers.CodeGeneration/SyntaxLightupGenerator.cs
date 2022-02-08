@@ -30,14 +30,62 @@ namespace StyleCop.Analyzers.CodeGeneration
 
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
-            var compilation = context.CompilationProvider;
+            var referencedAssemblies = context.CompilationProvider.SelectMany(
+                static (compilation, cancellationToken) =>
+                {
+                    return compilation.SourceModule.ReferencedAssemblySymbols
+                        .Where(reference => reference.Name is "Microsoft.CodeAnalysis" or "Microsoft.CodeAnalysis.CSharp");
+                });
+
+            var existingTypesInReferences = referencedAssemblies.SelectMany(
+                static (reference, cancellationToken) =>
+                {
+                    var microsoftNamespace = reference.GlobalNamespace.GetNamespaceMembers().SingleOrDefault(symbol => symbol.Name == nameof(Microsoft));
+                    var microsoftCodeAnalysisNamespace = microsoftNamespace?.GetNamespaceMembers().SingleOrDefault(symbol => symbol.Name == nameof(Microsoft.CodeAnalysis));
+                    var microsoftCodeAnalysisCSharpNamespace = microsoftCodeAnalysisNamespace?.GetNamespaceMembers().SingleOrDefault(symbol => symbol.Name == nameof(Microsoft.CodeAnalysis.CSharp));
+                    var microsoftCodeAnalysisCSharpSyntaxNamespace = microsoftCodeAnalysisCSharpNamespace?.GetNamespaceMembers().SingleOrDefault(symbol => symbol.Name == nameof(Microsoft.CodeAnalysis.CSharp.Syntax));
+
+                    var existingTypesBuilder = ImmutableArray.CreateBuilder<ExistingTypeData>();
+                    AddPublicTypesFromNamespace(microsoftNamespace, existingTypesBuilder);
+                    AddPublicTypesFromNamespace(microsoftCodeAnalysisNamespace, existingTypesBuilder);
+                    AddPublicTypesFromNamespace(microsoftCodeAnalysisCSharpNamespace, existingTypesBuilder);
+                    AddPublicTypesFromNamespace(microsoftCodeAnalysisCSharpSyntaxNamespace, existingTypesBuilder);
+
+                    return existingTypesBuilder.ToImmutable();
+
+                    static void AddPublicTypesFromNamespace(INamespaceSymbol? namespaceSymbol, ImmutableArray<ExistingTypeData>.Builder existingTypesBuilder)
+                    {
+                        if (namespaceSymbol is null)
+                        {
+                            return;
+                        }
+
+                        foreach (var type in namespaceSymbol.GetTypeMembers())
+                        {
+                            if (type is not { DeclaredAccessibility: Accessibility.Public })
+                            {
+                                continue;
+                            }
+
+                            existingTypesBuilder.Add(ExistingTypeData.FromNamedType(type, type.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
+                        }
+                    }
+                });
+
+            var compilationData = existingTypesInReferences.Collect().Select(
+                static (existingTypes, cancellationToken) =>
+                {
+                    return new CompilationData(
+                        ExistingTypes: existingTypes.ToImmutableDictionary(type => type.TypeName));
+                });
+
             var syntaxFiles = context.AdditionalTextsProvider.Where(static x => Path.GetFileName(x.Path) == "Syntax.xml");
             context.RegisterSourceOutput(
-                syntaxFiles.Combine(compilation),
+                syntaxFiles.Combine(compilationData),
                 (context, value) => this.Execute(in context, value.Right, value.Left));
         }
 
-        private void Execute(in SourceProductionContext context, Compilation compilation, AdditionalText syntaxFile)
+        private void Execute(in SourceProductionContext context, CompilationData compilationData, AdditionalText syntaxFile)
         {
             var syntaxText = syntaxFile.GetText(context.CancellationToken);
             if (syntaxText is null)
@@ -45,7 +93,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 throw new InvalidOperationException("Failed to read Syntax.xml");
             }
 
-            var syntaxData = new SyntaxData(compilation, XDocument.Parse(syntaxText.ToString()));
+            var syntaxData = new SyntaxData(compilationData, XDocument.Parse(syntaxText.ToString()));
             this.GenerateSyntaxWrappers(in context, syntaxData);
             this.GenerateSyntaxWrapperHelper(in context, syntaxData.Nodes);
         }
@@ -1201,12 +1249,12 @@ namespace StyleCop.Analyzers.CodeGeneration
         {
             private readonly Dictionary<string, NodeData> nameToNode;
 
-            public SyntaxData(Compilation compilation, XDocument document)
+            public SyntaxData(CompilationData compilationData, XDocument document)
             {
                 var nodesBuilder = ImmutableArray.CreateBuilder<NodeData>();
                 foreach (var element in document.XPathSelectElement("/Tree[@Root='SyntaxNode']").XPathSelectElements("PredefinedNode|AbstractNode|Node"))
                 {
-                    nodesBuilder.Add(new NodeData(compilation, element));
+                    nodesBuilder.Add(new NodeData(compilationData, element));
                 }
 
                 this.Nodes = nodesBuilder.ToImmutable();
@@ -1243,7 +1291,7 @@ namespace StyleCop.Analyzers.CodeGeneration
 
         private sealed class NodeData
         {
-            public NodeData(Compilation compilation, XElement element)
+            public NodeData(CompilationData compilationData, XElement element)
             {
                 this.Kind = element.Name.LocalName switch
                 {
@@ -1255,10 +1303,10 @@ namespace StyleCop.Analyzers.CodeGeneration
 
                 this.Name = element.Attribute("Name").Value;
 
-                this.ExistingType = compilation.GetTypeByMetadataName($"Microsoft.CodeAnalysis.CSharp.Syntax.{this.Name}")
-                    ?? compilation.GetTypeByMetadataName($"Microsoft.CodeAnalysis.CSharp.{this.Name}")
-                    ?? compilation.GetTypeByMetadataName($"Microsoft.CodeAnalysis.{this.Name}");
-                if (this.ExistingType?.DeclaredAccessibility == Accessibility.Public)
+                this.ExistingType = compilationData.ExistingTypes.GetValueOrDefault($"Microsoft.CodeAnalysis.CSharp.Syntax.{this.Name}")
+                    ?? compilationData.ExistingTypes.GetValueOrDefault($"Microsoft.CodeAnalysis.CSharp.{this.Name}")
+                    ?? compilationData.ExistingTypes.GetValueOrDefault($"Microsoft.CodeAnalysis.{this.Name}");
+                if (this.ExistingType is not null)
                 {
                     this.WrapperName = null;
                 }
@@ -1275,7 +1323,7 @@ namespace StyleCop.Analyzers.CodeGeneration
 
             public string Name { get; }
 
-            public INamedTypeSymbol? ExistingType { get; }
+            public ExistingTypeData? ExistingType { get; }
 
             public string? WrapperName { get; }
 
@@ -1332,7 +1380,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 get
                 {
                     return this.nodeData.ExistingType is not null
-                        && this.nodeData.ExistingType.GetMembers(this.Name).IsEmpty;
+                        && !this.nodeData.ExistingType.MemberNames.Contains(this.Name);
                 }
             }
 
@@ -1391,6 +1439,21 @@ namespace StyleCop.Analyzers.CodeGeneration
                 }
 
                 return null;
+            }
+        }
+
+        private record CompilationData(ImmutableDictionary<string, ExistingTypeData> ExistingTypes)
+        {
+        }
+
+        private record ExistingTypeData(string TypeName, ImmutableArray<string> MemberNames)
+        {
+            public static ExistingTypeData FromNamedType(INamedTypeSymbol namedType, string typeName)
+            {
+                var memberNames = ImmutableArray.CreateRange(namedType.GetMembers(), member => member.Name);
+                return new ExistingTypeData(
+                    TypeName: typeName,
+                    MemberNames: memberNames);
             }
         }
     }
