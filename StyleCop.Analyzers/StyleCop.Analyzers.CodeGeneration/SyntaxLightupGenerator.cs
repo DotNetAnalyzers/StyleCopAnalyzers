@@ -4,6 +4,7 @@
 namespace StyleCop.Analyzers.CodeGeneration
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Diagnostics;
@@ -13,6 +14,7 @@ namespace StyleCop.Analyzers.CodeGeneration
     using System.Text;
     using System.Xml.Linq;
     using System.Xml.XPath;
+    using Analyzer.Utilities;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -76,7 +78,9 @@ namespace StyleCop.Analyzers.CodeGeneration
                 static (existingTypes, cancellationToken) =>
                 {
                     return new CompilationData(
-                        ExistingTypes: existingTypes.ToImmutableDictionary(type => type.TypeName));
+                        ExistingTypesWrapper: new EquatableValue<ImmutableDictionary<string, ExistingTypeData>>(
+                            existingTypes.ToImmutableDictionary(type => type.TypeName),
+                            ImmutableDictionaryEqualityComparer<string, ExistingTypeData>.Default));
                 });
 
             var syntaxFiles = context.AdditionalTextsProvider.Where(static x => Path.GetFileName(x.Path) == "Syntax.xml");
@@ -1442,18 +1446,152 @@ namespace StyleCop.Analyzers.CodeGeneration
             }
         }
 
-        private record CompilationData(ImmutableDictionary<string, ExistingTypeData> ExistingTypes)
+        private sealed record CompilationData(EquatableValue<ImmutableDictionary<string, ExistingTypeData>> ExistingTypesWrapper)
         {
+            public ImmutableDictionary<string, ExistingTypeData> ExistingTypes => this.ExistingTypesWrapper.Value;
         }
 
-        private record ExistingTypeData(string TypeName, ImmutableArray<string> MemberNames)
+        private sealed record ExistingTypeData(string TypeName, EquatableValue<ImmutableArray<string>> MemberNamesWrapper)
         {
+            public ImmutableArray<string> MemberNames => this.MemberNamesWrapper.Value;
+
             public static ExistingTypeData FromNamedType(INamedTypeSymbol namedType, string typeName)
             {
                 var memberNames = ImmutableArray.CreateRange(namedType.GetMembers(), member => member.Name);
                 return new ExistingTypeData(
                     TypeName: typeName,
-                    MemberNames: memberNames);
+                    MemberNamesWrapper: new EquatableValue<ImmutableArray<string>>(memberNames, ImmutableArrayEqualityComparer<string>.Default));
+            }
+        }
+
+        private sealed class EquatableValue<T> : IEquatable<EquatableValue<T>?>
+        {
+            public EquatableValue(T value, IEqualityComparer<T> comparer)
+            {
+                this.Value = value;
+                this.Comparer = comparer;
+            }
+
+            public T Value { get; }
+
+            public IEqualityComparer<T> Comparer { get; }
+
+            public bool Equals(EquatableValue<T>? other)
+            {
+                if (other is null)
+                {
+                    return false;
+                }
+
+                return this.Comparer.Equals(this.Value, other.Value);
+            }
+        }
+
+        private sealed class ImmutableDictionaryEqualityComparer<TKey, TValue> : IEqualityComparer<ImmutableDictionary<TKey, TValue>?>
+            where TKey : notnull
+        {
+            public static ImmutableDictionaryEqualityComparer<TKey, TValue> Default { get; } = new ImmutableDictionaryEqualityComparer<TKey, TValue>();
+
+            public bool Equals(ImmutableDictionary<TKey, TValue>? x, ImmutableDictionary<TKey, TValue>? y)
+            {
+                if (x == y)
+                {
+                    return true;
+                }
+                else if (x is null || y is null)
+                {
+                    return false;
+                }
+                else if (x.Count != y.Count)
+                {
+                    return false;
+                }
+
+                var keyEqualityComparer = EqualityComparer<TKey>.Default;
+                var valueEqualityComparer = EqualityComparer<TValue>.Default;
+
+                using var first = x.GetEnumerator();
+                using var second = y.GetEnumerator();
+                while (first.MoveNext() && second.MoveNext())
+                {
+                    if (!keyEqualityComparer.Equals(first.Current.Key, second.Current.Key)
+                        || !valueEqualityComparer.Equals(first.Current.Value, second.Current.Value))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            public int GetHashCode(ImmutableDictionary<TKey, TValue>? obj)
+            {
+                if (obj is null)
+                {
+                    return 0;
+                }
+
+                var hashCode = default(RoslynHashCode);
+
+                var keyEqualityComparer = EqualityComparer<TKey>.Default;
+                var valueEqualityComparer = EqualityComparer<TValue>.Default;
+                foreach (var i in obj)
+                {
+                    hashCode.Add(keyEqualityComparer.GetHashCode(i.Key));
+                    hashCode.Add(valueEqualityComparer.GetHashCode(i.Value));
+                }
+
+                return hashCode.ToHashCode();
+            }
+        }
+
+        private sealed class ImmutableArrayEqualityComparer<T> : IEqualityComparer<ImmutableArray<T>>
+        {
+            public static ImmutableArrayEqualityComparer<T> Default { get; } = new ImmutableArrayEqualityComparer<T>();
+
+            public bool Equals(ImmutableArray<T> x, ImmutableArray<T> y)
+            {
+                if (x == y)
+                {
+                    return true;
+                }
+                else if (x == null || y == null)
+                {
+                    return false;
+                }
+                else if (x.Length != y.Length)
+                {
+                    return false;
+                }
+
+                var equalityComparer = EqualityComparer<T>.Default;
+                for (var i = 0; i < x.Length; i++)
+                {
+                    if (!equalityComparer.Equals(x[i], y[i]))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            public int GetHashCode(ImmutableArray<T> obj)
+            {
+                if (obj == null)
+                {
+                    return 0;
+                }
+
+                var hashCode = default(RoslynHashCode);
+
+                var equalityComparer = EqualityComparer<T>.Default;
+                foreach (var i in obj)
+                {
+                    hashCode.Add(equalityComparer.GetHashCode(i));
+                }
+
+                return hashCode.ToHashCode();
             }
         }
     }
