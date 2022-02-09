@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 #pragma warning disable SA1310 // Field names should not contain underscore - Following roslyn naming conventions
 
 namespace StyleCop.Analyzers.Lightup

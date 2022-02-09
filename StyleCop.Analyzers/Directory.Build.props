@@ -11,6 +11,7 @@
 
   <PropertyGroup>
     <LangVersion>10</LangVersion>
+    <Nullable>enable</Nullable>
     <WarningLevel>99</WarningLevel>
   </PropertyGroup>
 
