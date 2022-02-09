@@ -51,9 +51,15 @@ namespace StyleCop.Analyzers.SpecialRules
 
         private static void HandleCompilation(CompilationAnalysisContext context)
         {
+            var firstSyntaxTree = context.Compilation.SyntaxTrees.FirstOrDefault();
+            if (firstSyntaxTree is null)
+            {
+                return;
+            }
+
             try
             {
-                SettingsHelper.GetStyleCopSettings(context.Options, context.Compilation?.SyntaxTrees.FirstOrDefault(), DeserializationFailureBehavior.ThrowException, context.CancellationToken);
+                SettingsHelper.GetStyleCopSettings(context.Options, firstSyntaxTree, DeserializationFailureBehavior.ThrowException, context.CancellationToken);
             }
             catch (Exception ex) when (ex is JsonParseException || ex is InvalidSettingsException)
             {

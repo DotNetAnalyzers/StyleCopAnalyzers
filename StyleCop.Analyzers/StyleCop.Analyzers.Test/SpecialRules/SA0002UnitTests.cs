@@ -35,6 +35,30 @@ namespace NamespaceName { }
         }
 
         [Fact]
+        [WorkItem(3453, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3453")]
+        public async Task TestNoSourceFilesAsync()
+        {
+            string emptySettings = @"{ ""settings"": { } }";
+            await new CSharpTest
+            {
+                TestState =
+                {
+                    Sources = { string.Empty },
+                    AdditionalFiles = { ("stylecop.json", emptySettings) },
+                    AdditionalProjects =
+                    {
+                        ["EmptyProjectWithSettings"] =
+                        {
+                            // The main test state doesn't allow empty Sources, so we use a second project to validate
+                            // the completely empty case.
+                            AdditionalFiles = { ("stylecop.json", emptySettings) },
+                        },
+                    },
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestValidSettingsAsync()
         {
             await new CSharpTest
