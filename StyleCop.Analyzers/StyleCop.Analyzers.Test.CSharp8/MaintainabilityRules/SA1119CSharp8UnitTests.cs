@@ -80,6 +80,71 @@ public class Foo
         }
 
         /// <summary>
+        /// Verifies that <see langword="await"/> followed by a switch expression is handled correctly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3460, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3460")]
+        public async Task TestAwaitFollowedBySwitchExpressionIsHandledCorrectlyAsync()
+        {
+            const string testCode = @"
+using System.Threading.Tasks;
+
+public class Foo
+{
+    public async Task<string> TestMethod(int n, Task<string> a, Task<string> b)
+    {
+        return await (n switch { 1 => a, 2 => b });
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that <see langword="await"/> followed by a switch expression with unnecessary parenthesis is handled correctly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3460, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3460")]
+        public async Task TestAwaitFollowedBySwitchExpressionWithUnnecessaryParenthesisIsHandledCorrectlyAsync()
+        {
+            const string testCode = @"
+using System.Threading.Tasks;
+
+public class Foo
+{
+    public async Task<string> TestMethod(int n, Task<string> a, Task<string> b)
+    {
+        return await {|#0:{|#1:(|}(n switch { 1 => a, 2 => b }){|#2:)|}|};
+    }
+}
+";
+
+            const string fixedCode = @"
+using System.Threading.Tasks;
+
+public class Foo
+{
+    public async Task<string> TestMethod(int n, Task<string> a, Task<string> b)
+    {
+        return await (n switch { 1 => a, 2 => b });
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DiagnosticId).WithLocation(0),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(1),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(2),
+            };
+
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp8, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that a switch expression with unnecessary parenthesis is handled correcly.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>

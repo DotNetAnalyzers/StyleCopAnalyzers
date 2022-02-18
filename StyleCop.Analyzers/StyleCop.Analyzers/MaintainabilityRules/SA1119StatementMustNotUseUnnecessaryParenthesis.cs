@@ -130,12 +130,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                         return;
                     }
 
-                    if (IsSwitchOrWithExpressionPrecededByTypeCast(node))
-                    {
-                        return;
-                    }
-
-                    if (IsSwitchOrWithExpressionExpressionOfMemberAccess(node))
+                    if (IsSwitchOrWithExpressionWithRequiredParentheses(node))
                     {
                         return;
                     }
@@ -219,7 +214,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             return false;
         }
 
-        private static bool IsSwitchOrWithExpressionPrecededByTypeCast(ParenthesizedExpressionSyntax node)
+        private static bool IsSwitchOrWithExpressionWithRequiredParentheses(ParenthesizedExpressionSyntax node)
         {
             if (!node.Expression.IsKind(SyntaxKindEx.SwitchExpression)
                 && !node.Expression.IsKind(SyntaxKindEx.WithExpression))
@@ -227,29 +222,14 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 return false;
             }
 
-            var previousToken = node.OpenParenToken.GetPreviousToken();
-
-            while (previousToken.IsKind(SyntaxKind.OpenParenToken) && previousToken.Parent.IsKind(SyntaxKind.ParenthesizedExpression))
+            var outerExpression = node.WalkUpParentheses();
+            return outerExpression.Parent switch
             {
-                previousToken = previousToken.GetPreviousToken();
-            }
-
-            return previousToken.IsKind(SyntaxKind.CloseParenToken) && previousToken.Parent.IsKind(SyntaxKind.CastExpression);
-        }
-
-        private static bool IsSwitchOrWithExpressionExpressionOfMemberAccess(ParenthesizedExpressionSyntax node)
-        {
-            if (!node.Expression.IsKind(SyntaxKindEx.SwitchExpression)
-                && !node.Expression.IsKind(SyntaxKindEx.WithExpression))
-            {
-                return false;
-            }
-
-            return node.Parent switch
-            {
-                MemberAccessExpressionSyntax memberAccessExpression => memberAccessExpression.Expression == node,
-                ConditionalAccessExpressionSyntax conditionalAccessExpression => conditionalAccessExpression.Expression == node,
-                ElementAccessExpressionSyntax elementAccessExpression => elementAccessExpression.Expression == node,
+                AwaitExpressionSyntax awaitExpression => awaitExpression.Expression == outerExpression,
+                CastExpressionSyntax castExpression => castExpression.Expression == outerExpression,
+                MemberAccessExpressionSyntax memberAccessExpression => memberAccessExpression.Expression == outerExpression,
+                ConditionalAccessExpressionSyntax conditionalAccessExpression => conditionalAccessExpression.Expression == outerExpression,
+                ElementAccessExpressionSyntax elementAccessExpression => elementAccessExpression.Expression == outerExpression,
                 _ => false,
             };
         }
