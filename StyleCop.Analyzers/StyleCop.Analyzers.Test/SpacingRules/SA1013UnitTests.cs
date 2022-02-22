@@ -52,7 +52,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 {
     public class TestClass
     {
-        public void TestMethod()
+        public void TestMethod(int a, int b)
         {
             var test = 2;
             var x = $""{test}"";
@@ -61,6 +61,8 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             x = $""({test} )"";
             x = $""{test {|#0:}|}"";
             x = $""{test {|#1:}|} "";
+            x = $""{new { a, b{|#2:}|}}"";
+            x = $""{new { a, b } {|#3:}|}"";
         }
     }
 }
@@ -70,7 +72,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 {
     public class TestClass
     {
-        public void TestMethod()
+        public void TestMethod(int a, int b)
         {
             var test = 2;
             var x = $""{test}"";
@@ -79,6 +81,8 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             x = $""({test} )"";
             x = $""{test}"";
             x = $""{test} "";
+            x = $""{new { a, b }}"";
+            x = $""{new { a, b }}"";
         }
     }
 }
@@ -88,6 +92,8 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             {
                 Diagnostic().WithLocation(0).WithArguments(" not", "preceded"),
                 Diagnostic().WithLocation(1).WithArguments(" not", "preceded"),
+                Diagnostic().WithLocation(2).WithArguments(string.Empty, "preceded"),
+                Diagnostic().WithLocation(3).WithArguments(" not", "preceded"),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
