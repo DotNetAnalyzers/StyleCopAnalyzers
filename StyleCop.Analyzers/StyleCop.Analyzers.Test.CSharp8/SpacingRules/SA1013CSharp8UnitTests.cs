@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 {
     using System.Threading;
@@ -43,7 +41,7 @@ public class Foo
             break;
 
         // The space before 'message' is checked
-        case Exception { Message: { }message }:
+        case Exception { Message: { {|#0:}|}message }:
             break;
         }
     }
@@ -67,7 +65,7 @@ public class Foo
     }
 }";
 
-            var expected = Diagnostic().WithSpan(14, 37, 14, 38).WithArguments(string.Empty, "followed");
+            var expected = Diagnostic().WithLocation(0).WithArguments(string.Empty, "followed");
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 

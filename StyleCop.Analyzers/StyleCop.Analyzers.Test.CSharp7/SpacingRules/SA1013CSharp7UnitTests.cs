@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 {
     using System.Threading;
@@ -32,7 +30,7 @@ public class Foo
 {
     public void TestMethod()
     {
-        var values = (new[] { 3} , new[] { 3} );
+        var values = (new[] { 3{|#0:}|} , new[] { 3{|#1:}|} );
     }
 }";
             const string fixedCode = @"using System;
@@ -47,8 +45,8 @@ public class Foo
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(7, 32).WithArguments(string.Empty, "preceded"),
-                Diagnostic().WithLocation(7, 45).WithArguments(string.Empty, "preceded"),
+                Diagnostic().WithLocation(0).WithArguments(string.Empty, "preceded"),
+                Diagnostic().WithLocation(1).WithArguments(string.Empty, "preceded"),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
@@ -65,12 +63,12 @@ public class Foo
         {
             int* data1 = stackalloc int[] { 1 , 1 } ;
             int* data2 = stackalloc int[] { 1 , 1 };
-            int* data3 = stackalloc int[] { 1 , 1} ;
-            int* data4 = stackalloc int[] { 1 , 1};
+            int* data3 = stackalloc int[] { 1 , 1{|#0:}|} ;
+            int* data4 = stackalloc int[] { 1 , 1{|#1:}|};
             int* data5 = stackalloc int[] { 1 , 1
 };
             int* data6 = stackalloc int[]
-            { 1 , 1};
+            { 1 , 1{|#2:}|};
             int* data7 = stackalloc int[]
             {
                 1 , 1 } ;
@@ -103,9 +101,9 @@ public class Foo
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithArguments(string.Empty, "preceded").WithLocation(9, 50),
-                Diagnostic().WithArguments(string.Empty, "preceded").WithLocation(10, 50),
-                Diagnostic().WithArguments(string.Empty, "preceded").WithLocation(14, 20),
+                Diagnostic().WithLocation(0).WithArguments(string.Empty, "preceded"),
+                Diagnostic().WithLocation(1).WithArguments(string.Empty, "preceded"),
+                Diagnostic().WithLocation(2).WithArguments(string.Empty, "preceded"),
             };
 
             await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
@@ -122,12 +120,12 @@ public class Foo
         {
             int* data1 = stackalloc[] { 1 , 1 } ;
             int* data2 = stackalloc[] { 1 , 1 };
-            int* data3 = stackalloc[] { 1 , 1} ;
-            int* data4 = stackalloc[] { 1 , 1};
+            int* data3 = stackalloc[] { 1 , 1{|#0:}|} ;
+            int* data4 = stackalloc[] { 1 , 1{|#1:}|};
             int* data5 = stackalloc[] { 1 , 1
 };
             int* data6 = stackalloc[]
-            { 1 , 1};
+            { 1 , 1{|#2:}|};
             int* data7 = stackalloc[]
             {
                 1 , 1 } ;
@@ -160,9 +158,9 @@ public class Foo
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithArguments(string.Empty, "preceded").WithLocation(9, 46),
-                Diagnostic().WithArguments(string.Empty, "preceded").WithLocation(10, 46),
-                Diagnostic().WithArguments(string.Empty, "preceded").WithLocation(14, 20),
+                Diagnostic().WithLocation(0).WithArguments(string.Empty, "preceded"),
+                Diagnostic().WithLocation(1).WithArguments(string.Empty, "preceded"),
+                Diagnostic().WithLocation(2).WithArguments(string.Empty, "preceded"),
             };
 
             await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
