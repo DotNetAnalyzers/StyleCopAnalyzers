@@ -545,15 +545,15 @@ public interface ITest
         }
 
         [Theory]
-        [InlineData("a")]
-        [InlineData("see")]
-        [InlineData("seealso")]
-        public async Task TestFullSentenceLinkAsync(string tag)
+        [InlineData("a", true)]
+        [InlineData("see", true)]
+        [InlineData("seealso", false)]
+        public async Task TestFullSentenceLinkAsync(string tag, bool insideSummary)
         {
+            var surrounding = insideSummary ? (Start: "<summary>", End: "<summary>") : (Start: string.Empty, End: string.Empty);
+
             var testCode = $@"
-/// <summary>
-/// <{tag} href=""someurl"">Periods aren't required to glow white at the end of a full-sentence link.</{tag}>
-/// </summary>
+/// {surrounding.Start}<{tag} href=""someurl"">Periods aren't required to glow white at the end of a full-sentence link.</{tag}>{surrounding.End}
 public interface ITest
 {{
 }}
