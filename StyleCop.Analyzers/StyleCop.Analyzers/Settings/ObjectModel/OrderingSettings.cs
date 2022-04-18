@@ -105,7 +105,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             blankLinesBetweenUsingGroups ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "dotnet_separate_import_directive_groups") switch
             {
                 true => OptionSetting.Require,
-                false => OptionSetting.Omit,
+                false => OptionSetting.Allow,
                 _ => null,
             };
 
