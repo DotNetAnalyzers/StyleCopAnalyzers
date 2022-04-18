@@ -47,6 +47,22 @@ namespace StyleCop.Analyzers.Helpers
                     return GetStyleCopFileName(typeDeclaration);
                 }
             }
+            else if (declaration is DelegateDeclarationSyntax delegateDeclaration)
+            {
+                if (delegateDeclaration.TypeParameterList == null)
+                {
+                    return GetSimpleFileName(delegateDeclaration);
+                }
+
+                switch (convention)
+                {
+                case FileNamingConvention.Metadata:
+                    return GetMetadataFileName(delegateDeclaration);
+
+                default:
+                    return GetStyleCopFileName(delegateDeclaration);
+                }
+            }
 
             return GetSimpleFileName(declaration);
         }
@@ -62,10 +78,21 @@ namespace StyleCop.Analyzers.Helpers
             return $"{typeDeclaration.Identifier.ValueText}`{typeDeclaration.Arity}";
         }
 
+        private static string GetMetadataFileName(DelegateDeclarationSyntax delegateDeclaration)
+        {
+            return $"{delegateDeclaration.Identifier.ValueText}`{delegateDeclaration.Arity}";
+        }
+
         private static string GetStyleCopFileName(TypeDeclarationSyntax typeDeclaration)
         {
             var typeParameterList = string.Join(",", typeDeclaration.TypeParameterList.Parameters.Select(p => p.Identifier.ValueText));
             return $"{typeDeclaration.Identifier.ValueText}{{{typeParameterList}}}";
+        }
+
+        private static string GetStyleCopFileName(DelegateDeclarationSyntax delegateDeclaration)
+        {
+            var typeParameterList = string.Join(",", delegateDeclaration.TypeParameterList.Parameters.Select(p => p.Identifier.ValueText));
+            return $"{delegateDeclaration.Identifier.ValueText}{{{typeParameterList}}}";
         }
     }
 }
