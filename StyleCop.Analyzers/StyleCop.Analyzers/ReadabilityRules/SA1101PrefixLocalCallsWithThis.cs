@@ -281,6 +281,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 case SyntaxKind.Attribute:
                     return false;
 
+                case SyntaxKindEx.RecursivePattern:
+                    return false;
+
                 default:
                     continue;
                 }
