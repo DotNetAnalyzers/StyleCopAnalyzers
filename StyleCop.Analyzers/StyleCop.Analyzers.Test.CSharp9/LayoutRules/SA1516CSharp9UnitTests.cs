@@ -24,7 +24,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.LayoutRules
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         [WorkItem(3242, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3242")]
-        public async Task TestStatementSpacingInTopLevelProgramAsync()
+        public async Task TestUsingAndGlobalStatementSpacingInTopLevelProgramAsync()
         {
             var testCode = @"using System;
 using System.Threading;
@@ -49,6 +49,65 @@ return 0;
                         Diagnostic().WithLocation(0),
 
                         // /0/Test0.cs(3,1): warning SA1516: Elements should be separated by blank line
+                        Diagnostic().WithLocation(0),
+                    },
+                },
+                FixedCode = fixedCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that SA1516 is not reported between global statement in top-level programs.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3351, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3351")]
+        public async Task TestGlobalStatementSpacingInTopLevelProgramAsync()
+        {
+            var testCode = @"int i = 0;
+return i;
+";
+
+            await new CSharpTest(LanguageVersion.CSharp9)
+            {
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                TestState =
+                {
+                    OutputKind = OutputKind.ConsoleApplication,
+                    Sources = { testCode },
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that SA1516 is reported between global statement and record declaration in top-level programs.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestGlobalStatementAndRecordSpacingInTopLevelProgramAsync()
+        {
+            var testCode = @"return 0;
+{|#0:record|} A();
+";
+
+            var fixedCode = @"return 0;
+
+record A();
+";
+
+            await new CSharpTest(LanguageVersion.CSharp9)
+            {
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                TestState =
+                {
+                    OutputKind = OutputKind.ConsoleApplication,
+                    Sources = { testCode },
+                    ExpectedDiagnostics =
+                    {
+                        // /0/Test0.cs(2,1): warning SA1516: Elements should be separated by blank line
+                        Diagnostic().WithLocation(0),
+
+                        // /0/Test0.cs(2,1): warning SA1516: Elements should be separated by blank line
                         Diagnostic().WithLocation(0),
                     },
                 },
