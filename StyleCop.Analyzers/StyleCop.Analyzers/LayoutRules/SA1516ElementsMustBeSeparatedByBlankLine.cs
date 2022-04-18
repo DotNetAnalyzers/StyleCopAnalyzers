@@ -295,6 +295,12 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             for (int i = 1; i < members.Count; i++)
             {
+                // Don't report between global statements
+                if (members[i - 1].IsKind(SyntaxKind.GlobalStatement) && members[i].IsKind(SyntaxKind.GlobalStatement))
+                {
+                    continue;
+                }
+
                 if (!members[i - 1].ContainsDiagnostics && !members[i].ContainsDiagnostics)
                 {
                     // Report if
