@@ -5,10 +5,13 @@
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Settings.ObjectModel;
     using Xunit;
+    using Xunit.Sdk;
 
     public class SA1402ForDelegateUnitTests : SA1402ForNonBlockDeclarationUnitTestsBase
     {
@@ -41,23 +44,32 @@ public delegate void Bar();
             await VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestTwoGenericElementsAsync()
+        [Theory]
+        [InlineData(FileNamingConvention.StyleCop)]
+        [InlineData(FileNamingConvention.Metadata)]
+        public async Task TestTwoGenericElementsAsync(object namingConvention)
         {
             var testCode = @"public delegate void Foo();
 public delegate void Bar<T1, T2, T3>(T1 x, T2 y, T3 z);
 ";
 
+            var expectedName = (FileNamingConvention)namingConvention switch
+            {
+                FileNamingConvention.StyleCop => "Bar{T1,T2,T3}.cs",
+                FileNamingConvention.Metadata => "Bar`3.cs",
+                _ => throw new NotImplementedException(),
+            };
+
             var fixedCode = new[]
             {
                 ("/0/Test0.cs", @"public delegate void Foo();
 "),
-                ("Bar.cs", @"public delegate void Bar<T1, T2, T3>(T1 x, T2 y, T3 z);
+                (expectedName, @"public delegate void Bar<T1, T2, T3>(T1 x, T2 y, T3 z);
 "),
             };
 
             DiagnosticResult expected = Diagnostic().WithLocation(2, 22);
-            await VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, this.GetSettings((FileNamingConvention)namingConvention), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]

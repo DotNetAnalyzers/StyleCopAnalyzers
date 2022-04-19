@@ -74,5 +74,14 @@ namespace StyleCop.Analyzers.Test.Helpers
                     .Concat(new[] { new[] { "delegate" } });
             }
         }
+
+        public static IEnumerable<object[]> GenericTypeDeclarationKeywords
+        {
+            get
+            {
+                return TypeDeclarationKeywords
+                    .Concat(new[] { new[] { "delegate" } });
+            }
+        }
     }
 }

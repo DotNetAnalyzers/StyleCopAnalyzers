@@ -5,7 +5,6 @@
 
 namespace StyleCop.Analyzers.Test.Verifiers
 {
-    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -24,6 +23,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
     using Microsoft.CodeAnalysis.Testing.Verifiers;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Settings.ObjectModel;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
 
     internal static class StyleCopCodeFixVerifier<TAnalyzer, TCodeFix>
@@ -169,7 +169,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
                         {
                             JsonObject indentationObject = JsonReader.Parse(indentationSettings).AsJsonObject;
                             JsonObject settingsObject = JsonReader.Parse(settings).AsJsonObject;
-                            JsonObject mergedSettings = MergeJsonObjects(settingsObject, indentationObject);
+                            JsonObject mergedSettings = JsonTestHelper.MergeJsonObjects(settingsObject, indentationObject);
                             using (var writer = new JsonWriter(pretty: true))
                             {
                                 settings = writer.Serialize(mergedSettings);
@@ -273,35 +273,6 @@ namespace StyleCop.Analyzers.Test.Verifiers
                 var codeFixProvider = new TCodeFix();
                 Assert.NotSame(WellKnownFixAllProviders.BatchFixer, codeFixProvider.GetFixAllProvider());
                 return new[] { codeFixProvider };
-            }
-
-            private static JsonObject MergeJsonObjects(JsonObject priority, JsonObject fallback)
-            {
-                foreach (var pair in priority)
-                {
-                    if (pair.Value.IsJsonObject)
-                    {
-                        switch (fallback[pair.Key].Type)
-                        {
-                        case JsonValueType.Null:
-                            fallback[pair.Key] = pair.Value;
-                            break;
-
-                        case JsonValueType.Object:
-                            fallback[pair.Key] = MergeJsonObjects(pair.Value.AsJsonObject, fallback[pair.Key].AsJsonObject);
-                            break;
-
-                        default:
-                            throw new InvalidOperationException($"Cannot merge objects of type '{pair.Value.Type}' and '{fallback[pair.Key].Type}'.");
-                        }
-                    }
-                    else
-                    {
-                        fallback[pair.Key] = pair.Value;
-                    }
-                }
-
-                return fallback;
             }
         }
     }

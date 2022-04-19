@@ -7,8 +7,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using global::LightJson.Serialization;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.MaintainabilityRules;
+    using StyleCop.Analyzers.Settings.ObjectModel;
+    using StyleCop.Analyzers.Test.Helpers;
     using StyleCop.Analyzers.Test.Verifiers;
 
     public abstract class SA1402ForNonBlockDeclarationUnitTestsBase
@@ -55,9 +58,30 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             return test.RunAsync(cancellationToken);
         }
 
-        protected virtual string GetSettings()
+        private protected virtual string GetSettings(FileNamingConvention namingConvention = FileNamingConvention.StyleCop)
         {
-            return this.SettingsConfiguration.GetSettings(this.Keyword);
+            var settings = this.SettingsConfiguration.GetSettings(this.Keyword);
+            if (settings is null && namingConvention == FileNamingConvention.StyleCop)
+            {
+                return null;
+            }
+
+            var namingSettings = $@"
+{{
+  ""settings"": {{
+    ""documentationRules"": {{
+      ""fileNamingConvention"": ""{namingConvention.ToString().ToLowerInvariant()}""
+    }}
+  }}
+}}";
+
+            if (settings is null)
+            {
+                return namingSettings;
+            }
+
+            var merged = JsonTestHelper.MergeJsonObjects(JsonReader.Parse(settings).AsJsonObject, JsonReader.Parse(namingSettings).AsJsonObject);
+            return new JsonWriter(pretty: true).Serialize(merged);
         }
     }
 }
