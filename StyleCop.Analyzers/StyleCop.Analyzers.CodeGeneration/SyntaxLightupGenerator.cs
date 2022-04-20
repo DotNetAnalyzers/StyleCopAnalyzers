@@ -4,6 +4,7 @@
 namespace StyleCop.Analyzers.CodeGeneration
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Diagnostics;
@@ -13,6 +14,7 @@ namespace StyleCop.Analyzers.CodeGeneration
     using System.Text;
     using System.Xml.Linq;
     using System.Xml.XPath;
+    using Analyzer.Utilities;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -30,14 +32,64 @@ namespace StyleCop.Analyzers.CodeGeneration
 
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
-            var compilation = context.CompilationProvider;
+            var referencedAssemblies = context.CompilationProvider.SelectMany(
+                static (compilation, cancellationToken) =>
+                {
+                    return compilation.SourceModule.ReferencedAssemblySymbols
+                        .Where(reference => reference.Name is "Microsoft.CodeAnalysis" or "Microsoft.CodeAnalysis.CSharp");
+                });
+
+            var existingTypesInReferences = referencedAssemblies.SelectMany(
+                static (reference, cancellationToken) =>
+                {
+                    var microsoftNamespace = reference.GlobalNamespace.GetNamespaceMembers().SingleOrDefault(symbol => symbol.Name == nameof(Microsoft));
+                    var microsoftCodeAnalysisNamespace = microsoftNamespace?.GetNamespaceMembers().SingleOrDefault(symbol => symbol.Name == nameof(Microsoft.CodeAnalysis));
+                    var microsoftCodeAnalysisCSharpNamespace = microsoftCodeAnalysisNamespace?.GetNamespaceMembers().SingleOrDefault(symbol => symbol.Name == nameof(Microsoft.CodeAnalysis.CSharp));
+                    var microsoftCodeAnalysisCSharpSyntaxNamespace = microsoftCodeAnalysisCSharpNamespace?.GetNamespaceMembers().SingleOrDefault(symbol => symbol.Name == nameof(Microsoft.CodeAnalysis.CSharp.Syntax));
+
+                    var existingTypesBuilder = ImmutableArray.CreateBuilder<ExistingTypeData>();
+                    AddPublicTypesFromNamespace(microsoftNamespace, existingTypesBuilder);
+                    AddPublicTypesFromNamespace(microsoftCodeAnalysisNamespace, existingTypesBuilder);
+                    AddPublicTypesFromNamespace(microsoftCodeAnalysisCSharpNamespace, existingTypesBuilder);
+                    AddPublicTypesFromNamespace(microsoftCodeAnalysisCSharpSyntaxNamespace, existingTypesBuilder);
+
+                    return existingTypesBuilder.ToImmutable();
+
+                    static void AddPublicTypesFromNamespace(INamespaceSymbol? namespaceSymbol, ImmutableArray<ExistingTypeData>.Builder existingTypesBuilder)
+                    {
+                        if (namespaceSymbol is null)
+                        {
+                            return;
+                        }
+
+                        foreach (var type in namespaceSymbol.GetTypeMembers())
+                        {
+                            if (type is not { DeclaredAccessibility: Accessibility.Public })
+                            {
+                                continue;
+                            }
+
+                            existingTypesBuilder.Add(ExistingTypeData.FromNamedType(type, type.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
+                        }
+                    }
+                });
+
+            var compilationData = existingTypesInReferences.Collect().Select(
+                static (existingTypes, cancellationToken) =>
+                {
+                    return new CompilationData(
+                        ExistingTypesWrapper: new EquatableValue<ImmutableDictionary<string, ExistingTypeData>>(
+                            existingTypes.ToImmutableDictionary(type => type.TypeName),
+                            ImmutableDictionaryEqualityComparer<string, ExistingTypeData>.Default));
+                });
+
             var syntaxFiles = context.AdditionalTextsProvider.Where(static x => Path.GetFileName(x.Path) == "Syntax.xml");
             context.RegisterSourceOutput(
-                syntaxFiles.Combine(compilation),
+                syntaxFiles.Combine(compilationData),
                 (context, value) => this.Execute(in context, value.Right, value.Left));
         }
 
-        private void Execute(in SourceProductionContext context, Compilation compilation, AdditionalText syntaxFile)
+        private void Execute(in SourceProductionContext context, CompilationData compilationData, AdditionalText syntaxFile)
         {
             var syntaxText = syntaxFile.GetText(context.CancellationToken);
             if (syntaxText is null)
@@ -45,7 +97,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 throw new InvalidOperationException("Failed to read Syntax.xml");
             }
 
-            var syntaxData = new SyntaxData(compilation, XDocument.Parse(syntaxText.ToString()));
+            var syntaxData = new SyntaxData(compilationData, XDocument.Parse(syntaxText.ToString()));
             this.GenerateSyntaxWrappers(in context, syntaxData);
             this.GenerateSyntaxWrapperHelper(in context, syntaxData.Nodes);
         }
@@ -1201,12 +1253,12 @@ namespace StyleCop.Analyzers.CodeGeneration
         {
             private readonly Dictionary<string, NodeData> nameToNode;
 
-            public SyntaxData(Compilation compilation, XDocument document)
+            public SyntaxData(CompilationData compilationData, XDocument document)
             {
                 var nodesBuilder = ImmutableArray.CreateBuilder<NodeData>();
                 foreach (var element in document.XPathSelectElement("/Tree[@Root='SyntaxNode']").XPathSelectElements("PredefinedNode|AbstractNode|Node"))
                 {
-                    nodesBuilder.Add(new NodeData(compilation, element));
+                    nodesBuilder.Add(new NodeData(compilationData, element));
                 }
 
                 this.Nodes = nodesBuilder.ToImmutable();
@@ -1243,7 +1295,7 @@ namespace StyleCop.Analyzers.CodeGeneration
 
         private sealed class NodeData
         {
-            public NodeData(Compilation compilation, XElement element)
+            public NodeData(CompilationData compilationData, XElement element)
             {
                 this.Kind = element.Name.LocalName switch
                 {
@@ -1255,10 +1307,10 @@ namespace StyleCop.Analyzers.CodeGeneration
 
                 this.Name = element.Attribute("Name").Value;
 
-                this.ExistingType = compilation.GetTypeByMetadataName($"Microsoft.CodeAnalysis.CSharp.Syntax.{this.Name}")
-                    ?? compilation.GetTypeByMetadataName($"Microsoft.CodeAnalysis.CSharp.{this.Name}")
-                    ?? compilation.GetTypeByMetadataName($"Microsoft.CodeAnalysis.{this.Name}");
-                if (this.ExistingType?.DeclaredAccessibility == Accessibility.Public)
+                this.ExistingType = compilationData.ExistingTypes.GetValueOrDefault($"Microsoft.CodeAnalysis.CSharp.Syntax.{this.Name}")
+                    ?? compilationData.ExistingTypes.GetValueOrDefault($"Microsoft.CodeAnalysis.CSharp.{this.Name}")
+                    ?? compilationData.ExistingTypes.GetValueOrDefault($"Microsoft.CodeAnalysis.{this.Name}");
+                if (this.ExistingType is not null)
                 {
                     this.WrapperName = null;
                 }
@@ -1275,7 +1327,7 @@ namespace StyleCop.Analyzers.CodeGeneration
 
             public string Name { get; }
 
-            public INamedTypeSymbol? ExistingType { get; }
+            public ExistingTypeData? ExistingType { get; }
 
             public string? WrapperName { get; }
 
@@ -1332,7 +1384,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 get
                 {
                     return this.nodeData.ExistingType is not null
-                        && this.nodeData.ExistingType.GetMembers(this.Name).IsEmpty;
+                        && !this.nodeData.ExistingType.MemberNames.Contains(this.Name);
                 }
             }
 
@@ -1391,6 +1443,155 @@ namespace StyleCop.Analyzers.CodeGeneration
                 }
 
                 return null;
+            }
+        }
+
+        private sealed record CompilationData(EquatableValue<ImmutableDictionary<string, ExistingTypeData>> ExistingTypesWrapper)
+        {
+            public ImmutableDictionary<string, ExistingTypeData> ExistingTypes => this.ExistingTypesWrapper.Value;
+        }
+
+        private sealed record ExistingTypeData(string TypeName, EquatableValue<ImmutableArray<string>> MemberNamesWrapper)
+        {
+            public ImmutableArray<string> MemberNames => this.MemberNamesWrapper.Value;
+
+            public static ExistingTypeData FromNamedType(INamedTypeSymbol namedType, string typeName)
+            {
+                var memberNames = ImmutableArray.CreateRange(namedType.GetMembers(), member => member.Name);
+                return new ExistingTypeData(
+                    TypeName: typeName,
+                    MemberNamesWrapper: new EquatableValue<ImmutableArray<string>>(memberNames, ImmutableArrayEqualityComparer<string>.Default));
+            }
+        }
+
+        private sealed class EquatableValue<T> : IEquatable<EquatableValue<T>?>
+        {
+            public EquatableValue(T value, IEqualityComparer<T> comparer)
+            {
+                this.Value = value;
+                this.Comparer = comparer;
+            }
+
+            public T Value { get; }
+
+            public IEqualityComparer<T> Comparer { get; }
+
+            public bool Equals(EquatableValue<T>? other)
+            {
+                if (other is null)
+                {
+                    return false;
+                }
+
+                return this.Comparer.Equals(this.Value, other.Value);
+            }
+        }
+
+        private sealed class ImmutableDictionaryEqualityComparer<TKey, TValue> : IEqualityComparer<ImmutableDictionary<TKey, TValue>?>
+            where TKey : notnull
+        {
+            public static ImmutableDictionaryEqualityComparer<TKey, TValue> Default { get; } = new ImmutableDictionaryEqualityComparer<TKey, TValue>();
+
+            public bool Equals(ImmutableDictionary<TKey, TValue>? x, ImmutableDictionary<TKey, TValue>? y)
+            {
+                if (x == y)
+                {
+                    return true;
+                }
+                else if (x is null || y is null)
+                {
+                    return false;
+                }
+                else if (x.Count != y.Count)
+                {
+                    return false;
+                }
+
+                var keyEqualityComparer = EqualityComparer<TKey>.Default;
+                var valueEqualityComparer = EqualityComparer<TValue>.Default;
+
+                using var first = x.GetEnumerator();
+                using var second = y.GetEnumerator();
+                while (first.MoveNext() && second.MoveNext())
+                {
+                    if (!keyEqualityComparer.Equals(first.Current.Key, second.Current.Key)
+                        || !valueEqualityComparer.Equals(first.Current.Value, second.Current.Value))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            public int GetHashCode(ImmutableDictionary<TKey, TValue>? obj)
+            {
+                if (obj is null)
+                {
+                    return 0;
+                }
+
+                var hashCode = default(RoslynHashCode);
+
+                var keyEqualityComparer = EqualityComparer<TKey>.Default;
+                var valueEqualityComparer = EqualityComparer<TValue>.Default;
+                foreach (var i in obj)
+                {
+                    hashCode.Add(keyEqualityComparer.GetHashCode(i.Key));
+                    hashCode.Add(valueEqualityComparer.GetHashCode(i.Value));
+                }
+
+                return hashCode.ToHashCode();
+            }
+        }
+
+        private sealed class ImmutableArrayEqualityComparer<T> : IEqualityComparer<ImmutableArray<T>>
+        {
+            public static ImmutableArrayEqualityComparer<T> Default { get; } = new ImmutableArrayEqualityComparer<T>();
+
+            public bool Equals(ImmutableArray<T> x, ImmutableArray<T> y)
+            {
+                if (x == y)
+                {
+                    return true;
+                }
+                else if (x == null || y == null)
+                {
+                    return false;
+                }
+                else if (x.Length != y.Length)
+                {
+                    return false;
+                }
+
+                var equalityComparer = EqualityComparer<T>.Default;
+                for (var i = 0; i < x.Length; i++)
+                {
+                    if (!equalityComparer.Equals(x[i], y[i]))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            public int GetHashCode(ImmutableArray<T> obj)
+            {
+                if (obj == null)
+                {
+                    return 0;
+                }
+
+                var hashCode = default(RoslynHashCode);
+
+                var equalityComparer = EqualityComparer<T>.Default;
+                foreach (var i in obj)
+                {
+                    hashCode.Add(equalityComparer.GetHashCode(i));
+                }
+
+                return hashCode.ToHashCode();
             }
         }
     }
