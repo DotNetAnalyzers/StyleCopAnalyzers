@@ -1016,7 +1016,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Replace tabs with spaces.
+        ///   Looks up a localized string similar to Fix tabs.
         /// </summary>
         internal static string SA1027CodeFix {
             get {
