@@ -141,6 +141,9 @@ namespace StyleCop.Analyzers.SpacingRules
                 // values[x as T<int>]
                 //                  ^^
                 case SyntaxKind.CloseBracketToken when nextToken.Parent.IsKind(SyntaxKind.BracketedArgumentList):
+                // [MyAttribute<T>]
+                //               ^^
+                case SyntaxKind.CloseBracketToken when nextToken.Parent.IsKind(SyntaxKind.AttributeList):
                     allowTrailingNoSpace = true;
                     allowTrailingSpace = false;
                     break;
