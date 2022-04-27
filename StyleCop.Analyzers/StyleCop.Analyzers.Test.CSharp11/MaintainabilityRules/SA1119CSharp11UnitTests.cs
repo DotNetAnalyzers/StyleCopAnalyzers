@@ -9,5 +9,18 @@ namespace StyleCop.Analyzers.Test.CSharp11.MaintainabilityRules
 
     public class SA1119CSharp11UnitTests : SA1119CSharp10UnitTests
     {
+        // In earlier Roslyn versions, we ended up with an extra space between the opening brace
+        // and the identifier. Does not happen anymore.
+        protected override string GetFixedCodeTestParenthesisInInterpolatedStringThatShouldBeRemoved()
+        {
+            return @"class Foo
+{
+    public void Bar()
+    {
+        bool flag = false;
+        string data = $""{flag}"";
+    }
+}";
+        }
     }
 }

@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.NamingRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.NamingRules;
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
@@ -40,20 +41,15 @@ public record R(int A)
 }
 ";
 
-            await new CSharpTest(LanguageVersion.CSharp9)
+            var test = new CSharpTest(LanguageVersion.CSharp9)
             {
                 ReferenceAssemblies = GenericAnalyzerTest.ReferenceAssembliesNet50,
                 TestCode = testCode,
-                ExpectedDiagnostics =
-                {
-                    // /0/Test0.cs(2,15): warning SA1300: Element 'r' should begin with an uppercase letter
-                    Diagnostic().WithLocation(0).WithArguments("r"),
-
-                    // /0/Test0.cs(2,15): warning SA1300: Element 'r' should begin with an uppercase letter
-                    Diagnostic().WithLocation(0).WithArguments("r"),
-                },
                 FixedCode = fixedCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            };
+            var expectedDiagnostics = this.GetExpectedResultTestPositionalRecord1();
+            test.TestState.ExpectedDiagnostics.AddRange(expectedDiagnostics);
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -85,6 +81,19 @@ public record R(int A)
                 TestCode = testCode,
                 FixedCode = fixedCode,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestPositionalRecord1()
+        {
+            // NOTE: Seems like a Roslyn bug made diagnostics be reported twice. Fixed in a later version.
+            return new[]
+            {
+                // /0/Test0.cs(2,15): warning SA1300: Element 'r' should begin with an uppercase letter
+                Diagnostic().WithLocation(0).WithArguments("r"),
+
+                // /0/Test0.cs(2,15): warning SA1300: Element 'r' should begin with an uppercase letter
+                Diagnostic().WithLocation(0).WithArguments("r"),
+            };
         }
     }
 }

@@ -36,24 +36,19 @@ using System.Threading;
 return 0;
 ";
 
-            await new CSharpTest(LanguageVersion.CSharp9)
+            var test = new CSharpTest(LanguageVersion.CSharp9)
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestState =
                 {
                     OutputKind = OutputKind.ConsoleApplication,
                     Sources = { testCode },
-                    ExpectedDiagnostics =
-                    {
-                        // /0/Test0.cs(3,1): warning SA1516: Elements should be separated by blank line
-                        Diagnostic().WithLocation(0),
-
-                        // /0/Test0.cs(3,1): warning SA1516: Elements should be separated by blank line
-                        Diagnostic().WithLocation(0),
-                    },
                 },
                 FixedCode = fixedCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            };
+            var expectedDiagnostics = this.GetExpectedResultTestUsingAndGlobalStatementSpacingInTopLevelProgram();
+            test.TestState.ExpectedDiagnostics.AddRange(expectedDiagnostics);
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -95,24 +90,45 @@ return i;
 record A();
 ";
 
-            await new CSharpTest(LanguageVersion.CSharp9)
+            var test = new CSharpTest(LanguageVersion.CSharp9)
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestState =
                 {
                     OutputKind = OutputKind.ConsoleApplication,
                     Sources = { testCode },
-                    ExpectedDiagnostics =
-                    {
-                        // /0/Test0.cs(2,1): warning SA1516: Elements should be separated by blank line
-                        Diagnostic().WithLocation(0),
-
-                        // /0/Test0.cs(2,1): warning SA1516: Elements should be separated by blank line
-                        Diagnostic().WithLocation(0),
-                    },
                 },
                 FixedCode = fixedCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            };
+            var expectedDiagnostics = this.GetExpectedResultTestGlobalStatementAndRecordSpacingInTopLevelProgram();
+            test.TestState.ExpectedDiagnostics.AddRange(expectedDiagnostics);
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestUsingAndGlobalStatementSpacingInTopLevelProgram()
+        {
+            // NOTE: Seems like a Roslyn bug made diagnostics be reported twice. Fixed in a later version.
+            return new[]
+            {
+                // /0/Test0.cs(3,1): warning SA1516: Elements should be separated by blank line
+                Diagnostic().WithLocation(0),
+
+                // /0/Test0.cs(3,1): warning SA1516: Elements should be separated by blank line
+                Diagnostic().WithLocation(0),
+            };
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestGlobalStatementAndRecordSpacingInTopLevelProgram()
+        {
+            // NOTE: Seems like a Roslyn bug made diagnostics be reported twice. Fixed in a later version.
+            return new[]
+            {
+                // /0/Test0.cs(2,1): warning SA1516: Elements should be separated by blank line
+                Diagnostic().WithLocation(0),
+
+                // /0/Test0.cs(2,1): warning SA1516: Elements should be separated by blank line
+                Diagnostic().WithLocation(0),
+            };
         }
     }
 }
