@@ -108,7 +108,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
                     if (!previousUsing.IsSystemUsingDirective()
                         || previousUsing.HasNamespaceAliasQualifier()
-                        || previousUsing.StaticKeyword.Kind() != SyntaxKind.None)
+                        || !previousUsing.StaticKeyword.IsKind(SyntaxKind.None))
                     {
                         systemUsingDirectivesShouldBeBeforeThisName = previousUsing.Name.ToNormalizedString();
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation(), usingDirective.Name.ToNormalizedString(), systemUsingDirectivesShouldBeBeforeThisName));

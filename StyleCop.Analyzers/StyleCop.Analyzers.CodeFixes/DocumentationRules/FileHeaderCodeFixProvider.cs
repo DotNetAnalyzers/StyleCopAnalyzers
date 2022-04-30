@@ -449,12 +449,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 for (int i = 0; i < trivia.Count; i++)
                 {
                     var triviaLine = trivia[i];
-                    if (triviaLine.Kind() == SyntaxKind.SingleLineCommentTrivia && triviaLine.ToFullString().Contains(settings.DocumentationRules.HeaderDecoration))
+                    if (triviaLine.IsKind(SyntaxKind.SingleLineCommentTrivia) && triviaLine.ToFullString().Contains(settings.DocumentationRules.HeaderDecoration))
                     {
                         decorationRemovalList.Add(i);
 
                         // also remove the line break
-                        if (i + 1 < trivia.Count && trivia[i + 1].Kind() == SyntaxKind.EndOfLineTrivia)
+                        if (i + 1 < trivia.Count && trivia[i + 1].IsKind(SyntaxKind.EndOfLineTrivia))
                         {
                             decorationRemovalList.Add(i + 1);
                         }
