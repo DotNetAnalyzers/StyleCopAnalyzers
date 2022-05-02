@@ -22,6 +22,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
     using Microsoft.CodeAnalysis.Testing;
     using Microsoft.CodeAnalysis.Testing.Verifiers;
     using Microsoft.CodeAnalysis.Text;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
@@ -112,7 +113,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
             public CSharpTest(LanguageVersion? languageVersion)
             {
                 this.ReferenceAssemblies = GenericAnalyzerTest.ReferenceAssemblies;
-                this.LanguageVersion = languageVersion;
+                this.LanguageVersion = languageVersion ?? this.GetDefaultLanguageVersion();
 
                 this.OptionsTransforms.Add(options =>
                     options
@@ -273,6 +274,19 @@ namespace StyleCop.Analyzers.Test.Verifiers
                 var codeFixProvider = new TCodeFix();
                 Assert.NotSame(WellKnownFixAllProviders.BatchFixer, codeFixProvider.GetFixAllProvider());
                 return new[] { codeFixProvider };
+            }
+
+            // TODO: Remove when c# 11 is a supported language version
+            private LanguageVersion? GetDefaultLanguageVersion()
+            {
+                // Temporary fix since c# 11 is not yet the default language version
+                // in the c# 11 test project.
+                if (LightupHelpers.SupportsCSharp11)
+                {
+                    return LanguageVersionEx.Preview;
+                }
+
+                return null;
             }
         }
     }

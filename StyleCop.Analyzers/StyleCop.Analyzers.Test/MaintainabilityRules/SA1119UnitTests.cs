@@ -1042,14 +1042,9 @@ public class Foo
         string data = $""{(flag)}"";
     }
 }";
-            string fixedCode = @"class Foo
-{
-    public void Bar()
-    {
-        bool flag = false;
-        string data = $""{ flag}"";
-    }
-}";
+
+            string fixedCode = this.GetFixedCodeTestParenthesisInInterpolatedStringThatShouldBeRemoved();
+
             DiagnosticResult[] expected =
             {
                 Diagnostic(DiagnosticId).WithSpan(6, 26, 6, 32),
@@ -1476,6 +1471,20 @@ internal class Program
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        // In this version of Roslyn, we end up with an extra space between the opening brace
+        // and the identifier. Fixed in a later version.
+        protected virtual string GetFixedCodeTestParenthesisInInterpolatedStringThatShouldBeRemoved()
+        {
+            return @"class Foo
+{
+    public void Bar()
+    {
+        bool flag = false;
+        string data = $""{ flag}"";
+    }
+}";
         }
     }
 }

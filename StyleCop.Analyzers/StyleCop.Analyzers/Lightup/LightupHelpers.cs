@@ -46,6 +46,11 @@ namespace StyleCop.Analyzers.Lightup
         public static bool SupportsCSharp10 { get; }
             = Enum.GetNames(typeof(LanguageVersion)).Contains(nameof(LanguageVersionEx.CSharp10));
 
+        // NOTE: Since c# is only in preview yet, we need to check something else than available language versions. Picked a new syntax kind temporarily.
+        // TODO: Update when c# 11 is available as a language version.
+        public static bool SupportsCSharp11 { get; }
+            = Enum.GetNames(typeof(SyntaxKind)).Contains(nameof(SyntaxKindEx.SlicePattern));
+
         public static bool SupportsIOperation => SupportsCSharp73;
 
         internal static bool CanWrapObject(object obj, Type underlyingType)

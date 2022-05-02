@@ -13,6 +13,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Testing;
     using Microsoft.CodeAnalysis.Testing.Verifiers;
+    using StyleCop.Analyzers.Lightup;
 
     internal static class StyleCopDiagnosticVerifier<TAnalyzer>
         where TAnalyzer : DiagnosticAnalyzer, new()
@@ -64,7 +65,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
 
             public CSharpTest(LanguageVersion? languageVersion)
             {
-                this.LanguageVersion = languageVersion;
+                this.LanguageVersion = languageVersion ?? this.GetDefaultLanguageVersion();
             }
 
             private LanguageVersion? LanguageVersion { get; }
@@ -78,6 +79,19 @@ namespace StyleCop.Analyzers.Test.Verifiers
                 }
 
                 return parseOptions;
+            }
+
+            // TODO: Remove when c# 11 is a supported language version
+            private LanguageVersion? GetDefaultLanguageVersion()
+            {
+                // Temporary fix since c# 11 is not yet the default language version
+                // in the c# 11 test project.
+                if (LightupHelpers.SupportsCSharp11)
+                {
+                    return LanguageVersionEx.Preview;
+                }
+
+                return null;
             }
         }
     }

@@ -105,7 +105,7 @@ namespace StyleCop.Analyzers.SpacingRules
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
             {
-                if (token.Kind() == SyntaxKind.ColonToken)
+                if (token.IsKind(SyntaxKind.ColonToken))
                 {
                     HandleColonToken(context, token);
                 }
