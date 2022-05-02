@@ -118,6 +118,7 @@ namespace StyleCop.Analyzers.SpacingRules
             case SyntaxKind.SemicolonToken:
             case SyntaxKind.CommaToken:
             case SyntaxKind.DoubleQuoteToken:
+            case SyntaxKind.SingleQuoteToken:
             case SyntaxKindEx.DotDotToken:
                 precedesStickyCharacter = true;
                 break;

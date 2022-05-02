@@ -86,6 +86,33 @@ public class Foo
         }
 
         [Fact]
+        [WorkItem(2985, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2985")]
+        public async Task TestDocumentationMethodReferenceInSingleQuotesWithWhitespaceAfterClosingParenthesisAsync()
+        {
+            const string testCode = @"
+public class Foo
+{
+    /// <see cref='Method({|#0:)|} '/>
+    public void Method()
+    {
+    }
+}";
+
+            const string fixedCode = @"
+public class Foo
+{
+    /// <see cref='Method()'/>
+    public void Method()
+    {
+    }
+}";
+
+            DiagnosticResult expected = Diagnostic(DescriptorNotFollowed).WithLocation(0);
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestMethodWith2CorrectlySpacedParametersAsync()
         {
             const string testCode = @"using System;
