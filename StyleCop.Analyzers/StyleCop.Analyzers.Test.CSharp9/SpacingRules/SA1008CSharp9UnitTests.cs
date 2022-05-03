@@ -64,5 +64,23 @@ class C
                 FixedCode = fixedCode,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3476, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3476")]
+        public async Task TestLogicalTuplePatternAsync()
+        {
+            const string testCode = @"
+class C
+{
+    void Method((int, int) c)
+    {
+        _ = c is (1, 1) or (2, 2);
+        _ = c is (1, 1) and (1, 1);
+        _ = c is not (2, 2);
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
