@@ -8,7 +8,6 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.SpacingRules;
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;

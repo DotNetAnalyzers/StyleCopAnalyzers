@@ -11,7 +11,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Settings.ObjectModel;
     using Xunit;
-    using Xunit.Sdk;
 
     public class SA1402ForDelegateUnitTests : SA1402ForNonBlockDeclarationUnitTestsBase
     {

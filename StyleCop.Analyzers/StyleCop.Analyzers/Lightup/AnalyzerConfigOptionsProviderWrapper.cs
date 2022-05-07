@@ -7,7 +7,6 @@ namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Diagnostics;
 
     internal readonly struct AnalyzerConfigOptionsProviderWrapper
     {
