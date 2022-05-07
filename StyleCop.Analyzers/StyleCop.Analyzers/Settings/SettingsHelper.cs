@@ -25,10 +25,6 @@ namespace StyleCop.Analyzers
         internal const string SettingsFileName = "stylecop.json";
         internal const string AltSettingsFileName = ".stylecop.json";
 
-        private static SourceTextValueProvider<StyleCopSettings> SettingsValueProvider { get; } =
-            new SourceTextValueProvider<StyleCopSettings>(
-                text => GetStyleCopSettings(options: null, tree: null, SettingsFileName, text, DeserializationFailureBehavior.ReturnDefaultSettings));
-
         /// <summary>
         /// Gets the StyleCop settings.
         /// </summary>
