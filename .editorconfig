@@ -102,3 +102,4 @@ csharp_style_conditional_delegate_call = true:suggestion
 dotnet_diagnostic.IDE0005.severity = warning      # Remove unnecessary import
 dotnet_diagnostic.IDE0051.severity = warning      # Remove unused private member
 dotnet_diagnostic.IDE0052.severity = warning      # Remove unread private member
+dotnet_diagnostic.IDE0059.severity = warning      # Remove unnecessary value assignment

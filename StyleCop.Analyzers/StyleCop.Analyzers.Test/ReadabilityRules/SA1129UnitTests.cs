@@ -154,12 +154,6 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                Diagnostic().WithLocation(0),
-                Diagnostic().WithLocation(1),
-            };
-
             await new CSharpTest
             {
                 TestState =
