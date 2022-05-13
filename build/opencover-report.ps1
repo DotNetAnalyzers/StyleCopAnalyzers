@@ -43,6 +43,7 @@ $target_dll_csharp7 = "..\StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp7\bin
 $target_dll_csharp8 = "..\StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp8\bin\$Configuration\net472\StyleCop.Analyzers.Test.CSharp8.dll"
 $target_dll_csharp9 = "..\StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp9\bin\$Configuration\net472\StyleCop.Analyzers.Test.CSharp9.dll"
 $target_dll_csharp10 = "..\StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp10\bin\$Configuration\net472\StyleCop.Analyzers.Test.CSharp10.dll"
+$target_dll_csharp11 = "..\StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp11\bin\$Configuration\net472\StyleCop.Analyzers.Test.CSharp11.dll"
 
 If (Test-Path $report_folder) {
 	Remove-Item -Recurse -Force $report_folder
@@ -143,6 +144,24 @@ If (($AppVeyor -or $Azure) -and -not $?) {
 	-mergebyhash -mergeoutput `
 	-target:"$xunit_runner_console_net472" `
 	-targetargs:"$target_dll_csharp10 -noshadow $AppVeyorArg -xml StyleCopAnalyzers.CSharp10.xunit.xml"
+
+If (($AppVeyor -or $Azure) -and -not $?) {
+	$host.UI.WriteErrorLine('Build failed; coverage analysis may be incomplete.')
+	$exitCode = $LASTEXITCODE
+}
+
+&$opencover_console `
+	-register:$register_mode `
+	-threshold:1 -oldStyle `
+	-returntargetcode `
+	-hideskipped:All `
+	-filter:"+[StyleCop*]*" `
+	-excludebyattribute:*.ExcludeFromCodeCoverage* `
+	-excludebyfile:*\*Designer.cs `
+	-output:"$report_folder\OpenCover.StyleCopAnalyzers.xml" `
+	-mergebyhash -mergeoutput `
+	-target:"$xunit_runner_console_net472" `
+	-targetargs:"$target_dll_csharp11 -noshadow $AppVeyorArg -xml StyleCopAnalyzers.CSharp11.xunit.xml"
 
 If (($AppVeyor -or $Azure) -and -not $?) {
 	$host.UI.WriteErrorLine('Build failed; coverage analysis may be incomplete.')
