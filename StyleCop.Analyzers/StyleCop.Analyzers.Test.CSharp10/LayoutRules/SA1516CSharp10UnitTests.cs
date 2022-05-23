@@ -126,7 +126,8 @@ public enum Foobar
                 },
                 FixedCode = fixedCode,
             };
-            var expectedDiagnostic = new[] {
+            var expectedDiagnostic = new[]
+            {
                 Diagnostic().WithLocation(0),
                 Diagnostic().WithLocation(1),
                 Diagnostic().WithLocation(2),
