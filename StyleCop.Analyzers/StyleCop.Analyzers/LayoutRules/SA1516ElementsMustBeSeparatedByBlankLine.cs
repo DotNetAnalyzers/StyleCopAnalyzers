@@ -216,13 +216,35 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             var namespaceDeclaration = (BaseNamespaceDeclarationSyntaxWrapper)context.Node;
 
+            var usings = namespaceDeclaration.Usings;
             var members = namespaceDeclaration.Members;
 
+            HandleUsings(context, usings, settings);
             HandleMemberList(context, members);
+
+            if (namespaceDeclaration.Externs.Count > 0)
+            {
+                ReportIfThereIsNoBlankLine(context, namespaceDeclaration.Name, namespaceDeclaration.Externs[0]);
+            }
+
+            if (namespaceDeclaration.Usings.Count > 0)
+            {
+                ReportIfThereIsNoBlankLine(context, namespaceDeclaration.Name, namespaceDeclaration.Usings[0]);
+
+                if (namespaceDeclaration.Externs.Count > 0)
+                {
+                    ReportIfThereIsNoBlankLine(context, namespaceDeclaration.Externs[namespaceDeclaration.Externs.Count - 1], namespaceDeclaration.Usings[0]);
+                }
+            }
 
             if (members.Count > 0)
             {
                 ReportIfThereIsNoBlankLine(context, namespaceDeclaration.Name, members[0]);
+
+                if (namespaceDeclaration.Usings.Count > 0)
+                {
+                    ReportIfThereIsNoBlankLine(context, usings[usings.Count - 1], members[0]);
+                }
             }
         }
 

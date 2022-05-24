@@ -16,96 +16,75 @@ namespace StyleCop.Analyzers.Test.CSharp10.LayoutRules
 
     public class SA1516CSharp10UnitTests : SA1516CSharp9UnitTests
     {
-        private const string CorrectCode = @"extern alias corlib;
-
-using System;
-using System.Linq;
-using a = System.Collections.Generic;
-
-namespace Foo;
-
-public class Bar
-{
-    public string Test1;
-    public string Test2;
-    public string Test3;
-
-    public string TestProperty1 { get; set; }
-
-    public string TestProperty2 { get; set; }
-    /// <summary>
-    /// A summary.
-    /// </summary>
-    public string TestProperty3 { get; set; }
-
-    public string TestProperty4
-    {
-        get
-        {
-            return Test1;
-        }
-
-        set
-        {
-            Test1 = value;
-        }
-    }
-
-    public string FooValue, BarValue;
-
-    [Obsolete]
-    public enum TestEnum
-    {
-        Value1,
-        Value2
-    }
-}
-
-public enum Foobar
-{
-
-}
-";
-
         /// <summary>
-        /// Verifies that SA1516 is not reported for code with correct blank lines.
+        /// Verifies that SA1516 is reported for usings and extern alias outside a file scoped namespace.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         [WorkItem(3512, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3512")]
-        public async Task TestFileScopedNamespaceCorrectSpacingAsync()
-        {
-            await VerifyCSharpDiagnosticAsync(CorrectCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Verifies that SA1516 is reported for code with missing correct blank lines.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        [WorkItem(3512, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3512")]
-        public async Task TestFileScopedNamespaceWrongSpacingAsync()
+        public async Task TestThatDiagnosticIIsReportedOnUsingsAndExternAliasOutsideFileScopedNamespaceAsync()
         {
             var testCode = @"extern alias corlib;
-{|#0:using|} System;
+[|using|] System;
 using System.Linq;
-using a = System.Collections.Generic;
-{|#1:namespace|} Foo;
-{|#2:public|} class Bar
-{
-}
-{|#3:public|} enum Foobar
-{
-}
+using a = System.Collections;
+[|namespace|] Foo;
 ";
 
             var fixedCode = @"extern alias corlib;
 
 using System;
 using System.Linq;
-using a = System.Collections.Generic;
+using a = System.Collections;
 
 namespace Foo;
+";
+
+            await VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that SA1516 is reported for usings inside a file scoped namespace.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3512, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3512")]
+        public async Task TestThatDiagnosticIIsReportedOnSpacingWithUsingsInsideFileScopedNamespaceAsync()
+        {
+            var testCode = @"namespace Foo;
+[|using|] System;
+using System.Linq;
+using a = System.Collections;
+";
+
+            var fixedCode = @"namespace Foo;
+
+using System;
+using System.Linq;
+using a = System.Collections;
+";
+
+            await VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that SA1516 is reported for member declarations inside a file scoped namespace.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3512, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3512")]
+        public async Task TestThatDiagnosticIIsReportedOnMemberDeclarationsInsideFileScopedNamespaceAsync()
+        {
+            var testCode = @"namespace Foo;
+[|public|] class Bar
+{
+}
+[|public|] enum Foobar
+{
+}
+";
+
+            var fixedCode = @"namespace Foo;
 
 public class Bar
 {
@@ -116,6 +95,138 @@ public enum Foobar
 }
 ";
 
+            await VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that SA1516 is reported for usings and member declarations inside a file scoped namespace.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3512, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3512")]
+        public async Task TestThatDiagnosticIIsReportedOnUsingsAndMemberDeclarationsInsideFileScopedNamespaceAsync()
+        {
+            var testCode = @"namespace Foo;
+[|using|] System;
+using System.Linq;
+using a = System.Collections;
+[|public|] class Bar
+{
+}
+[|public|] enum Foobar
+{
+}
+";
+
+            var fixedCode = @"namespace Foo;
+
+using System;
+using System.Linq;
+using a = System.Collections;
+
+public class Bar
+{
+}
+
+public enum Foobar
+{
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that SA1516 is reported extern alias inside a file scoped namespace.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3512, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3512")]
+        public async Task TestThatDiagnosticIIsReportedOnExternAliasInsideFileScopedNamespaceAsync()
+        {
+            var testCode = @"namespace Foo;
+[|extern|] alias corlib;
+";
+
+            var fixedCode = @"namespace Foo;
+
+extern alias corlib;
+";
+
+            await VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that SA1516 is reported extern alias and usings inside a file scoped namespace.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3512, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3512")]
+        public async Task TestThatDiagnosticIIsReportedOnExternAliasAndUsingsInsideFileScopedNamespaceAsync()
+        {
+            var testCode = @"namespace Foo;
+[|extern|] alias corlib;
+[|using|] System;
+using System.Linq;
+using a = System.Collections;
+";
+
+            var fixedCode = @"namespace Foo;
+
+extern alias corlib;
+
+using System;
+using System.Linq;
+using a = System.Collections;
+";
+
+            await VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that SA1516 is reported extern alias, usings and member declarations
+        /// inside a file scoped namespace.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3512, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3512")]
+        public async Task TestThatDiagnosticIIsReportedOnExternAliasUsingsAndMemberDeclarationsInsideFileScopedNamespaceAsync()
+        {
+            var testCode = @"namespace Foo;
+[|extern|] alias corlib;
+[|using|] System;
+using System.Linq;
+using a = System.Collections;
+[|public|] class Bar
+{
+}
+[|public|] enum Foobar
+{
+}
+";
+
+            var fixedCode = @"namespace Foo;
+
+extern alias corlib;
+
+using System;
+using System.Linq;
+using a = System.Collections;
+
+public class Bar
+{
+}
+
+public enum Foobar
+{
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        private static Task VerifyCSharpFixAsync(string testCode, string fixedCode)
+        {
             var test = new CSharpTest(LanguageVersion.CSharp10)
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
@@ -126,15 +237,8 @@ public enum Foobar
                 },
                 FixedCode = fixedCode,
             };
-            var expectedDiagnostic = new[]
-            {
-                Diagnostic().WithLocation(0),
-                Diagnostic().WithLocation(1),
-                Diagnostic().WithLocation(2),
-                Diagnostic().WithLocation(3),
-            };
-            test.TestState.ExpectedDiagnostics.AddRange(expectedDiagnostic);
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+
+            return test.RunAsync(CancellationToken.None);
         }
     }
 }
