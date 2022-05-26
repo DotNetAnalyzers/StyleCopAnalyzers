@@ -859,7 +859,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 .WithTrailingTrivia(
                     SyntaxFactory.CarriageReturnLineFeed);
 
-            context.AddSource(nodeData.WrapperName + ".g.cs", SourceText.From(wrapperNamespace.ToFullString(), Encoding.UTF8));
+            context.AddSource(nodeData.WrapperName + ".g.cs", wrapperNamespace.GetText(Encoding.UTF8));
         }
 
         private void GenerateSyntaxWrapperHelper(in SourceProductionContext context, ImmutableArray<NodeData> wrapperTypes)
@@ -1246,7 +1246,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 .WithTrailingTrivia(
                     SyntaxFactory.CarriageReturnLineFeed);
 
-            context.AddSource("SyntaxWrapperHelper.g.cs", SourceText.From(wrapperNamespace.ToFullString(), Encoding.UTF8));
+            context.AddSource("SyntaxWrapperHelper.g.cs", wrapperNamespace.GetText(Encoding.UTF8));
         }
 
         private sealed class SyntaxData

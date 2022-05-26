@@ -579,7 +579,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 .WithTrailingTrivia(
                     SyntaxFactory.CarriageReturnLineFeed);
 
-            context.AddSource(node.WrapperName + ".g.cs", SourceText.From(wrapperNamespace.ToFullString(), Encoding.UTF8));
+            context.AddSource(node.WrapperName + ".g.cs", wrapperNamespace.GetText(Encoding.UTF8));
         }
 
         private void GenerateOperationWrapperHelper(in SourceProductionContext context, ImmutableArray<InterfaceData> wrapperTypes)
@@ -787,7 +787,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 .WithTrailingTrivia(
                     SyntaxFactory.CarriageReturnLineFeed);
 
-            context.AddSource("OperationWrapperHelper.g.cs", SourceText.From(wrapperNamespace.ToFullString(), Encoding.UTF8));
+            context.AddSource("OperationWrapperHelper.g.cs", wrapperNamespace.GetText(Encoding.UTF8));
         }
 
         private void GenerateOperationKindEx(in SourceProductionContext context, ImmutableArray<InterfaceData> wrapperTypes)
@@ -840,7 +840,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 .WithTrailingTrivia(
                     SyntaxFactory.CarriageReturnLineFeed);
 
-            context.AddSource("OperationKindEx.g.cs", SourceText.From(wrapperNamespace.ToFullString(), Encoding.UTF8));
+            context.AddSource("OperationKindEx.g.cs", wrapperNamespace.GetText(Encoding.UTF8));
         }
 
         private sealed class DocumentData
