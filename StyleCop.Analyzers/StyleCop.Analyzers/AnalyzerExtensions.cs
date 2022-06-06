@@ -26,10 +26,10 @@ namespace StyleCop.Analyzers
         public static void RegisterSyntaxTreeAction(this AnalysisContext context, Action<SyntaxTreeAnalysisContext, StyleCopSettings> action)
         {
             context.RegisterSyntaxTreeAction(
-                context =>
+                c =>
                 {
-                    StyleCopSettings settings = context.GetStyleCopSettings(context.CancellationToken);
-                    action(context, settings);
+                    StyleCopSettings settings = c.GetStyleCopSettings(c.CancellationToken);
+                    action(c, settings);
                 });
         }
 
@@ -42,10 +42,10 @@ namespace StyleCop.Analyzers
         public static void RegisterSyntaxTreeAction(this CompilationStartAnalysisContext context, Action<SyntaxTreeAnalysisContext, StyleCopSettings> action)
         {
             context.RegisterSyntaxTreeAction(
-                context =>
+                c =>
                 {
-                    StyleCopSettings settings = context.GetStyleCopSettings(context.CancellationToken);
-                    action(context, settings);
+                    StyleCopSettings settings = c.GetStyleCopSettings(c.CancellationToken);
+                    action(c, settings);
                 });
         }
 
@@ -81,10 +81,10 @@ namespace StyleCop.Analyzers
             where TLanguageKindEnum : struct
         {
             context.RegisterSyntaxNodeAction(
-                context =>
+                c =>
                 {
-                    StyleCopSettings settings = context.GetStyleCopSettings(context.CancellationToken);
-                    action(context, settings);
+                    StyleCopSettings settings = c.GetStyleCopSettings(c.CancellationToken);
+                    action(c, settings);
                 },
                 syntaxKinds);
         }
@@ -121,10 +121,10 @@ namespace StyleCop.Analyzers
             where TLanguageKindEnum : struct
         {
             context.RegisterSyntaxNodeAction(
-                context =>
+                c =>
                 {
-                    StyleCopSettings settings = context.GetStyleCopSettings(context.CancellationToken);
-                    action(context, settings);
+                    StyleCopSettings settings = c.GetStyleCopSettings(c.CancellationToken);
+                    action(c, settings);
                 },
                 syntaxKinds);
         }
