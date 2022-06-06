@@ -14,6 +14,7 @@ OpenCover.Symbols/
 .nuget/NuGet.exe
 build/nuget/
 *.log
+*.binlog
 
 # Visual Studio performance tools
 *.psess
