@@ -28,7 +28,7 @@ namespace StyleCop.Analyzers
             context.RegisterSyntaxTreeAction(
                 c =>
                 {
-                    StyleCopSettings settings = c.GetStyleCopSettings(c.CancellationToken);
+                    StyleCopSettings settings = context.GetStyleCopSettings(c.Options, c.Tree, c.CancellationToken);
                     action(c, settings);
                 });
         }
@@ -44,7 +44,7 @@ namespace StyleCop.Analyzers
             context.RegisterSyntaxTreeAction(
                 c =>
                 {
-                    StyleCopSettings settings = c.GetStyleCopSettings(c.CancellationToken);
+                    StyleCopSettings settings = context.GetStyleCopSettings(c.Options, c.Tree, c.CancellationToken);
                     action(c, settings);
                 });
         }
@@ -83,7 +83,7 @@ namespace StyleCop.Analyzers
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    StyleCopSettings settings = c.GetStyleCopSettings(c.CancellationToken);
+                    StyleCopSettings settings = context.GetStyleCopSettings(c.Options, c.Node.SyntaxTree, c.CancellationToken);
                     action(c, settings);
                 },
                 syntaxKinds);
@@ -123,7 +123,7 @@ namespace StyleCop.Analyzers
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    StyleCopSettings settings = c.GetStyleCopSettings(c.CancellationToken);
+                    StyleCopSettings settings = context.GetStyleCopSettings(c.Options, c.Node.SyntaxTree, c.CancellationToken);
                     action(c, settings);
                 },
                 syntaxKinds);
