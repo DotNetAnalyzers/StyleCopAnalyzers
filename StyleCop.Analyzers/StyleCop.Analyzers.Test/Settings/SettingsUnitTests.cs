@@ -388,7 +388,7 @@ namespace StyleCop.Analyzers.Test.Settings
             Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
         }
 
-        private static async Task<SyntaxTreeAnalysisContext> CreateAnalysisContextAsync(string stylecopJSON, string settingsFileName = SettingsHelper.SettingsFileName)
+        private static async Task<SyntaxTreeAnalysisContext> CreateAnalysisContextAsync(string stylecopJSON, string settingsFileName = SettingsJsonHelper.SettingsFileName)
         {
             var projectId = ProjectId.CreateNewId();
             var documentId = DocumentId.CreateNewId(projectId);

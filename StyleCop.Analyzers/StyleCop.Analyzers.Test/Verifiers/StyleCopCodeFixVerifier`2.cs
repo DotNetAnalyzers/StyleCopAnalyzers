@@ -233,7 +233,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
             /// <value>
             /// The name of the settings file to use.
             /// </value>
-            public string SettingsFileName { get; set; } = SettingsHelper.SettingsFileName;
+            public string SettingsFileName { get; set; } = SettingsJsonHelper.SettingsFileName;
 
             /// <summary>
             /// Gets the list of diagnostic identifier that will be explicitly enabled in the compilation options.

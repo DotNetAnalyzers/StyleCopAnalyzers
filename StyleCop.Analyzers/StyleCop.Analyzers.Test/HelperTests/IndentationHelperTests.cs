@@ -176,7 +176,7 @@ namespace StyleCop.Analyzers.Test.HelperTests
 }}
 ";
 
-                solution = solution.AddAdditionalDocument(documentId, SettingsHelper.SettingsFileName, settings);
+                solution = solution.AddAdditionalDocument(documentId, SettingsJsonHelper.SettingsFileName, settings);
             }
 
             return solution.GetDocument(documentId);

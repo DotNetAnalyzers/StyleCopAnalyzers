@@ -64,7 +64,7 @@ namespace StyleCop.Analyzers.Settings
             var workspace = project.Solution.Workspace;
 
             // check if the settings file already exists
-            if (project.AdditionalDocuments.Any(document => SettingsHelper.IsStyleCopSettingsFile(document.Name)))
+            if (project.AdditionalDocuments.Any(document => SettingsJsonHelper.IsStyleCopSettingsFile(document.Name)))
             {
                 return SpecializedTasks.CompletedTask;
             }
@@ -105,7 +105,7 @@ namespace StyleCop.Analyzers.Settings
 
             var newDocumentId = DocumentId.CreateNewId(project.Id);
 
-            var newSolution = solution.AddAdditionalDocument(newDocumentId, SettingsHelper.SettingsFileName, DefaultSettingsFileContent);
+            var newSolution = solution.AddAdditionalDocument(newDocumentId, SettingsJsonHelper.SettingsFileName, DefaultSettingsFileContent);
 
             return Task.FromResult(newSolution);
         }

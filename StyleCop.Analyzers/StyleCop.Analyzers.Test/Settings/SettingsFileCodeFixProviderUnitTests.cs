@@ -41,7 +41,7 @@ namespace NamespaceName
                 RemainingDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
                 FixedAdditionalFiles =
                 {
-                    (SettingsHelper.SettingsFileName, SettingsFileCodeFixProvider.DefaultSettingsFileContent),
+                    (SettingsJsonHelper.SettingsFileName, SettingsFileCodeFixProvider.DefaultSettingsFileContent),
                 },
                 Settings = null,
             };
@@ -65,7 +65,7 @@ namespace NamespaceName
                 RemainingDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
                 FixedAdditionalFiles =
                 {
-                    (SettingsHelper.SettingsFileName, SettingsFileCodeFixProvider.DefaultSettingsFileContent),
+                    (SettingsJsonHelper.SettingsFileName, SettingsFileCodeFixProvider.DefaultSettingsFileContent),
                 },
                 Settings = null,
             };
@@ -87,7 +87,7 @@ namespace NamespaceName
                 ExpectedDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
                 FixedCode = TestCode,
                 Settings = "{}",
-                SettingsFileName = SettingsHelper.SettingsFileName,
+                SettingsFileName = SettingsJsonHelper.SettingsFileName,
             };
 
             test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
@@ -107,7 +107,7 @@ namespace NamespaceName
                 ExpectedDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
                 FixedCode = TestCode,
                 Settings = "{}",
-                SettingsFileName = SettingsHelper.AltSettingsFileName,
+                SettingsFileName = SettingsJsonHelper.AltSettingsFileName,
             };
 
             test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
