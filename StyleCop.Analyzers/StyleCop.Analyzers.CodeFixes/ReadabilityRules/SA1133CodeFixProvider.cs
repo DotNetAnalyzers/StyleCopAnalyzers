@@ -116,7 +116,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
                 var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, fixAllContext.CancellationToken);
 
-                var nodes = diagnostics.Select(diagnostic => syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true).FirstAncestorOrSelf<AttributeListSyntax>());
+                // 🐉 Need to eagerly evaluate this with ToList() to ensure nodes are not garbage collected between the
+                // call to TrackNodes and subsequent enumeration.
+                var nodes = diagnostics.Select(diagnostic => syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true).FirstAncestorOrSelf<AttributeListSyntax>()).ToList();
 
                 var newRoot = syntaxRoot.TrackNodes(nodes);
 
