@@ -7,7 +7,6 @@ namespace StyleCop.Analyzers.Test.CSharp9.MaintainabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.MaintainabilityRules;
     using Xunit;
@@ -64,7 +63,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.MaintainabilityRules
 }
 ";
 
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp9, testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

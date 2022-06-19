@@ -8,7 +8,6 @@ namespace StyleCop.Analyzers.Test.CSharp9.OrderingRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.OrderingRules;
     using Xunit;
@@ -33,7 +32,7 @@ using System.Threading;
 return 0;
 ";
 
-            await new CSharpTest(LanguageVersion.CSharp9)
+            await new CSharpTest()
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestState =

@@ -7,7 +7,6 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp7.SpacingRules;
     using Xunit;
@@ -56,7 +55,6 @@ class C
             };
 
             await VerifyCSharpFixAsync(
-                LanguageVersion.CSharp8,
                 testCode,
                 expectedResults,
                 fixedCode,

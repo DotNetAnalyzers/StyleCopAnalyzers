@@ -5,7 +5,6 @@ namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CSharp;
     using StyleCop.Analyzers.Test.CSharp8.ReadabilityRules;
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
@@ -32,7 +31,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
     }
 }";
 
-            await new CSharpTest(LanguageVersion.CSharp9)
+            await new CSharpTest()
             {
                 ReferenceAssemblies = GenericAnalyzerTest.ReferenceAssembliesNet50,
                 TestCode = testCode,

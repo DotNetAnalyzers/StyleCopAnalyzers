@@ -7,7 +7,6 @@ namespace StyleCop.Analyzers.Test.CSharp9.NamingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.NamingRules;
     using StyleCop.Analyzers.Test.Verifiers;
@@ -41,7 +40,7 @@ public record R(int A)
 }
 ";
 
-            var test = new CSharpTest(LanguageVersion.CSharp9)
+            var test = new CSharpTest()
             {
                 ReferenceAssemblies = GenericAnalyzerTest.ReferenceAssembliesNet50,
                 TestCode = testCode,
@@ -75,7 +74,7 @@ public record R(int A)
 }
 ";
 
-            await new CSharpTest(LanguageVersion.CSharp9)
+            await new CSharpTest()
             {
                 ReferenceAssemblies = GenericAnalyzerTest.ReferenceAssembliesNet50,
                 TestCode = testCode,

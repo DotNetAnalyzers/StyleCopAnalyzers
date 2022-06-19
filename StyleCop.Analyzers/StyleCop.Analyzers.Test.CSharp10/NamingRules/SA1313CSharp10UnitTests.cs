@@ -7,7 +7,6 @@ namespace StyleCop.Analyzers.Test.CSharp10.NamingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CSharp;
     using StyleCop.Analyzers.Test.CSharp9.NamingRules;
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
@@ -43,7 +42,7 @@ public record {typeKind} R(int A)
 }}
 ";
 
-            await new CSharpTest(LanguageVersion.CSharp10)
+            await new CSharpTest()
             {
                 ReferenceAssemblies = GenericAnalyzerTest.ReferenceAssembliesNet60,
                 TestCode = testCode,

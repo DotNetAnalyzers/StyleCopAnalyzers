@@ -6,7 +6,6 @@
 namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
 {
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.SpacingRules;
     using Xunit;
@@ -18,7 +17,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
         {
             string statementWithoutSpace = "int a = new();";
 
-            await this.TestKeywordStatementAsync(statementWithoutSpace, DiagnosticResult.EmptyDiagnosticResults, statementWithoutSpace, languageVersion: LanguageVersion.CSharp9).ConfigureAwait(false);
+            await this.TestKeywordStatementAsync(statementWithoutSpace, DiagnosticResult.EmptyDiagnosticResults, statementWithoutSpace).ConfigureAwait(false);
         }
     }
 }
