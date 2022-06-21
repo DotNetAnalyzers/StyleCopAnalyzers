@@ -8,7 +8,6 @@ namespace StyleCop.Analyzers.Test.CSharp9.LayoutRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.LayoutRules;
     using Xunit;
@@ -36,7 +35,7 @@ using System.Threading;
 return 0;
 ";
 
-            var test = new CSharpTest(LanguageVersion.CSharp9)
+            var test = new CSharpTest()
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestState =
@@ -63,7 +62,7 @@ return 0;
 return i;
 ";
 
-            await new CSharpTest(LanguageVersion.CSharp9)
+            await new CSharpTest()
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestState =
@@ -90,7 +89,7 @@ return i;
 record A();
 ";
 
-            var test = new CSharpTest(LanguageVersion.CSharp9)
+            var test = new CSharpTest()
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestState =

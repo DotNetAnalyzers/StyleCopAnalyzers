@@ -7,7 +7,6 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.SpacingRules;
     using Xunit;
@@ -33,7 +32,7 @@ public record MyQuery1() : BaseQuery<object>;
 public record MyQuery2() : BaseQuery<object>;
 public record MyQuery3() : BaseQuery<object>;";
 
-            await new CSharpTest(LanguageVersion.CSharp9)
+            await new CSharpTest()
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 ExpectedDiagnostics =
