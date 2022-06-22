@@ -243,5 +243,31 @@ public class TestConstants
 
             await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that the analyzer will properly handle documentation followed by a comment,
+        /// even if there is another non-adjacent comment earlier.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3481, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3481")]
+        public async Task TestDocumentationFollowedByCommentWhenThereIsAlsoAnEarlierCommentAsync()
+        {
+            var testCode = @"
+public class Class1 // Comment 1
+{
+    public Class1()
+    {
+    }
+
+    /// <summary>
+    /// Gets value.
+    /// </summary>
+    // Comment 2
+    public double Value { get; }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
