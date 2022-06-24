@@ -80,7 +80,7 @@ public class C
         _ = r1 with
         {
             X = 0,
-            r2 = [|r2 with
+            [|r2 = r2 with
             {
                 [|Y = 0|]
             }|]
