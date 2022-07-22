@@ -53,6 +53,33 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
 
         /// <summary>
+        /// Verifies that the analyzer will properly handle valid dereference.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3538, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3538")]
+        public async Task TestNotReportedWhenFirstInForeachWithoutBracesAsync()
+        {
+            var testCode = @"
+public unsafe class TestClass
+{
+    internal void TestMethod(Obj[] objs)
+    {
+        foreach (var o in objs)
+            *o.I = 1;
+    }
+
+    internal struct Obj
+    {
+        public int* I;
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that the analyzer will properly handle invalid dereference and access of symbols.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
