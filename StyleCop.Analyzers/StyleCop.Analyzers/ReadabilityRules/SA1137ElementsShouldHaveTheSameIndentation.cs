@@ -526,9 +526,22 @@ namespace StyleCop.Analyzers.ReadabilityRules
             SyntaxTrivia closeBraceIndentationTrivia = closeBraceToken.LeadingTrivia.LastOrDefault();
             string closeBraceIndentation = closeBraceIndentationTrivia.IsKind(SyntaxKind.WhitespaceTrivia) ? closeBraceIndentationTrivia.ToString() : string.Empty;
 
-            if (!string.Equals(openBraceIndentation, closeBraceIndentation, StringComparison.Ordinal))
+            if (closeBraceToken.IsOnlyPrecededByWhitespaceInLine())
             {
-                ReportDiagnostic(context, closeBraceToken, closeBraceIndentationTrivia, closeBraceIndentation, openBraceIndentation);
+                if (!string.Equals(openBraceIndentation, closeBraceIndentation, StringComparison.Ordinal))
+                {
+                    ReportDiagnostic(context, closeBraceToken, closeBraceIndentationTrivia, closeBraceIndentation, openBraceIndentation);
+                }
+            }
+            else
+            {
+                // In this case, the closing brace does not seem to have any leading trivia,
+                // but the previous token can have trailing trivia.
+                SyntaxTrivia prevTokenTrailingTrivia = closeBraceToken.GetPreviousToken().TrailingTrivia.FirstOrDefault();
+                string prevTokenTrailingWhitespace = prevTokenTrailingTrivia.IsKind(SyntaxKind.WhitespaceTrivia) ? prevTokenTrailingTrivia.ToString() : string.Empty;
+                string expectedCloseBraceIndentation = Environment.NewLine + openBraceIndentation;
+
+                ReportDiagnostic(context, closeBraceToken, prevTokenTrailingTrivia, prevTokenTrailingWhitespace, expectedCloseBraceIndentation);
             }
         }
 

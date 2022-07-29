@@ -2050,5 +2050,50 @@ public class TestClass2
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3296, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3296")]
+        public async Task VerifyInitializerBracesAreCheckedAndFixedWhenClosingBraceIsNotOnSeparateLineAsync()
+        {
+            var testCode = @"
+class C
+{
+    void M()
+    {
+        var x1 = new[]
+        {
+            42 };
+        var x2 = new[]
+        {
+            42};
+    }
+}
+";
+
+            var fixedCode = @"
+class C
+{
+    void M()
+    {
+        var x1 = new[]
+        {
+            42
+        };
+        var x2 = new[]
+        {
+            42
+        };
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(8, 15),
+                Diagnostic().WithLocation(11, 15),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
