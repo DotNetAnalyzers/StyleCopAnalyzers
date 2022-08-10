@@ -101,32 +101,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
-        public async Task TestAdditionMultiplicationParenthesizedAsync()
-        {
-            var testCode = @"public class Foo
-{
-    public void Bar()
-    {
-        int x = 1 + (1 * 1);
-    }
-}";
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestMultiplicationAdditionParenthesizedAsync()
-        {
-            var testCode = @"public class Foo
-{
-    public void Bar()
-    {
-        int x = (1 * 1) * 1;
-    }
-}";
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
         public async Task TestMultipleViolationsAsync()
         {
             var testCode = @"public class Foo
