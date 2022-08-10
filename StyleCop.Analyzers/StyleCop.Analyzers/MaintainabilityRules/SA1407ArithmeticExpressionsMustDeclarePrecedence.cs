@@ -34,7 +34,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     /// operator precedence. The example below shows multiple arithmetic operations surrounded by parenthesis:</para>
     ///
     /// <code language="csharp">
-    /// int x = 5 + (y * ((b / 6) % z)) - 2;
+    /// int x = 5 + (y * b / 6 % z) - 2;
     /// </code>
     ///
     /// <para>Inserting parenthesis makes the code more obvious and easy to understand, and removes the need for the
@@ -109,8 +109,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             bool isSameFamily = false;
             isSameFamily |= (operatorToken1.IsKind(SyntaxKind.PlusToken) || operatorToken1.IsKind(SyntaxKind.MinusToken))
                 && (operatorToken2.IsKind(SyntaxKind.PlusToken) || operatorToken2.IsKind(SyntaxKind.MinusToken));
-            isSameFamily |= (operatorToken1.IsKind(SyntaxKind.AsteriskToken) || operatorToken1.IsKind(SyntaxKind.SlashToken))
-                && (operatorToken2.IsKind(SyntaxKind.AsteriskToken) || operatorToken2.IsKind(SyntaxKind.SlashToken));
+            isSameFamily |= (operatorToken1.IsKind(SyntaxKind.AsteriskToken) || operatorToken1.IsKind(SyntaxKind.SlashToken) || operatorToken1.IsKind(SyntaxKind.PercentToken))
+                && (operatorToken2.IsKind(SyntaxKind.AsteriskToken) || operatorToken2.IsKind(SyntaxKind.SlashToken) || operatorToken2.IsKind(SyntaxKind.PercentToken));
             isSameFamily |= (operatorToken1.IsKind(SyntaxKind.LessThanLessThanToken) || operatorToken1.IsKind(SyntaxKind.GreaterThanGreaterThanToken))
                 && (operatorToken2.IsKind(SyntaxKind.LessThanLessThanToken) || operatorToken2.IsKind(SyntaxKind.GreaterThanGreaterThanToken));
 

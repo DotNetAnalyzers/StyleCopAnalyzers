@@ -37,6 +37,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         [InlineData("/", "*", "/")]
         [InlineData("/", "/", "/")]
         [InlineData("*", "/", "*")]
+        [InlineData("%", "%", "%")]
+        [InlineData("*", "%", "*")]
+        [InlineData("/", "*", "%")]
         public async Task TestMultiplicativeAsync(string op1, string op2, string op3)
         {
             var testCode = $@"public class Foo
@@ -69,8 +72,10 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         [Theory]
         [InlineData("+", "*")]
         [InlineData("+", "/")]
+        [InlineData("+", "%")]
         [InlineData("-", "*")]
         [InlineData("-", "/")]
+        [InlineData("-", "%")]
         public async Task TestAdditiveMultiplicativeAsync(string op1, string op2)
         {
             var testCode = $@"public class Foo
@@ -98,6 +103,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         [InlineData("*", "-")]
         [InlineData("/", "+")]
         [InlineData("/", "-")]
+        [InlineData("%", "+")]
+        [InlineData("%", "-")]
         public async Task TestMultiplicativeAdditiveAsync(string op1, string op2)
         {
             var testCode = $@"public class Foo
@@ -194,7 +201,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     {
         int b = 1;
         int x = (1 * 1) + (1 * 1);
-        int y = 5 + ((x * b / 6) % x) - 2;
+        int y = 5 + (x * b / 6 % x) - 2;
         // the following test makes sure the code fix doesn't alter spacing
         int z = y==1 ? (4*3)+-1 :0;
     }
@@ -204,7 +211,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 {
                     Diagnostic().WithLocation(6, 17),
                     Diagnostic().WithLocation(6, 25),
-                    Diagnostic().WithLocation(7, 21),
                     Diagnostic().WithLocation(7, 21),
                     Diagnostic().WithLocation(9, 24),
                 };
