@@ -15,87 +15,107 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
     public class SA1407UnitTests
     {
-        [Fact]
-        public async Task TestAdditionAndSubtractionAsync()
+        [Theory]
+        [InlineData("+", "+", "+")]
+        [InlineData("-", "+", "-")]
+        [InlineData("-", "-", "-")]
+        [InlineData("+", "-", "+")]
+        public async Task TestAdditiveAsync(string op1, string op2, string op3)
         {
-            var testCode = @"public class Foo
-{
+            var testCode = $@"public class Foo
+{{
     public void Bar()
-    {
-        int x = 1 - 1 + 1 - 1;
-    }
-}";
+    {{
+        int x = 1 {op1} 1 {op2} 1 {op3} 1;
+    }}
+}}";
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestMultiplicationAndDivisionAsync()
+        [Theory]
+        [InlineData("*", "*", "*")]
+        [InlineData("/", "*", "/")]
+        [InlineData("/", "/", "/")]
+        [InlineData("*", "/", "*")]
+        public async Task TestMultiplicativeAsync(string op1, string op2, string op3)
         {
-            var testCode = @"public class Foo
-{
+            var testCode = $@"public class Foo
+{{
     public void Bar()
-    {
-        int x = 1 / 1 * 1 / 1;
-    }
-}";
+    {{
+        int x = 1 {op1} 1 {op2} 1 {op3} 1;
+    }}
+}}";
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestLeftShiftRightShiftAsync()
+        [Theory]
+        [InlineData(">>", ">>", ">>")]
+        [InlineData("<<", ">>", "<<")]
+        [InlineData("<<", "<<", "<<")]
+        [InlineData(">>", "<<", ">>")]
+        public async Task TestShiftAsync(string op1, string op2, string op3)
         {
-            var testCode = @"public class Foo
-{
+            var testCode = $@"public class Foo
+{{
     public void Bar()
-    {
-        int x = 1 >> 1 << 1 >> 1;
-    }
-}";
+    {{
+        int x = 1 {op1} 1 {op2} 1 {op3} 1;
+    }}
+}}";
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestAdditionMultiplicationAsync()
+        [Theory]
+        [InlineData("+", "*")]
+        [InlineData("+", "/")]
+        [InlineData("-", "*")]
+        [InlineData("-", "/")]
+        public async Task TestAdditiveMultiplicativeAsync(string op1, string op2)
         {
-            var testCode = @"public class Foo
-{
+            var testCode = $@"public class Foo
+{{
     public void Bar()
-    {
-        int x = 1 + 1 * 1;
-    }
-}";
+    {{
+        int x = 1 {op1} 1 {op2} 1;
+    }}
+}}";
             DiagnosticResult expected = Diagnostic().WithLocation(5, 21);
 
-            var fixedCode = @"public class Foo
-{
+            var fixedCode = $@"public class Foo
+{{
     public void Bar()
-    {
-        int x = 1 + (1 * 1);
-    }
-}";
+    {{
+        int x = 1 {op1} (1 {op2} 1);
+    }}
+}}";
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestMultiplicationAdditionAsync()
+        [Theory]
+        [InlineData("*", "+")]
+        [InlineData("*", "-")]
+        [InlineData("/", "+")]
+        [InlineData("/", "-")]
+        public async Task TestMultiplicativeAdditiveAsync(string op1, string op2)
         {
-            var testCode = @"public class Foo
-{
+            var testCode = $@"public class Foo
+{{
     public void Bar()
-    {
-        int x = 1 * 1 + 1;
-    }
-}";
+    {{
+        int x = 1 {op1} 1 {op2} 1;
+    }}
+}}";
             DiagnosticResult expected = Diagnostic().WithLocation(5, 17);
 
-            var fixedCode = @"public class Foo
-{
+            var fixedCode = $@"public class Foo
+{{
     public void Bar()
-    {
-        int x = (1 * 1) + 1;
-    }
-}";
+    {{
+        int x = (1 {op1} 1) {op2} 1;
+    }}
+}}";
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
