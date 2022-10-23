@@ -120,6 +120,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 isRelevant = topLevelTypes.Contains(TopLevelType.Interface);
                 break;
             case SyntaxKind.StructDeclaration:
+            case SyntaxKindEx.RecordStructDeclaration:
                 isRelevant = topLevelTypes.Contains(TopLevelType.Struct);
                 break;
             case SyntaxKind.EnumDeclaration:
