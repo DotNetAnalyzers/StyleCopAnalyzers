@@ -14,6 +14,7 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind NotKeyword = (SyntaxKind)8440;
         public const SyntaxKind ManagedKeyword = (SyntaxKind)8445;
         public const SyntaxKind UnmanagedKeyword = (SyntaxKind)8446;
+        public const SyntaxKind FileKeyword = (SyntaxKind)8449;
         public const SyntaxKind NullableKeyword = (SyntaxKind)8486;
         public const SyntaxKind EnableKeyword = (SyntaxKind)8487;
         public const SyntaxKind WarningsKeyword = (SyntaxKind)8488;
