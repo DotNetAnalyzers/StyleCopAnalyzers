@@ -19,6 +19,7 @@ namespace StyleCop.Analyzers.Lightup
         public const LanguageVersion CSharp8 = (LanguageVersion)800;
         public const LanguageVersion CSharp9 = (LanguageVersion)900;
         public const LanguageVersion CSharp10 = (LanguageVersion)1000;
+        public const LanguageVersion CSharp11 = (LanguageVersion)1100;
         public const LanguageVersion LatestMajor = (LanguageVersion)int.MaxValue - 2;
         public const LanguageVersion Preview = (LanguageVersion)int.MaxValue - 1;
         public const LanguageVersion Latest = (LanguageVersion)int.MaxValue;

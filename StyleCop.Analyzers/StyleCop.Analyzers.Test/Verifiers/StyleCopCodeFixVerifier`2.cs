@@ -5,6 +5,7 @@
 
 namespace StyleCop.Analyzers.Test.Verifiers
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -94,6 +95,10 @@ namespace StyleCop.Analyzers.Test.Verifiers
             private const int DefaultIndentationSize = 4;
             private const int DefaultTabSize = 4;
             private const bool DefaultUseTabs = false;
+
+            private int indentationSize = DefaultIndentationSize;
+            private bool useTabs = DefaultUseTabs;
+            private int tabSize = DefaultTabSize;
 
             static CSharpTest()
             {
@@ -200,7 +205,24 @@ namespace StyleCop.Analyzers.Test.Verifiers
             /// <value>
             /// The value of the <see cref="FormattingOptions.IndentationSize"/> to apply to the test workspace.
             /// </value>
-            public int IndentationSize { get; set; } = DefaultIndentationSize;
+            public int IndentationSize
+            {
+                get
+                {
+                    return this.indentationSize;
+                }
+
+                set
+                {
+                    if (this.indentationSize == value)
+                    {
+                        return;
+                    }
+
+                    this.indentationSize = value;
+                    this.UpdateGlobalAnalyzerConfig();
+                }
+            }
 
             /// <summary>
             /// Gets or sets a value indicating whether the <see cref="FormattingOptions.UseTabs"/> option is applied to the
@@ -209,7 +231,24 @@ namespace StyleCop.Analyzers.Test.Verifiers
             /// <value>
             /// The value of the <see cref="FormattingOptions.UseTabs"/> to apply to the test workspace.
             /// </value>
-            public bool UseTabs { get; set; } = DefaultUseTabs;
+            public bool UseTabs
+            {
+                get
+                {
+                    return this.useTabs;
+                }
+
+                set
+                {
+                    if (this.useTabs == value)
+                    {
+                        return;
+                    }
+
+                    this.useTabs = value;
+                    this.UpdateGlobalAnalyzerConfig();
+                }
+            }
 
             /// <summary>
             /// Gets or sets the value of the <see cref="FormattingOptions.TabSize"/> to apply to the test workspace.
@@ -217,7 +256,24 @@ namespace StyleCop.Analyzers.Test.Verifiers
             /// <value>
             /// The value of the <see cref="FormattingOptions.TabSize"/> to apply to the test workspace.
             /// </value>
-            public int TabSize { get; set; } = DefaultTabSize;
+            public int TabSize
+            {
+                get
+                {
+                    return this.tabSize;
+                }
+
+                set
+                {
+                    if (this.tabSize == value)
+                    {
+                        return;
+                    }
+
+                    this.tabSize = value;
+                    this.UpdateGlobalAnalyzerConfig();
+                }
+            }
 
             /// <summary>
             /// Gets or sets the content of the settings file to use.
@@ -276,16 +332,37 @@ namespace StyleCop.Analyzers.Test.Verifiers
                 return new[] { codeFixProvider };
             }
 
-            // TODO: Remove when c# 11 is a supported language version
-            private LanguageVersion? GetDefaultLanguageVersion()
+            private void UpdateGlobalAnalyzerConfig()
             {
-                // Temporary fix since c# 11 is not yet the default language version
-                // in the c# 11 test project.
-                if (LightupHelpers.SupportsCSharp11)
+                if (!LightupHelpers.SupportsCSharp11)
                 {
-                    return LanguageVersionEx.Preview;
+                    // Options support workspace options in this version
+                    // https://github.com/dotnet/roslyn/issues/66779
+                    return;
                 }
 
+                if (this.TestState.AnalyzerConfigFiles.Count == 1
+                    && this.TestState.AnalyzerConfigFiles[0].filename == "/.globalconfig")
+                {
+                    this.TestState.AnalyzerConfigFiles.RemoveAt(0);
+                }
+                else if (this.TestState.AnalyzerConfigFiles.Count > 1
+                    || (this.TestState.AnalyzerConfigFiles.Count > 0 && this.TestState.AnalyzerConfigFiles[0].filename != "/.globalconfig"))
+                {
+                    throw new NotSupportedException("Additional configuration files are not currently supported by the test");
+                }
+
+                this.TestState.AnalyzerConfigFiles.Add(("/.globalconfig", $@"is_global = true
+
+indent_size = {this.IndentationSize}
+indent_style = {(this.UseTabs ? "tab" : "space")}
+tab_width = {this.TabSize}
+"));
+            }
+
+            // NOTE: If needed, this method can be temporarily updated to default to a preview version
+            private LanguageVersion? GetDefaultLanguageVersion()
+            {
                 return null;
             }
         }
