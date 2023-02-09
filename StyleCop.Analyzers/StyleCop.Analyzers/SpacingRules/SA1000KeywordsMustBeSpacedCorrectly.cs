@@ -87,6 +87,7 @@ namespace StyleCop.Analyzers.SpacingRules
             {
                 switch (token.Kind())
                 {
+                case SyntaxKindEx.AndKeyword:
                 case SyntaxKind.AwaitKeyword:
                 case SyntaxKind.CaseKeyword:
                 case SyntaxKind.CatchKeyword:
@@ -98,9 +99,12 @@ namespace StyleCop.Analyzers.SpacingRules
                 case SyntaxKind.IfKeyword:
                 case SyntaxKind.InKeyword:
                 case SyntaxKind.IntoKeyword:
+                case SyntaxKind.IsKeyword:
                 case SyntaxKind.JoinKeyword:
                 case SyntaxKind.LetKeyword:
                 case SyntaxKind.LockKeyword:
+                case SyntaxKindEx.NotKeyword:
+                case SyntaxKindEx.OrKeyword:
                 case SyntaxKind.OrderByKeyword:
                 case SyntaxKind.OutKeyword:
                 case SyntaxKind.RefKeyword:
