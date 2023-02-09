@@ -119,13 +119,23 @@ namespace StyleCop.Analyzers.SpacingRules
 
                 case SyntaxKind.CheckedKeyword:
                 case SyntaxKind.UncheckedKeyword:
-                    if (token.GetNextToken().IsKind(SyntaxKind.OpenBraceToken))
+                    switch (token.Parent.Kind())
                     {
+                    case SyntaxKind.CheckedStatement:
+                    case SyntaxKind.UncheckedStatement:
+                    case SyntaxKind.OperatorDeclaration:
+                    case SyntaxKind.ConversionOperatorDeclaration:
                         HandleRequiredSpaceToken(ref context, token);
-                    }
-                    else
-                    {
+                        break;
+
+                    case SyntaxKind.CheckedExpression:
+                    case SyntaxKind.UncheckedExpression:
                         HandleDisallowedSpaceToken(ref context, token);
+                        break;
+
+                    default:
+                        // So far an unknown case, so we have no opinion yet
+                        break;
                     }
 
                     break;
