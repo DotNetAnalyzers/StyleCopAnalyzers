@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.OrderingRules
 {
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using StyleCop.Analyzers.Lightup;
 
     internal static class ModifierOrderHelper
     {
@@ -21,7 +22,7 @@ namespace StyleCop.Analyzers.OrderingRules
             None,
 
             /// <summary>
-            /// Represents any of access modifiers, i.e <see langword="public"/>, <see langword="protected"/>, <see langword="internal"/>, <see langword="private"/>.
+            /// Represents any of access modifiers, i.e <see langword="public"/>, <see langword="protected"/>, <see langword="internal"/>, <see langword="private"/>, <see langword="file"/>.
             /// </summary>
             Access,
 
@@ -46,6 +47,7 @@ namespace StyleCop.Analyzers.OrderingRules
             case SyntaxKind.ProtectedKeyword:
             case SyntaxKind.InternalKeyword:
             case SyntaxKind.PrivateKeyword:
+            case SyntaxKindEx.FileKeyword:
                 result = ModifierType.Access;
                 break;
 
