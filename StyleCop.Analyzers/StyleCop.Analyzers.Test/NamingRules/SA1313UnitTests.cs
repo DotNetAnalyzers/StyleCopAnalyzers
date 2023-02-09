@@ -278,6 +278,57 @@ public class Test : ITest
         }
 
         [Fact]
+        [WorkItem(3555, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3555")]
+        public async Task TestNoViolationOnExplicitlyImplementedInterfaceParameterNameAsync()
+        {
+            var testCode = @"
+public interface ITest
+{
+    void Method(int param1, int {|#0:Param2|});
+}
+
+public class Test : ITest
+{
+    void ITest.Method(int param1, int Param2)
+    {
+    }
+}";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(0).WithArguments("Param2"),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3555, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3555")]
+        public async Task TestViolationOnRenamedExplicitlyImplementedInterfaceParameterNameAsync()
+        {
+            var testCode = @"
+public interface ITest
+{
+    void Method(int param1, int {|#0:Param2|});
+}
+
+public class Test : ITest
+{
+    public void Method(int param1, int {|#1:Other|})
+    {
+    }
+}";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(0).WithArguments("Param2"),
+                Diagnostic().WithLocation(1).WithArguments("Other"),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestNoViolationOnAbstractParameterNameAsync()
         {
             var testCode = @"
