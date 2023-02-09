@@ -149,5 +149,50 @@ class C
                 fixedCode,
                 CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3556, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3556")]
+        public async Task TestInPositionalPatternAfterTagAsync()
+        {
+            var testCode = @"
+internal class TestClass
+    {
+        private void TestMethod(object obj)
+        {
+            _ = obj is ClassWithTuple { Tag:{|#0:(|} true, false) };
+        }
+
+        public class ClassWithTuple
+        {
+            public (bool Item1, bool Item2) Tag { get; set; }
+        }
+    }
+";
+            var fixedCode = @"
+internal class TestClass
+    {
+        private void TestMethod(object obj)
+        {
+            _ = obj is ClassWithTuple { Tag: (true, false) };
+        }
+
+        public class ClassWithTuple
+        {
+            public (bool Item1, bool Item2) Tag { get; set; }
+        }
+    }
+";
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(DescriptorPreceded).WithLocation(0),
+                Diagnostic(DescriptorNotFollowed).WithLocation(0),
+            };
+
+            await VerifyCSharpFixAsync(
+                testCode,
+                expectedResults,
+                fixedCode,
+                CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

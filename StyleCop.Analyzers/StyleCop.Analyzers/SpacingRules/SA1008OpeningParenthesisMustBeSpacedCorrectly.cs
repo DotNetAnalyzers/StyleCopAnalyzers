@@ -191,7 +191,8 @@ namespace StyleCop.Analyzers.SpacingRules
                     || prevToken.IsKind(SyntaxKindEx.OrKeyword)
                     || prevToken.IsKind(SyntaxKindEx.AndKeyword)
                     || prevToken.IsKind(SyntaxKindEx.NotKeyword)
-                    || prevToken.IsKind(SyntaxKind.CommaToken);
+                    || prevToken.IsKind(SyntaxKind.CommaToken)
+                    || prevToken.IsKind(SyntaxKind.ColonToken);
                 break;
 
             case SyntaxKindEx.ParenthesizedPattern:
