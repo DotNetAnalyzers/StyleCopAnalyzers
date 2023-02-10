@@ -20,6 +20,9 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.6.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" PrivateAssets="all" />
+
+    <!-- Increase the NuGet.Framworks version to the minimum supported by the net472 build of the testing library -->
+    <PackageReference Include="NuGet.Frameworks" Version="6.3.1" />
   </ItemGroup>
 
   <ItemGroup>
