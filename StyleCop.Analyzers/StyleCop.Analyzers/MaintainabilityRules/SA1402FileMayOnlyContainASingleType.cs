@@ -113,12 +113,14 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             switch (node.Kind())
             {
             case SyntaxKind.ClassDeclaration:
+            case SyntaxKindEx.RecordDeclaration:
                 isRelevant = topLevelTypes.Contains(TopLevelType.Class);
                 break;
             case SyntaxKind.InterfaceDeclaration:
                 isRelevant = topLevelTypes.Contains(TopLevelType.Interface);
                 break;
             case SyntaxKind.StructDeclaration:
+            case SyntaxKindEx.RecordStructDeclaration:
                 isRelevant = topLevelTypes.Contains(TopLevelType.Struct);
                 break;
             case SyntaxKind.EnumDeclaration:
