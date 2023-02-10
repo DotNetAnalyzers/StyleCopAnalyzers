@@ -5,12 +5,12 @@ namespace StyleCop.Analyzers.Test.CSharp10.MaintainabilityRules
 {
     using StyleCop.Analyzers.Test.MaintainabilityRules;
 
-    public class SA1402CSharp10ForRecordStructUnitTests : SA1402ForBlockDeclarationUnitTestsBase
+    public class SA1402CSharp10ForRecordClassUnitTests : SA1402ForBlockDeclarationUnitTestsBase
     {
-        public override string Keyword => "record struct";
+        public override string Keyword => "record class";
 
-        protected override string SettingKeyword => "struct";
+        protected override string SettingKeyword => "class";
 
-        protected override bool IsConfiguredAsTopLevelTypeByDefault => false;
+        protected override bool IsConfiguredAsTopLevelTypeByDefault => true;
     }
 }
