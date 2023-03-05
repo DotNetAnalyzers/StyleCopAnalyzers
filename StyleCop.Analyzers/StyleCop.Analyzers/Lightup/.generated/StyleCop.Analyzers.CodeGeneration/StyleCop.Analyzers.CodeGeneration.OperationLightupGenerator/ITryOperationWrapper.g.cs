@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct ITryOperationWrapper : IOperationWrapper
+    internal readonly struct ITryOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.ITryOperation";
         private static readonly Type WrappedType;
@@ -36,6 +36,8 @@ namespace StyleCop.Analyzers.Lightup
         public ImmutableArray<IOperation> Catches => CatchesAccessor(this.WrappedOperation);
         public IBlockOperationWrapper Finally => IBlockOperationWrapper.FromOperation(FinallyAccessor(this.WrappedOperation));
         public ILabelSymbol ExitLabel => ExitLabelAccessor(this.WrappedOperation);
+        public static explicit operator ITryOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(ITryOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static ITryOperationWrapper FromOperation(IOperation operation)
         {
             if (operation == null)

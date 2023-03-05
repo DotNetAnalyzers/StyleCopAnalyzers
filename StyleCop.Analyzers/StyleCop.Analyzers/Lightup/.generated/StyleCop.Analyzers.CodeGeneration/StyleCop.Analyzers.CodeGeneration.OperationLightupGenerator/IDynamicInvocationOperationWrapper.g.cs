@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct IDynamicInvocationOperationWrapper : IOperationWrapper
+    internal readonly struct IDynamicInvocationOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IDynamicInvocationOperation";
         private static readonly Type WrappedType;
@@ -30,6 +30,8 @@ namespace StyleCop.Analyzers.Lightup
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public IOperation Operation => OperationAccessor(this.WrappedOperation);
         public ImmutableArray<IOperation> Arguments => ArgumentsAccessor(this.WrappedOperation);
+        public static explicit operator IDynamicInvocationOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(IDynamicInvocationOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IDynamicInvocationOperationWrapper FromOperation(IOperation operation)
         {
             if (operation == null)

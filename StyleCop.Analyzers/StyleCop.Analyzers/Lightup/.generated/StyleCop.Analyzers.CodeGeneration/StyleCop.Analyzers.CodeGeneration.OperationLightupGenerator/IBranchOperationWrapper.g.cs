@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct IBranchOperationWrapper : IOperationWrapper
+    internal readonly struct IBranchOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IBranchOperation";
         private static readonly Type WrappedType;
@@ -28,6 +28,8 @@ namespace StyleCop.Analyzers.Lightup
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public ILabelSymbol Target => TargetAccessor(this.WrappedOperation);
         public object BranchKind => throw new NotImplementedException("Property 'IBranchOperation.BranchKind' has unsupported type 'BranchKind'");
+        public static explicit operator IBranchOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(IBranchOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IBranchOperationWrapper FromOperation(IOperation operation)
         {
             if (operation == null)

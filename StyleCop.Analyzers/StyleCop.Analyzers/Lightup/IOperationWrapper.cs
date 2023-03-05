@@ -3,28 +3,75 @@
 
 namespace StyleCop.Analyzers.Lightup
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
-    internal interface IOperationWrapper
+    internal readonly struct IOperationWrapper
     {
-        IOperation? WrappedOperation { get; }
+        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.IOperation";
+        private static readonly Func<IOperation, IOperation> ParentAccessor;
+        private static readonly Func<IOperation, IEnumerable<IOperation>> ChildrenAccessor;
+        private static readonly Func<IOperation, string> LanguageAccessor;
+        private static readonly Func<IOperation, bool> IsImplicitAccessor;
+        private static readonly Func<IOperation, SemanticModel?> SemanticModelAccessor;
+        private readonly IOperation operation;
 
-        ////IOperationWrapper Parent { get; }
+        static IOperationWrapper()
+        {
+            ParentAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation>(typeof(IOperation), nameof(Parent));
+            ChildrenAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IEnumerable<IOperation>>(typeof(IOperation), nameof(Children));
+            LanguageAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, string>(typeof(IOperation), nameof(Language));
+            IsImplicitAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, bool>(typeof(IOperation), nameof(IsImplicit));
+            SemanticModelAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, SemanticModel?>(typeof(IOperation), nameof(SemanticModel));
+        }
 
-        ////OperationKind Kind { get; }
+        private IOperationWrapper(IOperation operation)
+        {
+            this.operation = operation;
+        }
 
-        ////SyntaxNode Syntax { get; }
+        public IOperation WrappedOperation => this.operation;
 
-        ITypeSymbol? Type { get; }
+        public IOperationWrapper Parent => FromOperation(ParentAccessor(this.WrappedOperation));
 
-        ////Optional<object> ConstantValue { get; }
+        public OperationKind Kind => this.WrappedOperation.Kind;
 
-        ////IEnumerable<IOperationWrapper> Children { get; }
+        public SyntaxNode Syntax => this.WrappedOperation.Syntax;
 
-        ////string Language { get; }
+        public ITypeSymbol? Type => this.WrappedOperation.Type;
 
-        ////bool IsImplicit { get; }
+        public Optional<object?> ConstantValue => this.WrappedOperation.ConstantValue;
 
-        ////SemanticModel SemanticModel { get; }
+        public IEnumerable<IOperation> Children => ChildrenAccessor(this.WrappedOperation);
+
+        ////OperationList ChildOperations { get; }
+
+        public string Language => LanguageAccessor(this.WrappedOperation);
+
+        public bool IsImplicit => IsImplicitAccessor(this.WrappedOperation);
+
+        public SemanticModel? SemanticModel => SemanticModelAccessor(this.WrappedOperation);
+
+        public static IOperationWrapper FromOperation(IOperation? operation)
+        {
+            if (operation == null)
+            {
+                return default;
+            }
+
+            return new IOperationWrapper(operation);
+        }
+
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
+        {
+            return operation != null;
+        }
+
+        internal static IOperationWrapper FromUpcast(IOperation operation)
+        {
+            return new IOperationWrapper(operation);
+        }
     }
 }

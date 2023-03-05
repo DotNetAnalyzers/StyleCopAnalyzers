@@ -310,6 +310,57 @@ namespace StyleCop.Analyzers.CodeGeneration
                     semicolonToken: SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
             }
 
+            // public static explicit operator IFieldReferenceOperationWrapper(IOperationWrapper wrapper)
+            //     => FromOperation(wrapper.WrappedOperation);
+            members = members.Add(SyntaxFactory.ConversionOperatorDeclaration(
+                attributeLists: default,
+                modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword)),
+                implicitOrExplicitKeyword: SyntaxFactory.Token(SyntaxKind.ExplicitKeyword),
+                operatorKeyword: SyntaxFactory.Token(SyntaxKind.OperatorKeyword),
+                type: SyntaxFactory.IdentifierName(node.WrapperName),
+                parameterList: SyntaxFactory.ParameterList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Parameter(
+                    attributeLists: default,
+                    modifiers: default,
+                    type: SyntaxFactory.IdentifierName("IOperationWrapper"),
+                    identifier: SyntaxFactory.Identifier("wrapper"),
+                    @default: null))),
+                body: null,
+                expressionBody: SyntaxFactory.ArrowExpressionClause(SyntaxFactory.InvocationExpression(
+                    expression: SyntaxFactory.IdentifierName("FromOperation"),
+                    argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            expression: SyntaxFactory.IdentifierName("wrapper"),
+                            name: SyntaxFactory.IdentifierName("WrappedOperation"))))))),
+                semicolonToken: SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
+
+            // public static implicit operator IOperationWrapper(IFieldReferenceOperationWrapper wrapper)
+            //     => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
+            members = members.Add(SyntaxFactory.ConversionOperatorDeclaration(
+                attributeLists: default,
+                modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword)),
+                implicitOrExplicitKeyword: SyntaxFactory.Token(SyntaxKind.ImplicitKeyword),
+                operatorKeyword: SyntaxFactory.Token(SyntaxKind.OperatorKeyword),
+                type: SyntaxFactory.IdentifierName("IOperationWrapper"),
+                parameterList: SyntaxFactory.ParameterList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Parameter(
+                    attributeLists: default,
+                    modifiers: default,
+                    type: SyntaxFactory.IdentifierName(node.WrapperName),
+                    identifier: SyntaxFactory.Identifier("wrapper"),
+                    @default: null))),
+                body: null,
+                expressionBody: SyntaxFactory.ArrowExpressionClause(SyntaxFactory.InvocationExpression(
+                    expression: SyntaxFactory.MemberAccessExpression(
+                        SyntaxKind.SimpleMemberAccessExpression,
+                        expression: SyntaxFactory.IdentifierName("IOperationWrapper"),
+                        name: SyntaxFactory.IdentifierName("FromUpcast")),
+                    argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            expression: SyntaxFactory.IdentifierName("wrapper"),
+                            name: SyntaxFactory.IdentifierName("WrappedOperation"))))))),
+                semicolonToken: SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
+
             if (node.BaseInterface is { } baseDefinition)
             {
                 var inheritedProperties = baseDefinition.Properties;
@@ -556,7 +607,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 modifiers: SyntaxTokenList.Create(SyntaxFactory.Token(SyntaxKind.InternalKeyword)).Add(SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)),
                 identifier: SyntaxFactory.Identifier(node.WrapperName),
                 typeParameterList: null,
-                baseList: SyntaxFactory.BaseList(SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>(SyntaxFactory.SimpleBaseType(SyntaxFactory.IdentifierName("IOperationWrapper")))),
+                baseList: null,
                 constraintClauses: default,
                 members: members);
             var wrapperNamespace = SyntaxFactory.NamespaceDeclaration(
@@ -636,6 +687,21 @@ namespace StyleCop.Analyzers.CodeGeneration
                                                     SyntaxFactory.IdentifierName("Type"),
                                                     SyntaxFactory.IdentifierName("Type"),
                                                 })))))))))));
+
+            // builder.Add(typeof(IOperationWrapper), typeof(IOperation));
+            staticCtorStatements = staticCtorStatements.Add(SyntaxFactory.ExpressionStatement(
+                SyntaxFactory.InvocationExpression(
+                    expression: SyntaxFactory.MemberAccessExpression(
+                        SyntaxKind.SimpleMemberAccessExpression,
+                        expression: SyntaxFactory.IdentifierName("builder"),
+                        name: SyntaxFactory.IdentifierName("Add")),
+                    argumentList: SyntaxFactory.ArgumentList(
+                        SyntaxFactory.SeparatedList(
+                            new[]
+                            {
+                                SyntaxFactory.Argument(SyntaxFactory.TypeOfExpression(SyntaxFactory.IdentifierName("IOperationWrapper"))),
+                                SyntaxFactory.Argument(SyntaxFactory.TypeOfExpression(SyntaxFactory.IdentifierName("IOperation"))),
+                            })))));
 
             foreach (var node in wrapperTypes)
             {

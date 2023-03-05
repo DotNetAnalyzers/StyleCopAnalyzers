@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct IRelationalCaseClauseOperationWrapper : IOperationWrapper
+    internal readonly struct IRelationalCaseClauseOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IRelationalCaseClauseOperation";
         private static readonly Type WrappedType;
@@ -28,6 +28,8 @@ namespace StyleCop.Analyzers.Lightup
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public IOperation Value => ValueAccessor(this.WrappedOperation);
         public object Relation => throw new NotImplementedException("Property 'IRelationalCaseClauseOperation.Relation' has unsupported type 'BinaryOperatorKind'");
+        public static explicit operator IRelationalCaseClauseOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(IRelationalCaseClauseOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public object CaseKind => ((ICaseClauseOperationWrapper)this).CaseKind;
         public ILabelSymbol Label => ((ICaseClauseOperationWrapper)this).Label;
         public static explicit operator IRelationalCaseClauseOperationWrapper(ICaseClauseOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
