@@ -5,6 +5,7 @@
 
 namespace StyleCop.Analyzers.Helpers
 {
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Lightup;
@@ -14,6 +15,17 @@ namespace StyleCop.Analyzers.Helpers
     /// </summary>
     internal static class LanguageFeatureHelpers
     {
+        /// <summary>
+        /// Checks if the tuple language feature is supported.
+        /// </summary>
+        /// <param name="context">The analysis context that will be checked.</param>
+        /// <returns>True if tuples are supported by the compiler.</returns>
+        [SuppressMessage("MicrosoftCodeAnalysisPerformance", "RS1012:Start action has no registered actions", Justification = "This is not a start action method.")]
+        internal static bool SupportsTuples(this CompilationStartAnalysisContext context)
+        {
+            return context.Compilation is CSharpCompilation { LanguageVersion: >= LanguageVersionEx.CSharp7 };
+        }
+
         /// <summary>
         /// Checks if the tuple language feature is supported.
         /// </summary>
