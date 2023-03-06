@@ -136,13 +136,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             var memberAccessExpression = (MemberAccessExpressionSyntax)invocationExpression.Expression;
-
-            var symbolInfo = context.SemanticModel.GetSymbolInfo(memberAccessExpression.Expression);
-            if (symbolInfo.Symbol is INamedTypeSymbol namedTypeSymbol
-                && namedTypeSymbol.ToDisplayString(DisplayFormat) == "System.ValueTuple"
-                && !context.Node.IsInExpressionTree(context.SemanticModel, expressionType, context.CancellationToken))
+            if (memberAccessExpression.Name.Identifier.ValueText == "Create")
             {
-                if (memberAccessExpression.Name.Identifier.ValueText == "Create")
+                var symbolInfo = context.SemanticModel.GetSymbolInfo(memberAccessExpression.Expression);
+                if (symbolInfo.Symbol is INamedTypeSymbol namedTypeSymbol
+                    && namedTypeSymbol.ToDisplayString(DisplayFormat) == "System.ValueTuple"
+                    && !context.Node.IsInExpressionTree(context.SemanticModel, expressionType, context.CancellationToken))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, memberAccessExpression.GetLocation()));
                 }
@@ -209,7 +208,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void CheckGenericName(SyntaxNodeAnalysisContext context, INamedTypeSymbol expressionType, GenericNameSyntax genericNameSyntax, Location reportLocation)
         {
-            if (IsValueTupleWithLanguageRepresentation(context, expressionType, genericNameSyntax))
+            if (genericNameSyntax.Identifier.ValueText == "ValueTuple"
+                && IsValueTupleWithLanguageRepresentation(context, expressionType, genericNameSyntax))
             {
                 var location = reportLocation ?? genericNameSyntax.GetLocation();
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
