@@ -69,6 +69,36 @@ stylecop.unrecognizedValue = 3
             Assert.Equal(OptionSetting.Allow, styleCopSettings.OrderingRules.BlankLinesBetweenUsingGroups);
         }
 
+        [Fact]
+        public async Task VerifyFileHeaderTemplateFromEditorConfigAsync()
+        {
+            var settings = @"root = true
+
+[*]
+file_header_template = Line 1\nLine 2.
+";
+            var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+
+            Assert.Equal("Line 1\nLine 2.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
+        }
+
+        [Fact]
+        public async Task VerifyStyleCopDocumentationCopyrightTextFromEditorConfigAsync()
+        {
+            var settings = @"root = true
+
+[*]
+stylecop.documentation.copyrightText = Line 1\nLine 2.
+";
+            var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+
+            Assert.Equal("Line 1\nLine 2.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
+        }
+
         [Theory]
         [CombinatorialData]
         public async Task VerifyBooleanDocumentationSettingsFromEditorConfigAsync(bool value)
