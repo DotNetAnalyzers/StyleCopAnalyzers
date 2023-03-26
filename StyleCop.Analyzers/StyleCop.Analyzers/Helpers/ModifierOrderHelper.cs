@@ -69,6 +69,7 @@ namespace StyleCop.Analyzers.OrderingRules
             case SyntaxKind.AsyncKeyword:
             case SyntaxKind.PartialKeyword:
             case SyntaxKind.RefKeyword:
+            case SyntaxKindEx.RequiredKeyword:
                 result = ModifierType.Other;
                 break;
             }
