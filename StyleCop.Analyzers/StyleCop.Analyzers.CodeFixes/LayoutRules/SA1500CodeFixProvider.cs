@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.LayoutRules
 {
     using System;
@@ -55,15 +57,15 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
-            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
+            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
             var braceToken = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-            var tokenReplacements = GenerateBraceFixes(settings.Indentation, ImmutableArray.Create(braceToken));
+            var tokenReplacements = GenerateBraceFixes(settings, ImmutableArray.Create(braceToken));
 
             var newSyntaxRoot = syntaxRoot.ReplaceTokens(tokenReplacements.Keys, (originalToken, rewrittenToken) => tokenReplacements[originalToken]);
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
 
-        private static Dictionary<SyntaxToken, SyntaxToken> GenerateBraceFixes(IndentationSettings indentationSettings, ImmutableArray<SyntaxToken> braceTokens)
+        private static Dictionary<SyntaxToken, SyntaxToken> GenerateBraceFixes(StyleCopSettings settings, ImmutableArray<SyntaxToken> braceTokens)
         {
             var tokenReplacements = new Dictionary<SyntaxToken, SyntaxToken>();
 
@@ -72,7 +74,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 var braceLine = LocationHelpers.GetLineSpan(braceToken).StartLinePosition.Line;
                 var braceReplacementToken = braceToken;
 
-                var indentationSteps = DetermineIndentationSteps(indentationSettings, braceToken);
+                var indentationSteps = DetermineIndentationSteps(settings.Indentation, braceToken);
 
                 var previousToken = braceToken.GetPreviousToken();
 
@@ -102,19 +104,23 @@ namespace StyleCop.Analyzers.LayoutRules
                             AddReplacement(tokenReplacements, previousToken, previousToken.WithTrailingTrivia(previousTokenNewTrailingTrivia));
                         }
 
-                        braceReplacementToken = braceReplacementToken.WithLeadingTrivia(IndentationHelper.GenerateWhitespaceTrivia(indentationSettings, indentationSteps));
+                        braceReplacementToken = braceReplacementToken.WithLeadingTrivia(IndentationHelper.GenerateWhitespaceTrivia(settings.Indentation, indentationSteps));
                     }
 
                     // Check if we need to apply a fix after the brace. No fix is needed when:
                     // - The closing brace is followed by a semi-colon or closing paren
                     // - The closing brace is the last token in the file
+                    // - The closing brace is followed by the while expression of a do/while loop and the
+                    //   allowDoWhileOnClosingBrace setting is enabled.
                     var nextToken = braceToken.GetNextToken();
                     var nextTokenLine = nextToken.IsKind(SyntaxKind.None) ? -1 : LocationHelpers.GetLineSpan(nextToken).StartLinePosition.Line;
                     var isMultiDimensionArrayInitializer = braceToken.IsKind(SyntaxKind.OpenBraceToken) && braceToken.Parent.IsKind(SyntaxKind.ArrayInitializerExpression) && braceToken.Parent.Parent.IsKind(SyntaxKind.ArrayInitializerExpression);
+                    var allowDoWhileOnClosingBrace = settings.LayoutRules.AllowDoWhileOnClosingBrace && nextToken.IsKind(SyntaxKind.WhileKeyword) && (braceToken.Parent?.IsKind(SyntaxKind.Block) ?? false) && (braceToken.Parent.Parent?.IsKind(SyntaxKind.DoStatement) ?? false);
 
                     if ((nextTokenLine == braceLine) &&
                         (!braceToken.IsKind(SyntaxKind.CloseBraceToken) || !IsValidFollowingToken(nextToken)) &&
-                        !isMultiDimensionArrayInitializer)
+                        !isMultiDimensionArrayInitializer &&
+                        !allowDoWhileOnClosingBrace)
                     {
                         var sharedTrivia = nextToken.LeadingTrivia.WithoutTrailingWhitespace();
                         var newTrailingTrivia = braceReplacementToken.TrailingTrivia
@@ -135,7 +141,7 @@ namespace StyleCop.Analyzers.LayoutRules
                                 newIndentationSteps = Math.Max(0, newIndentationSteps - 1);
                             }
 
-                            AddReplacement(tokenReplacements, nextToken, nextToken.WithLeadingTrivia(IndentationHelper.GenerateWhitespaceTrivia(indentationSettings, newIndentationSteps)));
+                            AddReplacement(tokenReplacements, nextToken, nextToken.WithLeadingTrivia(IndentationHelper.GenerateWhitespaceTrivia(settings.Indentation, newIndentationSteps)));
                         }
 
                         braceReplacementToken = braceReplacementToken.WithTrailingTrivia(newTrailingTrivia);
@@ -282,9 +288,9 @@ namespace StyleCop.Analyzers.LayoutRules
                     .OrderBy(token => token.SpanStart)
                     .ToImmutableArray();
 
-                var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, fixAllContext.CancellationToken);
+                var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, fixAllContext.CancellationToken);
 
-                var tokenReplacements = GenerateBraceFixes(settings.Indentation, tokens);
+                var tokenReplacements = GenerateBraceFixes(settings, tokens);
 
                 return syntaxRoot.ReplaceTokens(tokenReplacements.Keys, (originalToken, rewrittenToken) => tokenReplacements[originalToken]);
             }

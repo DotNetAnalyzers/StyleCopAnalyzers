@@ -1,11 +1,12 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.SpacingRules;
     using Xunit;
@@ -41,7 +42,7 @@ class C
     }
 }";
 
-            await new CSharpTest(LanguageVersion.CSharp9)
+            await new CSharpTest()
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 ExpectedDiagnostics =
@@ -61,6 +62,24 @@ class C
                 TestCode = testCode,
                 FixedCode = fixedCode,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3476, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3476")]
+        public async Task TestLogicalTuplePatternAsync()
+        {
+            const string testCode = @"
+class C
+{
+    void Method((int, int) c)
+    {
+        _ = c is (1, 1) or (2, 2);
+        _ = c is (1, 1) and (1, 1);
+        _ = c is not (2, 2);
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

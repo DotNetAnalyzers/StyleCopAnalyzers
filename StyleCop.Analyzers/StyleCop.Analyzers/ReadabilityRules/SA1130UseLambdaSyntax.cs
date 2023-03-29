@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
@@ -96,6 +98,27 @@ namespace StyleCop.Analyzers.ReadabilityRules
             return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList(syntaxParameters));
         }
 
+        internal static int FindParameterIndex(SymbolInfo originalSymbolInfo, ArgumentSyntax argumentSyntax, BaseArgumentListSyntax argumentListSyntax)
+        {
+            // if delegate is passed as named argument of method try to find its position by argument name
+            if (argumentSyntax.NameColon != null
+                && originalSymbolInfo.Symbol is IMethodSymbol methodSymbol)
+            {
+                var calledMethodParameters = methodSymbol.Parameters;
+                var argumentIdentifier = argumentSyntax.NameColon.Name.Identifier.ValueText;
+
+                for (var i = 0; i < calledMethodParameters.Length; ++i)
+                {
+                    if (string.Equals(calledMethodParameters[i].Name, argumentIdentifier))
+                    {
+                        return i;
+                    }
+                }
+            }
+
+            return argumentListSyntax.Arguments.IndexOf(argumentSyntax);
+        }
+
         private static void HandleAnonymousMethodExpression(SyntaxNodeAnalysisContext context)
         {
             bool reportDiagnostic = true;
@@ -138,7 +161,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return false;
                 }
 
-                var argumentIndex = argumentListSyntax.Arguments.IndexOf(argumentSyntax);
+                var argumentIndex = FindParameterIndex(originalSymbolInfo, argumentSyntax, argumentListSyntax);
 
                 // Determine the parameter list from the method that is invoked, as delegates without parameters are allowed, but they cannot be replaced by a lambda without parameters.
                 var parameterList = GetDelegateParameterList(originalSymbolInfo.Symbol, argumentIndex);

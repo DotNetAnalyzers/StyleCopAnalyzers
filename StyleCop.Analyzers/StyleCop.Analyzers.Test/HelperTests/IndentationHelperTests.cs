@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.HelperTests
 {
     using System.Collections.Generic;
@@ -112,9 +114,9 @@ namespace StyleCop.Analyzers.Test.HelperTests
         {
             var testSource = $"{indentationString}public class TestClass {{}}";
             var document = await CreateTestDocumentAsync(testSource, indentationSize, false, tabSize, CancellationToken.None).ConfigureAwait(false);
-            StyleCopSettings settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, CancellationToken.None);
+            var syntaxRoot = await document.GetSyntaxRootAsync(CancellationToken.None).ConfigureAwait(false);
+            StyleCopSettings settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, CancellationToken.None);
 
-            var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
             var firstToken = syntaxRoot.GetFirstToken();
 
             Assert.Equal(expectedIndentationSteps, IndentationHelper.GetIndentationSteps(settings.Indentation, firstToken));
@@ -130,9 +132,9 @@ namespace StyleCop.Analyzers.Test.HelperTests
         {
             var testSource = "    public class TestClass {}";
             var document = await CreateTestDocumentAsync(testSource, cancellationToken: CancellationToken.None).ConfigureAwait(false);
-            StyleCopSettings settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, CancellationToken.None);
+            var syntaxRoot = await document.GetSyntaxRootAsync(CancellationToken.None).ConfigureAwait(false);
+            StyleCopSettings settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, CancellationToken.None);
 
-            var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
             var secondToken = syntaxRoot.GetFirstToken().GetNextToken();
 
             Assert.Equal(0, IndentationHelper.GetIndentationSteps(settings.Indentation, secondToken));

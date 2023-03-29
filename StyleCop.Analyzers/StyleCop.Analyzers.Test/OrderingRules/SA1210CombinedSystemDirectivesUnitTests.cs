@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Threading;
@@ -18,6 +20,16 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     /// </summary>
     public class SA1210CombinedSystemDirectivesUnitTests
     {
+        protected const string CombinedUsingDirectivesTestSettings = @"
+{
+  ""settings"": {
+    ""orderingRules"": {
+      ""systemUsingDirectivesFirst"": false
+    }
+  }
+}
+";
+
         [Fact]
         public async Task TestProperOrderedUsingDirectivesInNamespaceDeclarationAsync()
         {
@@ -212,16 +224,6 @@ using Microsoft.CodeAnalysis;
 
         private static Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
         {
-            const string CombinedUsingDirectivesTestSettings = @"
-{
-  ""settings"": {
-    ""orderingRules"": {
-      ""systemUsingDirectivesFirst"": false
-    }
-  }
-}
-";
-
             var test = new StyleCopCodeFixVerifier<SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace, UsingCodeFixProvider>.CSharpTest
             {
                 TestCode = source,

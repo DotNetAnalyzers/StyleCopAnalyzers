@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.NamingRules
 {
     using System;
@@ -49,7 +51,7 @@ namespace StyleCop.Analyzers.NamingRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> NamespaceDeclarationAction = HandleNamespaceDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> BaseNamespaceDeclarationAction = HandleBaseNamespaceDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> ClassDeclarationAction = HandleClassDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> RecordDeclarationAction = HandleRecordDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> EnumDeclarationAction = HandleEnumDeclaration;
@@ -75,9 +77,10 @@ namespace StyleCop.Analyzers.NamingRules
 
             // Note: Interfaces are handled by SA1302
             // Note: Fields are handled by SA1303 through SA1311
-            context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeAction(BaseNamespaceDeclarationAction, SyntaxKinds.BaseNamespaceDeclaration);
             context.RegisterSyntaxNodeAction(ClassDeclarationAction, SyntaxKind.ClassDeclaration);
             context.RegisterSyntaxNodeAction(RecordDeclarationAction, SyntaxKindEx.RecordDeclaration);
+            context.RegisterSyntaxNodeAction(RecordDeclarationAction, SyntaxKindEx.RecordStructDeclaration);
             context.RegisterSyntaxNodeAction(EnumDeclarationAction, SyntaxKind.EnumDeclaration);
             context.RegisterSyntaxNodeAction(EnumMemberDeclarationAction, SyntaxKind.EnumMemberDeclaration);
             context.RegisterSyntaxNodeAction(StructDeclarationAction, SyntaxKind.StructDeclaration);
@@ -90,9 +93,9 @@ namespace StyleCop.Analyzers.NamingRules
             context.RegisterSyntaxNodeAction(ParameterAction, SyntaxKind.Parameter);
         }
 
-        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        private static void HandleBaseNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
-            NameSyntax nameSyntax = ((NamespaceDeclarationSyntax)context.Node).Name;
+            NameSyntax nameSyntax = ((BaseNamespaceDeclarationSyntaxWrapper)context.Node).Name;
             CheckNamespaceNameSyntax(context, nameSyntax, settings);
         }
 
@@ -216,7 +219,7 @@ namespace StyleCop.Analyzers.NamingRules
         {
             var parameterDeclaration = (ParameterSyntax)context.Node;
             if (!parameterDeclaration.Parent.IsKind(SyntaxKind.ParameterList)
-                || !parameterDeclaration.Parent.Parent.IsKind(SyntaxKindEx.RecordDeclaration))
+                || (!parameterDeclaration.Parent.Parent.IsKind(SyntaxKindEx.RecordDeclaration) && !parameterDeclaration.Parent.Parent.IsKind(SyntaxKindEx.RecordStructDeclaration)))
             {
                 // Only positional parameters of records are treated as properties
                 return;

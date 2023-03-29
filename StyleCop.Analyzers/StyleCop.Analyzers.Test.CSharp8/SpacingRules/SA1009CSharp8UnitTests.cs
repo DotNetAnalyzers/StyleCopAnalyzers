@@ -1,14 +1,14 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp7.SpacingRules;
-    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
     using static StyleCop.Analyzers.SpacingRules.SA1009ClosingParenthesisMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -42,7 +42,7 @@ public class Foo
     }
 }";
 
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -98,7 +98,7 @@ public class Derived : Base
                 Diagnostic(DescriptorNotPreceded).WithLocation(2),
             };
 
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp8, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -122,7 +122,7 @@ public class Foo
     public IDisposable Service => this.TestMethod<IDisposable>()!;
 }";
 
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -152,7 +152,7 @@ public class Foo
     }
 }";
 
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -167,7 +167,7 @@ public class Foo
         [WorkItem(3064, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3064")]
         public async Task TestBeforeRangeExpressionAsync()
         {
-            var testCode = SpecialTypeDefinitions.IndexAndRange + @"
+            var testCode = @"
 namespace TestNamespace
 {
     using System;
@@ -177,13 +177,13 @@ namespace TestNamespace
         {
             string str = ""test"";
             int startLen = 4;
-            return str[(startLen - 1) ..];
+            return str[(startLen - 1{|#0:)|} ..];
         }
     }
 }
 ";
 
-            var fixedCode = SpecialTypeDefinitions.IndexAndRange + @"
+            var fixedCode = @"
 namespace TestNamespace
 {
     using System;
@@ -198,8 +198,14 @@ namespace TestNamespace
     }
 }
 ";
-            DiagnosticResult expected = Diagnostic(DescriptorNotFollowed).WithSpan(28, 37, 28, 38);
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp8, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+
+            await new CSharpTest()
+            {
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp31,
+                TestCode = testCode,
+                ExpectedDiagnostics = { Diagnostic(DescriptorNotFollowed).WithLocation(0) },
+                FixedCode = fixedCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

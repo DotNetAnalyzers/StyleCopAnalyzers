@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.OrderingRules
 {
     using System;
@@ -90,7 +92,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 return result;
             }
 
-            public SyntaxList<UsingDirectiveSyntax> GenerateGroupedUsings(TreeTextSpan directiveSpan, string indentation, bool withTrailingBlankLine, bool qualifyNames)
+            public SyntaxList<UsingDirectiveSyntax> GenerateGroupedUsings(TreeTextSpan directiveSpan, string indentation, bool withLeadingBlankLine, bool withTrailingBlankLine, bool qualifyNames)
             {
                 var usingList = new List<UsingDirectiveSyntax>();
                 List<SyntaxTrivia> triviaToMove = new List<SyntaxTrivia>();
@@ -107,6 +109,12 @@ namespace StyleCop.Analyzers.OrderingRules
                     usingList[0] = usingList[0].WithLeadingTrivia(newLeadingTrivia);
                 }
 
+                if (withLeadingBlankLine && usingList.Count > 0)
+                {
+                    var firstUsing = usingList[0];
+                    usingList[0] = firstUsing.WithLeadingTrivia(firstUsing.GetLeadingTrivia().Insert(0, SyntaxFactory.CarriageReturnLineFeed));
+                }
+
                 if (withTrailingBlankLine && (usingList.Count > 0))
                 {
                     var lastUsing = usingList[usingList.Count - 1];
@@ -116,7 +124,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 return SyntaxFactory.List(usingList);
             }
 
-            public SyntaxList<UsingDirectiveSyntax> GenerateGroupedUsings(List<UsingDirectiveSyntax> usingsList, string indentation, bool withTrailingBlankLine, bool qualifyNames)
+            public SyntaxList<UsingDirectiveSyntax> GenerateGroupedUsings(List<UsingDirectiveSyntax> usingsList, string indentation, bool withLeadingBlankLine, bool withTrailingBlankLine, bool qualifyNames)
             {
                 var usingList = new List<UsingDirectiveSyntax>();
                 List<SyntaxTrivia> triviaToMove = new List<SyntaxTrivia>();
@@ -131,6 +139,12 @@ namespace StyleCop.Analyzers.OrderingRules
                 {
                     var newLeadingTrivia = SyntaxFactory.TriviaList(triviaToMove).AddRange(usingList[0].GetLeadingTrivia());
                     usingList[0] = usingList[0].WithLeadingTrivia(newLeadingTrivia);
+                }
+
+                if (withLeadingBlankLine && usingList.Count > 0)
+                {
+                    var firstUsing = usingList[0];
+                    usingList[0] = firstUsing.WithLeadingTrivia(firstUsing.GetLeadingTrivia().Insert(0, SyntaxFactory.CarriageReturnLineFeed));
                 }
 
                 if (withTrailingBlankLine && (usingList.Count > 0))
@@ -467,10 +481,10 @@ namespace StyleCop.Analyzers.OrderingRules
 
             private void ProcessMembers(SyntaxList<MemberDeclarationSyntax> members)
             {
-                foreach (var namespaceDeclaration in members.OfType<NamespaceDeclarationSyntax>())
+                foreach (var namespaceDeclaration in members.Where(member => BaseNamespaceDeclarationSyntaxWrapper.IsInstance(member)))
                 {
-                    this.ProcessUsingDirectives(namespaceDeclaration.Usings);
-                    this.ProcessMembers(namespaceDeclaration.Members);
+                    this.ProcessUsingDirectives(((BaseNamespaceDeclarationSyntaxWrapper)namespaceDeclaration).Usings);
+                    this.ProcessMembers(((BaseNamespaceDeclarationSyntaxWrapper)namespaceDeclaration).Members);
                 }
             }
 

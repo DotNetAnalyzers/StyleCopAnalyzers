@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System;
@@ -125,6 +127,61 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task VerifyInvalidValueTypeCreationFromMetadataAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    public void TestMethod()
+    {
+        var v1 = [|new TestStruct()|];
+
+        System.Console.WriteLine([|new TestStruct()|]);
+    }
+}
+";
+
+            var fixedTestCode = @"public class TestClass
+{
+    public void TestMethod()
+    {
+        var v1 = default(TestStruct);
+
+        System.Console.WriteLine(default(TestStruct));
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+            };
+
+            await new CSharpTest
+            {
+                TestState =
+                {
+                    Sources = { testCode },
+                    AdditionalProjects =
+                    {
+                        ["Reference"] =
+                        {
+                            Sources =
+                            {
+                                @"public struct TestStruct { public int TestProperty { get; set; } }",
+                            },
+                        },
+                    },
+                    AdditionalProjectReferences = { "Reference" },
+                },
+                FixedState =
+                {
+                    Sources = { fixedTestCode },
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>

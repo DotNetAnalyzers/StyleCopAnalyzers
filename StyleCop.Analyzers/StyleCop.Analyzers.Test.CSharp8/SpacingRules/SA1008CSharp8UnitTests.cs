@@ -1,14 +1,14 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp7.SpacingRules;
-    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
 
     using static StyleCop.Analyzers.SpacingRules.SA1008OpeningParenthesisMustBeSpacedCorrectly;
@@ -28,50 +28,54 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(3386, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3386")]
         public async Task TestAfterRangeExpressionAsync()
         {
-            var testCode = SpecialTypeDefinitions.IndexAndRange + @"
+            var testCode = @"
 namespace TestNamespace
 {
     using System;
     public class TestClass
     {
-        public string TestMethod()
+        public void TestMethod()
         {
             string str = ""test"";
             int finalLen = 4;
-            return str[.. (finalLen - 1)];
+            var test1 = str[.. {|#0:(|}finalLen - 1)];
+            var test2 = .. {|#1:(|}int)finalLen;
         }
     }
 }
 ";
 
-            var fixedCode = SpecialTypeDefinitions.IndexAndRange + @"
+            var fixedCode = @"
 namespace TestNamespace
 {
     using System;
     public class TestClass
     {
-        public string TestMethod()
+        public void TestMethod()
         {
             string str = ""test"";
             int finalLen = 4;
-            return str[..(finalLen - 1)];
+            var test1 = str[..(finalLen - 1)];
+            var test2 = ..(int)finalLen;
         }
     }
 }
 ";
-            var expectedResults = new DiagnosticResult[]
+
+            await new CSharpTest()
             {
-                Diagnostic(DescriptorNotPreceded).WithLocation(28, 27),
-            };
-
-            await VerifyCSharpFixAsync(
-                LanguageVersion.CSharp8,
-                testCode,
-                expectedResults,
-                fixedCode,
-                CancellationToken.None).ConfigureAwait(false);
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp31,
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic(DescriptorNotPreceded).WithLocation(0),
+                    Diagnostic(DescriptorNotPreceded).WithLocation(1),
+                },
+                FixedCode = fixedCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -103,7 +107,6 @@ class C
             };
 
             await VerifyCSharpFixAsync(
-                LanguageVersion.CSharp8,
                 testCode,
                 expectedResults,
                 fixedCode,
@@ -141,7 +144,51 @@ class C
             };
 
             await VerifyCSharpFixAsync(
-                LanguageVersion.CSharp8,
+                testCode,
+                expectedResults,
+                fixedCode,
+                CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3556, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3556")]
+        public async Task TestInPositionalPatternAfterTagAsync()
+        {
+            var testCode = @"
+internal class TestClass
+    {
+        private void TestMethod(object obj)
+        {
+            _ = obj is ClassWithTuple { Tag:{|#0:(|} true, false) };
+        }
+
+        public class ClassWithTuple
+        {
+            public (bool Item1, bool Item2) Tag { get; set; }
+        }
+    }
+";
+            var fixedCode = @"
+internal class TestClass
+    {
+        private void TestMethod(object obj)
+        {
+            _ = obj is ClassWithTuple { Tag: (true, false) };
+        }
+
+        public class ClassWithTuple
+        {
+            public (bool Item1, bool Item2) Tag { get; set; }
+        }
+    }
+";
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(DescriptorPreceded).WithLocation(0),
+                Diagnostic(DescriptorNotFollowed).WithLocation(0),
+            };
+
+            await VerifyCSharpFixAsync(
                 testCode,
                 expectedResults,
                 fixedCode,

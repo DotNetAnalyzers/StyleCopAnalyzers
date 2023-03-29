@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Generic;
@@ -174,7 +176,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var originalInvocableExpression = argumentListSyntax.Parent;
 
             var originalSymbolInfo = semanticModel.GetSymbolInfo(originalInvocableExpression);
-            var argumentIndex = argumentListSyntax.Arguments.IndexOf(argumentSyntax);
+            var argumentIndex = SA1130UseLambdaSyntax.FindParameterIndex(originalSymbolInfo, argumentSyntax, argumentListSyntax);
             var parameterList = SA1130UseLambdaSyntax.GetDelegateParameterList(originalSymbolInfo.Symbol, argumentIndex);
             return parameterList.Parameters.Select(p => p.Identifier.ToString()).ToImmutableArray();
         }

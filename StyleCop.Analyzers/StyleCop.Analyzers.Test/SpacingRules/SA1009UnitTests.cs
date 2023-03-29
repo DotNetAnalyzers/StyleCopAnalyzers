@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Threading;
@@ -79,6 +81,33 @@ public class Foo
 }";
 
             DiagnosticResult expected = Diagnostic(DescriptorNotPreceded).WithLocation(4, 28);
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2985, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2985")]
+        public async Task TestDocumentationMethodReferenceInSingleQuotesWithWhitespaceAfterClosingParenthesisAsync()
+        {
+            const string testCode = @"
+public class Foo
+{
+    /// <see cref='Method({|#0:)|} '/>
+    public void Method()
+    {
+    }
+}";
+
+            const string fixedCode = @"
+public class Foo
+{
+    /// <see cref='Method()'/>
+    public void Method()
+    {
+    }
+}";
+
+            DiagnosticResult expected = Diagnostic(DescriptorNotFollowed).WithLocation(0);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System;
@@ -12,6 +14,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -99,7 +102,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
         private static bool ContainsTopLevelTypeDeclarations(SyntaxNode node)
         {
-            return node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration);
+            return node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration) || node.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration);
         }
 
         private static bool IsRelevantType(SyntaxNode node, StyleCopSettings settings)
@@ -110,12 +113,14 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             switch (node.Kind())
             {
             case SyntaxKind.ClassDeclaration:
+            case SyntaxKindEx.RecordDeclaration:
                 isRelevant = topLevelTypes.Contains(TopLevelType.Class);
                 break;
             case SyntaxKind.InterfaceDeclaration:
                 isRelevant = topLevelTypes.Contains(TopLevelType.Interface);
                 break;
             case SyntaxKind.StructDeclaration:
+            case SyntaxKindEx.RecordStructDeclaration:
                 isRelevant = topLevelTypes.Contains(TopLevelType.Struct);
                 break;
             case SyntaxKind.EnumDeclaration:

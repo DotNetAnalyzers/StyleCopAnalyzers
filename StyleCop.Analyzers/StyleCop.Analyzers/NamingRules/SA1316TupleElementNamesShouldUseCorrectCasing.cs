@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.NamingRules
 {
     using System;
@@ -59,7 +61,7 @@ namespace StyleCop.Analyzers.NamingRules
                 return;
             }
 
-            var settings = context.Options.GetStyleCopSettings(context.CancellationToken);
+            var settings = context.GetStyleCopSettings(context.CancellationToken);
             var tupleType = (TupleTypeSyntaxWrapper)context.Node;
 
             foreach (var tupleElement in tupleType.Elements)
@@ -75,7 +77,7 @@ namespace StyleCop.Analyzers.NamingRules
                 return;
             }
 
-            var settings = context.Options.GetStyleCopSettings(context.CancellationToken);
+            var settings = context.GetStyleCopSettings(context.CancellationToken);
             if (!settings.NamingRules.IncludeInferredTupleElementNames)
             {
                 return;

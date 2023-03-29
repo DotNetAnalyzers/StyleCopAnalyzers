@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
@@ -139,6 +141,9 @@ namespace StyleCop.Analyzers.SpacingRules
                 // values[x as T<int>]
                 //                  ^^
                 case SyntaxKind.CloseBracketToken when nextToken.Parent.IsKind(SyntaxKind.BracketedArgumentList):
+                // [MyAttribute<T>]
+                //               ^^
+                case SyntaxKind.CloseBracketToken when nextToken.Parent.IsKind(SyntaxKind.AttributeList):
                     allowTrailingNoSpace = true;
                     allowTrailingSpace = false;
                     break;

@@ -1,11 +1,14 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.SpecialRules
 {
     using System;
     using System.Collections.Immutable;
     using System.Globalization;
+    using System.Linq;
     using LightJson.Serialization;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -48,9 +51,15 @@ namespace StyleCop.Analyzers.SpecialRules
 
         private static void HandleCompilation(CompilationAnalysisContext context)
         {
+            var firstSyntaxTree = context.Compilation.SyntaxTrees.FirstOrDefault();
+            if (firstSyntaxTree is null)
+            {
+                return;
+            }
+
             try
             {
-                SettingsHelper.GetStyleCopSettings(context.Options, DeserializationFailureBehavior.ThrowException, context.CancellationToken);
+                SettingsHelper.GetStyleCopSettings(context.Options, firstSyntaxTree, DeserializationFailureBehavior.ThrowException, context.CancellationToken);
             }
             catch (Exception ex) when (ex is JsonParseException || ex is InvalidSettingsException)
             {

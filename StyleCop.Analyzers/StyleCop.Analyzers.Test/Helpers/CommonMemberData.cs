@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.Helpers
 {
     using System.Collections.Generic;
@@ -15,9 +17,33 @@ namespace StyleCop.Analyzers.Test.Helpers
             {
                 yield return new[] { "class" };
                 yield return new[] { "struct" };
+
                 if (LightupHelpers.SupportsCSharp9)
                 {
                     yield return new[] { "record" };
+                }
+
+                if (LightupHelpers.SupportsCSharp10)
+                {
+                    yield return new[] { "record class" };
+                    yield return new[] { "record struct" };
+                }
+            }
+        }
+
+        public static IEnumerable<object[]> RecordTypeDeclarationKeywords
+        {
+            get
+            {
+                if (LightupHelpers.SupportsCSharp9)
+                {
+                    yield return new[] { "record" };
+                }
+
+                if (LightupHelpers.SupportsCSharp10)
+                {
+                    yield return new[] { "record class" };
+                    yield return new[] { "record struct" };
                 }
             }
         }
@@ -45,6 +71,15 @@ namespace StyleCop.Analyzers.Test.Helpers
             get
             {
                 return BaseTypeDeclarationKeywords
+                    .Concat(new[] { new[] { "delegate" } });
+            }
+        }
+
+        public static IEnumerable<object[]> GenericTypeDeclarationKeywords
+        {
+            get
+            {
+                return TypeDeclarationKeywords
                     .Concat(new[] { new[] { "delegate" } });
             }
         }

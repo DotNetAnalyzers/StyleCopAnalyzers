@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Threading;
@@ -640,6 +642,36 @@ class TestClass1 { }
 ";
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestDefaultAccessModifierOrderInCompilationUnitAsync()
+        {
+            string testCode = @"
+public class Class1 { }
+internal class Class2 { }
+class Class3 { }
+internal class Class4 { }
+class Class5 { }
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestDefaultAccessModifierOrderInNamespaceAsync()
+        {
+            string testCode = @"namespace Foo
+{
+    public class Class1 { }
+    internal class Class2 { }
+    class Class3 { }
+    internal class Class4 { }
+    class Class5 { }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>

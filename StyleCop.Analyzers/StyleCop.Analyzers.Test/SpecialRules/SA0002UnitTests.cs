@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.SpecialRules
 {
     using System;
@@ -30,6 +32,30 @@ namespace NamespaceName { }
         public async Task TestMissingSettingsAsync()
         {
             await VerifyCSharpDiagnosticAsync(TestCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3453, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3453")]
+        public async Task TestNoSourceFilesAsync()
+        {
+            string emptySettings = @"{ ""settings"": { } }";
+            await new CSharpTest
+            {
+                TestState =
+                {
+                    Sources = { string.Empty },
+                    AdditionalFiles = { ("stylecop.json", emptySettings) },
+                    AdditionalProjects =
+                    {
+                        ["EmptyProjectWithSettings"] =
+                        {
+                            // The main test state doesn't allow empty Sources, so we use a second project to validate
+                            // the completely empty case.
+                            AdditionalFiles = { ("stylecop.json", emptySettings) },
+                        },
+                    },
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -327,18 +353,33 @@ namespace NamespaceName { }
         }
 
         [Fact]
-        public void TestUnexpectedExceptionNotCaught()
+        public async Task TestUnexpectedExceptionNotCaughtAsync()
         {
-            var analysisContext = new AnalysisContextMissingOptions();
-            var analyzer = new SA0002InvalidSettingsFile();
-            analyzer.Initialize(analysisContext);
-            Assert.NotNull(analysisContext.CompilationAction);
+            await new CSharpTest
+            {
+                TestSources = { string.Empty },
+                SolutionTransforms =
+                {
+                    // Run additional validation here with access to a Compilation
+                    (solution, projectId) =>
+                    {
+                        var compilation = solution.GetProject(projectId).GetCompilationAsync(CancellationToken.None).GetAwaiter().GetResult();
 
-            var additionalFiles = ImmutableArray.Create<AdditionalText>(new InvalidAdditionalText());
-            Assert.Null(additionalFiles[0].Path);
-            Assert.Null(additionalFiles[0].GetText(CancellationToken.None));
-            var context = new CompilationAnalysisContext(compilation: null, options: new AnalyzerOptions(additionalFiles), reportDiagnostic: null, isSupportedDiagnostic: null, cancellationToken: CancellationToken.None);
-            Assert.Throws<ArgumentNullException>(() => analysisContext.CompilationAction(context));
+                        var analysisContext = new AnalysisContextMissingOptions();
+                        var analyzer = new SA0002InvalidSettingsFile();
+                        analyzer.Initialize(analysisContext);
+                        Assert.NotNull(analysisContext.CompilationAction);
+
+                        var additionalFiles = ImmutableArray.Create<AdditionalText>(new InvalidAdditionalText());
+                        Assert.Null(additionalFiles[0].Path);
+                        Assert.Null(additionalFiles[0].GetText(CancellationToken.None));
+                        var context = new CompilationAnalysisContext(compilation, options: new AnalyzerOptions(additionalFiles), reportDiagnostic: null, isSupportedDiagnostic: null, cancellationToken: CancellationToken.None);
+                        Assert.Throws<ArgumentNullException>(() => analysisContext.CompilationAction(context));
+
+                        return solution;
+                    },
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         private class InvalidAdditionalText : AdditionalText

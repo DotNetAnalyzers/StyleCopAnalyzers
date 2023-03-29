@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
@@ -186,7 +188,11 @@ namespace StyleCop.Analyzers.SpacingRules
 
             case SyntaxKindEx.PositionalPatternClause:
                 haveLeadingSpace = prevToken.IsKind(SyntaxKind.IsKeyword)
-                    || prevToken.IsKind(SyntaxKind.CommaToken);
+                    || prevToken.IsKind(SyntaxKindEx.OrKeyword)
+                    || prevToken.IsKind(SyntaxKindEx.AndKeyword)
+                    || prevToken.IsKind(SyntaxKindEx.NotKeyword)
+                    || prevToken.IsKind(SyntaxKind.CommaToken)
+                    || prevToken.IsKind(SyntaxKind.ColonToken);
                 break;
 
             case SyntaxKindEx.ParenthesizedPattern:
@@ -231,8 +237,9 @@ namespace StyleCop.Analyzers.SpacingRules
                 startOfIndexer = prevToken.IsKind(SyntaxKind.OpenBracketToken);
                 var consecutiveCast = prevToken.IsKind(SyntaxKind.CloseParenToken) && prevToken.Parent.IsKind(SyntaxKind.CastExpression);
                 var partOfInterpolation = prevToken.IsKind(SyntaxKind.OpenBraceToken) && prevToken.Parent.IsKind(SyntaxKind.Interpolation);
+                var partOfRange = prevToken.IsKind(SyntaxKindEx.DotDotToken);
 
-                haveLeadingSpace = !partOfUnaryExpression && !startOfIndexer && !consecutiveCast && !partOfInterpolation;
+                haveLeadingSpace = !partOfUnaryExpression && !startOfIndexer && !consecutiveCast && !partOfInterpolation && !partOfRange;
                 break;
 
             case SyntaxKind.ParameterList:

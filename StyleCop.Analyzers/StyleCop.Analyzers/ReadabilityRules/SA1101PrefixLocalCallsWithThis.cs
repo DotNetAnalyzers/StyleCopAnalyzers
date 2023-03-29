@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
@@ -249,6 +251,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 case SyntaxKind.DelegateDeclaration:
                 case SyntaxKind.EnumDeclaration:
                 case SyntaxKind.NamespaceDeclaration:
+                case SyntaxKindEx.FileScopedNamespaceDeclaration:
                     return false;
 
                 case SyntaxKind.FieldDeclaration:
@@ -276,6 +279,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return !baseMethodSyntax.Modifiers.Any(SyntaxKind.StaticKeyword);
 
                 case SyntaxKind.Attribute:
+                    return false;
+
+                case SyntaxKindEx.RecursivePattern:
                     return false;
 
                 default:

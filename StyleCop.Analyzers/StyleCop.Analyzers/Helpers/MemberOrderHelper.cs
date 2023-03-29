@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Helpers
 {
     using System;
@@ -8,6 +10,7 @@ namespace StyleCop.Analyzers.Helpers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -151,7 +154,7 @@ namespace StyleCop.Analyzers.Helpers
                 accessibility = AccessLevelHelper.GetAccessLevel(modifiers);
                 if (accessibility == AccessLevel.NotSpecified)
                 {
-                    if (member.Parent.IsKind(SyntaxKind.CompilationUnit) || member.Parent.IsKind(SyntaxKind.NamespaceDeclaration))
+                    if (member.Parent.IsKind(SyntaxKind.CompilationUnit) || member.Parent.IsKind(SyntaxKind.NamespaceDeclaration) || member.Parent.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration))
                     {
                         accessibility = AccessLevel.Internal;
                     }

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp9.DocumentationRules
 {
     using Microsoft.CodeAnalysis.Testing;
@@ -19,9 +21,6 @@ namespace StyleCop.Analyzers.Test.CSharp9.DocumentationRules
 
                     // /0/Test0.cs(4,1): error CS0106: The modifier 'public' is not valid for this item
                     DiagnosticResult.CompilerError("CS0106").WithSpan(4, 1, 4, 7).WithArguments("public"),
-
-                    // /0/Test0.cs(4,1): error CS8320: Feature 'top-level statements' is not available in C# 7.2. Please use language version 9.0 or greater.
-                    DiagnosticResult.CompilerError("CS8320").WithSpan(4, 1, 4, 29).WithArguments("top-level statements", "9.0"),
                 };
             }
 

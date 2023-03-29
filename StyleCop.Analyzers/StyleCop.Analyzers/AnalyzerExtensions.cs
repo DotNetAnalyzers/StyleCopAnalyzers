@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers
 {
     using System;
@@ -24,10 +26,10 @@ namespace StyleCop.Analyzers
         public static void RegisterSyntaxTreeAction(this AnalysisContext context, Action<SyntaxTreeAnalysisContext, StyleCopSettings> action)
         {
             context.RegisterSyntaxTreeAction(
-                c =>
+                context =>
                 {
-                    StyleCopSettings settings = context.GetStyleCopSettings(c.Options, c.CancellationToken);
-                    action(c, settings);
+                    StyleCopSettings settings = context.GetStyleCopSettings(context.CancellationToken);
+                    action(context, settings);
                 });
         }
 
@@ -40,10 +42,10 @@ namespace StyleCop.Analyzers
         public static void RegisterSyntaxTreeAction(this CompilationStartAnalysisContext context, Action<SyntaxTreeAnalysisContext, StyleCopSettings> action)
         {
             context.RegisterSyntaxTreeAction(
-                c =>
+                context =>
                 {
-                    StyleCopSettings settings = context.GetStyleCopSettings(c.Options, c.CancellationToken);
-                    action(c, settings);
+                    StyleCopSettings settings = context.GetStyleCopSettings(context.CancellationToken);
+                    action(context, settings);
                 });
         }
 
@@ -79,10 +81,10 @@ namespace StyleCop.Analyzers
             where TLanguageKindEnum : struct
         {
             context.RegisterSyntaxNodeAction(
-                c =>
+                context =>
                 {
-                    StyleCopSettings settings = context.GetStyleCopSettings(c.Options, c.CancellationToken);
-                    action(c, settings);
+                    StyleCopSettings settings = context.GetStyleCopSettings(context.CancellationToken);
+                    action(context, settings);
                 },
                 syntaxKinds);
         }
@@ -119,10 +121,10 @@ namespace StyleCop.Analyzers
             where TLanguageKindEnum : struct
         {
             context.RegisterSyntaxNodeAction(
-                c =>
+                context =>
                 {
-                    StyleCopSettings settings = context.GetStyleCopSettings(c.Options, c.CancellationToken);
-                    action(c, settings);
+                    StyleCopSettings settings = context.GetStyleCopSettings(context.CancellationToken);
+                    action(context, settings);
                 },
                 syntaxKinds);
         }

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.Lightup
 {
     using System;
@@ -49,6 +51,12 @@ namespace StyleCop.Analyzers.Test.Lightup
                 // Special case for C# 6-8 analysis compatibility
                 Assert.False(LightupHelpers.SupportsCSharp9);
                 Assert.Same(typeof(ObjectCreationExpressionSyntax), SyntaxWrapperHelper.GetWrappedType(wrapperType));
+            }
+            else if (wrapperType == typeof(BaseNamespaceDeclarationSyntaxWrapper))
+            {
+                // Special case for C# 6-9 analysis compatibility
+                Assert.False(LightupHelpers.SupportsCSharp10);
+                Assert.Same(typeof(NamespaceDeclarationSyntax), SyntaxWrapperHelper.GetWrappedType(wrapperType));
             }
             else
             {

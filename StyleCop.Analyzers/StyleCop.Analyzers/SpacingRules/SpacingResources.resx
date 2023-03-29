@@ -436,7 +436,7 @@
     <value>Code should not contain space after new or stackalloc keyword in implicitly typed array allocation</value>
   </data>
   <data name="SA1027CodeFix" xml:space="preserve">
-    <value>Replace tabs with spaces</value>
+    <value>Fix tabs</value>
   </data>
   <data name="SA1027Description" xml:space="preserve">
     <value>The code contains a tab or space character which is not consistent with the current project settings.</value>

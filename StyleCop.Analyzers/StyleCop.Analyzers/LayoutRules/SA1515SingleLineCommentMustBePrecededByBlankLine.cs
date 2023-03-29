@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.LayoutRules
 {
     using System;
@@ -106,21 +108,18 @@ namespace StyleCop.Analyzers.LayoutRules
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
-            var previousCommentNotOnOwnLine = false;
 
             foreach (var trivia in syntaxRoot.DescendantTrivia().Where(trivia => trivia.IsKind(SyntaxKind.SingleLineCommentTrivia)))
             {
                 if (trivia.FullSpan.Start == 0)
                 {
                     // skip the trivia if it is at the start of the file
-                    previousCommentNotOnOwnLine = false;
                     continue;
                 }
 
                 if (trivia.ToString().StartsWith("////", StringComparison.Ordinal))
                 {
                     // ignore commented out code
-                    previousCommentNotOnOwnLine = false;
                     continue;
                 }
 
@@ -130,25 +129,20 @@ namespace StyleCop.Analyzers.LayoutRules
                 if (!IsOnOwnLine(triviaList, triviaIndex))
                 {
                     // ignore comments after other code elements.
-                    previousCommentNotOnOwnLine = true;
                     continue;
                 }
 
                 if (IsPrecededByBlankLine(triviaList, triviaIndex))
                 {
                     // allow properly formatted blank line comments.
-                    previousCommentNotOnOwnLine = false;
                     continue;
                 }
 
-                if (!previousCommentNotOnOwnLine && IsPrecededBySingleLineCommentOrDocumentation(triviaList, triviaIndex))
+                if (IsPrecededBySingleLineCommentOnOwnLineOrDocumentation(triviaList, triviaIndex))
                 {
                     // allow consecutive single line comments.
-                    previousCommentNotOnOwnLine = false;
                     continue;
                 }
-
-                previousCommentNotOnOwnLine = false;
 
                 if (IsAtStartOfScope(trivia))
                 {
@@ -183,7 +177,7 @@ namespace StyleCop.Analyzers.LayoutRules
             return false;
         }
 
-        private static bool IsPrecededBySingleLineCommentOrDocumentation<T>(T triviaList, int triviaIndex)
+        private static bool IsPrecededBySingleLineCommentOnOwnLineOrDocumentation<T>(T triviaList, int triviaIndex)
             where T : IReadOnlyList<SyntaxTrivia>
         {
             var eolCount = 0;
@@ -204,6 +198,8 @@ namespace StyleCop.Analyzers.LayoutRules
                     break;
 
                 case SyntaxKind.SingleLineCommentTrivia:
+                    return IsOnOwnLine(triviaList, triviaIndex);
+
                 case SyntaxKind.SingleLineDocumentationCommentTrivia:
                     return true;
 

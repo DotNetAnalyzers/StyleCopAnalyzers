@@ -6,7 +6,6 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
     using System.Threading;
     using System.Threading.Tasks;
 
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
 
     using StyleCop.Analyzers.Test.CSharp7.SpacingRules;
@@ -41,7 +40,7 @@ public class Foo
             break;
 
         // The space before 'message' is checked
-        case Exception { Message: { }message }:
+        case Exception { Message: { {|#0:}|}message }:
             break;
         }
     }
@@ -65,7 +64,7 @@ public class Foo
     }
 }";
 
-            var expected = Diagnostic().WithSpan(14, 37, 14, 38).WithArguments(string.Empty, "followed");
+            var expected = Diagnostic().WithLocation(0).WithArguments(string.Empty, "followed");
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -91,7 +90,7 @@ public class Foo
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

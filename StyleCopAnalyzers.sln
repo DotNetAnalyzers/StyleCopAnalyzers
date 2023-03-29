@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30420.98
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.31907.60
+MinimumVisualStudioVersion = 17.0.31903.59
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers", "StyleCop.Analyzers\StyleCop.Analyzers\StyleCop.Analyzers.csproj", "{3B052737-06CE-4182-AE0F-08EB82DFA73E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E359E48C-93DA-4C17-AA0E-94D4831BE5AB}"
@@ -266,6 +266,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.Test.CSh
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.CodeGeneration", "StyleCop.Analyzers\StyleCop.Analyzers.CodeGeneration\StyleCop.Analyzers.CodeGeneration.csproj", "{3A5631C1-A338-412F-9F5B-ED55DE48853F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.Test.CSharp10", "StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp10\StyleCop.Analyzers.Test.CSharp10.csproj", "{1A654DFB-8C99-4604-A1C3-A0057D60380B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.Test.CSharp11", "StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp11\StyleCop.Analyzers.Test.CSharp11.csproj", "{F7D63A25-EBBC-40B5-AF7E-C49213AD33CE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -312,6 +316,14 @@ Global
 		{3A5631C1-A338-412F-9F5B-ED55DE48853F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A5631C1-A338-412F-9F5B-ED55DE48853F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A5631C1-A338-412F-9F5B-ED55DE48853F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A654DFB-8C99-4604-A1C3-A0057D60380B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A654DFB-8C99-4604-A1C3-A0057D60380B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A654DFB-8C99-4604-A1C3-A0057D60380B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A654DFB-8C99-4604-A1C3-A0057D60380B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7D63A25-EBBC-40B5-AF7E-C49213AD33CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7D63A25-EBBC-40B5-AF7E-C49213AD33CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7D63A25-EBBC-40B5-AF7E-C49213AD33CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7D63A25-EBBC-40B5-AF7E-C49213AD33CE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

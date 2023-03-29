@@ -1,12 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp8.MaintainabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
 
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules;
 
@@ -36,7 +37,7 @@ public class Foo
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -74,7 +75,72 @@ public class Foo
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 54),
             };
 
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp8, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that <see langword="await"/> followed by a switch expression is handled correctly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3460, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3460")]
+        public async Task TestAwaitFollowedBySwitchExpressionIsHandledCorrectlyAsync()
+        {
+            const string testCode = @"
+using System.Threading.Tasks;
+
+public class Foo
+{
+    public async Task<string> TestMethod(int n, Task<string> a, Task<string> b)
+    {
+        return await (n switch { 1 => a, 2 => b });
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that <see langword="await"/> followed by a switch expression with unnecessary parenthesis is handled correctly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3460, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3460")]
+        public async Task TestAwaitFollowedBySwitchExpressionWithUnnecessaryParenthesisIsHandledCorrectlyAsync()
+        {
+            const string testCode = @"
+using System.Threading.Tasks;
+
+public class Foo
+{
+    public async Task<string> TestMethod(int n, Task<string> a, Task<string> b)
+    {
+        return await {|#0:{|#1:(|}(n switch { 1 => a, 2 => b }){|#2:)|}|};
+    }
+}
+";
+
+            const string fixedCode = @"
+using System.Threading.Tasks;
+
+public class Foo
+{
+    public async Task<string> TestMethod(int n, Task<string> a, Task<string> b)
+    {
+        return await (n switch { 1 => a, 2 => b });
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DiagnosticId).WithLocation(0),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(1),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(2),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -112,7 +178,7 @@ public class Foo
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 48),
             };
 
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp8, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -133,7 +199,7 @@ public class Foo
 }}
 ";
 
-            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -150,7 +216,7 @@ public class Foo
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -168,7 +234,80 @@ public class Foo
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3370, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3370")]
+        public async Task TestRangeFollowedByMemberCallAsync()
+        {
+            const string testCode = @"using System;
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var array = (1..10).ToString();
+    }
+}
+";
+
+            await new CSharpTest()
+            {
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp31,
+                TestCode = testCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3370, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3370")]
+        public async Task TestRangeAsync()
+        {
+            const string testCode = @"using System;
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var a = new int[0];
+        var b = a[(..)];
+        var range = (1..10);
+    }
+}
+";
+
+            const string fixedCode = @"using System;
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var a = new int[0];
+        var b = a[..];
+        var range = 1..10;
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DiagnosticId).WithSpan(8, 19, 8, 23),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(8, 19),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(8, 22),
+                Diagnostic(DiagnosticId).WithSpan(9, 21, 9, 28),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(9, 21),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(9, 27),
+            };
+
+            var test = new CSharpTest()
+            {
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp31,
+                TestCode = testCode,
+                FixedCode = fixedCode,
+            };
+            test.ExpectedDiagnostics.AddRange(expected);
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

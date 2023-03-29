@@ -9,8 +9,12 @@ namespace StyleCop.Analyzers.Lightup
     {
         public const SyntaxKind DotDotToken = (SyntaxKind)8222;
         public const SyntaxKind QuestionQuestionEqualsToken = (SyntaxKind)8284;
+        public const SyntaxKind OrKeyword = (SyntaxKind)8438;
+        public const SyntaxKind AndKeyword = (SyntaxKind)8439;
+        public const SyntaxKind NotKeyword = (SyntaxKind)8440;
         public const SyntaxKind ManagedKeyword = (SyntaxKind)8445;
         public const SyntaxKind UnmanagedKeyword = (SyntaxKind)8446;
+        public const SyntaxKind FileKeyword = (SyntaxKind)8449;
         public const SyntaxKind NullableKeyword = (SyntaxKind)8486;
         public const SyntaxKind EnableKeyword = (SyntaxKind)8487;
         public const SyntaxKind WarningsKeyword = (SyntaxKind)8488;
@@ -25,6 +29,7 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind IndexExpression = (SyntaxKind)8741;
         public const SyntaxKind DefaultLiteralExpression = (SyntaxKind)8755;
         public const SyntaxKind LocalFunctionStatement = (SyntaxKind)8830;
+        public const SyntaxKind FileScopedNamespaceDeclaration = (SyntaxKind)8845;
         public const SyntaxKind TupleType = (SyntaxKind)8924;
         public const SyntaxKind TupleElement = (SyntaxKind)8925;
         public const SyntaxKind TupleExpression = (SyntaxKind)8926;
@@ -45,6 +50,8 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind SwitchExpressionArm = (SyntaxKind)9026;
         public const SyntaxKind VarPattern = (SyntaxKind)9027;
         public const SyntaxKind ParenthesizedPattern = (SyntaxKind)9028;
+        public const SyntaxKind SlicePattern = (SyntaxKind)9034;
+        public const SyntaxKind ListPattern = (SyntaxKind)9035;
         public const SyntaxKind DeclarationExpression = (SyntaxKind)9040;
         public const SyntaxKind RefExpression = (SyntaxKind)9050;
         public const SyntaxKind RefType = (SyntaxKind)9051;
@@ -58,5 +65,6 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind WithInitializerExpression = (SyntaxKind)9062;
         public const SyntaxKind RecordDeclaration = (SyntaxKind)9063;
         public const SyntaxKind FunctionPointerUnmanagedCallingConventionList = (SyntaxKind)9066;
+        public const SyntaxKind RecordStructDeclaration = (SyntaxKind)9068;
     }
 }
