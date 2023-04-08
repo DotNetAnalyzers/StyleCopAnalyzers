@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.CodeGeneration
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Diagnostics;
@@ -18,7 +17,6 @@ namespace StyleCop.Analyzers.CodeGeneration
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Text;
 
     [Generator]
     internal sealed class SyntaxLightupGenerator : IIncrementalGenerator
@@ -1198,20 +1196,20 @@ namespace StyleCop.Analyzers.CodeGeneration
                 SyntaxFactory.Trivia(SyntaxFactory.DocumentationComment(
                     SyntaxFactory.XmlText(" "),
                     SyntaxFactory.XmlSummaryElement(
-                        SyntaxFactory.XmlNewLine(Environment.NewLine),
+                        SyntaxFactory.XmlText(XmlSyntaxFactory.XmlCarriageReturnLineFeedWithContinuation),
                         SyntaxFactory.XmlText(" Gets the type that is wrapped by the given wrapper."),
-                        SyntaxFactory.XmlNewLine(Environment.NewLine),
+                        SyntaxFactory.XmlText(XmlSyntaxFactory.XmlCarriageReturnLineFeedWithContinuation),
                         SyntaxFactory.XmlText(" ")),
-                    SyntaxFactory.XmlNewLine(Environment.NewLine),
+                    SyntaxFactory.XmlText(XmlSyntaxFactory.XmlCarriageReturnLineFeedWithContinuation),
                     SyntaxFactory.XmlText(" "),
                     SyntaxFactory.XmlParamElement(
                         "wrapperType",
                         SyntaxFactory.XmlText("Type of the wrapper for which the wrapped type should be retrieved.")),
-                    SyntaxFactory.XmlNewLine(Environment.NewLine),
+                    SyntaxFactory.XmlText(XmlSyntaxFactory.XmlCarriageReturnLineFeedWithContinuation),
                     SyntaxFactory.XmlText(" "),
                     SyntaxFactory.XmlReturnsElement(
                         SyntaxFactory.XmlText("The wrapped type, or null if there is no info.")),
-                    SyntaxFactory.XmlNewLine(Environment.NewLine).WithoutTrailingTrivia()))));
+                    SyntaxFactory.XmlText(XmlSyntaxFactory.XmlCarriageReturnLineFeedWithContinuation).WithoutTrailingTrivia()))));
 
             var wrapperHelperClass = SyntaxFactory.ClassDeclaration(
                 attributeLists: default,

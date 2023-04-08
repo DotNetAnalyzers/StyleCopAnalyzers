@@ -43,7 +43,9 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
         private T firstItem;
 
         internal ObjectPool(Func<T> factory)
+#pragma warning disable RS1035 // Do not use APIs banned for analyzers (false positive: https://github.com/dotnet/roslyn-analyzers/issues/6571)
             : this(factory, Environment.ProcessorCount * 2)
+#pragma warning restore RS1035 // Do not use APIs banned for analyzers
         {
         }
 
