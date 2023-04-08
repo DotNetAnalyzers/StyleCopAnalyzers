@@ -3,6 +3,7 @@
 
   <PropertyGroup>
     <TargetFramework>net452</TargetFramework>
+    <EnforceExtendedAnalyzerRules>false</EnforceExtendedAnalyzerRules>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>

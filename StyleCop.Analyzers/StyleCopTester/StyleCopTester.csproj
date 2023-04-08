@@ -4,6 +4,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFrameworks>net46</TargetFrameworks>
+    <EnforceExtendedAnalyzerRules>false</EnforceExtendedAnalyzerRules>
 
     <!-- Automatically generate the necessary assembly binding redirects -->
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
