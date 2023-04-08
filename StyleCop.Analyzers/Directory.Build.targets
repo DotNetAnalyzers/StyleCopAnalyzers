@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
 
-  <PropertyGroup>
-    <SkipAddAllResxFilesAsAdditionalFiles>true</SkipAddAllResxFilesAsAdditionalFiles>
-  </PropertyGroup>
-
   <ItemGroup>
     <!-- Enable code generation for resource files. -->
     <CodeGenerationEmbeddedResource Include="@(EmbeddedResource)" Exclude="**\*.??-??.resx" />
-    <AdditionalFiles Include="@(CodeGenerationEmbeddedResource)" GenerateSource="true" />
+    <EmbeddedResource Update="@(CodeGenerationEmbeddedResource)" GenerateSource="true" />
 
     <NonCodeGenerationEmbeddedResource Include="@(EmbeddedResource)" Exclude="@(CodeGenerationEmbeddedResource)" />
-    <AdditionalFiles Include="@(NonCodeGenerationEmbeddedResource)" GenerateSource="false" />
+    <EmbeddedResource Update="@(NonCodeGenerationEmbeddedResource)" GenerateSource="false" />
   </ItemGroup>
 
   <!-- Special handling for embedded resources to show as nested in Solution Explorer -->

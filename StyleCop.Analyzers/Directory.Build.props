@@ -53,7 +53,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.ResxSourceGenerator" Version="3.3.3-beta1.21417.2" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.ResxSourceGenerator" Version="3.3.5-beta1.23205.2" PrivateAssets="all" />
   </ItemGroup>
 
   <!-- C# Compiler -->
