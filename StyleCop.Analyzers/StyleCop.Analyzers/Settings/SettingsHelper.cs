@@ -121,8 +121,8 @@ namespace StyleCop.Analyzers
 
             if (tree != null)
             {
-                var optionsProvider = options.AnalyzerConfigOptionsProvider().GetOptions(tree);
-                return new StyleCopSettings(new JsonObject(), optionsProvider);
+                var analyzerConfigOptions = options.AnalyzerConfigOptionsProvider().GetOptions(tree);
+                return new StyleCopSettings(new JsonObject(), analyzerConfigOptions);
             }
 
             return new StyleCopSettings();
@@ -130,7 +130,7 @@ namespace StyleCop.Analyzers
 
         private static StyleCopSettings GetStyleCopSettings(AnalyzerOptions options, SyntaxTree tree, string path, SourceText text, DeserializationFailureBehavior failureBehavior)
         {
-            var optionsProvider = options.AnalyzerConfigOptionsProvider().GetOptions(tree);
+            var analyzerConfigOptions = options.AnalyzerConfigOptionsProvider().GetOptions(tree);
 
             try
             {
@@ -146,7 +146,7 @@ namespace StyleCop.Analyzers
                 var settingsObject = rootValue.AsJsonObject["settings"];
                 if (settingsObject.IsJsonObject)
                 {
-                    return new StyleCopSettings(settingsObject.AsJsonObject, optionsProvider);
+                    return new StyleCopSettings(settingsObject.AsJsonObject, analyzerConfigOptions);
                 }
                 else if (settingsObject.IsNull)
                 {
