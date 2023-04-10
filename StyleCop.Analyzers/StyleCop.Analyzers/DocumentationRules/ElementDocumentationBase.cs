@@ -86,6 +86,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// Analyzes the XML elements of a documentation comment.
         /// </summary>
         /// <param name="context">The current analysis context.</param>
+        /// <param name="settings">The StyleCop settings to use.</param>
         /// <param name="needsComment"><see langword="true"/> if the current documentation settings indicate that the
         /// element should be documented; otherwise, <see langword="false"/>.</param>
         /// <param name="completeDocumentation">The complete documentation for the declared symbol, with any
@@ -93,7 +94,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// element, this value will be <see langword="null"/>, even if the XML documentation comment also included an
         /// <c>&lt;include&gt;</c> element.</param>
         /// <param name="diagnosticLocations">The location(s) where diagnostics, if any, should be reported.</param>
-        protected abstract void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, bool needsComment, XElement completeDocumentation, params Location[] diagnosticLocations);
+        protected abstract void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, XElement completeDocumentation, params Location[] diagnosticLocations);
 
         private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
@@ -232,7 +233,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             var hasIncludedDocumentation =
-                documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag) is object;
+                documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag) != null;
 
             if (hasIncludedDocumentation)
             {
@@ -255,7 +256,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                         return;
                     }
 
-                    this.HandleCompleteDocumentation(context, needsComment, completeDocumentation, locations);
+                    this.HandleCompleteDocumentation(context, settings, needsComment, completeDocumentation, locations);
                     return;
                 }
             }
