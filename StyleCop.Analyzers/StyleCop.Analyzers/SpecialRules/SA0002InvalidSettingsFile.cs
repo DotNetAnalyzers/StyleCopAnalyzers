@@ -59,7 +59,7 @@ namespace StyleCop.Analyzers.SpecialRules
 
             try
             {
-                SettingsHelper.GetStyleCopSettings(context.Options, firstSyntaxTree, DeserializationFailureBehavior.ThrowException, context.CancellationToken);
+                context.GetStyleCopSettings(firstSyntaxTree, DeserializationFailureBehavior.ThrowException, context.CancellationToken);
             }
             catch (Exception ex) when (ex is JsonParseException || ex is InvalidSettingsException)
             {
