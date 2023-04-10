@@ -108,6 +108,26 @@ namespace StyleCop.Analyzers
                 || string.Equals(fileName, AltSettingsFileName, StringComparison.OrdinalIgnoreCase);
         }
 
+        private static StyleCopSettings GetStyleCopSettings(AnalyzerOptions options, SyntaxTree tree, ImmutableArray<AdditionalText> additionalFiles, DeserializationFailureBehavior failureBehavior, CancellationToken cancellationToken)
+        {
+            foreach (var additionalFile in additionalFiles)
+            {
+                if (IsStyleCopSettingsFile(additionalFile.Path))
+                {
+                    SourceText additionalTextContent = additionalFile.GetText(cancellationToken);
+                    return GetStyleCopSettings(options, tree, additionalFile.Path, additionalTextContent, failureBehavior);
+                }
+            }
+
+            if (tree != null)
+            {
+                var optionsProvider = options.AnalyzerConfigOptionsProvider().GetOptions(tree);
+                return new StyleCopSettings(new JsonObject(), optionsProvider);
+            }
+
+            return new StyleCopSettings();
+        }
+
         private static StyleCopSettings GetStyleCopSettings(AnalyzerOptions options, SyntaxTree tree, string path, SourceText text, DeserializationFailureBehavior failureBehavior)
         {
             var optionsProvider = options.AnalyzerConfigOptionsProvider().GetOptions(tree);
@@ -142,26 +162,6 @@ namespace StyleCop.Analyzers
             catch (JsonParseException) when (failureBehavior == DeserializationFailureBehavior.ReturnDefaultSettings)
             {
                 // The settings file is invalid -> return the default settings.
-            }
-
-            return new StyleCopSettings();
-        }
-
-        private static StyleCopSettings GetStyleCopSettings(AnalyzerOptions options, SyntaxTree tree, ImmutableArray<AdditionalText> additionalFiles, DeserializationFailureBehavior failureBehavior, CancellationToken cancellationToken)
-        {
-            foreach (var additionalFile in additionalFiles)
-            {
-                if (IsStyleCopSettingsFile(additionalFile.Path))
-                {
-                    SourceText additionalTextContent = additionalFile.GetText(cancellationToken);
-                    return GetStyleCopSettings(options, tree, additionalFile.Path, additionalTextContent, failureBehavior);
-                }
-            }
-
-            if (tree != null)
-            {
-                var optionsProvider = options.AnalyzerConfigOptionsProvider().GetOptions(tree);
-                return new StyleCopSettings(new JsonObject(), optionsProvider);
             }
 
             return new StyleCopSettings();
