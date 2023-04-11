@@ -8,7 +8,6 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Globalization;
     using System.Linq;
     using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
@@ -117,11 +116,10 @@ namespace StyleCop.Analyzers.DocumentationRules
         }
 
         /// <inheritdoc/>
-        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, bool needsComment, XElement completeDocumentation, params Location[] diagnosticLocations)
+        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, XElement completeDocumentation, params Location[] diagnosticLocations)
         {
             var objectPool = SharedPools.Default<HashSet<string>>();
             HashSet<string> documentationTexts = objectPool.Allocate();
-            var settings = context.GetStyleCopSettings(context.CancellationToken);
             var culture = settings.DocumentationRules.DocumentationCultureInfo;
             var resourceManager = DocumentationResources.ResourceManager;
 
