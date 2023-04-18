@@ -90,16 +90,19 @@ namespace StyleCop.Analyzers.NamingRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxNodeAction(VariableDeclarationAction, SyntaxKind.VariableDeclaration);
-            context.RegisterSyntaxNodeAction(ParameterDeclarationAction, SyntaxKind.Parameter);
-            context.RegisterSyntaxNodeAction(CatchDeclarationAction, SyntaxKind.CatchDeclaration);
-            context.RegisterSyntaxNodeAction(QueryContinuationAction, SyntaxKind.QueryContinuation);
-            context.RegisterSyntaxNodeAction(FromClauseAction, SyntaxKind.FromClause);
-            context.RegisterSyntaxNodeAction(LetClauseAction, SyntaxKind.LetClause);
-            context.RegisterSyntaxNodeAction(JoinClauseAction, SyntaxKind.JoinClause);
-            context.RegisterSyntaxNodeAction(JoinIntoClauseAction, SyntaxKind.JoinIntoClause);
-            context.RegisterSyntaxNodeAction(ForEachStatementAction, SyntaxKind.ForEachStatement);
-            context.RegisterSyntaxNodeAction(SingleVariableDesignationAction, SyntaxKindEx.SingleVariableDesignation);
+            context.RegisterCompilationStartAction(context =>
+            {
+                context.RegisterSyntaxNodeAction(VariableDeclarationAction, SyntaxKind.VariableDeclaration);
+                context.RegisterSyntaxNodeAction(ParameterDeclarationAction, SyntaxKind.Parameter);
+                context.RegisterSyntaxNodeAction(CatchDeclarationAction, SyntaxKind.CatchDeclaration);
+                context.RegisterSyntaxNodeAction(QueryContinuationAction, SyntaxKind.QueryContinuation);
+                context.RegisterSyntaxNodeAction(FromClauseAction, SyntaxKind.FromClause);
+                context.RegisterSyntaxNodeAction(LetClauseAction, SyntaxKind.LetClause);
+                context.RegisterSyntaxNodeAction(JoinClauseAction, SyntaxKind.JoinClause);
+                context.RegisterSyntaxNodeAction(JoinIntoClauseAction, SyntaxKind.JoinIntoClause);
+                context.RegisterSyntaxNodeAction(ForEachStatementAction, SyntaxKind.ForEachStatement);
+                context.RegisterSyntaxNodeAction(SingleVariableDesignationAction, SyntaxKindEx.SingleVariableDesignation);
+            });
         }
 
         private static class Analyzer

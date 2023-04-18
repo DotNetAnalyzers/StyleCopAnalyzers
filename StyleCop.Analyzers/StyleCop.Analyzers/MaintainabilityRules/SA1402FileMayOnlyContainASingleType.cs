@@ -57,7 +57,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
+            context.RegisterCompilationStartAction(context =>
+            {
+                context.RegisterSyntaxTreeAction(SyntaxTreeAction);
+            });
         }
 
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context, StyleCopSettings settings)
