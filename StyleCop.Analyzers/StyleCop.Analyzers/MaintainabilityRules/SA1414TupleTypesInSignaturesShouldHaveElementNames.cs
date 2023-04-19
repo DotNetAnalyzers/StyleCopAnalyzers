@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -62,6 +63,20 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             }
 
             var methodDeclaration = (MethodDeclarationSyntax)context.Node;
+            var methodSymbol = context.SemanticModel.GetDeclaredSymbol(methodDeclaration);
+            var containingType = methodSymbol.ContainingType;
+            if (containingType == null)
+            {
+                return;
+            }
+
+            foreach (var member in containingType.AllInterfaces.SelectMany(i => i.GetMembers(methodSymbol.Name).OfType<IMethodSymbol>()))
+            {
+                if (methodSymbol.Equals(containingType.FindImplementationForInterfaceMember(member)))
+                {
+                    return;
+                }
+            }
 
             CheckType(context, methodDeclaration.ReturnType);
             CheckParameterList(context, methodDeclaration.ParameterList);

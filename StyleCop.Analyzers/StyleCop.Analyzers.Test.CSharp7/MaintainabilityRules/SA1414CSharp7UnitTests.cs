@@ -117,5 +117,23 @@ public class TestClass
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public Task ValidateTuplesFromInheritedTypeAsync()
+        {
+            const string testCode = @"
+using System.Collections.Generic;
+
+namespace Test {
+    class StringTupleComparer : IEqualityComparer<(string, string)>
+    {
+	    public bool Equals((string, string) x, (string, string) y) => throw null;
+
+	    public int GetHashCode((string, string) obj) => throw null;
+    }
+}
+";
+            return VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, default);
+        }
     }
 }
