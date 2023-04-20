@@ -178,7 +178,7 @@ namespace Test {
 		}
 	}
 }";
-            return VerifyCSharpDiagnosticAsync(testCode, Array.Empty<DiagnosticResult>(), default);
+            return VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, default);
         }
     }
 }
