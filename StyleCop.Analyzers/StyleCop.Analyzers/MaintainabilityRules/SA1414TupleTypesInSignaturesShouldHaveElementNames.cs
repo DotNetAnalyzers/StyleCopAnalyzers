@@ -63,9 +63,14 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             }
 
             var methodDeclaration = (MethodDeclarationSyntax)context.Node;
+            if (methodDeclaration.Modifiers.Any(SyntaxKind.OverrideKeyword))
+            {
+                return;
+            }
+
             var methodSymbol = context.SemanticModel.GetDeclaredSymbol(methodDeclaration);
             var containingType = methodSymbol.ContainingType;
-            if (containingType == null)
+            if (containingType is null || methodSymbol.ExplicitInterfaceImplementations.Length > 0)
             {
                 return;
             }

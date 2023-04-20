@@ -5,6 +5,7 @@
 
 namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
@@ -119,7 +120,7 @@ public class TestClass
         }
 
         [Fact]
-        public Task ValidateTuplesFromInheritedTypeAsync()
+        public Task ValidateTuplesFromInterfaceAsync()
         {
             const string testCode = @"
 using System.Collections.Generic;
@@ -131,9 +132,53 @@ namespace Test {
 
 	    public int GetHashCode((string, string) obj) => throw null;
     }
-}
-";
+}";
             return VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, default);
+        }
+
+        [Fact]
+        public Task ValidateTuplesFromExplicitInterfaceImplementationAsync()
+        {
+            const string testCode = @"
+using System.Collections.Generic;
+
+namespace Test {
+    class StringTupleComparer : IEqualityComparer<(string, string)>
+    {
+	    bool IEqualityComparer<(string, string)>.Equals((string, string) x, (string, string) y) => throw null;
+
+	    int IEqualityComparer<(string, string)>.GetHashCode((string, string) obj) => throw null;
+    }
+}";
+            return VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, default);
+        }
+
+        [Fact]
+        public Task ValidateTuplesFromBaseClassAsync()
+        {
+            const string testCode = @"
+namespace Test {
+    class A : B
+	{
+		public override void Run((string, string) x)
+		{
+		}
+
+		public override void Run((int, int) y)
+		{
+		}
+	}
+
+	abstract class B
+	{
+		public abstract void Run(([|string|], [|string|]) x);
+
+		public virtual void Run(([|int|], [|int|]) y)
+		{
+		}
+	}
+}";
+            return VerifyCSharpDiagnosticAsync(testCode, Array.Empty<DiagnosticResult>(), default);
         }
     }
 }
