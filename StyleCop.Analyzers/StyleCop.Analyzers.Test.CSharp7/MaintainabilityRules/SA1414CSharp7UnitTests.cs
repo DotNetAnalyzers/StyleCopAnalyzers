@@ -160,22 +160,16 @@ namespace Test {
 namespace Test {
     class A : B
 	{
-		public override void Run((string, string) x)
-		{
-		}
+		public override (string, string) Run((string, string) x) => throw null;
 
-		public override void Run((int, int) y)
-		{
-		}
+		public override (int, int) Run((int, int) y) => throw null;
 	}
 
 	abstract class B
 	{
-		public abstract void Run(([|string|], [|string|]) x);
+		public abstract ([|string|], [|string|]) Run(([|string|], [|string|]) x);
 
-		public virtual void Run(([|int|], [|int|]) y)
-		{
-		}
+		public virtual ([|int|], [|int|]) Run(([|int|], [|int|]) y) => throw null;
 	}
 }";
             return VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, default);
