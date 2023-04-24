@@ -2,21 +2,6 @@
 <Project>
 
   <ItemGroup>
-    <!-- Enable code generation for resource files. -->
-    <CodeGenerationEmbeddedResource Include="@(EmbeddedResource)" Exclude="**\*.??-??.resx" />
-    <EmbeddedResource Update="@(CodeGenerationEmbeddedResource)" GenerateSource="true" />
-
-    <NonCodeGenerationEmbeddedResource Include="@(EmbeddedResource)" Exclude="@(CodeGenerationEmbeddedResource)" />
-    <EmbeddedResource Update="@(NonCodeGenerationEmbeddedResource)" GenerateSource="false" />
-  </ItemGroup>
-
-  <!-- Special handling for embedded resources to show as nested in Solution Explorer -->
-  <ItemGroup>
-    <!-- Localized embedded resources are just dependent on the parent RESX -->
-    <EmbeddedResource Update="**\*.??-??.resx" DependentUpon="$([System.IO.Path]::ChangeExtension($([System.IO.Path]::GetFileNameWithoutExtension(%(Identity))), '.resx'))" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="$(MSBuildProjectFileDirectory)$(AssemblyOriginatorKeyFile)" Link="%(Filename)%(Extension)" />
   </ItemGroup>
 
