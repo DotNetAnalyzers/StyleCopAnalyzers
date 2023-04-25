@@ -16,6 +16,7 @@ namespace StyleCop.Analyzers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
+    using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
@@ -247,7 +248,11 @@ namespace StyleCop.Analyzers
 
         private static Lazy<JsonValue> ParseJson(SourceText text)
         {
-            return new Lazy<JsonValue>(() => JsonReader.Parse(text.ToString()));
+            return new Lazy<JsonValue>(() =>
+            {
+                var reader = new SourceTextReader(text);
+                return JsonReader.Parse(reader);
+            });
         }
 
         public class SettingsFile
