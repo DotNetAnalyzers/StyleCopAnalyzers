@@ -93,7 +93,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             bool isAsynchronousTestMethod;
             if (methodDeclarationSyntax != null)
             {
-                isTask = TaskHelper.IsTaskReturningMethod(semanticModel, methodDeclarationSyntax, cancellationToken);
+                isTask = TaskHelper.IsTaskReturningType(semanticModel, methodDeclarationSyntax.ReturnType, cancellationToken);
                 isAsynchronousTestMethod = isTask && IsAsynchronousTestMethod(semanticModel, methodDeclarationSyntax, cancellationToken);
             }
             else

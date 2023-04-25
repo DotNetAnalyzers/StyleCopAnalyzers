@@ -75,13 +75,6 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
         }
 
-        private static SyntaxTrivia GetLastDocumentationCommentExteriorTrivia(SyntaxNode node)
-        {
-            return node
-                .DescendantTrivia(descendIntoTrivia: true)
-                .LastOrDefault(trivia => trivia.IsKind(SyntaxKind.DocumentationCommentExteriorTrivia));
-        }
-
         private async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var documentRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
@@ -133,7 +126,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             // HACK: The formatter isn't working when contents are added to an existing documentation comment, so we
             // manually apply the indentation from the last line of the existing comment to each new line of the
             // generated content.
-            SyntaxTrivia exteriorTrivia = GetLastDocumentationCommentExteriorTrivia(documentationComment);
+            SyntaxTrivia exteriorTrivia = CommonDocumentationHelper.GetLastDocumentationCommentExteriorTrivia(documentationComment);
             if (!exteriorTrivia.Token.IsMissing)
             {
                 leadingNewLine = leadingNewLine.ReplaceExteriorTrivia(exteriorTrivia);

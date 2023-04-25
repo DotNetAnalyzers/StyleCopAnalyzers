@@ -12,7 +12,9 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1611ElementParametersMustBeDocumented>;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.DocumentationRules.SA1611ElementParametersMustBeDocumented,
+        StyleCop.Analyzers.DocumentationRules.SA1611CodeFixProvider>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1611ElementParametersMustBeDocumented"/>.
@@ -414,7 +416,172 @@ public class ClassName
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory]
+        [MemberData(nameof(Data))]
+        public async Task TestMissingFirstParameterCodeFixAsync(string p)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <param name=""param2"">The param2.</param>
+    /// <param name=""param3"">The param3.</param>
+    public ##
+}";
+
+            var fixedCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <param name=""param1"">The param1.</param>
+    /// <param name=""param2"">The param2.</param>
+    /// <param name=""param3"">The param3.</param>
+    public ##
+}";
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(12, 38).WithArguments("param1"),
+            };
+
+            await VerifyCSharpFixAsync(testCode.Replace("##", p), expected, fixedCode.Replace("##", p), CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(Data))]
+        public async Task TestMissingSecondParameterCodeFixAsync(string p)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <param name=""param1"">Param 1</param>
+    /// <param name=""param3"">Param 3</param>
+    public ##
+}";
+
+            var fixedCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <param name=""param1"">Param 1</param>
+    /// <param name=""param2"">The param2.</param>
+    /// <param name=""param3"">Param 3</param>
+    public ##
+}";
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(12, 53).WithArguments("param2"),
+            };
+
+            await VerifyCSharpFixAsync(testCode.Replace("##", p), expected, fixedCode.Replace("##", p), CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(Data))]
+        public async Task TestMissingFirstParameterAfterTypeParamCodeFixAsync(string p)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <typeparam name=""TInternalRow"">The type of the internal row.</typeparam>
+    /// <param name=""param2"">The param2.</param>
+    /// <param name=""param3"">The param3.</param>
+    public ##
+}";
+
+            var fixedCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <typeparam name=""TInternalRow"">The type of the internal row.</typeparam>
+    /// <param name=""param1"">The param1.</param>
+    /// <param name=""param2"">The param2.</param>
+    /// <param name=""param3"">The param3.</param>
+    public ##
+}";
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(13, 38).WithArguments("param1"),
+            };
+
+            await VerifyCSharpFixAsync(testCode.Replace("##", p), expected, fixedCode.Replace("##", p), CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(Data))]
+        public async Task TestMissingLastParameterCodeFixAsync(string p)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <param name=""param1"">The param1.</param>
+    /// <param name=""param2"">The param2.</param>
+    public ##
+}";
+
+            var fixedCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <param name=""param1"">The param1.</param>
+    /// <param name=""param2"">The param2.</param>
+    /// <param name=""param3"">The param3.</param>
+    public ##
+}";
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(12, 68).WithArguments("param3"),
+            };
+
+            await VerifyCSharpFixAsync(testCode.Replace("##", p), expected, fixedCode.Replace("##", p), CancellationToken.None).ConfigureAwait(false);
+        }
+
         private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+            => VerifyCSharpFixAsync(source, expected, fixedSource: null, cancellationToken);
+
+        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
         {
             string contentWithoutElementDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <TestClass>
@@ -456,9 +623,10 @@ public class ClassName
  </TestClass>
  ";
 
-            var test = new StyleCopDiagnosticVerifier<SA1611ElementParametersMustBeDocumented>.CSharpTest
+            var test = new StyleCopCodeFixVerifier<SA1611ElementParametersMustBeDocumented, SA1611CodeFixProvider>.CSharpTest
             {
                 TestCode = source,
+                FixedCode = fixedSource,
                 XmlReferences =
                 {
                     { "MissingElementDocumentation.xml", contentWithoutElementDocumentation },

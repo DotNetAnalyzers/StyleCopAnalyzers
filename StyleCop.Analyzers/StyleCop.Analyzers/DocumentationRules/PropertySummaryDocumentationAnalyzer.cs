@@ -94,27 +94,9 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static void AnalyzeSummaryElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location diagnosticLocation, PropertyDeclarationSyntax propertyDeclaration, string startingTextGets, string startingTextSets, string startingTextGetsOrSets, string startingTextReturns)
         {
+            var propertyData = PropertyAnalyzerHelper.AnalyzePropertyAccessors(propertyDeclaration, context.SemanticModel, context.CancellationToken);
             var diagnosticProperties = ImmutableDictionary.CreateBuilder<string, string>();
             ArrowExpressionClauseSyntax expressionBody = propertyDeclaration.ExpressionBody;
-            AccessorDeclarationSyntax getter = null;
-            AccessorDeclarationSyntax setter = null;
-
-            if (propertyDeclaration.AccessorList != null)
-            {
-                foreach (var accessor in propertyDeclaration.AccessorList.Accessors)
-                {
-                    switch (accessor.Keyword.Kind())
-                    {
-                    case SyntaxKind.GetKeyword:
-                        getter = accessor;
-                        break;
-
-                    case SyntaxKind.SetKeyword:
-                        setter = accessor;
-                        break;
-                    }
-                }
-            }
 
             if (!(syntax is XmlElementSyntax summaryElement))
             {
@@ -136,95 +118,9 @@ namespace StyleCop.Analyzers.DocumentationRules
             bool prefixIsGets = !prefixIsGetsOrSets && text.StartsWith(startingTextGets, StringComparison.OrdinalIgnoreCase);
             bool prefixIsSets = text.StartsWith(startingTextSets, StringComparison.OrdinalIgnoreCase);
 
-            bool getterVisible, setterVisible;
-            if (getter != null && setter != null)
+            if (propertyData.GetterVisible)
             {
-                if (!getter.Modifiers.Any() && !setter.Modifiers.Any())
-                {
-                    // The getter and setter have the same declared accessibility
-                    getterVisible = true;
-                    setterVisible = true;
-                }
-                else if (getter.Modifiers.Any(SyntaxKind.PrivateKeyword))
-                {
-                    getterVisible = false;
-                    setterVisible = true;
-                }
-                else if (setter.Modifiers.Any(SyntaxKind.PrivateKeyword))
-                {
-                    getterVisible = true;
-                    setterVisible = false;
-                }
-                else
-                {
-                    var propertyAccessibility = propertyDeclaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
-                    bool propertyOnlyInternal = propertyAccessibility == Accessibility.Internal
-                                                || propertyAccessibility == Accessibility.ProtectedAndInternal
-                                                || propertyAccessibility == Accessibility.Private;
-                    if (propertyOnlyInternal)
-                    {
-                        // Property only internal and no accessor is explicitly private
-                        getterVisible = true;
-                        setterVisible = true;
-                    }
-                    else
-                    {
-                        var getterAccessibility = getter.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
-                        var setterAccessibility = setter.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
-
-                        switch (getterAccessibility)
-                        {
-                        case Accessibility.Public:
-                        case Accessibility.ProtectedOrInternal:
-                        case Accessibility.Protected:
-                            getterVisible = true;
-                            break;
-
-                        case Accessibility.Internal:
-                        case Accessibility.ProtectedAndInternal:
-                        case Accessibility.Private:
-                        default:
-                            // The property is externally accessible, so the setter must be more accessible.
-                            getterVisible = false;
-                            break;
-                        }
-
-                        switch (setterAccessibility)
-                        {
-                        case Accessibility.Public:
-                        case Accessibility.ProtectedOrInternal:
-                        case Accessibility.Protected:
-                            setterVisible = true;
-                            break;
-
-                        case Accessibility.Internal:
-                        case Accessibility.ProtectedAndInternal:
-                        case Accessibility.Private:
-                        default:
-                            // The property is externally accessible, so the getter must be more accessible.
-                            setterVisible = false;
-                            break;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                if (getter != null || expressionBody != null)
-                {
-                    getterVisible = true;
-                    setterVisible = false;
-                }
-                else
-                {
-                    getterVisible = false;
-                    setterVisible = setter != null;
-                }
-            }
-
-            if (getterVisible)
-            {
-                if (setterVisible)
+                if (propertyData.SetterVisible)
                 {
                     // Both getter and setter are visible.
                     if (!prefixIsGetsOrSets)
@@ -232,7 +128,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                         ReportSA1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextGetsOrSets, unexpectedStartingText1: startingTextGets, unexpectedStartingText2: startingTextSets, unexpectedStartingText3: startingTextReturns);
                     }
                 }
-                else if (setter != null)
+                else if (propertyData.HasSetter)
                 {
                     // Both getter and setter exist, but only getter is visible.
                     if (!prefixIsGets)
@@ -256,9 +152,9 @@ namespace StyleCop.Analyzers.DocumentationRules
                     }
                 }
             }
-            else if (setterVisible)
+            else if (propertyData.SetterVisible)
             {
-                if (getter != null)
+                if (propertyData.HasGetter)
                 {
                     // Both getter and setter exist, but only setter is visible.
                     if (!prefixIsSets)

@@ -13,9 +13,9 @@ namespace StyleCop.Analyzers.Helpers
 
     internal static class TaskHelper
     {
-        public static bool IsTaskReturningMethod(SemanticModel semanticModel, MethodDeclarationSyntax methodDeclarationSyntax, CancellationToken cancellationToken)
+        public static bool IsTaskReturningType(SemanticModel semanticModel, TypeSyntax returnType, CancellationToken cancellationToken)
         {
-            return IsTaskType(semanticModel, methodDeclarationSyntax.ReturnType, cancellationToken);
+            return IsTaskType(semanticModel, returnType, cancellationToken);
         }
 
         public static bool IsTaskReturningMethod(SemanticModel semanticModel, DelegateDeclarationSyntax delegateDeclarationSyntax, CancellationToken cancellationToken)

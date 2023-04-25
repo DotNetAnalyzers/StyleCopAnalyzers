@@ -11,9 +11,10 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Lightup;
-    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1618GenericTypeParametersMustBeDocumented>;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.DocumentationRules.SA1618GenericTypeParametersMustBeDocumented,
+        StyleCop.Analyzers.DocumentationRules.SA1618CodeFixProvider>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1618GenericTypeParametersMustBeDocumented"/>.
@@ -36,21 +37,21 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         {
             get
             {
-                yield return new object[] { "class Foo<{|#0:Ta|}, {|#1:Tb|}> { }" };
-                yield return new object[] { "struct Foo<{|#0:Ta|}, {|#1:Tb|}> { }" };
-                yield return new object[] { "interface Foo<{|#0:Ta|}, {|#1:Tb|}> { }" };
-                yield return new object[] { "class Foo<{|#0:Ta|}, {|#1:T\\u0062|}> { }" };
-                yield return new object[] { "struct Foo<{|#0:Ta|}, {|#1:T\\u0062|}> { }" };
-                yield return new object[] { "interface Foo<{|#0:Ta|}, {|#1:T\\u0062|}> { }" };
+                yield return new object[] { "class         Foo<{|#0:Ta|}, {|#1:Tb|}> { }" };
+                yield return new object[] { "struct        Foo<{|#0:Ta|}, {|#1:Tb|}> { }" };
+                yield return new object[] { "interface     Foo<{|#0:Ta|}, {|#1:Tb|}> { }" };
+                yield return new object[] { "class         Foo<{|#0:Ta|}, {|#1:T\\u0062|}> { }" };
+                yield return new object[] { "struct        Foo<{|#0:Ta|}, {|#1:T\\u0062|}> { }" };
+                yield return new object[] { "interface     Foo<{|#0:Ta|}, {|#1:T\\u0062|}> { }" };
                 if (LightupHelpers.SupportsCSharp9)
                 {
-                    yield return new object[] { "record Foo<{|#0:Ta|}, {|#1:Tb|}> { }" };
-                    yield return new object[] { "record Foo<{|#0:Ta|}, {|#1:T\\u0062|}> { }" };
+                    yield return new object[] { "record        Foo<{|#0:Ta|}, {|#1:Tb|}> { }" };
+                    yield return new object[] { "record        Foo<{|#0:Ta|}, {|#1:T\\u0062|}> { }" };
                 }
 
                 if (LightupHelpers.SupportsCSharp10)
                 {
-                    yield return new object[] { "record class Foo<{|#0:Ta|}, {|#1:Tb|}> { }" };
+                    yield return new object[] { "record class  Foo<{|#0:Ta|}, {|#1:Tb|}> { }" };
                     yield return new object[] { "record struct Foo<{|#0:Ta|}, {|#1:T\\u0062|}> { }" };
                 }
             }
@@ -116,6 +117,60 @@ public class ClassName
 /// <typeparam name=""Tb"">Param 2</param>
 public ##";
             await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(Types))]
+        public async Task TestTypesWithoutFirstDocumentationAsync(string p)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+/// <typeparam name=""Tb"">The type of the tb.</typeparam>
+public ##";
+
+            var fixedSource = @"
+/// <summary>
+/// Foo
+/// </summary>
+/// <typeparam name=""Ta"">The type of the ta.</typeparam>
+/// <typeparam name=""Tb"">The type of the tb.</typeparam>
+public ##";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(6, 26).WithArguments("Ta"),
+            };
+
+            await VerifyCSharpFixAsync(testCode.Replace("##", p), expected, fixedSource.Replace("##", p), CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(Types))]
+        public async Task TestTypesWithoutSecondDocumentationAsync(string p)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+/// <typeparam name=""Ta"">The type of the ta.</typeparam>
+public ##";
+
+            var fixedSource = @"
+/// <summary>
+/// Foo
+/// </summary>
+/// <typeparam name=""Ta"">The type of the ta.</typeparam>
+/// <typeparam name=""Tb"">The type of the tb.</typeparam>
+public ##";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(6, 30).WithArguments("Tb"),
+            };
+
+            await VerifyCSharpFixAsync(testCode.Replace("##", p), expected, fixedSource.Replace("##", p), CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -427,10 +482,89 @@ internal class ClassName
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
-            => VerifyCSharpDiagnosticAsync(source, new[] { expected }, cancellationToken);
+        [Theory]
+        [MemberData(nameof(Members))]
+        public async Task TestMissingFirstTypeParameterCodeFixAsync(string p)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <typeparam name=""Tb"">The type of the tb.</typeparam>
+    public ##
+}";
+
+            var fixedCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <typeparam name=""Ta"">The type of the ta.</typeparam>
+    /// <typeparam name=""Tb"">The type of the tb.</typeparam>
+    public ##
+}";
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(11, 30).WithArguments("Ta"),
+            };
+
+            await VerifyCSharpFixAsync(testCode.Replace("##", p), expected, fixedCode.Replace("##", p), CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(Members))]
+        public async Task TestMissingSecondParameterCodeFixAsync(string p)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <typeparam name=""Ta"">The type of the ta.</typeparam>
+    public ##
+}";
+
+            var fixedCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <typeparam name=""Ta"">The type of the ta.</typeparam>
+    /// <typeparam name=""Tb"">The type of the tb.</typeparam>
+    public ##
+}";
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(11, 34).WithArguments("Tb"),
+            };
+
+            await VerifyCSharpFixAsync(testCode.Replace("##", p), expected, fixedCode.Replace("##", p), CancellationToken.None).ConfigureAwait(false);
+        }
 
         private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+            => VerifyCSharpFixAsync(source, expected, null, cancellationToken);
+
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
+            => VerifyCSharpFixAsync(source, new[] { expected }, null, cancellationToken);
+
+        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
         {
             string contentClassWithTypeparamDoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <TestClass>
@@ -471,9 +605,10 @@ internal class ClassName
 </TestClass>
 ";
 
-            var test = new StyleCopDiagnosticVerifier<SA1618GenericTypeParametersMustBeDocumented>.CSharpTest
+            var test = new CSharpTest
             {
                 TestCode = source,
+                FixedCode = fixedSource,
                 XmlReferences =
                 {
                     { "ClassWithTypeparamDoc.xml", contentClassWithTypeparamDoc },
