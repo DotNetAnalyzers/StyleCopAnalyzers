@@ -7,7 +7,6 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 {
     using System.Collections.Immutable;
     using System.Linq;
-    using System.Text.RegularExpressions;
     using LightJson;
     using StyleCop.Analyzers.Lightup;
 
@@ -55,7 +54,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                     {
                         var prefix = prefixJsonValue.ToStringValue(kvp.Key);
 
-                        if (!Regex.IsMatch(prefix, "^[a-z]{1,2}$"))
+                        if (!IsValidHungarianPrefix(prefix))
                         {
                             continue;
                         }
@@ -86,7 +85,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
             allowCommonHungarianPrefixes ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.naming.allowCommonHungarianPrefixes");
             allowedHungarianPrefixes ??= AnalyzerConfigHelper.TryGetStringListValue(analyzerConfigOptions, "stylecop.naming.allowedHungarianPrefixes")
-                ?.Where(value => Regex.IsMatch(value, "^[a-z]{1,2}$"))
+                ?.Where(value => IsValidHungarianPrefix(value))
                 .ToImmutableArray()
                 .ToBuilder();
             allowedNamespaceComponents ??= AnalyzerConfigHelper.TryGetStringListValue(analyzerConfigOptions, "stylecop.naming.allowedNamespaceComponents")?.ToBuilder();
@@ -115,5 +114,19 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         public bool IncludeInferredTupleElementNames { get; }
 
         public TupleElementNameCase TupleElementNameCasing { get; }
+
+        private static bool IsValidHungarianPrefix(string prefix)
+        {
+            // Equivalent to Regex.IsMatch(prefix, "^[a-z]{1,2}$")
+            for (var i = 0; i < prefix.Length; i++)
+            {
+                if (prefix[i] is not (>= 'a' and <= 'z'))
+                {
+                    return false;
+                }
+            }
+
+            return prefix.Length is (>= 1 and <= 2);
+        }
     }
 }

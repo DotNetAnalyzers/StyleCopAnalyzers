@@ -199,7 +199,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                     {
                         string name = child.Key;
 
-                        if (!Regex.IsMatch(name, "^[a-zA-Z0-9]+$"))
+                        if (!IsValidVariableName(name))
                         {
                             continue;
                         }
@@ -352,6 +352,20 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
             this.copyrightTextCache = expandedCopyrightText.Key;
             return this.copyrightTextCache;
+        }
+
+        private static bool IsValidVariableName(string name)
+        {
+            // Equivalent to Regex.IsMatch(prefix, "^[a-zA-Z0-9]+$")
+            for (var i = 0; i < name.Length; i++)
+            {
+                if (name[i] is not ((>= 'a' and <= 'z') or (>= 'A' and <= 'Z') or (>= '0' and <= '9')))
+                {
+                    return false;
+                }
+            }
+
+            return name.Length > 0;
         }
 
         private KeyValuePair<string, bool> BuildCopyrightText(string fileName)
