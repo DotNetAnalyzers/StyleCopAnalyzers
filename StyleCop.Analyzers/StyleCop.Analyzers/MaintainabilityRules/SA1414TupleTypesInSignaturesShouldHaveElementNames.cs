@@ -68,21 +68,6 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 return;
             }
 
-            var methodSymbol = context.SemanticModel.GetDeclaredSymbol(methodDeclaration);
-            var containingType = methodSymbol.ContainingType;
-            if (containingType is null || methodSymbol.ExplicitInterfaceImplementations.Length > 0)
-            {
-                return;
-            }
-
-            foreach (var member in containingType.AllInterfaces.SelectMany(i => i.GetMembers(methodSymbol.Name).OfType<IMethodSymbol>()))
-            {
-                if (methodSymbol.Equals(containingType.FindImplementationForInterfaceMember(member)))
-                {
-                    return;
-                }
-            }
-
             CheckType(context, methodDeclaration.ReturnType);
             CheckParameterList(context, methodDeclaration.ParameterList);
         }
@@ -181,7 +166,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             {
                 CheckType(context, tupleElementSyntax.Type);
 
-                if (tupleElementSyntax.Identifier.IsKind(SyntaxKind.None))
+                if (tupleElementSyntax.Identifier.IsKind(SyntaxKind.None) && !NamedTypeHelpers.IsImplementingAnInterfaceMember(context.SemanticModel.GetDeclaredSymbol(context.Node)))
                 {
                     var location = tupleElementSyntax.SyntaxNode.GetLocation();
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
