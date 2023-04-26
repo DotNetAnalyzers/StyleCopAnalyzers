@@ -42,9 +42,9 @@ namespace StyleCop.Analyzers
         [SuppressMessage("MicrosoftCodeAnalysisPerformance", "RS1012:Start action has no registered actions", Justification = "This is not a start action")]
         internal static SettingsFile GetStyleCopSettingsFile(this CompilationStartAnalysisContext context, CancellationToken cancellationToken)
         {
-            return GetSettingsFile(context.Options, GetJsonValue, cancellationToken);
+            return GetSettingsFile(context, context.Options, GetJsonValue, cancellationToken);
 
-            Lazy<JsonValue> GetJsonValue(SourceText settingsText)
+            static Lazy<JsonValue> GetJsonValue(CompilationStartAnalysisContext context, SourceText settingsText)
             {
                 if (context.TryGetValue(settingsText, JsonValueProvider, out var settingsFile))
                 {
@@ -87,8 +87,14 @@ namespace StyleCop.Analyzers
         /// <returns>A <see cref="StyleCopSettings"/> instance that represents the StyleCop settings for the given context.</returns>
         internal static StyleCopSettings GetStyleCopSettings(this SyntaxTreeAnalysisContext context, CancellationToken cancellationToken)
         {
-            var settingsFile = GetSettingsFile(context.Options, ParseJson, cancellationToken);
+            var settingsFile = GetSettingsFile((object)null, context.Options, GetJsonValue, cancellationToken);
             return GetSettings(context.Options, context.Tree, settingsFile, DeserializationFailureBehavior.ReturnDefaultSettings);
+
+            static Lazy<JsonValue> GetJsonValue(object context, SourceText settingsText)
+            {
+                _ = context; // Dummy context
+                return ParseJson(settingsText);
+            }
         }
 
         /// <summary>
@@ -120,8 +126,14 @@ namespace StyleCop.Analyzers
         /// <returns>A <see cref="StyleCopSettings"/> instance that represents the StyleCop settings for the given context.</returns>
         internal static StyleCopSettings GetStyleCopSettings(this AnalyzerOptions options, SyntaxTree tree, CancellationToken cancellationToken)
         {
-            var settingsFile = GetSettingsFile(options, ParseJson, cancellationToken);
+            var settingsFile = GetSettingsFile((object)null, options, GetJsonValue, cancellationToken);
             return GetSettings(options, tree, settingsFile, DeserializationFailureBehavior.ReturnDefaultSettings);
+
+            static Lazy<JsonValue> GetJsonValue(object context, SourceText settingsText)
+            {
+                _ = context; // Dummy context
+                return ParseJson(settingsText);
+            }
         }
 
         /// <summary>
@@ -135,10 +147,10 @@ namespace StyleCop.Analyzers
         /// <returns>A <see cref="StyleCopSettings"/> instance that represents the StyleCop settings for the given context.</returns>
         internal static StyleCopSettings GetStyleCopSettings(this CompilationAnalysisContext context, SyntaxTree tree, DeserializationFailureBehavior failureBehavior, CancellationToken cancellationToken)
         {
-            var settingsFile = GetSettingsFile(context.Options, GetJsonValue, cancellationToken);
+            var settingsFile = GetSettingsFile(context, context.Options, GetJsonValue, cancellationToken);
             return GetSettings(context.Options, tree, settingsFile, failureBehavior);
 
-            Lazy<JsonValue> GetJsonValue(SourceText settingsText)
+            static Lazy<JsonValue> GetJsonValue(CompilationAnalysisContext context, SourceText settingsText)
             {
                 if (context.TryGetValue(settingsText, JsonValueProvider, out var settingsFile))
                 {
@@ -230,7 +242,7 @@ namespace StyleCop.Analyzers
             return new StyleCopSettings();
         }
 
-        private static SettingsFile GetSettingsFile(AnalyzerOptions options, Func<SourceText, Lazy<JsonValue>> getJsonValue, CancellationToken cancellationToken)
+        private static SettingsFile GetSettingsFile<TContext>(TContext context, AnalyzerOptions options, Func<TContext, SourceText, Lazy<JsonValue>> getJsonValue, CancellationToken cancellationToken)
         {
             var additionalFiles = options != null ? options.AdditionalFiles : ImmutableArray.Create<AdditionalText>();
             foreach (var additionalFile in additionalFiles)
@@ -238,7 +250,7 @@ namespace StyleCop.Analyzers
                 if (IsStyleCopSettingsFile(additionalFile.Path))
                 {
                     SourceText additionalTextContent = additionalFile.GetText(cancellationToken);
-                    var content = getJsonValue(additionalTextContent);
+                    var content = getJsonValue(context, additionalTextContent);
                     return new SettingsFile(additionalFile.Path, content);
                 }
             }
