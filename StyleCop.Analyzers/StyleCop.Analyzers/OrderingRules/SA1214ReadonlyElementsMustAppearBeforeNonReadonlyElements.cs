@@ -48,7 +48,7 @@ namespace StyleCop.Analyzers.OrderingRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterCompilationStartAction(context =>
+            context.RegisterCompilationStartActionWithSettings(context =>
             {
                 context.RegisterSyntaxNodeAction(TypeDeclarationAction, TypeDeclarationKinds);
             });

@@ -136,7 +136,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<CompilationStartAnalysisContextWithSettings> CompilationStartAction = HandleCompilationStart;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -148,10 +148,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterCompilationStartAction(CompilationStartAction);
+            context.RegisterCompilationStartActionWithSettings(CompilationStartAction);
         }
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContextWithSettings context)
         {
             Analyzer analyzer = new Analyzer(context.Compilation.GetOrCreateUsingAliasCache());
             context.RegisterSyntaxNodeAction(analyzer.HandleIdentifierNameSyntax, SyntaxKind.IdentifierName);
