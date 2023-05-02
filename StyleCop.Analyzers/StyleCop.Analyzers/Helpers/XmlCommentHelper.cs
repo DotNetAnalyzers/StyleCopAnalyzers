@@ -319,7 +319,7 @@ namespace StyleCop.Analyzers.Helpers
 
             bool lastSpace = false;
 
-            bool diff = true;
+            bool diff = false;
 
             foreach (char ch in text)
             {
