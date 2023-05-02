@@ -268,20 +268,112 @@ namespace StyleCop.Analyzers.Helpers
                 return null;
             }
 
-            StringBuilder stringBuilder = StringBuilderPool.Allocate();
+            string result = string.Empty;
+
+            StringBuilder stringBuilder = null;
 
             foreach (var item in textElement.TextTokens)
             {
-                stringBuilder.Append(item);
+                if (result.Length == 0)
+                {
+                    result = item.ToString();
+                }
+                else
+                {
+                    if (stringBuilder == null)
+                    {
+                        stringBuilder = StringBuilderPool.Allocate();
+                        stringBuilder.Append(result);
+                    }
+
+                    stringBuilder.Append(item.ToString());
+                }
             }
 
-            string result = StringBuilderPool.ReturnAndFree(stringBuilder);
+            if (stringBuilder != null)
+            {
+                result = StringBuilderPool.ReturnAndFree(stringBuilder);
+            }
+
             if (normalizeWhitespace)
             {
-                result = Regex.Replace(result, @"\s+", " ");
+                result = result.NormalizeWhiteSpace();
             }
 
             return result;
+        }
+
+        internal static string NormalizeWhiteSpace(this string text)
+        {
+            if (text == null)
+            {
+                return null;
+            }
+
+            int length = text.Length;
+
+            if (length == 0)
+            {
+                return string.Empty;
+            }
+
+            bool lastSpace = false;
+
+            bool diff = true;
+
+            foreach (char ch in text)
+            {
+                if (char.IsWhiteSpace(ch))
+                {
+                    if (lastSpace)
+                    {
+                        length--;
+                    }
+                    else
+                    {
+                        if (ch != ' ')
+                        {
+                            diff = true;
+                        }
+
+                        lastSpace = true;
+                    }
+                }
+                else
+                {
+                    lastSpace = false;
+                }
+            }
+
+            if (diff || (length != text.Length))
+            {
+                char[] buffer = new char[length];
+
+                lastSpace = false;
+
+                length = 0;
+
+                foreach (char ch in text)
+                {
+                    if (char.IsWhiteSpace(ch))
+                    {
+                        if (!lastSpace)
+                        {
+                            buffer[length++] = ' ';
+                            lastSpace = true;
+                        }
+                    }
+                    else
+                    {
+                        buffer[length++] = ch;
+                        lastSpace = false;
+                    }
+                }
+
+                return new string(buffer, 0, length);
+            }
+
+            return text;
         }
 
         internal static T GetFirstAttributeOrDefault<T>(XmlNodeSyntax nodeSyntax)
