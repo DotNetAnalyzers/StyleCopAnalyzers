@@ -267,107 +267,92 @@ namespace StyleCop.Analyzers.Helpers
                 return null;
             }
 
-            string result = string.Empty;
+            bool lastWhitespace = false;
+
+            string single = string.Empty;
 
             StringBuilder stringBuilder = null;
 
             foreach (var item in textElement.TextTokens)
             {
-                if (result.Length == 0)
+                if (single.Length == 0)
                 {
-                    result = item.ToString();
+                    single = item.ToString();
                 }
                 else
                 {
                     if (stringBuilder == null)
                     {
                         stringBuilder = StringBuilderPool.Allocate();
-                        stringBuilder.Append(result);
+                        stringBuilder.AppendNormalize(single, normalizeWhitespace, ref lastWhitespace);
                     }
 
-                    stringBuilder.Append(item.ToString());
+                    stringBuilder.AppendNormalize(item.ToString(), normalizeWhitespace, ref lastWhitespace);
                 }
             }
 
-            if (stringBuilder != null)
+            if (stringBuilder == null)
             {
-                result = StringBuilderPool.ReturnAndFree(stringBuilder);
-            }
-
-            if (normalizeWhitespace)
-            {
-                result = result.NormalizeWhiteSpace();
-            }
-
-            return result;
-        }
-
-        internal static string NormalizeWhiteSpace(this string text)
-        {
-            if (text == null)
-            {
-                return null;
-            }
-
-            int length = text.Length;
-
-            bool lastSpace = false;
-
-            bool diff = false;
-
-            foreach (char ch in text)
-            {
-                if (char.IsWhiteSpace(ch))
+                if (normalizeWhitespace)
                 {
-                    if (lastSpace)
-                    {
-                        length--;
-                    }
-                    else
-                    {
-                        if (ch != ' ')
-                        {
-                            diff = true;
-                        }
+                    stringBuilder = StringBuilderPool.Allocate();
 
-                        lastSpace = true;
+                    if (!stringBuilder.AppendNormalize(single, normalizeWhitespace, ref lastWhitespace))
+                    {
+                        StringBuilderPool.Free(stringBuilder);
+
+                        return single;
                     }
                 }
                 else
                 {
-                    lastSpace = false;
+                    return single;
                 }
             }
 
-            if (diff || (length != text.Length))
+            return StringBuilderPool.ReturnAndFree(stringBuilder);
+        }
+
+        internal static bool AppendNormalize(this StringBuilder builder, string text, bool normalizeWhitespace, ref bool lastWhitespace)
+        {
+            bool diff = false;
+
+            if (normalizeWhitespace)
             {
-                char[] buffer = new char[length];
-
-                lastSpace = false;
-
-                length = 0;
-
                 foreach (char ch in text)
                 {
                     if (char.IsWhiteSpace(ch))
                     {
-                        if (!lastSpace)
+                        if (lastWhitespace)
                         {
-                            buffer[length++] = ' ';
-                            lastSpace = true;
+                            diff = true;
                         }
+                        else
+                        {
+                            if (ch != ' ')
+                            {
+                                diff = true;
+                            }
+
+                            builder.Append(' ');
+                        }
+
+                        lastWhitespace = true;
                     }
                     else
                     {
-                        buffer[length++] = ch;
-                        lastSpace = false;
+                        builder.Append(ch);
+
+                        lastWhitespace = false;
                     }
                 }
-
-                return new string(buffer, 0, length);
+            }
+            else
+            {
+                builder.Append(text);
             }
 
-            return text;
+            return diff;
         }
 
         internal static T GetFirstAttributeOrDefault<T>(XmlNodeSyntax nodeSyntax)
