@@ -7,7 +7,6 @@ namespace StyleCop.Analyzers.Helpers
 {
     using System.Linq;
     using System.Text;
-    using System.Text.RegularExpressions;
     using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -311,11 +310,6 @@ namespace StyleCop.Analyzers.Helpers
             }
 
             int length = text.Length;
-
-            if (length == 0)
-            {
-                return string.Empty;
-            }
 
             bool lastSpace = false;
 
