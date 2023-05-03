@@ -101,14 +101,10 @@ namespace StyleCop.Analyzers.DocumentationRules
                     continue;
                 }
 
-                if (documentationTexts.Contains(documentation))
+                if (!documentationTexts.Add(documentation))
                 {
                     // Add violation
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, documentationSyntax.GetLocation()));
-                }
-                else
-                {
-                    documentationTexts.Add(documentation);
                 }
             }
 
@@ -148,14 +144,10 @@ namespace StyleCop.Analyzers.DocumentationRules
                     continue;
                 }
 
-                if (documentationTexts.Contains(documentation))
+                if (!documentationTexts.Add(documentation))
                 {
                     // Add violation
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, diagnosticLocations.First()));
-                }
-                else
-                {
-                    documentationTexts.Add(documentation);
                 }
             }
 
