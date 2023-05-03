@@ -317,6 +317,10 @@ namespace StyleCop.Analyzers.Helpers
         /// <summary>
         /// Append to StringBuilder and perform white space normalization.
         /// </summary>
+        /// <param name="builder">StringBuilder to append to.</param>
+        /// <param name="text">String to append.</param>
+        /// <param name="normalizeWhitespace">Normalize flag.</param>
+        /// <param name="lastWhitespace">last char is white space flag.</param>
         /// <returns>True if output is different.</returns>
         internal static bool AppendNormalize(this StringBuilder builder, string text, bool normalizeWhitespace, ref bool lastWhitespace)
         {
