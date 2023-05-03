@@ -301,6 +301,7 @@ namespace StyleCop.Analyzers.Helpers
                     {
                         StringBuilderPool.Free(stringBuilder);
 
+                        // No change is needed, return original string.
                         return single;
                     }
                 }
@@ -313,6 +314,10 @@ namespace StyleCop.Analyzers.Helpers
             return StringBuilderPool.ReturnAndFree(stringBuilder);
         }
 
+        /// <summary>
+        /// Append to StringBuilder and perform white space normalization.
+        /// </summary>
+        /// <returns>True if output is different.</returns>
         internal static bool AppendNormalize(this StringBuilder builder, string text, bool normalizeWhitespace, ref bool lastWhitespace)
         {
             bool diff = false;
