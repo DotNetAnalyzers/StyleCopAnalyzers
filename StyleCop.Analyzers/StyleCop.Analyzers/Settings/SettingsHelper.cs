@@ -186,9 +186,27 @@ namespace StyleCop.Analyzers
 
         private static StyleCopSettings GetSettings(AnalyzerOptions options, SyntaxTree tree, SettingsFile settingsFile, DeserializationFailureBehavior failureBehavior)
         {
+            try
+            {
+                return CreateSettingsObject(options, tree, settingsFile);
+            }
+            catch (InvalidSettingsException) when (failureBehavior == DeserializationFailureBehavior.ReturnDefaultSettings)
+            {
+                // The settings file is invalid -> return the default settings.
+            }
+            catch (JsonParseException) when (failureBehavior == DeserializationFailureBehavior.ReturnDefaultSettings)
+            {
+                // The settings file is invalid -> return the default settings.
+            }
+
+            return new StyleCopSettings();
+        }
+
+        private static StyleCopSettings CreateSettingsObject(AnalyzerOptions options, SyntaxTree tree, SettingsFile settingsFile)
+        {
             if (settingsFile != null)
             {
-                return CreateSettingsObjectFromFile(options, tree, settingsFile, failureBehavior);
+                return CreateSettingsObjectFromFile(options, tree, settingsFile);
             }
 
             // TODO: Can this really be null? Review when nullable references has been enabled
@@ -201,42 +219,29 @@ namespace StyleCop.Analyzers
             return new StyleCopSettings();
         }
 
-        private static StyleCopSettings CreateSettingsObjectFromFile(AnalyzerOptions options, SyntaxTree tree, SettingsFile settingsFile, DeserializationFailureBehavior failureBehavior)
+        private static StyleCopSettings CreateSettingsObjectFromFile(AnalyzerOptions options, SyntaxTree tree, SettingsFile settingsFile)
         {
             var analyzerConfigOptions = options.AnalyzerConfigOptionsProvider().GetOptions(tree);
 
-            try
+            // If the file was accessed through the cache, this statement will re-throw any exceptions from when parsing the file
+            var rootValue = settingsFile.Content.Value;
+
+            if (!rootValue.IsJsonObject)
             {
-                // If the file was accessed through the cache, this statement will re-throw any exceptions from when parsing the file
-                var rootValue = settingsFile.Content.Value;
-
-                if (!rootValue.IsJsonObject)
-                {
-                    throw new JsonParseException(
-                        $"Settings file at '{settingsFile.FilePath}' was missing or empty.",
-                        JsonParseException.ErrorType.InvalidOrUnexpectedCharacter,
-                        default);
-                }
-
-                var settingsObject = rootValue.AsJsonObject["settings"];
-                if (settingsObject.IsJsonObject)
-                {
-                    return new StyleCopSettings(settingsObject.AsJsonObject, analyzerConfigOptions);
-                }
-                else if (settingsObject.IsNull)
-                {
-                    throw new InvalidSettingsException("\"settings\" must be a JSON object.");
-                }
-
-                return new StyleCopSettings();
+                throw new JsonParseException(
+                    $"Settings file at '{settingsFile.FilePath}' was missing or empty.",
+                    JsonParseException.ErrorType.InvalidOrUnexpectedCharacter,
+                    default);
             }
-            catch (InvalidSettingsException) when (failureBehavior == DeserializationFailureBehavior.ReturnDefaultSettings)
+
+            var settingsObject = rootValue.AsJsonObject["settings"];
+            if (settingsObject.IsJsonObject)
             {
-                // The settings file is invalid -> return the default settings.
+                return new StyleCopSettings(settingsObject.AsJsonObject, analyzerConfigOptions);
             }
-            catch (JsonParseException) when (failureBehavior == DeserializationFailureBehavior.ReturnDefaultSettings)
+            else if (settingsObject.IsNull)
             {
-                // The settings file is invalid -> return the default settings.
+                throw new InvalidSettingsException("\"settings\" must be a JSON object.");
             }
 
             return new StyleCopSettings();
