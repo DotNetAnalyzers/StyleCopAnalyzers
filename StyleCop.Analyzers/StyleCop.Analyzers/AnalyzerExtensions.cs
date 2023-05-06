@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -22,7 +23,8 @@ namespace StyleCop.Analyzers
             context.RegisterCompilationStartAction(context =>
             {
                 var settingsFile = context.GetStyleCopSettingsFile(context.CancellationToken);
-                var contextWithSettings = new CompilationStartAnalysisContextWithSettings(context, settingsFile);
+                var settingsObjectCache = context.Compilation.GetOrCreateStyleCopSettingsCache();
+                var contextWithSettings = new CompilationStartAnalysisContextWithSettings(context, settingsFile, settingsObjectCache);
                 action(contextWithSettings);
             });
         }
@@ -36,11 +38,12 @@ namespace StyleCop.Analyzers
         public static void RegisterSyntaxTreeAction(this CompilationStartAnalysisContextWithSettings context, Action<SyntaxTreeAnalysisContext, StyleCopSettings> action)
         {
             var settingsFile = context.SettingsFile;
+            var settingsObjectCache = context.SettingsObjectCache;
 
             context.InnerContext.RegisterSyntaxTreeAction(
                 context =>
                 {
-                    StyleCopSettings settings = context.GetStyleCopSettings(settingsFile);
+                    StyleCopSettings settings = context.GetStyleCopSettings(settingsFile, settingsObjectCache);
                     action(context, settings);
                 });
         }
@@ -77,11 +80,12 @@ namespace StyleCop.Analyzers
             where TLanguageKindEnum : struct
         {
             var settingsFile = context.SettingsFile;
+            var settingsObjectCache = context.SettingsObjectCache;
 
             context.InnerContext.RegisterSyntaxNodeAction(
                 context =>
                 {
-                    StyleCopSettings settings = context.GetStyleCopSettings(settingsFile);
+                    StyleCopSettings settings = context.GetStyleCopSettings(settingsFile, settingsObjectCache);
                     action(context, settings);
                 },
                 syntaxKinds);

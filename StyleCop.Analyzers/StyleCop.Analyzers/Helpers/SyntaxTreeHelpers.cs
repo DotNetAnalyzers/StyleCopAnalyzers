@@ -13,6 +13,7 @@ namespace StyleCop.Analyzers.Helpers
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Lightup;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     internal static class SyntaxTreeHelpers
     {
@@ -26,6 +27,15 @@ namespace StyleCop.Analyzers.Helpers
         private static Tuple<WeakReference<Compilation>, ConcurrentDictionary<SyntaxTree, bool>> usingAliasCache
             = Tuple.Create(new WeakReference<Compilation>(null), default(ConcurrentDictionary<SyntaxTree, bool>));
 
+        /// <summary>
+        /// A cache of the StyleCopSettings for a document.
+        /// </summary>
+        /// <remarks>
+        /// <para>This allows analyzers that needs the settings to not all need to re-create them during compilation of a project.</para>
+        /// </remarks>
+        private static Tuple<WeakReference<Compilation>, ConcurrentDictionary<SyntaxTree, Lazy<StyleCopSettings>>> styleCopSettingsCache
+            = Tuple.Create(new WeakReference<Compilation>(null), default(ConcurrentDictionary<SyntaxTree, Lazy<StyleCopSettings>>));
+
         public static ConcurrentDictionary<SyntaxTree, bool> GetOrCreateUsingAliasCache(this Compilation compilation)
         {
             var cache = usingAliasCache;
@@ -37,6 +47,34 @@ namespace StyleCop.Analyzers.Helpers
                 while (true)
                 {
                     var prior = Interlocked.CompareExchange(ref usingAliasCache, replacementCache, cache);
+                    if (prior == cache)
+                    {
+                        cache = replacementCache;
+                        break;
+                    }
+
+                    cache = prior;
+                    if (cache.Item1.TryGetTarget(out cachedCompilation) && cachedCompilation == compilation)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return cache.Item2;
+        }
+
+        public static ConcurrentDictionary<SyntaxTree, Lazy<StyleCopSettings>> GetOrCreateStyleCopSettingsCache(this Compilation compilation)
+        {
+            var cache = styleCopSettingsCache;
+
+            Compilation cachedCompilation;
+            if (!cache.Item1.TryGetTarget(out cachedCompilation) || cachedCompilation != compilation)
+            {
+                var replacementCache = Tuple.Create(new WeakReference<Compilation>(compilation), new ConcurrentDictionary<SyntaxTree, Lazy<StyleCopSettings>>());
+                while (true)
+                {
+                    var prior = Interlocked.CompareExchange(ref styleCopSettingsCache, replacementCache, cache);
                     if (prior == cache)
                     {
                         cache = replacementCache;
