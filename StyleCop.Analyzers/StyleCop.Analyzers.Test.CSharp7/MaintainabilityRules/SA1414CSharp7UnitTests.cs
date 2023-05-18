@@ -120,7 +120,7 @@ public class TestClass
         }
 
         [Fact]
-        public Task ValidateTuplesFromInterfaceAsync()
+        public async Task ValidateTuplesFromInterfaceAsync()
         {
             const string testCode = @"
 using System.Collections.Generic;
@@ -133,11 +133,11 @@ namespace Test {
 	    public int GetHashCode((string, string) obj) => throw null;
     }
 }";
-            return VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, default);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public Task ValidateTuplesFromExplicitInterfaceImplementationAsync()
+        public async Task ValidateTuplesFromExplicitInterfaceImplementationAsync()
         {
             const string testCode = @"
 using System.Collections.Generic;
@@ -150,11 +150,11 @@ namespace Test {
 	    int IEqualityComparer<(string, string)>.GetHashCode((string, string) obj) => throw null;
     }
 }";
-            return VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, default);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public Task ValidateTuplesFromBaseClassAsync()
+        public async Task ValidateTuplesFromBaseClassAsync()
         {
             const string testCode = @"
 namespace Test {
@@ -172,7 +172,7 @@ namespace Test {
 		public virtual ([|int|], [|int|]) Run(([|int|], [|int|]) y) => throw null;
 	}
 }";
-            return VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, default);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
