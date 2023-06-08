@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.LayoutRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.LayoutRules;
+    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.LayoutRules.SA1513ClosingBraceMustBeFollowedByBlankLine,
@@ -36,6 +37,35 @@ public class Foo
 ";
 
             await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3658, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3658")]
+        public async Task TestInitAccessorAsync()
+        {
+            var testCode = @"using System;
+
+public class Foo
+{
+    public int X
+    {
+        get
+        {
+            return 0;
+        }
+        init
+        {
+        }
+    }
+}
+";
+
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                ReferenceAssemblies = GenericAnalyzerTest.ReferenceAssembliesNet50,
+            };
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.LayoutRules
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.LayoutRules;
+    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.LayoutRules.SA1516ElementsMustBeSeparatedByBlankLine,
@@ -101,6 +102,54 @@ record A();
             };
             var expectedDiagnostics = this.GetExpectedResultTestGlobalStatementAndRecordSpacingInTopLevelProgram();
             test.TestState.ExpectedDiagnostics.AddRange(expectedDiagnostics);
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3658, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3658")]
+        public async Task TestInitAccessorAsync()
+        {
+            var testCode = @"using System;
+
+public class Foo
+{
+    public int X
+    {
+        get
+        {
+            return 0;
+        }
+[|        |]init
+        {
+        }
+    }
+}
+";
+
+            var fixedCode = @"using System;
+
+public class Foo
+{
+    public int X
+    {
+        get
+        {
+            return 0;
+        }
+
+        init
+        {
+        }
+    }
+}
+";
+
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                ReferenceAssemblies = GenericAnalyzerTest.ReferenceAssembliesNet50,
+            };
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
