@@ -18,6 +18,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -165,6 +166,7 @@ namespace StyleCop.Analyzers.LayoutRules
             {
             case SyntaxKind.GetKeyword:
             case SyntaxKind.SetKeyword:
+            case SyntaxKindEx.InitKeyword:
             case SyntaxKind.AddKeyword:
             case SyntaxKind.RemoveKeyword:
                 break;

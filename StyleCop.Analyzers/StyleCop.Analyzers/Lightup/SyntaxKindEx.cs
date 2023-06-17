@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind OrKeyword = (SyntaxKind)8438;
         public const SyntaxKind AndKeyword = (SyntaxKind)8439;
         public const SyntaxKind NotKeyword = (SyntaxKind)8440;
+        public const SyntaxKind InitKeyword = (SyntaxKind)8443;
         public const SyntaxKind ManagedKeyword = (SyntaxKind)8445;
         public const SyntaxKind UnmanagedKeyword = (SyntaxKind)8446;
         public const SyntaxKind RequiredKeyword = (SyntaxKind)8447;
@@ -62,6 +63,7 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind NullableDirectiveTrivia = (SyntaxKind)9055;
         public const SyntaxKind FunctionPointerType = (SyntaxKind)9056;
         public const SyntaxKind FunctionPointerParameter = (SyntaxKind)9057;
+        public const SyntaxKind InitAccessorDeclaration = (SyntaxKind)9060;
         public const SyntaxKind WithExpression = (SyntaxKind)9061;
         public const SyntaxKind WithInitializerExpression = (SyntaxKind)9062;
         public const SyntaxKind RecordDeclaration = (SyntaxKind)9063;
