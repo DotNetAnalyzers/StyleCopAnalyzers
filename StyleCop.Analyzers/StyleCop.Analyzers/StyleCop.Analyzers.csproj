@@ -24,7 +24,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <EmitCompilerGeneratedFiles Condition="'$(APPVEYOR)' != 'true'">true</EmitCompilerGeneratedFiles>
     <CompilerGeneratedFilesOutputPath>$(MSBuildProjectDirectory)\Lightup\.generated</CompilerGeneratedFilesOutputPath>
   </PropertyGroup>
 

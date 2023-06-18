@@ -81,16 +81,9 @@ namespace StyleCop.Analyzers.Test.Verifiers
                 return parseOptions;
             }
 
-            // TODO: Remove when c# 11 is a supported language version
+            // NOTE: If needed, this method can be temporarily updated to default to a preview version
             private LanguageVersion? GetDefaultLanguageVersion()
             {
-                // Temporary fix since c# 11 is not yet the default language version
-                // in the c# 11 test project.
-                if (LightupHelpers.SupportsCSharp11)
-                {
-                    return LanguageVersionEx.Preview;
-                }
-
                 return null;
             }
         }

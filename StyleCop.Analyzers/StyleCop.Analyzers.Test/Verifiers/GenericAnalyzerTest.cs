@@ -7,7 +7,6 @@ namespace StyleCop.Analyzers.Test.Verifiers
 {
     using System;
     using System.Collections.Immutable;
-    using System.IO;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -22,6 +21,8 @@ namespace StyleCop.Analyzers.Test.Verifiers
         internal static readonly ReferenceAssemblies ReferenceAssembliesNet50;
 
         internal static readonly ReferenceAssemblies ReferenceAssembliesNet60;
+
+        internal static readonly ReferenceAssemblies ReferenceAssembliesNet70;
 
         private static readonly Lazy<IExportProviderFactory> ExportProviderFactory;
 
@@ -44,15 +45,11 @@ namespace StyleCop.Analyzers.Test.Verifiers
             ReferenceAssembliesNet50 = ReferenceAssemblies.Net.Net50.AddPackages(ImmutableArray.Create(
                 new PackageIdentity("Microsoft.CodeAnalysis.CSharp", codeAnalysisTestVersion)));
 
-            ReferenceAssembliesNet60 =
-                new ReferenceAssemblies(
-                    "net6.0",
-                    new PackageIdentity(
-                        "Microsoft.NETCore.App.Ref",
-                        "6.0.0"),
-                    Path.Combine("ref", "net6.0"))
-                .AddPackages(ImmutableArray.Create(
-                    new PackageIdentity("Microsoft.CodeAnalysis.CSharp", codeAnalysisTestVersion)));
+            ReferenceAssembliesNet60 = ReferenceAssemblies.Net.Net60.AddPackages(ImmutableArray.Create(
+                new PackageIdentity("Microsoft.CodeAnalysis.CSharp", codeAnalysisTestVersion)));
+
+            ReferenceAssembliesNet70 = ReferenceAssemblies.Net.Net70.AddPackages(ImmutableArray.Create(
+                new PackageIdentity("Microsoft.CodeAnalysis.CSharp", codeAnalysisTestVersion)));
 
             ExportProviderFactory = new Lazy<IExportProviderFactory>(
                 () =>

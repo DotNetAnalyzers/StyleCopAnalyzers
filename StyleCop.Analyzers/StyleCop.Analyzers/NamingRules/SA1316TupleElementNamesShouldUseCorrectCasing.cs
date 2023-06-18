@@ -37,8 +37,8 @@ namespace StyleCop.Analyzers.NamingRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<SyntaxNodeAnalysisContext> TupleTypeAction = HandleTupleTypeAction;
-        private static readonly Action<SyntaxNodeAnalysisContext> TupleExpressionAction = HandleTupleExpressionAction;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> TupleTypeAction = HandleTupleTypeAction;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> TupleExpressionAction = HandleTupleExpressionAction;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -50,18 +50,20 @@ namespace StyleCop.Analyzers.NamingRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxNodeAction(TupleTypeAction, SyntaxKindEx.TupleType);
-            context.RegisterSyntaxNodeAction(TupleExpressionAction, SyntaxKindEx.TupleExpression);
+            context.RegisterCompilationStartAction(context =>
+            {
+                context.RegisterSyntaxNodeAction(TupleTypeAction, SyntaxKindEx.TupleType);
+                context.RegisterSyntaxNodeAction(TupleExpressionAction, SyntaxKindEx.TupleExpression);
+            });
         }
 
-        private static void HandleTupleTypeAction(SyntaxNodeAnalysisContext context)
+        private static void HandleTupleTypeAction(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             if (!context.SupportsTuples())
             {
                 return;
             }
 
-            var settings = context.GetStyleCopSettings(context.CancellationToken);
             var tupleType = (TupleTypeSyntaxWrapper)context.Node;
 
             foreach (var tupleElement in tupleType.Elements)
@@ -70,14 +72,13 @@ namespace StyleCop.Analyzers.NamingRules
             }
         }
 
-        private static void HandleTupleExpressionAction(SyntaxNodeAnalysisContext context)
+        private static void HandleTupleExpressionAction(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             if (!context.SupportsInferredTupleElementNames())
             {
                 return;
             }
 
-            var settings = context.GetStyleCopSettings(context.CancellationToken);
             if (!settings.NamingRules.IncludeInferredTupleElementNames)
             {
                 return;

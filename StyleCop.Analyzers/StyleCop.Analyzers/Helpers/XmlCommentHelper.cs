@@ -7,7 +7,6 @@ namespace StyleCop.Analyzers.Helpers
 {
     using System.Linq;
     using System.Text;
-    using System.Text.RegularExpressions;
     using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -268,20 +267,101 @@ namespace StyleCop.Analyzers.Helpers
                 return null;
             }
 
-            StringBuilder stringBuilder = StringBuilderPool.Allocate();
+            bool lastWhitespace = false;
+
+            string single = string.Empty;
+
+            StringBuilder stringBuilder = null;
 
             foreach (var item in textElement.TextTokens)
             {
-                stringBuilder.Append(item);
+                if (single.Length == 0)
+                {
+                    single = item.ToString();
+                }
+                else
+                {
+                    if (stringBuilder == null)
+                    {
+                        stringBuilder = StringBuilderPool.Allocate();
+                        stringBuilder.AppendNormalize(single, normalizeWhitespace, ref lastWhitespace);
+                    }
+
+                    stringBuilder.AppendNormalize(item.ToString(), normalizeWhitespace, ref lastWhitespace);
+                }
             }
 
-            string result = StringBuilderPool.ReturnAndFree(stringBuilder);
+            if (stringBuilder == null)
+            {
+                if (normalizeWhitespace)
+                {
+                    stringBuilder = StringBuilderPool.Allocate();
+
+                    if (!stringBuilder.AppendNormalize(single, normalizeWhitespace, ref lastWhitespace))
+                    {
+                        StringBuilderPool.Free(stringBuilder);
+
+                        // No change is needed, return original string.
+                        return single;
+                    }
+                }
+                else
+                {
+                    return single;
+                }
+            }
+
+            return StringBuilderPool.ReturnAndFree(stringBuilder);
+        }
+
+        /// <summary>
+        /// Append to StringBuilder and perform white space normalization.
+        /// </summary>
+        /// <param name="builder">StringBuilder to append to.</param>
+        /// <param name="text">String to append.</param>
+        /// <param name="normalizeWhitespace">Normalize flag.</param>
+        /// <param name="lastWhitespace">last char is white space flag.</param>
+        /// <returns>True if output is different.</returns>
+        internal static bool AppendNormalize(this StringBuilder builder, string text, bool normalizeWhitespace, ref bool lastWhitespace)
+        {
+            bool diff = false;
+
             if (normalizeWhitespace)
             {
-                result = Regex.Replace(result, @"\s+", " ");
+                foreach (char ch in text)
+                {
+                    if (char.IsWhiteSpace(ch))
+                    {
+                        if (lastWhitespace)
+                        {
+                            diff = true;
+                        }
+                        else
+                        {
+                            if (ch != ' ')
+                            {
+                                diff = true;
+                            }
+
+                            builder.Append(' ');
+                        }
+
+                        lastWhitespace = true;
+                    }
+                    else
+                    {
+                        builder.Append(ch);
+
+                        lastWhitespace = false;
+                    }
+                }
+            }
+            else
+            {
+                builder.Append(text);
             }
 
-            return result;
+            return diff;
         }
 
         internal static T GetFirstAttributeOrDefault<T>(XmlNodeSyntax nodeSyntax)

@@ -51,6 +51,12 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             return null;
         }
 
+        internal static string TryGetMultiLineStringValue(AnalyzerConfigOptionsWrapper analyzerConfigOptions, string key, bool allowExplicitUnset = true)
+        {
+            var orgValue = TryGetStringValue(analyzerConfigOptions, key, allowExplicitUnset);
+            return orgValue?.Replace("\\r", "\r").Replace("\\n", "\n");
+        }
+
         internal static KeyValuePair<string, string>? TryGetStringValueAndNotification(AnalyzerConfigOptionsWrapper analyzerConfigOptions, string key, bool allowExplicitUnset = true)
         {
             if (analyzerConfigOptions.TryGetValue(key, out var value))

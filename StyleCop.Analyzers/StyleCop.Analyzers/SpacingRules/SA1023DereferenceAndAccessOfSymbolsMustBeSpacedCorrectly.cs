@@ -198,6 +198,10 @@ namespace StyleCop.Analyzers.SpacingRules
                 context.ReportDiagnostic(Diagnostic.Create(DescriptorNotAtBeginningOfLine, token.GetLocation(), properties));
 #pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
             }
+            else if (allowAtLineStart && firstInLine)
+            {
+                // The case below should not trigger
+            }
             else if (!allowPrecedingSpace && precededBySpace)
             {
                 // Dereference symbol '*' should {not be preceded by a space}.

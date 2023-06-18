@@ -24,6 +24,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
         protected SA1402SettingsConfiguration SettingsConfiguration { get; set; } = SA1402SettingsConfiguration.ConfigureAsTopLevelType;
 
+        protected virtual string SettingKeyword => this.Keyword;
+
         protected abstract bool IsConfiguredAsTopLevelTypeByDefault { get; }
 
         [Fact]
@@ -190,7 +192,7 @@ public {this.Keyword} Test0
 
         protected override string GetSettings()
         {
-            return this.SettingsConfiguration.GetSettings(this.Keyword);
+            return this.SettingsConfiguration.GetSettings(this.SettingKeyword);
         }
     }
 }
