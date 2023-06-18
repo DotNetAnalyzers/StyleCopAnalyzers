@@ -227,7 +227,7 @@ public enum Foobar
 
         private static Task VerifyCSharpFixAsync(string testCode, string fixedCode)
         {
-            var test = new CSharpTest()
+            var test = new CSharpTest
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60,
                 TestState =
