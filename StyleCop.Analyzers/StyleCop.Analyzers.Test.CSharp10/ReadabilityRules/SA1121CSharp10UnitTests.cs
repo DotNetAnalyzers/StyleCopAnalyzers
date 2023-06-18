@@ -42,5 +42,31 @@ uint value = 3;
                 FixedCode = newSource,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestUsingNameChangeInGlobalUsingInAnotherFileAsync()
+        {
+            var source1 = @"
+global using MyDouble = System.Double;";
+
+            var oldSource2 = @"
+class TestClass
+{
+    private [|MyDouble|] x;
+}";
+
+            var newSource2 = @"
+class TestClass
+{
+    private double x;
+}";
+
+            var test = new CSharpTest();
+            test.TestState.Sources.Add(source1);
+            test.TestState.Sources.Add(oldSource2);
+            test.FixedState.Sources.Add(source1);
+            test.FixedState.Sources.Add(newSource2);
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

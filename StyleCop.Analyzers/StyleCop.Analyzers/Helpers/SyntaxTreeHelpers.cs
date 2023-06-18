@@ -33,7 +33,10 @@ namespace StyleCop.Analyzers.Helpers
             Compilation cachedCompilation;
             if (!cache.Item1.TryGetTarget(out cachedCompilation) || cachedCompilation != compilation)
             {
-                var replacementCache = Tuple.Create(new WeakReference<Compilation>(compilation), new ConcurrentDictionary<SyntaxTree, bool>());
+                var containsGlobalUsingAlias = ContainsGlobalUsingAliasNoCache(compilation);
+                var replacementDictionary = containsGlobalUsingAlias ? null : new ConcurrentDictionary<SyntaxTree, bool>();
+                var replacementCache = Tuple.Create(new WeakReference<Compilation>(compilation), replacementDictionary);
+
                 while (true)
                 {
                     var prior = Interlocked.CompareExchange(ref usingAliasCache, replacementCache, cache);
@@ -79,6 +82,12 @@ namespace StyleCop.Analyzers.Helpers
                 return false;
             }
 
+            if (cache == null)
+            {
+                // NOTE: This happens if any syntax tree in the compilation contains a global using alias
+                return true;
+            }
+
             bool result;
             if (cache.TryGetValue(tree, out result))
             {
@@ -95,6 +104,19 @@ namespace StyleCop.Analyzers.Helpers
             var nodes = tree.GetRoot().DescendantNodes(node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration) || node.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration));
 
             return nodes.OfType<UsingDirectiveSyntax>().Any(x => x.Alias != null);
+        }
+
+        private static bool ContainsGlobalUsingAliasNoCache(Compilation compilation)
+        {
+            return compilation.SyntaxTrees.Any(ContainsGlobalUsingAliasNoCache);
+        }
+
+        private static bool ContainsGlobalUsingAliasNoCache(SyntaxTree tree)
+        {
+            var nodes = tree.GetRoot().DescendantNodes(node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration) || node.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration));
+
+            var relevantNodes = nodes.OfType<UsingDirectiveSyntax>().ToArray();
+            return relevantNodes.Any(x => x.Alias != null && !x.GlobalKeyword().IsKind(SyntaxKind.None));
         }
     }
 }
