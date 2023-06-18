@@ -227,12 +227,11 @@ public enum Foobar
 
         private static Task VerifyCSharpFixAsync(string testCode, string fixedCode)
         {
-            var test = new CSharpTest(LanguageVersion.CSharp10)
+            var test = new CSharpTest()
             {
-                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net60,
                 TestState =
                 {
-                    OutputKind = OutputKind.DynamicallyLinkedLibrary,
                     Sources = { testCode },
                 },
                 FixedCode = fixedCode,
