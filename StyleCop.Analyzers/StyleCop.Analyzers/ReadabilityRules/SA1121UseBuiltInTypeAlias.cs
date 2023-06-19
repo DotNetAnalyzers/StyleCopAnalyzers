@@ -6,7 +6,7 @@
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
-    using System.Collections.Concurrent;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -159,9 +159,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private sealed class Analyzer
         {
-            private readonly ConcurrentDictionary<SyntaxTree, bool> usingAliasCache;
+            private readonly IReadOnlyDictionary<SyntaxTree, bool> usingAliasCache;
 
-            public Analyzer(ConcurrentDictionary<SyntaxTree, bool> usingAliasCache)
+            public Analyzer(IReadOnlyDictionary<SyntaxTree, bool> usingAliasCache)
             {
                 this.usingAliasCache = usingAliasCache;
             }

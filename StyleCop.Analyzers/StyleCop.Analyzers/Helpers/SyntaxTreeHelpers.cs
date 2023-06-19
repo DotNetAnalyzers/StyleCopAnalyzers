@@ -6,7 +6,8 @@
 namespace StyleCop.Analyzers.Helpers
 {
     using System;
-    using System.Collections.Concurrent;
+    using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Threading;
     using Microsoft.CodeAnalysis;
@@ -23,18 +24,17 @@ namespace StyleCop.Analyzers.Helpers
         /// <para>This allows many analyzers that run on every token in the file to avoid checking
         /// the same state in the document repeatedly.</para>
         /// </remarks>
-        private static Tuple<WeakReference<Compilation>, ConcurrentDictionary<SyntaxTree, bool>> usingAliasCache
-            = Tuple.Create(new WeakReference<Compilation>(null), default(ConcurrentDictionary<SyntaxTree, bool>));
+        private static Tuple<WeakReference<Compilation>, IReadOnlyDictionary<SyntaxTree, bool>> usingAliasCache
+            = Tuple.Create(new WeakReference<Compilation>(null), default(IReadOnlyDictionary<SyntaxTree, bool>));
 
-        public static ConcurrentDictionary<SyntaxTree, bool> GetOrCreateUsingAliasCache(this Compilation compilation)
+        public static IReadOnlyDictionary<SyntaxTree, bool> GetOrCreateUsingAliasCache(this Compilation compilation)
         {
             var cache = usingAliasCache;
 
             Compilation cachedCompilation;
             if (!cache.Item1.TryGetTarget(out cachedCompilation) || cachedCompilation != compilation)
             {
-                var containsGlobalUsingAlias = ContainsGlobalUsingAliasNoCache(compilation);
-                var replacementDictionary = containsGlobalUsingAlias ? null : new ConcurrentDictionary<SyntaxTree, bool>();
+                var replacementDictionary = CreateDictionary(compilation);
                 var replacementCache = Tuple.Create(new WeakReference<Compilation>(compilation), replacementDictionary);
 
                 while (true)
@@ -75,7 +75,7 @@ namespace StyleCop.Analyzers.Helpers
                 && TriviaHelper.IndexOfFirstNonWhitespaceTrivia(firstToken.LeadingTrivia) == -1;
         }
 
-        internal static bool ContainsUsingAlias(this SyntaxTree tree, ConcurrentDictionary<SyntaxTree, bool> cache)
+        internal static bool ContainsUsingAlias(this SyntaxTree tree, IReadOnlyDictionary<SyntaxTree, bool> cache)
         {
             if (tree == null)
             {
@@ -88,35 +88,39 @@ namespace StyleCop.Analyzers.Helpers
                 return true;
             }
 
-            bool result;
-            if (cache.TryGetValue(tree, out result))
+            if (cache.TryGetValue(tree, out var result))
             {
                 return result;
             }
 
-            bool generated = ContainsUsingAliasNoCache(tree);
-            cache.TryAdd(tree, generated);
-            return generated;
+            Debug.Assert(false, "This should not happen. Syntax tree could not be found in cache!");
+            return false;
         }
 
-        private static bool ContainsUsingAliasNoCache(SyntaxTree tree)
+        private static IReadOnlyDictionary<SyntaxTree, bool> CreateDictionary(Compilation compilation)
         {
-            var nodes = tree.GetRoot().DescendantNodes(node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration) || node.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration));
+            var result = new Dictionary<SyntaxTree, bool>();
 
-            return nodes.OfType<UsingDirectiveSyntax>().Any(x => x.Alias != null);
+            foreach (var tree in compilation.SyntaxTrees)
+            {
+                CheckUsingAliases(tree, out var containsUsingAlias, out var containsGlobalUsingAlias);
+                if (containsGlobalUsingAlias)
+                {
+                    return null;
+                }
+
+                result.Add(tree, containsUsingAlias);
+            }
+
+            return result;
         }
 
-        private static bool ContainsGlobalUsingAliasNoCache(Compilation compilation)
+        private static void CheckUsingAliases(SyntaxTree tree, out bool containsUsingAlias, out bool containsGlobalUsingAlias)
         {
-            return compilation.SyntaxTrees.Any(ContainsGlobalUsingAliasNoCache);
-        }
-
-        private static bool ContainsGlobalUsingAliasNoCache(SyntaxTree tree)
-        {
-            var nodes = tree.GetRoot().DescendantNodes(node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration) || node.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration));
-
-            var relevantNodes = nodes.OfType<UsingDirectiveSyntax>().ToArray();
-            return relevantNodes.Any(x => x.Alias != null && !x.GlobalKeyword().IsKind(SyntaxKind.None));
+            var usingNodes = tree.GetRoot().DescendantNodes(node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration) || node.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration)).OfType<UsingDirectiveSyntax>();
+            var usingAliasNodes = usingNodes.Where(x => x.Alias != null).ToList();
+            containsUsingAlias = usingAliasNodes.Any();
+            containsGlobalUsingAlias = usingAliasNodes.Any(x => !x.GlobalKeyword().IsKind(SyntaxKind.None));
         }
     }
 }
