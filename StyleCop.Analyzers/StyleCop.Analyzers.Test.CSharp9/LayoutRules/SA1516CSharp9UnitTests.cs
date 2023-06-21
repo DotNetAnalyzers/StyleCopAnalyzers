@@ -10,7 +10,6 @@ namespace StyleCop.Analyzers.Test.CSharp9.LayoutRules
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.LayoutRules;
-    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.LayoutRules.SA1516ElementsMustBeSeparatedByBlankLine,
@@ -144,13 +143,12 @@ public class Foo
 }
 ";
 
-            var test = new CSharpTest
+            await new CSharpTest
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
-                ReferenceAssemblies = GenericAnalyzerTest.ReferenceAssembliesNet50,
-            };
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         protected virtual DiagnosticResult[] GetExpectedResultTestUsingAndGlobalStatementSpacingInTopLevelProgram()
