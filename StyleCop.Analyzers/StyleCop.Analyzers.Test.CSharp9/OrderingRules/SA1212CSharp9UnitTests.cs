@@ -5,8 +5,8 @@ namespace StyleCop.Analyzers.Test.CSharp9.OrderingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.OrderingRules;
-    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.OrderingRules.SA1212PropertyAccessorsMustFollowOrder,
@@ -30,13 +30,12 @@ public class Foo
     public int Prop { get; init; }
 }";
 
-            var test = new CSharpTest
+            await new CSharpTest
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
-                ReferenceAssemblies = GenericAnalyzerTest.ReferenceAssembliesNet50,
-            };
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -81,13 +80,12 @@ public class Foo
     }
 }";
 
-            var test = new CSharpTest
+            await new CSharpTest
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
-                ReferenceAssemblies = GenericAnalyzerTest.ReferenceAssembliesNet50,
-            };
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

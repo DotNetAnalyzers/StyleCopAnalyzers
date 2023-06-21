@@ -100,7 +100,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 return;
             }
 
-            if ((accessors[0].Kind() == SyntaxKind.SetAccessorDeclaration || accessors[0].Kind() == SyntaxKindEx.InitAccessorDeclaration) &&
+            if ((accessors[0].Kind() is SyntaxKind.SetAccessorDeclaration or SyntaxKindEx.InitAccessorDeclaration) &&
                 accessors[1].Kind() == SyntaxKind.GetAccessorDeclaration)
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, accessors[0].GetLocation()));
