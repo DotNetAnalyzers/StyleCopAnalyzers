@@ -130,13 +130,12 @@ class TestClass
     }
 }";
 
-            var test = new CSharpTest
+            await new CSharpTest
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestCode = testCode,
                 FixedCode = fixedCode,
-            };
-            await test.RunAsync().ConfigureAwait(false);
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
