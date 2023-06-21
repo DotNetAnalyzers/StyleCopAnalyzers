@@ -175,5 +175,35 @@ namespace StyleCop.Analyzers.Helpers
             triviaList = token.GetNextToken().LeadingTrivia;
             return triviaList.Count > 0 && triviaList.First().IsKind(SyntaxKind.WhitespaceTrivia);
         }
+
+        /// <summary>
+        /// Returns the closest end of line trivia preceding the <paramref name="token"/>.
+        /// This currently only looks immediately before the specified token.
+        /// </summary>
+        /// <param name="token">The token to process.</param>
+        /// <returns>The closest preceding end of line trivia, or <see cref="SyntaxFactory.CarriageReturnLineFeed"/> if none is found.</returns>
+        internal static SyntaxTrivia GetPrecedingEndOfLineTrivia(this SyntaxToken token)
+        {
+            var leadingTrivia = token.LeadingTrivia;
+            for (var i = leadingTrivia.Count - 1; i >= 0; i--)
+            {
+                if (leadingTrivia[i].IsKind(SyntaxKind.EndOfLineTrivia))
+                {
+                    return leadingTrivia[i];
+                }
+            }
+
+            var prevToken = token.GetPreviousToken();
+            var prevTrailingTrivia = prevToken.TrailingTrivia;
+            for (var i = prevTrailingTrivia.Count - 1; i >= 0; i--)
+            {
+                if (prevTrailingTrivia[i].IsKind(SyntaxKind.EndOfLineTrivia))
+                {
+                    return prevTrailingTrivia[i];
+                }
+            }
+
+            return SyntaxFactory.CarriageReturnLineFeed;
+        }
     }
 }

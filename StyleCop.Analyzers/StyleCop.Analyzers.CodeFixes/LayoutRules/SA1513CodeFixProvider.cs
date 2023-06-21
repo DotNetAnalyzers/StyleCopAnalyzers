@@ -65,7 +65,8 @@ namespace StyleCop.Analyzers.LayoutRules
                 diagnostics.Select(diagnostic => root.FindToken(diagnostic.Location.SourceSpan.End)),
                 (originalToken, rewrittenToken) =>
                 {
-                    var newTrivia = rewrittenToken.LeadingTrivia.Insert(0, SyntaxFactory.CarriageReturnLineFeed);
+                    var endOfLineTrivia = rewrittenToken.GetPrecedingEndOfLineTrivia();
+                    var newTrivia = rewrittenToken.LeadingTrivia.Insert(0, endOfLineTrivia);
                     return rewrittenToken.WithLeadingTrivia(newTrivia);
                 });
         }
