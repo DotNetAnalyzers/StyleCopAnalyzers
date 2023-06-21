@@ -72,7 +72,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static SyntaxNode ReplaceWithLambda(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod)
         {
             var parameterList = anonymousMethod.ParameterList;
-            SyntaxNode lambdaExpression;
+            ExpressionSyntax lambdaExpression;
             SyntaxToken arrowToken;
 
             if (parameterList == null)
@@ -91,15 +91,16 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 case SyntaxKind.AddAssignmentExpression:
                 case SyntaxKind.SubtractAssignmentExpression:
-                    var list = GetAssignmentArgumentList(semanticModel, anonymousMethod);
-
-                    if (list == null)
                     {
-                        return null;
-                    }
+                        var list = GetAssignmentArgumentList(semanticModel, anonymousMethod);
+                        if (list == null)
+                        {
+                            return null;
+                        }
 
-                    argumentList = list.Value;
-                    break;
+                        argumentList = list.Value;
+                        break;
+                    }
 
                 case SyntaxKind.ArrowExpressionClause:
                 case SyntaxKind.ReturnStatement:
@@ -110,6 +111,18 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     }
 
                     break;
+
+                case SyntaxKind.CastExpression:
+                    {
+                        var list = GetCastTypeArgumentList(semanticModel, anonymousMethod);
+                        if (list == null)
+                        {
+                            return null;
+                        }
+
+                        argumentList = list.Value;
+                        break;
+                    }
                 }
 
                 List<ParameterSyntax> parameters = GenerateUniqueParameterNames(semanticModel, anonymousMethod, argumentList);
@@ -165,6 +178,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 lambdaExpression = SyntaxFactory.ParenthesizedLambdaExpression(anonymousMethod.AsyncKeyword, parameterListSyntax, arrowToken, anonymousMethod.Body);
             }
 
+            if (anonymousMethod.Parent.IsKind(SyntaxKind.CastExpression))
+            {
+                // In this case, the lambda needs enclosing parenthesis to be syntactically correct
+                lambdaExpression = SyntaxFactory.ParenthesizedExpression(lambdaExpression);
+            }
+
+            // TODO: No tests require this annotation. Can it be removed?
             return lambdaExpression
                 .WithAdditionalAnnotations(Formatter.Annotation);
         }
@@ -211,6 +231,21 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var enclosingSymbol = semanticModel.GetEnclosingSymbol(anonymousMethod.Parent.SpanStart);
             return !(((IMethodSymbol)enclosingSymbol).ReturnType is INamedTypeSymbol returnType) ? ImmutableArray<string>.Empty : returnType.DelegateInvokeMethod.Parameters.Select(ps => ps.Name).ToImmutableArray();
+        }
+
+        private static ImmutableArray<string>? GetCastTypeArgumentList(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod)
+        {
+            var castExpression = (CastExpressionSyntax)anonymousMethod.Parent;
+
+            var symbol = semanticModel.GetSymbolInfo(castExpression.Type);
+            var namedTypeSymbol = symbol.Symbol as INamedTypeSymbol;
+            var parameters = namedTypeSymbol?.DelegateInvokeMethod?.Parameters;
+            if (parameters == null)
+            {
+                return null;
+            }
+
+            return parameters.Value.Select(ps => ps.Name).ToImmutableArray();
         }
 
         private static List<ParameterSyntax> GenerateUniqueParameterNames(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod, ImmutableArray<string> argumentNames)
@@ -306,7 +341,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                         return rewrittenNode;
                     }
 
-                    return newNode;
+                    return newNode.WithoutFormatting();
                 });
             }
         }

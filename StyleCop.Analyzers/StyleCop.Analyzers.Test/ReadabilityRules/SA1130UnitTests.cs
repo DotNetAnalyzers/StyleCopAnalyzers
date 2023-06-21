@@ -963,5 +963,52 @@ public class TypeName
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Theory]
+        [InlineData(
+            "(Func<int>)[|delegate|] { return 1; }",
+            "(Func<int>)(() => { return 1; })")]
+        [InlineData(
+            "(Func<int>)[|delegate|]() { return 1; }",
+            "(Func<int>)(() => { return 1; })")]
+        [InlineData(
+            "(Func<int, int>)[|delegate|] { return 1; }",
+            "(Func<int, int>)(arg => { return 1; })")]
+        [InlineData(
+            "(Func<int, int>)[|delegate|](int x) { return 1; }",
+            "(Func<int, int>)(x => { return 1; })")]
+        [InlineData(
+            "(Func<int, int, int>)[|delegate|] { return 1; }",
+            "(Func<int, int, int>)((arg1, arg2) => { return 1; })")]
+        [InlineData(
+            "(Func<int, int, int>)[|delegate|](int x, int y) { return 1; }",
+            "(Func<int, int, int>)((x, y) => { return 1; })")]
+        [WorkItem(3510, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3510")]
+        public async Task TestDelegateUsedInCastAsync(string testExpression, string fixedExpression)
+        {
+            var testCode = $@"
+using System;
+
+public class TypeName
+{{
+    public void Test()
+    {{
+        var z = {testExpression};
+    }}
+}}";
+
+            var fixedCode = $@"
+using System;
+
+public class TypeName
+{{
+    public void Test()
+    {{
+        var z = {fixedExpression};
+    }}
+}}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
