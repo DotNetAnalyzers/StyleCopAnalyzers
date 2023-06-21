@@ -339,7 +339,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestAutoPropertydDeclarationSetterBeforeGetterAsync()
+        public async Task TestAutoPropertyDeclarationSetterBeforeGetterAsync()
         {
             var testCode = @"
 public class Foo
