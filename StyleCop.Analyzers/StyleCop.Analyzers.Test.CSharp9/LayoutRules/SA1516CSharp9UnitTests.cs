@@ -104,6 +104,53 @@ record A();
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(3658, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3658")]
+        public async Task TestInitAccessorAsync()
+        {
+            var testCode = @"using System;
+
+public class Foo
+{
+    public int X
+    {
+        get
+        {
+            return 0;
+        }
+[|        |]init
+        {
+        }
+    }
+}
+";
+
+            var fixedCode = @"using System;
+
+public class Foo
+{
+    public int X
+    {
+        get
+        {
+            return 0;
+        }
+
+        init
+        {
+        }
+    }
+}
+";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected virtual DiagnosticResult[] GetExpectedResultTestUsingAndGlobalStatementSpacingInTopLevelProgram()
         {
             // NOTE: Seems like a Roslyn bug made diagnostics be reported twice. Fixed in a later version.
