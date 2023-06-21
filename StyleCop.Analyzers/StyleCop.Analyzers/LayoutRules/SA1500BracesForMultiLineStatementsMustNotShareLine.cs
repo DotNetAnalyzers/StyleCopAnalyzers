@@ -219,6 +219,7 @@ namespace StyleCop.Analyzers.LayoutRules
                     {
                     case SyntaxKind.GetAccessorDeclaration:
                     case SyntaxKind.SetAccessorDeclaration:
+                    case SyntaxKindEx.InitAccessorDeclaration:
                     case SyntaxKind.AddAccessorDeclaration:
                     case SyntaxKind.RemoveAccessorDeclaration:
                     case SyntaxKind.UnknownAccessorDeclaration:
