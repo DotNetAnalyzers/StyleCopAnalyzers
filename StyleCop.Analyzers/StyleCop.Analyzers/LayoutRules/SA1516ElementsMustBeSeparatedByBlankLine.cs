@@ -15,6 +15,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -87,6 +88,7 @@ namespace StyleCop.Analyzers.LayoutRules
         private static readonly Action<SyntaxNodeAnalysisContext> TypeDeclarationAction = HandleTypeDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CompilationUnitAction = HandleCompilationUnit;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> NamespaceDeclarationAction = HandleNamespaceDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> FileScopedNamespaceDeclarationAction = HandleFileScopedNamespaceDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> BasePropertyDeclarationAction = HandleBasePropertyDeclaration;
 
         private static readonly ImmutableDictionary<string, string> DiagnosticProperties = ImmutableDictionary<string, string>.Empty.Add(CodeFixActionKey, InsertBlankLineValue);
@@ -129,6 +131,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
                 context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
                 context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
+                context.RegisterSyntaxNodeAction(FileScopedNamespaceDeclarationAction, SyntaxKindEx.FileScopedNamespaceDeclaration);
                 context.RegisterSyntaxNodeAction(BasePropertyDeclarationAction, SyntaxKinds.BasePropertyDeclaration);
             });
         }
@@ -208,6 +211,42 @@ namespace StyleCop.Analyzers.LayoutRules
                 if (previousItem != null)
                 {
                     ReportIfThereIsNoBlankLine(context, previousItem, members[0]);
+                }
+            }
+        }
+
+        private static void HandleFileScopedNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        {
+            var namespaceDeclaration = (BaseNamespaceDeclarationSyntaxWrapper)context.Node;
+
+            var usings = namespaceDeclaration.Usings;
+            var members = namespaceDeclaration.Members;
+
+            HandleUsings(context, usings, settings);
+            HandleMemberList(context, members);
+
+            if (namespaceDeclaration.Externs.Count > 0)
+            {
+                ReportIfThereIsNoBlankLine(context, namespaceDeclaration.Name, namespaceDeclaration.Externs[0]);
+            }
+
+            if (namespaceDeclaration.Usings.Count > 0)
+            {
+                ReportIfThereIsNoBlankLine(context, namespaceDeclaration.Name, namespaceDeclaration.Usings[0]);
+
+                if (namespaceDeclaration.Externs.Count > 0)
+                {
+                    ReportIfThereIsNoBlankLine(context, namespaceDeclaration.Externs[namespaceDeclaration.Externs.Count - 1], namespaceDeclaration.Usings[0]);
+                }
+            }
+
+            if (members.Count > 0)
+            {
+                ReportIfThereIsNoBlankLine(context, namespaceDeclaration.Name, members[0]);
+
+                if (namespaceDeclaration.Usings.Count > 0)
+                {
+                    ReportIfThereIsNoBlankLine(context, usings[usings.Count - 1], members[0]);
                 }
             }
         }

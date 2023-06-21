@@ -152,6 +152,11 @@ namespace StyleCop.Analyzers.LayoutRules
                     return currentNode;
                 }
 
+                if (currentNode is ExternAliasDirectiveSyntax)
+                {
+                    return currentNode;
+                }
+
                 currentNode = currentNode.Parent;
             }
 
