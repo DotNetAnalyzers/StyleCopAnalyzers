@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
 {
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.ReadabilityRules;
@@ -51,13 +52,12 @@ class TestClass
 class MyAttribute : Attribute { }
 ";
 
-            var test = new CSharpTest
+            await new CSharpTest
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestCode = testCode,
                 FixedCode = fixedCode,
-            };
-            await test.RunAsync().ConfigureAwait(false);
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
