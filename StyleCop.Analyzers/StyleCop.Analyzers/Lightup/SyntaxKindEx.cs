@@ -62,6 +62,7 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind NullableDirectiveTrivia = (SyntaxKind)9055;
         public const SyntaxKind FunctionPointerType = (SyntaxKind)9056;
         public const SyntaxKind FunctionPointerParameter = (SyntaxKind)9057;
+        public const SyntaxKind InitAccessorDeclaration = (SyntaxKind)9060;
         public const SyntaxKind WithExpression = (SyntaxKind)9061;
         public const SyntaxKind WithInitializerExpression = (SyntaxKind)9062;
         public const SyntaxKind RecordDeclaration = (SyntaxKind)9063;
