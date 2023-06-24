@@ -63,6 +63,21 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [Fact]
+        public async Task TestVariableNamesInNativeClassMethodAsync()
+        {
+            var testCode = @"
+public class TypeNameNativeMethods
+{
+    public void MethodName()
+    {
+        bool abX;
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestInvalidFieldNamesAreReportedAsync()
         {
             var testCode = @" public class TestClass
