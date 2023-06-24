@@ -58,7 +58,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.NamingRules
         }
 
         [Fact]
-        public async Task TestLowerCaseComlicatedFileScopedNamespaceAsync()
+        public async Task TestLowerCaseComplicatedFileScopedNamespaceAsync()
         {
             var testCode = @"namespace {|#0:test|}.{|#1:foo|}.{|#2:bar|};";
 

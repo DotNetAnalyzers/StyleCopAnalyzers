@@ -71,7 +71,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [Fact]
-        public async Task TestLowerCaseComlicatedNamespaceAsync()
+        public async Task TestLowerCaseComplicatedNamespaceAsync()
         {
             var testCode = @"namespace test.foo.bar
 {
@@ -789,7 +789,7 @@ const string test = ""value"";
         {
             var testCode = @"public class TestNativeMethods
 {
-public string test;
+public string test { get; set; }
 }";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
