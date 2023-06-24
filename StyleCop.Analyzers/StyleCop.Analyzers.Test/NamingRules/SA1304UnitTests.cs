@@ -62,6 +62,17 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [Fact]
+        public async Task TestFieldInNativeClassMethodAsync()
+        {
+            var testCode = @"public class FooNativeMethods
+{
+    internal readonly string bar = ""baz"";
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestInternalReadonlyFieldStartingWithLowerCaseAsync()
         {
             var testCode = @"public class Foo
