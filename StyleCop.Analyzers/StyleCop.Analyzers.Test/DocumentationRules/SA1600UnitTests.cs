@@ -47,9 +47,25 @@ using System;
         }
 
         [Fact]
+        public async Task TestPartialClassWithoutDocumentationAsync()
+        {
+            await this.TestTypeDeclarationDocumentationAsync("class", "partial", false, false).ConfigureAwait(false);
+            await this.TestTypeDeclarationDocumentationAsync("class", "internal partial", false, false).ConfigureAwait(false);
+            await this.TestTypeDeclarationDocumentationAsync("class", "public partial", false, false).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestStructWithoutDocumentationAsync()
         {
             await this.TestTypeWithoutDocumentationAsync("struct", false).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPartialStructWithoutDocumentationAsync()
+        {
+            await this.TestTypeDeclarationDocumentationAsync("struct", "partial", false, false).ConfigureAwait(false);
+            await this.TestTypeDeclarationDocumentationAsync("struct", "internal partial", false, false).ConfigureAwait(false);
+            await this.TestTypeDeclarationDocumentationAsync("struct", "public partial", false, false).ConfigureAwait(false);
         }
 
         [Fact]
@@ -62,6 +78,14 @@ using System;
         public async Task TestInterfaceWithoutDocumentationAsync()
         {
             await this.TestTypeWithoutDocumentationAsync("interface", true).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPartialInterfaceWithoutDocumentationAsync()
+        {
+            await this.TestTypeDeclarationDocumentationAsync("interface", "partial", false, false).ConfigureAwait(false);
+            await this.TestTypeDeclarationDocumentationAsync("interface", "internal partial", false, false).ConfigureAwait(false);
+            await this.TestTypeDeclarationDocumentationAsync("interface", "public partial", false, false).ConfigureAwait(false);
         }
 
         [Fact]
