@@ -135,7 +135,9 @@ namespace StyleCop.Analyzers.SpacingRules
                     break;
 
                 case SyntaxKind.ColonToken:
-                    precedesSpecialCharacter = nextToken.Parent.IsKind(SyntaxKind.InterpolationFormatClause);
+                    precedesSpecialCharacter =
+                        nextToken.Parent.IsKind(SyntaxKind.InterpolationFormatClause) ||
+                        nextToken.Parent.IsKind(SyntaxKindEx.CasePatternSwitchLabel);
                     suppressFollowingSpaceError = false;
                     break;
 
