@@ -410,5 +410,19 @@ public class Foo
             };
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestOtherAttributeAsync()
+        {
+            var testCode = @"public class Foo
+{
+    [System.Obsolete(""Method is obsolete!"")]
+    public void Bar()
+    {
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
