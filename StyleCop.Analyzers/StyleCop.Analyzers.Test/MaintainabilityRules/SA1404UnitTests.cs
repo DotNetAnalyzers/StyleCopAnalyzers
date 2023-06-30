@@ -16,17 +16,19 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
     public class SA1404UnitTests
     {
-        [Fact]
-        public async Task TestSuppressionWithStringLiteralAsync()
+        [Theory]
+        [InlineData("SuppressMessage")]
+        [InlineData("SuppressMessageAttribute")]
+        public async Task TestSuppressionWithStringLiteralAsync(string attributeName)
         {
-            var testCode = @"public class Foo
-{
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = ""a justification"")]
+            var testCode = $@"public class Foo
+{{
+    [System.Diagnostics.CodeAnalysis.{attributeName}(null, null, Justification = ""a justification"")]
     public void Bar()
-    {
+    {{
 
-    }
-}";
+    }}
+}}";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
