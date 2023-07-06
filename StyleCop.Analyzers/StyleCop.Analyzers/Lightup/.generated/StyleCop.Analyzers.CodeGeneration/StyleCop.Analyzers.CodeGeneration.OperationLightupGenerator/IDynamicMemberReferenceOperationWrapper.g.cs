@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct IDynamicMemberReferenceOperationWrapper : IOperationWrapper
+    internal readonly struct IDynamicMemberReferenceOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IDynamicMemberReferenceOperation";
         private static readonly Type WrappedType;
@@ -36,6 +36,8 @@ namespace StyleCop.Analyzers.Lightup
         public string MemberName => MemberNameAccessor(this.WrappedOperation);
         public ImmutableArray<ITypeSymbol> TypeArguments => TypeArgumentsAccessor(this.WrappedOperation);
         public ITypeSymbol ContainingType => ContainingTypeAccessor(this.WrappedOperation);
+        public static explicit operator IDynamicMemberReferenceOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(IDynamicMemberReferenceOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IDynamicMemberReferenceOperationWrapper FromOperation(IOperation operation)
         {
             if (operation == null)

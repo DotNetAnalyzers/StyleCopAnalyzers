@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct IInvocationOperationWrapper : IOperationWrapper
+    internal readonly struct IInvocationOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IInvocationOperation";
         private static readonly Type WrappedType;
@@ -36,6 +36,8 @@ namespace StyleCop.Analyzers.Lightup
         public IOperation Instance => InstanceAccessor(this.WrappedOperation);
         public bool IsVirtual => IsVirtualAccessor(this.WrappedOperation);
         public ImmutableArray<IOperation> Arguments => ArgumentsAccessor(this.WrappedOperation);
+        public static explicit operator IInvocationOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(IInvocationOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IInvocationOperationWrapper FromOperation(IOperation operation)
         {
             if (operation == null)
