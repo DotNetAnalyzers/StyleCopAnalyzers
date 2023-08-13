@@ -216,5 +216,23 @@ public class TestClass
             var expected = Diagnostic(DescriptorNotPreceded).WithLocation(8, 62);
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        // NOTE: This case is handled by SA1026, so it's intentionally allowed here
+        [Fact]
+        public async Task TestImplicitlyTypedArrayCreationAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            var x = new [] { 0, 1 };
+        }
+    }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
