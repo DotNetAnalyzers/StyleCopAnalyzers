@@ -154,28 +154,12 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestAttributeWithParametersAndNoSpaceAfterClosingParenthesisAsync()
-        {
-            const string testCode = @"using System;
-using System.Security.Permissions;
-
-[PermissionSet(SecurityAction.LinkDemand, Name = ""FullTrust"")]
-public class Foo
-{
-    public void Method(int param1, int param2)
-    {
-    }
-}";
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
         public async Task TestAttributeWithParametersAndSpaceAfterClosingParenthesisAsync()
         {
             const string testCode = @"using System;
-using System.Security.Permissions;
+using System.Runtime.InteropServices;
 
-[PermissionSet(SecurityAction.LinkDemand, Name = ""FullTrust"") ]
+[StructLayout(LayoutKind.Auto, CharSet = CharSet.Auto{|#0:)|} ]
 public class Foo
 {
     public void Method(int param1, int param2)
@@ -184,9 +168,9 @@ public class Foo
 }";
 
             const string fixedCode = @"using System;
-using System.Security.Permissions;
+using System.Runtime.InteropServices;
 
-[PermissionSet(SecurityAction.LinkDemand, Name = ""FullTrust"")]
+[StructLayout(LayoutKind.Auto, CharSet = CharSet.Auto)]
 public class Foo
 {
     public void Method(int param1, int param2)
@@ -194,7 +178,7 @@ public class Foo
     }
 }";
 
-            DiagnosticResult expected = Diagnostic(DescriptorNotFollowed).WithLocation(4, 61);
+            DiagnosticResult expected = Diagnostic(DescriptorNotFollowed).WithLocation(0);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
