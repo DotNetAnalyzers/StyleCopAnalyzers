@@ -158,6 +158,10 @@ namespace StyleCop.Analyzers.Helpers
                     {
                         accessibility = AccessLevel.Internal;
                     }
+                    else if (member.Parent.IsKind(SyntaxKind.InterfaceDeclaration))
+                    {
+                        accessibility = AccessLevel.Public;
+                    }
                     else
                     {
                         accessibility = AccessLevel.Private;
