@@ -104,20 +104,22 @@ namespace StyleCop.Analyzers.Test.OrderingRules
         }
 
         /// <summary>
-        /// Verifies that the analyzer will properly handle class access levels.
+        /// Verifies that the analyzer will properly handle type access levels.
         /// </summary>
+        /// <param name="keyword">The keyword used to declare the type.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestClassOrderingAsync()
+        [Theory]
+        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestTypeOrderingAsync(string keyword)
         {
-            var testCode = @"internal class TestClass1 { }
-public class TestClass2 { }
+            var testCode = $@"internal {keyword} TestClass1 {{ }}
+public {keyword} {{|#0:TestClass2|}} {{ }}
 ";
 
-            var expected = Diagnostic().WithLocation(2, 14).WithArguments("public", "internal");
+            var expected = Diagnostic().WithLocation(0).WithArguments("public", "internal");
 
-            var fixedCode = @"public class TestClass2 { }
-internal class TestClass1 { }
+            var fixedCode = $@"public {keyword} TestClass2 {{ }}
+internal {keyword} TestClass1 {{ }}
 ";
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
@@ -126,12 +128,14 @@ internal class TestClass1 { }
         /// <summary>
         /// Verifies that the analyzer will properly handle interfaces before classes.
         /// </summary>
+        /// <param name="keyword">The keyword used to declare the type.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestInternalInterfaceBeforePublicClassAsync()
+        [Theory]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestInternalInterfaceBeforePublicClassAsync(string keyword)
         {
-            var testCode = @"internal interface ITestInterface { }
-public class TestClass2 { }
+            var testCode = $@"internal interface ITestInterface {{ }}
+public {keyword} TestClass2 {{ }}
 ";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
