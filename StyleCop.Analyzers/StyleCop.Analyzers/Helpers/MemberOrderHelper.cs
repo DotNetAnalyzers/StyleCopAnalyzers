@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Helpers
 {
     using System;
@@ -16,7 +14,7 @@ namespace StyleCop.Analyzers.Helpers
     /// <summary>
     /// Helper for dealing with member priority.
     /// </summary>
-    internal struct MemberOrderHelper
+    internal readonly struct MemberOrderHelper
     {
         private static readonly ImmutableArray<SyntaxKind> TypeMemberOrder = ImmutableArray.Create(
             SyntaxKind.ClassDeclaration,
@@ -44,8 +42,13 @@ namespace StyleCop.Analyzers.Helpers
         {
             this.Member = member;
             var modifiers = member.GetModifiers();
-            var type = member.Kind();
-            type = type == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : type;
+            var type = member.Kind() switch
+            {
+                SyntaxKind.EventFieldDeclaration => SyntaxKind.EventDeclaration,
+                SyntaxKindEx.RecordDeclaration => SyntaxKind.ClassDeclaration,
+                SyntaxKindEx.RecordStructDeclaration => SyntaxKind.StructDeclaration,
+                var kind => kind,
+            };
 
             this.Priority = 0;
             foreach (OrderingTrait trait in elementOrder)
