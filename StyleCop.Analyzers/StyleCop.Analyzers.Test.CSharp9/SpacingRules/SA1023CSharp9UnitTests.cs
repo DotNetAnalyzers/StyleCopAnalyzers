@@ -1,14 +1,12 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.SpacingRules;
-    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
     using static StyleCop.Analyzers.SpacingRules.SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -68,21 +66,17 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
 }
 ";
 
-            await new CSharpTest()
+            DiagnosticResult[] expected =
             {
-                ReferenceAssemblies = GenericAnalyzerTest.ReferenceAssembliesNet50,
-                TestCode = testCode,
-                FixedCode = fixedCode,
-                ExpectedDiagnostics =
-                {
-                    Diagnostic(DescriptorNotPreceded).WithLocation(0),
-                    Diagnostic(DescriptorNotFollowed).WithLocation(1),
-                    Diagnostic(DescriptorNotPreceded).WithLocation(2),
-                    Diagnostic(DescriptorFollowed).WithLocation(3),
-                    Diagnostic(DescriptorNotPreceded).WithLocation(4),
-                    Diagnostic(DescriptorFollowed).WithLocation(5),
-                },
-            }.RunAsync().ConfigureAwait(false);
+                Diagnostic(DescriptorNotPreceded).WithLocation(0),
+                Diagnostic(DescriptorNotFollowed).WithLocation(1),
+                Diagnostic(DescriptorNotPreceded).WithLocation(2),
+                Diagnostic(DescriptorFollowed).WithLocation(3),
+                Diagnostic(DescriptorNotPreceded).WithLocation(4),
+                Diagnostic(DescriptorFollowed).WithLocation(5),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

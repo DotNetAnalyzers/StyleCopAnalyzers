@@ -5,8 +5,8 @@ namespace StyleCop.Analyzers.Test.CSharp11.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp10.SpacingRules;
-    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1012OpeningBracesMustBeSpacedCorrectly,
@@ -40,20 +40,16 @@ class C
 }
 ";
 
-            await new CSharpTest()
+            DiagnosticResult[] expected =
             {
-                ReferenceAssemblies = GenericAnalyzerTest.ReferenceAssembliesNet50,
-                TestCode = testCode,
-                ExpectedDiagnostics =
-                {
-                    // Opening brace should not be preceded by a space
-                    Diagnostic().WithLocation(0).WithArguments(" not", "preceded"),
+                // Opening brace should not be preceded by a space
+                Diagnostic().WithLocation(0).WithArguments(" not", "preceded"),
 
-                    // Opening brace should be preceded by a space
-                    Diagnostic().WithLocation(1).WithArguments(string.Empty, "preceded"),
-                },
-                FixedCode = fixedCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+                // Opening brace should be preceded by a space
+                Diagnostic().WithLocation(1).WithArguments(string.Empty, "preceded"),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

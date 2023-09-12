@@ -53,9 +53,6 @@ namespace StyleCop.Analyzers.OrderingRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly ImmutableArray<SyntaxKind> TypeDeclarationKinds =
-            ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration);
-
         private static readonly ImmutableHashSet<SyntaxKind> MemberKinds = ImmutableHashSet.Create(
             SyntaxKind.DelegateDeclaration,
             SyntaxKind.EnumDeclaration,
@@ -69,7 +66,9 @@ namespace StyleCop.Analyzers.OrderingRules
             SyntaxKind.IndexerDeclaration,
             SyntaxKind.MethodDeclaration,
             SyntaxKind.ConversionOperatorDeclaration,
-            SyntaxKind.OperatorDeclaration);
+            SyntaxKind.OperatorDeclaration,
+            SyntaxKindEx.RecordDeclaration,
+            SyntaxKindEx.RecordStructDeclaration);
 
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CompilationUnitAction = HandleCompilationUnit;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> BaseNamespaceDeclarationAction = HandleBaseNamespaceDeclaration;
@@ -89,7 +88,7 @@ namespace StyleCop.Analyzers.OrderingRules
             {
                 context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
                 context.RegisterSyntaxNodeAction(BaseNamespaceDeclarationAction, SyntaxKinds.BaseNamespaceDeclaration);
-                context.RegisterSyntaxNodeAction(TypeDeclarationAction, TypeDeclarationKinds);
+                context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
             });
         }
 

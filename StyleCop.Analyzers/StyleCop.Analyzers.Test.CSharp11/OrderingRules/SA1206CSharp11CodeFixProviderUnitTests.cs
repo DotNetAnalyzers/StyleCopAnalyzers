@@ -5,8 +5,8 @@ namespace StyleCop.Analyzers.Test.CSharp11.OrderingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp10.OrderingRules;
-    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.OrderingRules.SA1206DeclarationKeywordsMustFollowOrder,
@@ -43,17 +43,13 @@ internal struct SomeStruct
     public required int Field;
 }";
 
-            await new CSharpTest()
+            DiagnosticResult[] expected =
             {
-                ReferenceAssemblies = GenericAnalyzerTest.ReferenceAssembliesNet70,
-                TestCode = testCode,
-                FixedCode = fixedCode,
-                ExpectedDiagnostics =
-                {
-                    Diagnostic().WithLocation(0).WithArguments("public", "required"),
-                    Diagnostic().WithLocation(1).WithArguments("public", "required"),
-                },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+                Diagnostic().WithLocation(0).WithArguments("public", "required"),
+                Diagnostic().WithLocation(1).WithArguments("public", "required"),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
