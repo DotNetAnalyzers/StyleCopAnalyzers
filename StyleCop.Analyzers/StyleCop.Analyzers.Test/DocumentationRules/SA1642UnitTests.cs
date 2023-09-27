@@ -5,10 +5,13 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
+    using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Test.Helpers;
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
@@ -21,8 +24,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     public class SA1642UnitTests
     {
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestNoDocumentationAsync(string typeKind)
         {
             var testCode = $@"namespace FooNamespace
@@ -38,8 +40,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestEmptyPublicConstructorAsync(string typeKind)
         {
             await TestEmptyConstructorAsync(typeKind, "public").ConfigureAwait(false);
@@ -54,62 +55,65 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestEmptyStaticConstructorAsync(string typeKind)
         {
             await TestEmptyConstructorAsync(typeKind, "static").ConfigureAwait(false);
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestNonPrivateConstructorCorrectDocumentationSimpleAsync(string typeKind)
         {
+            var docTypeKind = GetDocTypeKind(typeKind);
+
             await TestConstructorCorrectDocumentationSimpleAsync(
                 typeKind,
                 "public",
-                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
-                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, docTypeKind),
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, docTypeKind),
                 false).ConfigureAwait(false);
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestNonPrivateConstructorCorrectDocumentationCustomizedAsync(string typeKind)
         {
+            var docTypeKind = GetDocTypeKind(typeKind);
+
             await TestConstructorCorrectDocumentationCustomizedAsync(
                 typeKind,
                 "public",
-                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
-                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, docTypeKind),
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, docTypeKind),
                 false).ConfigureAwait(false);
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestNonPrivateConstructorCorrectDocumentationGenericSimpleAsync(string typeKind)
         {
+            var docTypeKind = GetDocTypeKind(typeKind);
+
             await TestConstructorCorrectDocumentationSimpleAsync(
                 typeKind,
                 "public",
-                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
-                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, docTypeKind),
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, docTypeKind),
                 true).ConfigureAwait(false);
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestNonPrivateConstructorCorrectDocumentationGenericCustomizedAsync(string typeKind)
         {
+            var docTypeKind = GetDocTypeKind(typeKind);
+
             await TestConstructorCorrectDocumentationCustomizedAsync(
                 typeKind,
                 "public",
-                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
-                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, docTypeKind),
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, docTypeKind),
                 true).ConfigureAwait(false);
         }
 
@@ -222,56 +226,60 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestStaticConstructorCorrectDocumentationAsync(string typeKind)
         {
+            var docTypeKind = GetDocTypeKind(typeKind);
+
             await TestConstructorCorrectDocumentationAsync(
                 typeKind,
                 "static",
-                string.Format(DocumentationResources.StaticConstructorStandardTextFirstPart, typeKind),
-                string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, typeKind),
+                string.Format(DocumentationResources.StaticConstructorStandardTextFirstPart, docTypeKind),
+                string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, docTypeKind),
                 string.Empty,
                 false).ConfigureAwait(false);
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestStaticConstructorCorrectDocumentationGenericAsync(string typeKind)
         {
+            var docTypeKind = GetDocTypeKind(typeKind);
+
             await TestConstructorCorrectDocumentationAsync(
                 typeKind,
                 "static",
-                string.Format(DocumentationResources.StaticConstructorStandardTextFirstPart, typeKind),
-                string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, typeKind),
+                string.Format(DocumentationResources.StaticConstructorStandardTextFirstPart, docTypeKind),
+                string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, docTypeKind),
                 string.Empty,
                 true).ConfigureAwait(false);
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestNonPrivateConstructorMissingDocumentationAsync(string typeKind)
         {
+            var docTypeKind = GetDocTypeKind(typeKind);
+
             await TestConstructorMissingDocumentationAsync(
                 typeKind,
                 "public",
-                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
-                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, docTypeKind),
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, docTypeKind),
                 false).ConfigureAwait(false);
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestNonPrivateConstructorMissingDocumentationGenericAsync(string typeKind)
         {
+            var docTypeKind = GetDocTypeKind(typeKind);
+
             await TestConstructorMissingDocumentationAsync(
                 typeKind,
                 "public",
-                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
-                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, docTypeKind),
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, docTypeKind),
                 true).ConfigureAwait(false);
         }
 
@@ -302,54 +310,58 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestStaticConstructorMissingDocumentationAsync(string typeKind)
         {
+            var docTypeKind = GetDocTypeKind(typeKind);
+
             await TestConstructorMissingDocumentationAsync(
                 typeKind,
                 "static",
-                string.Format(DocumentationResources.StaticConstructorStandardTextFirstPart, typeKind),
-                string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, typeKind),
+                string.Format(DocumentationResources.StaticConstructorStandardTextFirstPart, docTypeKind),
+                string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, docTypeKind),
                 false).ConfigureAwait(false);
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestStaticConstructorMissingDocumentationGenericAsync(string typeKind)
         {
+            var docTypeKind = GetDocTypeKind(typeKind);
+
             await TestConstructorMissingDocumentationAsync(
                 typeKind,
                 "static",
-                string.Format(DocumentationResources.StaticConstructorStandardTextFirstPart, typeKind),
-                string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, typeKind),
+                string.Format(DocumentationResources.StaticConstructorStandardTextFirstPart, docTypeKind),
+                string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, docTypeKind),
                 true).ConfigureAwait(false);
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestNonPrivateConstructorSimpleDocumentationAsync(string typeKind)
         {
+            var docTypeKind = GetDocTypeKind(typeKind);
+
             await TestConstructorSimpleDocumentationAsync(
                 typeKind,
                 "public",
-                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
-                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, docTypeKind),
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, docTypeKind),
                 false).ConfigureAwait(false);
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestNonPrivateConstructorSimpleDocumentationGenericAsync(string typeKind)
         {
+            var docTypeKind = GetDocTypeKind(typeKind);
+
             await TestConstructorSimpleDocumentationAsync(
                 typeKind,
                 "public",
-                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
-                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, docTypeKind),
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, docTypeKind),
                 true).ConfigureAwait(false);
         }
 
@@ -380,54 +392,58 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestStaticConstructorSimpleDocumentationAsync(string typeKind)
         {
+            var docTypeKind = GetDocTypeKind(typeKind);
+
             await TestConstructorSimpleDocumentationAsync(
                 typeKind,
                 "static",
-                string.Format(DocumentationResources.StaticConstructorStandardTextFirstPart, typeKind),
-                string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, typeKind),
+                string.Format(DocumentationResources.StaticConstructorStandardTextFirstPart, docTypeKind),
+                string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, docTypeKind),
                 false).ConfigureAwait(false);
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestStaticConstructorSimpleDocumentationGenericAsync(string typeKind)
         {
+            var docTypeKind = GetDocTypeKind(typeKind);
+
             await TestConstructorSimpleDocumentationAsync(
                 typeKind,
                 "static",
-                string.Format(DocumentationResources.StaticConstructorStandardTextFirstPart, typeKind),
-                string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, typeKind),
+                string.Format(DocumentationResources.StaticConstructorStandardTextFirstPart, docTypeKind),
+                string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, docTypeKind),
                 true).ConfigureAwait(false);
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestNonPrivateConstructorSimpleDocumentationWrongTypeNameAsync(string typeKind)
         {
+            var docTypeKind = GetDocTypeKind(typeKind);
+
             await TestConstructorSimpleDocumentationWrongTypeNameAsync(
                 typeKind,
                 "public",
-                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
-                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, docTypeKind),
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, docTypeKind),
                 false).ConfigureAwait(false);
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestNonPrivateConstructorSimpleDocumentationGenericWrongTypeNameAsync(string typeKind)
         {
+            var docTypeKind = GetDocTypeKind(typeKind);
+
             await TestConstructorSimpleDocumentationWrongTypeNameAsync(
                 typeKind,
                 "public",
-                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
-                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, docTypeKind),
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, docTypeKind),
                 true).ConfigureAwait(false);
         }
 
@@ -458,28 +474,30 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestStaticConstructorSimpleDocumentationWrongTypeNameAsync(string typeKind)
         {
+            var docTypeKind = GetDocTypeKind(typeKind);
+
             await TestConstructorSimpleDocumentationWrongTypeNameAsync(
                 typeKind,
                 "static",
-                string.Format(DocumentationResources.StaticConstructorStandardTextFirstPart, typeKind),
-                string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, typeKind),
+                string.Format(DocumentationResources.StaticConstructorStandardTextFirstPart, docTypeKind),
+                string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, docTypeKind),
                 false).ConfigureAwait(false);
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestStaticConstructorSimpleDocumentationGenericWrongTypeNameAsync(string typeKind)
         {
+            var docTypeKind = GetDocTypeKind(typeKind);
+
             await TestConstructorSimpleDocumentationWrongTypeNameAsync(
                 typeKind,
                 "static",
-                string.Format(DocumentationResources.StaticConstructorStandardTextFirstPart, typeKind),
-                string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, typeKind),
+                string.Format(DocumentationResources.StaticConstructorStandardTextFirstPart, docTypeKind),
+                string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, docTypeKind),
                 true).ConfigureAwait(false);
         }
 
@@ -587,34 +605,66 @@ internal abstract class CustomizableBlockSubscriberBase<TSource, TTarget, TSubsc
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// Verifies that an empty see tag is handled properly.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestWithEmptySeeTagAsync()
+        [Theory]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestWithEmptySeeTagAsync(string typeKind)
         {
-            string testCode = @"
-public class TestClass
-{
+            var docTypeKind = GetDocTypeKind(typeKind);
+
+            string testCode = $@"
+public {typeKind} TestClass
+{{
     /// <summary>
-    /// Initializes a new instance of the <see/> class.
+    /// Initializes a new instance of the <see/> {docTypeKind}.
     /// </summary>
-    public TestClass()
-    {
-    }
-}
+    public TestClass(int i)
+    {{
+    }}
+}}
 ";
-            string fixedCode = @"
-public class TestClass
-{
+            string fixedCode = $@"
+public {typeKind} TestClass
+{{
     /// <summary>
-    /// Initializes a new instance of the <see cref=""TestClass""/> class.
+    /// Initializes a new instance of the <see cref=""TestClass""/> {docTypeKind}.
     /// </summary>
-    public TestClass()
-    {
-    }
-}
+    public TestClass(int i)
+    {{
+    }}
+}}
+";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(5, 43);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestWithEmptySeeTagGenericAsync(string typeKind)
+        {
+            var docTypeKind = GetDocTypeKind(typeKind);
+
+            string testCode = $@"
+public {typeKind} TestClass<T>
+{{
+    /// <summary>
+    /// Initializes a new instance of the <see/> {docTypeKind}.
+    /// </summary>
+    public TestClass(int i)
+    {{
+    }}
+}}
+";
+            string fixedCode = $@"
+public {typeKind} TestClass<T>
+{{
+    /// <summary>
+    /// Initializes a new instance of the <see cref=""TestClass{{T}}""/> {docTypeKind}.
+    /// </summary>
+    public TestClass(int i)
+    {{
+    }}
+}}
 ";
 
             DiagnosticResult expected = Diagnostic().WithLocation(5, 43);
@@ -1108,7 +1158,7 @@ public class TestClass
         private static async Task TestConstructorMissingDocumentationAsync(string typeKind, string modifiers, string part1, string part2, bool generic)
         {
             string typeParameters = generic ? "<T1, T2>" : string.Empty;
-            string arguments = typeKind == "struct" && modifiers != "static" ? "int argument" : null;
+            string arguments = IsStruct(typeKind) && modifiers != "static" ? "int argument" : null;
             var testCode = $@"namespace FooNamespace
 {{
     public {typeKind} Foo{typeParameters}
@@ -1321,6 +1371,30 @@ public class TestClass
             }
 
             return test;
+        }
+
+        private static string GetDocTypeKind(string codeTypeKind)
+        {
+            return IsStruct(codeTypeKind) ? "struct" : "class";
+        }
+
+        private static bool IsStruct(string codeTypeKind)
+        {
+            switch (codeTypeKind)
+            {
+            case "class":
+            case "record":
+            case "record class":
+                return false;
+
+            case "struct":
+            case "record struct":
+                return true;
+
+            default:
+                Debug.Fail($"Unexpected type kind {codeTypeKind}");
+                return false;
+            }
         }
     }
 }
