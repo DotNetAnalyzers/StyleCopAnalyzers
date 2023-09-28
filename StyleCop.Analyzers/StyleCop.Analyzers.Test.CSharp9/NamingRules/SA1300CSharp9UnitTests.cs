@@ -12,7 +12,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.NamingRules
         StyleCop.Analyzers.NamingRules.SA1300ElementMustBeginWithUpperCaseLetter,
         StyleCop.Analyzers.NamingRules.RenameToUpperCaseCodeFixProvider>;
 
-    public class SA1300CSharp9UnitTests : SA1300CSharp8UnitTests
+    public partial class SA1300CSharp9UnitTests : SA1300CSharp8UnitTests
     {
         [Fact]
         public async Task TestPositionalRecord1Async()

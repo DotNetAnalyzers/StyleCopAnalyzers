@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
         StyleCop.Analyzers.ReadabilityRules.SA1116SplitParametersMustStartOnLineAfterDeclaration,
         StyleCop.Analyzers.ReadabilityRules.SA1116CodeFixProvider>;
 
-    public class SA1116CSharp7UnitTests : SA1116UnitTests
+    public partial class SA1116CSharp7UnitTests : SA1116UnitTests
     {
         [Fact]
         public async Task TestValidLocalFunctionAsync()

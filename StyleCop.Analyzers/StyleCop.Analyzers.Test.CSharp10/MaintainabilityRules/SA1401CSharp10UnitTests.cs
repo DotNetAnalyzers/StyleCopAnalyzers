@@ -5,7 +5,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.MaintainabilityRules
 {
     using StyleCop.Analyzers.Test.CSharp9.MaintainabilityRules;
 
-    public class SA1401CSharp10UnitTests : SA1401CSharp9UnitTests
+    public partial class SA1401CSharp10UnitTests : SA1401CSharp9UnitTests
     {
     }
 }

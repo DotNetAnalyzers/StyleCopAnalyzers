@@ -16,7 +16,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1012OpeningBracesMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1012CSharp7UnitTests : SA1012UnitTests
+    public partial class SA1012CSharp7UnitTests : SA1012UnitTests
     {
         [Fact]
         public async Task TestStackAllocArrayCreationExpressionAsync()

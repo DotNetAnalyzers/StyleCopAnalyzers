@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
         StyleCop.Analyzers.MaintainabilityRules.SA1119StatementMustNotUseUnnecessaryParenthesis,
         StyleCop.Analyzers.MaintainabilityRules.SA1119CodeFixProvider>;
 
-    public class SA1119CSharp7UnitTests : SA1119UnitTests
+    public partial class SA1119CSharp7UnitTests : SA1119UnitTests
     {
         /// <summary>
         /// Verifies that extra parentheses in pattern matching is not reported.

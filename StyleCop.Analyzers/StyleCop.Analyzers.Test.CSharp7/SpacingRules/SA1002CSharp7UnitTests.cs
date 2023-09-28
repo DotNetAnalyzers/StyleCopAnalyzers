@@ -16,7 +16,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1002SemicolonsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1002CSharp7UnitTests : SA1002UnitTests
+    public partial class SA1002CSharp7UnitTests : SA1002UnitTests
     {
         [Fact]
         public async Task TestStackAllocArrayCreationExpressionAsync()

@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.OrderingRules
         StyleCop.Analyzers.OrderingRules.SA1206DeclarationKeywordsMustFollowOrder,
         StyleCop.Analyzers.OrderingRules.SA1206CodeFixProvider>;
 
-    public class SA1206CSharp7UnitTests : SA1206UnitTests
+    public partial class SA1206CSharp7UnitTests : SA1206UnitTests
     {
         [Theory]
         [InlineData("readonly")]

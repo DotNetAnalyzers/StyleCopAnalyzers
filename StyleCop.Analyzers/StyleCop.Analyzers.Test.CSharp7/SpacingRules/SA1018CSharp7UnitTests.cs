@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1018NullableTypeSymbolsMustNotBePrecededBySpace,
         StyleCop.Analyzers.SpacingRules.SA1018CodeFixProvider>;
 
-    public class SA1018CSharp7UnitTests : SA1018UnitTests
+    public partial class SA1018CSharp7UnitTests : SA1018UnitTests
     {
         /// <summary>
         /// Verifies that nullable tuple types with different kinds of spacing will report.

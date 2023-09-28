@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.ReadabilityRules
         StyleCop.Analyzers.ReadabilityRules.SA1137ElementsShouldHaveTheSameIndentation,
         StyleCop.Analyzers.ReadabilityRules.IndentationCodeFixProvider>;
 
-    public class SA1137CSharp10UnitTests : SA1137CSharp9UnitTests
+    public partial class SA1137CSharp10UnitTests : SA1137CSharp9UnitTests
     {
         [Theory]
         [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]

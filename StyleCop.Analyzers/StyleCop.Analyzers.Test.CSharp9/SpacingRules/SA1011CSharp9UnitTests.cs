@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1011ClosingSquareBracketsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1011CSharp9UnitTests : SA1011CSharp8UnitTests
+    public partial class SA1011CSharp9UnitTests : SA1011CSharp8UnitTests
     {
         [Fact]
         public async Task TestFunctionPointerUnmanagedCallingConventionListAsync()

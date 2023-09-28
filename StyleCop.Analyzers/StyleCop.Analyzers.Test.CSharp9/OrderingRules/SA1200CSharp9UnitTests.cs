@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.OrderingRules
         StyleCop.Analyzers.OrderingRules.SA1200UsingDirectivesMustBePlacedCorrectly,
         StyleCop.Analyzers.OrderingRules.UsingCodeFixProvider>;
 
-    public class SA1200CSharp9UnitTests : SA1200CSharp8UnitTests
+    public partial class SA1200CSharp9UnitTests : SA1200CSharp8UnitTests
     {
         /// <summary>
         /// Verifies that having using statements in the compilation unit will not produce diagnostics for top-level

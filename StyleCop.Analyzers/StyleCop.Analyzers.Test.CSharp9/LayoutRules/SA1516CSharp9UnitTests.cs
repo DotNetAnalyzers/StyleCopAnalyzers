@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.LayoutRules
         StyleCop.Analyzers.LayoutRules.SA1516ElementsMustBeSeparatedByBlankLine,
         StyleCop.Analyzers.LayoutRules.SA1516CodeFixProvider>;
 
-    public class SA1516CSharp9UnitTests : SA1516CSharp8UnitTests
+    public partial class SA1516CSharp9UnitTests : SA1516CSharp8UnitTests
     {
         /// <summary>
         /// Verifies that SA1516 is reported at the correct location in top-level programs.

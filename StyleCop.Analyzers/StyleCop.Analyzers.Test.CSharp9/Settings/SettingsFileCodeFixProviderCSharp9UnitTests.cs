@@ -5,7 +5,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.Settings
 {
     using StyleCop.Analyzers.Test.CSharp8.Settings;
 
-    public class SettingsFileCodeFixProviderCSharp9UnitTests : SettingsFileCodeFixProviderCSharp8UnitTests
+    public partial class SettingsFileCodeFixProviderCSharp9UnitTests : SettingsFileCodeFixProviderCSharp8UnitTests
     {
     }
 }

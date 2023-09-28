@@ -16,7 +16,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
         StyleCop.Analyzers.LayoutRules.SA1509OpeningBracesMustNotBePrecededByBlankLine,
         StyleCop.Analyzers.LayoutRules.SA1509CodeFixProvider>;
 
-    public class SA1509CSharp7UnitTests : SA1509UnitTests
+    public partial class SA1509CSharp7UnitTests : SA1509UnitTests
     {
         [Fact]
         public async Task TestLocalFunctionDeclarationOpeningBraceHasBlankLineAsync()

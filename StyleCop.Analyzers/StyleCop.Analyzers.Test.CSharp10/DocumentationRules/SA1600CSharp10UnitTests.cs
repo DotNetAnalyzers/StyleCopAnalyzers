@@ -11,7 +11,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.DocumentationRules
         StyleCop.Analyzers.DocumentationRules.SA1600ElementsMustBeDocumented,
         StyleCop.Analyzers.DocumentationRules.SA1600CodeFixProvider>;
 
-    public class SA1600CSharp10UnitTests : SA1600CSharp9UnitTests
+    public partial class SA1600CSharp10UnitTests : SA1600CSharp9UnitTests
     {
         protected override DiagnosticResult[] GetExpectedResultTestRegressionMethodGlobalNamespace(string code)
         {

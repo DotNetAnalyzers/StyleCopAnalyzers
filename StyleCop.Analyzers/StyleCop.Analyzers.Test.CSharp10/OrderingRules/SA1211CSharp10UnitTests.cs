@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
         StyleCop.Analyzers.OrderingRules.SA1211UsingAliasDirectivesMustBeOrderedAlphabeticallyByAliasName,
         StyleCop.Analyzers.OrderingRules.UsingCodeFixProvider>;
 
-    public class SA1211CSharp10UnitTests : SA1211CSharp9UnitTests
+    public partial class SA1211CSharp10UnitTests : SA1211CSharp9UnitTests
     {
         [Fact]
         public async Task TestUsingDirectivesOrderingInFileScopedNamespaceAsync()

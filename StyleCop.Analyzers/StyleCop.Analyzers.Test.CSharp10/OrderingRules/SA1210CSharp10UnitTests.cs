@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
         StyleCop.Analyzers.OrderingRules.SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace,
         StyleCop.Analyzers.OrderingRules.UsingCodeFixProvider>;
 
-    public class SA1210CSharp10UnitTests : SA1210CSharp9UnitTests
+    public partial class SA1210CSharp10UnitTests : SA1210CSharp9UnitTests
     {
         [Fact]
         public async Task TestUsingDirectivesInFileScopedNamespaceDeclarationAsync()

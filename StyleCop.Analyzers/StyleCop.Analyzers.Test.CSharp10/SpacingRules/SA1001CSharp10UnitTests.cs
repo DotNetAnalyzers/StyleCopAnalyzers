@@ -5,7 +5,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.SpacingRules
 {
     using StyleCop.Analyzers.Test.CSharp9.SpacingRules;
 
-    public class SA1001CSharp10UnitTests : SA1001CSharp9UnitTests
+    public partial class SA1001CSharp10UnitTests : SA1001CSharp9UnitTests
     {
     }
 }

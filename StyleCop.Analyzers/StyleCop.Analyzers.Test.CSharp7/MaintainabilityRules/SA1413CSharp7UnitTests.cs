@@ -16,7 +16,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
         StyleCop.Analyzers.MaintainabilityRules.SA1413UseTrailingCommasInMultiLineInitializers,
         StyleCop.Analyzers.MaintainabilityRules.SA1413CodeFixProvider>;
 
-    public class SA1413CSharp7UnitTests : SA1413UnitTests
+    public partial class SA1413CSharp7UnitTests : SA1413UnitTests
     {
         [Fact]
         public async Task TestStackAllocArrayCreationExpressionAsync()

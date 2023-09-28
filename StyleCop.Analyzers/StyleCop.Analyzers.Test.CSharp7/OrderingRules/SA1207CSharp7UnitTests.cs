@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.OrderingRules
         StyleCop.Analyzers.OrderingRules.SA1207ProtectedMustComeBeforeInternal,
         StyleCop.Analyzers.OrderingRules.SA1207CodeFixProvider>;
 
-    public class SA1207CSharp7UnitTests : SA1207UnitTests
+    public partial class SA1207CSharp7UnitTests : SA1207UnitTests
     {
         [Fact]
         public async Task TestPrivateProtectedAsync()

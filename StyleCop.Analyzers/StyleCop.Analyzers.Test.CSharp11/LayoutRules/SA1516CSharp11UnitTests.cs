@@ -12,7 +12,7 @@ namespace StyleCop.Analyzers.Test.CSharp11.LayoutRules
         StyleCop.Analyzers.LayoutRules.SA1516ElementsMustBeSeparatedByBlankLine,
         StyleCop.Analyzers.LayoutRules.SA1516CodeFixProvider>;
 
-    public class SA1516CSharp11UnitTests : SA1516CSharp10UnitTests
+    public partial class SA1516CSharp11UnitTests : SA1516CSharp10UnitTests
     {
         protected override DiagnosticResult[] GetExpectedResultTestUsingAndGlobalStatementSpacingInTopLevelProgram()
         {

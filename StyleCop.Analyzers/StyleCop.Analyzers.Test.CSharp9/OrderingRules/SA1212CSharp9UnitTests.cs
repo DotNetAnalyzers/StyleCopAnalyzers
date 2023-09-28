@@ -12,7 +12,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.OrderingRules
         StyleCop.Analyzers.OrderingRules.SA1212PropertyAccessorsMustFollowOrder,
         StyleCop.Analyzers.OrderingRules.SA1212SA1213CodeFixProvider>;
 
-    public class SA1212CSharp9UnitTests : SA1212CSharp8UnitTests
+    public partial class SA1212CSharp9UnitTests : SA1212CSharp8UnitTests
     {
         [Fact]
         [WorkItem(3652, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3652")]

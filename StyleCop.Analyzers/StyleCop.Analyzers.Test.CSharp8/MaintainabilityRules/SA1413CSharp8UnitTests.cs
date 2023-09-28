@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.MaintainabilityRules
         StyleCop.Analyzers.MaintainabilityRules.SA1413UseTrailingCommasInMultiLineInitializers,
         StyleCop.Analyzers.MaintainabilityRules.SA1413CodeFixProvider>;
 
-    public class SA1413CSharp8UnitTests : SA1413CSharp7UnitTests
+    public partial class SA1413CSharp8UnitTests : SA1413CSharp7UnitTests
     {
         [Fact]
         [WorkItem(3056, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3056")]

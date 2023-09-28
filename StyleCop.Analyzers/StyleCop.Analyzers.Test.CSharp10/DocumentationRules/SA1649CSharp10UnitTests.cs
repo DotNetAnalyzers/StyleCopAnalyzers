@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.DocumentationRules
     using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<
         StyleCop.Analyzers.DocumentationRules.SA1649FileNameMustMatchTypeName>;
 
-    public class SA1649CSharp10UnitTests : SA1649CSharp9UnitTests
+    public partial class SA1649CSharp10UnitTests : SA1649CSharp9UnitTests
     {
         /// <summary>
         /// Verifies that the file name is based on the first type.

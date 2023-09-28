@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Test.CSharp11.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1010OpeningSquareBracketsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1010CSharp11UnitTests : SA1010CSharp10UnitTests
+    public partial class SA1010CSharp11UnitTests : SA1010CSharp10UnitTests
     {
         [Theory]
         [InlineData("x is [1]")]

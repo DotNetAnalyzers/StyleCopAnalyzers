@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
         StyleCop.Analyzers.ReadabilityRules.SA1106CodeMustNotContainEmptyStatements,
         StyleCop.Analyzers.ReadabilityRules.SA1106CodeFixProvider>;
 
-    public class SA1106CSharp9UnitTests : SA1106CSharp8UnitTests
+    public partial class SA1106CSharp9UnitTests : SA1106CSharp8UnitTests
     {
         [Fact]
         [WorkItem(3267, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3267")]
