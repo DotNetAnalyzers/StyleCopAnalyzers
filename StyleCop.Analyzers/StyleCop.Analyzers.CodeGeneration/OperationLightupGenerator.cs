@@ -921,7 +921,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                         continue;
                     }
 
-                    if (!operationKinds.TryGetValue(node.Attribute("Name").Value, out var kinds))
+                    if (!operationKinds.TryGetValue(node.RequiredAttribute("Name").Value, out var kinds))
                     {
                         kinds = ImmutableArray<(string name, int value, string? extraDescription)>.Empty;
                     }
@@ -937,7 +937,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                         continue;
                     }
 
-                    if (!operationKinds.TryGetValue(node.Attribute("Name").Value, out var kinds))
+                    if (!operationKinds.TryGetValue(node.RequiredAttribute("Name").Value, out var kinds))
                     {
                         kinds = ImmutableArray<(string name, int value, string? extraDescription)>.Empty;
                     }
@@ -987,11 +987,11 @@ namespace StyleCop.Analyzers.CodeGeneration
                                     continue;
                                 }
 
-                                int parsedValue = ParsePrefixHexValue(entry.Attribute("Value").Value);
-                                nodeBuilder.Add((entry.Attribute("Name").Value, parsedValue, entry.Attribute("ExtraDescription")?.Value));
+                                int parsedValue = ParsePrefixHexValue(entry.RequiredAttribute("Value").Value);
+                                nodeBuilder.Add((entry.RequiredAttribute("Name").Value, parsedValue, entry.Attribute("ExtraDescription")?.Value));
                             }
 
-                            builder.Add(node.Attribute("Name").Value, nodeBuilder.ToImmutable());
+                            builder.Add(node.RequiredAttribute("Name").Value, nodeBuilder.ToImmutable());
                             continue;
                         }
                     }
@@ -1008,7 +1008,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                         operationKind++;
                     }
 
-                    var nodeName = node.Attribute("Name").Value;
+                    var nodeName = node.RequiredAttribute("Name").Value;
                     var kindName = nodeName.Substring("I".Length, nodeName.Length - "I".Length - "Operation".Length);
                     builder.Add(nodeName, ImmutableArray.Create((kindName, operationKind, (string?)null)));
                 }
@@ -1021,12 +1021,12 @@ namespace StyleCop.Analyzers.CodeGeneration
                 var builder = ImmutableHashSet.CreateBuilder<int>();
                 foreach (var skippedKind in document.XPathSelectElements("/Tree/UnusedOperationKinds/Entry"))
                 {
-                    builder.Add(ParsePrefixHexValue(skippedKind.Attribute("Value").Value));
+                    builder.Add(ParsePrefixHexValue(skippedKind.RequiredAttribute("Value").Value));
                 }
 
                 foreach (var explicitKind in document.XPathSelectElements("/Tree/*/OperationKind/Entry"))
                 {
-                    builder.Add(ParsePrefixHexValue(explicitKind.Attribute("Value").Value));
+                    builder.Add(ParsePrefixHexValue(explicitKind.RequiredAttribute("Value").Value));
                 }
 
                 return builder.ToImmutable();
@@ -1052,7 +1052,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 this.documentData = documentData;
 
                 this.OperationKinds = operationKinds;
-                this.InterfaceName = node.Attribute("Name").Value;
+                this.InterfaceName = node.RequiredAttribute("Name").Value;
 
                 if (node.Attribute("Namespace") is { } namespaceNode)
                 {
@@ -1127,9 +1127,9 @@ namespace StyleCop.Analyzers.CodeGeneration
         {
             public PropertyData(XElement node)
             {
-                this.Name = node.Attribute("Name").Value;
+                this.Name = node.RequiredAttribute("Name").Value;
                 this.AccessorName = this.Name + "Accessor";
-                this.Type = node.Attribute("Type").Value;
+                this.Type = node.RequiredAttribute("Type").Value;
 
                 this.IsNew = node.Attribute("New")?.Value == "true";
                 this.IsPublicProperty = node.Attribute("Internal")?.Value != "true";
