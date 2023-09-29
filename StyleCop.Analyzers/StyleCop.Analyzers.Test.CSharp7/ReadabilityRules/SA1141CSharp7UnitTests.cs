@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
+    using StyleCop.Analyzers.Test.ReadabilityRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1141UseTupleSyntax,
@@ -19,7 +18,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
     /// </summary>
     /// <seealso cref="SA1141UseTupleSyntax"/>
     /// <seealso cref="SA1141CodeFixProvider"/>
-    public class SA1141CSharp7UnitTests
+    public class SA1141CSharp7UnitTests : SA1141UnitTests
     {
         /// <summary>
         /// Verifies that member declarations containing ValueTuple will result in the proper diagnostics and fixes.
@@ -32,28 +31,28 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
 
 public class TestClass
 {
-    public ValueTuple<int, int> TestMethod(ValueTuple<double, double> value)
+    public [|ValueTuple<int, int>|] TestMethod([|ValueTuple<double, double>|] value)
     {
         throw new NotImplementedException();
     }
 
-    public System.ValueTuple<(int, int), int> TestMethod2(int p1, ValueTuple<System.ValueTuple<long, long>, long> p2, (ValueTuple<string, string>, string) p3)
+    public [|System.ValueTuple<(int, int), int>|] TestMethod2(int p1, [|ValueTuple<System.ValueTuple<long, long>, long>|] p2, ([|ValueTuple<string, string>|], string) p3)
     {
         throw new NotImplementedException();
     }
 
-    public System.ValueTuple<int, int> TestProperty1 { get; set; }
+    public [|System.ValueTuple<int, int>|] TestProperty1 { get; set; }
 
-    public System.Collections.Generic.List<ValueTuple<int, int>> TestProperty2 { get; set; }
+    public System.Collections.Generic.List<[|ValueTuple<int, int>|]> TestProperty2 { get; set; }
 
-    public System.ValueTuple<int, long> this[int i] { get { return (1, 1l); } set { } }
+    public [|System.ValueTuple<int, long>|] this[int i] { get { return (1, 1l); } set { } }
 
-    public static explicit operator TestClass(System.ValueTuple<int, int> p1)
+    public static explicit operator TestClass([|System.ValueTuple<int, int>|] p1)
     {
         throw new NotImplementedException();
     }
 
-    public static implicit operator System.ValueTuple<int, int>(TestClass p1)
+    public static implicit operator [|System.ValueTuple<int, int>|](TestClass p1)
     {
         throw new NotImplementedException();
     }
@@ -92,21 +91,7 @@ public class TestClass
 }
 ";
 
-            DiagnosticResult[] expectedDiagnostics =
-            {
-                Diagnostic().WithLocation(5, 12),
-                Diagnostic().WithLocation(5, 44),
-                Diagnostic().WithLocation(10, 12),
-                Diagnostic().WithLocation(10, 67),
-                Diagnostic().WithLocation(10, 120),
-                Diagnostic().WithLocation(15, 12),
-                Diagnostic().WithLocation(17, 44),
-                Diagnostic().WithLocation(19, 12),
-                Diagnostic().WithLocation(21, 47),
-                Diagnostic().WithLocation(26, 37),
-            };
-
-            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -122,18 +107,18 @@ public class TestClass
 {
     public void TestMethod()
     {
-        var test1 = new ValueTuple<int, int>(1, 2);
-        var test2 = new System.ValueTuple<int, int>(1, 2);
-        var test3 = new ValueTuple<ValueTuple<int, int>, int>(new ValueTuple<int, int>(3, 4), 2);
-        var test4 = new System.ValueTuple<int, System.ValueTuple<int, int>>(1, new System.ValueTuple<int, int>(2, 3));
-        var test5 = (new ValueTuple<int, int>(3, 4), 2);
-        var test6 = new System.ValueTuple<int, System.ValueTuple<int, int>>(1, (2, 3));
-        var test7 = ValueTuple.Create(1, 2);
-        var test8 = ValueTuple.Create<int, double>(1, 2);
-        var test9 = System.ValueTuple.Create(1, new ValueTuple<int, double>(2, 3));
-        var test10 = ValueTuple.Create(ValueTuple.Create(1, 2, 3), 4);
-        var test11 = new ValueTuple<int, ValueTuple<int, int>>(1, ValueTuple.Create(2, 3));
-        var test12 = new System.ValueTuple<byte, int>(1, 2);
+        var test1 = [|new ValueTuple<int, int>(1, 2)|];
+        var test2 = [|new System.ValueTuple<int, int>(1, 2)|];
+        var test3 = [|new ValueTuple<ValueTuple<int, int>, int>([|new ValueTuple<int, int>(3, 4)|], 2)|];
+        var test4 = [|new System.ValueTuple<int, System.ValueTuple<int, int>>(1, [|new System.ValueTuple<int, int>(2, 3)|])|];
+        var test5 = ([|new ValueTuple<int, int>(3, 4)|], 2);
+        var test6 = [|new System.ValueTuple<int, System.ValueTuple<int, int>>(1, (2, 3))|];
+        var test7 = [|ValueTuple.Create|](1, 2);
+        var test8 = [|ValueTuple.Create<int, double>|](1, 2);
+        var test9 = [|System.ValueTuple.Create|](1, [|new ValueTuple<int, double>(2, 3)|]);
+        var test10 = [|ValueTuple.Create|]([|ValueTuple.Create|](1, 2, 3), 4);
+        var test11 = [|new ValueTuple<int, ValueTuple<int, int>>(1, [|ValueTuple.Create|](2, 3))|];
+        var test12 = [|new System.ValueTuple<byte, int>(1, 2)|];
     }
 }
 ";
@@ -160,28 +145,7 @@ public class TestClass
 }
 ";
 
-            DiagnosticResult[] expectedDiagnostics =
-            {
-                Diagnostic().WithLocation(7, 21),
-                Diagnostic().WithLocation(8, 21),
-                Diagnostic().WithLocation(9, 21),
-                Diagnostic().WithLocation(9, 63),
-                Diagnostic().WithLocation(10, 21),
-                Diagnostic().WithLocation(10, 80),
-                Diagnostic().WithLocation(11, 22),
-                Diagnostic().WithLocation(12, 21),
-                Diagnostic().WithLocation(13, 21),
-                Diagnostic().WithLocation(14, 21),
-                Diagnostic().WithLocation(15, 21),
-                Diagnostic().WithLocation(15, 49),
-                Diagnostic().WithLocation(16, 22),
-                Diagnostic().WithLocation(16, 40),
-                Diagnostic().WithLocation(17, 22),
-                Diagnostic().WithLocation(17, 67),
-                Diagnostic().WithLocation(18, 22),
-            };
-
-            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -329,8 +293,8 @@ public class TestClass
 {
     public void TestMethod(object input)
     {
-        var test1 = (ValueTuple<int, int>)input;
-        var test2 = (System.ValueTuple<System.ValueTuple<int, long>, byte>)input;
+        var test1 = ([|ValueTuple<int, int>|])input;
+        var test2 = ([|System.ValueTuple<System.ValueTuple<int, long>, byte>|])input;
     }
 }
 ";
@@ -347,13 +311,7 @@ public class TestClass
 }
 ";
 
-            DiagnosticResult[] expectedDiagnostics =
-            {
-                Diagnostic().WithLocation(7, 22),
-                Diagnostic().WithLocation(8, 22),
-            };
-
-            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -369,8 +327,8 @@ public class TestClass
 {
     public void TestMethod()
     {
-        var test1 = default(ValueTuple<int, int>);
-        var test2 = default(System.ValueTuple<System.ValueTuple<int, long>, byte>);
+        var test1 = default([|ValueTuple<int, int>|]);
+        var test2 = default([|System.ValueTuple<System.ValueTuple<int, long>, byte>|]);
     }
 }
 ";
@@ -387,13 +345,7 @@ public class TestClass
 }
 ";
 
-            DiagnosticResult[] expectedDiagnostics =
-            {
-                Diagnostic().WithLocation(7, 29),
-                Diagnostic().WithLocation(8, 29),
-            };
-
-            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -407,7 +359,7 @@ public class TestClass
 
 public class TestClass
 {
-    public delegate System.ValueTuple<int, bool> TestDelegate(ValueTuple<int, ValueTuple<int, long>> arg1, (long, double) arg2, (long, System.ValueTuple<bool, bool>) arg3);
+    public delegate [|System.ValueTuple<int, bool>|] TestDelegate([|ValueTuple<int, ValueTuple<int, long>>|] arg1, (long, double) arg2, (long, [|System.ValueTuple<bool, bool>|]) arg3);
 }
 ";
 
@@ -419,14 +371,7 @@ public class TestClass
 }
 ";
 
-            DiagnosticResult[] expectedDiagnostics =
-            {
-                Diagnostic().WithLocation(5, 21),
-                Diagnostic().WithLocation(5, 63),
-                Diagnostic().WithLocation(5, 136),
-            };
-
-            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

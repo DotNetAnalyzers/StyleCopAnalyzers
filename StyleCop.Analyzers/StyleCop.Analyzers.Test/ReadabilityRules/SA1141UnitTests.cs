@@ -1,14 +1,12 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.Testing;
+    using Microsoft.CodeAnalysis.CSharp;
     using StyleCop.Analyzers.ReadabilityRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -42,9 +40,10 @@ public class TestClass
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest(LanguageVersion.CSharp6)
+            {
+                TestCode = testCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
-
-        //// TODO: Make sure that all paths are covered!
     }
 }

@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
+    using StyleCop.Analyzers.Test.ReadabilityRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1142ReferToTupleElementsByName,
@@ -19,7 +18,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
     /// </summary>
     /// <seealso cref="SA1142ReferToTupleElementsByName"/>
     /// <seealso cref="SA1142CodeFixProvider"/>
-    public class SA1142CSharp7UnitTests
+    public class SA1142CSharp7UnitTests : SA1142UnitTests
     {
         /// <summary>
         /// Validate that tuple fields that are referenced by their name will not produce any diagnostics.
@@ -78,12 +77,7 @@ public class TestClass
 }
 ";
 
-            DiagnosticResult[] expectedDiagnostics =
-            {
-                // diagnostics are specified inline
-            };
-
-            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
