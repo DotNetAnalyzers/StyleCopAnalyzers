@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
         StyleCop.Analyzers.OrderingRules.SA1201ElementsMustAppearInTheCorrectOrder,
         StyleCop.Analyzers.OrderingRules.ElementOrderCodeFixProvider>;
 
-    public class SA1201CSharp10UnitTests : SA1201CSharp9UnitTests
+    public partial class SA1201CSharp10UnitTests : SA1201CSharp9UnitTests
     {
         [Fact]
         public async Task TestOuterOrderCorrectOrderWithFileScopedNamespaceAsync()

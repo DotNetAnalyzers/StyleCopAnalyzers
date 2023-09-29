@@ -16,7 +16,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
         StyleCop.Analyzers.LayoutRules.SA1500BracesForMultiLineStatementsMustNotShareLine,
         StyleCop.Analyzers.LayoutRules.SA1500CodeFixProvider>;
 
-    public class SA1500CSharp7UnitTests : SA1500UnitTests
+    public partial class SA1500CSharp7UnitTests : SA1500UnitTests
     {
         /// <summary>
         /// Verifies that no diagnostics are reported for the valid local functions defined in this test.

@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1023CSharp8UnitTests : SA1023CSharp7UnitTests
+    public partial class SA1023CSharp8UnitTests : SA1023CSharp7UnitTests
     {
         [Fact]
         [WorkItem(3302, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3302")]

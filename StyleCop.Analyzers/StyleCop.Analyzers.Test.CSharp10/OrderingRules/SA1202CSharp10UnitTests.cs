@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
         StyleCop.Analyzers.OrderingRules.SA1202ElementsMustBeOrderedByAccess,
         StyleCop.Analyzers.OrderingRules.ElementOrderCodeFixProvider>;
 
-    public class SA1202CSharp10UnitTests : SA1202CSharp9UnitTests
+    public partial class SA1202CSharp10UnitTests : SA1202CSharp9UnitTests
     {
         /// <summary>
         /// Verifies that the analyzer will properly handle ordering within a file-scoped namespace.

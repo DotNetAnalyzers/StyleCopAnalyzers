@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1023CSharp9UnitTests : SA1023CSharp8UnitTests
+    public partial class SA1023CSharp9UnitTests : SA1023CSharp8UnitTests
     {
         [Fact]
         public async Task TestFunctionPointerParameterInvalidSpacingAsync()

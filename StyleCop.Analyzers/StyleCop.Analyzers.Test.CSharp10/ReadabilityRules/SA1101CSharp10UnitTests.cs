@@ -12,7 +12,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.ReadabilityRules
         StyleCop.Analyzers.ReadabilityRules.SA1101PrefixLocalCallsWithThis,
         StyleCop.Analyzers.ReadabilityRules.SA1101CodeFixProvider>;
 
-    public class SA1101CSharp10UnitTests : SA1101CSharp9UnitTests
+    public partial class SA1101CSharp10UnitTests : SA1101CSharp9UnitTests
     {
         [Fact]
         [WorkItem(3472, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3472")]

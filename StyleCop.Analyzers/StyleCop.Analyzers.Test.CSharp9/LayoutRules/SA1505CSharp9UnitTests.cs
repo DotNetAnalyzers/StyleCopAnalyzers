@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.LayoutRules
         StyleCop.Analyzers.LayoutRules.SA1505OpeningBracesMustNotBeFollowedByBlankLine,
         StyleCop.Analyzers.LayoutRules.SA1505CodeFixProvider>;
 
-    public class SA1505CSharp9UnitTests : SA1505CSharp8UnitTests
+    public partial class SA1505CSharp9UnitTests : SA1505CSharp8UnitTests
     {
         [Fact]
         [WorkItem(3272, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3272")]

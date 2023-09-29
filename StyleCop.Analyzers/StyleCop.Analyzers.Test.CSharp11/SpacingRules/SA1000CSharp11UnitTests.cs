@@ -12,7 +12,7 @@ namespace StyleCop.Analyzers.Test.CSharp11.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1000KeywordsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1000CSharp11UnitTests : SA1000CSharp10UnitTests
+    public partial class SA1000CSharp11UnitTests : SA1000CSharp10UnitTests
     {
         [Fact]
         public async Task TestCheckedOperatorDeclarationAsync()

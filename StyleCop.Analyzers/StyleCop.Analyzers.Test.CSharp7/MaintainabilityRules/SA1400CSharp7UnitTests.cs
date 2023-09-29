@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
         StyleCop.Analyzers.MaintainabilityRules.SA1400AccessModifierMustBeDeclared,
         StyleCop.Analyzers.MaintainabilityRules.SA1400CodeFixProvider>;
 
-    public class SA1400CSharp7UnitTests : SA1400UnitTests
+    public partial class SA1400CSharp7UnitTests : SA1400UnitTests
     {
         /// <summary>
         /// Verifies that local functions, which do not support access modifiers, do not trigger SA1400.

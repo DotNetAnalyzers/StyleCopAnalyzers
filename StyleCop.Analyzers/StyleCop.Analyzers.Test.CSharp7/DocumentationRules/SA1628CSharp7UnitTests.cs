@@ -5,7 +5,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.DocumentationRules
 {
     using StyleCop.Analyzers.Test.DocumentationRules;
 
-    public class SA1628CSharp7UnitTests : SA1628UnitTests
+    public partial class SA1628CSharp7UnitTests : SA1628UnitTests
     {
     }
 }

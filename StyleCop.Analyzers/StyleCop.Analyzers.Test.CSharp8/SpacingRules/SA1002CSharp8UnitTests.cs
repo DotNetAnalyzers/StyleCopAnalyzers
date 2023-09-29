@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1002SemicolonsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1002CSharp8UnitTests : SA1002CSharp7UnitTests
+    public partial class SA1002CSharp8UnitTests : SA1002CSharp7UnitTests
     {
         [Fact]
         [WorkItem(3052, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3052")]

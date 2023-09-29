@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
         StyleCop.Analyzers.OrderingRules.SA1204StaticElementsMustAppearBeforeInstanceElements,
         StyleCop.Analyzers.OrderingRules.ElementOrderCodeFixProvider>;
 
-    public class SA1204CSharp10UnitTests : SA1204CSharp9UnitTests
+    public partial class SA1204CSharp10UnitTests : SA1204CSharp9UnitTests
     {
         /// <summary>
         /// Verifies that the analyzer will properly handle ordering within a file-scoped namespace.

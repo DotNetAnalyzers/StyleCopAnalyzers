@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
         StyleCop.Analyzers.NamingRules.SA1312VariableNamesMustBeginWithLowerCaseLetter,
         StyleCop.Analyzers.NamingRules.RenameToLowerCaseCodeFixProvider>;
 
-    public class SA1312CSharp7UnitTests : SA1312UnitTests
+    public partial class SA1312CSharp7UnitTests : SA1312UnitTests
     {
         [Fact]
         public async Task TestThatDiagnosticIsReported_SingleVariableDesignatorAsync()

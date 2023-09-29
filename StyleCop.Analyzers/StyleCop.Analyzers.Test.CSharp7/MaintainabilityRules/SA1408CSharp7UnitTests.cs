@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
         StyleCop.Analyzers.MaintainabilityRules.SA1408ConditionalExpressionsMustDeclarePrecedence,
         StyleCop.Analyzers.MaintainabilityRules.SA1407SA1408CodeFixProvider>;
 
-    public class SA1408CSharp7UnitTests : SA1408UnitTests
+    public partial class SA1408CSharp7UnitTests : SA1408UnitTests
     {
         /// <summary>
         /// Verifies that a code fix for SA1119 in a pattern matching expression does not trigger SA1408.

@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1024ColonsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1024CSharp8UnitTests : SA1024CSharp7UnitTests
+    public partial class SA1024CSharp8UnitTests : SA1024CSharp7UnitTests
     {
         /// <summary>
         /// Verifies the behavior of colons in case patterns.

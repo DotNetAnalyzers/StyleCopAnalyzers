@@ -12,7 +12,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.NamingRules
         StyleCop.Analyzers.NamingRules.SA1313ParameterNamesMustBeginWithLowerCaseLetter,
         StyleCop.Analyzers.NamingRules.RenameToLowerCaseCodeFixProvider>;
 
-    public class SA1313CSharp10UnitTests : SA1313CSharp9UnitTests
+    public partial class SA1313CSharp10UnitTests : SA1313CSharp9UnitTests
     {
         [Theory]
         [WorkItem(3384, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3384")]

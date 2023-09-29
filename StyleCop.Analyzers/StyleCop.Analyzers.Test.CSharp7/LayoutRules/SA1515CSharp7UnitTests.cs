@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
         StyleCop.Analyzers.LayoutRules.SA1515SingleLineCommentMustBePrecededByBlankLine,
         StyleCop.Analyzers.LayoutRules.SA1515CodeFixProvider>;
 
-    public class SA1515CSharp7UnitTests : SA1515UnitTests
+    public partial class SA1515CSharp7UnitTests : SA1515UnitTests
     {
         [Fact]
         public async Task TestCommentAfterCasePatternSwitchLabelAsync()

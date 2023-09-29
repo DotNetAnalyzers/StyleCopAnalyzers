@@ -5,7 +5,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 {
     using StyleCop.Analyzers.Test.SpacingRules;
 
-    public class SA1027AlternateIndentationCSharp7UnitTests : SA1027AlternateIndentationUnitTests
+    public partial class SA1027AlternateIndentationCSharp7UnitTests : SA1027AlternateIndentationUnitTests
     {
     }
 }

@@ -12,7 +12,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.ReadabilityRules.SA1118ParameterMustNotSpanMultipleLines>;
 
-    public class SA1118CSharp9UnitTests : SA1118CSharp8UnitTests
+    public partial class SA1118CSharp9UnitTests : SA1118CSharp8UnitTests
     {
         [Fact]
         [WorkItem(3314, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3314")]

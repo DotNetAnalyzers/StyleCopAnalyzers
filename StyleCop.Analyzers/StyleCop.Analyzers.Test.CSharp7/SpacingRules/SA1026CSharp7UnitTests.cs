@@ -16,7 +16,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1026CSharp7UnitTests : SA1026UnitTests
+    public partial class SA1026CSharp7UnitTests : SA1026UnitTests
     {
         [Theory]
         [InlineData(" ")]

@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1000KeywordsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1000CSharp9UnitTests : SA1000CSharp8UnitTests
+    public partial class SA1000CSharp9UnitTests : SA1000CSharp8UnitTests
     {
         [Fact]
         public async Task TestTargetTypedNewAsync()

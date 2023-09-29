@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1013ClosingBracesMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1013CSharp7UnitTests : SA1013UnitTests
+    public partial class SA1013CSharp7UnitTests : SA1013UnitTests
     {
         /// <summary>
         /// Verifies spacing around a <c>}</c> character in tuple expressions.

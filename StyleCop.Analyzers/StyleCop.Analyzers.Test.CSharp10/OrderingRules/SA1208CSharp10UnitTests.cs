@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
         StyleCop.Analyzers.OrderingRules.SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives,
         StyleCop.Analyzers.OrderingRules.UsingCodeFixProvider>;
 
-    public class SA1208CSharp10UnitTests : SA1208CSharp9UnitTests
+    public partial class SA1208CSharp10UnitTests : SA1208CSharp9UnitTests
     {
         [Fact]
         [WorkItem(3437, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3437")]

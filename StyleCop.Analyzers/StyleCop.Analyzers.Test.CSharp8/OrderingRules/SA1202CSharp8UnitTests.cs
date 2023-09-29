@@ -11,7 +11,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.OrderingRules
         StyleCop.Analyzers.OrderingRules.SA1202ElementsMustBeOrderedByAccess,
         StyleCop.Analyzers.OrderingRules.ElementOrderCodeFixProvider>;
 
-    public class SA1202CSharp8UnitTests : SA1202CSharp7UnitTests
+    public partial class SA1202CSharp8UnitTests : SA1202CSharp7UnitTests
     {
         /// <summary>
         /// Verifies that the analyzer will properly handle property access levels.

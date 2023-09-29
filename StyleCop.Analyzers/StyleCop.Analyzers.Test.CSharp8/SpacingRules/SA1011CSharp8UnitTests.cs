@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1011ClosingSquareBracketsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1011CSharp8UnitTests : SA1011CSharp7UnitTests
+    public partial class SA1011CSharp8UnitTests : SA1011CSharp7UnitTests
     {
         /// <summary>
         /// Verify that declaring a null reference type works for arrays.

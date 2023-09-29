@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.ReadabilityRules
         StyleCop.Analyzers.ReadabilityRules.SA1129DoNotUseDefaultValueTypeConstructor,
         StyleCop.Analyzers.ReadabilityRules.SA1129CodeFixProvider>;
 
-    public class SA1129CSharp10UnitTests : SA1129CSharp9UnitTests
+    public partial class SA1129CSharp10UnitTests : SA1129CSharp9UnitTests
     {
         [Fact]
         [WorkItem(3430, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3430")]

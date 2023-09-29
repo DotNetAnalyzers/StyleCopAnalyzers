@@ -5,7 +5,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.NamingRules
 {
     using StyleCop.Analyzers.Test.CSharp8.NamingRules;
 
-    public class SX1309SCSharp9UnitTests : SX1309SCSharp8UnitTests
+    public partial class SX1309SCSharp9UnitTests : SX1309SCSharp8UnitTests
     {
     }
 }

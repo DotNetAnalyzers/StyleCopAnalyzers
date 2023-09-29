@@ -16,7 +16,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1001CommasMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1001CSharp7UnitTests : SA1001UnitTests
+    public partial class SA1001CSharp7UnitTests : SA1001UnitTests
     {
         /// <summary>
         /// Verifies spacing around a <c>]</c> character in tuple types and expressions.

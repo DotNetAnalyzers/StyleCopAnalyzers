@@ -12,7 +12,7 @@ namespace StyleCop.Analyzers.Test.CSharp11.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1012OpeningBracesMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1012CSharp11UnitTests : SA1012CSharp10UnitTests
+    public partial class SA1012CSharp11UnitTests : SA1012CSharp10UnitTests
     {
         [Fact]
         [WorkItem(3509, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3509")]
