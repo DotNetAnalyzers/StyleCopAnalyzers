@@ -15,7 +15,6 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities.Extensions;
-using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
@@ -59,7 +58,7 @@ namespace Analyzer.Utilities
                 return ImmutableArray<TSyntaxNode>.Empty;
             }
 
-            var relevantNodesBuilder = ArrayBuilder<TSyntaxNode>.GetInstance();
+            var relevantNodesBuilder = ImmutableArray.CreateBuilder<TSyntaxNode>();
 
             // Every time a Node is considered an extractNodes method is called to add all nodes around the original one
             // that should also be considered.
@@ -130,7 +129,7 @@ namespace Analyzer.Utilities
                 }
             }
 
-            return relevantNodesBuilder.ToImmutableAndFree();
+            return relevantNodesBuilder.ToImmutable();
         }
 
         private static bool IsWantedTypeExpressionLike<TSyntaxNode>() where TSyntaxNode : SyntaxNode
@@ -235,7 +234,7 @@ namespace Analyzer.Utilities
             }
         }
 
-        private void AddNodesForTokenToLeft<TSyntaxNode>(ISyntaxFacts syntaxFacts, ArrayBuilder<TSyntaxNode> relevantNodesBuilder, int location, SyntaxToken tokenToLeft, CancellationToken cancellationToken) where TSyntaxNode : SyntaxNode
+        private void AddNodesForTokenToLeft<TSyntaxNode>(ISyntaxFacts syntaxFacts, ImmutableArray<TSyntaxNode>.Builder relevantNodesBuilder, int location, SyntaxToken tokenToLeft, CancellationToken cancellationToken) where TSyntaxNode : SyntaxNode
         {
             // there could be multiple (n) tokens to the left if first n-1 are Empty -> iterate over all of them
             while (tokenToLeft != default)
@@ -262,7 +261,7 @@ namespace Analyzer.Utilities
             }
         }
 
-        private void AddNodesForTokenToRightOrIn<TSyntaxNode>(ISyntaxFacts syntaxFacts, SyntaxNode root, ArrayBuilder<TSyntaxNode> relevantNodesBuilder, int location, SyntaxToken tokenToRightOrIn, CancellationToken cancellationToken) where TSyntaxNode : SyntaxNode
+        private void AddNodesForTokenToRightOrIn<TSyntaxNode>(ISyntaxFacts syntaxFacts, SyntaxNode root, ImmutableArray<TSyntaxNode>.Builder relevantNodesBuilder, int location, SyntaxToken tokenToRightOrIn, CancellationToken cancellationToken) where TSyntaxNode : SyntaxNode
         {
             if (tokenToRightOrIn != default)
             {
@@ -300,7 +299,7 @@ namespace Analyzer.Utilities
             }
         }
 
-        private void AddRelevantNodesForSelection<TSyntaxNode>(ISyntaxFacts syntaxFacts, SyntaxNode root, TextSpan selectionTrimmed, ArrayBuilder<TSyntaxNode> relevantNodesBuilder, CancellationToken cancellationToken)
+        private void AddRelevantNodesForSelection<TSyntaxNode>(ISyntaxFacts syntaxFacts, SyntaxNode root, TextSpan selectionTrimmed, ImmutableArray<TSyntaxNode>.Builder relevantNodesBuilder, CancellationToken cancellationToken)
             where TSyntaxNode : SyntaxNode
         {
             var selectionNode = root.FindNode(selectionTrimmed, getInnermostNodeForTie: true);
@@ -479,7 +478,7 @@ namespace Analyzer.Utilities
 
         protected virtual async Task AddNodesDeepInAsync<TSyntaxNode>(
             Document document, int position,
-            ArrayBuilder<TSyntaxNode> relevantNodesBuilder,
+            ImmutableArray<TSyntaxNode>.Builder relevantNodesBuilder,
             CancellationToken cancellationToken) where TSyntaxNode : SyntaxNode
         {
             // If we're deep inside we don't have to deal with being on edges (that gets dealt by TryGetSelectedNodeAsync)
@@ -514,7 +513,7 @@ namespace Analyzer.Utilities
             }
         }
 
-        private static void AddNonHiddenCorrectTypeNodes<TSyntaxNode>(IEnumerable<SyntaxNode> nodes, ArrayBuilder<TSyntaxNode> resultBuilder, CancellationToken cancellationToken)
+        private static void AddNonHiddenCorrectTypeNodes<TSyntaxNode>(IEnumerable<SyntaxNode> nodes, ImmutableArray<TSyntaxNode>.Builder resultBuilder, CancellationToken cancellationToken)
             where TSyntaxNode : SyntaxNode
         {
             var correctTypeNonHiddenNodes = nodes.OfType<TSyntaxNode>().Where(n => !n.OverlapsHiddenPosition(cancellationToken));
