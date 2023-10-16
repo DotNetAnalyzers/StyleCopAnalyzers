@@ -65,18 +65,22 @@ namespace StyleCop.Analyzers.Lightup
                 return false;
             }
 
-            ConcurrentDictionary<Type, bool> wrappedObject = SupportedObjectWrappers.GetOrAdd(underlyingType, _ => new ConcurrentDictionary<Type, bool>());
-
             // Avoid creating the delegate if the value already exists
-            bool canCast;
-            if (!wrappedObject.TryGetValue(obj.GetType(), out canCast))
+            if (!SupportedObjectWrappers.TryGetValue(underlyingType, out var wrappedObject))
             {
-                canCast = wrappedObject.GetOrAdd(
-                    obj.GetType(),
-                    kind => underlyingType.GetTypeInfo().IsAssignableFrom(obj.GetType().GetTypeInfo()));
+                wrappedObject = SupportedObjectWrappers.GetOrAdd(underlyingType, static _ => new ConcurrentDictionary<Type, bool>());
             }
 
-            return canCast;
+            // Avoid creating the delegate and capture class if the value already exists
+            return wrappedObject.TryGetValue(obj.GetType(), out var canCast)
+                ? canCast
+                : GetOrAdd(obj, underlyingType, wrappedObject);
+
+            // Don't inline this method. Otherwise a capture class is generated on each call to CanWrapObject.
+            static bool GetOrAdd(object obj, Type underlyingType, ConcurrentDictionary<Type, bool> wrappedObject)
+                => wrappedObject.GetOrAdd(
+                    obj.GetType(),
+                    kind => underlyingType.GetTypeInfo().IsAssignableFrom(obj.GetType().GetTypeInfo()));
         }
 
         internal static bool CanWrapNode(SyntaxNode node, Type underlyingType)
@@ -93,18 +97,22 @@ namespace StyleCop.Analyzers.Lightup
                 return false;
             }
 
-            ConcurrentDictionary<SyntaxKind, bool> wrappedSyntax = SupportedSyntaxWrappers.GetOrAdd(underlyingType, _ => new ConcurrentDictionary<SyntaxKind, bool>());
-
             // Avoid creating the delegate if the value already exists
-            bool canCast;
-            if (!wrappedSyntax.TryGetValue(node.Kind(), out canCast))
+            if (!SupportedSyntaxWrappers.TryGetValue(underlyingType, out var wrappedSyntax))
             {
-                canCast = wrappedSyntax.GetOrAdd(
-                    node.Kind(),
-                    kind => underlyingType.GetTypeInfo().IsAssignableFrom(node.GetType().GetTypeInfo()));
+                wrappedSyntax = SupportedSyntaxWrappers.GetOrAdd(underlyingType, static _ => new ConcurrentDictionary<SyntaxKind, bool>());
             }
 
-            return canCast;
+            // Avoid creating the delegate and capture class if the value already exists
+            return wrappedSyntax.TryGetValue(node.Kind(), out var canCast)
+                ? canCast
+                : GetOrAdd(node, underlyingType, wrappedSyntax);
+
+            // Don't inline this method. Otherwise a capture class is generated on each call to CanWrapNode.
+            static bool GetOrAdd(SyntaxNode node, Type underlyingType, ConcurrentDictionary<SyntaxKind, bool> wrappedSyntax) =>
+                wrappedSyntax.GetOrAdd(
+                    node.Kind(),
+                    kind => underlyingType.GetTypeInfo().IsAssignableFrom(node.GetType().GetTypeInfo()));
         }
 
         internal static bool CanWrapOperation(IOperation operation, Type underlyingType)
@@ -121,18 +129,22 @@ namespace StyleCop.Analyzers.Lightup
                 return false;
             }
 
-            ConcurrentDictionary<OperationKind, bool> wrappedSyntax = SupportedOperationWrappers.GetOrAdd(underlyingType, _ => new ConcurrentDictionary<OperationKind, bool>());
-
             // Avoid creating the delegate if the value already exists
-            bool canCast;
-            if (!wrappedSyntax.TryGetValue(operation.Kind, out canCast))
+            if (!SupportedOperationWrappers.TryGetValue(underlyingType, out var wrappedSyntax))
             {
-                canCast = wrappedSyntax.GetOrAdd(
-                    operation.Kind,
-                    kind => underlyingType.GetTypeInfo().IsAssignableFrom(operation.GetType().GetTypeInfo()));
+                wrappedSyntax = SupportedOperationWrappers.GetOrAdd(underlyingType, static _ => new ConcurrentDictionary<OperationKind, bool>());
             }
 
-            return canCast;
+            // Avoid creating the delegate if the value already exists
+            return wrappedSyntax.TryGetValue(operation.Kind, out var canCast)
+                ? canCast
+                : GetOrAdd(operation, underlyingType, wrappedSyntax);
+
+            // Don't inline this method. Otherwise a capture class is generated on each call to CanWrapOperation.
+            static bool GetOrAdd(IOperation operation, Type underlyingType, ConcurrentDictionary<OperationKind, bool> wrappedSyntax) =>
+                wrappedSyntax.GetOrAdd(
+                    operation.Kind,
+                    kind => underlyingType.GetTypeInfo().IsAssignableFrom(operation.GetType().GetTypeInfo()));
         }
 
         internal static Func<TOperation, TProperty> CreateOperationPropertyAccessor<TOperation, TProperty>(Type type, string propertyName)
