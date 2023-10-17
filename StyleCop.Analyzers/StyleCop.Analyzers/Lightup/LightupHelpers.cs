@@ -65,11 +65,7 @@ namespace StyleCop.Analyzers.Lightup
                 return false;
             }
 
-            // Avoid creating the delegate if the value already exists
-            if (!SupportedObjectWrappers.TryGetValue(underlyingType, out var wrappedObject))
-            {
-                wrappedObject = SupportedObjectWrappers.GetOrAdd(underlyingType, static _ => new ConcurrentDictionary<Type, bool>());
-            }
+            ConcurrentDictionary<Type, bool> wrappedObject = SupportedObjectWrappers.GetOrAdd(underlyingType, static _ => new ConcurrentDictionary<Type, bool>());
 
             // Avoid creating the delegate and capture class
             if (!wrappedObject.TryGetValue(obj.GetType(), out var canCast))
@@ -95,11 +91,7 @@ namespace StyleCop.Analyzers.Lightup
                 return false;
             }
 
-            // Avoid creating the delegate if the value already exists
-            if (!SupportedSyntaxWrappers.TryGetValue(underlyingType, out var wrappedSyntax))
-            {
-                wrappedSyntax = SupportedSyntaxWrappers.GetOrAdd(underlyingType, static _ => new ConcurrentDictionary<SyntaxKind, bool>());
-            }
+            ConcurrentDictionary<SyntaxKind, bool> wrappedSyntax = SupportedSyntaxWrappers.GetOrAdd(underlyingType, static _ => new ConcurrentDictionary<SyntaxKind, bool>());
 
             // Avoid creating the delegate and capture class
             if (!wrappedSyntax.TryGetValue(node.Kind(), out var canCast))
@@ -125,11 +117,7 @@ namespace StyleCop.Analyzers.Lightup
                 return false;
             }
 
-            // Avoid creating the delegate if the value already exists
-            if (!SupportedOperationWrappers.TryGetValue(underlyingType, out var wrappedSyntax))
-            {
-                wrappedSyntax = SupportedOperationWrappers.GetOrAdd(underlyingType, static _ => new ConcurrentDictionary<OperationKind, bool>());
-            }
+            ConcurrentDictionary<OperationKind, bool> wrappedSyntax = SupportedOperationWrappers.GetOrAdd(underlyingType, static _ => new ConcurrentDictionary<OperationKind, bool>());
 
             // Avoid creating the delegate and capture class
             if (!wrappedSyntax.TryGetValue(operation.Kind, out var canCast))
