@@ -71,16 +71,14 @@ namespace StyleCop.Analyzers.Lightup
                 wrappedObject = SupportedObjectWrappers.GetOrAdd(underlyingType, static _ => new ConcurrentDictionary<Type, bool>());
             }
 
-            // Avoid creating the delegate and capture class if the value already exists
-            return wrappedObject.TryGetValue(obj.GetType(), out var canCast)
-                ? canCast
-                : GetOrAdd(obj, underlyingType, wrappedObject);
+            // Avoid creating the delegate and capture class
+            if (!wrappedObject.TryGetValue(obj.GetType(), out var canCast))
+            {
+                canCast = underlyingType.GetTypeInfo().IsAssignableFrom(obj.GetType().GetTypeInfo());
+                wrappedObject.TryAdd(obj.GetType(), canCast);
+            }
 
-            // Don't inline this method. Otherwise a capture class is generated on each call to CanWrapObject.
-            static bool GetOrAdd(object obj, Type underlyingType, ConcurrentDictionary<Type, bool> wrappedObject)
-                => wrappedObject.GetOrAdd(
-                    obj.GetType(),
-                    kind => underlyingType.GetTypeInfo().IsAssignableFrom(obj.GetType().GetTypeInfo()));
+            return canCast;
         }
 
         internal static bool CanWrapNode(SyntaxNode node, Type underlyingType)
@@ -103,16 +101,14 @@ namespace StyleCop.Analyzers.Lightup
                 wrappedSyntax = SupportedSyntaxWrappers.GetOrAdd(underlyingType, static _ => new ConcurrentDictionary<SyntaxKind, bool>());
             }
 
-            // Avoid creating the delegate and capture class if the value already exists
-            return wrappedSyntax.TryGetValue(node.Kind(), out var canCast)
-                ? canCast
-                : GetOrAdd(node, underlyingType, wrappedSyntax);
+            // Avoid creating the delegate and capture class
+            if (!wrappedSyntax.TryGetValue(node.Kind(), out var canCast))
+            {
+                canCast = underlyingType.GetTypeInfo().IsAssignableFrom(node.GetType().GetTypeInfo());
+                wrappedSyntax.TryAdd(node.Kind(), canCast);
+            }
 
-            // Don't inline this method. Otherwise a capture class is generated on each call to CanWrapNode.
-            static bool GetOrAdd(SyntaxNode node, Type underlyingType, ConcurrentDictionary<SyntaxKind, bool> wrappedSyntax) =>
-                wrappedSyntax.GetOrAdd(
-                    node.Kind(),
-                    kind => underlyingType.GetTypeInfo().IsAssignableFrom(node.GetType().GetTypeInfo()));
+            return canCast;
         }
 
         internal static bool CanWrapOperation(IOperation operation, Type underlyingType)
@@ -135,16 +131,14 @@ namespace StyleCop.Analyzers.Lightup
                 wrappedSyntax = SupportedOperationWrappers.GetOrAdd(underlyingType, static _ => new ConcurrentDictionary<OperationKind, bool>());
             }
 
-            // Avoid creating the delegate if the value already exists
-            return wrappedSyntax.TryGetValue(operation.Kind, out var canCast)
-                ? canCast
-                : GetOrAdd(operation, underlyingType, wrappedSyntax);
+            // Avoid creating the delegate and capture class
+            if (!wrappedSyntax.TryGetValue(operation.Kind, out var canCast))
+            {
+                canCast = underlyingType.GetTypeInfo().IsAssignableFrom(operation.GetType().GetTypeInfo());
+                wrappedSyntax.TryAdd(operation.Kind, canCast);
+            }
 
-            // Don't inline this method. Otherwise a capture class is generated on each call to CanWrapOperation.
-            static bool GetOrAdd(IOperation operation, Type underlyingType, ConcurrentDictionary<OperationKind, bool> wrappedSyntax) =>
-                wrappedSyntax.GetOrAdd(
-                    operation.Kind,
-                    kind => underlyingType.GetTypeInfo().IsAssignableFrom(operation.GetType().GetTypeInfo()));
+            return canCast;
         }
 
         internal static Func<TOperation, TProperty> CreateOperationPropertyAccessor<TOperation, TProperty>(Type type, string propertyName)
