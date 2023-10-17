@@ -67,7 +67,7 @@ namespace StyleCop.Analyzers.Lightup
 
             ConcurrentDictionary<Type, bool> wrappedObject = SupportedObjectWrappers.GetOrAdd(underlyingType, static _ => new ConcurrentDictionary<Type, bool>());
 
-            // Avoid creating the delegate and capture class
+            // Avoid creating a delegate and capture class
             if (!wrappedObject.TryGetValue(obj.GetType(), out var canCast))
             {
                 canCast = underlyingType.GetTypeInfo().IsAssignableFrom(obj.GetType().GetTypeInfo());
@@ -93,7 +93,7 @@ namespace StyleCop.Analyzers.Lightup
 
             ConcurrentDictionary<SyntaxKind, bool> wrappedSyntax = SupportedSyntaxWrappers.GetOrAdd(underlyingType, static _ => new ConcurrentDictionary<SyntaxKind, bool>());
 
-            // Avoid creating the delegate and capture class
+            // Avoid creating a delegate and capture class
             if (!wrappedSyntax.TryGetValue(node.Kind(), out var canCast))
             {
                 canCast = underlyingType.GetTypeInfo().IsAssignableFrom(node.GetType().GetTypeInfo());
@@ -119,7 +119,7 @@ namespace StyleCop.Analyzers.Lightup
 
             ConcurrentDictionary<OperationKind, bool> wrappedSyntax = SupportedOperationWrappers.GetOrAdd(underlyingType, static _ => new ConcurrentDictionary<OperationKind, bool>());
 
-            // Avoid creating the delegate and capture class
+            // Avoid creating a delegate and capture class
             if (!wrappedSyntax.TryGetValue(operation.Kind, out var canCast))
             {
                 canCast = underlyingType.GetTypeInfo().IsAssignableFrom(operation.GetType().GetTypeInfo());
