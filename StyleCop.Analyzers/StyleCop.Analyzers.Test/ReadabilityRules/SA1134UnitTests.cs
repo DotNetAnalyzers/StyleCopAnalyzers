@@ -319,7 +319,16 @@ namespace TestNamespace
                 Diagnostic().WithLocation(23, 54),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            // TODO: Revert after fixing issue 2438 (https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2438)
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedTestCode,
+                NumberOfIncrementalIterations = int.MinValue,
+                NumberOfFixAllIterations = int.MinValue,
+            };
+            test.ExpectedDiagnostics.AddRange(expected);
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
