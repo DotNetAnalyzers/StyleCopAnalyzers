@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
+#nullable enable
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
@@ -18,6 +18,23 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     /// </summary>
     public class SA1648UnitTests
     {
+        [Fact]
+        public async Task TestConstructorInheritsFromParentAsync()
+        {
+            var testCode = @"class Base
+{
+    public Base() { }
+}
+
+class Test : Base
+{
+    /// <inheritdoc />
+    public Test() { }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestClassOverridesClassAsync()
         {

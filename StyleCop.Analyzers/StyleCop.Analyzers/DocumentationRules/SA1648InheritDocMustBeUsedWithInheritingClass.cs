@@ -159,6 +159,11 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
             }
 
+            if (memberSyntax is ConstructorDeclarationSyntax && declaredSymbol is IMethodSymbol methodSymbol && methodSymbol.ContainingType?.BaseType != null)
+            {
+                return;
+            }
+
             if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag) is XmlEmptyElementSyntax includeElement)
             {
                 if (declaredSymbol == null)
