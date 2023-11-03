@@ -159,7 +159,9 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
             }
 
-            if (memberSyntax is ConstructorDeclarationSyntax && declaredSymbol is IMethodSymbol methodSymbol && methodSymbol.ContainingType?.BaseType != null)
+            // "class Test {}" has assigne System.Object as its base type.
+            if (memberSyntax is ConstructorDeclarationSyntax && declaredSymbol is IMethodSymbol methodSymbol && methodSymbol.ContainingType != null
+                && methodSymbol.ContainingType.BaseType?.SpecialType != SpecialType.System_Object)
             {
                 return;
             }
