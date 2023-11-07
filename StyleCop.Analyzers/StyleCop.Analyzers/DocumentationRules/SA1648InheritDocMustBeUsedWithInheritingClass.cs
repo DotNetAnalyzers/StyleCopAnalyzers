@@ -159,11 +159,28 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
             }
 
-            // "class Test {}" has assigne System.Object as its base type.
-            if (memberSyntax is ConstructorDeclarationSyntax && declaredSymbol is IMethodSymbol methodSymbol && methodSymbol.ContainingType != null
-                && methodSymbol.ContainingType.BaseType?.SpecialType != SpecialType.System_Object)
+            if (memberSyntax is ConstructorDeclarationSyntax constructorDeclarationSyntax)
             {
-                return;
+                // ConstructorInitializerSyntax initializer = constructorDeclarationSyntax.Initializer;
+                ISymbol symbol = context.SemanticModel.GetDeclaredSymbol(constructorDeclarationSyntax, context.CancellationToken);
+
+                if (symbol is IMethodSymbol constructorMethodSymbol && constructorMethodSymbol.ContainingType is INamedTypeSymbol enclosingNamedTypeSymbol)
+                {
+                    INamedTypeSymbol baseType = enclosingNamedTypeSymbol.BaseType;
+
+                    if (baseType.SpecialType != SpecialType.System_Object)
+                    {
+                        foreach (IMethodSymbol baseConstructorMethod in baseType.Constructors)
+                        {
+                            // TODO: SymbolEqualityComparer?
+                            if (constructorMethodSymbol.Parameters.SequenceEqual(baseConstructorMethod.Parameters))
+                            {
+                                // Matching constructor was found.
+                                return;
+                            }
+                        }
+                    }
+                }
             }
 
             if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag) is XmlEmptyElementSyntax includeElement)
