@@ -23,6 +23,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         {
             var testCode = @"class Base
 {
+    /// <summary>Base constructor.</summary>
     public Base() { }
 }
 
@@ -31,6 +32,22 @@ class Test : Base
     /// <inheritdoc />
     public Test() { }
 }";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+
+            testCode = @"class Base
+{
+    /// <summary>Base constructor.</summary>
+    public Base(string s, int a) { }
+}
+
+class Test : Base
+{
+    /// <inheritdoc />
+    public Test(string s, int b)
+        : base(s, b) { }
+}
+";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }

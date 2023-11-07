@@ -161,7 +161,6 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             if (memberSyntax is ConstructorDeclarationSyntax constructorDeclarationSyntax)
             {
-                // ConstructorInitializerSyntax initializer = constructorDeclarationSyntax.Initializer;
                 ISymbol symbol = context.SemanticModel.GetDeclaredSymbol(constructorDeclarationSyntax, context.CancellationToken);
 
                 if (symbol is IMethodSymbol constructorMethodSymbol && constructorMethodSymbol.ContainingType is INamedTypeSymbol enclosingNamedTypeSymbol)
@@ -170,14 +169,41 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                     if (baseType.SpecialType != SpecialType.System_Object)
                     {
+                        bool foundMatchingConstructorsToInheritFrom = false;
+
                         foreach (IMethodSymbol baseConstructorMethod in baseType.Constructors)
                         {
-                            // TODO: SymbolEqualityComparer?
-                            if (constructorMethodSymbol.Parameters.SequenceEqual(baseConstructorMethod.Parameters))
+                            // Constructors must have the same number of parameters.
+                            if (constructorMethodSymbol.Parameters.Count() != baseConstructorMethod.Parameters.Count())
                             {
-                                // Matching constructor was found.
-                                return;
+                                continue;
                             }
+
+                            // Our constructor and the base constructor must have the same signature. But variable names can be different.
+                            bool success = true;
+
+                            for (int i = 0; i < constructorMethodSymbol.Parameters.Length; i++)
+                            {
+                                IParameterSymbol constructorParameter = constructorMethodSymbol.Parameters[i];
+                                IParameterSymbol baseParameter = baseConstructorMethod.Parameters[i];
+
+                                if (!constructorParameter.Type.Equals(baseParameter.Type))
+                                {
+                                    success = false;
+                                    break;
+                                }
+                            }
+
+                            if (success)
+                            {
+                                foundMatchingConstructorsToInheritFrom = true;
+                                break;
+                            }
+                        }
+
+                        if (foundMatchingConstructorsToInheritFrom)
+                        {
+                            return;
                         }
                     }
                 }
