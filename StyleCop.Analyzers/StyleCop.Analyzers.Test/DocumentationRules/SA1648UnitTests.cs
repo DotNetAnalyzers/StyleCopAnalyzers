@@ -17,7 +17,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     public class SA1648UnitTests
     {
         [Fact]
-        public async Task TestConstructorInheritsFromParentAsync()
+        public async Task TestConstructorWithNoParametersInheritsFromParentAsync()
         {
             var testCode = @"class Base
 {
@@ -32,8 +32,12 @@ class Test : Base
 }";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
 
-            testCode = @"class Base
+        [Fact]
+        public async Task TestConstructorWithParametersInheritsFromParentAsync()
+        {
+            var testCode = @"class Base
 {
     /// <summary>Base constructor.</summary>
     public Base(string s, int a) { }
