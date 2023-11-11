@@ -147,21 +147,10 @@ namespace StyleCop.Analyzers.DocumentationRules
             Location location;
 
             ISymbol declaredSymbol = context.SemanticModel.GetDeclaredSymbol(memberSyntax, context.CancellationToken);
-            if (declaredSymbol == null && memberSyntax.IsKind(SyntaxKind.EventFieldDeclaration))
-            {
-                var eventFieldDeclarationSyntax = (EventFieldDeclarationSyntax)memberSyntax;
-                VariableDeclaratorSyntax firstVariable = eventFieldDeclarationSyntax.Declaration?.Variables.FirstOrDefault();
-                if (firstVariable != null)
-                {
-                    declaredSymbol = context.SemanticModel.GetDeclaredSymbol(firstVariable, context.CancellationToken);
-                }
-            }
 
             if (memberSyntax is ConstructorDeclarationSyntax constructorDeclarationSyntax)
             {
-                ISymbol symbol = context.SemanticModel.GetDeclaredSymbol(constructorDeclarationSyntax, context.CancellationToken);
-
-                if (symbol is IMethodSymbol constructorMethodSymbol && constructorMethodSymbol.ContainingType is INamedTypeSymbol enclosingNamedTypeSymbol)
+                if (declaredSymbol is IMethodSymbol constructorMethodSymbol && constructorMethodSymbol.ContainingType is INamedTypeSymbol enclosingNamedTypeSymbol)
                 {
                     INamedTypeSymbol baseType = enclosingNamedTypeSymbol.BaseType;
 
@@ -204,6 +193,16 @@ namespace StyleCop.Analyzers.DocumentationRules
                             return;
                         }
                     }
+                }
+            }
+
+            if (declaredSymbol == null && memberSyntax.IsKind(SyntaxKind.EventFieldDeclaration))
+            {
+                var eventFieldDeclarationSyntax = (EventFieldDeclarationSyntax)memberSyntax;
+                VariableDeclaratorSyntax? firstVariable = eventFieldDeclarationSyntax.Declaration?.Variables.FirstOrDefault();
+                if (firstVariable != null)
+                {
+                    declaredSymbol = context.SemanticModel.GetDeclaredSymbol(firstVariable, context.CancellationToken);
                 }
             }
 
