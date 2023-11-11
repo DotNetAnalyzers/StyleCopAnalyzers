@@ -148,50 +148,23 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             ISymbol declaredSymbol = context.SemanticModel.GetDeclaredSymbol(memberSyntax, context.CancellationToken);
 
-            if (memberSyntax is ConstructorDeclarationSyntax constructorDeclarationSyntax)
+            if (memberSyntax is ConstructorDeclarationSyntax constructorDeclarationSyntax && declaredSymbol is IMethodSymbol constructorMethodSymbol)
             {
-                if (declaredSymbol is IMethodSymbol constructorMethodSymbol && constructorMethodSymbol.ContainingType is INamedTypeSymbol enclosingNamedTypeSymbol)
+                if (constructorMethodSymbol.ContainingType is INamedTypeSymbol enclosingNamedTypeSymbol)
                 {
                     INamedTypeSymbol baseType = enclosingNamedTypeSymbol.BaseType;
 
-                    if (baseType.SpecialType != SpecialType.System_Object)
+                    if (baseType.SpecialType == SpecialType.System_Object)
                     {
-                        bool foundMatchingConstructorsToInheritFrom = false;
-
-                        foreach (IMethodSymbol baseConstructorMethod in baseType.Constructors)
-                        {
-                            // Constructors must have the same number of parameters.
-                            if (constructorMethodSymbol.Parameters.Count() != baseConstructorMethod.Parameters.Count())
-                            {
-                                continue;
-                            }
-
-                            // Our constructor and the base constructor must have the same signature. But variable names can be different.
-                            bool success = true;
-
-                            for (int i = 0; i < constructorMethodSymbol.Parameters.Length; i++)
-                            {
-                                IParameterSymbol constructorParameter = constructorMethodSymbol.Parameters[i];
-                                IParameterSymbol baseParameter = baseConstructorMethod.Parameters[i];
-
-                                if (!constructorParameter.Type.Equals(baseParameter.Type))
-                                {
-                                    success = false;
-                                    break;
-                                }
-                            }
-
-                            if (success)
-                            {
-                                foundMatchingConstructorsToInheritFrom = true;
-                                break;
-                            }
-                        }
-
-                        if (foundMatchingConstructorsToInheritFrom)
+                        // Exception: If the base type is System.Object, then we can use <inheritdoc/> if our constructor has zero parameters.
+                        if (constructorMethodSymbol.Parameters.Length == 0)
                         {
                             return;
                         }
+                    }
+                    else if (HasMatchingSignature(baseType.Constructors, constructorMethodSymbol))
+                    {
+                        return;
                     }
                 }
             }
@@ -251,6 +224,48 @@ namespace StyleCop.Analyzers.DocumentationRules
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
             }
+        }
+
+        /// <summary>
+        /// Method compares a <paramref name="constructorMethodSymbol">constructor method</paramref> signature against its
+        /// <paramref name="baseConstructorSymbols">base type constructors</paramref> to find if there is a method signature match.
+        /// </summary>
+        /// <returns><see langword="true"/> if any base type constructor's signature matches the signature of <paramref name="constructorMethodSymbol"/>, <see langword="false"/> otherwise.</returns>
+        private static bool HasMatchingSignature(ImmutableArray<IMethodSymbol> baseConstructorSymbols, IMethodSymbol constructorMethodSymbol)
+        {
+            bool found = false;
+
+            foreach (IMethodSymbol baseConstructorMethod in baseConstructorSymbols)
+            {
+                // Constructors must have the same number of parameters.
+                if (constructorMethodSymbol.Parameters.Count() != baseConstructorMethod.Parameters.Count())
+                {
+                    continue;
+                }
+
+                // Our constructor and the base constructor must have the same signature. But variable names can be different.
+                bool success = true;
+
+                for (int i = 0; i < constructorMethodSymbol.Parameters.Length; i++)
+                {
+                    IParameterSymbol constructorParameter = constructorMethodSymbol.Parameters[i];
+                    IParameterSymbol baseParameter = baseConstructorMethod.Parameters[i];
+
+                    if (!constructorParameter.Type.Equals(baseParameter.Type))
+                    {
+                        success = false;
+                        break;
+                    }
+                }
+
+                if (success)
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            return found;
         }
 
         private static bool HasXmlCrefAttribute(XmlNodeSyntax inheritDocElement)

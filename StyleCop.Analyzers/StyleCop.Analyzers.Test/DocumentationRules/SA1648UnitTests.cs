@@ -55,6 +55,30 @@ class Test : Base
         }
 
         [Fact]
+        public async Task TestConstructorInheritsImplicitlyFromSystemObjectAsync()
+        {
+            var testCode = @"class Test
+{
+    /// <inheritdoc />
+    public Test() { }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestConstructorInheritsExplicitlyFromSystemObjectAsync()
+        {
+            var testCode = @"class Test : System.Object
+{
+    /// <inheritdoc />
+    public Test() { }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestClassOverridesClassAsync()
         {
             var testCode = @"class Base { }
@@ -126,7 +150,6 @@ interface ITest : IBase { }";
         }
 
         [Theory]
-        [InlineData("Test() { }")]
         [InlineData("void Foo() { }")]
         [InlineData("string foo;")]
         [InlineData("string Foo { get; set; }")]
