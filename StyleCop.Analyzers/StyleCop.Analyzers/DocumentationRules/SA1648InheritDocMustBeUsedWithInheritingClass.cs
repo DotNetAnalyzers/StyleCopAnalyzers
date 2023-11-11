@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
@@ -70,7 +68,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static void HandleBaseTypeLikeDeclaration(SyntaxNodeAnalysisContext context)
         {
-            BaseTypeDeclarationSyntax baseType = context.Node as BaseTypeDeclarationSyntax;
+            BaseTypeDeclarationSyntax? baseType = context.Node as BaseTypeDeclarationSyntax;
 
             // baseType can be null here if we are looking at a delegate declaration
             if (baseType != null && baseType.BaseList != null && baseType.BaseList.Types.Any())
@@ -258,13 +256,13 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static bool HasXmlCrefAttribute(XmlNodeSyntax inheritDocElement)
         {
-            XmlElementSyntax xmlElementSyntax = inheritDocElement as XmlElementSyntax;
+            XmlElementSyntax? xmlElementSyntax = inheritDocElement as XmlElementSyntax;
             if (xmlElementSyntax?.StartTag?.Attributes.Any(SyntaxKind.XmlCrefAttribute) ?? false)
             {
                 return true;
             }
 
-            XmlEmptyElementSyntax xmlEmptyElementSyntax = inheritDocElement as XmlEmptyElementSyntax;
+            XmlEmptyElementSyntax? xmlEmptyElementSyntax = inheritDocElement as XmlEmptyElementSyntax;
             if (xmlEmptyElementSyntax?.Attributes.Any(SyntaxKind.XmlCrefAttribute) ?? false)
             {
                 return true;
