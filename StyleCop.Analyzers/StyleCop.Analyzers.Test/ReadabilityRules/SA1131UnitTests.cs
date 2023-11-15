@@ -373,7 +373,7 @@ public class TypeName
     public void Test()
     {{
         int j = 6;
-        bool b = j {@operator} i;
+        bool b = i {@operator} j;
     }}
 }}";
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -396,7 +396,7 @@ public class TypeName
     public void Test()
     {{
         int j = 6;
-        bool b = j {@operator} i;
+        bool b = i {@operator} j;
     }}
 }}";
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -419,7 +419,7 @@ public class TypeName
     public void Test()
     {{
         int j = 6;
-        bool b = j {@operator} i;
+        bool b = i {@operator} j;
     }}
 }}";
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
