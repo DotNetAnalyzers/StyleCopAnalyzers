@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -100,7 +101,7 @@ namespace StyleCop.Analyzers.SpacingRules
             }
 
             if (!firstInLine && precededBySpace && !ignorePrecedingSpaceProblem &&
-                !IsPartOfIndexInitializer(token) && !IsPartOfListPattern(token))
+                ShouldNormallyForbidPrecedingWhitespace(token))
             {
                 // Opening square bracket should {not be preceded} by a space.
                 context.ReportDiagnostic(Diagnostic.Create(DescriptorNotPreceded, token.GetLocation(), TokenSpacingProperties.RemovePreceding));
@@ -118,15 +119,35 @@ namespace StyleCop.Analyzers.SpacingRules
             }
         }
 
-        private static bool IsPartOfIndexInitializer(SyntaxToken token)
+        private static bool ShouldNormallyForbidPrecedingWhitespace(SyntaxToken token)
         {
-            return token.Parent.IsKind(SyntaxKind.BracketedArgumentList)
-                && token.Parent.Parent.IsKind(SyntaxKind.ImplicitElementAccess);
-        }
+            switch (token.Parent?.Kind())
+            {
+            case SyntaxKind.ArrayRankSpecifier: // T[] x
+            case SyntaxKind.BracketedParameterList: // int this[int index] { ... }
+                return true;
 
-        private static bool IsPartOfListPattern(SyntaxToken token)
-        {
-            return token.Parent.IsKind(SyntaxKindEx.ListPattern);
+            case SyntaxKindEx.ListPattern: // x is [1]
+                return false;
+
+            case SyntaxKind.BracketedArgumentList:
+                switch (token.Parent?.Parent?.Kind())
+                {
+                case SyntaxKind.ElementAccessExpression: // x[y]
+                    return true;
+
+                case SyntaxKind.ImplicitElementAccess: // new Dictionary<T1, T2> { [x] = y }
+                    return false;
+
+                default:
+                    Debug.Assert(false, "Unexpected node type");
+                    return false;
+                }
+
+            default:
+                Debug.Assert(false, "Unexpected node type");
+                return false;
+            }
         }
     }
 }
