@@ -25,8 +25,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     ///
     /// <para>A violation of this rule occurs if an element is completely missing a documentation header, or if the
     /// header is empty. In C# the following types of elements can have documentation headers: classes, constructors,
-    /// delegates, enums, events, finalizers, indexers, interfaces, methods, properties, records, record classes,
-    /// record structs and structs.</para>
+    /// delegates, enums, events, finalizers, indexers, interfaces, methods, properties, records, and structs.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SA1600ElementsMustBeDocumented : DiagnosticAnalyzer
