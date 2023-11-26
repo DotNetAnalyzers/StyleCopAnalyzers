@@ -218,33 +218,10 @@ internal class TypeName
         Action<int> h = delegate (int x, __arglist) { Console.WriteLine(); };
     }
 }";
-            var expected = new[]
-            {
-                Diagnostic().WithLocation(8, 20),
-                Diagnostic().WithLocation(9, 20),
-                Diagnostic().WithLocation(10, 25),
-                Diagnostic().WithLocation(11, 30),
-                Diagnostic().WithLocation(12, 30),
-                Diagnostic(CS1065).WithLocation(12, 53),
-                Diagnostic().WithLocation(13, 30),
-                Diagnostic(CS7014).WithLocation(13, 47),
-                Diagnostic().WithLocation(14, 30),
-                Diagnostic(CS1670).WithLocation(14, 47),
-                Diagnostic().WithLocation(15, 25),
-                Diagnostic(CS1669).WithLocation(15, 42),
-            };
 
-            var expectedAfterFix = new[]
-            {
-                Diagnostic().WithLocation(12, 30),
-                Diagnostic(CS1065).WithLocation(12, 53),
-                Diagnostic().WithLocation(13, 30),
-                Diagnostic(CS7014).WithLocation(13, 47),
-                Diagnostic().WithLocation(14, 30),
-                Diagnostic(CS1670).WithLocation(14, 47),
-                Diagnostic().WithLocation(15, 25),
-                Diagnostic(CS1669).WithLocation(15, 42),
-            };
+            var expected = this.GetExpectedResultCodeFixSpecialCases();
+
+            var expectedAfterFix = this.GetExpectedResultAfterFixCodeFixSpecialCases();
 
             var test = new CSharpTest
             {
@@ -828,11 +805,7 @@ public class TestClass
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                Diagnostic().WithSpan(4, 50, 4, 58),
-                DiagnosticResult.CompilerError("CS1660").WithMessage("Cannot convert anonymous method to type 'EventHandler[]' because it is not a delegate type").WithSpan(4, 50, 4, 62),
-            };
+            var expected = this.GetExpectedResultVerifyInvalidCodeConstructions();
 
             var test = new CSharpTest
             {
@@ -1009,6 +982,49 @@ public class TypeName
 }}";
 
             await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultCodeFixSpecialCases()
+        {
+            return new[]
+            {
+                Diagnostic().WithLocation(8, 20),
+                Diagnostic().WithLocation(9, 20),
+                Diagnostic().WithLocation(10, 25),
+                Diagnostic().WithLocation(11, 30),
+                Diagnostic().WithLocation(12, 30),
+                Diagnostic(CS1065).WithLocation(12, 53),
+                Diagnostic().WithLocation(13, 30),
+                Diagnostic(CS7014).WithLocation(13, 47),
+                Diagnostic().WithLocation(14, 30),
+                Diagnostic(CS1670).WithLocation(14, 47),
+                Diagnostic().WithLocation(15, 25),
+                Diagnostic(CS1669).WithLocation(15, 42),
+            };
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultAfterFixCodeFixSpecialCases()
+        {
+            return new[]
+            {
+                Diagnostic().WithLocation(12, 30),
+                Diagnostic(CS1065).WithLocation(12, 53),
+                Diagnostic().WithLocation(13, 30),
+                Diagnostic(CS7014).WithLocation(13, 47),
+                Diagnostic().WithLocation(14, 30),
+                Diagnostic(CS1670).WithLocation(14, 47),
+                Diagnostic().WithLocation(15, 25),
+                Diagnostic(CS1669).WithLocation(15, 42),
+            };
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultVerifyInvalidCodeConstructions()
+        {
+            return new[]
+            {
+                Diagnostic().WithSpan(4, 50, 4, 58),
+                DiagnosticResult.CompilerError("CS1660").WithMessage("Cannot convert anonymous method to type 'EventHandler[]' because it is not a delegate type").WithSpan(4, 50, 4, 62),
+            };
         }
     }
 }
