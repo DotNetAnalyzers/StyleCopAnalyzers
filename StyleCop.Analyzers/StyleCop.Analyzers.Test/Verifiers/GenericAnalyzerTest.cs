@@ -34,7 +34,11 @@ namespace StyleCop.Analyzers.Test.Verifiers
             // Use appropriate default reference assemblies per the support matrix:
             // https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/configure-language-version
             ReferenceAssemblies defaultReferenceAssemblies;
-            if (LightupHelpers.SupportsCSharp11)
+            if (LightupHelpers.SupportsCSharp12)
+            {
+                defaultReferenceAssemblies = ReferenceAssemblies.Net.Net80;
+            }
+            else if (LightupHelpers.SupportsCSharp11)
             {
                 defaultReferenceAssemblies = ReferenceAssemblies.Net.Net70;
             }
