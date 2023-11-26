@@ -153,6 +153,15 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                         return;
                     }
 
+                    if (node.Parent is AssignmentExpressionSyntax assignmentExpression
+                        && node.Expression.IsKind(SyntaxKind.ConditionalExpression)
+                        && assignmentExpression.Left == node)
+                    {
+                        // NOTE: This is only valid syntax if the conditional expression is a ref expression
+                        // Parenthesis can't be removed here
+                        return;
+                    }
+
                     if (!(node.Parent is ExpressionSyntax)
                         || node.Parent is CheckedExpressionSyntax
                         || node.Parent is MemberAccessExpressionSyntax)
