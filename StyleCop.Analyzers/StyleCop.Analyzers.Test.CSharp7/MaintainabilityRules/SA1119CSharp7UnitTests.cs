@@ -5,9 +5,12 @@
 
 namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Lightup;
+    using StyleCop.Analyzers.Test.Helpers;
     using StyleCop.Analyzers.Test.MaintainabilityRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -16,6 +19,31 @@ namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
 
     public partial class SA1119CSharp7UnitTests : SA1119UnitTests
     {
+        public static IEnumerable<object[]> Assignments
+        {
+            get
+            {
+                yield return new object[] { "= 1" };
+                yield return new object[] { "+= 1" };
+                yield return new object[] { "-= 1" };
+                yield return new object[] { "*= 1" };
+                yield return new object[] { "/= 1" };
+                yield return new object[] { "%= 1" };
+                yield return new object[] { "&= 1" };
+                yield return new object[] { "|= 1" };
+                yield return new object[] { "^= 1" };
+                yield return new object[] { "<<= 1" };
+                yield return new object[] { ">>= 1" };
+                yield return new object[] { "++" };
+                yield return new object[] { "--" };
+
+                if (LightupHelpers.SupportsCSharp11)
+                {
+                    yield return new object[] { ">>>= 1" };
+                }
+            }
+        }
+
         /// <summary>
         /// Verifies that extra parentheses in pattern matching is not reported.
         /// </summary>
@@ -84,6 +112,22 @@ namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(Assignments))]
+        [WorkItem(3712, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3712")]
+        public async Task TestConditionalRefAssignmentAsync(string assignment)
+        {
+            var testCode = $@"public class Foo
+{{
+    public void Bar(bool b, ref int x, ref int y)
+    {{
+        (b ? ref x : ref y) {assignment};
+    }}
+}}";
+
+            await VerifyCSharpDiagnosticAsync(LanguageVersionEx.CSharp7_2.OrLaterDefault(), testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
