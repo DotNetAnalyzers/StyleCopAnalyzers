@@ -239,6 +239,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 MemberAccessExpressionSyntax memberAccessExpression => memberAccessExpression.Expression == outerExpression,
                 ConditionalAccessExpressionSyntax conditionalAccessExpression => conditionalAccessExpression.Expression == outerExpression,
                 ElementAccessExpressionSyntax elementAccessExpression => elementAccessExpression.Expression == outerExpression,
+                InvocationExpressionSyntax invocationExpression => invocationExpression.Expression == outerExpression,
                 _ => false,
             };
         }
