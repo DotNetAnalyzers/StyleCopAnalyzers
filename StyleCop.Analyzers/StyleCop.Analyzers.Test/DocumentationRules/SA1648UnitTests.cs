@@ -58,7 +58,7 @@ $KEYWORD$ Test : Base
         }
 
         [Theory]
-        [MemberData(nameof(CommonMemberData.ReferenceTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestConstructorInheritsImplicitlyFromSystemObjectAsync(string keyword)
         {
             var testCode = @"$KEYWORD$ Test
