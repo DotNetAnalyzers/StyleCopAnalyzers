@@ -220,6 +220,25 @@ public class Foo
         }
 
         [Fact]
+        [WorkItem(3730, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3730")]
+        public async Task TestSwitchExpressionFollowedByInvocationAsync()
+        {
+            string testCode = @"
+using System;
+
+public class Foo
+{
+    public string TestMethod(int n, Func<string> a, Func<string> b)
+    {
+        return (n switch { 1 => a, 2 => b })();
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestStackAllocExpressionInExpressionAsync()
         {
             const string testCode = @"public class TestClass
