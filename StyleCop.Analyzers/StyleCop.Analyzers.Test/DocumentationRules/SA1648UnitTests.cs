@@ -27,7 +27,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 
 class Test : Base
 {
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public Test() { }
 }";
 
@@ -45,7 +45,7 @@ class Test : Base
 
 class Test : Base
 {
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public Test(string s, int b)
         : base(s, b) { }
 }
@@ -59,7 +59,7 @@ class Test : Base
         {
             var testCode = @"class Test
 {
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public Test() { }
 }";
 
@@ -71,8 +71,20 @@ class Test : Base
         {
             var testCode = @"class Test : System.Object
 {
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public Test() { }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestConstructorInheritsExplicitlyFromTypeInDifferentAssemblyAsync()
+        {
+            var testCode = @"class MyArgumentException : System.ArgumentException
+{
+    /// <inheritdoc/>
+    public MyArgumentException() { }
 }";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
