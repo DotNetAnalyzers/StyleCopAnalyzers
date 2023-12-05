@@ -19,6 +19,7 @@ jobs:
       Release:
         BuildConfiguration: Release
         _debugArg: ''
+  timeoutInMinutes: 90
   steps:
   - powershell: .\init.ps1 -NoRestore
     displayName: Install .NET Core SDK
@@ -45,6 +46,7 @@ jobs:
 
   - task: PowerShell@2
     displayName: Run Tests
+    timeoutInMinutes: 80
     inputs:
       workingDirectory: '$(Build.SourcesDirectory)/build'
       filePath: build/opencover-report.ps1
