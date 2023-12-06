@@ -100,7 +100,7 @@ namespace StyleCop.Analyzers.SpacingRules
             }
 
             if (!firstInLine && precededBySpace && !ignorePrecedingSpaceProblem &&
-                !IsPartOfIndexInitializer(token) && !IsPartOfListPattern(token))
+                !IsPartOfIndexInitializer(token) && !IsPartOfListPattern(token) && !IsPartOfCollectionExpression(token))
             {
                 // Opening square bracket should {not be preceded} by a space.
                 context.ReportDiagnostic(Diagnostic.Create(DescriptorNotPreceded, token.GetLocation(), TokenSpacingProperties.RemovePreceding));
@@ -127,6 +127,11 @@ namespace StyleCop.Analyzers.SpacingRules
         private static bool IsPartOfListPattern(SyntaxToken token)
         {
             return token.Parent.IsKind(SyntaxKindEx.ListPattern);
+        }
+
+        private static bool IsPartOfCollectionExpression(SyntaxToken token)
+        {
+            return token.Parent.IsKind(SyntaxKindEx.CollectionExpression);
         }
     }
 }
