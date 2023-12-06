@@ -272,6 +272,12 @@ namespace StyleCop.Analyzers.LayoutRules
                         return;
                     }
 
+                    if (nextToken.IsKind(SyntaxKind.CloseBracketToken))
+                    {
+                        // the close brace is for example in an object initializer at the end of a collection expression.
+                        return;
+                    }
+
                     if (nextToken.IsKind(SyntaxKind.AddKeyword)
                         || nextToken.IsKind(SyntaxKind.RemoveKeyword)
                         || nextToken.IsKind(SyntaxKind.GetKeyword)
