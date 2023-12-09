@@ -87,6 +87,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             SyntaxKind.ImplicitArrayCreationExpression,
             SyntaxKindEx.WithExpression,
             SyntaxKindEx.ImplicitObjectCreationExpression,
+            SyntaxKindEx.CollectionExpression,
         };
 
         /// <inheritdoc/>
