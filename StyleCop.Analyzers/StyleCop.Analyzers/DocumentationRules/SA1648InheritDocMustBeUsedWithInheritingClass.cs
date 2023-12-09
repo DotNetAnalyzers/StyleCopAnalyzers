@@ -150,9 +150,9 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             if (memberSyntax is ConstructorDeclarationSyntax constructorDeclarationSyntax && declaredSymbol is IMethodSymbol constructorMethodSymbol)
             {
-                if (constructorMethodSymbol.ContainingType is INamedTypeSymbol enclosingNamedTypeSymbol)
+                if (constructorMethodSymbol.ContainingType != null)
                 {
-                    INamedTypeSymbol baseType = enclosingNamedTypeSymbol.BaseType;
+                    INamedTypeSymbol baseType = constructorMethodSymbol.ContainingType.BaseType;
 
                     if (baseType.SpecialType == SpecialType.System_Object)
                     {
