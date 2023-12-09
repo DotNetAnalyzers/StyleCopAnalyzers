@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using Microsoft.VisualBasic.Devices;
     using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Test.Helpers;
     using StyleCop.Analyzers.Test.Verifiers;
@@ -96,6 +97,50 @@ $KEYWORD$ Test : Base
 }";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.ReferenceTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestConstructorInheritsButBaseCtorHasTheSameNumberOfParametersButNotMatchingSignaturesAsync(string keyword)
+        {
+            var testCode = @"$KEYWORD$ Base
+{
+    /// <summary>Base constructor.</summary>
+    public Base(string s, string a) { }
+}
+
+$KEYWORD$ Test : Base
+{
+    /// <inheritdoc/>
+    public Test(string s, int b)
+        : base(s, b.ToString()) { }
+}
+";
+
+            var expected = Diagnostic().WithLocation(9, 9);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$KEYWORD$", keyword), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.ReferenceTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestConstructorInheritsButBaseCtorHasDifferentNumberOfParametersAsync(string keyword)
+        {
+            var testCode = @"$KEYWORD$ Base
+{
+    /// <summary>Base constructor.</summary>
+    public Base(string s) { }
+}
+
+$KEYWORD$ Test : Base
+{
+    /// <inheritdoc/>
+    public Test(string s, int b)
+        : base(s) { }
+}
+";
+
+            var expected = Diagnostic().WithLocation(9, 9);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$KEYWORD$", keyword), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
