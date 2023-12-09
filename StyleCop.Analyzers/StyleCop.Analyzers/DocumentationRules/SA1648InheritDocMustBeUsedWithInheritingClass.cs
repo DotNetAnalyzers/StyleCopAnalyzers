@@ -154,15 +154,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 {
                     INamedTypeSymbol baseType = constructorMethodSymbol.ContainingType.BaseType;
 
-                    if (baseType.SpecialType == SpecialType.System_Object)
-                    {
-                        // Exception: If the base type is System.Object, then we can use <inheritdoc/> if our constructor has zero parameters.
-                        if (constructorMethodSymbol.Parameters.Length == 0)
-                        {
-                            return;
-                        }
-                    }
-                    else if (HasMatchingSignature(baseType.Constructors, constructorMethodSymbol))
+                    if (HasMatchingSignature(baseType.Constructors, constructorMethodSymbol))
                     {
                         return;
                     }
