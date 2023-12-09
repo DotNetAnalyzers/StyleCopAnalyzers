@@ -13,7 +13,6 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
-    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -161,6 +160,12 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 MethodDeclarationSyntax declaration = (MethodDeclarationSyntax)context.Node;
 
+                if (declaration.ExplicitInterfaceSpecifier != null)
+                {
+                    // Skipping since explicitly implemented members can't be used through the implementing type
+                    return;
+                }
+
                 Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
                 Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
                 if (NeedsComment(settings.DocumentationRules, declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
@@ -221,6 +226,12 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 PropertyDeclarationSyntax declaration = (PropertyDeclarationSyntax)context.Node;
 
+                if (declaration.ExplicitInterfaceSpecifier != null)
+                {
+                    // Skipping since explicitly implemented members can't be used through the implementing type
+                    return;
+                }
+
                 Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
                 Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
                 if (NeedsComment(settings.DocumentationRules, declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
@@ -240,6 +251,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
 
                 IndexerDeclarationSyntax declaration = (IndexerDeclarationSyntax)context.Node;
+
+                if (declaration.ExplicitInterfaceSpecifier != null)
+                {
+                    // Skipping since explicitly implemented members can't be used through the implementing type
+                    return;
+                }
 
                 Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
                 Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
@@ -305,6 +322,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
 
                 EventDeclarationSyntax declaration = (EventDeclarationSyntax)context.Node;
+
+                if (declaration.ExplicitInterfaceSpecifier != null)
+                {
+                    // Skipping since explicitly implemented members can't be used through the implementing type
+                    return;
+                }
 
                 Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
                 Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
