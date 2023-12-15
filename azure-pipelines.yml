@@ -1,4 +1,4 @@
-pool:
+﻿pool:
   name: Azure Pipelines
   vmImage: windows-latest
   demands:
@@ -6,75 +6,11 @@ pool:
   - visualstudio
   - vstest
 
-jobs:
-- job: Build
-  variables:
-    BuildSolution: StyleCopAnalyzers.sln
-    BuildPlatform: Any CPU
-  strategy:
-    matrix:
-      Debug:
-        BuildConfiguration: Debug
-        _debugArg: '-Debug'
-      Release:
-        BuildConfiguration: Release
-        _debugArg: ''
-  timeoutInMinutes: 90
-  steps:
-  - powershell: .\init.ps1 -NoRestore
-    displayName: Install .NET Core SDK
+stages:
+- template: build/build-and-test.yml
+  parameters:
+    BuildConfiguration: Debug
 
-  - task: NuGetToolInstaller@0
-    displayName: 'Use NuGet 5.3.1'
-    inputs:
-      versionSpec: 5.3.1
-
-  - task: NuGetCommand@2
-    displayName: 'NuGet restore'
-    inputs:
-      restoreSolution: '$(BuildSolution)'
-      feedsToUse: 'config'
-      nugetConfigPath: 'NuGet.config'
-
-  - task: VSBuild@1
-    displayName: 'Build solution StyleCopAnalyzers.sln'
-    inputs:
-      solution: '$(BuildSolution)'
-      platform: '$(BuildPlatform)'
-      configuration: '$(BuildConfiguration)'
-      msbuildArgs: '/bl:$(Build.SourcesDirectory)/msbuild.binlog'
-
-  - task: PowerShell@2
-    displayName: Run Tests
-    timeoutInMinutes: 80
-    inputs:
-      workingDirectory: '$(Build.SourcesDirectory)/build'
-      filePath: build/opencover-report.ps1
-      arguments: '$(_debugArg) -NoBuild -NoReport -Azure'
-
-  - task: PublishTestResults@2
-    displayName: Publish test results
-    condition: always()
-    inputs:
-      testResultsFormat: xUnit
-      testResultsFiles: 'build/*.xml'
-      mergeTestResults: true
-      testRunTitle: '$(BuildConfiguration)'
-
-  - task: PowerShell@2
-    displayName: Upload coverage reports to codecov.io
-    condition: eq(variables['BuildConfiguration'], 'Debug')
-    inputs:
-      workingDirectory: '$(Build.SourcesDirectory)/build'
-      targetType: inline
-      script: |
-        $packageConfig = [xml](Get-Content ..\.nuget\packages.config)
-        $codecov_version = $packageConfig.SelectSingleNode('/packages/package[@id="Codecov"]').version
-        $codecov = "..\packages\Codecov.$codecov_version\tools\codecov.exe"
-        &$codecov -f '..\build\OpenCover.Reports\OpenCover.StyleCopAnalyzers.xml' --required
-
-  - task: PublishBuildArtifacts@1
-    displayName: Publish build logs
-    inputs:
-      pathtoPublish: msbuild.binlog
-    condition: failed()
+- template: build/build-and-test.yml
+  parameters:
+    BuildConfiguration: Release
