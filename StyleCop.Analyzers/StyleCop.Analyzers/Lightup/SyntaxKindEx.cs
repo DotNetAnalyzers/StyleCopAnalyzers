@@ -69,5 +69,6 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind RecordDeclaration = (SyntaxKind)9063;
         public const SyntaxKind FunctionPointerUnmanagedCallingConventionList = (SyntaxKind)9066;
         public const SyntaxKind RecordStructDeclaration = (SyntaxKind)9068;
+        public const SyntaxKind CollectionExpression = (SyntaxKind)9076;
     }
 }
