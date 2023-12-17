@@ -181,7 +181,9 @@ namespace StyleCop.Analyzers.SpacingRules
 
             case SyntaxKind.PlusPlusToken:
             case SyntaxKind.MinusMinusToken:
-                precedesStickyCharacter = true;
+                precedesStickyCharacter =
+                    !nextToken.Parent.IsKind(SyntaxKind.PreIncrementExpression)
+                    && !nextToken.Parent.IsKind(SyntaxKind.PreDecrementExpression);
                 suppressFollowingSpaceError = false;
                 break;
 

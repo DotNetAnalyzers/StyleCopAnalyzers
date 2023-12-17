@@ -985,6 +985,49 @@ public class TestClass
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory]
+        [InlineData("if (true)")]
+        [InlineData("while (true)")]
+        [InlineData("for (var i = 0; i < 10; i++)")]
+        [InlineData("foreach (var i in a)")]
+        [WorkItem(3731, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3731")]
+        public async Task TestControlStatementWithBodyOnSameLineAsync(string stmt)
+        {
+            var testCode = $@"
+public class TestClass
+{{
+    public async void TestMethod(int x, int[] a)
+    {{
+        {stmt}++x;
+        {stmt}--x;
+        {stmt}x++;
+        {stmt}{{ x++; }}
+    }}
+}}";
+
+            var fixedCode = $@"
+public class TestClass
+{{
+    public async void TestMethod(int x, int[] a)
+    {{
+        {stmt} ++x;
+        {stmt} --x;
+        {stmt} x++;
+        {stmt} {{ x++; }}
+    }}
+}}";
+
+            var expected = new[]
+            {
+                Diagnostic(DescriptorFollowed).WithLocation(6, 8 + stmt.Length),
+                Diagnostic(DescriptorFollowed).WithLocation(7, 8 + stmt.Length),
+                Diagnostic(DescriptorFollowed).WithLocation(8, 8 + stmt.Length),
+                Diagnostic(DescriptorFollowed).WithLocation(9, 8 + stmt.Length),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         private async Task TestWhitespaceInStatementOrDeclAsync(string originalStatement, string fixedStatement, params DiagnosticResult[] expected)
         {
             string template = @"namespace Foo
