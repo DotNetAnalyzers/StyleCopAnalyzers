@@ -603,31 +603,33 @@ class Foo
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestAttributeOpeningParenthesisOnTheNextLineAsync()
+        [Theory]
+        [InlineData("Conditional")]
+        [InlineData("System.Diagnostics.Conditional")]
+        public async Task TestAttributeOpeningParenthesisOnTheNextLineAsync(string attributeName)
         {
-            var testCode = @"
+            var testCode = $@"
 using System.Diagnostics;
 public class Foo
-{
-[Conditional
-(""DEBUG""), Conditional
+{{
+[{attributeName}
+(""DEBUG""), {attributeName}
 (""TEST1"")]
     public void Baz()
-    {
-    }
-}";
-            var fixedCode = @"
+    {{
+    }}
+}}";
+            var fixedCode = $@"
 using System.Diagnostics;
 public class Foo
-{
-[Conditional(
-""DEBUG""), Conditional(
+{{
+[{attributeName}(
+""DEBUG""), {attributeName}(
 ""TEST1"")]
     public void Baz()
-    {
-    }
-}";
+    {{
+    }}
+}}";
 
             DiagnosticResult[] expected =
                 {
@@ -638,19 +640,21 @@ public class Foo
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestAttributeOpeningParenthesisOnTheSameLineAsync()
+        [Theory]
+        [InlineData("Conditional")]
+        [InlineData("System.Diagnostics.Conditional")]
+        public async Task TestAttributeOpeningParenthesisOnTheSameLineAsync(string attributeName)
         {
-            var testCode = @"
+            var testCode = $@"
 using System.Diagnostics;
 public class Foo
-{
-    [Conditional(""DEBUG""), Conditional(""TEST1"")]
+{{
+    [{attributeName}(""DEBUG""), {attributeName}(""TEST1"")]
     public void Baz()
-    {
+    {{
 
-    }
-}";
+    }}
+}}";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }

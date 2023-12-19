@@ -6,7 +6,9 @@
 namespace StyleCop.Analyzers.Test.HelperTests
 {
     using System;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using StyleCop.Analyzers.Helpers;
     using Xunit;
 
@@ -49,6 +51,37 @@ namespace StyleCop.Analyzers.Test.HelperTests
             // Test enclosing is Public
             Assert.Equal(Accessibility.Private, AccessLevelHelper.CombineEffectiveAccessibility(Accessibility.Private, Accessibility.Public));
             Assert.Equal(Accessibility.Public, AccessLevelHelper.CombineEffectiveAccessibility(Accessibility.Public, Accessibility.Public));
+        }
+
+        [Fact]
+        public void TestGetAccessLevel()
+        {
+            Check(AccessLevel.NotSpecified);
+            Check(AccessLevel.NotSpecified, SyntaxKind.PartialKeyword);
+
+            Check(AccessLevel.Private, SyntaxKind.PrivateKeyword);
+            Check(AccessLevel.Private, SyntaxKind.OverrideKeyword, SyntaxKind.PrivateKeyword);
+
+            Check(AccessLevel.PrivateProtected, SyntaxKind.PrivateKeyword, SyntaxKind.ProtectedKeyword);
+            Check(AccessLevel.PrivateProtected, SyntaxKind.ProtectedKeyword, SyntaxKind.PrivateKeyword);
+
+            Check(AccessLevel.Protected, SyntaxKind.ProtectedKeyword);
+            Check(AccessLevel.Protected, SyntaxKind.VirtualKeyword, SyntaxKind.ProtectedKeyword);
+
+            Check(AccessLevel.ProtectedInternal, SyntaxKind.ProtectedKeyword, SyntaxKind.InternalKeyword);
+            Check(AccessLevel.ProtectedInternal, SyntaxKind.InternalKeyword, SyntaxKind.ProtectedKeyword);
+
+            Check(AccessLevel.Internal, SyntaxKind.InternalKeyword);
+            Check(AccessLevel.Internal, SyntaxKind.AbstractKeyword, SyntaxKind.InternalKeyword);
+
+            Check(AccessLevel.Public, SyntaxKind.PublicKeyword);
+            Check(AccessLevel.Public, SyntaxKind.AsyncKeyword, SyntaxKind.PublicKeyword);
+
+            static void Check(AccessLevel expectedAccessLevel, params SyntaxKind[] tokenKinds)
+            {
+                var tokenList = SyntaxFactory.TokenList(tokenKinds.Select(SyntaxFactory.Token));
+                Assert.Equal(expectedAccessLevel, AccessLevelHelper.GetAccessLevel(tokenList));
+            }
         }
     }
 }

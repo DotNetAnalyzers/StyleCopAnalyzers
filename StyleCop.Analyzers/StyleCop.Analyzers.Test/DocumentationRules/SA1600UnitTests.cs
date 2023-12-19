@@ -56,6 +56,15 @@ using System;
             await this.TestTypeWithDocumentationAsync(type).ConfigureAwait(false);
         }
 
+        [Theory]
+        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestPartialTypeWithoutDocumentationAsync(string type)
+        {
+            await this.TestTypeDeclarationDocumentationAsync(type, "partial", false, false).ConfigureAwait(false);
+            await this.TestTypeDeclarationDocumentationAsync(type, "internal partial", false, false).ConfigureAwait(false);
+            await this.TestTypeDeclarationDocumentationAsync(type, "public partial", false, false).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestDelegateWithoutDocumentationAsync()
         {

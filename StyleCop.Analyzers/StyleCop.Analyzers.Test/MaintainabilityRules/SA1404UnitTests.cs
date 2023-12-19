@@ -16,17 +16,19 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
     public class SA1404UnitTests
     {
-        [Fact]
-        public async Task TestSuppressionWithStringLiteralAsync()
+        [Theory]
+        [InlineData("SuppressMessage")]
+        [InlineData("SuppressMessageAttribute")]
+        public async Task TestSuppressionWithStringLiteralAsync(string attributeName)
         {
-            var testCode = @"public class Foo
-{
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = ""a justification"")]
+            var testCode = $@"public class Foo
+{{
+    [System.Diagnostics.CodeAnalysis.{attributeName}(null, null, Justification = ""a justification"")]
     public void Bar()
-    {
+    {{
 
-    }
-}";
+    }}
+}}";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
@@ -409,6 +411,20 @@ public class Foo
                 DiagnosticResult.CompilerError("CS0029").WithMessage("Cannot implicitly convert type 'int' to 'string'").WithLocation(4, 82),
             };
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestOtherAttributeAsync()
+        {
+            var testCode = @"public class Foo
+{
+    [System.Obsolete(""Method is obsolete!"")]
+    public void Bar()
+    {
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
