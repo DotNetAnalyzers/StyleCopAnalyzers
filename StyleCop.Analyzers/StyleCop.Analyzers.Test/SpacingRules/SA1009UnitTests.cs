@@ -154,28 +154,12 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestAttributeWithParametersAndNoSpaceAfterClosingParenthesisAsync()
-        {
-            const string testCode = @"using System;
-using System.Security.Permissions;
-
-[PermissionSet(SecurityAction.LinkDemand, Name = ""FullTrust"")]
-public class Foo
-{
-    public void Method(int param1, int param2)
-    {
-    }
-}";
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
         public async Task TestAttributeWithParametersAndSpaceAfterClosingParenthesisAsync()
         {
             const string testCode = @"using System;
-using System.Security.Permissions;
+using System.Runtime.InteropServices;
 
-[PermissionSet(SecurityAction.LinkDemand, Name = ""FullTrust"") ]
+[StructLayout(LayoutKind.Auto, CharSet = CharSet.Auto{|#0:)|} ]
 public class Foo
 {
     public void Method(int param1, int param2)
@@ -184,9 +168,9 @@ public class Foo
 }";
 
             const string fixedCode = @"using System;
-using System.Security.Permissions;
+using System.Runtime.InteropServices;
 
-[PermissionSet(SecurityAction.LinkDemand, Name = ""FullTrust"")]
+[StructLayout(LayoutKind.Auto, CharSet = CharSet.Auto)]
 public class Foo
 {
     public void Method(int param1, int param2)
@@ -194,7 +178,7 @@ public class Foo
     }
 }";
 
-            DiagnosticResult expected = Diagnostic(DescriptorNotFollowed).WithLocation(4, 61);
+            DiagnosticResult expected = Diagnostic(DescriptorNotFollowed).WithLocation(0);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
@@ -996,6 +980,49 @@ public class TestClass
             DiagnosticResult[] expected =
             {
                 Diagnostic(DescriptorNotPreceded).WithLocation(8, 13),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("if (true)")]
+        [InlineData("while (true)")]
+        [InlineData("for (var i = 0; i < 10; i++)")]
+        [InlineData("foreach (var i in a)")]
+        [WorkItem(3731, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3731")]
+        public async Task TestControlStatementWithBodyOnSameLineAsync(string stmt)
+        {
+            var testCode = $@"
+public class TestClass
+{{
+    public async void TestMethod(int x, int[] a)
+    {{
+        {stmt}++x;
+        {stmt}--x;
+        {stmt}x++;
+        {stmt}{{ x++; }}
+    }}
+}}";
+
+            var fixedCode = $@"
+public class TestClass
+{{
+    public async void TestMethod(int x, int[] a)
+    {{
+        {stmt} ++x;
+        {stmt} --x;
+        {stmt} x++;
+        {stmt} {{ x++; }}
+    }}
+}}";
+
+            var expected = new[]
+            {
+                Diagnostic(DescriptorFollowed).WithLocation(6, 8 + stmt.Length),
+                Diagnostic(DescriptorFollowed).WithLocation(7, 8 + stmt.Length),
+                Diagnostic(DescriptorFollowed).WithLocation(8, 8 + stmt.Length),
+                Diagnostic(DescriptorFollowed).WithLocation(9, 8 + stmt.Length),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);

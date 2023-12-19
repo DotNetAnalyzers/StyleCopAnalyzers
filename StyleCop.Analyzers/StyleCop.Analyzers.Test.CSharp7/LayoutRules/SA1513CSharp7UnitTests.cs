@@ -16,7 +16,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
         StyleCop.Analyzers.LayoutRules.SA1513ClosingBraceMustBeFollowedByBlankLine,
         StyleCop.Analyzers.LayoutRules.SA1513CodeFixProvider>;
 
-    public class SA1513CSharp7UnitTests : SA1513UnitTests
+    public partial class SA1513CSharp7UnitTests : SA1513UnitTests
     {
         /// <summary>
         /// Verifies that all valid usages of a closing brace in new C# 7 syntax without a following blank line will

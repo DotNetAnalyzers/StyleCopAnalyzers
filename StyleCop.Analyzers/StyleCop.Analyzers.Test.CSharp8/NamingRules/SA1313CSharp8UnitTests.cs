@@ -8,7 +8,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.NamingRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp7.NamingRules;
 
-    public class SA1313CSharp8UnitTests : SA1313CSharp7UnitTests
+    public partial class SA1313CSharp8UnitTests : SA1313CSharp7UnitTests
     {
         protected override DiagnosticResult[] GetInvalidMethodOverrideShouldNotProduceDiagnosticAsyncDiagnostics()
         {

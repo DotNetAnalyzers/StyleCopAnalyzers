@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct IRelationalPatternOperationWrapper : IOperationWrapper
+    internal readonly struct IRelationalPatternOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IRelationalPatternOperation";
         private static readonly Type WrappedType;
@@ -28,6 +28,8 @@ namespace StyleCop.Analyzers.Lightup
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public object OperatorKind => throw new NotImplementedException("Property 'IRelationalPatternOperation.OperatorKind' has unsupported type 'BinaryOperatorKind'");
         public IOperation Value => ValueAccessor(this.WrappedOperation);
+        public static explicit operator IRelationalPatternOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(IRelationalPatternOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public ITypeSymbol InputType => ((IPatternOperationWrapper)this).InputType;
         public ITypeSymbol NarrowedType => ((IPatternOperationWrapper)this).NarrowedType;
         public static explicit operator IRelationalPatternOperationWrapper(IPatternOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);

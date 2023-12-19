@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
         StyleCop.Analyzers.ReadabilityRules.SA1131UseReadableConditions,
         StyleCop.Analyzers.ReadabilityRules.SA1131CodeFixProvider>;
 
-    public class SA1131CSharp7UnitTests : SA1131UnitTests
+    public partial class SA1131CSharp7UnitTests : SA1131UnitTests
     {
         [Theory]
         [InlineData("==", "==")]

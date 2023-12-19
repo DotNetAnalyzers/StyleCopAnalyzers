@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.NamingRules
         StyleCop.Analyzers.NamingRules.SA1300ElementMustBeginWithUpperCaseLetter,
         StyleCop.Analyzers.NamingRules.RenameToUpperCaseCodeFixProvider>;
 
-    public class SA1300CSharp10UnitTests : SA1300CSharp9UnitTests
+    public partial class SA1300CSharp10UnitTests : SA1300CSharp9UnitTests
     {
         [Fact]
         public async Task TestUpperCaseFileScopedNamespaceAsync()

@@ -17,7 +17,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1010OpeningSquareBracketsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1010CSharp7UnitTests : SA1010UnitTests
+    public partial class SA1010CSharp7UnitTests : SA1010UnitTests
     {
         [Fact]
         public async Task TestStackAllocArrayCreationExpressionAsync()

@@ -2158,5 +2158,22 @@ class ClassName
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(2354, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2354")]
+        public async Task TestNoPreviousTokenAsync()
+        {
+            var testCode = "(";
+
+            var test = new CSharpTest()
+            {
+                TestCode = testCode,
+
+                // Compiler diagnostics differ between Roslyn versions. The main thing is that the analyzer doesn't throw an exception.
+                CompilerDiagnostics = CompilerDiagnostics.None,
+            };
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

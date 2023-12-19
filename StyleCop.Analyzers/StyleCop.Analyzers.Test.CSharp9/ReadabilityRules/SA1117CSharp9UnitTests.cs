@@ -12,7 +12,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.ReadabilityRules.SA1117ParametersMustBeOnSameLineOrSeparateLines>;
 
-    public class SA1117CSharp9UnitTests : SA1117CSharp8UnitTests
+    public partial class SA1117CSharp9UnitTests : SA1117CSharp8UnitTests
     {
         [Fact]
         public async Task TestValidTargetTypedNewExpressionAsync()

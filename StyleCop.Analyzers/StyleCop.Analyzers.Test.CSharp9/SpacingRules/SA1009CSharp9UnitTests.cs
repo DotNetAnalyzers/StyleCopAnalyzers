@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1009ClosingParenthesisMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1009CSharp9UnitTests : SA1009CSharp8UnitTests
+    public partial class SA1009CSharp9UnitTests : SA1009CSharp8UnitTests
     {
         [Fact]
         [WorkItem(3248, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3248")]

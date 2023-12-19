@@ -31,6 +31,37 @@ namespace StyleCop.Analyzers.Test.Helpers
             }
         }
 
+        public static IEnumerable<object[]> ReferenceTypeDeclarationKeywords
+        {
+            get
+            {
+                yield return new[] { "class" };
+
+                if (LightupHelpers.SupportsCSharp9)
+                {
+                    yield return new[] { "record" };
+                }
+
+                if (LightupHelpers.SupportsCSharp10)
+                {
+                    yield return new[] { "record class" };
+                }
+            }
+        }
+
+        public static IEnumerable<object[]> ValueTypeDeclarationKeywords
+        {
+            get
+            {
+                yield return new[] { "struct" };
+
+                if (LightupHelpers.SupportsCSharp10)
+                {
+                    yield return new[] { "record struct" };
+                }
+            }
+        }
+
         public static IEnumerable<object[]> RecordTypeDeclarationKeywords
         {
             get

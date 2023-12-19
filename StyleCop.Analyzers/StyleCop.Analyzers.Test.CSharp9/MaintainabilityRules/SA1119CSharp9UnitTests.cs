@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.MaintainabilityRules
         StyleCop.Analyzers.MaintainabilityRules.SA1119StatementMustNotUseUnnecessaryParenthesis,
         StyleCop.Analyzers.MaintainabilityRules.SA1119CodeFixProvider>;
 
-    public class SA1119CSharp9UnitTests : SA1119CSharp8UnitTests
+    public partial class SA1119CSharp9UnitTests : SA1119CSharp8UnitTests
     {
         /// <summary>
         /// Verifies that a type cast followed by a <c>with</c> expression is handled correctly.

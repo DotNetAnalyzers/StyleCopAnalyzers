@@ -82,12 +82,16 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return true;
             }
 
-            if (semanticModel.GetSymbolInfo(expression).Symbol is IFieldSymbol fieldSymbol)
+            var symbol = semanticModel.GetSymbolInfo(expression).Symbol;
+            switch (symbol)
             {
-                return fieldSymbol.IsStatic && fieldSymbol.IsReadOnly;
-            }
+            case IFieldSymbol fieldSymbol when fieldSymbol.IsStatic && fieldSymbol.IsReadOnly:
+            case IMethodSymbol:
+                return true;
 
-            return false;
+            default:
+                return false;
+            }
         }
     }
 }

@@ -12,7 +12,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.ReadabilityRules.SA1115ParameterMustFollowComma>;
 
-    public class SA1115CSharp7UnitTests : SA1115UnitTests
+    public partial class SA1115CSharp7UnitTests : SA1115UnitTests
     {
         [Fact]
         public async Task TestLocalFunctionDeclarationEmptyLinesBetweenParametersAsync()

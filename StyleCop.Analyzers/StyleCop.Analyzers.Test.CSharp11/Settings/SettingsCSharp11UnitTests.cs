@@ -5,7 +5,7 @@ namespace StyleCop.Analyzers.Test.CSharp11.Settings
 {
     using StyleCop.Analyzers.Test.CSharp10.Settings;
 
-    public class SettingsCSharp11UnitTests : SettingsCSharp10UnitTests
+    public partial class SettingsCSharp11UnitTests : SettingsCSharp10UnitTests
     {
     }
 }

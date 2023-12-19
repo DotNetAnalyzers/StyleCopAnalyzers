@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.DocumentationRules.SA1600ElementsMustBeDocumented,
@@ -40,10 +41,19 @@ using System;
             await VerifyCSharpDiagnosticAsync(this.LanguageVersion, testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestClassWithoutDocumentationAsync()
+        [Theory]
+        [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestBaseTypeWithoutDocumentationAsync(string type)
         {
-            await this.TestTypeWithoutDocumentationAsync("class", false).ConfigureAwait(false);
+            var isInterface = type == "interface";
+            await this.TestTypeWithoutDocumentationAsync(type, isInterface).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestBaseTypeWithDocumentationAsync(string type)
+        {
+            await this.TestTypeWithDocumentationAsync(type).ConfigureAwait(false);
         }
 
         [Fact]
@@ -55,12 +65,6 @@ using System;
         }
 
         [Fact]
-        public async Task TestStructWithoutDocumentationAsync()
-        {
-            await this.TestTypeWithoutDocumentationAsync("struct", false).ConfigureAwait(false);
-        }
-
-        [Fact]
         public async Task TestPartialStructWithoutDocumentationAsync()
         {
             await this.TestTypeDeclarationDocumentationAsync("struct", "partial", false, false).ConfigureAwait(false);
@@ -69,47 +73,11 @@ using System;
         }
 
         [Fact]
-        public async Task TestEnumWithoutDocumentationAsync()
-        {
-            await this.TestTypeWithoutDocumentationAsync("enum", false).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestInterfaceWithoutDocumentationAsync()
-        {
-            await this.TestTypeWithoutDocumentationAsync("interface", true).ConfigureAwait(false);
-        }
-
-        [Fact]
         public async Task TestPartialInterfaceWithoutDocumentationAsync()
         {
             await this.TestTypeDeclarationDocumentationAsync("interface", "partial", false, false).ConfigureAwait(false);
             await this.TestTypeDeclarationDocumentationAsync("interface", "internal partial", false, false).ConfigureAwait(false);
             await this.TestTypeDeclarationDocumentationAsync("interface", "public partial", false, false).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestClassWithDocumentationAsync()
-        {
-            await this.TestTypeWithDocumentationAsync("class").ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestStructWithDocumentationAsync()
-        {
-            await this.TestTypeWithDocumentationAsync("struct").ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestEnumWithDocumentationAsync()
-        {
-            await this.TestTypeWithDocumentationAsync("enum").ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestInterfaceWithDocumentationAsync()
-        {
-            await this.TestTypeWithDocumentationAsync("interface").ConfigureAwait(false);
         }
 
         [Fact]

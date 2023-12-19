@@ -15,6 +15,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             var codeAnalysisAssembly = typeof(SyntaxNode).GetTypeInfo().Assembly;
             var builder = ImmutableDictionary.CreateBuilder<Type, Type>();
+            builder.Add(typeof(IOperationWrapper), typeof(IOperation));
             builder.Add(typeof(ILoopOperationWrapper), codeAnalysisAssembly.GetType(ILoopOperationWrapper.WrappedTypeName));
             builder.Add(typeof(IMemberReferenceOperationWrapper), codeAnalysisAssembly.GetType(IMemberReferenceOperationWrapper.WrappedTypeName));
             builder.Add(typeof(IAssignmentOperationWrapper), codeAnalysisAssembly.GetType(IAssignmentOperationWrapper.WrappedTypeName));

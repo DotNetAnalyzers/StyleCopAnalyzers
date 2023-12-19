@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct IBinaryOperationWrapper : IOperationWrapper
+    internal readonly struct IBinaryOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IBinaryOperation";
         private static readonly Type WrappedType;
@@ -43,6 +43,8 @@ namespace StyleCop.Analyzers.Lightup
         public bool IsChecked => IsCheckedAccessor(this.WrappedOperation);
         public bool IsCompareText => IsCompareTextAccessor(this.WrappedOperation);
         public IMethodSymbol OperatorMethod => OperatorMethodAccessor(this.WrappedOperation);
+        public static explicit operator IBinaryOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(IBinaryOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IBinaryOperationWrapper FromOperation(IOperation operation)
         {
             if (operation == null)

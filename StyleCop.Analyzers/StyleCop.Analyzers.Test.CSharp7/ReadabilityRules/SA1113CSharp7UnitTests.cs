@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
         StyleCop.Analyzers.ReadabilityRules.SA1113CommaMustBeOnSameLineAsPreviousParameter,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1113CSharp7UnitTests : SA1113UnitTests
+    public partial class SA1113CSharp7UnitTests : SA1113UnitTests
     {
         [Fact]
         public async Task TestLocalFunctionDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameterAsync()

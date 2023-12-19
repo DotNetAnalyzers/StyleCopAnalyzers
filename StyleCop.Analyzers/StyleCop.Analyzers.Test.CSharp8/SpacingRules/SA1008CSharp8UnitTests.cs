@@ -17,7 +17,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
             StyleCop.Analyzers.SpacingRules.SA1008OpeningParenthesisMustBeSpacedCorrectly,
             StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1008CSharp8UnitTests : SA1008CSharp7UnitTests
+    public partial class SA1008CSharp8UnitTests : SA1008CSharp7UnitTests
     {
         /// <summary>
         /// Verifies that spacing after a range expression double dots isn't required.

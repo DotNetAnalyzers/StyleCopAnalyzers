@@ -1254,9 +1254,12 @@ namespace StyleCop.Analyzers.CodeGeneration
             public SyntaxData(CompilationData compilationData, XDocument document)
             {
                 var nodesBuilder = ImmutableArray.CreateBuilder<NodeData>();
-                foreach (var element in document.XPathSelectElement("/Tree[@Root='SyntaxNode']").XPathSelectElements("PredefinedNode|AbstractNode|Node"))
+                if (document.XPathSelectElement("/Tree[@Root='SyntaxNode']") is { } tree)
                 {
-                    nodesBuilder.Add(new NodeData(compilationData, element));
+                    foreach (var element in tree.XPathSelectElements("PredefinedNode|AbstractNode|Node"))
+                    {
+                        nodesBuilder.Add(new NodeData(compilationData, element));
+                    }
                 }
 
                 this.Nodes = nodesBuilder.ToImmutable();
@@ -1303,7 +1306,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                     _ => throw new NotSupportedException($"Unknown element name '{element.Name}'"),
                 };
 
-                this.Name = element.Attribute("Name").Value;
+                this.Name = element.RequiredAttribute("Name").Value;
 
                 this.ExistingType = compilationData.ExistingTypes.GetValueOrDefault($"Microsoft.CodeAnalysis.CSharp.Syntax.{this.Name}")
                     ?? compilationData.ExistingTypes.GetValueOrDefault($"Microsoft.CodeAnalysis.CSharp.{this.Name}")
@@ -1317,7 +1320,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                     this.WrapperName = this.Name + "Wrapper";
                 }
 
-                this.BaseName = element.Attribute("Base").Value;
+                this.BaseName = element.RequiredAttribute("Base").Value;
                 this.Fields = element.XPathSelectElements("descendant::Field").Select(field => new FieldData(this, field)).ToImmutableArray();
             }
 
@@ -1347,9 +1350,9 @@ namespace StyleCop.Analyzers.CodeGeneration
             {
                 this.nodeData = nodeData;
 
-                this.Name = element.Attribute("Name").Value;
+                this.Name = element.RequiredAttribute("Name").Value;
 
-                var type = element.Attribute("Type").Value;
+                var type = element.RequiredAttribute("Type").Value;
                 this.Type = type switch
                 {
                     "SyntaxList<SyntaxToken>" => nameof(SyntaxTokenList),

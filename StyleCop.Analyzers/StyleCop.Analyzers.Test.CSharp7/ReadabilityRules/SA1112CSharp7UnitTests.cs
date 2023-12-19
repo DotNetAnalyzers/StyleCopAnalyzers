@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
         StyleCop.Analyzers.ReadabilityRules.SA1112ClosingParenthesisMustBeOnLineOfOpeningParenthesis,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1112CSharp7UnitTests : SA1112UnitTests
+    public partial class SA1112CSharp7UnitTests : SA1112UnitTests
     {
         [Fact]
         public async Task TestLocalFunctionWithNoParametersClosingParenthesisOnTheNextLineAsync()

@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct ISwitchOperationWrapper : IOperationWrapper
+    internal readonly struct ISwitchOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.ISwitchOperation";
         private static readonly Type WrappedType;
@@ -36,6 +36,8 @@ namespace StyleCop.Analyzers.Lightup
         public IOperation Value => ValueAccessor(this.WrappedOperation);
         public ImmutableArray<IOperation> Cases => CasesAccessor(this.WrappedOperation);
         public ILabelSymbol ExitLabel => ExitLabelAccessor(this.WrappedOperation);
+        public static explicit operator ISwitchOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(ISwitchOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static ISwitchOperationWrapper FromOperation(IOperation operation)
         {
             if (operation == null)

@@ -6,6 +6,7 @@
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -190,14 +191,14 @@ internal class TypeName
 {
     private void Method(object o)
     {
-        Action a = delegate() { Console.WriteLine(); };
-        Action b = delegate() { Console.WriteLine(); };
-        Action<int> c = delegate(int x) { Console.WriteLine(); };
-        Action<int, int> d = delegate(int x, int y) { Console.WriteLine(); };
-        Action<int, int> e = delegate (int x, int y = 0) { Console.WriteLine(); };
-        Action<int, int> f = delegate (int x, [Obsolete]int y) { Console.WriteLine(); };
-        Action<int, int> g = delegate (int x, params int y) { Console.WriteLine(); };
-        Action<int> h = delegate (int x, __arglist) { Console.WriteLine(); };
+        Action a = [|delegate|]() { Console.WriteLine(); };
+        Action b = [|delegate|]() { Console.WriteLine(); };
+        Action<int> c = [|delegate|](int x) { Console.WriteLine(); };
+        Action<int, int> d = [|delegate|](int x, int y) { Console.WriteLine(); };
+        Action<int, int> e = [|delegate|] (int x, int y = 0) { Console.WriteLine(); };
+        Action<int, int> f = [|delegate|] (int x, [Obsolete]int y) { Console.WriteLine(); };
+        Action<int, int> g = [|delegate|] (int x, params int y) { Console.WriteLine(); };
+        Action<int> h = [|delegate|] (int x, __arglist) { Console.WriteLine(); };
     }
 }";
 
@@ -218,33 +219,17 @@ internal class TypeName
         Action<int> h = delegate (int x, __arglist) { Console.WriteLine(); };
     }
 }";
-            var expected = new[]
-            {
-                Diagnostic().WithLocation(8, 20),
-                Diagnostic().WithLocation(9, 20),
-                Diagnostic().WithLocation(10, 25),
-                Diagnostic().WithLocation(11, 30),
-                Diagnostic().WithLocation(12, 30),
-                Diagnostic(CS1065).WithLocation(12, 53),
-                Diagnostic().WithLocation(13, 30),
-                Diagnostic(CS7014).WithLocation(13, 47),
-                Diagnostic().WithLocation(14, 30),
-                Diagnostic(CS1670).WithLocation(14, 47),
-                Diagnostic().WithLocation(15, 25),
-                Diagnostic(CS1669).WithLocation(15, 42),
-            };
 
-            var expectedAfterFix = new[]
-            {
-                Diagnostic().WithLocation(12, 30),
-                Diagnostic(CS1065).WithLocation(12, 53),
-                Diagnostic().WithLocation(13, 30),
-                Diagnostic(CS7014).WithLocation(13, 47),
-                Diagnostic().WithLocation(14, 30),
-                Diagnostic(CS1670).WithLocation(14, 47),
-                Diagnostic().WithLocation(15, 25),
-                Diagnostic(CS1669).WithLocation(15, 42),
-            };
+            var expected = this.GetCompilerExpectedResultCodeFixSpecialCases();
+
+            var expectedAfterFix = this.GetCompilerExpectedResultCodeFixSpecialCases()
+                .Concat(new[]
+                {
+                    Diagnostic().WithLocation(12, 30),
+                    Diagnostic().WithLocation(13, 30),
+                    Diagnostic().WithLocation(14, 30),
+                    Diagnostic().WithLocation(15, 25),
+                });
 
             var test = new CSharpTest
             {
@@ -824,14 +809,13 @@ public class TestClass
             var testCode = @"using System;
 public class TestClass
 {
-    public static EventHandler[] TestMethod() => delegate { };
+    public static EventHandler[] TestMethod() => [|delegate|] { };
 }
 ";
 
-            DiagnosticResult[] expected =
+            var expected = new[]
             {
-                Diagnostic().WithSpan(4, 50, 4, 58),
-                DiagnosticResult.CompilerError("CS1660").WithMessage("Cannot convert anonymous method to type 'EventHandler[]' because it is not a delegate type").WithSpan(4, 50, 4, 62),
+                DiagnosticResult.CompilerError("CS1660").WithLocation(4, 50),
             };
 
             var test = new CSharpTest
@@ -1009,6 +993,17 @@ public class TypeName
 }}";
 
             await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetCompilerExpectedResultCodeFixSpecialCases()
+        {
+            return new[]
+            {
+                Diagnostic(CS1065).WithLocation(12, 53),
+                Diagnostic(CS7014).WithLocation(13, 47),
+                Diagnostic(CS1670).WithLocation(14, 47),
+                Diagnostic(CS1669).WithLocation(15, 42),
+            };
         }
     }
 }

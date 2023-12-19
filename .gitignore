@@ -14,7 +14,6 @@ OpenCover.Symbols/
 .nuget/NuGet.exe
 build/nuget/
 *.log
-StyleCop.Analyzers/StyleCop.Analyzers/Lightup/.generated/Microsoft.CodeAnalysis.ResxSourceGenerator.CSharp/
 
 # Visual Studio performance tools
 *.psess

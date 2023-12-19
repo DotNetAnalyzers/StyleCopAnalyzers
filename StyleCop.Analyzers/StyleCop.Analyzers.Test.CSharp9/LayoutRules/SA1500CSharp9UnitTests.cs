@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.LayoutRules
         StyleCop.Analyzers.LayoutRules.SA1500BracesForMultiLineStatementsMustNotShareLine,
         StyleCop.Analyzers.LayoutRules.SA1500CodeFixProvider>;
 
-    public class SA1500CSharp9UnitTests : SA1500CSharp8UnitTests
+    public partial class SA1500CSharp9UnitTests : SA1500CSharp8UnitTests
     {
         [Theory]
         [MemberData(nameof(CommonMemberData.RecordTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]

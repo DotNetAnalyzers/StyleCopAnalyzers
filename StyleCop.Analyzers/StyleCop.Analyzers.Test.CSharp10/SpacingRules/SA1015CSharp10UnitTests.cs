@@ -12,7 +12,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1015ClosingGenericBracketsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1015CSharp10UnitTests : SA1015CSharp9UnitTests
+    public partial class SA1015CSharp10UnitTests : SA1015CSharp9UnitTests
     {
         [Fact]
         [WorkItem(3624, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3624")]

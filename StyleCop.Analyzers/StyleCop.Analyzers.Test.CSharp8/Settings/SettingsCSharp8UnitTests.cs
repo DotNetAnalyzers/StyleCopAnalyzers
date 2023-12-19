@@ -16,7 +16,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.Settings
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
 
-    public class SettingsCSharp8UnitTests : SettingsCSharp7UnitTests
+    public partial class SettingsCSharp8UnitTests : SettingsCSharp7UnitTests
     {
         private const string TestProjectName = "TestProject";
 

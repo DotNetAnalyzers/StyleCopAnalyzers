@@ -145,11 +145,6 @@ namespace StyleCop.Analyzers.Helpers
         /// <returns>true if the member is implementing an interface member, otherwise false.</returns>
         internal static bool IsImplementingAnInterfaceMember(ISymbol memberSymbol)
         {
-            if (memberSymbol.IsStatic)
-            {
-                return false;
-            }
-
             bool isImplementingExplicitly;
 
             // Only methods, properties and events can implement an interface member

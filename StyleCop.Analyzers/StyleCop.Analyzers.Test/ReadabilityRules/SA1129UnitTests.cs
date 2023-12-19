@@ -406,7 +406,12 @@ public class TestClass
 }}
 ";
 
-            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedTestCode,
+                CodeActionValidationMode = CodeActionValidationMode.None, // Differences in syntax nodes (SimpleMemberAccessExpression vs QualifiedName)
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>

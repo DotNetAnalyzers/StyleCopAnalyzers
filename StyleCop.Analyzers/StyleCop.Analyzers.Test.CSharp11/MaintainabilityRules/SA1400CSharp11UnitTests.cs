@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Test.CSharp11.MaintainabilityRules
         StyleCop.Analyzers.MaintainabilityRules.SA1400AccessModifierMustBeDeclared,
         StyleCop.Analyzers.MaintainabilityRules.SA1400CodeFixProvider>;
 
-    public class SA1400CSharp11UnitTests : SA1400CSharp10UnitTests
+    public partial class SA1400CSharp11UnitTests : SA1400CSharp10UnitTests
     {
         [Theory]
         [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]

@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.LayoutRules
         StyleCop.Analyzers.LayoutRules.SA1516ElementsMustBeSeparatedByBlankLine,
         StyleCop.Analyzers.LayoutRules.SA1516CodeFixProvider>;
 
-    public class SA1516CSharp10UnitTests : SA1516CSharp9UnitTests
+    public partial class SA1516CSharp10UnitTests : SA1516CSharp9UnitTests
     {
         /// <summary>
         /// Verifies that SA1516 is reported for usings and extern alias outside a file scoped namespace.

@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
         StyleCop.Analyzers.ReadabilityRules.SA1135UsingDirectivesMustBeQualified,
         StyleCop.Analyzers.ReadabilityRules.SA1135CodeFixProvider>;
 
-    public class SA1135CSharp7UnitTests : SA1135UnitTests
+    public partial class SA1135CSharp7UnitTests : SA1135UnitTests
     {
         [Fact]
         [WorkItem(2879, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2879")]
