@@ -56,28 +56,13 @@ using System;
             await this.TestTypeWithDocumentationAsync(type).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestPartialClassWithoutDocumentationAsync()
+        [Theory]
+        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestPartialTypeWithoutDocumentationAsync(string type)
         {
-            await this.TestTypeDeclarationDocumentationAsync("class", "partial", false, false).ConfigureAwait(false);
-            await this.TestTypeDeclarationDocumentationAsync("class", "internal partial", false, false).ConfigureAwait(false);
-            await this.TestTypeDeclarationDocumentationAsync("class", "public partial", false, false).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestPartialStructWithoutDocumentationAsync()
-        {
-            await this.TestTypeDeclarationDocumentationAsync("struct", "partial", false, false).ConfigureAwait(false);
-            await this.TestTypeDeclarationDocumentationAsync("struct", "internal partial", false, false).ConfigureAwait(false);
-            await this.TestTypeDeclarationDocumentationAsync("struct", "public partial", false, false).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestPartialInterfaceWithoutDocumentationAsync()
-        {
-            await this.TestTypeDeclarationDocumentationAsync("interface", "partial", false, false).ConfigureAwait(false);
-            await this.TestTypeDeclarationDocumentationAsync("interface", "internal partial", false, false).ConfigureAwait(false);
-            await this.TestTypeDeclarationDocumentationAsync("interface", "public partial", false, false).ConfigureAwait(false);
+            await this.TestTypeDeclarationDocumentationAsync(type, "partial", false, false).ConfigureAwait(false);
+            await this.TestTypeDeclarationDocumentationAsync(type, "internal partial", false, false).ConfigureAwait(false);
+            await this.TestTypeDeclarationDocumentationAsync(type, "public partial", false, false).ConfigureAwait(false);
         }
 
         [Fact]
