@@ -142,7 +142,11 @@ namespace StyleCop.Analyzers.SpacingRules
             var leadingTriviaList = TriviaHelper.MergeTriviaLists(prevToken.TrailingTrivia, token.LeadingTrivia);
 
             var isFirstOnLine = false;
-            if (prevToken.GetLineSpan().EndLinePosition.Line < token.GetLineSpan().StartLinePosition.Line)
+            if (prevToken.IsKind(SyntaxKind.None))
+            {
+                isFirstOnLine = true; // This means that it doesn't matter if there are spaces before or not
+            }
+            else if (prevToken.GetLineSpan().EndLinePosition.Line < token.GetLineSpan().StartLinePosition.Line)
             {
                 var done = false;
                 for (var i = leadingTriviaList.Count - 1; !done && (i >= 0); i--)
