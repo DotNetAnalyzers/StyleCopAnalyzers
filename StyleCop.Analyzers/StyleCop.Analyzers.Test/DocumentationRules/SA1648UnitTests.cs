@@ -6,7 +6,6 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
-    using Microsoft.VisualBasic.Devices;
     using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Test.Helpers;
     using StyleCop.Analyzers.Test.Verifiers;
@@ -215,6 +214,7 @@ interface ITest : IBase { }";
         }
 
         [Theory]
+        [InlineData("Test(int ignored) { }")]
         [InlineData("void Foo() { }")]
         [InlineData("string foo;")]
         [InlineData("string Foo { get; set; }")]

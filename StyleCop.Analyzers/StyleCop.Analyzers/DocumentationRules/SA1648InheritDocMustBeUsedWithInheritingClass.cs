@@ -225,12 +225,10 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <returns><see langword="true"/> if any base type constructor's signature matches the signature of <paramref name="constructorMethodSymbol"/>, <see langword="false"/> otherwise.</returns>
         private static bool HasMatchingSignature(ImmutableArray<IMethodSymbol> baseConstructorSymbols, IMethodSymbol constructorMethodSymbol)
         {
-            bool found = false;
-
             foreach (IMethodSymbol baseConstructorMethod in baseConstructorSymbols)
             {
                 // Constructors must have the same number of parameters.
-                if (constructorMethodSymbol.Parameters.Count() != baseConstructorMethod.Parameters.Count())
+                if (constructorMethodSymbol.Parameters.Length != baseConstructorMethod.Parameters.Length)
                 {
                     continue;
                 }
@@ -252,12 +250,11 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 if (success)
                 {
-                    found = true;
-                    break;
+                    return true;
                 }
             }
 
-            return found;
+            return false;
         }
 
         private static bool HasXmlCrefAttribute(XmlNodeSyntax inheritDocElement)
