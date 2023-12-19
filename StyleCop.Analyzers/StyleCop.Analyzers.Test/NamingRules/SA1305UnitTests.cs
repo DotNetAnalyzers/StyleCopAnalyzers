@@ -63,7 +63,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [Fact]
-        public async Task TestVariableNamesInNativeClassMethodAsync()
+        public async Task TestVariableNamesInNativeMethodsClassAsync()
         {
             var testCode = @"
 public class TypeNameNativeMethods
