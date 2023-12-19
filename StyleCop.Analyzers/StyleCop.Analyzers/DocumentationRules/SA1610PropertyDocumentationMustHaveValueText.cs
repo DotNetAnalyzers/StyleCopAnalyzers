@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
@@ -10,6 +12,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// The XML header documentation for a C# property contains an empty <c>&lt;value&gt;</c> tag.
@@ -30,10 +33,10 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// The ID for diagnostics produced by the <see cref="SA1610PropertyDocumentationMustHaveValueText"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1610";
-        private const string Title = "Property documentation should have value text";
-        private const string MessageFormat = "Property documentation should have value text";
-        private const string Description = "The XML header documentation for a C# property contains an empty <value> tag.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1610.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1610Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1610MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1610Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -46,7 +49,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         protected override string XmlTagToHandle => XmlCommentHelper.ValueXmlTag;
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, bool needsComment, XmlNodeSyntax syntax, XElement completeDocumentation, Location diagnosticLocation)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, XmlNodeSyntax syntax, XElement completeDocumentation, Location diagnosticLocation)
         {
             var properties = ImmutableDictionary.Create<string, string>();
 

@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Helpers
 {
@@ -294,11 +296,17 @@ namespace StyleCop.Analyzers.Helpers
 
         internal static Accessibility GetDeclaredAccessibility(this EnumMemberDeclarationSyntax syntax)
         {
+            // Intentionally unused
+            _ = syntax;
+
             return Accessibility.Public;
         }
 
         internal static Accessibility GetDeclaredAccessibility(this DelegateDeclarationSyntax syntax, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
+            // Currently unused
+            _ = cancellationToken;
+
             Requires.NotNull(syntax, nameof(syntax));
             Requires.NotNull(semanticModel, nameof(semanticModel));
 

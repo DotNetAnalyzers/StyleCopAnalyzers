@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
@@ -7,7 +9,6 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1139UseLiteralSuffixNotationInsteadOfCasting,
@@ -265,6 +266,54 @@ class ClassName
 ";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the codefix will not insert extraneous spaces.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2901, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2901")]
+        public async Task TestCodeFixDoesNotAddExtraneousSpacesAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var x = (long)64 * 1024;
+        var y = (double)64 /* test */ * 1024;
+        var z = (long) /* test */ 64 * 1024;
+        var a = (double)64 // dividend
+            / (double)4; // divisor
+    }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var x = 64L * 1024;
+        var y = 64D /* test */ * 1024;
+        var z = /* test */ 64L * 1024;
+        var a = 64D // dividend
+            / 4D; // divisor
+    }
+}
+";
+
+            DiagnosticResult[] expectedDiagnosticResult =
+            {
+                Diagnostic().WithLocation(6, 17),
+                Diagnostic().WithLocation(7, 17),
+                Diagnostic().WithLocation(8, 17),
+                Diagnostic().WithLocation(9, 17),
+                Diagnostic().WithLocation(10, 15),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedDiagnosticResult, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

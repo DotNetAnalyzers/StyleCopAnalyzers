@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
@@ -53,10 +55,10 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <see cref="SA1626SingleLineCommentsMustNotUseDocumentationStyleSlashes"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1626";
-        private const string Title = "Single-line comments should not use documentation style slashes";
-        private const string MessageFormat = "Single-line comments should not use documentation style slashes";
-        private const string Description = "The C# code contains a single-line comment which begins with three forward slashes in a row.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1626.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1626Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1626MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1626Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

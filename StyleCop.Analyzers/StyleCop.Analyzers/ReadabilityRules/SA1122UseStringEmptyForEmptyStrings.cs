@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
@@ -9,6 +11,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// The C# code includes an empty string, written as <c>""</c>.
@@ -34,10 +37,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// The ID for diagnostics produced by the <see cref="SA1122UseStringEmptyForEmptyStrings"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1122";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1122.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1122Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1122MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1122Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1122.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -81,21 +84,20 @@ namespace StyleCop.Analyzers.ReadabilityRules
             ExpressionSyntax outermostExpression = FindOutermostExpression(literalExpression);
 
             if (outermostExpression.Parent.IsKind(SyntaxKind.AttributeArgument)
-                || outermostExpression.Parent.IsKind(SyntaxKind.CaseSwitchLabel))
+                || outermostExpression.Parent.IsKind(SyntaxKind.CaseSwitchLabel)
+                || outermostExpression.Parent.IsKind(SyntaxKindEx.ConstantPattern))
             {
                 return true;
             }
 
             if (outermostExpression.Parent is EqualsValueClauseSyntax equalsValueClause)
             {
-                if (equalsValueClause.Parent is ParameterSyntax parameterSyntax)
+                if (equalsValueClause.Parent is ParameterSyntax)
                 {
                     return true;
                 }
 
-                VariableDeclaratorSyntax variableDeclaratorSyntax = equalsValueClause.Parent as VariableDeclaratorSyntax;
-                VariableDeclarationSyntax variableDeclarationSyntax = variableDeclaratorSyntax?.Parent as VariableDeclarationSyntax;
-                if (variableDeclaratorSyntax == null || variableDeclarationSyntax == null)
+                if (!(equalsValueClause.Parent is VariableDeclaratorSyntax variableDeclaratorSyntax) || !(variableDeclaratorSyntax?.Parent is VariableDeclarationSyntax variableDeclarationSyntax))
                 {
                     return false;
                 }

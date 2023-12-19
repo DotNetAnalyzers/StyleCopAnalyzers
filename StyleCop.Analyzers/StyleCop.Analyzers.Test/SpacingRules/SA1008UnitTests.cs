@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
@@ -7,7 +9,6 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.SpacingRules.SA1008OpeningParenthesisMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -137,11 +138,61 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             int z)
         {
         }
+
+        public void TestMethod2 (
+            int x,
+            int y,
+            int z)
+        {
+        }
+
+        // Opening parenthesis followed by space
+        public void TestMethod3( 
+            int x,
+            int y,
+            int z)
+        {
+        }
     }
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            var fixedTestCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod1(
+            int x,
+            int y,
+            int z)
+        {
+        }
+
+        public void TestMethod2(
+            int x,
+            int y,
+            int z)
+        {
+        }
+
+        // Opening parenthesis followed by space
+        public void TestMethod3(
+            int x,
+            int y,
+            int z)
+        {
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expectedDiagnostics =
+            {
+                Diagnostic(DescriptorNotPreceded).WithLocation(12, 33),
+                Diagnostic(DescriptorNotFollowed).WithLocation(20, 32),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -776,6 +827,72 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
                 // v2
                 Diagnostic(DescriptorNotFollowed).WithLocation(15, 19),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that spacing for multiline argument lists is handled properly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestMultiLineArgumentListAsync()
+        {
+            var testCode = @"using System;
+
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public TestClass(int x, int y)
+        {
+            var s1 = new String(
+                'a',
+                x);
+
+            var s2 = new String (
+                'a',
+                y);
+
+            // Opening parenthesis followed by space
+            var s3 = new String( 
+                'a',
+                x);
+        }
+    }
+}
+";
+
+            var fixedTestCode = @"using System;
+
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public TestClass(int x, int y)
+        {
+            var s1 = new String(
+                'a',
+                x);
+
+            var s2 = new String(
+                'a',
+                y);
+
+            // Opening parenthesis followed by space
+            var s3 = new String(
+                'a',
+                x);
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expectedDiagnostics =
+            {
+                Diagnostic(DescriptorNotPreceded).WithLocation(13, 33),
+                Diagnostic(DescriptorNotFollowed).WithLocation(18, 32),
             };
 
             await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
@@ -2040,6 +2157,23 @@ class ClassName
 ";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2354, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2354")]
+        public async Task TestNoPreviousTokenAsync()
+        {
+            var testCode = "(";
+
+            var test = new CSharpTest()
+            {
+                TestCode = testCode,
+
+                // Compiler diagnostics differ between Roslyn versions. The main thing is that the analyzer doesn't throw an exception.
+                CompilerDiagnostics = CompilerDiagnostics.None,
+            };
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.NamingRules
 {
@@ -33,10 +35,10 @@ namespace StyleCop.Analyzers.NamingRules
         /// The ID for diagnostics produced by the <see cref="SA1310FieldNamesMustNotContainUnderscore"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1310";
-        private const string Title = "Field names should not contain underscore";
-        private const string MessageFormat = "Field '{0}' should not contain an underscore";
-        private const string Description = "A field name in C# contains an underscore.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1310.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(NamingResources.SA1310Title), NamingResources.ResourceManager, typeof(NamingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(NamingResources.SA1310MessageFormat), NamingResources.ResourceManager, typeof(NamingResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(NamingResources.SA1310Description), NamingResources.ResourceManager, typeof(NamingResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

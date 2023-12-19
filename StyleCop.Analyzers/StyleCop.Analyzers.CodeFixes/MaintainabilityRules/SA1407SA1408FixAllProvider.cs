@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
@@ -37,14 +39,14 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 nodes.Add(node);
             }
 
-            return root.ReplaceNodes(nodes, (originalNode, rewrittenNode) => AddParentheses(originalNode, rewrittenNode));
+            return root.ReplaceNodes(nodes, (originalNode, rewrittenNode) => AddParentheses(rewrittenNode));
         }
 
-        private static SyntaxNode AddParentheses(SyntaxNode originalNode, SyntaxNode rewrittenNode)
+        private static SyntaxNode AddParentheses(SyntaxNode node)
         {
-            if (!(rewrittenNode is BinaryExpressionSyntax syntax))
+            if (!(node is BinaryExpressionSyntax syntax))
             {
-                return rewrittenNode;
+                return node;
             }
 
             BinaryExpressionSyntax trimmedSyntax = syntax.WithoutTrivia();

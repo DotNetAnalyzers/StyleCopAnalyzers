@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
@@ -7,7 +9,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
-    using TestHelper;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.OrderingRules.SA1202ElementsMustBeOrderedByAccess,
@@ -102,20 +104,22 @@ namespace StyleCop.Analyzers.Test.OrderingRules
         }
 
         /// <summary>
-        /// Verifies that the analyzer will properly handle class access levels.
+        /// Verifies that the analyzer will properly handle type access levels.
         /// </summary>
+        /// <param name="keyword">The keyword used to declare the type.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestClassOrderingAsync()
+        [Theory]
+        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestTypeOrderingAsync(string keyword)
         {
-            var testCode = @"internal class TestClass1 { }
-public class TestClass2 { }
+            var testCode = $@"internal {keyword} TestClass1 {{ }}
+public {keyword} {{|#0:TestClass2|}} {{ }}
 ";
 
-            var expected = Diagnostic().WithLocation(2, 14).WithArguments("public", "internal");
+            var expected = Diagnostic().WithLocation(0).WithArguments("public", "internal");
 
-            var fixedCode = @"public class TestClass2 { }
-internal class TestClass1 { }
+            var fixedCode = $@"public {keyword} TestClass2 {{ }}
+internal {keyword} TestClass1 {{ }}
 ";
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
@@ -124,12 +128,14 @@ internal class TestClass1 { }
         /// <summary>
         /// Verifies that the analyzer will properly handle interfaces before classes.
         /// </summary>
+        /// <param name="keyword">The keyword used to declare the type.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestInternalInterfaceBeforePublicClassAsync()
+        [Theory]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestInternalInterfaceBeforePublicClassAsync(string keyword)
         {
-            var testCode = @"internal interface ITestInterface { }
-public class TestClass2 { }
+            var testCode = $@"internal interface ITestInterface {{ }}
+public {keyword} TestClass2 {{ }}
 ";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -138,18 +144,20 @@ public class TestClass2 { }
         /// <summary>
         /// Verifies that the analyzer will properly handle property access levels.
         /// </summary>
+        /// <param name="keyword">The keyword used to declare the type.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestPropertiesAsync()
+        [Theory]
+        [MemberData(nameof(CommonMemberData.ReferenceTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestPropertiesOfClassAsync(string keyword)
         {
-            var testCode = @"public class TestClass
-{
-    private string TestProperty1 { get; set; }
-    protected string TestProperty2 { get; set; }
-    protected internal string TestProperty3 { get; set; }
-    internal string TestProperty4 { get; set; }
-    public string TestProperty5 { get; set; }
-}
+            var testCode = $@"public {keyword} TestClass
+{{
+    private string TestProperty1 {{ get; set; }}
+    protected string TestProperty2 {{ get; set; }}
+    protected internal string TestProperty3 {{ get; set; }}
+    internal string TestProperty4 {{ get; set; }}
+    public string TestProperty5 {{ get; set; }}
+}}
 ";
 
             DiagnosticResult[] expected =
@@ -160,14 +168,48 @@ public class TestClass2 { }
                 Diagnostic().WithLocation(7, 19).WithArguments("public", "internal"),
             };
 
-            var fixedCode = @"public class TestClass
-{
-    public string TestProperty5 { get; set; }
-    internal string TestProperty4 { get; set; }
-    protected internal string TestProperty3 { get; set; }
-    protected string TestProperty2 { get; set; }
-    private string TestProperty1 { get; set; }
-}
+            var fixedCode = $@"public {keyword} TestClass
+{{
+    public string TestProperty5 {{ get; set; }}
+    internal string TestProperty4 {{ get; set; }}
+    protected internal string TestProperty3 {{ get; set; }}
+    protected string TestProperty2 {{ get; set; }}
+    private string TestProperty1 {{ get; set; }}
+}}
+";
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer will properly handle property access levels.
+        /// </summary>
+        /// <param name="keyword">The keyword used to declare the type.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [MemberData(nameof(CommonMemberData.ValueTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestPropertiesOfStructAsync(string keyword)
+        {
+            var testCode = $@"public {keyword} TestClass
+{{
+    private string TestProperty1 {{ get; set; }}
+    internal string {{|#0:TestProperty4|}} {{ get; set; }}
+    public string {{|#1:TestProperty5|}} {{ get; set; }}
+}}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0).WithArguments("internal", "private"),
+                Diagnostic().WithLocation(1).WithArguments("public", "internal"),
+            };
+
+            var fixedCode = $@"public {keyword} TestClass
+{{
+    public string TestProperty5 {{ get; set; }}
+    internal string TestProperty4 {{ get; set; }}
+    private string TestProperty1 {{ get; set; }}
+}}
 ";
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
@@ -643,6 +685,36 @@ class TestClass1 { }
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestDefaultAccessModifierOrderInCompilationUnitAsync()
+        {
+            string testCode = @"
+public class Class1 { }
+internal class Class2 { }
+class Class3 { }
+internal class Class4 { }
+class Class5 { }
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestDefaultAccessModifierOrderInNamespaceAsync()
+        {
+            string testCode = @"namespace Foo
+{
+    public class Class1 { }
+    internal class Class2 { }
+    class Class3 { }
+    internal class Class4 { }
+    class Class5 { }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Verifies that the analyzer will properly handle static constructors.
         /// </summary>
@@ -880,8 +952,11 @@ public class TestClass : TestInterface
             // We don't care about the syntax errors.
             var expected = new[]
             {
-                DiagnosticResult.CompilerError("CS1585").WithMessage("Member modifier 'public' must precede the member type and name").WithLocation(5, 5),
-                DiagnosticResult.CompilerError("CS1519").WithMessage("Invalid token '}' in class, struct, or interface member declaration").WithLocation(6, 1),
+                // /0/Test0.cs(5,5): error CS1585: Member modifier 'public' must precede the member type and name
+                DiagnosticResult.CompilerError("CS1585").WithLocation(5, 5).WithArguments("public"),
+
+                // /0/Test0.cs(6,1): error CS1519: Invalid token '}' in class, record, struct, or interface member declaration
+                DiagnosticResult.CompilerError("CS1519").WithLocation(6, 1).WithArguments("}"),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -905,8 +980,11 @@ public class TestClass : TestInterface
             // We don't care about the syntax errors.
             DiagnosticResult[] expected =
             {
-                DiagnosticResult.CompilerError("CS1585").WithMessage("Member modifier 'public' must precede the member type and name").WithLocation(5, 5),
-                DiagnosticResult.CompilerError("CS1519").WithMessage("Invalid token '}' in class, struct, or interface member declaration").WithLocation(6, 1),
+                // /0/Test0.cs(5,5): error CS1585: Member modifier 'public' must precede the member type and name
+                DiagnosticResult.CompilerError("CS1585").WithLocation(5, 5).WithArguments("public"),
+
+                // /0/Test0.cs(6,1): error CS1519: Invalid token '}' in class, record, struct, or interface member declaration
+                DiagnosticResult.CompilerError("CS1519").WithLocation(6, 1).WithArguments("}"),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

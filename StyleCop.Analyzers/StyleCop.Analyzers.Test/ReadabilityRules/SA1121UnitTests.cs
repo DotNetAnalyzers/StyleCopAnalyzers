@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 // Several test methods in this file use the same member data, but in some cases the test does not use all of the
 // supported parameters. See https://github.com/xunit/xunit/issues/1556.
@@ -14,7 +16,6 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1121UseBuiltInTypeAlias,
@@ -668,6 +669,9 @@ namespace {0}
         [MemberData(nameof(AllTypes))]
         public async Task TestNameOfAsync(string predefined, string fullName)
         {
+            // Not needed for this test
+            _ = predefined;
+
             string testCode = @"
 namespace System
 {{

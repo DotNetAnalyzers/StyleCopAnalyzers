@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.SpacingRules
 {
@@ -239,9 +241,10 @@ namespace StyleCop.Analyzers.SpacingRules
 
                 case TokenSpacingProperties.ActionRemove:
                     triviaList = token.TrailingTrivia.AddRange(nextToken.LeadingTrivia);
+                    bool preserveLayout = layout == TokenSpacingProperties.LayoutPreserve;
 
                     UpdateReplaceMap(replaceMap, token, t => t.WithTrailingTrivia());
-                    UpdateReplaceMap(replaceMap, nextToken, t => t.WithLeadingTrivia(triviaList.WithoutLeadingWhitespace(true)));
+                    UpdateReplaceMap(replaceMap, nextToken, t => t.WithLeadingTrivia(triviaList.WithoutLeadingWhitespace(endOfLineIsWhitespace: !preserveLayout)));
                     break;
                 }
 

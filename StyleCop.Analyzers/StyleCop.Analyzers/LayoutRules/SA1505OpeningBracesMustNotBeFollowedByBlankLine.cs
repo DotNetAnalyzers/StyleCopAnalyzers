@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.LayoutRules
 {
@@ -10,7 +12,6 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
-    using StyleCop.Analyzers.SpacingRules;
 
     /// <summary>
     /// An opening brace within a C# element, statement, or expression is followed by a blank line.
@@ -45,10 +46,10 @@ namespace StyleCop.Analyzers.LayoutRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1505";
-        private const string Title = "Opening braces should not be followed by blank line";
-        private const string MessageFormat = "An opening brace should not be followed by a blank line.";
-        private const string Description = "An opening brace within a C# element, statement, or expression is followed by a blank line.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1505.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(LayoutResources.SA1505Title), LayoutResources.ResourceManager, typeof(LayoutResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(LayoutResources.SA1505MessageFormat), LayoutResources.ResourceManager, typeof(LayoutResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(LayoutResources.SA1505Description), LayoutResources.ResourceManager, typeof(LayoutResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

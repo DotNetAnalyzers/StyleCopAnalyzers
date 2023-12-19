@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
@@ -8,7 +10,6 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Test.Verifiers;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1629DocumentationTextMustEndWithAPeriod>;
 
@@ -173,6 +174,35 @@ public class TestClass
         }
 
         [Fact]
+        [WorkItem(2950, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2950")]
+        public async Task TestEnumMemberAsync()
+        {
+            var testCode = @"
+public enum TestEnum
+{
+    /// <summary>
+    /// Enum member
+    /// </summary>
+    EnumMember = 0,
+}
+";
+
+            var fixedTestCode = @"
+public enum TestEnum
+{
+    /// <summary>
+    /// Enum member.
+    /// </summary>
+    EnumMember = 0,
+}
+";
+
+            var expected = Diagnostic().WithLocation(5, 20);
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestAugmentedInheritedDocumentationAsync()
         {
             var testCode = @"
@@ -279,6 +309,20 @@ public class TestClass
         {
             var testCode = @"
 /// <include file='InvalidClassInheritDoc.xml' path='/TestClass/*'/>
+public class TestClass
+{
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3150, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3150")]
+        public async Task TestIncludedMissingFileAsync()
+        {
+            var testCode = @"
+/// <include file='MissingFile.xml' path='/TestClass/*'/>
 public class TestClass
 {
 }
@@ -474,6 +518,75 @@ public interface ITest
 
             DiagnosticResult expected = Diagnostic().WithLocation(3, 26);
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData(",")]
+        [InlineData(";")]
+        public async Task TestSentenceEndingWithTypoAsync(string typo)
+        {
+            var testCode = $@"
+/// <summary>
+/// Summary{typo}
+/// </summary>
+public interface ITest
+{{
+}}
+";
+            var fixedTestCode = $@"
+/// <summary>
+/// Summary.
+/// </summary>
+public interface ITest
+{{
+}}
+";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(3, 12);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, default).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("a", true)]
+        [InlineData("see", true)]
+        [InlineData("seealso", false)]
+        public async Task TestFullSentenceLinkAsync(string tag, bool insideSummary)
+        {
+            var surrounding = insideSummary ? (Start: "<summary>", End: "<summary>") : (Start: string.Empty, End: string.Empty);
+
+            var testCode = $@"
+/// {surrounding.Start}<{tag} href=""someurl"">Periods aren't required to glow white at the end of a full-sentence link.</{tag}>{surrounding.End}
+public interface ITest
+{{
+}}
+";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, default).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData(",")]
+        [InlineData(";")]
+        public async Task TestSentenceEndingWithTypoAndParenthesisAsync(string typo)
+        {
+            var testCode = $@"
+/// <summary>
+/// Summary (for example{typo})
+/// </summary>
+public interface ITest
+{{
+}}
+";
+            var fixedTestCode = $@"
+/// <summary>
+/// Summary (for example.)
+/// </summary>
+public interface ITest
+{{
+}}
+";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(3, 25);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, default).ConfigureAwait(false);
         }
 
         [Fact]
@@ -849,9 +962,6 @@ public interface ITest
             await VerifyCSharpDiagnosticAsync(testCode, testSettings, expectedResult, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
-            => VerifyCSharpDiagnosticAsync(source, testSettings: null, new[] { expected }, cancellationToken);
-
         private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
             => VerifyCSharpDiagnosticAsync(source, testSettings: null, expected, cancellationToken);
 
@@ -871,14 +981,6 @@ public interface ITest
             var test = CreateTest(testSettings: null, expected);
             test.TestCode = source;
             test.FixedCode = fixedSource;
-
-            if (source == fixedSource)
-            {
-                test.FixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
-                test.FixedState.MarkupHandling = MarkupMode.Allow;
-                test.BatchFixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
-                test.BatchFixedState.MarkupHandling = MarkupMode.Allow;
-            }
 
             return test.RunAsync(cancellationToken);
         }

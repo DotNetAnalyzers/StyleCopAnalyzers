@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.LayoutRules
 {
@@ -13,6 +15,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A closing brace within a C# element, statement, or expression is not followed by a blank line.
@@ -44,10 +47,10 @@ namespace StyleCop.Analyzers.LayoutRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1513";
-        private const string Title = "Closing brace should be followed by blank line";
-        private const string MessageFormat = "Closing brace should be followed by blank line";
-        private const string Description = "A closing brace within a C# element, statement, or expression is not followed by a blank line.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1513.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(LayoutResources.SA1513Title), LayoutResources.ResourceManager, typeof(LayoutResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(LayoutResources.SA1513MessageFormat), LayoutResources.ResourceManager, typeof(LayoutResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(LayoutResources.SA1513Description), LayoutResources.ResourceManager, typeof(LayoutResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -176,6 +179,13 @@ namespace StyleCop.Analyzers.LayoutRules
 
             private void AnalyzeCloseBrace(SyntaxToken token)
             {
+                if (token.Parent.IsKind(SyntaxKind.Interpolation))
+                {
+                    // The text after an interpolation is part of a string literal, and therefore does not require a
+                    // blank line in source.
+                    return;
+                }
+
                 var nextToken = token.GetNextToken(true, true);
 
                 if (nextToken.HasLeadingTrivia
@@ -242,9 +252,10 @@ namespace StyleCop.Analyzers.LayoutRules
                          IsPartOf<EqualsValueClauseSyntax>(token) ||
                          IsPartOf<AssignmentExpressionSyntax>(token) ||
                          IsPartOf<ReturnStatementSyntax>(token) ||
+                         IsPartOf<ThrowStatementSyntax>(token) ||
                          IsPartOf<ObjectCreationExpressionSyntax>(token)))
                     {
-                        // the close brace is part of a variable initialization statement or a return statement
+                        // the close brace is part of a variable initialization statement or a return/throw statement
                         return;
                     }
 
@@ -261,10 +272,17 @@ namespace StyleCop.Analyzers.LayoutRules
                         return;
                     }
 
+                    if (nextToken.IsKind(SyntaxKind.CloseBracketToken))
+                    {
+                        // the close brace is for example in an object initializer at the end of a collection expression.
+                        return;
+                    }
+
                     if (nextToken.IsKind(SyntaxKind.AddKeyword)
                         || nextToken.IsKind(SyntaxKind.RemoveKeyword)
                         || nextToken.IsKind(SyntaxKind.GetKeyword)
-                        || nextToken.IsKind(SyntaxKind.SetKeyword))
+                        || nextToken.IsKind(SyntaxKind.SetKeyword)
+                        || nextToken.IsKind(SyntaxKindEx.InitKeyword))
                     {
                         // the close brace is followed by an accessor (SA1516 will handle that)
                         return;

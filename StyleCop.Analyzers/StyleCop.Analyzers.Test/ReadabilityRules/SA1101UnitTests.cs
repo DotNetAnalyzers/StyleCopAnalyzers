@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
@@ -366,6 +366,194 @@ public class Foo
 ";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2845, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2845")]
+        public async Task TestExpressionBodiedPropertyAsync()
+        {
+            var testCode = @"
+public class Foo
+{
+    private readonly int bar = 0;
+
+    public int Bar => bar;
+}
+";
+
+            var fixedCode = @"
+public class Foo
+{
+    private readonly int bar = 0;
+
+    public int Bar => this.bar;
+}
+";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(6, 23),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2845, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2845")]
+        public async Task TestPropertyWithInitializerAsync()
+        {
+            var testCode = @"
+public class Foo
+{
+    private static int bar = 0;
+
+    public int Bar { get; set; } = bar;
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2845, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2845")]
+        public async Task TestIndexerAsync()
+        {
+            var testCode = @"
+public class Foo<T>
+{
+   private T[] arr = new T[100];
+
+   public T this[int i]
+   {
+      get { return arr[i]; }
+      set { arr[i] = value; }
+   }
+}
+";
+
+            var fixedCode = @"
+public class Foo<T>
+{
+   private T[] arr = new T[100];
+
+   public T this[int i]
+   {
+      get { return this.arr[i]; }
+      set { this.arr[i] = value; }
+   }
+}
+";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(8, 20),
+                Diagnostic().WithLocation(9, 13),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2845, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2845")]
+        public async Task TestExpressionBodiedIndexerAsync()
+        {
+            var testCode = @"
+public class Foo<T>
+{
+   private T[] arr = new T[100];
+
+   public T this[int i] => arr[i];
+}
+";
+
+            var fixedCode = @"
+public class Foo<T>
+{
+   private T[] arr = new T[100];
+
+   public T this[int i] => this.arr[i];
+}
+";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(6, 28),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2845, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2845")]
+        public async Task TestEventAsync()
+        {
+            var testCode = @"
+using System;
+
+public class Foo<T>
+{
+    private EventHandler bar;
+
+    public event EventHandler Bar
+    {
+        add { bar += value; }
+        remove { bar -= value; }
+    }
+}
+";
+
+            var fixedCode = @"
+using System;
+
+public class Foo<T>
+{
+    private EventHandler bar;
+
+    public event EventHandler Bar
+    {
+        add { this.bar += value; }
+        remove { this.bar -= value; }
+    }
+}
+";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(10, 15),
+                Diagnostic().WithLocation(11, 18),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2845, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2845")]
+        public async Task TestExpressionBodiedMethodAsync()
+        {
+            var testCode = @"
+public class Foo
+{
+    private readonly object bar;
+
+    public object Bar() => bar;
+}
+";
+
+            var fixedCode = @"
+public class Foo
+{
+    private readonly object bar;
+
+    public object Bar() => this.bar;
+}
+";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(6, 28),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]

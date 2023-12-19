@@ -1,12 +1,14 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
-    using TestHelper;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1106CodeMustNotContainEmptyStatements,
@@ -307,17 +309,14 @@ class TestClass
         }
 
         [Theory]
-        [InlineData("class Foo { }")]
-        [InlineData("struct Foo { }")]
-        [InlineData("interface IFoo { }")]
-        [InlineData("enum Foo { }")]
-        [InlineData("namespace Foo { }")]
-        public async Task TestMemberAsync(string declaration)
+        [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        [InlineData("namespace")]
+        public async Task TestMemberAsync(string declarationKeyword)
         {
-            var testCode = declaration + ";";
-            var fixedCode = declaration;
+            var testCode = declarationKeyword + " Foo { }{|#0:;|}";
+            var fixedCode = declarationKeyword + " Foo { }";
 
-            DiagnosticResult expected = Diagnostic().WithLocation(1, declaration.Length + 1);
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }

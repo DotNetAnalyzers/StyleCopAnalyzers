@@ -1,18 +1,22 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.LayoutRules;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Helpers.LanguageVersionTestExtensions;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.LayoutRules.SA1513ClosingBraceMustBeFollowedByBlankLine,
         StyleCop.Analyzers.LayoutRules.SA1513CodeFixProvider>;
 
-    public class SA1513CSharp7UnitTests : SA1513UnitTests
+    public partial class SA1513CSharp7UnitTests : SA1513UnitTests
     {
         /// <summary>
         /// Verifies that all valid usages of a closing brace in new C# 7 syntax without a following blank line will
@@ -52,7 +56,7 @@ public class Foo
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -140,6 +144,64 @@ public class Foo
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestStackAllocArrayCreationExpressionAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public unsafe void TestMethod()
+        {
+            int* v1 = stackalloc int[]
+            {
+                1,
+                2,
+                3
+            };
+            int* v2 = stackalloc int[]
+            {
+                1,
+                2,
+                3
+            };
+        }
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3.OrLaterDefault(), testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestImplicitStackAllocArrayCreationExpressionAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public unsafe void TestMethod()
+        {
+            int* v1 = stackalloc[]
+            {
+                1,
+                2,
+                3
+            };
+            int* v2 = stackalloc[]
+            {
+                1,
+                2,
+                3
+            };
+        }
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3.OrLaterDefault(), testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

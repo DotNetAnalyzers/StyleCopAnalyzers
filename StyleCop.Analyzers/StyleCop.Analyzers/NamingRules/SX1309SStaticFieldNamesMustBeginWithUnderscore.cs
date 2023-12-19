@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.NamingRules
 {
@@ -34,10 +36,10 @@ namespace StyleCop.Analyzers.NamingRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SX1309S";
-        private const string Title = "Static field names should begin with underscore";
-        private const string MessageFormat = "Static field '{0}' should begin with an underscore";
-        private const string Description = "A static field name in C# does not begin with an underscore.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SX1309S.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(NamingResources.SX1309STitle), NamingResources.ResourceManager, typeof(NamingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(NamingResources.SX1309SMessageFormat), NamingResources.ResourceManager, typeof(NamingResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(NamingResources.SX1309SDescription), NamingResources.ResourceManager, typeof(NamingResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledAlternative, Description, HelpLink);

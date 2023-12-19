@@ -1,9 +1,10 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Settings
 {
-    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
@@ -79,7 +80,7 @@ namespace StyleCop.Analyzers.Settings
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         SettingsResources.SettingsFileCodeFix,
-                        cancellationToken => GetTransformedSolutionAsync(context.Document, diagnostic, cancellationToken),
+                        cancellationToken => GetTransformedSolutionAsync(context.Document, cancellationToken),
                         nameof(SettingsFileCodeFixProvider)),
                     diagnostic);
             }
@@ -94,8 +95,11 @@ namespace StyleCop.Analyzers.Settings
             return null;
         }
 
-        private static Task<Solution> GetTransformedSolutionAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        private static Task<Solution> GetTransformedSolutionAsync(Document document, CancellationToken cancellationToken)
         {
+            // Currently unused
+            _ = cancellationToken;
+
             var project = document.Project;
             var solution = project.Solution;
 

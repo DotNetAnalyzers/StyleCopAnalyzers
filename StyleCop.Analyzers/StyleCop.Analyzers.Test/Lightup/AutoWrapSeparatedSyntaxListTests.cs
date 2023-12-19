@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.Lightup
 {
@@ -11,7 +13,7 @@ namespace StyleCop.Analyzers.Test.Lightup
     {
         internal override SeparatedSyntaxListWrapper<SyntaxNode> CreateList()
         {
-            return new SeparatedSyntaxListWrapper<SyntaxNode>.AutoWrapSeparatedSyntaxList<SyntaxNode>(default(SeparatedSyntaxList<SyntaxNode>));
+            return new SeparatedSyntaxListWrapper<SyntaxNode>.AutoWrapSeparatedSyntaxList<SyntaxNode>(default);
         }
 
         internal override bool TryCreateNonEmptyList(out SeparatedSyntaxListWrapper<SyntaxNode> list)

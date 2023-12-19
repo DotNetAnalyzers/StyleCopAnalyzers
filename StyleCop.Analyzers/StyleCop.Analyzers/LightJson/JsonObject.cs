@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace LightJson
 {
@@ -217,8 +219,10 @@ namespace LightJson
             [DebuggerDisplay("{value.ToString(),nq}", Name = "{key}", Type = "JsonValue({Type})")]
             public class KeyValuePair
             {
+#pragma warning disable IDE0052 // Remove unread private members
                 [DebuggerBrowsable(DebuggerBrowsableState.Never)]
                 private readonly string key;
+#pragma warning restore IDE0052 // Remove unread private members
 
                 [DebuggerBrowsable(DebuggerBrowsableState.Never)]
                 private readonly JsonValue value;
@@ -246,15 +250,6 @@ namespace LightJson
                         {
                             return this.value;
                         }
-                    }
-                }
-
-                [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-                private JsonValueType Type
-                {
-                    get
-                    {
-                        return this.value.Type;
                     }
                 }
             }

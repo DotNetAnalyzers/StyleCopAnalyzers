@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCopTester
 {
@@ -129,7 +131,7 @@ namespace StyleCopTester
 
                 bool force = args.Contains("/force");
 
-                var diagnostics = await GetAnalyzerDiagnosticsAsync(solution, solutionPath, analyzers, force, cancellationToken).ConfigureAwait(true);
+                var diagnostics = await GetAnalyzerDiagnosticsAsync(solution, analyzers, force, cancellationToken).ConfigureAwait(true);
                 var allDiagnostics = diagnostics.SelectMany(i => i.Value).ToImmutableArray();
 
                 Console.WriteLine($"Found {allDiagnostics.Length} diagnostics in {stopwatch.ElapsedMilliseconds}ms");
@@ -269,7 +271,7 @@ namespace StyleCopTester
                 var processedProject = project.WithCompilationOptions(modifiedCompilationOptions);
 
                 Compilation compilation = await processedProject.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
-                CompilationWithAnalyzers compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, new CompilationWithAnalyzersOptions(new AnalyzerOptions(ImmutableArray.Create<AdditionalText>()), null, true, false));
+                CompilationWithAnalyzers compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, new CompilationWithAnalyzersOptions(processedProject.AnalyzerOptions, null, true, false));
 
                 SyntaxTree tree = await project.GetDocument(documentId).GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
                 await compilationWithAnalyzers.GetAnalyzerSyntaxDiagnosticsAsync(tree, cancellationToken).ConfigureAwait(false);
@@ -528,24 +530,7 @@ namespace StyleCopTester
             return providers.ToImmutableDictionary();
         }
 
-        private static ImmutableDictionary<FixAllProvider, ImmutableHashSet<string>> GetAllFixAllProviders(IEnumerable<CodeFixProvider> providers)
-        {
-            Dictionary<FixAllProvider, ImmutableHashSet<string>> fixAllProviders = new Dictionary<FixAllProvider, ImmutableHashSet<string>>();
-
-            foreach (var provider in providers)
-            {
-                var fixAllProvider = provider.GetFixAllProvider();
-                var supportedDiagnosticIds = fixAllProvider.GetSupportedFixAllDiagnosticIds(provider);
-                foreach (var id in supportedDiagnosticIds)
-                {
-                    fixAllProviders.AddToInnerSet(fixAllProvider, id);
-                }
-            }
-
-            return fixAllProviders.ToImmutableDictionary();
-        }
-
-        private static async Task<ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>>> GetAnalyzerDiagnosticsAsync(Solution solution, string solutionPath, ImmutableArray<DiagnosticAnalyzer> analyzers, bool force, CancellationToken cancellationToken)
+        private static async Task<ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>>> GetAnalyzerDiagnosticsAsync(Solution solution, ImmutableArray<DiagnosticAnalyzer> analyzers, bool force, CancellationToken cancellationToken)
         {
             List<KeyValuePair<ProjectId, Task<ImmutableArray<Diagnostic>>>> projectDiagnosticTasks = new List<KeyValuePair<ProjectId, Task<ImmutableArray<Diagnostic>>>>();
 
@@ -602,7 +587,7 @@ namespace StyleCopTester
             var processedProject = project.WithCompilationOptions(modifiedCompilationOptions);
 
             Compilation compilation = await processedProject.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
-            CompilationWithAnalyzers compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, new CompilationWithAnalyzersOptions(new AnalyzerOptions(ImmutableArray.Create<AdditionalText>()), null, true, false));
+            CompilationWithAnalyzers compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, new CompilationWithAnalyzersOptions(processedProject.AnalyzerOptions, null, true, false));
 
             var diagnostics = await compilationWithAnalyzers.GetAllDiagnosticsAsync(cancellationToken).ConfigureAwait(false);
             return diagnostics;

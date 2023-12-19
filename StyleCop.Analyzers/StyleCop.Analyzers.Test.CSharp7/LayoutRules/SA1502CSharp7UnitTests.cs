@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
 {
@@ -12,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
         StyleCop.Analyzers.LayoutRules.SA1502ElementMustNotBeOnASingleLine,
         StyleCop.Analyzers.LayoutRules.SA1502CodeFixProvider>;
 
-    public class SA1502CSharp7UnitTests : SA1502UnitTests
+    public partial class SA1502CSharp7UnitTests : SA1502UnitTests
     {
         /// <summary>
         /// Verifies that a valid local function will pass without diagnostic.

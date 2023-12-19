@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.LightJson
 {
@@ -107,6 +109,8 @@ namespace StyleCop.Analyzers.Test.LightJson
             Assert.Same(value, obj["y"].AsString);
         }
 
+#pragma warning disable IDE0060 // Remove unused parameter
         private static Type StaticType<T>(T value) => typeof(T);
+#pragma warning restore IDE0060 // Remove unused parameter
     }
 }

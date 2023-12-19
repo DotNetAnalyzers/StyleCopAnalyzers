@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.OrderingRules
 {
@@ -10,6 +12,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A using-alias directive is positioned before a regular using directive.
@@ -28,16 +31,16 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <see cref="SA1209UsingAliasDirectivesMustBePlacedAfterOtherUsingDirectives"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1209";
-        private const string Title = "Using alias directives should be placed after other using directives";
-        private const string MessageFormat = "Using alias directives should be placed after all using namespace directives.";
-        private const string Description = "A using-alias directive is positioned before a regular using directive.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1209.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(OrderingResources.SA1209Title), OrderingResources.ResourceManager, typeof(OrderingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(OrderingResources.SA1209MessageFormat), OrderingResources.ResourceManager, typeof(OrderingResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(OrderingResources.SA1209Description), OrderingResources.ResourceManager, typeof(OrderingResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<SyntaxNodeAnalysisContext> CompilationUnitAction = HandleCompilationUnit;
-        private static readonly Action<SyntaxNodeAnalysisContext> NamespaceDeclarationAction = HandleNamespaceDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> BaseNamespaceDeclarationAction = HandleBaseNamespaceDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -50,7 +53,7 @@ namespace StyleCop.Analyzers.OrderingRules
             context.EnableConcurrentExecution();
 
             context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
-            context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeAction(BaseNamespaceDeclarationAction, SyntaxKinds.BaseNamespaceDeclaration);
         }
 
         private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context)
@@ -60,9 +63,9 @@ namespace StyleCop.Analyzers.OrderingRules
             ProcessUsingsAndReportDiagnostic(compilationUnit.Usings, context);
         }
 
-        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleBaseNamespaceDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var namespaceDeclaration = (NamespaceDeclarationSyntax)context.Node;
+            var namespaceDeclaration = (BaseNamespaceDeclarationSyntaxWrapper)context.Node;
 
             ProcessUsingsAndReportDiagnostic(namespaceDeclaration.Usings, context);
         }

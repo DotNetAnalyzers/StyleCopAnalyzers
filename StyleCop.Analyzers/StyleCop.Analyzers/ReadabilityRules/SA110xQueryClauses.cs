@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
@@ -103,10 +105,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
             HandleQueryClause(queryExpression.FromClause, tokensToCheck);
             HandleQueryBody(queryExpression.Body, tokensToCheck);
 
-            bool isEnabledSA1102 = !context.IsAnalyzerSuppressed(SA1102Identifier);
-            bool isEnabledSA1103 = !context.IsAnalyzerSuppressed(SA1103Identifier);
-            bool isEnabledSA1104 = !context.IsAnalyzerSuppressed(SA1104Identifier);
-            bool isEnabledSA1105 = !context.IsAnalyzerSuppressed(SA1105Identifier);
+            bool isEnabledSA1102 = !context.IsAnalyzerSuppressed(SA1102Descriptor);
+            bool isEnabledSA1103 = !context.IsAnalyzerSuppressed(SA1103Descriptor);
+            bool isEnabledSA1104 = !context.IsAnalyzerSuppressed(SA1104Descriptor);
+            bool isEnabledSA1105 = !context.IsAnalyzerSuppressed(SA1105Descriptor);
 
             bool allOnSameLine = true;
             bool allOnSeparateLine = true;
@@ -218,7 +220,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
             case SyntaxKind.SelectClause:
                 var selectClause = (SelectClauseSyntax)selectOrGroup;
-                tokensToCheck.Add(selectClause.SelectKeyword);
+                if (!selectClause.IsMissing)
+                {
+                    tokensToCheck.Add(selectClause.SelectKeyword);
+                }
+
                 break;
             case SyntaxKind.GroupClause:
                 var groupClause = (GroupClauseSyntax)selectOrGroup;

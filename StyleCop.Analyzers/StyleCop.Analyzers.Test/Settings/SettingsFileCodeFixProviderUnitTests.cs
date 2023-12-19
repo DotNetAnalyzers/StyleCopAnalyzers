@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.Settings
 {
@@ -31,7 +33,7 @@ namespace NamespaceName
         [Fact]
         public async Task TestMissingFileHeaderWithLeadingTriviaAsync()
         {
-            await new CSharpTest
+            var test = new CSharpTest
             {
                 TestCode = TestCode,
                 ExpectedDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
@@ -42,7 +44,10 @@ namespace NamespaceName
                     (SettingsHelper.SettingsFileName, SettingsFileCodeFixProvider.DefaultSettingsFileContent),
                 },
                 Settings = null,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            };
+
+            test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -52,7 +57,7 @@ namespace NamespaceName
         [Fact]
         public async Task TestSettingsFileDoesNotExistAsync()
         {
-            await new CSharpTest
+            var test = new CSharpTest
             {
                 TestCode = TestCode,
                 ExpectedDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
@@ -63,7 +68,10 @@ namespace NamespaceName
                     (SettingsHelper.SettingsFileName, SettingsFileCodeFixProvider.DefaultSettingsFileContent),
                 },
                 Settings = null,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            };
+
+            test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -73,15 +81,17 @@ namespace NamespaceName
         [Fact]
         public async Task TestSettingsFileAlreadyExistsAsync()
         {
-            await new CSharpTest
+            var test = new CSharpTest
             {
                 TestCode = TestCode,
                 ExpectedDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
                 FixedCode = TestCode,
-                FixedState = { InheritanceMode = StateInheritanceMode.AutoInheritAll },
                 Settings = "{}",
                 SettingsFileName = SettingsHelper.SettingsFileName,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            };
+
+            test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -91,15 +101,17 @@ namespace NamespaceName
         [Fact]
         public async Task TestDotPrefixedSettingsFileAlreadyExistsAsync()
         {
-            await new CSharpTest
+            var test = new CSharpTest
             {
                 TestCode = TestCode,
                 ExpectedDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
                 FixedCode = TestCode,
-                FixedState = { InheritanceMode = StateInheritanceMode.AutoInheritAll },
                 Settings = "{}",
                 SettingsFileName = SettingsHelper.AltSettingsFileName,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            };
+
+            test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

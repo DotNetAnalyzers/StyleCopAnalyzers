@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.NamingRules
 {
@@ -10,6 +12,7 @@ namespace StyleCop.Analyzers.NamingRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// The name of a parameter in C# does not begin with a lower-case letter.
@@ -33,10 +36,10 @@ namespace StyleCop.Analyzers.NamingRules
         /// The ID for diagnostics produced by the <see cref="SA1313ParameterNamesMustBeginWithLowerCaseLetter"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1313";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1313.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(NamingResources.SA1313Title), NamingResources.ResourceManager, typeof(NamingResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(NamingResources.SA1313MessageFormat), NamingResources.ResourceManager, typeof(NamingResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(NamingResources.SA1313Description), NamingResources.ResourceManager, typeof(NamingResources));
-        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1313.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -61,6 +64,13 @@ namespace StyleCop.Analyzers.NamingRules
             ParameterSyntax syntax = (ParameterSyntax)context.Node;
             if (NamedTypeHelpers.IsContainedInNativeMethodsClass(syntax))
             {
+                return;
+            }
+
+            if (syntax.Parent.Parent.IsKind(SyntaxKindEx.RecordDeclaration)
+                || syntax.Parent.Parent.IsKind(SyntaxKindEx.RecordStructDeclaration))
+            {
+                // Positional parameters of a record are treated as properties for naming conventions
                 return;
             }
 
@@ -127,10 +137,21 @@ namespace StyleCop.Analyzers.NamingRules
 
             if (methodSymbol.IsOverride)
             {
-                // OverridenMethod can be null in case of an invalid method declaration -> exit because there is no meaningful analysis to be done.
+                // OverriddenMethod can be null in case of an invalid method declaration -> exit because there is no meaningful analysis to be done.
                 if ((methodSymbol.OverriddenMethod == null) || (methodSymbol.OverriddenMethod.Parameters[index].Name == syntax.Identifier.ValueText))
                 {
                     return true;
+                }
+            }
+            else if (methodSymbol.ExplicitInterfaceImplementations.Length > 0)
+            {
+                // Checking explicitly implemented interface members here because the code below will not handle them correctly
+                foreach (var interfaceMethod in methodSymbol.ExplicitInterfaceImplementations)
+                {
+                    if (interfaceMethod.Parameters[index].Name == syntax.Identifier.ValueText)
+                    {
+                        return true;
+                    }
                 }
             }
             else

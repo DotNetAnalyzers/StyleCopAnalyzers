@@ -1,19 +1,21 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.Test.NamingRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.NamingRules.SA1312VariableNamesMustBeginWithLowerCaseLetter,
         StyleCop.Analyzers.NamingRules.RenameToLowerCaseCodeFixProvider>;
 
-    public class SA1312CSharp7UnitTests : SA1312UnitTests
+    public partial class SA1312CSharp7UnitTests : SA1312UnitTests
     {
         [Fact]
         public async Task TestThatDiagnosticIsReported_SingleVariableDesignatorAsync()
@@ -322,6 +324,56 @@ public class TypeName
 
             DiagnosticResult expected = Diagnostic().WithArguments("__").WithLocation(7, 52);
             await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3031, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3031")]
+        public async Task TestTupleDesconstructionCamelCaseAsync()
+        {
+            var testCode = @"
+public class TypeName
+{
+    public void MethodName((string name, string value) obj)
+    {
+        (string name, string value) = obj;
+    }
+}
+";
+            var settings = $@"{{
+  ""settings"": {{
+    ""namingRules"": {{
+      ""tupleElementNameCasing"": ""{TupleElementNameCase.CamelCase}""
+    }}
+  }}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(languageVersion: null, testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3031, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3031")]
+        public async Task TestTupleDesconstructionPascalCaseAsync()
+        {
+            var testCode = @"
+public class TypeName
+{
+    public void MethodName((string Name, string Value) obj)
+    {
+        (string name, string value) = obj;
+    }
+}
+";
+            var settings = $@"{{
+  ""settings"": {{
+    ""namingRules"": {{
+      ""tupleElementNameCasing"": ""{TupleElementNameCase.PascalCase}""
+    }}
+  }}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(languageVersion: null, testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

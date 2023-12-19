@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.LayoutRules
 {
@@ -7,6 +9,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.LayoutRules.SA1502ElementMustNotBeOnASingleLine,
@@ -23,8 +26,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="elementType">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestValidEmptyConstructorAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
@@ -43,8 +45,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="elementType">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestEmptyConstructorOnSingleLineAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
@@ -62,8 +63,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="elementType">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestConstructorOnSingleLineAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
@@ -81,8 +81,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="elementType">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestConstructorWithBlockOnSingleLineAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
@@ -101,8 +100,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="elementType">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestConstructorWithBlockStartOnSameLineAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
@@ -120,8 +118,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="elementType">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestEmptyConstructorOnSingleLineCodeFixAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
@@ -145,8 +142,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="elementType">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestConstructorOnSingleLineCodeFixAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
@@ -171,8 +167,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="elementType">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestConstructorWithBlockOnSingleLineCodeFixAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
@@ -198,8 +193,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="elementType">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestConstructorWithLotsOfTriviaCodeFixAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo

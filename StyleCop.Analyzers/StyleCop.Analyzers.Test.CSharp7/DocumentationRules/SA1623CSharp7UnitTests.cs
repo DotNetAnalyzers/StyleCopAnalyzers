@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.CSharp7.DocumentationRules
 {
@@ -12,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.DocumentationRules
         StyleCop.Analyzers.DocumentationRules.PropertySummaryDocumentationAnalyzer,
         StyleCop.Analyzers.DocumentationRules.PropertySummaryDocumentationCodeFixProvider>;
 
-    public class SA1623CSharp7UnitTests : SA1623UnitTests
+    public partial class SA1623CSharp7UnitTests : SA1623UnitTests
     {
         /// <summary>
         /// Verifies that property documentation that does not start with the appropriate text will result in a
@@ -48,6 +50,9 @@ namespace StyleCop.Analyzers.Test.CSharp7.DocumentationRules
         [InlineData("protected internal", "int", "{ private get => 0; set => this.field = value; }", "Sets")]
         [InlineData("internal", "int", "{ get => 0; private set => this.field = value; }", "Gets")]
         [InlineData("internal", "int", "{ private get => 0; set => this.field = value; }", "Sets")]
+
+        [WorkItem(2861, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2861")]
+        [InlineData("public", "ref int", "{ get => throw null; }", "Gets")]
         public async Task VerifyDocumentationWithWrongStartingTextWillProduceDiagnosticWithExpressionBodiedAccessorsAsync(string accessibility, string type, string accessors, string expectedArgument)
         {
             var testCode = $@"

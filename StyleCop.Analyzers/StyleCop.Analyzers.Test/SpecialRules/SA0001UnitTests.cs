@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.SpecialRules
 {
@@ -8,7 +10,6 @@ namespace StyleCop.Analyzers.Test.SpecialRules
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpecialRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.SpecialRules.SA0001XmlCommentAnalysisDisabled>;
 
@@ -29,14 +30,10 @@ namespace StyleCop.Analyzers.Test.SpecialRules
 
             await new CSharpTest
             {
-                TestCode = testCode,
-                SolutionTransforms =
+                TestState =
                 {
-                    (solution, projectId) =>
-                    {
-                        var project = solution.GetProject(projectId);
-                        return solution.WithProjectParseOptions(projectId, project.ParseOptions.WithDocumentationMode(documentationMode));
-                    },
+                    DocumentationMode = documentationMode,
+                    Sources = { testCode },
                 },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
@@ -55,15 +52,11 @@ namespace StyleCop.Analyzers.Test.SpecialRules
 
             await new CSharpTest
             {
-                TestCode = testCode,
-                ExpectedDiagnostics = { expected },
-                SolutionTransforms =
+                TestState =
                 {
-                    (solution, projectId) =>
-                    {
-                        var project = solution.GetProject(projectId);
-                        return solution.WithProjectParseOptions(projectId, project.ParseOptions.WithDocumentationMode(documentationMode));
-                    },
+                    DocumentationMode = documentationMode,
+                    Sources = { testCode },
+                    ExpectedDiagnostics = { expected },
                 },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }

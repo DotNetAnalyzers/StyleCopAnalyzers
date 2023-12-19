@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
@@ -14,14 +16,13 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
-    using StyleCop.Analyzers.Helpers.ObjectPools;
 
     /// <summary>
     /// Implements the code fix for property summary documentation.
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(PropertySummaryDocumentationCodeFixProvider))]
     [Shared]
-    public class PropertySummaryDocumentationCodeFixProvider : CodeFixProvider
+    internal class PropertySummaryDocumentationCodeFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
@@ -62,7 +63,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             var documentation = node.GetDocumentationCommentTriviaSyntax();
 
             var summaryElement = (XmlElementSyntax)documentation.Content.GetFirstXmlElement(XmlCommentHelper.SummaryXmlTag);
-            var textElement = (XmlTextSyntax)summaryElement.Content.FirstOrDefault();
+            var textElement = XmlCommentHelper.TryGetFirstTextElementWithContent(summaryElement);
             if (textElement == null)
             {
                 return document;

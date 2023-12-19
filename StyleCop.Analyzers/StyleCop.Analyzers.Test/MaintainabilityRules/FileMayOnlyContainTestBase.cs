@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
@@ -10,7 +12,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Testing;
-    using Microsoft.CodeAnalysis.Testing.Verifiers;
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
 
@@ -48,7 +49,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             var fixedCode = new[]
             {
-                ("Test0.cs", @"%1 Foo
+                ("/0/Test0.cs", @"%1 Foo
 {
 }
 "),
@@ -91,7 +92,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             var fixedCode = new[]
             {
-                ("Test0.cs", @"%1 Foo
+                ("/0/Test0.cs", @"%1 Foo
 {
 }
 "),
@@ -141,7 +142,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             var fixedCode = new[]
             {
-                ("Test0.cs", @"%1 Foo
+                ("/0/Test0.cs", @"%1 Foo
 {
 }
 "),
@@ -185,7 +186,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             // See https://github.com/dotnet/roslyn/issues/3999
             var fixedCode = new[]
             {
-                ("Test0.cs", @"%1 Foo
+                ("/0/Test0.cs", @"%1 Foo
 {
 }
 "),
@@ -226,7 +227,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             var fixedCode = new[]
             {
-                ("Test0.cs", @"%1 Foo
+                ("/0/Test0.cs", @"%1 Foo
 {
 }
 "),
@@ -271,7 +272,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             // See https://github.com/dotnet/roslyn/issues/3999
             var fixedCode = new[]
             {
-                ("Test0.cs", @"%1 Foo
+                ("/0/Test0.cs", @"%1 Foo
 {
 #if true
 }
@@ -339,23 +340,13 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 test.FixedSources.Add(fixedSource);
             }
 
-            if (fixedSources.Length == 1
-                && (fixedSources[0].fileName == string.Empty || fixedSources[0].fileName == "Test0.cs")
-                && source == fixedSources[0].content)
-            {
-                test.FixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
-                test.FixedState.MarkupHandling = MarkupMode.Allow;
-                test.BatchFixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
-                test.BatchFixedState.MarkupHandling = MarkupMode.Allow;
-            }
-
             test.ExpectedDiagnostics.AddRange(expected);
             return test.RunAsync(cancellationToken);
         }
 
         protected virtual string GetSettings() => null;
 
-        private class CSharpTest : StyleCopCodeFixVerifier<EmptyAnalyzer, EmptyCodeFixProvider>.CSharpTest
+        private class CSharpTest : StyleCopCodeFixVerifier<EmptyDiagnosticAnalyzer, EmptyCodeFixProvider>.CSharpTest
         {
             private readonly FileMayOnlyContainTestBase testFixture;
 

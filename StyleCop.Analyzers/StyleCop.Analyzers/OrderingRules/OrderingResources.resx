@@ -120,6 +120,24 @@
   <data name="ElementOrderCodeFix" xml:space="preserve">
     <value>Fix element order</value>
   </data>
+  <data name="ModifierOrderCodeFix" xml:space="preserve">
+    <value>Fix modifier order</value>
+  </data>
+  <data name="SA1200DescriptionInside" xml:space="preserve">
+    <value>A C# using directive is placed outside of a namespace element.</value>
+  </data>
+  <data name="SA1200DescriptionOutside" xml:space="preserve">
+    <value>A C# using directive is placed inside of a namespace declaration.</value>
+  </data>
+  <data name="SA1200MessageFormatInside" xml:space="preserve">
+    <value>Using directive should appear within a namespace declaration</value>
+  </data>
+  <data name="SA1200MessageFormatOutside" xml:space="preserve">
+    <value>Using directive should appear outside a namespace declaration</value>
+  </data>
+  <data name="SA1200Title" xml:space="preserve">
+    <value>Using directives should be placed correctly</value>
+  </data>
   <data name="SA1201Description" xml:space="preserve">
     <value>An element within a C# code file is out of order in relation to the other elements in the code.</value>
   </data>
@@ -156,17 +174,95 @@
   <data name="SA1204Title" xml:space="preserve">
     <value>Static elements should appear before instance elements</value>
   </data>
-  <data name="ModifierOrderCodeFix" xml:space="preserve">
-    <value>Fix modifier order</value>
-  </data>
   <data name="SA1205CodeFix" xml:space="preserve">
     <value>Add access modifier</value>
+  </data>
+  <data name="SA1205Description" xml:space="preserve">
+    <value>The partial element does not have an access modifier defined.</value>
+  </data>
+  <data name="SA1205MessageFormat" xml:space="preserve">
+    <value>Partial elements should declare an access modifier</value>
+  </data>
+  <data name="SA1205Title" xml:space="preserve">
+    <value>Partial elements should declare access</value>
+  </data>
+  <data name="SA1206Description" xml:space="preserve">
+    <value>The keywords within the declaration of an element do not follow a standard ordering scheme.</value>
+  </data>
+  <data name="SA1206MessageFormat" xml:space="preserve">
+    <value>The '{0}' modifier should appear before '{1}'</value>
+  </data>
+  <data name="SA1206Title" xml:space="preserve">
+    <value>Declaration keywords should follow order</value>
   </data>
   <data name="SA1207CodeFix" xml:space="preserve">
     <value>Place keyword 'protected' before keyword 'internal'</value>
   </data>
+  <data name="SA1207Description" xml:space="preserve">
+    <value>The keyword '{0}' is positioned after the keyword '{1}' within the declaration of a {0} {1} C# element.</value>
+  </data>
+  <data name="SA1207MessageFormat" xml:space="preserve">
+    <value>The keyword '{0}' should come before '{1}'</value>
+  </data>
+  <data name="SA1207Title" xml:space="preserve">
+    <value>Protected should come before internal</value>
+  </data>
+  <data name="SA1208Description" xml:space="preserve">
+    <value>A using directive which declares a member of the 'System' namespace appears after a using directive which declares a member of a different namespace, within a C# code file.</value>
+  </data>
+  <data name="SA1208MessageFormat" xml:space="preserve">
+    <value>Using directive for '{0}' should appear before directive for '{1}'</value>
+  </data>
+  <data name="SA1208Title" xml:space="preserve">
+    <value>System using directives should be placed before other using directives</value>
+  </data>
+  <data name="SA1209Description" xml:space="preserve">
+    <value>A using-alias directive is positioned before a regular using directive.</value>
+  </data>
+  <data name="SA1209MessageFormat" xml:space="preserve">
+    <value>Using alias directives should be placed after all using namespace directives</value>
+  </data>
+  <data name="SA1209Title" xml:space="preserve">
+    <value>Using alias directives should be placed after other using directives</value>
+  </data>
+  <data name="SA1210Description" xml:space="preserve">
+    <value>The using directives within a C# code file are not sorted alphabetically by namespace.</value>
+  </data>
+  <data name="SA1210MessageFormat" xml:space="preserve">
+    <value>Using directives should be ordered alphabetically by the namespaces</value>
+  </data>
+  <data name="SA1210Title" xml:space="preserve">
+    <value>Using directives should be ordered alphabetically by namespace</value>
+  </data>
+  <data name="SA1211Description" xml:space="preserve">
+    <value>The using-alias directives within a C# code file are not sorted alphabetically by alias name.</value>
+  </data>
+  <data name="SA1211MessageFormat" xml:space="preserve">
+    <value>Using alias directive for '{0}' should appear before using alias directive for '{1}'</value>
+  </data>
+  <data name="SA1211Title" xml:space="preserve">
+    <value>Using alias directives should be ordered alphabetically by alias name</value>
+  </data>
+  <data name="SA1212Description" xml:space="preserve">
+    <value>A get accessor appears after a set accessor within a property or indexer.</value>
+  </data>
+  <data name="SA1212MessageFormat" xml:space="preserve">
+    <value>A get accessor appears after a set accessor within a property or indexer</value>
+  </data>
+  <data name="SA1212Title" xml:space="preserve">
+    <value>Property accessors should follow order</value>
+  </data>
   <data name="SA1213CodeFix" xml:space="preserve">
     <value>Fix accessor order</value>
+  </data>
+  <data name="SA1213Description" xml:space="preserve">
+    <value>An add accessor appears after a remove accessor within an event.</value>
+  </data>
+  <data name="SA1213MessageFormat" xml:space="preserve">
+    <value>Event accessors should follow order</value>
+  </data>
+  <data name="SA1213Title" xml:space="preserve">
+    <value>Event accessors should follow order</value>
   </data>
   <data name="SA1214Description" xml:space="preserve">
     <value>A readonly field is positioned beneath a non-readonly field.</value>
@@ -176,6 +272,24 @@
   </data>
   <data name="SA1214Title" xml:space="preserve">
     <value>Readonly fields should appear before non-readonly fields</value>
+  </data>
+  <data name="SA1216Description" xml:space="preserve">
+    <value>A using static directive is positioned before a regular or after an alias using directive.</value>
+  </data>
+  <data name="SA1216MessageFormat" xml:space="preserve">
+    <value>Using static directives should be placed at the correct location</value>
+  </data>
+  <data name="SA1216Title" xml:space="preserve">
+    <value>Using static directives should be placed at the correct location</value>
+  </data>
+  <data name="SA1217Description" xml:space="preserve">
+    <value>All using static directives should be ordered alphabetically.</value>
+  </data>
+  <data name="SA1217MessageFormat" xml:space="preserve">
+    <value>The using static directive for '{0}' should appear after the using static directive for '{1}'</value>
+  </data>
+  <data name="SA1217Title" xml:space="preserve">
+    <value>Using static directives should be ordered alphabetically</value>
   </data>
   <data name="UsingCodeFix" xml:space="preserve">
     <value>Reorder using statements</value>

@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
@@ -9,7 +11,6 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Test.Verifiers;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1612ElementParameterDocumentationMustMatchElementParameters>;
 
@@ -132,7 +133,7 @@ $$
 }";
 
             var diagnostic = Diagnostic()
-                .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}.");
+                .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}");
 
             var expected = new[]
             {
@@ -215,7 +216,7 @@ public class ClassName
 }";
 
             var diagnostic = Diagnostic()
-                .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}.");
+                .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}");
 
             var expected = new[]
             {
@@ -248,7 +249,7 @@ public class ClassName
 }";
 
             var diagnostic = Diagnostic()
-                .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}.");
+                .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}");
 
             var expected = diagnostic.WithLocation(13, 22).WithArguments("bar", 2);
 
@@ -281,6 +282,22 @@ public class ClassName
 public class ClassName
 {
     /// <include file='MissingParamDocumentation.xml' path='/ClassName/Method/*' />
+    public ClassName Method() { return null; }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3150, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3150")]
+        public async Task VerifyIncludedMissingFileIsNotReportedAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <include file='MissingFile.xml' path='/ClassName/Method/*' />
     public ClassName Method() { return null; }
 }";
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -353,7 +370,7 @@ public class ClassName
 }";
 
             var diagnostic = Diagnostic()
-                .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}.");
+                .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}");
 
             var expected = new[]
             {
@@ -400,7 +417,7 @@ public class ClassName
 }";
 
             var diagnostic = Diagnostic()
-                .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}.");
+                .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}");
 
             var expected = diagnostic.WithLocation(8, 22).WithArguments("bar", 2);
 

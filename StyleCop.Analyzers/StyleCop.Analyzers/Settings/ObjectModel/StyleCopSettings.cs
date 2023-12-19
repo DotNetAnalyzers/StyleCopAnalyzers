@@ -1,9 +1,12 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
     using LightJson;
+    using StyleCop.Analyzers.Lightup;
 
     internal class StyleCopSettings
     {
@@ -63,8 +66,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.documentationRules = new DocumentationSettings();
         }
 
-        protected internal StyleCopSettings(JsonObject settingsObject)
-            : this()
+        protected internal StyleCopSettings(JsonObject settingsObject, AnalyzerConfigOptionsWrapper analyzerConfigOptions)
         {
             foreach (var kvp in settingsObject)
             {
@@ -73,48 +75,58 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                 {
                 case "indentation":
                     kvp.AssertIsObject();
-                    this.indentation = new IndentationSettings(childSettingsObject);
+                    this.indentation = new IndentationSettings(childSettingsObject, analyzerConfigOptions);
                     break;
 
                 case "spacingRules":
                     kvp.AssertIsObject();
-                    this.spacingRules = new SpacingSettings(childSettingsObject);
+                    this.spacingRules = new SpacingSettings(childSettingsObject, analyzerConfigOptions);
                     break;
 
                 case "readabilityRules":
                     kvp.AssertIsObject();
-                    this.readabilityRules = new ReadabilitySettings(childSettingsObject);
+                    this.readabilityRules = new ReadabilitySettings(childSettingsObject, analyzerConfigOptions);
                     break;
 
                 case "orderingRules":
                     kvp.AssertIsObject();
-                    this.orderingRules = new OrderingSettings(childSettingsObject);
+                    this.orderingRules = new OrderingSettings(childSettingsObject, analyzerConfigOptions);
                     break;
 
                 case "namingRules":
                     kvp.AssertIsObject();
-                    this.namingRules = new NamingSettings(childSettingsObject);
+                    this.namingRules = new NamingSettings(childSettingsObject, analyzerConfigOptions);
                     break;
 
                 case "maintainabilityRules":
                     kvp.AssertIsObject();
-                    this.maintainabilityRules = new MaintainabilitySettings(childSettingsObject);
+                    this.maintainabilityRules = new MaintainabilitySettings(childSettingsObject, analyzerConfigOptions);
                     break;
 
                 case "layoutRules":
                     kvp.AssertIsObject();
-                    this.layoutRules = new LayoutSettings(childSettingsObject);
+                    this.layoutRules = new LayoutSettings(childSettingsObject, analyzerConfigOptions);
                     break;
 
                 case "documentationRules":
                     kvp.AssertIsObject();
-                    this.documentationRules = new DocumentationSettings(childSettingsObject);
+                    this.documentationRules = new DocumentationSettings(childSettingsObject, analyzerConfigOptions);
                     break;
 
                 default:
                     break;
                 }
             }
+
+            this.indentation ??= new IndentationSettings(new JsonObject(), analyzerConfigOptions);
+
+            this.spacingRules ??= new SpacingSettings(new JsonObject(), analyzerConfigOptions);
+            this.readabilityRules ??= new ReadabilitySettings(new JsonObject(), analyzerConfigOptions);
+            this.orderingRules ??= new OrderingSettings(new JsonObject(), analyzerConfigOptions);
+            this.namingRules ??= new NamingSettings(new JsonObject(), analyzerConfigOptions);
+            this.maintainabilityRules ??= new MaintainabilitySettings(new JsonObject(), analyzerConfigOptions);
+            this.layoutRules ??= new LayoutSettings(new JsonObject(), analyzerConfigOptions);
+            this.documentationRules ??= new DocumentationSettings(new JsonObject(), analyzerConfigOptions);
         }
 
         public IndentationSettings Indentation =>

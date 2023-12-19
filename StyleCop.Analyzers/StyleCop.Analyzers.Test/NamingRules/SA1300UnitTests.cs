@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.NamingRules
 {
@@ -7,7 +9,6 @@ namespace StyleCop.Analyzers.Test.NamingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.Helpers;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.NamingRules.SA1300ElementMustBeginWithUpperCaseLetter,
@@ -45,6 +46,31 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [Fact]
+        public async Task TestAllowedLowerCaseNamespaceIsNotReportedAsync()
+        {
+            var customTestSettings = @"
+{
+  ""settings"": {
+    ""namingRules"": {
+      ""allowedNamespaceComponents"": [ ""eBay"" ]
+    }
+  }
+}
+";
+
+            var testCode = @"namespace eBay
+{ 
+
+}";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                Settings = customTestSettings,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestLowerCaseComlicatedNamespaceAsync()
         {
             var testCode = @"namespace test.foo.bar
@@ -65,6 +91,31 @@ namespace StyleCop.Analyzers.Test.NamingRules
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestAllowedLowerCaseComplicatedNamespaceIsNotReportedAsync()
+        {
+            var customTestSettings = @"
+{
+  ""settings"": {
+    ""namingRules"": {
+      ""allowedNamespaceComponents"": [ ""iPod"" ]
+    }
+  }
+}
+";
+
+            var testCode = @"namespace Apple.iPod.Library
+{ 
+
+}";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                Settings = customTestSettings,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -930,6 +981,31 @@ public interface IInterface
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("_")]
+        [InlineData("__")]
+        [WorkItem(3636, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3636")]
+        public async Task TestUnderscoreMethodAsync(string name)
+        {
+            var testCode = $@"
+public class TestClass
+{{
+    public void [|{name}|]()
+    {{
+    }}
+}}";
+
+            var fixedCode = $@"
+public class TestClass
+{{
+    public void [|{name}|]()
+    {{
+    }}
+}}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

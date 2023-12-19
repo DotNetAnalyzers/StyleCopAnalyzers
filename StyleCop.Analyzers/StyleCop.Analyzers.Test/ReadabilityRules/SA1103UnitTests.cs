@@ -1,13 +1,15 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA110xQueryClauses,
@@ -116,7 +118,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             var test = new CSharpTest
             {
                 TestCode = testCode,
-                CodeFixIndex = 1,
+                CodeActionIndex = 1,
                 FixedCode = fixedTestCode,
             };
 
@@ -194,7 +196,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             var test = new CSharpTest
             {
                 TestCode = testCode,
-                CodeFixIndex = 1,
+                CodeActionIndex = 1,
                 FixedCode = fixedTestCode,
             };
 
@@ -300,7 +302,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             var test = new CSharpTest
             {
                 TestCode = testCode,
-                CodeFixIndex = 1,
+                CodeActionIndex = 1,
                 FixedCode = fixedTestCode,
             };
 
@@ -364,6 +366,92 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             };
 
             await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2888, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2888")]
+        public async Task TestQueryExpressionWithMissingSelectAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    using System.Linq;
+
+    public class TestClass
+    {
+        private int[] testArray = { 1, 2, 3, 4, 5 };
+
+        public void TestMethod()
+        {
+            var x = from element in testArray
+                    where element > 1;
+        }
+    }
+}
+";
+
+            var expectedDiagnostics = new DiagnosticResult("CS0742", DiagnosticSeverity.Error).WithLocation(12, 38).WithMessage("A query body must end with a select clause or a group clause");
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2888, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2888")]
+        public async Task TestQueryExpressionWithMissingSelect2Async()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    using System.Linq;
+
+    public class TestClass
+    {
+        private int[] testArray = { 1, 2, 3, 4, 5 };
+
+        public void TestMethod()
+        {
+            var x = from element in testArray where element < 3
+                    where element > 1;
+        }
+    }
+}
+";
+            var fixedTestCode = @"namespace TestNamespace
+{
+    using System.Linq;
+
+    public class TestClass
+    {
+        private int[] testArray = { 1, 2, 3, 4, 5 };
+
+        public void TestMethod()
+        {
+            var x = from element in testArray
+                where element < 3
+                    where element > 1;
+        }
+    }
+}
+";
+
+            await new CSharpTest
+            {
+                TestState =
+                {
+                    Sources = { testCode },
+                    ExpectedDiagnostics =
+                    {
+                        Diagnostic(SA110xQueryClauses.SA1103Descriptor).WithLocation(11, 21),
+                        new DiagnosticResult("CS0742", DiagnosticSeverity.Error).WithLocation(12, 38).WithMessage("A query body must end with a select clause or a group clause"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixedTestCode },
+                    ExpectedDiagnostics =
+                    {
+                        new DiagnosticResult("CS0742", DiagnosticSeverity.Error).WithLocation(13, 38).WithMessage("A query body must end with a select clause or a group clause"),
+                    },
+                },
+                CodeActionIndex = 1,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

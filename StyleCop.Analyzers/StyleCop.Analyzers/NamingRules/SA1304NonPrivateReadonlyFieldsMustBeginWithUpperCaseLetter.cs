@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.NamingRules
 {
@@ -33,12 +35,10 @@ namespace StyleCop.Analyzers.NamingRules
         /// <see cref="SA1304NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1304";
-        private const string Title = "Non-private readonly fields should begin with upper-case letter";
-        private const string MessageFormat = "Non-private readonly fields should begin with upper-case letter";
-
-        private const string Description = "The name of a non-private readonly C# field should being with an upper-case letter.";
-
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1304.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(NamingResources.SA1304Title), NamingResources.ResourceManager, typeof(NamingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(NamingResources.SA1304MessageFormat), NamingResources.ResourceManager, typeof(NamingResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(NamingResources.SA1304Description), NamingResources.ResourceManager, typeof(NamingResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -84,8 +84,7 @@ namespace StyleCop.Analyzers.NamingRules
             {
                 // SA1307 is taken precedence here. SA1307 should be reported if the field is accessible.
                 // So if SA1307 is enabled this diagnostic will only be reported for internal fields.
-                if (context.SemanticModel.Compilation.Options.SpecificDiagnosticOptions
-                    .GetValueOrDefault(SA1307AccessibleFieldsMustBeginWithUpperCaseLetter.DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
+                if (!context.IsAnalyzerSuppressed(SA1307AccessibleFieldsMustBeginWithUpperCaseLetter.Descriptor))
                 {
                     return;
                 }

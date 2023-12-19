@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
@@ -174,7 +176,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             // Find the token containing the prefix, such as "Gets or sets "
-            SyntaxToken prefixToken = default(SyntaxToken);
+            SyntaxToken prefixToken = default;
             foreach (SyntaxToken textToken in firstText.TextTokens)
             {
                 if (textToken.IsMissing)

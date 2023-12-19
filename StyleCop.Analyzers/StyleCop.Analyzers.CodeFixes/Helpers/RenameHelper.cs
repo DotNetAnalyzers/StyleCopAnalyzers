@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Helpers
 {
@@ -162,8 +164,7 @@ namespace StyleCop.Analyzers.Helpers
                     return parent;
 
                 default:
-                    var declarationParent = parent as MemberDeclarationSyntax;
-                    if (declarationParent != null)
+                    if (parent is MemberDeclarationSyntax declarationParent)
                     {
                         return declarationParent;
                     }

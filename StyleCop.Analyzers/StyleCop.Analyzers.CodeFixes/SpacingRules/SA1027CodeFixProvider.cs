@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.SpacingRules
 {
@@ -52,7 +54,8 @@ namespace StyleCop.Analyzers.SpacingRules
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
-            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
+            var syntaxTree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
+            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxTree, cancellationToken);
             SourceText sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
             return document.WithText(sourceText.WithChanges(FixDiagnostic(settings.Indentation, sourceText, diagnostic)));
         }
@@ -86,7 +89,7 @@ namespace StyleCop.Analyzers.SpacingRules
                     {
                         if (useTabs)
                         {
-                            replacement.Length = replacement.Length - spaceCount;
+                            replacement.Length -= spaceCount;
                             replacement.Append('\t');
                             spaceCount = 0;
                         }
@@ -113,7 +116,7 @@ namespace StyleCop.Analyzers.SpacingRules
                                 if (offsetWithinTabColumn == 0)
                                 {
                                     // We reached a tab stop.
-                                    replacement.Length = replacement.Length - spaceCount;
+                                    replacement.Length -= spaceCount;
                                     replacement.Append('\t');
                                     spaceCount = 0;
                                 }
@@ -157,7 +160,8 @@ namespace StyleCop.Analyzers.SpacingRules
                     return null;
                 }
 
-                var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, fixAllContext.CancellationToken);
+                SyntaxTree tree = await document.GetSyntaxTreeAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, tree, fixAllContext.CancellationToken);
                 SourceText sourceText = await document.GetTextAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
 
                 List<TextChange> changes = new List<TextChange>();
@@ -168,7 +172,6 @@ namespace StyleCop.Analyzers.SpacingRules
 
                 changes.Sort((left, right) => left.Span.Start.CompareTo(right.Span.Start));
 
-                SyntaxTree tree = await document.GetSyntaxTreeAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
                 return await tree.WithChangedText(sourceText.WithChanges(changes)).GetRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
             }
         }

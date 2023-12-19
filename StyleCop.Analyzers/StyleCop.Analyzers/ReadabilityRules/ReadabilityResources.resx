@@ -241,7 +241,7 @@
     <value>The opening parenthesis or bracket is not placed on the same line as the method/indexer/attribute/array name.</value>
   </data>
   <data name="SA1110MessageFormat" xml:space="preserve">
-    <value>Opening parenthesis or bracket should be on declaration line.</value>
+    <value>Opening parenthesis or bracket should be on declaration line</value>
   </data>
   <data name="SA1110Title" xml:space="preserve">
     <value>Opening parenthesis or bracket should be on declaration line</value>
@@ -268,7 +268,7 @@
     <value>A comma between two parameters in a call to a C# method or indexer, or in the declaration of a method or indexer, is not placed on the same line as the previous parameter.</value>
   </data>
   <data name="SA1113MessageFormat" xml:space="preserve">
-    <value>Comma should be on the same line as previous parameter.</value>
+    <value>Comma should be on the same line as previous parameter</value>
   </data>
   <data name="SA1113Title" xml:space="preserve">
     <value>Comma should be on the same line as previous parameter</value>
@@ -286,7 +286,7 @@
     <value>A parameter within a C# method or indexer call or declaration does not begin on the same line as the previous parameter, or on the next line.</value>
   </data>
   <data name="SA1115MessageFormat" xml:space="preserve">
-    <value>The parameter should begin on the line after the previous parameter.</value>
+    <value>The parameter should begin on the line after the previous parameter</value>
   </data>
   <data name="SA1115Title" xml:space="preserve">
     <value>Parameter should follow comma</value>
@@ -307,7 +307,7 @@
     <value>The parameters to a C# method or indexer call or declaration are not all on the same line or each on a separate line.</value>
   </data>
   <data name="SA1117MessageFormat" xml:space="preserve">
-    <value>The parameters should all be placed on the same line or each parameter should be placed on its own line.</value>
+    <value>The parameters should all be placed on the same line or each parameter should be placed on its own line</value>
   </data>
   <data name="SA1117Title" xml:space="preserve">
     <value>Parameters should be on same line or separate lines</value>
@@ -361,7 +361,7 @@
     <value>The C# code contains a region within the body of a code element.</value>
   </data>
   <data name="SA1123MessageFormat" xml:space="preserve">
-    <value>Region should not be located within a code element.</value>
+    <value>Region should not be located within a code element</value>
   </data>
   <data name="SA1123Title" xml:space="preserve">
     <value>Do not place regions within elements</value>
@@ -472,7 +472,7 @@
     <value>Each attribute usage should be placed in its own set of square brackets for maximum readability.</value>
   </data>
   <data name="SA1133MessageFormat" xml:space="preserve">
-    <value>Each attribute should be placed in its own set of square brackets.</value>
+    <value>Each attribute should be placed in its own set of square brackets</value>
   </data>
   <data name="SA1133Title" xml:space="preserve">
     <value>Do not combine attributes</value>
@@ -484,10 +484,25 @@
     <value>Each attribute should be placed on its own line of code.</value>
   </data>
   <data name="SA1134MessageFormat" xml:space="preserve">
-    <value>Each attribute should be placed on its own line of code.</value>
+    <value>Each attribute should be placed on its own line of code</value>
   </data>
   <data name="SA1134Title" xml:space="preserve">
     <value>Attributes should not share line</value>
+  </data>
+  <data name="SA1135CodeFix" xml:space="preserve">
+    <value>Qualify using directive</value>
+  </data>
+  <data name="SA1135Description" xml:space="preserve">
+    <value>All using directives should be qualified.</value>
+  </data>
+  <data name="SA1135MessageFormatNamespace" xml:space="preserve">
+    <value>Using directive for namespace '{0}' should be qualified</value>
+  </data>
+  <data name="SA1135MessageFormatType" xml:space="preserve">
+    <value>Using directive for type '{0}' should be qualified</value>
+  </data>
+  <data name="SA1135Title" xml:space="preserve">
+    <value>Using directives should be qualified</value>
   </data>
   <data name="SA1136CodeFix" xml:space="preserve">
     <value>Place enum values own their own lines</value>
@@ -510,6 +525,9 @@
   <data name="SA1137Title" xml:space="preserve">
     <value>Elements should have the same indentation</value>
   </data>
+  <data name="SA1139CodeFix" xml:space="preserve">
+    <value>Use literal suffix notation instead of casting</value>
+  </data>
   <data name="SA1139Description" xml:space="preserve">
     <value>Use literal suffix notation instead of casting, in order to improve readability, avoid bugs related to illegal casts and ensure that optimal IL is produced.</value>
   </data>
@@ -519,23 +537,29 @@
   <data name="SA1139Title" xml:space="preserve">
     <value>Use literal suffix notation instead of casting</value>
   </data>
-  <data name="SA1139CodeFix" xml:space="preserve">
-    <value>Use literal suffix notation instead of casting</value>
+  <data name="SA1141CodeFix" xml:space="preserve">
+    <value>Replace with tuple syntax</value>
   </data>
-  <data name="SA1135CodeFix" xml:space="preserve">
-    <value>Qualify using directive</value>
+  <data name="SA1141Description" xml:space="preserve">
+    <value>Use tuple syntax instead of the underlying ValueTuple implementation type.</value>
   </data>
-  <data name="SA1135Description" xml:space="preserve">
-    <value>All using directives should be qualified.</value>
+  <data name="SA1141MessageFormat" xml:space="preserve">
+    <value>Use tuple syntax</value>
   </data>
-  <data name="SA1135MessageFormatNamespace" xml:space="preserve">
-    <value>Using directive for namespace '{0}' should be qualified</value>
+  <data name="SA1141Title" xml:space="preserve">
+    <value>Use tuple syntax</value>
   </data>
-  <data name="SA1135MessageFormatType" xml:space="preserve">
-    <value>Using directive for type '{0}' should be qualified</value>
+  <data name="SA1142CodeFix" xml:space="preserve">
+    <value>Use tuple field name</value>
   </data>
-  <data name="SA1135Title" xml:space="preserve">
-    <value>Using directives should be qualified</value>
+  <data name="SA1142Description" xml:space="preserve">
+    <value>A field of a tuple was referenced by its metadata name when a field name is available.</value>
+  </data>
+  <data name="SA1142MessageFormat" xml:space="preserve">
+    <value>Refer to tuple fields by name</value>
+  </data>
+  <data name="SA1142Title" xml:space="preserve">
+    <value>Refer to tuple fields by name</value>
   </data>
   <data name="SX1101CodeFix" xml:space="preserve">
     <value>Remove 'this.' prefix</value>

@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
@@ -7,7 +9,6 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.DocumentationRules.PropertySummaryDocumentationAnalyzer,
@@ -168,6 +169,106 @@ public class TestClass
             await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(1934, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1934")]
+        public async Task SummaryInParagraphIsAllowedAsync()
+        {
+            var testCode = @"public class ClassName
+{
+    /// <summary><para>Gets the first test value.</para></summary>
+    public int Property1
+    {
+        get;
+    }
+
+    /// <summary>
+    /// <para>Gets the second test value.</para>
+    /// </summary>
+    public int Property2
+    {
+        get;
+    }
+
+    /// <summary>
+    /// <para>
+    /// Gets the third test value.
+    /// </para>
+    /// </summary>
+    public int Property3
+    {
+        get;
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1934, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1934")]
+        public async Task SummaryInParagraphCanBeFixedAsync()
+        {
+            var testCode = @"public class ClassName
+{
+    /// <summary><para>Gets the first test value.</para></summary>
+    public int Property1
+    {
+        set { }
+    }
+
+    /// <summary>
+    /// <para>Gets the second test value.</para>
+    /// </summary>
+    public int Property2
+    {
+        set { }
+    }
+
+    /// <summary>
+    /// <para>
+    /// Gets the third test value.
+    /// </para>
+    /// </summary>
+    public int Property3
+    {
+        set { }
+    }
+}";
+            var fixedTestCode = @"public class ClassName
+{
+    /// <summary><para>Sets the first test value.</para></summary>
+    public int Property1
+    {
+        set { }
+    }
+
+    /// <summary>
+    /// <para>Sets the second test value.</para>
+    /// </summary>
+    public int Property2
+    {
+        set { }
+    }
+
+    /// <summary>
+    /// <para>
+    /// Sets the third test value.
+    /// </para>
+    /// </summary>
+    public int Property3
+    {
+        set { }
+    }
+}";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(4, 16).WithArguments("Sets"),
+                Diagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(12, 16).WithArguments("Sets"),
+                Diagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(22, 16).WithArguments("Sets"),
+            };
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Verifies that an incorrect summary tag with a known prefix will be fixed correctly.
         /// </summary>
@@ -192,6 +293,10 @@ public class TestClass
         [InlineData("public", "int", "{ set {} }", "Gets or sets", "Sets")] // Regression test for #2253
         [InlineData("public", "int", "{ get; private set; }", "Sets", "Gets")] // Regression test for #2253
         [InlineData("public", "int", "{ private get; set; }", "Gets", "Sets")] // Regression test for #2253
+        [InlineData("public", "int", "{ get; }", "Returns", "Gets")]
+        [InlineData("public", "int", "{ get; set; }", "Returns", "Gets or sets")]
+        [InlineData("public", "bool", "{ get; }", "Returns a value indicating whether", "Gets a value indicating whether")]
+        [InlineData("public", "bool", "{ get; set; }", "Returns a value indicating whether", "Gets or sets a value indicating whether")]
         public async Task IncorrectSummaryTagWithKnownPrefixShouldBeFixedCorrectlyAsync(string accessibility, string type, string accessors, string summaryPrefix, string expectedArgument)
         {
             var testCode = $@"

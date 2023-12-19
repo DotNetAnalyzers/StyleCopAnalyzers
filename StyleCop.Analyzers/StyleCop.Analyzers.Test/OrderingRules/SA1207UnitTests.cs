@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
@@ -129,7 +131,8 @@ public class Foo
             var testCode = TestCodeTemplate.Replace("$$", invalidDeclaration);
             var fixedTestCode = TestCodeTemplate.Replace("$$", fixedDeclaration);
 
-            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(4, 4 + diagnosticColumn), fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithArguments("protected", "internal").WithLocation(4, 4 + diagnosticColumn);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

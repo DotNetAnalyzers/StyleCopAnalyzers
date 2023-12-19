@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
@@ -12,6 +14,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -34,10 +37,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// The ID for diagnostics produced by the <see cref="SA1402FileMayOnlyContainASingleType"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1402";
-        private const string Title = "File may only contain a single type";
-        private const string MessageFormat = "File may only contain a single type";
-        private const string Description = "A C# code file contains more than one unique type.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1402.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(MaintainabilityResources.SA1402Title), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(MaintainabilityResources.SA1402MessageFormat), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(MaintainabilityResources.SA1402Description), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -54,7 +57,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
+            context.RegisterCompilationStartAction(context =>
+            {
+                context.RegisterSyntaxTreeAction(SyntaxTreeAction);
+            });
         }
 
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context, StyleCopSettings settings)
@@ -99,7 +105,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
         private static bool ContainsTopLevelTypeDeclarations(SyntaxNode node)
         {
-            return node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration);
+            return node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration) || node.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration);
         }
 
         private static bool IsRelevantType(SyntaxNode node, StyleCopSettings settings)
@@ -110,12 +116,14 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             switch (node.Kind())
             {
             case SyntaxKind.ClassDeclaration:
+            case SyntaxKindEx.RecordDeclaration:
                 isRelevant = topLevelTypes.Contains(TopLevelType.Class);
                 break;
             case SyntaxKind.InterfaceDeclaration:
                 isRelevant = topLevelTypes.Contains(TopLevelType.Interface);
                 break;
             case SyntaxKind.StructDeclaration:
+            case SyntaxKindEx.RecordStructDeclaration:
                 isRelevant = topLevelTypes.Contains(TopLevelType.Struct);
                 break;
             case SyntaxKind.EnumDeclaration:

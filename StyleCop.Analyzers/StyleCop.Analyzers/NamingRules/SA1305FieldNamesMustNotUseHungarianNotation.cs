@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.NamingRules
 {
@@ -54,10 +56,10 @@ namespace StyleCop.Analyzers.NamingRules
         /// The ID for diagnostics produced by the <see cref="SA1305FieldNamesMustNotUseHungarianNotation"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1305";
-        private const string Title = "Field names should not use Hungarian notation";
-        private const string MessageFormat = "{0} '{1}' should not use Hungarian notation";
-        private const string Description = "The name of a field or variable in C# uses Hungarian notation.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1305.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(NamingResources.SA1305Title), NamingResources.ResourceManager, typeof(NamingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(NamingResources.SA1305MessageFormat), NamingResources.ResourceManager, typeof(NamingResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(NamingResources.SA1305Description), NamingResources.ResourceManager, typeof(NamingResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledByDefault, Description, HelpLink);
@@ -88,16 +90,19 @@ namespace StyleCop.Analyzers.NamingRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxNodeAction(VariableDeclarationAction, SyntaxKind.VariableDeclaration);
-            context.RegisterSyntaxNodeAction(ParameterDeclarationAction, SyntaxKind.Parameter);
-            context.RegisterSyntaxNodeAction(CatchDeclarationAction, SyntaxKind.CatchDeclaration);
-            context.RegisterSyntaxNodeAction(QueryContinuationAction, SyntaxKind.QueryContinuation);
-            context.RegisterSyntaxNodeAction(FromClauseAction, SyntaxKind.FromClause);
-            context.RegisterSyntaxNodeAction(LetClauseAction, SyntaxKind.LetClause);
-            context.RegisterSyntaxNodeAction(JoinClauseAction, SyntaxKind.JoinClause);
-            context.RegisterSyntaxNodeAction(JoinIntoClauseAction, SyntaxKind.JoinIntoClause);
-            context.RegisterSyntaxNodeAction(ForEachStatementAction, SyntaxKind.ForEachStatement);
-            context.RegisterSyntaxNodeAction(SingleVariableDesignationAction, SyntaxKindEx.SingleVariableDesignation);
+            context.RegisterCompilationStartAction(context =>
+            {
+                context.RegisterSyntaxNodeAction(VariableDeclarationAction, SyntaxKind.VariableDeclaration);
+                context.RegisterSyntaxNodeAction(ParameterDeclarationAction, SyntaxKind.Parameter);
+                context.RegisterSyntaxNodeAction(CatchDeclarationAction, SyntaxKind.CatchDeclaration);
+                context.RegisterSyntaxNodeAction(QueryContinuationAction, SyntaxKind.QueryContinuation);
+                context.RegisterSyntaxNodeAction(FromClauseAction, SyntaxKind.FromClause);
+                context.RegisterSyntaxNodeAction(LetClauseAction, SyntaxKind.LetClause);
+                context.RegisterSyntaxNodeAction(JoinClauseAction, SyntaxKind.JoinClause);
+                context.RegisterSyntaxNodeAction(JoinIntoClauseAction, SyntaxKind.JoinIntoClause);
+                context.RegisterSyntaxNodeAction(ForEachStatementAction, SyntaxKind.ForEachStatement);
+                context.RegisterSyntaxNodeAction(SingleVariableDesignationAction, SyntaxKindEx.SingleVariableDesignation);
+            });
         }
 
         private static class Analyzer

@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.OrderingRules
 {
@@ -11,11 +13,12 @@ namespace StyleCop.Analyzers.OrderingRules
 
     /// <summary>
     /// The keyword <c>protected</c> is positioned after the keyword <c>internal</c> within the declaration of a
-    /// protected internal C# element.
+    /// protected internal C# element, or the keyword <c>private</c> is positioned after the keyword <c>protected</c>.
     /// </summary>
     /// <remarks>
     /// <para>A violation of this rule occurs when a protected internal element's access modifiers are written as
-    /// <c>internal protected</c>. In reality, an element with the keywords <c>protected internal</c> will have the same
+    /// <c>internal protected</c>, or when a private protected element's access modifiers are written as
+    /// <c>protected private</c>. In reality, an element with the keywords <c>protected internal</c> will have the same
     /// access level as an element with the keywords <c>internal protected</c>. To make the code easier to read and more
     /// consistent, StyleCop standardizes the ordering of these keywords, so that a protected internal element will
     /// always be described as such, and never as internal protected. This can help to reduce confusion about whether
@@ -28,10 +31,10 @@ namespace StyleCop.Analyzers.OrderingRules
         /// The ID for diagnostics produced by the <see cref="SA1207ProtectedMustComeBeforeInternal"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1207";
-        private const string Title = "Protected should come before internal";
-        private const string MessageFormat = "The keyword 'protected' should come before 'internal'.";
-        private const string Description = "The keyword 'protected' is positioned after the keyword 'internal' within the declaration of a protected internal C# element.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1207.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(OrderingResources.SA1207Title), OrderingResources.ResourceManager, typeof(OrderingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(OrderingResources.SA1207MessageFormat), OrderingResources.ResourceManager, typeof(OrderingResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(OrderingResources.SA1207Description), OrderingResources.ResourceManager, typeof(OrderingResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -72,6 +75,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 return;
             }
 
+            bool protectedKeywordFound = false;
             bool internalKeywordFound = false;
             foreach (var childToken in childTokens)
             {
@@ -80,10 +84,22 @@ namespace StyleCop.Analyzers.OrderingRules
                     internalKeywordFound = true;
                     continue;
                 }
-
-                if (internalKeywordFound && childToken.IsKind(SyntaxKind.ProtectedKeyword))
+                else if (childToken.IsKind(SyntaxKind.ProtectedKeyword))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, childToken.GetLocation()));
+                    if (internalKeywordFound)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, childToken.GetLocation(), "protected", "internal"));
+                        break;
+                    }
+                    else
+                    {
+                        protectedKeywordFound = true;
+                        continue;
+                    }
+                }
+                else if (protectedKeywordFound && childToken.IsKind(SyntaxKind.PrivateKeyword))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, childToken.GetLocation(), "private", "protected"));
                     break;
                 }
             }

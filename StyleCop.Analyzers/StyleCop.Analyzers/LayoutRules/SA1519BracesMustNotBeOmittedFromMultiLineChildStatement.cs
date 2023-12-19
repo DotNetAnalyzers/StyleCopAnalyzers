@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.LayoutRules
 {
@@ -36,19 +38,24 @@ namespace StyleCop.Analyzers.LayoutRules
         /// The ID for diagnostics produced by the <see cref="SA1519BracesMustNotBeOmittedFromMultiLineChildStatement"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1519";
-        private const string Title = "Braces should not be omitted from multi-line child statement";
-        private const string MessageFormat = "Braces should not be omitted from multi-line child statement";
-        private const string Description = "The opening and closing braces for a multi-line C# statement have been omitted.";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1519.md";
 
-        private static readonly DiagnosticDescriptor Descriptor =
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1519.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(LayoutResources.SA1519Title), LayoutResources.ResourceManager, typeof(LayoutResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(LayoutResources.SA1519MessageFormat), LayoutResources.ResourceManager, typeof(LayoutResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(LayoutResources.SA1519Description), LayoutResources.ResourceManager, typeof(LayoutResources));
+
+#pragma warning disable SA1202 // Elements should be ordered by access
+        internal static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+#pragma warning restore SA1202 // Elements should be ordered by access
 
         private static readonly Action<SyntaxNodeAnalysisContext> IfStatementAction = HandleIfStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> DoStatementAction = HandleDoStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> WhileStatementAction = HandleWhileStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> ForStatementAction = HandleForStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> ForEachStatementAction = HandleForEachStatement;
+        private static readonly Action<SyntaxNodeAnalysisContext> LockStatementAction = HandleLockStatement;
+        private static readonly Action<SyntaxNodeAnalysisContext> FixedStatementAction = HandleFixedStatement;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> UsingStatementAction = HandleUsingStatement;
 
         /// <inheritdoc/>
@@ -61,12 +68,17 @@ namespace StyleCop.Analyzers.LayoutRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxNodeAction(IfStatementAction, SyntaxKind.IfStatement);
-            context.RegisterSyntaxNodeAction(DoStatementAction, SyntaxKind.DoStatement);
-            context.RegisterSyntaxNodeAction(WhileStatementAction, SyntaxKind.WhileStatement);
-            context.RegisterSyntaxNodeAction(ForStatementAction, SyntaxKind.ForStatement);
-            context.RegisterSyntaxNodeAction(ForEachStatementAction, SyntaxKind.ForEachStatement);
-            context.RegisterSyntaxNodeAction(UsingStatementAction, SyntaxKind.UsingStatement);
+            context.RegisterCompilationStartAction(context =>
+            {
+                context.RegisterSyntaxNodeAction(IfStatementAction, SyntaxKind.IfStatement);
+                context.RegisterSyntaxNodeAction(DoStatementAction, SyntaxKind.DoStatement);
+                context.RegisterSyntaxNodeAction(WhileStatementAction, SyntaxKind.WhileStatement);
+                context.RegisterSyntaxNodeAction(ForStatementAction, SyntaxKind.ForStatement);
+                context.RegisterSyntaxNodeAction(ForEachStatementAction, SyntaxKind.ForEachStatement);
+                context.RegisterSyntaxNodeAction(LockStatementAction, SyntaxKind.LockStatement);
+                context.RegisterSyntaxNodeAction(FixedStatementAction, SyntaxKind.FixedStatement);
+                context.RegisterSyntaxNodeAction(UsingStatementAction, SyntaxKind.UsingStatement);
+            });
         }
 
         private static void HandleIfStatement(SyntaxNodeAnalysisContext context)
@@ -107,6 +119,18 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             var forEachStatement = (ForEachStatementSyntax)context.Node;
             CheckChildStatement(context, forEachStatement.Statement);
+        }
+
+        private static void HandleLockStatement(SyntaxNodeAnalysisContext context)
+        {
+            var lockStatement = (LockStatementSyntax)context.Node;
+            CheckChildStatement(context, lockStatement.Statement);
+        }
+
+        private static void HandleFixedStatement(SyntaxNodeAnalysisContext context)
+        {
+            var fixedStatement = (FixedStatementSyntax)context.Node;
+            CheckChildStatement(context, fixedStatement.Statement);
         }
 
         private static void HandleUsingStatement(SyntaxNodeAnalysisContext context, StyleCopSettings settings)

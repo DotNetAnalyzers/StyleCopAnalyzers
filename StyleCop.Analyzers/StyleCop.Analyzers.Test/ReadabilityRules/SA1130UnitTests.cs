@@ -1,13 +1,16 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
+    using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1130UseLambdaSyntax,
@@ -15,9 +18,11 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
     public class SA1130UnitTests
     {
+        [SuppressMessage("MicrosoftCodeAnalysisDesign", "RS1032:Define diagnostic message correctly", Justification = "The message here matches the compiler.")]
         private static readonly DiagnosticDescriptor CS1065 =
                    new DiagnosticDescriptor(nameof(CS1065), "Title", "Default values are not valid in this context.", "Category", DiagnosticSeverity.Error, AnalyzerConstants.EnabledByDefault);
 
+        [SuppressMessage("MicrosoftCodeAnalysisDesign", "RS1032:Define diagnostic message correctly", Justification = "The message here matches the compiler.")]
         private static readonly DiagnosticDescriptor CS7014 =
                    new DiagnosticDescriptor(nameof(CS7014), "Title", "Attributes are not valid in this context.", "Category", DiagnosticSeverity.Error, AnalyzerConstants.EnabledByDefault);
 
@@ -186,14 +191,14 @@ internal class TypeName
 {
     private void Method(object o)
     {
-        Action a = delegate() { Console.WriteLine(); };
-        Action b = delegate() { Console.WriteLine(); };
-        Action<int> c = delegate(int x) { Console.WriteLine(); };
-        Action<int, int> d = delegate(int x, int y) { Console.WriteLine(); };
-        Action<int, int> e = delegate (int x, int y = 0) { Console.WriteLine(); };
-        Action<int, int> f = delegate (int x, [Obsolete]int y) { Console.WriteLine(); };
-        Action<int, int> g = delegate (int x, params int y) { Console.WriteLine(); };
-        Action<int> h = delegate (int x, __arglist) { Console.WriteLine(); };
+        Action a = [|delegate|]() { Console.WriteLine(); };
+        Action b = [|delegate|]() { Console.WriteLine(); };
+        Action<int> c = [|delegate|](int x) { Console.WriteLine(); };
+        Action<int, int> d = [|delegate|](int x, int y) { Console.WriteLine(); };
+        Action<int, int> e = [|delegate|] (int x, int y = 0) { Console.WriteLine(); };
+        Action<int, int> f = [|delegate|] (int x, [Obsolete]int y) { Console.WriteLine(); };
+        Action<int, int> g = [|delegate|] (int x, params int y) { Console.WriteLine(); };
+        Action<int> h = [|delegate|] (int x, __arglist) { Console.WriteLine(); };
     }
 }";
 
@@ -214,33 +219,17 @@ internal class TypeName
         Action<int> h = delegate (int x, __arglist) { Console.WriteLine(); };
     }
 }";
-            var expected = new[]
-            {
-                Diagnostic().WithLocation(8, 20),
-                Diagnostic().WithLocation(9, 20),
-                Diagnostic().WithLocation(10, 25),
-                Diagnostic().WithLocation(11, 30),
-                Diagnostic().WithLocation(12, 30),
-                Diagnostic(CS1065).WithLocation(12, 53),
-                Diagnostic().WithLocation(13, 30),
-                Diagnostic(CS7014).WithLocation(13, 47),
-                Diagnostic().WithLocation(14, 30),
-                Diagnostic(CS1670).WithLocation(14, 47),
-                Diagnostic().WithLocation(15, 25),
-                Diagnostic(CS1669).WithLocation(15, 42),
-            };
 
-            var expectedAfterFix = new[]
-            {
-                Diagnostic().WithLocation(12, 30),
-                Diagnostic(CS1065).WithLocation(12, 53),
-                Diagnostic().WithLocation(13, 30),
-                Diagnostic(CS7014).WithLocation(13, 47),
-                Diagnostic().WithLocation(14, 30),
-                Diagnostic(CS1670).WithLocation(14, 47),
-                Diagnostic().WithLocation(15, 25),
-                Diagnostic(CS1669).WithLocation(15, 42),
-            };
+            var expected = this.GetCompilerExpectedResultCodeFixSpecialCases();
+
+            var expectedAfterFix = this.GetCompilerExpectedResultCodeFixSpecialCases()
+                .Concat(new[]
+                {
+                    Diagnostic().WithLocation(12, 30),
+                    Diagnostic().WithLocation(13, 30),
+                    Diagnostic().WithLocation(14, 30),
+                    Diagnostic().WithLocation(15, 25),
+                });
 
             var test = new CSharpTest
             {
@@ -276,7 +265,7 @@ public class TypeName
 {
     public void Test()
     {
-        Action action1 = /*a*/()/*b*/ => { };
+        Action action1 = /*a*/() =>/*b*/{ };
         Action action2 = /*a*//*b*/(/*c*/)/*d*/ => { };
         Action<int> action3 = /*a*//*b*//*c*//*d*/i/*e*//*f*/ => { };
         Action<List<int>> action4 = i => { };
@@ -709,6 +698,312 @@ namespace StyleCopDemo
             };
 
             await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2902, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2902")]
+        public async Task VerifyThatCodeFixDoesNotCrashOnDelegateReturnAsync()
+        {
+            var testCode = @"using System;
+public class TestClass
+{
+    public static EventHandler TestMethod1()
+    {
+        return delegate
+        {
+        };
+    }
+
+    public static EventHandler TestMethod2() => delegate
+    {
+    };
+
+    public static EventHandler TestProperty1
+    {
+        get
+        {
+            return delegate
+            {
+            };
+        }
+    }
+
+    public static EventHandler TestProperty2 => delegate
+    {
+    };
+}";
+
+            var fixedCode = @"using System;
+public class TestClass
+{
+    public static EventHandler TestMethod1()
+    {
+        return (sender, e) =>
+        {
+        };
+    }
+
+    public static EventHandler TestMethod2() => (sender, e) =>
+    {
+    };
+
+    public static EventHandler TestProperty1
+    {
+        get
+        {
+            return (sender, e) =>
+            {
+            };
+        }
+    }
+
+    public static EventHandler TestProperty2 => (sender, e) =>
+    {
+    };
+}";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(6, 16),
+                Diagnostic().WithLocation(11, 49),
+                Diagnostic().WithLocation(19, 20),
+                Diagnostic().WithLocation(25, 49),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2902, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2902")]
+        public async Task VerifyThatEventInitializersWorkAsExpectedAsync()
+        {
+            var testCode = @"using System;
+public class TestClass
+{
+    public static event EventHandler StaticEvent = delegate { };
+    public event EventHandler InstanceEvent = delegate { };
+}
+";
+
+            var fixedCode = @"using System;
+public class TestClass
+{
+    public static event EventHandler StaticEvent = (sender, e) => { };
+    public event EventHandler InstanceEvent = (sender, e) => { };
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(4, 52),
+                Diagnostic().WithLocation(5, 47),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2902, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2902")]
+        public async Task VerifyInvalidCodeConstructionsAsync()
+        {
+            var testCode = @"using System;
+public class TestClass
+{
+    public static EventHandler[] TestMethod() => [|delegate|] { };
+}
+";
+
+            var expected = new[]
+            {
+                DiagnosticResult.CompilerError("CS1660").WithLocation(4, 50),
+            };
+
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = testCode,
+            };
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            test.RemainingDiagnostics.AddRange(expected);
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2997, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2997")]
+        public async Task VerifyDelegateConstructionAsync()
+        {
+            var testCode = @"using System;
+using System.Collections.Generic;
+
+public class TestClass
+{
+    private Dictionary<string, Func<int>> items = new Dictionary<string, Func<int>>()
+    {
+        { ""a"", delegate { return 0; } },
+        { ""b"", () => 1 },
+    };
+}
+";
+
+            var fixedCode = @"using System;
+using System.Collections.Generic;
+
+public class TestClass
+{
+    private Dictionary<string, Func<int>> items = new Dictionary<string, Func<int>>()
+    {
+        { ""a"", () => { return 0; } },
+        { ""b"", () => 1 },
+    };
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(8, 16),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3279, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3279")]
+        public async Task TestDelegateUsedAsSecondNamedArgumentAsync()
+        {
+            var testCode = @"
+using System;
+using System.Linq;
+public class TypeName
+{
+    public void Test()
+    {
+        Test2(resolve: delegate
+        {
+            return """";
+        });
+    }
+
+    private void Test2(string description = null, Func<object, string> resolve = null)
+    {
+        resolve(0);
+    }
+}";
+
+            string fixedCode = @"
+using System;
+using System.Linq;
+public class TypeName
+{
+    public void Test()
+    {
+        Test2(resolve: arg =>
+        {
+            return """";
+        });
+    }
+
+    private void Test2(string description = null, Func<object, string> resolve = null)
+    {
+        resolve(0);
+    }
+}";
+
+            var expected = new[]
+            {
+                Diagnostic().WithSpan(8, 24, 8, 32),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3279, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3279")]
+        public async Task VerifyThatUnknownNamedParameterWontCauseCrashAsync()
+        {
+            var testCode = @"
+using System;
+using System.Linq;
+public class TypeName
+{
+    public void Test()
+    {
+        Test2(unknownParam: delegate
+        {
+            return """";
+        });
+    }
+
+    private void Test2(string description = null, Func<object, string> resolve = null)
+    {
+        resolve(0);
+    }
+}";
+
+            var expected = DiagnosticResult.CompilerError("CS1739")
+                .WithMessage("The best overload for 'Test2' does not have a parameter named 'unknownParam'")
+                .WithSpan(8, 15, 8, 27)
+                .WithArguments("Test2", "unknownParam");
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData(
+            "(Func<int>)[|delegate|] { return 1; }",
+            "(Func<int>)(() => { return 1; })")]
+        [InlineData(
+            "(Func<int>)[|delegate|]() { return 1; }",
+            "(Func<int>)(() => { return 1; })")]
+        [InlineData(
+            "(Func<int, int>)[|delegate|] { return 1; }",
+            "(Func<int, int>)(arg => { return 1; })")]
+        [InlineData(
+            "(Func<int, int>)[|delegate|](int x) { return 1; }",
+            "(Func<int, int>)(x => { return 1; })")]
+        [InlineData(
+            "(Func<int, int, int>)[|delegate|] { return 1; }",
+            "(Func<int, int, int>)((arg1, arg2) => { return 1; })")]
+        [InlineData(
+            "(Func<int, int, int>)[|delegate|](int x, int y) { return 1; }",
+            "(Func<int, int, int>)((x, y) => { return 1; })")]
+        [WorkItem(3510, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3510")]
+        public async Task TestDelegateUsedInCastAsync(string testExpression, string fixedExpression)
+        {
+            var testCode = $@"
+using System;
+
+public class TypeName
+{{
+    public void Test()
+    {{
+        var z = {testExpression};
+    }}
+}}";
+
+            var fixedCode = $@"
+using System;
+
+public class TypeName
+{{
+    public void Test()
+    {{
+        var z = {fixedExpression};
+    }}
+}}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetCompilerExpectedResultCodeFixSpecialCases()
+        {
+            return new[]
+            {
+                Diagnostic(CS1065).WithLocation(12, 53),
+                Diagnostic(CS7014).WithLocation(13, 47),
+                Diagnostic(CS1670).WithLocation(14, 47),
+                Diagnostic(CS1669).WithLocation(15, 42),
+            };
         }
     }
 }

@@ -1,9 +1,12 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
     using Microsoft.CodeAnalysis;
@@ -11,6 +14,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SA1137ElementsShouldHaveTheSameIndentation : DiagnosticAnalyzer
@@ -21,16 +25,16 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// The ID for diagnostics produced by the <see cref="SA1137ElementsShouldHaveTheSameIndentation"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1137";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1137.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1137Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1137MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1137Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1137.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<SyntaxNodeAnalysisContext> CompilationUnitAction = HandleCompilationUnit;
-        private static readonly Action<SyntaxNodeAnalysisContext> NamespaceDeclarationAction = HandleNamespaceDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> BaseNamespaceDeclarationAction = HandleBaseNamespaceDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> TypeDeclarationAction = HandleTypeDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> EnumDeclarationAction = HandleEnumDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> MethodDeclarationAction = HandleMethodDeclaration;
@@ -45,6 +49,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly Action<SyntaxNodeAnalysisContext> SwitchStatementAction = HandleSwitchStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> InitializerExpressionAction = HandleInitializerExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> AnonymousObjectCreationExpressionAction = HandleAnonymousObjectCreationExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> TupleTypeAction = HandleTupleType;
+        private static readonly Action<SyntaxNodeAnalysisContext> TupleExpressionAction = HandleTupleExpression;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -57,7 +63,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.EnableConcurrentExecution();
 
             context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
-            context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeAction(BaseNamespaceDeclarationAction, SyntaxKinds.BaseNamespaceDeclaration);
             context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
             context.RegisterSyntaxNodeAction(EnumDeclarationAction, SyntaxKind.EnumDeclaration);
             context.RegisterSyntaxNodeAction(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
@@ -72,6 +78,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(SwitchStatementAction, SyntaxKind.SwitchStatement);
             context.RegisterSyntaxNodeAction(InitializerExpressionAction, SyntaxKinds.InitializerExpression);
             context.RegisterSyntaxNodeAction(AnonymousObjectCreationExpressionAction, SyntaxKind.AnonymousObjectCreationExpression);
+            context.RegisterSyntaxNodeAction(TupleTypeAction, SyntaxKindEx.TupleType);
+            context.RegisterSyntaxNodeAction(TupleExpressionAction, SyntaxKindEx.TupleExpression);
         }
 
         private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context)
@@ -88,9 +96,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
             CheckElements(context, elements.ToImmutable());
         }
 
-        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleBaseNamespaceDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var namespaceDeclaration = (NamespaceDeclarationSyntax)context.Node;
+            var namespaceDeclaration = (BaseNamespaceDeclarationSyntaxWrapper)context.Node;
 
             var elements = ImmutableList.CreateBuilder<SyntaxNode>();
 
@@ -262,6 +270,20 @@ namespace StyleCop.Analyzers.ReadabilityRules
             CheckElements(context, anonymousObjectCreationExpression.Initializers);
         }
 
+        private static void HandleTupleType(SyntaxNodeAnalysisContext context)
+        {
+            var tupleType = (TupleTypeSyntaxWrapper)context.Node;
+
+            CheckElements(context, tupleType.Elements);
+        }
+
+        private static void HandleTupleExpression(SyntaxNodeAnalysisContext context)
+        {
+            var tupleExpression = (TupleExpressionSyntaxWrapper)context.Node;
+
+            CheckElements(context, tupleExpression.Arguments);
+        }
+
         private static void AddMembersAndAttributes<T>(ImmutableList<SyntaxNode>.Builder elements, SeparatedSyntaxList<T> members)
             where T : SyntaxNode
         {
@@ -288,6 +310,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             case SyntaxKind.StructDeclaration:
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.EnumDeclaration:
+            case SyntaxKindEx.RecordDeclaration:
+            case SyntaxKindEx.RecordStructDeclaration:
                 elements.AddRange(((BaseTypeDeclarationSyntax)member).AttributeLists);
                 break;
 
@@ -312,6 +336,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             case SyntaxKind.GetAccessorDeclaration:
             case SyntaxKind.SetAccessorDeclaration:
+            case SyntaxKindEx.InitAccessorDeclaration:
             case SyntaxKind.AddAccessorDeclaration:
             case SyntaxKind.RemoveAccessorDeclaration:
             case SyntaxKind.UnknownAccessorDeclaration:
@@ -353,6 +378,16 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             CheckElements(context, elements.ToImmutableList());
+        }
+
+        private static void CheckElements<T>(SyntaxNodeAnalysisContext context, SeparatedSyntaxListWrapper<T> elements)
+        {
+            if (elements.Count < 2)
+            {
+                return;
+            }
+
+            CheckElements(context, ((IEnumerable<SyntaxNode>)elements.UnderlyingList).ToImmutableList());
         }
 
         // BlockSyntax is analyzed separately because it needs to check both braces.
@@ -477,6 +512,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
             if (openBraceToken.GetLine() == closeBraceToken.GetLine())
             {
                 // If the braces are on the same line, there is no point in checking indentation
+                return;
+            }
+
+            if (!openBraceToken.IsFirstInLine())
+            {
+                // Do not check brace indentation if the opening brace is not the first token on a line.
                 return;
             }
 

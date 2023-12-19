@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.SpacingRules
 {
@@ -32,13 +34,13 @@ namespace StyleCop.Analyzers.SpacingRules
         /// The ID for diagnostics produced by the <see cref="SA1008OpeningParenthesisMustBeSpacedCorrectly"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1008";
-        private const string Title = "Opening parenthesis should be spaced correctly";
-        private const string Description = "An opening parenthesis within a C# statement is not spaced correctly.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1008.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1008Title), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1008Description), SpacingResources.ResourceManager, typeof(SpacingResources));
 
-        private const string MessageNotPreceded = "Opening parenthesis should not be preceded by a space.";
-        private const string MessagePreceded = "Opening parenthesis should be preceded by a space.";
-        private const string MessageNotFollowed = "Opening parenthesis should not be followed by a space.";
+        private static readonly LocalizableString MessageNotPreceded = new LocalizableResourceString(nameof(SpacingResources.SA1008MessageNotPreceded), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString MessagePreceded = new LocalizableResourceString(nameof(SpacingResources.SA1008MessagePreceded), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString MessageNotFollowed = new LocalizableResourceString(nameof(SpacingResources.SA1008MessageNotFollowed), SpacingResources.ResourceManager, typeof(SpacingResources));
 
         private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
 
@@ -92,12 +94,6 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
-            if (token.IsLastInLine())
-            {
-                // ignore open parenthesis when last on line.
-                return;
-            }
-
             var prevToken = token.GetPreviousToken();
 
             // Don't check leading spaces when preceded by a keyword that is already handled by SA1000
@@ -146,7 +142,11 @@ namespace StyleCop.Analyzers.SpacingRules
             var leadingTriviaList = TriviaHelper.MergeTriviaLists(prevToken.TrailingTrivia, token.LeadingTrivia);
 
             var isFirstOnLine = false;
-            if (prevToken.GetLineSpan().EndLinePosition.Line < token.GetLineSpan().StartLinePosition.Line)
+            if (prevToken.IsKind(SyntaxKind.None))
+            {
+                isFirstOnLine = true; // This means that it doesn't matter if there are spaces before or not
+            }
+            else if (prevToken.GetLineSpan().EndLinePosition.Line < token.GetLineSpan().StartLinePosition.Line)
             {
                 var done = false;
                 for (var i = leadingTriviaList.Count - 1; !done && (i >= 0); i--)
@@ -190,6 +190,20 @@ namespace StyleCop.Analyzers.SpacingRules
                 haveLeadingSpace = true;
                 break;
 
+            case SyntaxKindEx.PositionalPatternClause:
+                haveLeadingSpace = prevToken.IsKind(SyntaxKind.IsKeyword)
+                    || prevToken.IsKind(SyntaxKindEx.OrKeyword)
+                    || prevToken.IsKind(SyntaxKindEx.AndKeyword)
+                    || prevToken.IsKind(SyntaxKindEx.NotKeyword)
+                    || prevToken.IsKind(SyntaxKind.CommaToken)
+                    || prevToken.IsKind(SyntaxKind.ColonToken);
+                break;
+
+            case SyntaxKindEx.ParenthesizedPattern:
+                var partOfCastExpression = prevToken.IsKind(SyntaxKind.CloseParenToken) && prevToken.Parent.IsKind(SyntaxKind.CastExpression);
+                haveLeadingSpace = !partOfCastExpression;
+                break;
+
             case SyntaxKind.ArgumentList:
             case SyntaxKind.AttributeArgumentList:
             case SyntaxKind.CheckedExpression:
@@ -208,7 +222,8 @@ namespace StyleCop.Analyzers.SpacingRules
 
             case SyntaxKind.ParenthesizedExpression:
             case SyntaxKindEx.TupleExpression:
-                if (prevToken.Parent.IsKind(SyntaxKind.Interpolation))
+                if (prevToken.Parent.IsKind(SyntaxKind.Interpolation)
+                    || token.Parent.Parent.IsKind(SyntaxKindEx.RangeExpression))
                 {
                     haveLeadingSpace = false;
                     break;
@@ -216,7 +231,7 @@ namespace StyleCop.Analyzers.SpacingRules
 
                 partOfUnaryExpression = prevToken.Parent is PrefixUnaryExpressionSyntax;
                 startOfIndexer = prevToken.IsKind(SyntaxKind.OpenBracketToken);
-                var partOfCastExpression = prevToken.IsKind(SyntaxKind.CloseParenToken) && prevToken.Parent.IsKind(SyntaxKind.CastExpression);
+                partOfCastExpression = prevToken.IsKind(SyntaxKind.CloseParenToken) && prevToken.Parent.IsKind(SyntaxKind.CastExpression);
 
                 haveLeadingSpace = !partOfUnaryExpression && !startOfIndexer && !partOfCastExpression;
                 break;
@@ -226,8 +241,9 @@ namespace StyleCop.Analyzers.SpacingRules
                 startOfIndexer = prevToken.IsKind(SyntaxKind.OpenBracketToken);
                 var consecutiveCast = prevToken.IsKind(SyntaxKind.CloseParenToken) && prevToken.Parent.IsKind(SyntaxKind.CastExpression);
                 var partOfInterpolation = prevToken.IsKind(SyntaxKind.OpenBraceToken) && prevToken.Parent.IsKind(SyntaxKind.Interpolation);
+                var partOfRange = prevToken.IsKind(SyntaxKindEx.DotDotToken);
 
-                haveLeadingSpace = !partOfUnaryExpression && !startOfIndexer && !consecutiveCast && !partOfInterpolation;
+                haveLeadingSpace = !partOfUnaryExpression && !startOfIndexer && !consecutiveCast && !partOfInterpolation && !partOfRange;
                 break;
 
             case SyntaxKind.ParameterList:
@@ -237,10 +253,14 @@ namespace StyleCop.Analyzers.SpacingRules
 
             case SyntaxKindEx.TupleType:
                 // Comma covers tuple types in parameters and nested within other tuple types.
+                // Equals covers definition of a tuple type alias.
                 // 'out', 'ref', 'in', 'params' parameters are covered by IsKeywordKind.
+                // Attributes of parameters are covered by checking the previous token's parent.
                 // Return types are handled by a helper.
                 haveLeadingSpace = prevToken.IsKind(SyntaxKind.CommaToken)
+                    || prevToken.IsKind(SyntaxKind.EqualsToken)
                     || SyntaxFacts.IsKeywordKind(prevToken.Kind())
+                    || prevToken.Parent.IsKind(SyntaxKind.AttributeList)
                     || ((TypeSyntax)token.Parent).GetContainingNotEnclosingType().IsReturnType();
                 break;
             }
@@ -267,7 +287,7 @@ namespace StyleCop.Analyzers.SpacingRules
 
             if (token.IsFollowedByWhitespace())
             {
-                context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowed, token.GetLocation(), TokenSpacingProperties.RemoveFollowing));
+                context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowed, token.GetLocation(), TokenSpacingProperties.RemoveFollowingPreserveLayout));
             }
         }
     }

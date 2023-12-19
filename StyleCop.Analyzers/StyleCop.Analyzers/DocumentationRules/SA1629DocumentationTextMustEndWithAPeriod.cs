@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
@@ -52,10 +54,12 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// </summary>
         internal const string NoCodeFixKey = "NoCodeFix";
 
+        internal const string ReplaceCharKey = "CharToReplace";
+
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1629.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1629Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1629MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1629Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
-        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1629.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -84,7 +88,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         }
 
         /// <inheritdoc/>
-        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, bool needsComment, XElement completeDocumentation, params Location[] diagnosticLocations)
+        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, XElement completeDocumentation, params Location[] diagnosticLocations)
         {
             foreach (var node in completeDocumentation.Nodes().OfType<XElement>())
             {
@@ -123,13 +127,32 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                         if (!string.IsNullOrEmpty(textWithoutTrailingWhitespace))
                         {
-                            if (!textWithoutTrailingWhitespace.EndsWith(".", StringComparison.Ordinal)
-                                && !textWithoutTrailingWhitespace.EndsWith(".)", StringComparison.Ordinal)
-                                && (startingWithFinalParagraph || !textWithoutTrailingWhitespace.EndsWith(":", StringComparison.Ordinal))
-                                && !textWithoutTrailingWhitespace.EndsWith("-or-", StringComparison.Ordinal))
+                            if (IsMissingRequiredPeriod(textWithoutTrailingWhitespace, startingWithFinalParagraph))
                             {
-                                var location = Location.Create(xmlElement.SyntaxTree, new TextSpan(textToken.SpanStart + textWithoutTrailingWhitespace.Length, 1));
-                                context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                                int spanStart = textToken.SpanStart + textWithoutTrailingWhitespace.Length;
+                                ImmutableDictionary<string, string> properties = null;
+                                if (textWithoutTrailingWhitespace.EndsWith(",", StringComparison.Ordinal)
+                                    || textWithoutTrailingWhitespace.EndsWith(";", StringComparison.Ordinal))
+                                {
+                                    spanStart -= 1;
+                                    SetReplaceChar();
+                                }
+                                else if (textWithoutTrailingWhitespace.EndsWith(",)", StringComparison.Ordinal)
+                                    || textWithoutTrailingWhitespace.EndsWith(";)", StringComparison.Ordinal))
+                                {
+                                    spanStart -= 2;
+                                    SetReplaceChar();
+                                }
+
+                                var location = Location.Create(xmlElement.SyntaxTree, new TextSpan(spanStart, 1));
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptor, location, properties));
+
+                                void SetReplaceChar()
+                                {
+                                    var propertiesBuilder = ImmutableDictionary.CreateBuilder<string, string>();
+                                    propertiesBuilder.Add(ReplaceCharKey, string.Empty);
+                                    properties = propertiesBuilder.ToImmutable();
+                                }
                             }
 
                             currentParagraphDone = true;
@@ -138,10 +161,15 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
                 else if (xmlElement.Content[i].IsInlineElement() && !currentParagraphDone)
                 {
-                    // Treat empty XML elements as a "word not ending with a period"
-                    var location = Location.Create(xmlElement.SyntaxTree, new TextSpan(xmlElement.Content[i].Span.End, 1));
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
-                    currentParagraphDone = true;
+                    var lastTextElement = XmlCommentHelper.TryGetLastTextElementWithContent(xmlElement.Content[i]);
+
+                    if (lastTextElement is null // Treat empty XML elements as a "word not ending with a period"
+                        || IsMissingRequiredPeriod(lastTextElement.TextTokens.Last().Text.TrimEnd(' ', '\r', '\n'), startingWithFinalParagraph))
+                    {
+                        var location = Location.Create(xmlElement.SyntaxTree, new TextSpan(xmlElement.Content[i].Span.End, 1));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                        currentParagraphDone = true;
+                    }
                 }
                 else if (xmlElement.Content[i] is XmlElementSyntax childXmlElement)
                 {
@@ -173,6 +201,14 @@ namespace StyleCop.Analyzers.DocumentationRules
                     }
                 }
             }
+        }
+
+        private static bool IsMissingRequiredPeriod(string textWithoutTrailingWhitespace, bool startingWithFinalParagraph)
+        {
+            return !textWithoutTrailingWhitespace.EndsWith(".", StringComparison.Ordinal)
+                && !textWithoutTrailingWhitespace.EndsWith(".)", StringComparison.Ordinal)
+                && (startingWithFinalParagraph || !textWithoutTrailingWhitespace.EndsWith(":", StringComparison.Ordinal))
+                && !textWithoutTrailingWhitespace.EndsWith("-or-", StringComparison.Ordinal);
         }
     }
 }

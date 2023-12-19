@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.SpacingRules
 {
@@ -10,6 +12,7 @@ namespace StyleCop.Analyzers.SpacingRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// The spacing around an operator symbol is incorrect, within a C# code file.
@@ -57,15 +60,15 @@ namespace StyleCop.Analyzers.SpacingRules
         internal const string RemoveEndOfLineTag = "RemoveEndOfLine";
         internal const string RemoveEndOfLineWithTrailingSpaceTag = "RemoveEndOfLineWithTrailingSpace";
 
-        private const string Title = "Symbols should be spaced correctly";
-        private const string MessageFormatNotFollowedByComment = "Operator '{0}' should not be followed by a comment.";
-        private const string MessageFormatPrecededByWhitespace = "Operator '{0}' should be preceded by whitespace.";
-        private const string MessageFormatNotPrecededByWhitespace = "Operator '{0}' should not be preceded by whitespace.";
-        private const string MessageFormatFollowedByWhitespace = "Operator '{0}' should be followed by whitespace.";
-        private const string MessageFormatNotFollowedByWhitespace = "Operator '{0}' should not be followed by whitespace.";
-        private const string MessageFormatNotAtEndOfLine = "Operator '{0}' should not appear at the end of a line.";
-        private const string Description = "The spacing around an operator symbol is incorrect, within a C# code file.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1003.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1003Title), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString MessageFormatNotFollowedByComment = new LocalizableResourceString(nameof(SpacingResources.SA1003MessageFormatNotFollowedByComment), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString MessageFormatPrecededByWhitespace = new LocalizableResourceString(nameof(SpacingResources.SA1003MessageFormatPrecededByWhitespace), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString MessageFormatNotPrecededByWhitespace = new LocalizableResourceString(nameof(SpacingResources.SA1003MessageFormatNotPrecededByWhitespace), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString MessageFormatFollowedByWhitespace = new LocalizableResourceString(nameof(SpacingResources.SA1003MessageFormatFollowedByWhitespace), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString MessageFormatNotFollowedByWhitespace = new LocalizableResourceString(nameof(SpacingResources.SA1003MessageFormatNotFollowedByWhitespace), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString MessageFormatNotAtEndOfLine = new LocalizableResourceString(nameof(SpacingResources.SA1003MessageFormatNotAtEndOfLine), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1003Description), SpacingResources.ResourceManager, typeof(SpacingResources));
 
         private static readonly ImmutableArray<SyntaxKind> BinaryExpressionKinds =
             ImmutableArray.Create(
@@ -312,6 +315,10 @@ namespace StyleCop.Analyzers.SpacingRules
                 mustHaveTrailingWhitespace = !(followingToken.Parent is InterpolationSyntax);
                 break;
 
+            case SyntaxKind.ColonToken:
+                mustHaveTrailingWhitespace = !(followingToken.Parent is InterpolationFormatClauseSyntax);
+                break;
+
             default:
                 mustHaveTrailingWhitespace = true;
                 break;
@@ -340,7 +347,8 @@ namespace StyleCop.Analyzers.SpacingRules
                 && !(castExpression.Parent is CastExpressionSyntax)
                 && !precedingToken.IsKind(SyntaxKind.OpenParenToken)
                 && !precedingToken.IsKind(SyntaxKind.OpenBracketToken)
-                && !(precedingToken.IsKind(SyntaxKind.OpenBraceToken) && (precedingToken.Parent is InterpolationSyntax));
+                && !(precedingToken.IsKind(SyntaxKind.OpenBraceToken) && (precedingToken.Parent is InterpolationSyntax))
+                && !precedingToken.IsKind(SyntaxKindEx.DotDotToken);
 
             var tokenString = castExpression.OpenParenToken.ToString() + castExpression.Type.ToString() + castExpression.CloseParenToken.ToString();
             CheckToken(context, castExpression.OpenParenToken, mustHaveLeadingWhitespace, false, false, tokenString);

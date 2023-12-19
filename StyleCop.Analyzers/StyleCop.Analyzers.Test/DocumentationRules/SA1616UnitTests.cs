@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
@@ -9,7 +11,6 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Test.Verifiers;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1616ElementReturnValueDocumentationMustHaveText>;
 
@@ -445,6 +446,22 @@ public class ClassName
         }
 
         [Fact]
+        [WorkItem(3150, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3150")]
+        public async Task VerifyMemberIncludedMissingFileAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <include file='MissingFile.xml' path='/ClassName/Method/*' />
+    public ClassName Method(string foo, string bar) { return null; }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task VerifyMemberIncludedDocumentationWithoutReturnsAsync()
         {
             var testCode = @"
@@ -531,9 +548,6 @@ public class ClassName
             await VerifyCSharpFixAsync(testCode, expected, testCode, offerEmptyFixer: true, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
-            => VerifyCSharpFixAsync(source, new[] { expected }, fixedSource: null, offerEmptyFixer: false, cancellationToken);
-
         private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
             => VerifyCSharpFixAsync(source, expected, fixedSource: null, offerEmptyFixer: false, cancellationToken);
 
@@ -615,18 +629,10 @@ public class ClassName
                 },
             };
 
-            if (source == fixedSource)
+            if (source == fixedSource && offerEmptyFixer)
             {
-                test.FixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
-                test.FixedState.MarkupHandling = MarkupMode.Allow;
-                test.BatchFixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
-                test.BatchFixedState.MarkupHandling = MarkupMode.Allow;
-
-                if (offerEmptyFixer)
-                {
-                    test.NumberOfIncrementalIterations = 1;
-                    test.NumberOfFixAllIterations = 1;
-                }
+                test.NumberOfIncrementalIterations = 1;
+                test.NumberOfFixAllIterations = 1;
             }
 
             test.ExpectedDiagnostics.AddRange(expected);

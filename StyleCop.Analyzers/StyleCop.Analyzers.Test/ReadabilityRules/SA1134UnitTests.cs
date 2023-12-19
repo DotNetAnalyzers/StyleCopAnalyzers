@@ -1,12 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1134AttributesMustNotShareLine,
@@ -408,6 +409,36 @@ namespace TestNamespace
 ";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that passing an invalid member syntax into the codefix will not change the code.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2894, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2894")]
+        public virtual async Task VerifyInvalidMemberSyntaxInCodeFixAsync()
+        {
+            string testCode = @"class Program
+{
+    static void Main(string[] args)
+    {
+        {
+        }[;]
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                DiagnosticResult.CompilerError("CS1513").WithLocation(6, 10),
+                Diagnostic().WithLocation(6, 10),
+                DiagnosticResult.CompilerError("CS1001").WithLocation(6, 11),
+                DiagnosticResult.CompilerError("CS1001").WithLocation(6, 11),
+                DiagnosticResult.CompilerError("CS1022").WithLocation(8, 1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

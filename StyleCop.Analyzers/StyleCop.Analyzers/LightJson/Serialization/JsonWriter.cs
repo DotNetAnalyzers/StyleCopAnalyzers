@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace LightJson.Serialization
 {
@@ -105,11 +107,6 @@ namespace LightJson.Serialization
             {
                 this.writer.Dispose();
             }
-        }
-
-        private static bool IsValidNumber(double number)
-        {
-            return !(double.IsNaN(number) || double.IsInfinity(number));
         }
 
         private void Initialize()

@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.LayoutRules
 {
@@ -13,6 +15,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -71,6 +74,8 @@ namespace StyleCop.Analyzers.LayoutRules
         internal const string RemoveBlankLinesValue = "RemoveBlankLines";
         internal const string InsertBlankLineValue = "InsertBlankLine";
 
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1516.md";
+
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(LayoutResources.SA1516Title), LayoutResources.ResourceManager, typeof(LayoutResources));
 
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(LayoutResources.SA1516MessageFormat), LayoutResources.ResourceManager, typeof(LayoutResources));
@@ -80,11 +85,10 @@ namespace StyleCop.Analyzers.LayoutRules
         private static readonly LocalizableString MessageFormatOmit = new LocalizableResourceString(nameof(LayoutResources.SA1516MessageFormatOmit), LayoutResources.ResourceManager, typeof(LayoutResources));
         private static readonly LocalizableString DescriptionOmit = new LocalizableResourceString(nameof(LayoutResources.SA1516DescriptionOmit), LayoutResources.ResourceManager, typeof(LayoutResources));
 
-        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1516.md";
-
         private static readonly Action<SyntaxNodeAnalysisContext> TypeDeclarationAction = HandleTypeDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CompilationUnitAction = HandleCompilationUnit;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> NamespaceDeclarationAction = HandleNamespaceDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> FileScopedNamespaceDeclarationAction = HandleFileScopedNamespaceDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> BasePropertyDeclarationAction = HandleBasePropertyDeclaration;
 
         private static readonly ImmutableDictionary<string, string> DiagnosticProperties = ImmutableDictionary<string, string>.Empty.Add(CodeFixActionKey, InsertBlankLineValue);
@@ -122,10 +126,14 @@ namespace StyleCop.Analyzers.LayoutRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
-            context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
-            context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
-            context.RegisterSyntaxNodeAction(BasePropertyDeclarationAction, SyntaxKinds.BasePropertyDeclaration);
+            context.RegisterCompilationStartAction(context =>
+            {
+                context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
+                context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
+                context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
+                context.RegisterSyntaxNodeAction(FileScopedNamespaceDeclarationAction, SyntaxKindEx.FileScopedNamespaceDeclaration);
+                context.RegisterSyntaxNodeAction(BasePropertyDeclarationAction, SyntaxKinds.BasePropertyDeclaration);
+            });
         }
 
         private static void HandleBasePropertyDeclaration(SyntaxNodeAnalysisContext context)
@@ -169,20 +177,77 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             var compilationUnit = (CompilationUnitSyntax)context.Node;
 
+            var externs = compilationUnit.Externs;
             var usings = compilationUnit.Usings;
+            var attributeLists = compilationUnit.AttributeLists;
             var members = compilationUnit.Members;
 
             HandleUsings(context, usings, settings);
             HandleMemberList(context, members);
 
-            if (members.Count > 0 && compilationUnit.Usings.Count > 0)
+            SyntaxNode previousItem = externs.LastOrDefault();
+            if (usings.Any())
             {
-                ReportIfThereIsNoBlankLine(context, usings[usings.Count - 1], members[0]);
+                if (previousItem != null)
+                {
+                    ReportIfThereIsNoBlankLine(context, previousItem, usings[0]);
+                }
+
+                previousItem = usings.Last();
             }
 
-            if (compilationUnit.Usings.Count > 0 && compilationUnit.Externs.Count > 0)
+            if (attributeLists.Any())
             {
-                ReportIfThereIsNoBlankLine(context, compilationUnit.Externs[compilationUnit.Externs.Count - 1], compilationUnit.Usings[0]);
+                if (previousItem != null)
+                {
+                    ReportIfThereIsNoBlankLine(context, previousItem, attributeLists[0]);
+                }
+
+                previousItem = attributeLists.Last();
+            }
+
+            if (members.Any())
+            {
+                if (previousItem != null)
+                {
+                    ReportIfThereIsNoBlankLine(context, previousItem, members[0]);
+                }
+            }
+        }
+
+        private static void HandleFileScopedNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        {
+            var namespaceDeclaration = (BaseNamespaceDeclarationSyntaxWrapper)context.Node;
+
+            var usings = namespaceDeclaration.Usings;
+            var members = namespaceDeclaration.Members;
+
+            HandleUsings(context, usings, settings);
+            HandleMemberList(context, members);
+
+            if (namespaceDeclaration.Externs.Count > 0)
+            {
+                ReportIfThereIsNoBlankLine(context, namespaceDeclaration.Name, namespaceDeclaration.Externs[0]);
+            }
+
+            if (namespaceDeclaration.Usings.Count > 0)
+            {
+                ReportIfThereIsNoBlankLine(context, namespaceDeclaration.Name, namespaceDeclaration.Usings[0]);
+
+                if (namespaceDeclaration.Externs.Count > 0)
+                {
+                    ReportIfThereIsNoBlankLine(context, namespaceDeclaration.Externs[namespaceDeclaration.Externs.Count - 1], namespaceDeclaration.Usings[0]);
+                }
+            }
+
+            if (members.Count > 0)
+            {
+                ReportIfThereIsNoBlankLine(context, namespaceDeclaration.Name, members[0]);
+
+                if (namespaceDeclaration.Usings.Count > 0)
+                {
+                    ReportIfThereIsNoBlankLine(context, usings[usings.Count - 1], members[0]);
+                }
             }
         }
 
@@ -272,6 +337,12 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             for (int i = 1; i < members.Count; i++)
             {
+                // Don't report between global statements
+                if (members[i - 1].IsKind(SyntaxKind.GlobalStatement) && members[i].IsKind(SyntaxKind.GlobalStatement))
+                {
+                    continue;
+                }
+
                 if (!members[i - 1].ContainsDiagnostics && !members[i].ContainsDiagnostics)
                 {
                     // Report if
@@ -345,10 +416,16 @@ namespace StyleCop.Analyzers.LayoutRules
                 return node.GetLeadingTrivia()[0].GetLocation();
             }
 
+            // Prefer the first token which is a direct child, but fall back to the first descendant token
             var firstToken = node.ChildTokens().FirstOrDefault();
-            if (firstToken != default(SyntaxToken))
+            if (firstToken.IsKind(SyntaxKind.None))
             {
-                return node.ChildTokens().First().GetLocation();
+                firstToken = node.GetFirstToken();
+            }
+
+            if (firstToken != default)
+            {
+                return firstToken.GetLocation();
             }
 
             return Location.None;
@@ -358,7 +435,7 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             allTrivia = allTrivia.Where(x => !x.IsKind(SyntaxKind.WhitespaceTrivia));
 
-            SyntaxTrivia previousTrivia = default(SyntaxTrivia);
+            SyntaxTrivia previousTrivia = default;
 
             foreach (var trivia in allTrivia)
             {

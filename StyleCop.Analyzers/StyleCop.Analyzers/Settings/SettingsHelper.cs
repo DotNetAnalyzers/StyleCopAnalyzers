@@ -1,16 +1,22 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Threading;
+    using LightJson;
     using LightJson.Serialization;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -21,9 +27,36 @@ namespace StyleCop.Analyzers
         internal const string SettingsFileName = "stylecop.json";
         internal const string AltSettingsFileName = ".stylecop.json";
 
-        private static readonly SourceTextValueProvider<StyleCopSettings> SettingsValueProvider =
-            new SourceTextValueProvider<StyleCopSettings>(
-                text => GetStyleCopSettings(SettingsFileName, text, DeserializationFailureBehavior.ReturnDefaultSettings));
+        private static SourceTextValueProvider<Lazy<JsonValue>> JsonValueProvider { get; } =
+            new SourceTextValueProvider<Lazy<JsonValue>>(
+                text => ParseJson(text));
+
+        /// <summary>
+        /// Gets the StyleCop settings from the JSON file, i.e. without adding information frmo the .editorconfig.
+        /// </summary>
+        /// <param name="context">The context that will be used to determine the StyleCop settings.</param>
+        /// <param name="cancellationToken">The cancellation token that the operation will observe.</param>
+        /// <returns>A <see cref="SettingsFile"/> instance which contains information about the the StyleCop settings file for the given context.
+        /// Null if no settings file was found.</returns>
+        [SuppressMessage("MicrosoftCodeAnalysisPerformance", "RS1012:Start action has no registered actions", Justification = "This is not a start action")]
+        internal static SettingsFile GetStyleCopSettingsFile(this CompilationStartAnalysisContext context, CancellationToken cancellationToken)
+        {
+            return GetSettingsFile(context.Options, GetJsonValue, cancellationToken);
+
+            Lazy<JsonValue> GetJsonValue(SourceText settingsText)
+            {
+                if (context.TryGetValue(settingsText, JsonValueProvider, out var settingsFile))
+                {
+                    return settingsFile;
+                }
+                else
+                {
+                    // This should never happen, since the Lazy<> instance can always be created, but parse it normally if it does
+                    Debug.Assert(false, "Could not get settings through cache");
+                    return ParseJson(settingsText);
+                }
+            }
+        }
 
         /// <summary>
         /// Gets the StyleCop settings.
@@ -33,11 +66,28 @@ namespace StyleCop.Analyzers
         /// deserializing the settings file, a default settings instance is returned.</para>
         /// </remarks>
         /// <param name="context">The context that will be used to determine the StyleCop settings.</param>
+        /// <param name="settingsFile">Information about the StyleCop settings file.</param>
+        /// <returns>A <see cref="StyleCopSettings"/> instance that represents the StyleCop settings for the given context.</returns>
+        internal static StyleCopSettings GetStyleCopSettings(this SyntaxTreeAnalysisContext context, SettingsFile settingsFile)
+        {
+            return GetSettings(context.Options, context.Tree, settingsFile, DeserializationFailureBehavior.ReturnDefaultSettings);
+        }
+
+        /// <summary>
+        /// Gets the StyleCop settings.
+        /// </summary>
+        /// <remarks>
+        /// <para>If a <see cref="JsonParseException"/> or <see cref="InvalidSettingsException"/> occurs while
+        /// deserializing the settings file, a default settings instance is returned.</para>
+        /// <para>Note that this method does not use the cache.</para>
+        /// </remarks>
+        /// <param name="context">The context that will be used to determine the StyleCop settings.</param>
         /// <param name="cancellationToken">The cancellation token that the operation will observe.</param>
         /// <returns>A <see cref="StyleCopSettings"/> instance that represents the StyleCop settings for the given context.</returns>
         internal static StyleCopSettings GetStyleCopSettings(this SyntaxTreeAnalysisContext context, CancellationToken cancellationToken)
         {
-            return context.Options.GetStyleCopSettings(cancellationToken);
+            var settingsFile = GetSettingsFile(context.Options, ParseJson, cancellationToken);
+            return GetSettings(context.Options, context.Tree, settingsFile, DeserializationFailureBehavior.ReturnDefaultSettings);
         }
 
         /// <summary>
@@ -47,25 +97,59 @@ namespace StyleCop.Analyzers
         /// <para>If a <see cref="JsonParseException"/> or <see cref="InvalidSettingsException"/> occurs while
         /// deserializing the settings file, a default settings instance is returned.</para>
         /// </remarks>
-        /// <param name="options">The analyzer options that will be used to determine the StyleCop settings.</param>
-        /// <param name="cancellationToken">The cancellation token that the operation will observe.</param>
+        /// <param name="context">The context that will be used to determine the StyleCop settings.</param>
+        /// <param name="settingsFile">The contents of the StyleCop settnigs file.</param>
         /// <returns>A <see cref="StyleCopSettings"/> instance that represents the StyleCop settings for the given context.</returns>
-        internal static StyleCopSettings GetStyleCopSettings(this AnalyzerOptions options, CancellationToken cancellationToken)
+        internal static StyleCopSettings GetStyleCopSettings(this SyntaxNodeAnalysisContext context, SettingsFile settingsFile)
         {
-            return GetStyleCopSettings(options, DeserializationFailureBehavior.ReturnDefaultSettings, cancellationToken);
+            return GetSettings(context.Options, context.Node.SyntaxTree, settingsFile, DeserializationFailureBehavior.ReturnDefaultSettings);
         }
 
         /// <summary>
         /// Gets the StyleCop settings.
         /// </summary>
+        /// <remarks>
+        /// <para>If a <see cref="JsonParseException"/> or <see cref="InvalidSettingsException"/> occurs while
+        /// deserializing the settings file, a default settings instance is returned.</para>
+        /// <para>Note that this method does not use the cache.</para>
+        /// </remarks>
         /// <param name="options">The analyzer options that will be used to determine the StyleCop settings.</param>
+        /// <param name="tree">The syntax tree.</param>
+        /// <param name="cancellationToken">The cancellation token that the operation will observe.</param>
+        /// <returns>A <see cref="StyleCopSettings"/> instance that represents the StyleCop settings for the given context.</returns>
+        internal static StyleCopSettings GetStyleCopSettings(this AnalyzerOptions options, SyntaxTree tree, CancellationToken cancellationToken)
+        {
+            var settingsFile = GetSettingsFile(options, ParseJson, cancellationToken);
+            return GetSettings(options, tree, settingsFile, DeserializationFailureBehavior.ReturnDefaultSettings);
+        }
+
+        /// <summary>
+        /// Gets the StyleCop settings.
+        /// </summary>
+        /// <param name="context">The context that will be used to determine the StyleCop settings.</param>
+        /// <param name="tree">The syntax tree.</param>
         /// <param name="failureBehavior">The behavior of the method when a <see cref="JsonParseException"/> or
         /// <see cref="InvalidSettingsException"/> occurs while deserializing the settings file.</param>
         /// <param name="cancellationToken">The cancellation token that the operation will observe.</param>
         /// <returns>A <see cref="StyleCopSettings"/> instance that represents the StyleCop settings for the given context.</returns>
-        internal static StyleCopSettings GetStyleCopSettings(this AnalyzerOptions options, DeserializationFailureBehavior failureBehavior, CancellationToken cancellationToken)
+        internal static StyleCopSettings GetStyleCopSettings(this CompilationAnalysisContext context, SyntaxTree tree, DeserializationFailureBehavior failureBehavior, CancellationToken cancellationToken)
         {
-            return GetStyleCopSettings(options != null ? options.AdditionalFiles : ImmutableArray.Create<AdditionalText>(), failureBehavior, cancellationToken);
+            var settingsFile = GetSettingsFile(context.Options, GetJsonValue, cancellationToken);
+            return GetSettings(context.Options, tree, settingsFile, failureBehavior);
+
+            Lazy<JsonValue> GetJsonValue(SourceText settingsText)
+            {
+                if (context.TryGetValue(settingsText, JsonValueProvider, out var settingsFile))
+                {
+                    return settingsFile;
+                }
+                else
+                {
+                    // This should never happen, since the Lazy<> instance can always be created, but parse it normally if it does
+                    Debug.Assert(false, "Could not get settings through cache");
+                    return ParseJson(settingsText);
+                }
+            }
         }
 
         /// <summary>
@@ -87,81 +171,44 @@ namespace StyleCop.Analyzers
                 || string.Equals(fileName, AltSettingsFileName, StringComparison.OrdinalIgnoreCase);
         }
 
-        internal static StyleCopSettings GetStyleCopSettings(this AnalysisContext context, AnalyzerOptions options, CancellationToken cancellationToken)
+        private static StyleCopSettings GetSettings(AnalyzerOptions options, SyntaxTree tree, SettingsFile settingsFile, DeserializationFailureBehavior failureBehavior)
         {
-            return GetStyleCopSettings(context, options, DeserializationFailureBehavior.ReturnDefaultSettings, cancellationToken);
-        }
-
-        internal static StyleCopSettings GetStyleCopSettings(this AnalysisContext context, AnalyzerOptions options, DeserializationFailureBehavior failureBehavior, CancellationToken cancellationToken)
-        {
-            string settingsFilePath;
-            SourceText text = TryGetStyleCopSettingsText(options, cancellationToken, out settingsFilePath);
-            if (text == null)
+            if (settingsFile != null)
             {
-                return new StyleCopSettings();
+                return CreateSettingsObjectFromFile(options, tree, settingsFile, failureBehavior);
             }
 
-            if (failureBehavior == DeserializationFailureBehavior.ReturnDefaultSettings)
+            // TODO: Can this really be null? Review when nullable references has been enabled
+            if (tree != null)
             {
-                StyleCopSettings settings;
-                if (!context.TryGetValue(text, SettingsValueProvider, out settings))
-                {
-                    return new StyleCopSettings();
-                }
-
-                return settings;
+                var analyzerConfigOptions = options.AnalyzerConfigOptionsProvider().GetOptions(tree);
+                return new StyleCopSettings(new JsonObject(), analyzerConfigOptions);
             }
 
-            return GetStyleCopSettings(settingsFilePath, text, failureBehavior);
+            return new StyleCopSettings();
         }
 
-        internal static StyleCopSettings GetStyleCopSettings(this CompilationStartAnalysisContext context, AnalyzerOptions options, CancellationToken cancellationToken)
+        private static StyleCopSettings CreateSettingsObjectFromFile(AnalyzerOptions options, SyntaxTree tree, SettingsFile settingsFile, DeserializationFailureBehavior failureBehavior)
         {
-            return GetStyleCopSettings(context, options, DeserializationFailureBehavior.ReturnDefaultSettings, cancellationToken);
-        }
+            var analyzerConfigOptions = options.AnalyzerConfigOptionsProvider().GetOptions(tree);
 
-#pragma warning disable RS1012 // Start action has no registered actions.
-        internal static StyleCopSettings GetStyleCopSettings(this CompilationStartAnalysisContext context, AnalyzerOptions options, DeserializationFailureBehavior failureBehavior, CancellationToken cancellationToken)
-#pragma warning restore RS1012 // Start action has no registered actions.
-        {
-            string settingsFilePath;
-            SourceText text = TryGetStyleCopSettingsText(options, cancellationToken, out settingsFilePath);
-            if (text == null)
-            {
-                return new StyleCopSettings();
-            }
-
-            if (failureBehavior == DeserializationFailureBehavior.ReturnDefaultSettings)
-            {
-                StyleCopSettings settings;
-                if (!context.TryGetValue(text, SettingsValueProvider, out settings))
-                {
-                    return new StyleCopSettings();
-                }
-
-                return settings;
-            }
-
-            return GetStyleCopSettings(settingsFilePath, text, failureBehavior);
-        }
-
-        private static StyleCopSettings GetStyleCopSettings(string path, SourceText text, DeserializationFailureBehavior failureBehavior)
-        {
             try
             {
-                var rootValue = JsonReader.Parse(text.ToString());
+                // If the file was accessed through the cache, this statement will re-throw any exceptions from when parsing the file
+                var rootValue = settingsFile.Content.Value;
+
                 if (!rootValue.IsJsonObject)
                 {
                     throw new JsonParseException(
-                        $"Settings file at '{path}' was missing or empty.",
+                        $"Settings file at '{settingsFile.FilePath}' was missing or empty.",
                         JsonParseException.ErrorType.InvalidOrUnexpectedCharacter,
-                        default(TextPosition));
+                        default);
                 }
 
                 var settingsObject = rootValue.AsJsonObject["settings"];
                 if (settingsObject.IsJsonObject)
                 {
-                    return new StyleCopSettings(settingsObject.AsJsonObject);
+                    return new StyleCopSettings(settingsObject.AsJsonObject, analyzerConfigOptions);
                 }
                 else if (settingsObject.IsNull)
                 {
@@ -182,35 +229,38 @@ namespace StyleCop.Analyzers
             return new StyleCopSettings();
         }
 
-        private static SourceText TryGetStyleCopSettingsText(this AnalyzerOptions options, CancellationToken cancellationToken, out string settingsFilePath)
+        private static SettingsFile GetSettingsFile(AnalyzerOptions options, Func<SourceText, Lazy<JsonValue>> getJsonValue, CancellationToken cancellationToken)
         {
-            foreach (var additionalFile in options.AdditionalFiles)
-            {
-                if (IsStyleCopSettingsFile(additionalFile.Path))
-                {
-                    settingsFilePath = additionalFile.Path;
-
-                    return additionalFile.GetText(cancellationToken);
-                }
-            }
-
-            settingsFilePath = null;
-
-            return null;
-        }
-
-        private static StyleCopSettings GetStyleCopSettings(ImmutableArray<AdditionalText> additionalFiles, DeserializationFailureBehavior failureBehavior, CancellationToken cancellationToken)
-        {
+            var additionalFiles = options != null ? options.AdditionalFiles : ImmutableArray.Create<AdditionalText>();
             foreach (var additionalFile in additionalFiles)
             {
                 if (IsStyleCopSettingsFile(additionalFile.Path))
                 {
                     SourceText additionalTextContent = additionalFile.GetText(cancellationToken);
-                    return GetStyleCopSettings(additionalFile.Path, additionalTextContent, failureBehavior);
+                    var content = getJsonValue(additionalTextContent);
+                    return new SettingsFile(additionalFile.Path, content);
                 }
             }
 
-            return new StyleCopSettings();
+            return null;
+        }
+
+        private static Lazy<JsonValue> ParseJson(SourceText text)
+        {
+            return new Lazy<JsonValue>(() => JsonReader.Parse(text.ToString()));
+        }
+
+        public class SettingsFile
+        {
+            public SettingsFile(string filePath, Lazy<JsonValue> content)
+            {
+                this.FilePath = filePath;
+                this.Content = content;
+            }
+
+            public string FilePath { get; }
+
+            public Lazy<JsonValue> Content { get; }
         }
     }
 }

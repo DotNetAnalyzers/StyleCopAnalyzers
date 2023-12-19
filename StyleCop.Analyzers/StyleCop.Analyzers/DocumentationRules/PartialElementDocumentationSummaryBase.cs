@@ -1,10 +1,11 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Xml.Linq;
@@ -21,8 +22,6 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     internal abstract class PartialElementDocumentationSummaryBase : DiagnosticAnalyzer
     {
-        private static readonly XElement EmptyElement = new XElement("empty");
-
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> typeDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> methodDeclarationAction;
 
@@ -38,8 +37,11 @@ namespace StyleCop.Analyzers.DocumentationRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxNodeAction(this.typeDeclarationAction, SyntaxKinds.TypeDeclaration);
-            context.RegisterSyntaxNodeAction(this.methodDeclarationAction, SyntaxKind.MethodDeclaration);
+            context.RegisterCompilationStartAction(context =>
+            {
+                context.RegisterSyntaxNodeAction(this.typeDeclarationAction, SyntaxKinds.TypeDeclaration);
+                context.RegisterSyntaxNodeAction(this.methodDeclarationAction, SyntaxKind.MethodDeclaration);
+            });
         }
 
         /// <summary>
@@ -168,9 +170,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var sb = new StringBuilder();
 
-            sb.AppendLine("<member>");
-
-            var documentationChildren = new List<XElement>();
+            sb.Append("<member>\n");
 
             foreach (XmlNodeSyntax xmlNode in documentCommentTrivia.Content)
             {
@@ -180,11 +180,11 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
                 else
                 {
-                    sb.AppendLine(xmlNode.ToString());
+                    sb.Append(xmlNode.ToString()).Append('\n');
                 }
             }
 
-            sb.AppendLine("</member>");
+            sb.Append("</member>\n");
 
             return sb.ToString();
         }
@@ -212,7 +212,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                             foreach (var x in expandedInclude)
                             {
-                                sb.AppendLine(x.ToString());
+                                sb.Append(x.ToString()).Append('\n');
                             }
                         }
                     }

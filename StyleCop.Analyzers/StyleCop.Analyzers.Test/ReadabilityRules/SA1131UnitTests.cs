@@ -1,12 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1131UseReadableConditions,
@@ -506,6 +507,82 @@ public class TypeName
                 Diagnostic().WithLocation(9, 23),
             };
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("Method1", "arg", true)]
+        [InlineData("Method2", "arg", true)]
+        [InlineData("Method1", "field1", true)]
+        [InlineData("Method2", "field1", true)]
+        [InlineData("Method1", "field2", true)]
+        [InlineData("Method2", "field2", true)]
+        [InlineData("Const1", "Method1", false)]
+        [InlineData("Const1", "Method2", false)]
+        [InlineData("Method1", "Const1", false)]
+        [InlineData("Method2", "Const1", false)]
+        [WorkItem(3677, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3677")]
+        public async Task TestMethodsAsync(string expr1, string expr2, bool shouldTrigger)
+        {
+            var testExpr = $"{expr1} == {expr2}";
+            var testCode = $@"
+using System;
+
+public class TestClass
+{{
+    private static readonly Action Const1 = Method1;
+
+    private Action field1 = Method1;
+    private readonly Action field2 = Method1;
+
+    public bool TestMethod(Action arg)
+    {{
+        return {(shouldTrigger ? $"[|{testExpr}|]" : testExpr)};
+    }}
+
+    private static void Method1()
+    {{
+    }}
+
+    private void Method2()
+    {{
+    }}
+}}
+";
+
+            var fixedExpr = $"{expr2} == {expr1}";
+            var fixedCode = $@"
+using System;
+
+public class TestClass
+{{
+    private static readonly Action Const1 = Method1;
+
+    private Action field1 = Method1;
+    private readonly Action field2 = Method1;
+
+    public bool TestMethod(Action arg)
+    {{
+        return {fixedExpr};
+    }}
+
+    private static void Method1()
+    {{
+    }}
+
+    private void Method2()
+    {{
+    }}
+}}
+";
+
+            if (shouldTrigger)
+            {
+                await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            }
+            else
+            {
+                await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            }
         }
     }
 }

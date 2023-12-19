@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.SpacingRules
 {
@@ -10,6 +12,7 @@ namespace StyleCop.Analyzers.SpacingRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A closing square bracket within a C# statement is not spaced correctly.
@@ -33,10 +36,10 @@ namespace StyleCop.Analyzers.SpacingRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1011";
-        private const string Title = "Closing square brackets should be spaced correctly";
-        private const string MessageFormat = "Closing square bracket should{0} be {1} by a space.";
-        private const string Description = "A closing square bracket within a C# statement is not spaced correctly.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1011.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1011Title), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpacingResources.SA1011MessageFormat), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1011Description), SpacingResources.ResourceManager, typeof(SpacingResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -104,11 +107,19 @@ namespace StyleCop.Analyzers.SpacingRules
                 case SyntaxKind.OpenBracketToken:
                 case SyntaxKind.CloseParenToken:
                 case SyntaxKind.MinusGreaterThanToken:
+                case SyntaxKindEx.DotDotToken:
                     precedesSpecialCharacter = true;
                     break;
+
+                case SyntaxKind.ExclamationToken:
                 case SyntaxKind.PlusPlusToken:
                 case SyntaxKind.MinusMinusToken:
                     precedesSpecialCharacter = true;
+                    suppressFollowingSpaceError = false;
+                    break;
+
+                case SyntaxKind.LessThanToken:
+                    precedesSpecialCharacter = token.Parent.IsKind(SyntaxKindEx.FunctionPointerUnmanagedCallingConventionList);
                     suppressFollowingSpaceError = false;
                     break;
 
@@ -117,7 +128,7 @@ namespace StyleCop.Analyzers.SpacingRules
                     break;
 
                 case SyntaxKind.QuestionToken:
-                    precedesSpecialCharacter = nextToken.Parent.IsKind(SyntaxKind.ConditionalAccessExpression);
+                    precedesSpecialCharacter = nextToken.Parent.IsKind(SyntaxKind.ConditionalAccessExpression) || nextToken.Parent.IsKind(SyntaxKind.NullableType);
                     break;
 
                 case SyntaxKind.CloseBraceToken:
@@ -125,7 +136,9 @@ namespace StyleCop.Analyzers.SpacingRules
                     break;
 
                 case SyntaxKind.ColonToken:
-                    precedesSpecialCharacter = nextToken.Parent.IsKind(SyntaxKind.InterpolationFormatClause);
+                    precedesSpecialCharacter =
+                        nextToken.Parent.IsKind(SyntaxKind.InterpolationFormatClause) ||
+                        nextToken.Parent.IsKind(SyntaxKindEx.CasePatternSwitchLabel);
                     suppressFollowingSpaceError = false;
                     break;
 

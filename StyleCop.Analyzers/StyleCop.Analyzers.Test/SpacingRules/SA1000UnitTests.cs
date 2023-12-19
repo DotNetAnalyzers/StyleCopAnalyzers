@@ -1,13 +1,15 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1000KeywordsMustBeSpacedCorrectly,
@@ -931,12 +933,12 @@ class ClassName
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected Task TestKeywordStatementAsync(string statement, DiagnosticResult expected, string fixedStatement, string returnType = "void", bool asyncMethod = false)
+        protected Task TestKeywordStatementAsync(string statement, DiagnosticResult expected, string fixedStatement, string returnType = "void", bool asyncMethod = false, LanguageVersion? languageVersion = default)
         {
-            return this.TestKeywordStatementAsync(statement, new[] { expected }, fixedStatement, returnType, asyncMethod);
+            return this.TestKeywordStatementAsync(statement, new[] { expected }, fixedStatement, returnType, asyncMethod, languageVersion);
         }
 
-        protected async Task TestKeywordStatementAsync(string statement, DiagnosticResult[] expected, string fixedStatement, string returnType = "void", bool asyncMethod = false)
+        protected async Task TestKeywordStatementAsync(string statement, DiagnosticResult[] expected, string fixedStatement, string returnType = "void", bool asyncMethod = false, LanguageVersion? languageVersion = default)
         {
             string testCodeFormat = @"
 using System;
@@ -962,14 +964,7 @@ namespace Namespace
             string testCode = string.Format(testCodeFormat, asyncModifier, statement, unsafeModifier, awaitMethod, returnType);
             string fixedTest = string.Format(testCodeFormat, asyncModifier, fixedStatement, unsafeModifier, awaitMethod, returnType);
 
-            var test = new CSharpTest
-            {
-                TestCode = testCode,
-                FixedCode = fixedTest,
-            };
-
-            test.ExpectedDiagnostics.AddRange(expected);
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(languageVersion, testCode, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
         }
 
         private Task TestKeywordDeclarationAsync(string statement, DiagnosticResult expected, string fixedStatement)

@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.LayoutRules
 {
@@ -78,6 +80,9 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode syntaxRoot, Diagnostic diagnostic, bool insertBlankLine, CancellationToken cancellationToken)
         {
+            // Currently unused
+            _ = cancellationToken;
+
             var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
             node = GetRelevantNode(node);
 
@@ -138,6 +143,16 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
 
                 if (currentNode is AccessorDeclarationSyntax)
+                {
+                    return currentNode;
+                }
+
+                if (currentNode is AttributeListSyntax)
+                {
+                    return currentNode;
+                }
+
+                if (currentNode is ExternAliasDirectiveSyntax)
                 {
                     return currentNode;
                 }

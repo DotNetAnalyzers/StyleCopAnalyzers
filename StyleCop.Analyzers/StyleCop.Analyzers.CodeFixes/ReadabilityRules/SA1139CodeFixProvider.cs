@@ -1,9 +1,10 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
@@ -14,7 +15,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
@@ -44,10 +44,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
             return SpecializedTasks.CompletedTask;
         }
 
+        /// <inheritdoc/>
+        public override FixAllProvider GetFixAllProvider()
+            => CustomFixAllProviders.BatchFixer;
+
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var oldSemanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
             if (!(syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) is CastExpressionSyntax node))
             {
@@ -68,9 +71,18 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 (LiteralExpressionSyntax)plusMinusSyntax.Operand.WalkDownParentheses();
             var typeToken = node.Type.GetFirstToken();
             var replacementLiteral = literalExpressionSyntax.WithLiteralSuffix(typeToken.Kind());
+
+            var newLeadingTrivia = SyntaxFactory.TriviaList(node.GetLeadingTrivia().Concat(node.CloseParenToken.TrailingTrivia).Concat(node.Expression.GetLeadingTrivia()))
+                .WithoutLeadingWhitespace()
+                .WithoutTrailingWhitespace();
+
+            if (newLeadingTrivia.Count != 0)
+            {
+                newLeadingTrivia = newLeadingTrivia.Add(SyntaxFactory.Space);
+            }
+
             var replacementNode = node.Expression.ReplaceNode(literalExpressionSyntax, replacementLiteral)
-                .WithLeadingTrivia(node.GetLeadingTrivia().Concat(node.CloseParenToken.TrailingTrivia).Concat(node.Expression.GetLeadingTrivia()))
-                .WithTrailingTrivia(node.Expression.GetTrailingTrivia().Concat(node.GetTrailingTrivia()));
+                .WithLeadingTrivia(newLeadingTrivia);
 
             return replacementNode;
         }

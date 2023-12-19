@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
@@ -58,10 +60,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1408";
-        private const string Title = "Conditional expressions should declare precedence";
-        private const string MessageFormat = "Conditional expressions should declare precedence";
-        private const string Description = "A C# statement contains a complex conditional expression which omits parenthesis around operators.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1408.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(MaintainabilityResources.SA1408Title), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(MaintainabilityResources.SA1408MessageFormat), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(MaintainabilityResources.SA1408Description), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

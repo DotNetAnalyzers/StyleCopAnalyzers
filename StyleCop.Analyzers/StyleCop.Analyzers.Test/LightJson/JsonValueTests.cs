@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.LightJson
 {
@@ -308,7 +310,7 @@ namespace StyleCop.Analyzers.Test.LightJson
         [Fact]
         public void TestOpInequality()
         {
-            Assert.False(JsonValue.Null != default(JsonValue));
+            Assert.False(JsonValue.Null != default);
             Assert.True(new JsonValue(true) != new JsonValue(0));
         }
 

@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
@@ -10,7 +12,6 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using StyleCop.Analyzers.OrderingRules;
     using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.Test.Verifiers;
-    using TestHelper;
     using Xunit;
 
     /// <summary>
@@ -19,7 +20,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     /// </summary>
     public class SA1200OutsideNamespaceUnitTests
     {
-        private const string TestSettings = @"
+        protected const string TestSettings = @"
 {
   ""settings"": {
     ""orderingRules"": {
@@ -235,7 +236,7 @@ namespace TestNamespace
         public async Task TestFileHeaderIsProperlyPreservedWhenMovingUsingStatementsAsync()
         {
             var testCode = @"// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace TestNamespace
 {
@@ -243,7 +244,7 @@ namespace TestNamespace
 }
 ";
             var fixedTestCode = @"// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using System;
 
@@ -264,7 +265,7 @@ namespace TestNamespace
         public async Task TestFileHeaderIsProperlyPreservedWhenMovingUsingStatementsWithCommentsAsync()
         {
             var testCode = @"// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace TestNamespace
 {
@@ -276,7 +277,7 @@ namespace TestNamespace
 }
 ";
             var fixedTestCode = @"// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 // Separated Comment
 
@@ -298,10 +299,60 @@ namespace TestNamespace
             await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private static DiagnosticResult Diagnostic(DiagnosticDescriptor descriptor)
+        [Fact]
+        [WorkItem(2928, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2928")]
+        public async Task TestMovingValueTupleAliasOutsideAsync()
+        {
+            var testCode = @"using System;
+
+namespace MyNamespace
+{
+    using QuotesRange = ValueTuple<QuoteType, DateTime, DateTime>;
+
+    public class QuoteType
+    {
+    }
+
+    public class UseClass
+    {
+        private void Test()
+        {
+            QuotesRange t;
+        }
+    }
+}
+";
+            var fixedTestCode = @"using System;
+using QuotesRange = System.ValueTuple<MyNamespace.QuoteType, System.DateTime, System.DateTime>;
+
+namespace MyNamespace
+{
+    public class QuoteType
+    {
+    }
+
+    public class UseClass
+    {
+        private void Test()
+        {
+            QuotesRange t;
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(5, 5),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected static DiagnosticResult Diagnostic(DiagnosticDescriptor descriptor)
             => StyleCopCodeFixVerifier<SA1200UsingDirectivesMustBePlacedCorrectly, UsingCodeFixProvider>.Diagnostic(descriptor);
 
-        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        protected static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
             var test = new StyleCopCodeFixVerifier<SA1200UsingDirectivesMustBePlacedCorrectly, UsingCodeFixProvider>.CSharpTest
             {
@@ -313,7 +364,7 @@ namespace TestNamespace
             return test.RunAsync(cancellationToken);
         }
 
-        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
+        protected static Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
         {
             var test = new StyleCopCodeFixVerifier<SA1200UsingDirectivesMustBePlacedCorrectly, UsingCodeFixProvider>.CSharpTest
             {

@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
@@ -7,7 +9,6 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1018NullableTypeSymbolsMustNotBePrecededBySpace,
@@ -128,12 +129,17 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 ?
 ";
 
-            DiagnosticResult[] expected =
+            var expected = this.GetExpectedResultSyntaxErrorAtEndOfFile();
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultSyntaxErrorAtEndOfFile()
+        {
+            return new[]
             {
                 DiagnosticResult.CompilerError("CS1031").WithMessage("Type expected").WithLocation(10, 2),
             };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

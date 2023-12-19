@@ -70,6 +70,9 @@
   <Rules AnalyzerId="Microsoft.CodeAnalysis.CSharp.Analyzers" RuleNamespace="Microsoft.CodeAnalysis.CSharp.Analyzers">
     <Rule Id="RS1022" Action="None" /> <!-- https://github.com/dotnet/roslyn-analyzers/issues/1803 -->
   </Rules>
+  <Rules AnalyzerId="Microsoft.CodeAnalysis.CSharp.CodeStyle" RuleNamespace="Microsoft.CodeAnalysis.CSharp.CodeStyle">
+    <Rule Id="IDE0055" Action="Warning" />
+  </Rules>
   <Rules AnalyzerId="Microsoft.CodeAnalysis.CSharp.Features" RuleNamespace="Microsoft.CodeAnalysis.CSharp.Features">
     <Rule Id="IDE0003" Action="None" />
   </Rules>
@@ -77,6 +80,7 @@
     <Rule Id="SA1305" Action="Warning" />
     <Rule Id="SA1412" Action="Warning" />
     <Rule Id="SA1600" Action="None" />
+    <Rule Id="SA1601" Action="None" />
     <Rule Id="SA1609" Action="Warning" />
   </Rules>
   <Rules AnalyzerId="DocumentationAnalyzers" RuleNamespace="DocumentationAnalyzers">

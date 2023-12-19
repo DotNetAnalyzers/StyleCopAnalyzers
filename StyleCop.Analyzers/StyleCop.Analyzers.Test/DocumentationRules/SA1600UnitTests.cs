@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
@@ -8,9 +10,11 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
-    using StyleCop.Analyzers.Test.Verifiers;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1600ElementsMustBeDocumented>;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.DocumentationRules.SA1600ElementsMustBeDocumented,
+        StyleCop.Analyzers.DocumentationRules.SA1600CodeFixProvider>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1600ElementsMustBeDocumented"/>.
@@ -20,12 +24,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         protected virtual LanguageVersion LanguageVersion => LanguageVersion.CSharp6;
 
         [Theory]
-        [InlineData("public string TestMember;", 15)]
-        [InlineData("public string TestMember { get; set; }", 15)]
-        [InlineData("public void TestMember() { }", 13)]
-        [InlineData("public string this[int a] { get { return \"a\"; } set { } }", 15)]
-        [InlineData("public event EventHandler TestMember { add { } remove { } }", 27)]
-        public async Task TestRegressionMethodGlobalNamespaceAsync(string code, int column)
+        [InlineData("public string {|#0:TestMember|};")]
+        [InlineData("public string {|#0:TestMember|} { get; set; }")]
+        [InlineData("public void {|#0:TestMember|}() { }")]
+        [InlineData("public string {|#0:this|}[int a] { get { return \"a\"; } set { } }")]
+        [InlineData("public event EventHandler {|#0:TestMember|} { add { } remove { } }")]
+        public async Task TestRegressionMethodGlobalNamespaceAsync(string code)
         {
             // This test is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1416
             var testCode = $@"
@@ -33,61 +37,23 @@ using System;
 
 {code}";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS0116").WithMessage("A namespace cannot directly contain members such as fields or methods").WithLocation(4, column),
-                Diagnostic().WithLocation(4, column),
-            };
-
+            var expected = this.GetExpectedResultTestRegressionMethodGlobalNamespace(code);
             await VerifyCSharpDiagnosticAsync(this.LanguageVersion, testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestClassWithoutDocumentationAsync()
+        [Theory]
+        [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestBaseTypeWithoutDocumentationAsync(string type)
         {
-            await this.TestTypeWithoutDocumentationAsync("class", false).ConfigureAwait(false);
+            var isInterface = type == "interface";
+            await this.TestTypeWithoutDocumentationAsync(type, isInterface).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestStructWithoutDocumentationAsync()
+        [Theory]
+        [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestBaseTypeWithDocumentationAsync(string type)
         {
-            await this.TestTypeWithoutDocumentationAsync("struct", false).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestEnumWithoutDocumentationAsync()
-        {
-            await this.TestTypeWithoutDocumentationAsync("enum", false).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestInterfaceWithoutDocumentationAsync()
-        {
-            await this.TestTypeWithoutDocumentationAsync("interface", true).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestClassWithDocumentationAsync()
-        {
-            await this.TestTypeWithDocumentationAsync("class").ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestStructWithDocumentationAsync()
-        {
-            await this.TestTypeWithDocumentationAsync("struct").ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestEnumWithDocumentationAsync()
-        {
-            await this.TestTypeWithDocumentationAsync("enum").ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestInterfaceWithDocumentationAsync()
-        {
-            await this.TestTypeWithDocumentationAsync("interface").ConfigureAwait(false);
+            await this.TestTypeWithDocumentationAsync(type).ConfigureAwait(false);
         }
 
         [Fact]
@@ -612,14 +578,18 @@ public struct Test2
 }
 ";
 
-            DiagnosticResult[] expectedResults =
+            await new CSharpTest(this.LanguageVersion)
             {
-                Diagnostic().WithLocation(7, 12),
-                Diagnostic().WithLocation(11, 12),
-                Diagnostic().WithLocation(21, 12),
-            };
-
-            await VerifyCSharpFixAsync(this.LanguageVersion, testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(7, 12),
+                    Diagnostic().WithLocation(11, 12),
+                    Diagnostic().WithLocation(21, 12),
+                },
+                FixedCode = fixedTestCode,
+                DisabledDiagnostics = { "CS1591" },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -656,12 +626,16 @@ public class TestClass
 }
 ";
 
-            DiagnosticResult[] expectedResults =
+            await new CSharpTest(this.LanguageVersion)
             {
-                Diagnostic().WithLocation(7, 6),
-            };
-
-            await VerifyCSharpFixAsync(this.LanguageVersion, testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(7, 6),
+                },
+                FixedCode = fixedTestCode,
+                DisabledDiagnostics = { "CS1591" },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -688,13 +662,17 @@ public class TestClass
 }
 ";
 
-            DiagnosticResult[] expectedResults =
+            await new CSharpTest(this.LanguageVersion)
             {
-                Diagnostic().WithLocation(7, 17),
-                Diagnostic().WithLocation(11, 16),
-            };
-
-            await VerifyCSharpFixAsync(this.LanguageVersion, testCode, expectedResults, testCode, CancellationToken.None).ConfigureAwait(false);
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(7, 17),
+                    Diagnostic().WithLocation(11, 16),
+                },
+                FixedCode = testCode,
+                DisabledDiagnostics = { "CS1591" },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -819,17 +797,21 @@ public {typeKeyword} Test
 }}
 ";
 
-            DiagnosticResult[] expectedResults =
+            await new CSharpTest(this.LanguageVersion)
             {
-                Diagnostic().WithLocation(9, 17),
-                Diagnostic().WithLocation(14, 22),
-                Diagnostic().WithLocation(19, 20),
-                Diagnostic().WithLocation(24, 17),
-                Diagnostic().WithLocation(29, 22),
-                Diagnostic().WithLocation(34, 20),
-            };
-
-            await VerifyCSharpFixAsync(this.LanguageVersion, testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(9, 17),
+                    Diagnostic().WithLocation(14, 22),
+                    Diagnostic().WithLocation(19, 20),
+                    Diagnostic().WithLocation(24, 17),
+                    Diagnostic().WithLocation(29, 22),
+                    Diagnostic().WithLocation(34, 20),
+                },
+                FixedCode = fixedTestCode,
+                DisabledDiagnostics = { "CS1591" },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         protected async Task TestTypeDeclarationDocumentationAsync(string type, string modifiers, bool requiresDiagnostic, bool hasDocumentation)
@@ -1332,6 +1314,7 @@ public class OuterClass
             {
                 TestCode = string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers),
                 Settings = testSettings,
+                DisabledDiagnostics = { "CS1591" },
             };
 
             if (requiresDiagnostic)
@@ -1371,6 +1354,15 @@ public class OuterClass
             await VerifyCSharpDiagnosticAsync(this.LanguageVersion, string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        protected virtual DiagnosticResult[] GetExpectedResultTestRegressionMethodGlobalNamespace(string code)
+        {
+            return new[]
+            {
+                DiagnosticResult.CompilerError("CS0116").WithMessage("A namespace cannot directly contain members such as fields or methods").WithLocation(0),
+                Diagnostic().WithLocation(0),
+            };
+        }
+
         protected virtual async Task TestTypeWithoutDocumentationAsync(string type, bool isInterface)
         {
             await this.TestTypeDeclarationDocumentationAsync(type, string.Empty, true, false).ConfigureAwait(false);
@@ -1397,52 +1389,6 @@ public class OuterClass
             await this.TestNestedTypeDeclarationDocumentationAsync(type, "internal", false, true).ConfigureAwait(false);
             await this.TestNestedTypeDeclarationDocumentationAsync(type, "protected internal", false, true).ConfigureAwait(false);
             await this.TestNestedTypeDeclarationDocumentationAsync(type, "public", false, true).ConfigureAwait(false);
-        }
-
-        private static Task VerifyCSharpDiagnosticAsync(LanguageVersion languageVersion, string source, DiagnosticResult expected, CancellationToken cancellationToken)
-            => VerifyCSharpDiagnosticAsync(languageVersion, source, new[] { expected }, cancellationToken);
-
-        private static Task VerifyCSharpDiagnosticAsync(LanguageVersion languageVersion, string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
-        {
-            var test = new CSharpTest(languageVersion)
-            {
-                TestCode = source,
-            };
-
-            test.ExpectedDiagnostics.AddRange(expected);
-            return test.RunAsync(cancellationToken);
-        }
-
-        private static Task VerifyCSharpFixAsync(LanguageVersion languageVersion, string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
-        {
-            var test = new CSharpTest(languageVersion)
-            {
-                TestCode = source,
-                FixedCode = fixedSource,
-            };
-
-            if (source == fixedSource)
-            {
-                test.FixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
-                test.FixedState.MarkupHandling = MarkupMode.Allow;
-                test.BatchFixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
-                test.BatchFixedState.MarkupHandling = MarkupMode.Allow;
-            }
-
-            test.ExpectedDiagnostics.AddRange(expected);
-            return test.RunAsync(cancellationToken);
-        }
-
-        private class CSharpTest : StyleCopCodeFixVerifier<SA1600ElementsMustBeDocumented, SA1600CodeFixProvider>.CSharpTest
-        {
-            public CSharpTest(LanguageVersion languageVersion)
-            {
-                this.SolutionTransforms.Add((solution, projectId) =>
-                {
-                    var parseOptions = (CSharpParseOptions)solution.GetProject(projectId).ParseOptions;
-                    return solution.WithProjectParseOptions(projectId, parseOptions.WithLanguageVersion(languageVersion));
-                });
-            }
         }
     }
 }

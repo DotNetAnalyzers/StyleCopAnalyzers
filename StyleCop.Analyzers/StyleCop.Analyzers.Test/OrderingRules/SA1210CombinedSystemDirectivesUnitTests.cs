@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
@@ -9,7 +11,6 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using StyleCop.Analyzers.OrderingRules;
     using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.Test.Verifiers;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.OrderingRules.SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace>;
 
@@ -19,6 +20,16 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     /// </summary>
     public class SA1210CombinedSystemDirectivesUnitTests
     {
+        protected const string CombinedUsingDirectivesTestSettings = @"
+{
+  ""settings"": {
+    ""orderingRules"": {
+      ""systemUsingDirectivesFirst"": false
+    }
+  }
+}
+";
+
         [Fact]
         public async Task TestProperOrderedUsingDirectivesInNamespaceDeclarationAsync()
         {
@@ -213,16 +224,6 @@ using Microsoft.CodeAnalysis;
 
         private static Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
         {
-            const string CombinedUsingDirectivesTestSettings = @"
-{
-  ""settings"": {
-    ""orderingRules"": {
-      ""systemUsingDirectivesFirst"": false
-    }
-  }
-}
-";
-
             var test = new StyleCopCodeFixVerifier<SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace, UsingCodeFixProvider>.CSharpTest
             {
                 TestCode = source,

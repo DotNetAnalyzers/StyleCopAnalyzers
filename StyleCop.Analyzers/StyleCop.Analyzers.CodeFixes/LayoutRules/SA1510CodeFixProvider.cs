@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.LayoutRules
 {
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -26,7 +29,7 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
@@ -47,12 +50,30 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
+            var newRoot = await GetTransformedDocumentAsync(document, ImmutableArray.Create(diagnostic), cancellationToken).ConfigureAwait(false);
+            return document.WithSyntaxRoot(newRoot);
+        }
+
+        private static async Task<SyntaxNode> GetTransformedDocumentAsync(Document document, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken)
+        {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            return syntaxRoot.ReplaceTokens(
+                diagnostics.Select(diagnostic => syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start)),
+                (originalToken, rewrittenToken) =>
+                {
+                    return rewrittenToken.WithoutLeadingBlankLines();
+                });
+        }
 
-            var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; } =
+                new FixAll();
 
-            var newSyntaxRoot = syntaxRoot.ReplaceToken(token, token.WithoutLeadingBlankLines());
-            return document.WithSyntaxRoot(newSyntaxRoot);
+            protected override string CodeActionTitle => LayoutResources.SA1510CodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+                => await GetTransformedDocumentAsync(document, diagnostics, fixAllContext.CancellationToken).ConfigureAwait(false);
         }
     }
 }

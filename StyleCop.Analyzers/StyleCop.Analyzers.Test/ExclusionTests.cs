@@ -1,11 +1,14 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test
 {
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<TestHelper.ExclusionTestAnalyzer>;
 
@@ -82,7 +85,7 @@ namespace StyleCop.Analyzers.Test
         {
             var result = Diagnostic().WithLocation(filename, 1, 1);
 
-            await new CSharpTest
+            var test = new CSharpTest
             {
                 TestSources =
                 {
@@ -92,7 +95,10 @@ namespace StyleCop.Analyzers.Test
                 {
                     result,
                 },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            };
+
+            test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

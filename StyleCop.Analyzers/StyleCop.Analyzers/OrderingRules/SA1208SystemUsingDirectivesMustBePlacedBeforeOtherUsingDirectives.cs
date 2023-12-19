@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.OrderingRules
 {
@@ -10,6 +12,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -30,16 +33,16 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <see cref="SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1208";
-        private const string Title = "System using directives should be placed before other using directives";
-        private const string MessageFormat = "Using directive for '{0}' should appear before directive for '{1}'";
-        private const string Description = "A using directive which declares a member of the 'System' namespace appears after a using directive which declares a member of a different namespace, within a C# code file.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1208.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(OrderingResources.SA1208Title), OrderingResources.ResourceManager, typeof(OrderingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(OrderingResources.SA1208MessageFormat), OrderingResources.ResourceManager, typeof(OrderingResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(OrderingResources.SA1208Description), OrderingResources.ResourceManager, typeof(OrderingResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CompilationUnitAction = HandleCompilationUnit;
-        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> NamespaceDeclarationAction = HandleNamespaceDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> BaseNamespaceDeclarationAction = HandleBaseNamespaceDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -51,8 +54,11 @@ namespace StyleCop.Analyzers.OrderingRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
-            context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
+            context.RegisterCompilationStartAction(context =>
+            {
+                context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
+                context.RegisterSyntaxNodeAction(BaseNamespaceDeclarationAction, SyntaxKinds.BaseNamespaceDeclaration);
+            });
         }
 
         private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
@@ -69,17 +75,15 @@ namespace StyleCop.Analyzers.OrderingRules
             ProcessUsingsAndReportDiagnostic(usings, context);
         }
 
-        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        private static void HandleBaseNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             if (!settings.OrderingRules.SystemUsingDirectivesFirst)
             {
                 return;
             }
 
-            var namespaceDeclaration = (NamespaceDeclarationSyntax)context.Node;
-
+            var namespaceDeclaration = (BaseNamespaceDeclarationSyntaxWrapper)context.Node;
             var usings = namespaceDeclaration.Usings;
-
             ProcessUsingsAndReportDiagnostic(usings, context);
         }
 
@@ -107,7 +111,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
                     if (!previousUsing.IsSystemUsingDirective()
                         || previousUsing.HasNamespaceAliasQualifier()
-                        || previousUsing.StaticKeyword.Kind() != SyntaxKind.None)
+                        || !previousUsing.StaticKeyword.IsKind(SyntaxKind.None))
                     {
                         systemUsingDirectivesShouldBeBeforeThisName = previousUsing.Name.ToNormalizedString();
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation(), usingDirective.Name.ToNormalizedString(), systemUsingDirectivesShouldBeBeforeThisName));

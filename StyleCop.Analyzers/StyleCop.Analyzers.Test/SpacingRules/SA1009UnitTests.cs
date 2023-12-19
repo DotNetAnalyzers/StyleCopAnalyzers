@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
@@ -7,8 +9,8 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.SpacingRules.SA1009ClosingParenthesisMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1009ClosingParenthesisMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
@@ -53,7 +55,7 @@ public class Foo
     }
 }";
 
-            DiagnosticResult expected = Diagnostic().WithArguments(" not", "preceded").WithLocation(5, 25);
+            DiagnosticResult expected = Diagnostic(DescriptorNotPreceded).WithLocation(5, 25);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
@@ -78,7 +80,34 @@ public class Foo
     }
 }";
 
-            DiagnosticResult expected = Diagnostic().WithArguments(" not", "preceded").WithLocation(4, 28);
+            DiagnosticResult expected = Diagnostic(DescriptorNotPreceded).WithLocation(4, 28);
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2985, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2985")]
+        public async Task TestDocumentationMethodReferenceInSingleQuotesWithWhitespaceAfterClosingParenthesisAsync()
+        {
+            const string testCode = @"
+public class Foo
+{
+    /// <see cref='Method({|#0:)|} '/>
+    public void Method()
+    {
+    }
+}";
+
+            const string fixedCode = @"
+public class Foo
+{
+    /// <see cref='Method()'/>
+    public void Method()
+    {
+    }
+}";
+
+            DiagnosticResult expected = Diagnostic(DescriptorNotFollowed).WithLocation(0);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
@@ -119,34 +148,18 @@ public class Foo
     }
 }";
 
-            DiagnosticResult expected = Diagnostic().WithArguments(" not", "preceded").WithLocation(5, 47);
+            DiagnosticResult expected = Diagnostic(DescriptorNotPreceded).WithLocation(5, 47);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestAttributeWithParametersAndNoSpaceAfterClosingParenthesisAsync()
-        {
-            const string testCode = @"using System;
-using System.Security.Permissions;
-
-[PermissionSet(SecurityAction.LinkDemand, Name = ""FullTrust"")]
-public class Foo
-{
-    public void Method(int param1, int param2)
-    {
-    }
-}";
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestAttributeWithParametersAndSpaceAfterClosingParenthesisAsync()
         {
             const string testCode = @"using System;
-using System.Security.Permissions;
+using System.Runtime.InteropServices;
 
-[PermissionSet(SecurityAction.LinkDemand, Name = ""FullTrust"") ]
+[StructLayout(LayoutKind.Auto, CharSet = CharSet.Auto{|#0:)|} ]
 public class Foo
 {
     public void Method(int param1, int param2)
@@ -155,9 +168,9 @@ public class Foo
 }";
 
             const string fixedCode = @"using System;
-using System.Security.Permissions;
+using System.Runtime.InteropServices;
 
-[PermissionSet(SecurityAction.LinkDemand, Name = ""FullTrust"")]
+[StructLayout(LayoutKind.Auto, CharSet = CharSet.Auto)]
 public class Foo
 {
     public void Method(int param1, int param2)
@@ -165,7 +178,7 @@ public class Foo
     }
 }";
 
-            DiagnosticResult expected = Diagnostic().WithArguments(" not", "followed").WithLocation(4, 61);
+            DiagnosticResult expected = Diagnostic(DescriptorNotFollowed).WithLocation(0);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
@@ -206,7 +219,7 @@ public class Foo
     }
 }";
 
-            DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "followed").WithLocation(5, 21);
+            DiagnosticResult expected = Diagnostic(DescriptorFollowed).WithLocation(5, 21);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
@@ -217,7 +230,7 @@ public class Foo
             var invalidStatement = @"System.EventHandler handler = (s, e)=> { };";
             var validStatement = @"System.EventHandler handler = (s, e) => { };";
 
-            DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 48);
+            DiagnosticResult expected = Diagnostic(DescriptorFollowed).WithLocation(7, 48);
 
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, validStatement, expected).ConfigureAwait(false);
         }
@@ -251,7 +264,7 @@ public class Foo
             {
             }";
 
-            DiagnosticResult expected = Diagnostic().WithArguments(" not", "preceded").WithLocation(7, 41);
+            DiagnosticResult expected = Diagnostic(DescriptorNotPreceded).WithLocation(7, 41);
 
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, validStatement, expected).ConfigureAwait(false);
         }
@@ -266,7 +279,7 @@ public class Foo
             {
             }";
 
-            DiagnosticResult expected = Diagnostic().WithArguments(" not", "preceded").WithLocation(7, 41);
+            DiagnosticResult expected = Diagnostic(DescriptorNotPreceded).WithLocation(7, 41);
 
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, validStatement, expected).ConfigureAwait(false);
         }
@@ -277,7 +290,7 @@ public class Foo
             var invalidStatement = @"var i = (int) 1;";
             var validStatement = @"var i = (int)1;";
 
-            DiagnosticResult expected = Diagnostic().WithArguments(" not", "followed").WithLocation(7, 25);
+            DiagnosticResult expected = Diagnostic(DescriptorNotFollowed).WithLocation(7, 25);
 
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, validStatement, expected).ConfigureAwait(false);
         }
@@ -288,7 +301,7 @@ public class Foo
             var invalidStatement = @"var o = new object() ;";
             var validStatement = @"var o = new object();";
 
-            DiagnosticResult expected = Diagnostic().WithArguments(" not", "followed").WithLocation(7, 32);
+            DiagnosticResult expected = Diagnostic(DescriptorNotFollowed).WithLocation(7, 32);
 
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, validStatement, expected).ConfigureAwait(false);
         }
@@ -299,7 +312,7 @@ public class Foo
             var invalidStatement = @"var o = new Baz() .Test;";
             var validStatement = @"var o = new Baz().Test;";
 
-            DiagnosticResult expected = Diagnostic().WithArguments(" not", "followed").WithLocation(7, 29);
+            DiagnosticResult expected = Diagnostic(DescriptorNotFollowed).WithLocation(7, 29);
 
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, validStatement, expected).ConfigureAwait(false);
         }
@@ -310,7 +323,7 @@ public class Foo
             var invalidStatement = @"var o = new Baz() ?.Test;";
             var validStatement = @"var o = new Baz()?.Test;";
 
-            DiagnosticResult expected = Diagnostic().WithArguments(" not", "followed").WithLocation(7, 29);
+            DiagnosticResult expected = Diagnostic(DescriptorNotFollowed).WithLocation(7, 29);
 
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, validStatement, expected).ConfigureAwait(false);
         }
@@ -321,7 +334,7 @@ public class Foo
             var invalidStatement = @"var o = GetPointer() ->ToString();";
             var validStatement = @"var o = GetPointer()->ToString();";
 
-            DiagnosticResult expected = Diagnostic().WithArguments(" not", "followed").WithLocation(7, 32);
+            DiagnosticResult expected = Diagnostic(DescriptorNotFollowed).WithLocation(7, 32);
 
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, validStatement, expected).ConfigureAwait(false);
         }
@@ -334,8 +347,8 @@ public class Foo
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithArguments(" not", "followed").WithLocation(7, 28),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(7, 30),
+                Diagnostic(DescriptorNotFollowed).WithLocation(7, 28),
+                Diagnostic(DescriptorNotPreceded).WithLocation(7, 30),
             };
 
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, validStatement, expected).ConfigureAwait(false);
@@ -355,7 +368,7 @@ public class Foo
             (i){0};",
                 operatorValue);
 
-            DiagnosticResult expected = Diagnostic().WithArguments(" not", "followed").WithLocation(8, 15);
+            DiagnosticResult expected = Diagnostic(DescriptorNotFollowed).WithLocation(8, 15);
 
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, validStatement, expected).ConfigureAwait(false);
         }
@@ -366,7 +379,7 @@ public class Foo
             var invalidStatement = @"var x = new System.Action(() => { } );";
             var validStatement = @"var x = new System.Action(() => { });";
 
-            DiagnosticResult expected = Diagnostic().WithArguments(" not", "preceded").WithLocation(7, 49);
+            DiagnosticResult expected = Diagnostic(DescriptorNotPreceded).WithLocation(7, 49);
 
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, validStatement, expected).ConfigureAwait(false);
         }
@@ -377,7 +390,7 @@ public class Foo
             var invalidStatement = @"new System.Action(() => { }) ();";
             var validStatement = @"new System.Action(() => { })();";
 
-            DiagnosticResult expected = Diagnostic().WithArguments(" not", "followed").WithLocation(7, 40);
+            DiagnosticResult expected = Diagnostic(DescriptorNotFollowed).WithLocation(7, 40);
 
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, validStatement, expected).ConfigureAwait(false);
         }
@@ -388,7 +401,7 @@ public class Foo
             var invalidStatement = @"var a = GetA() [0];";
             var validStatement = @"var a = GetA()[0];";
 
-            DiagnosticResult expected = Diagnostic().WithArguments(" not", "followed").WithLocation(7, 26);
+            DiagnosticResult expected = Diagnostic(DescriptorNotFollowed).WithLocation(7, 26);
 
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, validStatement, expected).ConfigureAwait(false);
         }
@@ -399,7 +412,7 @@ public class Foo
             var invalidStatement = @"var x = true ? GetA(): GetB();";
             var validStatement = @"var x = true ? GetA() : GetB();";
 
-            DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 33);
+            DiagnosticResult expected = Diagnostic(DescriptorFollowed).WithLocation(7, 33);
 
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, validStatement, expected).ConfigureAwait(false);
         }
@@ -410,7 +423,7 @@ public class Foo
             var invalidStatement = @"var x = (true == true)? GetA() : GetB();";
             var validStatement = @"var x = (true == true) ? GetA() : GetB();";
 
-            DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 34);
+            DiagnosticResult expected = Diagnostic(DescriptorFollowed).WithLocation(7, 34);
 
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, validStatement, expected).ConfigureAwait(false);
         }
@@ -421,7 +434,7 @@ public class Foo
             var invalidStatement = @"var x = $""{typeof(string).ToString() }"";";
             var validStatement = @"var x = $""{typeof(string).ToString()}"";";
 
-            DiagnosticResult expected = Diagnostic().WithArguments(" not", "followed").WithLocation(7, 48);
+            DiagnosticResult expected = Diagnostic(DescriptorNotFollowed).WithLocation(7, 48);
 
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, validStatement, expected).ConfigureAwait(false);
         }
@@ -555,12 +568,12 @@ public class TestClass
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(8, 21).WithArguments(string.Empty, "followed"),
-                Diagnostic().WithLocation(11, 25).WithArguments(string.Empty, "followed"),
-                Diagnostic().WithLocation(18, 9).WithArguments(" not", "preceded"),
-                Diagnostic().WithLocation(24, 12).WithArguments(" not", "preceded"),
-                Diagnostic().WithLocation(33, 12).WithArguments(" not", "preceded"),
-                Diagnostic().WithLocation(42, 12).WithArguments(" not", "preceded"),
+                Diagnostic(DescriptorFollowed).WithLocation(8, 21),
+                Diagnostic(DescriptorFollowed).WithLocation(11, 25),
+                Diagnostic(DescriptorNotPreceded).WithLocation(18, 9),
+                Diagnostic(DescriptorNotPreceded).WithLocation(24, 12),
+                Diagnostic(DescriptorNotPreceded).WithLocation(33, 12),
+                Diagnostic(DescriptorNotPreceded).WithLocation(42, 12),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
@@ -611,8 +624,8 @@ public class TestClass
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(8, 21).WithArguments(string.Empty, "followed"),
-                Diagnostic().WithLocation(11, 25).WithArguments(string.Empty, "followed"),
+                Diagnostic(DescriptorFollowed).WithLocation(8, 21),
+                Diagnostic(DescriptorFollowed).WithLocation(11, 25),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
@@ -706,17 +719,17 @@ int a)
                 TestCode = testCode,
                 ExpectedDiagnostics =
                 {
-                    Diagnostic().WithLocation(10, 9).WithArguments(" not", "preceded"),
-                    Diagnostic().WithLocation(16, 7).WithArguments(" not", "preceded"),
-                    Diagnostic().WithLocation(21, 19).WithArguments(" not", "preceded"),
-                    Diagnostic().WithLocation(25, 17).WithArguments(" not", "preceded"),
-                    Diagnostic().WithLocation(32, 16).WithArguments(" not", "preceded"),
+                    Diagnostic(DescriptorNotPreceded).WithLocation(10, 9),
+                    Diagnostic(DescriptorNotPreceded).WithLocation(16, 7),
+                    Diagnostic(DescriptorNotPreceded).WithLocation(21, 19),
+                    Diagnostic(DescriptorNotPreceded).WithLocation(25, 17),
+                    Diagnostic(DescriptorNotPreceded).WithLocation(32, 16),
                 },
                 FixedCode = fixedCode,
                 RemainingDiagnostics =
                 {
-                    Diagnostic().WithLocation(10, 9).WithArguments(" not", "preceded"),
-                    Diagnostic().WithLocation(25, 17).WithArguments(" not", "preceded"),
+                    Diagnostic(DescriptorNotPreceded).WithLocation(10, 9),
+                    Diagnostic(DescriptorNotPreceded).WithLocation(25, 17),
                 },
                 NumberOfFixAllIterations = 2,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
@@ -745,7 +758,7 @@ public class TestClass
 }
 ";
 
-            DiagnosticResult expected = Diagnostic().WithLocation(6, 52).WithArguments(" not", "preceded");
+            DiagnosticResult expected = Diagnostic(DescriptorNotPreceded).WithLocation(6, 52);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
@@ -782,7 +795,7 @@ class ClassName
 }
 ";
 
-            DiagnosticResult expected = Diagnostic().WithLocation(8, 15).WithArguments(" not", "followed");
+            DiagnosticResult expected = Diagnostic(DescriptorNotFollowed).WithLocation(8, 15);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
@@ -814,7 +827,7 @@ class ClassName
             string testCode = $"var x = (3 + 2){operatorToken} 4;";
             string fixedCode = $"var x = (3 + 2) {operatorToken} 4;";
 
-            DiagnosticResult expected = Diagnostic().WithLocation(7, 27).WithArguments(string.Empty, "followed");
+            DiagnosticResult expected = Diagnostic(DescriptorFollowed).WithLocation(7, 27);
 
             await this.TestWhitespaceInStatementOrDeclAsync(testCode, fixedCode, expected).ConfigureAwait(false);
         }
@@ -832,7 +845,7 @@ class ClassName
             string testCode = $"var x = (true){operatorToken} false;";
             string fixedCode = $"var x = (true) {operatorToken} false;";
 
-            DiagnosticResult expected = Diagnostic().WithLocation(7, 26).WithArguments(string.Empty, "followed");
+            DiagnosticResult expected = Diagnostic(DescriptorFollowed).WithLocation(7, 26);
 
             await this.TestWhitespaceInStatementOrDeclAsync(testCode, fixedCode, expected).ConfigureAwait(false);
         }
@@ -859,7 +872,7 @@ class ClassName
             string testCode = $"var x = 0; (x){operatorToken} 4;";
             string fixedCode = $"var x = 0; (x) {operatorToken} 4;";
 
-            DiagnosticResult expected = Diagnostic().WithLocation(7, 26).WithArguments(string.Empty, "followed");
+            DiagnosticResult expected = Diagnostic(DescriptorFollowed).WithLocation(7, 26);
 
             await this.TestWhitespaceInStatementOrDeclAsync(testCode, fixedCode, expected).ConfigureAwait(false);
         }
@@ -930,7 +943,7 @@ public class TestClass
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(8, 13).WithArguments(" not", "preceded"),
+                Diagnostic(DescriptorNotPreceded).WithLocation(8, 13),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
@@ -966,7 +979,50 @@ public class TestClass
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(8, 13).WithArguments(" not", "preceded"),
+                Diagnostic(DescriptorNotPreceded).WithLocation(8, 13),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("if (true)")]
+        [InlineData("while (true)")]
+        [InlineData("for (var i = 0; i < 10; i++)")]
+        [InlineData("foreach (var i in a)")]
+        [WorkItem(3731, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3731")]
+        public async Task TestControlStatementWithBodyOnSameLineAsync(string stmt)
+        {
+            var testCode = $@"
+public class TestClass
+{{
+    public async void TestMethod(int x, int[] a)
+    {{
+        {stmt}++x;
+        {stmt}--x;
+        {stmt}x++;
+        {stmt}{{ x++; }}
+    }}
+}}";
+
+            var fixedCode = $@"
+public class TestClass
+{{
+    public async void TestMethod(int x, int[] a)
+    {{
+        {stmt} ++x;
+        {stmt} --x;
+        {stmt} x++;
+        {stmt} {{ x++; }}
+    }}
+}}";
+
+            var expected = new[]
+            {
+                Diagnostic(DescriptorFollowed).WithLocation(6, 8 + stmt.Length),
+                Diagnostic(DescriptorFollowed).WithLocation(7, 8 + stmt.Length),
+                Diagnostic(DescriptorFollowed).WithLocation(8, 8 + stmt.Length),
+                Diagnostic(DescriptorFollowed).WithLocation(9, 8 + stmt.Length),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);

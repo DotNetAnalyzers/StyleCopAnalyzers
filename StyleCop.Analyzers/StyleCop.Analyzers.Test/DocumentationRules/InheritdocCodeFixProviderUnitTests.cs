@@ -1,12 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -20,7 +21,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     {
         private static readonly DiagnosticDescriptor SA1600 = new SA1600ElementsMustBeDocumented().SupportedDiagnostics[0];
         private static readonly DiagnosticDescriptor CS1591 =
-            new DiagnosticDescriptor(nameof(CS1591), "Title", "Missing XML comment for publicly visible type or member '{0}'", "Category", DiagnosticSeverity.Error, AnalyzerConstants.EnabledByDefault);
+            new DiagnosticDescriptor(nameof(CS1591), "Title", "Missing XML comment for publicly visible type or member '{0}'", "Category", DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault);
 
         [Theory]
         [InlineData(false, null, "string             TestMember { get; set; }")]
@@ -83,12 +84,7 @@ public class ChildClass : ParentClass
                 },
             };
 
-            if (compilerWarning)
-            {
-                test.DisabledDiagnostics.Add(SA1600.Id);
-                test.SolutionTransforms.Add(SetCompilerDocumentationWarningToError);
-            }
-
+            test.DisabledDiagnostics.Add(compilerWarning ? SA1600.Id : CS1591.Id);
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -153,12 +149,7 @@ public class ChildClass : IParent
                 },
             };
 
-            if (compilerWarning)
-            {
-                test.DisabledDiagnostics.Add(SA1600.Id);
-                test.SolutionTransforms.Add(SetCompilerDocumentationWarningToError);
-            }
-
+            test.DisabledDiagnostics.Add(compilerWarning ? SA1600.Id : CS1591.Id);
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -193,8 +184,8 @@ public class ChildClass : ParentClass
                     Diagnostic(SA1600).WithLocation(10, 14),
                     Diagnostic(SA1600).WithLocation(12, 35),
                 },
+                DisabledDiagnostics = { CS1591.Id },
                 FixedCode = testCode,
-                FixedState = { InheritanceMode = StateInheritanceMode.AutoInheritAll },
                 NumberOfIncrementalIterations = 1,
                 NumberOfFixAllIterations = 1,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
@@ -231,22 +222,11 @@ public class ChildClass : ParentClass
                     Diagnostic(SA1600).WithLocation(10, 14),
                     Diagnostic(SA1600).WithLocation(12, 35),
                 },
+                DisabledDiagnostics = { CS1591.Id },
                 FixedCode = testCode,
-                FixedState = { InheritanceMode = StateInheritanceMode.AutoInheritAll },
                 NumberOfIncrementalIterations = 1,
                 NumberOfFixAllIterations = 1,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private static Solution SetCompilerDocumentationWarningToError(Solution solution, ProjectId projectId)
-        {
-            var project = solution.GetProject(projectId);
-
-            // update the project compilation options
-            var modifiedSpecificDiagnosticOptions = project.CompilationOptions.SpecificDiagnosticOptions.SetItem(CS1591.Id, ReportDiagnostic.Error);
-            var modifiedCompilationOptions = project.CompilationOptions.WithSpecificDiagnosticOptions(modifiedSpecificDiagnosticOptions);
-
-            return solution.WithProjectCompilationOptions(projectId, modifiedCompilationOptions);
         }
     }
 }

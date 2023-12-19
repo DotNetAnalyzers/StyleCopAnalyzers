@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.Lightup
 {
@@ -20,8 +22,10 @@ namespace StyleCop.Analyzers.Test.Lightup
             Assert.Null(wrapper.SyntaxNode);
             Assert.Throws<NullReferenceException>(() => wrapper.Type);
             Assert.Throws<NullReferenceException>(() => wrapper.RefKeyword);
+            Assert.Throws<NullReferenceException>(() => wrapper.ReadOnlyKeyword);
             Assert.Throws<NullReferenceException>(() => wrapper.WithType(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword))));
-            Assert.Throws<NullReferenceException>(() => wrapper.WithRefKeyword(SyntaxFactory.Token(SyntaxKind.IsKeyword)));
+            Assert.Throws<NullReferenceException>(() => wrapper.WithRefKeyword(SyntaxFactory.Token(SyntaxKind.RefKeyword)));
+            Assert.Throws<NullReferenceException>(() => wrapper.WithReadOnlyKeyword(SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)));
         }
 
         [Fact]

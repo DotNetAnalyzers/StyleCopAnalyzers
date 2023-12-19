@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.LayoutRules
 {
@@ -9,7 +11,6 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using Microsoft.CodeAnalysis.Testing;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.LayoutRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.LayoutRules.SA1503BracesMustNotBeOmitted,
@@ -350,8 +351,15 @@ public class Foo
     }
 }";
 
-            var expected = Diagnostic().WithLocation(8, 13);
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics = { Diagnostic().WithLocation(8, 13) },
+                FixedCode = fixedTestCode,
+            };
+
+            test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -537,7 +545,7 @@ public class Foo
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TestStatements))]
-        private async Task TestCodeFixForStatementAsync(string statementText)
+        public async Task TestCodeFixForStatementAsync(string statementText)
         {
             var expected = Diagnostic().WithLocation(7, 13);
             await VerifyCSharpFixAsync(this.GenerateTestStatement(statementText), expected, this.GenerateFixedTestStatement(statementText), CancellationToken.None).ConfigureAwait(false);

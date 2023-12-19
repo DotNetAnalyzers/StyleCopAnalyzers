@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.LayoutRules
 {
@@ -44,10 +46,10 @@ namespace StyleCop.Analyzers.LayoutRules
         /// The ID for diagnostics produced by the <see cref="SA1502ElementMustNotBeOnASingleLine"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1502";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1502.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(LayoutResources.SA1502Title), LayoutResources.ResourceManager, typeof(LayoutResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(LayoutResources.SA1502MessageFormat), LayoutResources.ResourceManager, typeof(LayoutResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(LayoutResources.SA1502Description), LayoutResources.ResourceManager, typeof(LayoutResources));
-        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1502.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -126,6 +128,11 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static void CheckViolation(SyntaxNodeAnalysisContext context, SyntaxToken openBraceToken, SyntaxToken closeBraceToken)
         {
+            if (openBraceToken.IsKind(SyntaxKind.None) || closeBraceToken.IsKind(SyntaxKind.None))
+            {
+                return;
+            }
+
             var openingBraceLineSpan = openBraceToken.GetLineSpan();
             var closingBraceLineSpan = closeBraceToken.GetLineSpan();
 

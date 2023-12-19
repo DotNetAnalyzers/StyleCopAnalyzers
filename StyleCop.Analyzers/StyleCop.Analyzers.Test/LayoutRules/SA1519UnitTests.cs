@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.LayoutRules
 {
@@ -7,7 +9,6 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.LayoutRules.SA1519BracesMustNotBeOmittedFromMultiLineChildStatement,
@@ -29,6 +30,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
                 yield return new[] { "while (i == 0)" };
                 yield return new[] { "for (var j = 0; j < i; j++)" };
                 yield return new[] { "foreach (var j in new[] { 1, 2, 3 })" };
+                yield return new[] { "lock (new object())" };
                 yield return new[] { "using (default(System.IDisposable))" };
             }
         }
@@ -363,6 +365,84 @@ public class Foo
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestSingleLineFixedStatementWithoutBracesAsync()
+        {
+            var testCode = @"public class C {
+    unsafe private static void TestMethod()
+    {
+        var a = new int[] { 1, 2, 3 };
+        fixed (int* n = &a[0])
+            *n = a[1] + a[2];
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMultiLineFixedStatementWithoutBracesAsync()
+        {
+            var testCode = @"public class C {
+    unsafe private static void TestMethod()
+    {
+        var a = new int[] { 1, 2, 3 };
+        fixed (int* n = &a[0])
+            *n = a[1]
+                + a[2];
+    }
+}";
+            var fixedCode = @"public class C {
+    unsafe private static void TestMethod()
+    {
+        var a = new int[] { 1, 2, 3 };
+        fixed (int* n = &a[0])
+        {
+            *n = a[1]
+                + a[2];
+        }
+    }
+}";
+
+            var expected = Diagnostic().WithLocation(6, 13);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestSingleLineFixedStatementWithBracesAsync()
+        {
+            var testCode = @"public class C {
+    unsafe private static void TestMethod()
+    {
+        var a = new int[] { 1, 2, 3 };
+        fixed (int* n = &a[0])
+        {
+            *n = a[1] + a[2];
+        }
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMultiLineFixedStatementWithBracesAsync()
+        {
+            var testCode = @"public class C {
+    unsafe private static void TestMethod()
+    {
+        var a = new int[] { 1, 2, 3 };
+        fixed (int* n = &a[0])
+        {
+            *n = a[1]
+                + a[2];
+        }
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Verifies that the code fix provider will work properly for a statement.
         /// </summary>
@@ -582,8 +662,15 @@ public class Foo
     }
 }";
 
-            var expected = Diagnostic().WithLocation(8, 13);
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics = { Diagnostic().WithLocation(8, 13) },
+                FixedCode = fixedTestCode,
+            };
+
+            test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>

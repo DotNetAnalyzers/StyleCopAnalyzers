@@ -1,9 +1,12 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Text;
     using System.Threading;
@@ -12,6 +15,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Testing;
     using Microsoft.CodeAnalysis.Text;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
 
@@ -44,10 +48,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         [Fact]
         public async Task TestConstantMessage_Field_PassWrongTypeAsync()
         {
-            LinePosition linePosition = new LinePosition(3, 27);
+            var startLinePosition = new LinePosition(3, 27);
+            var endLinePosition = new LinePosition(3, 28);
             DiagnosticResult[] expected =
             {
-                DiagnosticResult.CompilerError("CS0029").WithSpan(new FileLinePositionSpan("Test0.cs", linePosition, linePosition)).WithMessage("Cannot implicitly convert type 'int' to 'string'"),
+                DiagnosticResult.CompilerError("CS0029").WithSpan(new FileLinePositionSpan("/0/Test0.cs", startLinePosition, endLinePosition)).WithMessage("Cannot implicitly convert type 'int' to 'string'"),
             };
 
             await this.TestConstantMessage_Field_PassExecuterAsync("3", expected).ConfigureAwait(false);
@@ -68,10 +73,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         [Fact]
         public async Task TestConstantMessage_Local_PassWrongTypeAsync()
         {
-            LinePosition linePosition = new LinePosition(5, 31);
+            var startLinePosition = new LinePosition(5, 31);
+            var endLinePosition = new LinePosition(5, 32);
             DiagnosticResult[] expected =
             {
-                DiagnosticResult.CompilerError("CS0029").WithSpan(new FileLinePositionSpan("Test0.cs", linePosition, linePosition)).WithMessage("Cannot implicitly convert type 'int' to 'string'"),
+                DiagnosticResult.CompilerError("CS0029").WithSpan(new FileLinePositionSpan("/0/Test0.cs", startLinePosition, endLinePosition)).WithMessage("Cannot implicitly convert type 'int' to 'string'"),
             };
 
             await this.TestConstantMessage_Local_PassExecuterAsync("3", expected).ConfigureAwait(false);
@@ -92,11 +98,25 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         [Fact]
         public async Task TestConstantMessage_Inline_PassWrongTypeAsync()
         {
-            LinePosition linePosition = new LinePosition(5, 15 + this.MethodName.Length + this.InitialArguments.Sum(i => i.Length + ", ".Length));
-            DiagnosticResult[] expected =
+            var startLinePosition = new LinePosition(5, 15 + this.MethodName.Length + this.InitialArguments.Sum(i => i.Length + ", ".Length));
+            var endLinePosition = new LinePosition(startLinePosition.Line, startLinePosition.Character + 1);
+            DiagnosticResult[] expected;
+            if (LightupHelpers.SupportsCSharp11 && this.MethodName == nameof(Debug.Assert))
             {
-                DiagnosticResult.CompilerError("CS1503").WithSpan(new FileLinePositionSpan("Test0.cs", linePosition, linePosition)).WithMessage($"Argument {1 + this.InitialArguments.Count()}: cannot convert from 'int' to 'string'"),
-            };
+                // For some reason this case wants to bind to Debug.Assert(bool, ref Debug.AssertInterpolatedStringHandler)
+                expected = new[]
+                {
+                    DiagnosticResult.CompilerError("CS1620").WithSpan(new FileLinePositionSpan("/0/Test0.cs", startLinePosition, endLinePosition)).WithMessage($"Argument {1 + this.InitialArguments.Count()} must be passed with the 'ref' keyword"),
+                };
+            }
+            else
+            {
+                var expectedType = LightupHelpers.SupportsCSharp8 ? "string?" : "string";
+                expected = new[]
+                {
+                    DiagnosticResult.CompilerError("CS1503").WithSpan(new FileLinePositionSpan("/0/Test0.cs", startLinePosition, endLinePosition)).WithMessage($"Argument {1 + this.InitialArguments.Count()}: cannot convert from 'int' to '{expectedType}'"),
+                };
+            }
 
             await this.TestConstantMessage_Inline_PassExecuterAsync("3", expected).ConfigureAwait(false);
         }
@@ -294,16 +314,7 @@ public class Foo
         protected virtual string BuildTestCode(string format)
         {
             StringBuilder argumentList = new StringBuilder();
-            foreach (var argument in this.InitialArguments)
-            {
-                if (argumentList.Length > 0)
-                {
-                    argumentList.Append(", ");
-                }
-
-                argumentList.Append(argument);
-            }
-
+            argumentList.Append(string.Join(", ", this.InitialArguments));
             if (argumentList.Length > 0)
             {
                 argumentList.Append(", ");
@@ -403,7 +414,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private class CSharpTest : StyleCopDiagnosticVerifier<EmptyAnalyzer>.CSharpTest
+        private class CSharpTest : StyleCopDiagnosticVerifier<EmptyDiagnosticAnalyzer>.CSharpTest
         {
             private readonly DebugMessagesUnitTestsBase testFixture;
 

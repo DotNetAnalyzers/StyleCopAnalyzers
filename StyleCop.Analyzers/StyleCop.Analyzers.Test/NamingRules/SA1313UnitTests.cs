@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.NamingRules
 {
@@ -7,7 +9,6 @@ namespace StyleCop.Analyzers.Test.NamingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.Helpers;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.NamingRules.SA1313ParameterNamesMustBeginWithLowerCaseLetter,
@@ -271,6 +272,57 @@ public class Test : ITest
                 Diagnostic().WithLocation(4, 21).WithArguments("Param1"),
                 Diagnostic().WithLocation(4, 45).WithArguments("Param3"),
                 Diagnostic().WithLocation(9, 52).WithArguments("Other"),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3555, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3555")]
+        public async Task TestNoViolationOnExplicitlyImplementedInterfaceParameterNameAsync()
+        {
+            var testCode = @"
+public interface ITest
+{
+    void Method(int param1, int {|#0:Param2|});
+}
+
+public class Test : ITest
+{
+    void ITest.Method(int param1, int Param2)
+    {
+    }
+}";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(0).WithArguments("Param2"),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3555, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3555")]
+        public async Task TestViolationOnRenamedExplicitlyImplementedInterfaceParameterNameAsync()
+        {
+            var testCode = @"
+public interface ITest
+{
+    void Method(int param1, int {|#0:Param2|});
+}
+
+public class Test : ITest
+{
+    public void Method(int param1, int {|#1:Other|})
+    {
+    }
+}";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(0).WithArguments("Param2"),
+                Diagnostic().WithLocation(1).WithArguments("Other"),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -560,7 +612,14 @@ namespace TestNamespace
     }
 }
 ";
-            DiagnosticResult[] expected =
+            DiagnosticResult[] expected = this.GetInvalidMethodOverrideShouldNotProduceDiagnosticAsyncDiagnostics();
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetInvalidMethodOverrideShouldNotProduceDiagnosticAsyncDiagnostics()
+        {
+            return new DiagnosticResult[]
             {
                 DiagnosticResult.CompilerError("CS0534").WithLocation(9, 18).WithMessage("'TestClass' does not implement inherited abstract member 'BaseClass.TestMethod(int, int)'"),
                 DiagnosticResult.CompilerError("CS0115").WithLocation(11, 30).WithMessage("'TestClass.TestMethod(int, X, int)': no suitable method found to override"),
@@ -568,8 +627,6 @@ namespace TestNamespace
                 DiagnosticResult.CompilerError("CS1001").WithLocation(11, 51).WithMessage("Identifier expected"),
                 DiagnosticResult.CompilerError("CS1003").WithLocation(11, 51).WithMessage("Syntax error, ',' expected"),
             };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

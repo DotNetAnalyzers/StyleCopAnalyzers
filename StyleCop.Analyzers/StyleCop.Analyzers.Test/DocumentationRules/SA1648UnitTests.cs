@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
@@ -8,7 +10,6 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Test.Verifiers;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1648InheritDocMustBeUsedWithInheritingClass>;
 
@@ -306,10 +307,26 @@ public class TestClass : ITest
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
+        /// <summary>
+        /// Verifies that a delegate declaration that includes the inheritdoc will produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3291, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3291")]
+        public async Task TestIncorrectDelegateInheritDocAsync()
+        {
+            var testCode = @"
+/// [|<include file='DelegateInheritDoc.xml' path='/TestDelegate/*'/>|]
+public delegate bool TestDelegate(int value);
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
             => VerifyCSharpDiagnosticAsync(source, new[] { expected }, cancellationToken);
 
-        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        protected static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
             var test = CreateTest(expected);
             test.TestCode = source;
@@ -331,6 +348,11 @@ public class TestClass : ITest
   </TestMethod>
 </TestClass>
 ";
+            string contentDelegateInheritDoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestDelegate>
+    <inheritdoc/>
+</TestDelegate>
+";
 
             var test = new StyleCopDiagnosticVerifier<SA1648InheritDocMustBeUsedWithInheritingClass>.CSharpTest
             {
@@ -338,6 +360,7 @@ public class TestClass : ITest
                 {
                     { "ClassInheritDoc.xml", contentClassInheritDoc },
                     { "MethodInheritDoc.xml", contentMethodInheritDoc },
+                    { "DelegateInheritDoc.xml", contentDelegateInheritDoc },
                 },
             };
 

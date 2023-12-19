@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.LayoutRules
 {
@@ -80,10 +82,10 @@ namespace StyleCop.Analyzers.LayoutRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1515";
-        private const string Title = "Single-line comment should be preceded by blank line";
-        private const string MessageFormat = "Single-line comment should be preceded by blank line";
-        private const string Description = "A single-line comment within C# code is not preceded by a blank line.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1515.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(LayoutResources.SA1515Title), LayoutResources.ResourceManager, typeof(LayoutResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(LayoutResources.SA1515MessageFormat), LayoutResources.ResourceManager, typeof(LayoutResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(LayoutResources.SA1515Description), LayoutResources.ResourceManager, typeof(LayoutResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -106,21 +108,18 @@ namespace StyleCop.Analyzers.LayoutRules
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
-            var previousCommentNotOnOwnLine = false;
 
             foreach (var trivia in syntaxRoot.DescendantTrivia().Where(trivia => trivia.IsKind(SyntaxKind.SingleLineCommentTrivia)))
             {
                 if (trivia.FullSpan.Start == 0)
                 {
                     // skip the trivia if it is at the start of the file
-                    previousCommentNotOnOwnLine = false;
                     continue;
                 }
 
                 if (trivia.ToString().StartsWith("////", StringComparison.Ordinal))
                 {
                     // ignore commented out code
-                    previousCommentNotOnOwnLine = false;
                     continue;
                 }
 
@@ -130,25 +129,20 @@ namespace StyleCop.Analyzers.LayoutRules
                 if (!IsOnOwnLine(triviaList, triviaIndex))
                 {
                     // ignore comments after other code elements.
-                    previousCommentNotOnOwnLine = true;
                     continue;
                 }
 
                 if (IsPrecededByBlankLine(triviaList, triviaIndex))
                 {
                     // allow properly formatted blank line comments.
-                    previousCommentNotOnOwnLine = false;
                     continue;
                 }
 
-                if (!previousCommentNotOnOwnLine && IsPrecededBySingleLineCommentOrDocumentation(triviaList, triviaIndex))
+                if (IsPrecededBySingleLineCommentOnOwnLineOrDocumentation(triviaList, triviaIndex))
                 {
                     // allow consecutive single line comments.
-                    previousCommentNotOnOwnLine = false;
                     continue;
                 }
-
-                previousCommentNotOnOwnLine = false;
 
                 if (IsAtStartOfScope(trivia))
                 {
@@ -170,8 +164,19 @@ namespace StyleCop.Analyzers.LayoutRules
         private static bool IsOnOwnLine<T>(T triviaList, int triviaIndex)
             where T : IReadOnlyList<SyntaxTrivia>
         {
+            if (triviaList[triviaIndex].Span.Start == 0)
+            {
+                return true;
+            }
+
             while (triviaIndex >= 0)
             {
+                if (triviaList[triviaIndex].IsDirective)
+                {
+                    // directive trivia are special, as they have a 'built-in' end-of-line.
+                    return true;
+                }
+
                 if (triviaList[triviaIndex].IsKind(SyntaxKind.EndOfLineTrivia))
                 {
                     return true;
@@ -183,7 +188,7 @@ namespace StyleCop.Analyzers.LayoutRules
             return false;
         }
 
-        private static bool IsPrecededBySingleLineCommentOrDocumentation<T>(T triviaList, int triviaIndex)
+        private static bool IsPrecededBySingleLineCommentOnOwnLineOrDocumentation<T>(T triviaList, int triviaIndex)
             where T : IReadOnlyList<SyntaxTrivia>
         {
             var eolCount = 0;
@@ -204,6 +209,8 @@ namespace StyleCop.Analyzers.LayoutRules
                     break;
 
                 case SyntaxKind.SingleLineCommentTrivia:
+                    return IsOnOwnLine(triviaList, triviaIndex);
+
                 case SyntaxKind.SingleLineDocumentationCommentTrivia:
                     return true;
 
@@ -279,6 +286,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 case SyntaxKind.IfDirectiveTrivia:
                 case SyntaxKind.ElifDirectiveTrivia:
                 case SyntaxKind.ElseDirectiveTrivia:
+                case SyntaxKind.PragmaWarningDirectiveTrivia:
                     return true;
 
                 default:

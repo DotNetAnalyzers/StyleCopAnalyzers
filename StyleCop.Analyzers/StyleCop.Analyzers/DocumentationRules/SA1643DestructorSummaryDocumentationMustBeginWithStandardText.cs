@@ -1,15 +1,16 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
     using System.Collections.Immutable;
-    using System.Globalization;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// The XML documentation header for a C# finalizer does not contain the appropriate summary text.
@@ -53,15 +54,15 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <see cref="SA1643DestructorSummaryDocumentationMustBeginWithStandardText"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1643";
-        private const string Title = "Destructor summary documentation should begin with standard text";
-        private const string MessageFormat = "Destructor summary documentation should begin with standard text";
-        private const string Description = "The XML documentation header for a C# finalizer does not contain the appropriate summary text.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1643.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1643Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1643MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1643Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<SyntaxNodeAnalysisContext> DestructorDeclarationAction = HandleDestructor;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> DestructorDeclarationAction = HandleDestructor;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -73,14 +74,15 @@ namespace StyleCop.Analyzers.DocumentationRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxNodeAction(DestructorDeclarationAction, SyntaxKind.DestructorDeclaration);
+            context.RegisterCompilationStartAction(context =>
+            {
+                context.RegisterSyntaxNodeAction(DestructorDeclarationAction, SyntaxKind.DestructorDeclaration);
+            });
         }
 
-        private static void HandleDestructor(SyntaxNodeAnalysisContext context)
+        private static void HandleDestructor(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
-            var destructorDeclaration = (DestructorDeclarationSyntax)context.Node;
-            var settings = context.Options.GetStyleCopSettings(context.CancellationToken);
-            var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
+            var culture = settings.DocumentationRules.DocumentationCultureInfo;
             var resourceManager = DocumentationResources.ResourceManager;
 
             HandleDeclaration(

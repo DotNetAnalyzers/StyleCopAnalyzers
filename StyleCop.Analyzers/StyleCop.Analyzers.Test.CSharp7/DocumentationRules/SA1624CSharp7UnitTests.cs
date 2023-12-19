@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.CSharp7.DocumentationRules
 {
@@ -12,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.DocumentationRules
         StyleCop.Analyzers.DocumentationRules.PropertySummaryDocumentationAnalyzer,
         StyleCop.Analyzers.DocumentationRules.PropertySummaryDocumentationCodeFixProvider>;
 
-    public class SA1624CSharp7UnitTests : SA1624UnitTests
+    public partial class SA1624CSharp7UnitTests : SA1624UnitTests
     {
         /// <summary>
         /// Verifies that documentation that starts with the proper text for multiple expression-bodied accessors will

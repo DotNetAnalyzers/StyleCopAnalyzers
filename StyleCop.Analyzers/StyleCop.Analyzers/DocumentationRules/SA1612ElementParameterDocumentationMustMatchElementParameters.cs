@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
@@ -32,12 +34,12 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <see cref="SA1612ElementParameterDocumentationMustMatchElementParameters"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1612";
-        private const string Title = "Element parameter documentation should match element parameters";
-        private const string Description = "The documentation describing the parameters to a C# method, constructor, delegate or indexer element does not match the actual parameters on the element.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1612.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1612Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1612Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
 
-        private const string MissingParamForDocumentationMessageFormat = "The parameter '{0}' does not exist.";
-        private const string ParamWrongOrderMessageFormat = "The parameter documentation for '{0}' should be at position {1}.";
+        private static readonly LocalizableString MissingParamForDocumentationMessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1612MissingParamForDocumentationMessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString ParamWrongOrderMessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1612ParamWrongOrderMessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
 
         private static readonly DiagnosticDescriptor MissingParameterDescriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MissingParamForDocumentationMessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -109,12 +111,14 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                     if (parentParameters.Length <= index || parentParameters[index] != parentParameter)
                     {
+#pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
                         context.ReportDiagnostic(
                             Diagnostic.Create(
                                 OrderDescriptor,
                                 location,
                                 nameAttributeText,
                                 parentParameters.IndexOf(parentParameter) + 1));
+#pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
                     }
                 }
 
@@ -123,7 +127,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         }
 
         /// <inheritdoc/>
-        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, bool needsComment, XElement completeDocumentation, params Location[] diagnosticLocations)
+        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, XElement completeDocumentation, params Location[] diagnosticLocations)
         {
             var node = context.Node;
             var identifier = GetIdentifier(node);
@@ -180,12 +184,14 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                     if (parentParameters.Length <= index || parentParameters[index] != parentParameter)
                     {
+#pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
                         context.ReportDiagnostic(
                             Diagnostic.Create(
                                 OrderDescriptor,
                                 identifierLocation,
                                 nameAttributeText,
                                 parentParameters.IndexOf(parentParameter) + 1));
+#pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
                     }
                 }
 

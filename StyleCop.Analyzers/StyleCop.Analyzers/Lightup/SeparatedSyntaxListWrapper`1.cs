@@ -1,11 +1,14 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.ComponentModel;
     using System.Linq;
     using Microsoft.CodeAnalysis;
@@ -51,11 +54,19 @@ namespace StyleCop.Analyzers.Lightup
 
         public static bool operator ==(SeparatedSyntaxListWrapper<TNode> left, SeparatedSyntaxListWrapper<TNode> right)
         {
+            // Currently unused
+            _ = left;
+            _ = right;
+
             throw new NotImplementedException();
         }
 
         public static bool operator !=(SeparatedSyntaxListWrapper<TNode> left, SeparatedSyntaxListWrapper<TNode> right)
         {
+            // Currently unused
+            _ = left;
+            _ = right;
+
             throw new NotImplementedException();
         }
 
@@ -158,7 +169,7 @@ namespace StyleCop.Analyzers.Lightup
             {
                 this.wrapper = wrapper;
                 this.index = -1;
-                this.current = default(TNode);
+                this.current = default;
             }
 
             public TNode Current => this.current;
@@ -213,7 +224,7 @@ namespace StyleCop.Analyzers.Lightup
             public void Reset()
             {
                 this.index = -1;
-                this.current = default(TNode);
+                this.current = default;
             }
         }
 
@@ -221,6 +232,11 @@ namespace StyleCop.Analyzers.Lightup
             where TSyntax : SyntaxNode
         {
             private readonly SeparatedSyntaxList<TSyntax> syntaxList;
+
+            public AutoWrapSeparatedSyntaxList()
+                : this(default)
+            {
+            }
 
             public AutoWrapSeparatedSyntaxList(SeparatedSyntaxList<TSyntax> syntaxList)
             {
@@ -317,7 +333,7 @@ namespace StyleCop.Analyzers.Lightup
 
         private sealed class UnsupportedSyntaxList : SeparatedSyntaxListWrapper<TNode>
         {
-            private static readonly SeparatedSyntaxList<SyntaxNode> SyntaxList = default(SeparatedSyntaxList<SyntaxNode>);
+            private static readonly SeparatedSyntaxList<SyntaxNode> SyntaxList = default;
 
             public UnsupportedSyntaxList()
             {
@@ -351,7 +367,7 @@ namespace StyleCop.Analyzers.Lightup
                 => SyntaxWrapper.Wrap(SyntaxList.First());
 
             public override TNode FirstOrDefault()
-                => SyntaxWrapper.Wrap(default(SyntaxNode));
+                => SyntaxWrapper.Wrap(default);
 
             public override int GetHashCode()
                 => SyntaxList.GetHashCode();
@@ -391,7 +407,7 @@ namespace StyleCop.Analyzers.Lightup
                 => SyntaxList.LastIndexOf(node => predicate(SyntaxWrapper.Wrap(node)));
 
             public override TNode LastOrDefault()
-                => SyntaxWrapper.Wrap(default(SyntaxNode));
+                => SyntaxWrapper.Wrap(default);
 
             public override SeparatedSyntaxListWrapper<TNode> Remove(TNode node)
             {

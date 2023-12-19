@@ -1,32 +1,19 @@
 version: '{build}'
-image: Visual Studio 2017
+image: Visual Studio 2019
 init:
 - git config --global core.autocrlf true
 configuration:
 - Debug
 - Release
 before_build:
+- ps: .\init.ps1 -NoRestore
 - nuget restore
 skip_tags: true
 build:
   project: StyleCopAnalyzers.sln
   verbosity: minimal
 test_script:
-- cd build
-- ps: |
-    if ($env:Configuration -eq 'Debug') {
-      .\opencover-report.ps1 -Debug -NoBuild -NoReport -AppVeyor
-      if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
-      $packageConfig = [xml](Get-Content ..\.nuget\packages.config)
-      $codecov_version = $packageConfig.SelectSingleNode('/packages/package[@id="Codecov"]').version
-      $codecov = "..\packages\Codecov.$codecov_version\tools\codecov.exe"
-      &$codecov -f '..\build\OpenCover.Reports\OpenCover.StyleCopAnalyzers.xml'
-    } else {
-      .\opencover-report.ps1 -NoBuild -NoReport -AppVeyor
-      if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
-    }
-- cd ..
-- .\StyleCop.Analyzers\StyleCop.Analyzers.Status.Generator\bin\%Configuration%\net46\StyleCop.Analyzers.Status.Generator.exe .\StyleCopAnalyzers.sln > StyleCop.Analyzers.Status.json
+- .\StyleCop.Analyzers\StyleCop.Analyzers.Status.Generator\bin\%Configuration%\net472\StyleCop.Analyzers.Status.Generator.exe .\StyleCopAnalyzers.sln > StyleCop.Analyzers.Status.json
 cache:
   - packages -> **\packages.config
   - C:\Users\appveyor\.nuget\packages -> appveyor.yml

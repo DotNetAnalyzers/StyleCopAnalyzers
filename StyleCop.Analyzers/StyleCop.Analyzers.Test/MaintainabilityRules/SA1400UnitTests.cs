@@ -1,12 +1,14 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
-    using TestHelper;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.MaintainabilityRules.SA1400AccessModifierMustBeDeclared,
@@ -16,202 +18,67 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     {
         private const string Tab = "\t";
 
-        [Fact]
-        public async Task TestClassDeclarationAsync()
+        [Theory]
+        [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestTypeDeclarationAsync(string typeName)
         {
-            await this.TestTypeDeclarationAsync("class").ConfigureAwait(false);
+            await this.TestTypeDeclarationImplAsync(typeName).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestClassDeclarationWithAttributesAsync()
+        [Theory]
+        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestPartialTypeDeclarationAsync(string typeName)
         {
-            await this.TestTypeDeclarationWithAttributesAsync("class").ConfigureAwait(false);
+            await this.TestTypeDeclarationImplAsync($"partial {typeName}", warning: false).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestClassDeclarationWithDirectivesAsync()
+        [Theory]
+        [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestTypeDeclarationWithAttributesAsync(string typeName)
         {
-            await this.TestTypeDeclarationWithDirectivesAsync("class").ConfigureAwait(false);
+            await this.TestTypeDeclarationWithAttributesImplAsync(typeName).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestNestedClassDeclarationAsync()
+        [Theory]
+        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestPartialTypeDeclarationWithAttributesAsync(string typeName)
         {
-            await this.TestNestedTypeDeclarationAsync("class").ConfigureAwait(false);
+            await this.TestTypeDeclarationWithAttributesImplAsync($"partial {typeName}", warning: false).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestNestedClassDeclarationWithAttributesAsync()
+        [Theory]
+        [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestTypeDeclarationWithDirectivesAsync(string typeName)
         {
-            await this.TestNestedTypeDeclarationWithAttributesAsync("class").ConfigureAwait(false);
+            await this.TestTypeDeclarationWithDirectivesImplAsync(typeName).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestNestedClassDeclarationWithDirectivesAsync()
+        [Theory]
+        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestPartialTypeDeclarationWithDirectivesAsync(string typeName)
         {
-            await this.TestNestedTypeDeclarationWithDirectivesAsync("class").ConfigureAwait(false);
+            await this.TestTypeDeclarationWithDirectivesImplAsync($"partial {typeName}", warning: false).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestPartialClassDeclarationAsync()
+        [Theory]
+        [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestNestedTypeDeclarationAsync(string typeName)
         {
-            await this.TestTypeDeclarationAsync("partial class", warning: false).ConfigureAwait(false);
+            await this.TestNestedTypeDeclarationImplAsync(typeName).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestPartialClassDeclarationWithAttributesAsync()
+        [Theory]
+        [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestNestedTypeDeclarationWithAttributesAsync(string typeName)
         {
-            await this.TestTypeDeclarationWithAttributesAsync("partial class", warning: false).ConfigureAwait(false);
+            await this.TestNestedTypeDeclarationWithAttributesImplAsync(typeName).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestPartialClassDeclarationWithDirectivesAsync()
+        [Theory]
+        [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestNestedTypeDeclarationWithDirectivesAsync(string typeName)
         {
-            await this.TestTypeDeclarationWithDirectivesAsync("partial class", warning: false).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestInterfaceDeclarationAsync()
-        {
-            await this.TestTypeDeclarationAsync("interface").ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestInterfaceDeclarationWithAttributesAsync()
-        {
-            await this.TestTypeDeclarationWithAttributesAsync("interface").ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestInterfaceDeclarationWithDirectivesAsync()
-        {
-            await this.TestTypeDeclarationWithDirectivesAsync("interface").ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestNestedInterfaceDeclarationAsync()
-        {
-            await this.TestNestedTypeDeclarationAsync("interface").ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestNestedInterfaceDeclarationWithAttributesAsync()
-        {
-            await this.TestNestedTypeDeclarationWithAttributesAsync("interface").ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestNestedInterfaceDeclarationWithDirectivesAsync()
-        {
-            await this.TestNestedTypeDeclarationWithDirectivesAsync("interface").ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestPartialInterfaceDeclarationAsync()
-        {
-            await this.TestTypeDeclarationAsync("partial interface", warning: false).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestPartialInterfaceDeclarationWithAttributesAsync()
-        {
-            await this.TestTypeDeclarationWithAttributesAsync("partial interface", warning: false).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestPartialInterfaceDeclarationWithDirectivesAsync()
-        {
-            await this.TestTypeDeclarationWithDirectivesAsync("partial interface", warning: false).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestStructDeclarationAsync()
-        {
-            await this.TestTypeDeclarationAsync("struct").ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestStructDeclarationWithAttributesAsync()
-        {
-            await this.TestTypeDeclarationWithAttributesAsync("struct").ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestStructDeclarationWithDirectivesAsync()
-        {
-            await this.TestTypeDeclarationWithDirectivesAsync("struct").ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestNestedStructDeclarationAsync()
-        {
-            await this.TestNestedTypeDeclarationAsync("struct").ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestNestedStructDeclarationWithAttributesAsync()
-        {
-            await this.TestNestedTypeDeclarationWithAttributesAsync("struct").ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestNestedStructDeclarationWithDirectivesAsync()
-        {
-            await this.TestNestedTypeDeclarationWithDirectivesAsync("struct").ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestPartialStructDeclarationAsync()
-        {
-            await this.TestTypeDeclarationAsync("partial struct", warning: false).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestPartialStructDeclarationWithAttributesAsync()
-        {
-            await this.TestTypeDeclarationWithAttributesAsync("partial struct", warning: false).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestPartialStructDeclarationWithDirectivesAsync()
-        {
-            await this.TestTypeDeclarationWithDirectivesAsync("partial struct", warning: false).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestEnumDeclarationAsync()
-        {
-            await this.TestTypeDeclarationAsync("enum").ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestEnumDeclarationWithAttributesAsync()
-        {
-            await this.TestTypeDeclarationWithAttributesAsync("enum").ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestEnumDeclarationWithDirectivesAsync()
-        {
-            await this.TestTypeDeclarationWithDirectivesAsync("enum").ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestNestedEnumDeclarationAsync()
-        {
-            await this.TestNestedTypeDeclarationAsync("enum").ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestNestedEnumDeclarationWithAttributesAsync()
-        {
-            await this.TestNestedTypeDeclarationWithAttributesAsync("enum").ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestNestedEnumDeclarationWithDirectivesAsync()
-        {
-            await this.TestNestedTypeDeclarationWithDirectivesAsync("enum").ConfigureAwait(false);
+            await this.TestNestedTypeDeclarationWithDirectivesImplAsync(typeName).ConfigureAwait(false);
         }
 
         [Fact]
@@ -652,32 +519,32 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.TestNestedDeclarationWithDirectivesAsync("private", "OuterTypeName", "static OuterTypeName(", " ) { }", warning: false).ConfigureAwait(false);
         }
 
-        private async Task TestTypeDeclarationAsync(string keyword, bool warning = true)
+        private async Task TestTypeDeclarationImplAsync(string keyword, bool warning = true)
         {
             await this.TestDeclarationAsync("internal", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning).ConfigureAwait(false);
         }
 
-        private async Task TestTypeDeclarationWithAttributesAsync(string keyword, bool warning = true)
+        private async Task TestTypeDeclarationWithAttributesImplAsync(string keyword, bool warning = true)
         {
             await this.TestDeclarationWithAttributesAsync("internal", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning).ConfigureAwait(false);
         }
 
-        private async Task TestTypeDeclarationWithDirectivesAsync(string keyword, bool warning = true)
+        private async Task TestTypeDeclarationWithDirectivesImplAsync(string keyword, bool warning = true)
         {
             await this.TestDeclarationWithDirectivesAsync("internal", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning).ConfigureAwait(false);
         }
 
-        private async Task TestNestedTypeDeclarationAsync(string keyword, bool warning = true)
+        private async Task TestNestedTypeDeclarationImplAsync(string keyword, bool warning = true)
         {
             await this.TestNestedDeclarationAsync("private", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning).ConfigureAwait(false);
         }
 
-        private async Task TestNestedTypeDeclarationWithAttributesAsync(string keyword, bool warning = true)
+        private async Task TestNestedTypeDeclarationWithAttributesImplAsync(string keyword, bool warning = true)
         {
             await this.TestNestedDeclarationWithAttributesAsync("private", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning).ConfigureAwait(false);
         }
 
-        private async Task TestNestedTypeDeclarationWithDirectivesAsync(string keyword, bool warning = true)
+        private async Task TestNestedTypeDeclarationWithDirectivesImplAsync(string keyword, bool warning = true)
         {
             await this.TestNestedDeclarationWithDirectivesAsync("private", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning).ConfigureAwait(false);
         }

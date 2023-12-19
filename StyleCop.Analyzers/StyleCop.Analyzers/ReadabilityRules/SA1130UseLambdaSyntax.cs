@@ -1,11 +1,12 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
     using System.Collections.Immutable;
-    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -23,11 +24,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// </summary>
         public const string DiagnosticId = "SA1130";
 
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1130.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1130Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1130MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1130Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1130.md";
-        private static readonly ParameterListSyntax EmptyParameterList = SyntaxFactory.ParameterList();
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -98,6 +98,27 @@ namespace StyleCop.Analyzers.ReadabilityRules
             return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList(syntaxParameters));
         }
 
+        internal static int FindParameterIndex(SymbolInfo originalSymbolInfo, ArgumentSyntax argumentSyntax, BaseArgumentListSyntax argumentListSyntax)
+        {
+            // if delegate is passed as named argument of method try to find its position by argument name
+            if (argumentSyntax.NameColon != null
+                && originalSymbolInfo.Symbol is IMethodSymbol methodSymbol)
+            {
+                var calledMethodParameters = methodSymbol.Parameters;
+                var argumentIdentifier = argumentSyntax.NameColon.Name.Identifier.ValueText;
+
+                for (var i = 0; i < calledMethodParameters.Length; ++i)
+                {
+                    if (string.Equals(calledMethodParameters[i].Name, argumentIdentifier))
+                    {
+                        return i;
+                    }
+                }
+            }
+
+            return argumentListSyntax.Arguments.IndexOf(argumentSyntax);
+        }
+
         private static void HandleAnonymousMethodExpression(SyntaxNodeAnalysisContext context)
         {
             bool reportDiagnostic = true;
@@ -128,9 +149,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static bool HandleMethodInvocation(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod, ArgumentSyntax argumentSyntax)
         {
             // invocation -> argument list -> argument -> anonymous method
-            var argumentListSyntax = argumentSyntax?.Parent as BaseArgumentListSyntax;
-
-            if (argumentListSyntax != null)
+            if (argumentSyntax?.Parent is BaseArgumentListSyntax argumentListSyntax)
             {
                 var originalInvocableExpression = argumentListSyntax.Parent;
                 SymbolInfo originalSymbolInfo = semanticModel.GetSymbolInfo(originalInvocableExpression);
@@ -142,14 +161,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return false;
                 }
 
-                var argumentIndex = argumentListSyntax.Arguments.IndexOf(argumentSyntax);
+                var argumentIndex = FindParameterIndex(originalSymbolInfo, argumentSyntax, argumentListSyntax);
 
                 // Determine the parameter list from the method that is invoked, as delegates without parameters are allowed, but they cannot be replaced by a lambda without parameters.
                 var parameterList = GetDelegateParameterList(originalSymbolInfo.Symbol, argumentIndex);
 
                 if (parameterList == null)
                 {
-                    // This might happen if the call was using params witha type unknown to the analyzer, e.g. params Span<T>.
+                    // This might happen if the call was using params with a type unknown to the analyzer, e.g. params Span<T>.
                     return false;
                 }
 

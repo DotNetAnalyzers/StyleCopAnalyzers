@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.OrderingRules
 {
@@ -158,7 +160,7 @@ namespace StyleCop.Analyzers.OrderingRules
             internal class Builder
             {
                 private readonly List<Builder> children = new List<Builder>();
-                private int start;
+                private readonly int start;
                 private int end = int.MaxValue;
 
                 /// <summary>

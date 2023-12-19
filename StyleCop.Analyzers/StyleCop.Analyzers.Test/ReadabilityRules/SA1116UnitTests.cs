@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 // Several test methods in this file use the same member data, but in some cases the test does not use all of the
 // supported parameters. See https://github.com/xunit/xunit/issues/1556.
@@ -11,7 +13,6 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1116SplitParametersMustStartOnLineAfterDeclaration,
@@ -57,6 +58,10 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         [MemberData(nameof(GetTestDeclarations), "", "")]
         public async Task TestValidDeclarationAsync(string declaration, string fixedDeclaration, int column)
         {
+            // Not needed for this test
+            _ = fixedDeclaration;
+            _ = column;
+
             var testCode = $@"
 class Foo
 {{
@@ -87,6 +92,9 @@ class Foo
         [MemberData(nameof(GetTestConstructorInitializers), "", "")]
         public async Task TestValidConstructorInitializerAsync(string initializer, string fixedInitializer)
         {
+            // Not needed for this test
+            _ = fixedInitializer;
+
             var testCode = $@"
 class Base
 {{
@@ -165,6 +173,10 @@ class Derived : Base
         [MemberData(nameof(ValidTestExpressions))]
         public async Task TestValidExpressionAsync(string expression, string fixedExpression, int column)
         {
+            // Not needed for this test
+            _ = fixedExpression;
+            _ = column;
+
             var testCode = $@"
 class Foo
 {{

@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.LayoutRules
 {
@@ -78,10 +80,10 @@ namespace StyleCop.Analyzers.LayoutRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1512";
-        private const string Title = "Single-line comments should not be followed by blank line";
-        private const string MessageFormat = "Single-line comments should not be followed by blank line";
-        private const string Description = "A single-line comment within C# code is followed by a blank line.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1512.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(LayoutResources.SA1512Title), LayoutResources.ResourceManager, typeof(LayoutResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(LayoutResources.SA1512MessageFormat), LayoutResources.ResourceManager, typeof(LayoutResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(LayoutResources.SA1512Description), LayoutResources.ResourceManager, typeof(LayoutResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -103,11 +105,10 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            var diagnosticOptions = context.Compilation.Options.SpecificDiagnosticOptions;
-            context.RegisterSyntaxTreeAction(c => HandleSyntaxTreeAnalysis(c, diagnosticOptions));
+            context.RegisterSyntaxTreeAction(c => HandleSyntaxTreeAnalysis(c, context.Compilation));
         }
 
-        private static void HandleSyntaxTreeAnalysis(SyntaxTreeAnalysisContext context, ImmutableDictionary<string, ReportDiagnostic> specificDiagnosticOptions)
+        private static void HandleSyntaxTreeAnalysis(SyntaxTreeAnalysisContext context, Compilation compilation)
         {
             var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
 
@@ -144,7 +145,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
                 else if (trailingBlankLineCount > 1)
                 {
-                    if (specificDiagnosticOptions.GetValueOrDefault(SA1507CodeMustNotContainMultipleBlankLinesInARow.DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
+                    if (!compilation.IsAnalyzerSuppressed(SA1507CodeMustNotContainMultipleBlankLinesInARow.Descriptor))
                     {
                         // ignore comments that are followed by multiple blank lines -> the multiple blank lines will be reported by SA1507
                         continue;

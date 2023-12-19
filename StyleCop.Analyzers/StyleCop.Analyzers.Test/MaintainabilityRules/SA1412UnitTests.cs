@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
@@ -8,6 +10,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Testing;
     using Microsoft.CodeAnalysis.Text;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -38,12 +41,15 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             var expected = Diagnostic().WithLocation(1, 1);
 
-            await new CSharpTest
+            var test = new CSharpTest
             {
                 TestSources = { testCode },
                 ExpectedDiagnostics = { expected },
                 FixedSources = { fixedCode },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            };
+
+            test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -54,12 +60,15 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             var expected = Diagnostic().WithLocation(1, 1);
 
-            await new CSharpTest
+            var test = new CSharpTest
             {
                 TestSources = { testCode },
                 ExpectedDiagnostics = { expected },
                 FixedSources = { fixedCode },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            };
+
+            test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -73,7 +82,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         [Fact]
         public async Task TestFixAllWithMultipleEncodingsAsync()
         {
-            await new CSharpTest
+            var test = new CSharpTest
             {
                 TestSources =
                 {
@@ -83,9 +92,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 },
                 ExpectedDiagnostics =
                 {
-                    Diagnostic().WithLocation("Test0.cs", 1, 1),
-                    Diagnostic().WithLocation("Test1.cs", 1, 1),
-                    Diagnostic().WithLocation("Test2.cs", 1, 1),
+                    Diagnostic().WithLocation("/0/Test0.cs", 1, 1),
+                    Diagnostic().WithLocation("/0/Test1.cs", 1, 1),
+                    Diagnostic().WithLocation("/0/Test2.cs", 1, 1),
                 },
                 FixedSources =
                 {
@@ -95,12 +104,18 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 },
                 NumberOfFixAllIterations = 2,
                 NumberOfFixAllInDocumentIterations = 3,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            };
+
+            test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         private async Task TestFixAllExecuterAsync(int codepage, FixAllScope scope)
         {
-            await new CSharpTest
+            // Currently unused
+            _ = scope;
+
+            var test = new CSharpTest
             {
                 TestSources =
                 {
@@ -109,8 +124,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 },
                 ExpectedDiagnostics =
                 {
-                    Diagnostic().WithLocation("Test0.cs", 1, 1),
-                    Diagnostic().WithLocation("Test1.cs", 1, 1),
+                    Diagnostic().WithLocation("/0/Test0.cs", 1, 1),
+                    Diagnostic().WithLocation("/0/Test1.cs", 1, 1),
                 },
                 FixedSources =
                 {
@@ -119,7 +134,10 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 },
                 NumberOfFixAllIterations = 1,
                 NumberOfFixAllInDocumentIterations = 2,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            };
+
+            test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

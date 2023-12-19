@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Helpers
 {
@@ -8,6 +10,8 @@ namespace StyleCop.Analyzers.Helpers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+    using StyleCop.Analyzers.Lightup;
 
     internal static class NamedTypeHelpers
     {
@@ -84,6 +88,8 @@ namespace StyleCop.Analyzers.Helpers
             case SyntaxKind.ClassDeclaration:
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.StructDeclaration:
+            case SyntaxKindEx.RecordDeclaration:
+            case SyntaxKindEx.RecordStructDeclaration:
                 return ((TypeDeclarationSyntax)member).Identifier.Text;
 
             case SyntaxKind.EnumDeclaration:
@@ -139,11 +145,6 @@ namespace StyleCop.Analyzers.Helpers
         /// <returns>true if the member is implementing an interface member, otherwise false.</returns>
         internal static bool IsImplementingAnInterfaceMember(ISymbol memberSymbol)
         {
-            if (memberSymbol.IsStatic)
-            {
-                return false;
-            }
-
             bool isImplementingExplicitly;
 
             // Only methods, properties and events can implement an interface member
@@ -179,5 +180,8 @@ namespace StyleCop.Analyzers.Helpers
                 .Select(typeSymbol.FindImplementationForInterfaceMember)
                 .Any(x => memberSymbol.Equals(x));
         }
+
+        internal static INamedTypeSymbol TupleUnderlyingTypeOrSelf(this INamedTypeSymbol tupleSymbol)
+            => tupleSymbol.TupleUnderlyingType() ?? tupleSymbol;
     }
 }

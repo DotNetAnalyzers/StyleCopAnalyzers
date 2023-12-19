@@ -1,14 +1,14 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Globalization;
     using System.Linq;
-    using System.Resources;
     using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -67,10 +67,10 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1625";
-        private const string Title = "Element documentation should not be copied and pasted";
-        private const string MessageFormat = "Element documentation should not be copied and pasted";
-        private const string Description = "The Xml documentation for a C# element contains two or more identical entries, indicating that the documentation has been copied and pasted. This can sometimes indicate invalid or poorly written documentation.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1625.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1625Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1625MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1625Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -89,7 +89,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var objectPool = SharedPools.Default<HashSet<string>>();
             HashSet<string> documentationTexts = objectPool.Allocate();
-            var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
+            var culture = settings.DocumentationRules.DocumentationCultureInfo;
             var resourceManager = DocumentationResources.ResourceManager;
 
             foreach (var documentationSyntax in syntaxList)
@@ -101,14 +101,10 @@ namespace StyleCop.Analyzers.DocumentationRules
                     continue;
                 }
 
-                if (documentationTexts.Contains(documentation))
+                if (!documentationTexts.Add(documentation))
                 {
                     // Add violation
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, documentationSyntax.GetLocation()));
-                }
-                else
-                {
-                    documentationTexts.Add(documentation);
                 }
             }
 
@@ -116,12 +112,11 @@ namespace StyleCop.Analyzers.DocumentationRules
         }
 
         /// <inheritdoc/>
-        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, bool needsComment, XElement completeDocumentation, params Location[] diagnosticLocations)
+        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, XElement completeDocumentation, params Location[] diagnosticLocations)
         {
             var objectPool = SharedPools.Default<HashSet<string>>();
             HashSet<string> documentationTexts = objectPool.Allocate();
-            var settings = context.Options.GetStyleCopSettings(context.CancellationToken);
-            var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
+            var culture = settings.DocumentationRules.DocumentationCultureInfo;
             var resourceManager = DocumentationResources.ResourceManager;
 
             // Concatenate all XML node values
@@ -149,14 +144,10 @@ namespace StyleCop.Analyzers.DocumentationRules
                     continue;
                 }
 
-                if (documentationTexts.Contains(documentation))
+                if (!documentationTexts.Add(documentation))
                 {
                     // Add violation
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, diagnosticLocations.First()));
-                }
-                else
-                {
-                    documentationTexts.Add(documentation);
                 }
             }
 

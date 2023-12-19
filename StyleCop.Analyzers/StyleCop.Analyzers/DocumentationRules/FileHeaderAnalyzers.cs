@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
@@ -182,7 +184,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             var compilation = context.Compilation;
 
             // Disabling SA1633 will disable all other header related diagnostics.
-            if (!compilation.IsAnalyzerSuppressed(SA1633Identifier))
+            if (!compilation.IsAnalyzerSuppressed(SA1633DescriptorMissing))
             {
                 context.RegisterSyntaxTreeAction((ctx, settings) => Analyzer.HandleSyntaxTree(ctx, settings, compilation));
             }
@@ -215,14 +217,14 @@ namespace StyleCop.Analyzers.DocumentationRules
                         return;
                     }
 
-                    if (!compilation.IsAnalyzerSuppressed(SA1634Identifier))
+                    if (!compilation.IsAnalyzerSuppressed(SA1634Descriptor))
                     {
                         CheckCopyrightHeader(context, settings.DocumentationRules, compilation, fileHeader);
                     }
 
-                    if (!compilation.IsAnalyzerSuppressed(SA1639Identifier))
+                    if (!compilation.IsAnalyzerSuppressed(SA1639Descriptor))
                     {
-                        CheckSummaryHeader(context, compilation, fileHeader);
+                        CheckSummaryHeader(context, fileHeader);
                     }
                 }
                 else
@@ -234,7 +236,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                         return;
                     }
 
-                    if (!compilation.IsAnalyzerSuppressed(SA1635Identifier))
+                    if (!compilation.IsAnalyzerSuppressed(SA1635Descriptor))
                     {
                         if (string.IsNullOrWhiteSpace(fileHeader.CopyrightText))
                         {
@@ -242,7 +244,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                             return;
                         }
 
-                        if (compilation.IsAnalyzerSuppressed(SA1636Identifier))
+                        if (compilation.IsAnalyzerSuppressed(SA1636Descriptor))
                         {
                             return;
                         }
@@ -265,17 +267,17 @@ namespace StyleCop.Analyzers.DocumentationRules
                     return;
                 }
 
-                if (!compilation.IsAnalyzerSuppressed(SA1637Identifier))
+                if (!compilation.IsAnalyzerSuppressed(SA1637Descriptor))
                 {
                     CheckFile(context, compilation, fileHeader, copyrightElement);
                 }
 
-                if (!compilation.IsAnalyzerSuppressed(SA1640Identifier))
+                if (!compilation.IsAnalyzerSuppressed(SA1640Descriptor))
                 {
                     CheckCompanyName(context, documentationSettings, compilation, fileHeader, copyrightElement);
                 }
 
-                if (!compilation.IsAnalyzerSuppressed(SA1635Identifier))
+                if (!compilation.IsAnalyzerSuppressed(SA1635Descriptor))
                 {
                     CheckCopyrightText(context, documentationSettings, compilation, fileHeader, copyrightElement);
                 }
@@ -291,7 +293,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     return;
                 }
 
-                if (compilation.IsAnalyzerSuppressed(SA1638Identifier))
+                if (compilation.IsAnalyzerSuppressed(SA1638Descriptor))
                 {
                     return;
                 }
@@ -314,7 +316,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     return;
                 }
 
-                if (compilation.IsAnalyzerSuppressed(SA1636Identifier))
+                if (compilation.IsAnalyzerSuppressed(SA1636Descriptor))
                 {
                     return;
                 }
@@ -345,7 +347,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     return;
                 }
 
-                if (compilation.IsAnalyzerSuppressed(SA1641Identifier))
+                if (compilation.IsAnalyzerSuppressed(SA1641Descriptor))
                 {
                     return;
                 }
@@ -363,7 +365,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
             }
 
-            private static void CheckSummaryHeader(SyntaxTreeAnalysisContext context, Compilation compilation, XmlFileHeader fileHeader)
+            private static void CheckSummaryHeader(SyntaxTreeAnalysisContext context, XmlFileHeader fileHeader)
             {
                 var summaryElement = fileHeader.GetElement("summary");
                 if (summaryElement == null)

@@ -1,9 +1,10 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
-    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
@@ -59,7 +60,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     context.RegisterCodeFix(
                         CodeAction.Create(
                             DocumentationResources.ConstructorDocumentationCodeFix,
-                            cancellationToken => GetConstructorOrDestructorDocumentationTransformedDocumentAsync(context.Document, diagnostic, root, (BaseMethodDeclarationSyntax)identifierToken.Parent, cancellationToken),
+                            cancellationToken => GetConstructorOrDestructorDocumentationTransformedDocumentAsync(context.Document, root, (BaseMethodDeclarationSyntax)identifierToken.Parent, cancellationToken),
                             nameof(SA1600CodeFixProvider)),
                         diagnostic);
                     break;
@@ -72,7 +73,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                         context.RegisterCodeFix(
                             CodeAction.Create(
                                 DocumentationResources.MethodDocumentationCodeFix,
-                                cancellationToken => GetMethodDocumentationTransformedDocumentAsync(context.Document, diagnostic, root, semanticModel, (MethodDeclarationSyntax)identifierToken.Parent, cancellationToken),
+                                cancellationToken => GetMethodDocumentationTransformedDocumentAsync(context.Document, root, semanticModel, (MethodDeclarationSyntax)identifierToken.Parent, cancellationToken),
                                 nameof(SA1600CodeFixProvider)),
                             diagnostic);
                     }
@@ -98,7 +99,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             return (declaredSymbol != null) && NamedTypeHelpers.IsImplementingAnInterfaceMember(declaredSymbol);
         }
 
-        private static Task<Document> GetConstructorOrDestructorDocumentationTransformedDocumentAsync(Document document, Diagnostic diagnostic, SyntaxNode root, BaseMethodDeclarationSyntax declaration, CancellationToken cancellationToken)
+        private static Task<Document> GetConstructorOrDestructorDocumentationTransformedDocumentAsync(Document document, SyntaxNode root, BaseMethodDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxTriviaList leadingTrivia = declaration.GetLeadingTrivia();
             int insertionIndex = GetInsertionIndex(ref leadingTrivia);
@@ -136,7 +137,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             return Task.FromResult(document.WithSyntaxRoot(root.ReplaceNode(declaration, newElement)));
         }
 
-        private static Task<Document> GetMethodDocumentationTransformedDocumentAsync(Document document, Diagnostic diagnostic, SyntaxNode root, SemanticModel semanticModel, MethodDeclarationSyntax methodDeclaration, CancellationToken cancellationToken)
+        private static Task<Document> GetMethodDocumentationTransformedDocumentAsync(Document document, SyntaxNode root, SemanticModel semanticModel, MethodDeclarationSyntax methodDeclaration, CancellationToken cancellationToken)
         {
             SyntaxTriviaList leadingTrivia = methodDeclaration.GetLeadingTrivia();
             int insertionIndex = GetInsertionIndex(ref leadingTrivia);

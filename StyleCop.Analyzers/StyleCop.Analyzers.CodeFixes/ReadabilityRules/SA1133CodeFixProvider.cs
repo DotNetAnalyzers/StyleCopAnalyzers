@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
@@ -59,7 +61,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var nodeInSourceSpan = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
             AttributeListSyntax attributeList = nodeInSourceSpan.FirstAncestorOrSelf<AttributeListSyntax>();
 
-            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
+            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
             var indentationSteps = IndentationHelper.GetIndentationSteps(settings.Indentation, attributeList);
             var indentationTrivia = IndentationHelper.GenerateWhitespaceTrivia(settings.Indentation, indentationSteps);
 
@@ -111,10 +113,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return null;
                 }
 
-                var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, fixAllContext.CancellationToken);
                 var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, fixAllContext.CancellationToken);
 
-                var nodes = diagnostics.Select(diagnostic => syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true).FirstAncestorOrSelf<AttributeListSyntax>());
+                // 🐉 Need to eagerly evaluate this with ToList() to ensure nodes are not garbage collected between the
+                // call to TrackNodes and subsequent enumeration.
+                var nodes = diagnostics.Select(diagnostic => syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true).FirstAncestorOrSelf<AttributeListSyntax>()).ToList();
 
                 var newRoot = syntaxRoot.TrackNodes(nodes);
 

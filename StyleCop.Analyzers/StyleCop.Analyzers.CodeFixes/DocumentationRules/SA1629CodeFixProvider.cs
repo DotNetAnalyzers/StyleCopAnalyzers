@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
@@ -52,7 +54,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
-            var newText = text.WithChanges(new TextChange(new TextSpan(diagnostic.Location.SourceSpan.Start, 0), "."));
+            bool replaceChar = diagnostic.Properties.ContainsKey(SA1629DocumentationTextMustEndWithAPeriod.ReplaceCharKey);
+            var newText = text.WithChanges(new TextChange(new TextSpan(diagnostic.Location.SourceSpan.Start, replaceChar ? 1 : 0), "."));
 
             return document.WithText(newText);
         }

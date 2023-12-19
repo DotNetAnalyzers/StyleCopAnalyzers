@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
@@ -1040,6 +1042,9 @@ public class Foo
         string data = $""{(flag)}"";
     }
 }";
+
+            string fixedCode = this.GetFixedCodeTestParenthesisInInterpolatedStringThatShouldBeRemoved();
+
             DiagnosticResult[] expected =
             {
                 Diagnostic(DiagnosticId).WithSpan(6, 26, 6, 32),
@@ -1047,7 +1052,7 @@ public class Foo
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 31),
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -1428,6 +1433,58 @@ public class Program
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2992, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2992")]
+        public async Task VerifyCodeFixDoesNotInsertUnnecessarySpacesAsync()
+        {
+            var testCode = @"using System;
+internal class Program
+{
+    private static readonly DateTime MaxDate = new DateTime((new DateTime(2101, 1, 28, 23, 59, 59, 999)).Ticks + 9999);
+
+    private static void Main()
+    {
+        Console.WriteLine(MaxDate);
+    }
+}
+";
+
+            var fixedCode = @"using System;
+internal class Program
+{
+    private static readonly DateTime MaxDate = new DateTime(new DateTime(2101, 1, 28, 23, 59, 59, 999).Ticks + 9999);
+
+    private static void Main()
+    {
+        Console.WriteLine(MaxDate);
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DiagnosticId).WithSpan(4, 61, 4, 105),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(4, 61),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(4, 104),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        // In this version of Roslyn, we end up with an extra space between the opening brace
+        // and the identifier. Fixed in a later version.
+        protected virtual string GetFixedCodeTestParenthesisInInterpolatedStringThatShouldBeRemoved()
+        {
+            return @"class Foo
+{
+    public void Bar()
+    {
+        bool flag = false;
+        string data = $""{ flag}"";
+    }
+}";
         }
     }
 }

@@ -1,16 +1,15 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.LayoutRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
-    using TestHelper;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.LayoutRules.SA1513ClosingBraceMustBeFollowedByBlankLine,
@@ -994,6 +993,46 @@ public class TestClass3
 ";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3442, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3442")]
+        public async Task NestedInterpolatedStringAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod(string extraSupport)
+    {
+        string suffix = $@""{(string.IsNullOrEmpty(extraSupport) ? string.Empty : $@""
+        {extraSupport}"")}
+    }}
+}}"";
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3360, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3360")]
+        public async Task TestLineFeedEndOfLinesAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+}[|
+|]// Hello".ReplaceLineEndings("\n");
+
+            var fixedCode = @"
+public class TestClass
+{
+}
+
+// Hello".ReplaceLineEndings("\n");
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -1,17 +1,19 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
     using System.Collections.Immutable;
-    using System.Globalization;
     using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// Analyzes the correct usage of property summary documentation.
@@ -57,12 +59,11 @@ namespace StyleCop.Analyzers.DocumentationRules
         protected override string XmlTagToHandle => XmlCommentHelper.SummaryXmlTag;
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, bool needsComment, XmlNodeSyntax syntax, XElement completeDocumentation, Location diagnosticLocation)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, XmlNodeSyntax syntax, XElement completeDocumentation, Location diagnosticLocation)
         {
             var propertyDeclaration = (PropertyDeclarationSyntax)context.Node;
-            var propertyType = context.SemanticModel.GetTypeInfo(propertyDeclaration.Type);
-            var settings = context.Options.GetStyleCopSettings(context.CancellationToken);
-            var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
+            var propertyType = context.SemanticModel.GetTypeInfo(propertyDeclaration.Type.StripRefFromType());
+            var culture = settings.DocumentationRules.DocumentationCultureInfo;
             var resourceManager = DocumentationResources.ResourceManager;
 
             if (propertyType.Type.SpecialType == SpecialType.System_Boolean)
@@ -74,7 +75,8 @@ namespace StyleCop.Analyzers.DocumentationRules
                     propertyDeclaration,
                     resourceManager.GetString(nameof(DocumentationResources.StartingTextGetsWhether), culture),
                     resourceManager.GetString(nameof(DocumentationResources.StartingTextSetsWhether), culture),
-                    resourceManager.GetString(nameof(DocumentationResources.StartingTextGetsOrSetsWhether), culture));
+                    resourceManager.GetString(nameof(DocumentationResources.StartingTextGetsOrSetsWhether), culture),
+                    resourceManager.GetString(nameof(DocumentationResources.StartingTextReturnsWhether), culture));
             }
             else
             {
@@ -85,11 +87,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                     propertyDeclaration,
                     resourceManager.GetString(nameof(DocumentationResources.StartingTextGets), culture),
                     resourceManager.GetString(nameof(DocumentationResources.StartingTextSets), culture),
-                    resourceManager.GetString(nameof(DocumentationResources.StartingTextGetsOrSets), culture));
+                    resourceManager.GetString(nameof(DocumentationResources.StartingTextGetsOrSets), culture),
+                    resourceManager.GetString(nameof(DocumentationResources.StartingTextReturns), culture));
             }
         }
 
-        private static void AnalyzeSummaryElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location diagnosticLocation, PropertyDeclarationSyntax propertyDeclaration, string startingTextGets, string startingTextSets, string startingTextGetsOrSets)
+        private static void AnalyzeSummaryElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location diagnosticLocation, PropertyDeclarationSyntax propertyDeclaration, string startingTextGets, string startingTextSets, string startingTextGetsOrSets, string startingTextReturns)
         {
             var diagnosticProperties = ImmutableDictionary.CreateBuilder<string, string>();
             ArrowExpressionClauseSyntax expressionBody = propertyDeclaration.ExpressionBody;
@@ -126,7 +129,8 @@ namespace StyleCop.Analyzers.DocumentationRules
                 diagnosticProperties.Add(NoCodeFixKey, string.Empty);
             }
 
-            var text = !(summaryElement.Content.FirstOrDefault() is XmlTextSyntax textElement) ? string.Empty : XmlCommentHelper.GetText(textElement, true).TrimStart();
+            var textElement = XmlCommentHelper.TryGetFirstTextElementWithContent(summaryElement);
+            string text = textElement is null ? string.Empty : XmlCommentHelper.GetText(textElement, normalizeWhitespace: true).TrimStart();
 
             bool prefixIsGetsOrSets = text.StartsWith(startingTextGetsOrSets, StringComparison.OrdinalIgnoreCase);
             bool prefixIsGets = !prefixIsGetsOrSets && text.StartsWith(startingTextGets, StringComparison.OrdinalIgnoreCase);
@@ -225,7 +229,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     // Both getter and setter are visible.
                     if (!prefixIsGetsOrSets)
                     {
-                        ReportSA1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextGetsOrSets, unexpectedStartingText1: startingTextGets, unexpectedStartingText2: startingTextSets);
+                        ReportSA1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextGetsOrSets, unexpectedStartingText1: startingTextGets, unexpectedStartingText2: startingTextSets, unexpectedStartingText3: startingTextReturns);
                     }
                 }
                 else if (setter != null)
@@ -239,7 +243,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                         }
                         else
                         {
-                            ReportSA1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextGets, unexpectedStartingText1: startingTextSets);
+                            ReportSA1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextGets, unexpectedStartingText1: startingTextSets, unexpectedStartingText2: startingTextReturns);
                         }
                     }
                 }
@@ -248,7 +252,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     // Getter exists and is visible. Setter does not exist.
                     if (!prefixIsGets)
                     {
-                        ReportSA1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextGets, unexpectedStartingText1: startingTextSets, unexpectedStartingText2: startingTextGetsOrSets);
+                        ReportSA1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextGets, unexpectedStartingText1: startingTextSets, unexpectedStartingText2: startingTextGetsOrSets, unexpectedStartingText3: startingTextReturns);
                     }
                 }
             }
@@ -265,7 +269,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                         }
                         else
                         {
-                            ReportSA1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextSets, unexpectedStartingText1: startingTextGets);
+                            ReportSA1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextSets, unexpectedStartingText1: startingTextGets, unexpectedStartingText2: startingTextReturns);
                         }
                     }
                 }
@@ -274,13 +278,13 @@ namespace StyleCop.Analyzers.DocumentationRules
                     // Setter exists and is visible. Getter does not exist.
                     if (!prefixIsSets)
                     {
-                        ReportSA1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextSets, unexpectedStartingText1: startingTextGetsOrSets, unexpectedStartingText2: startingTextGets);
+                        ReportSA1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextSets, unexpectedStartingText1: startingTextGetsOrSets, unexpectedStartingText2: startingTextGets, unexpectedStartingText3: startingTextReturns);
                     }
                 }
             }
         }
 
-        private static void ReportSA1623(SyntaxNodeAnalysisContext context, Location diagnosticLocation, ImmutableDictionary<string, string>.Builder diagnosticProperties, string text, string expectedStartingText, string unexpectedStartingText1, string unexpectedStartingText2 = null)
+        private static void ReportSA1623(SyntaxNodeAnalysisContext context, Location diagnosticLocation, ImmutableDictionary<string, string>.Builder diagnosticProperties, string text, string expectedStartingText, string unexpectedStartingText1, string unexpectedStartingText2 = null, string unexpectedStartingText3 = null)
         {
             diagnosticProperties.Add(ExpectedTextKey, expectedStartingText);
 
@@ -291,6 +295,10 @@ namespace StyleCop.Analyzers.DocumentationRules
             else if ((unexpectedStartingText2 != null) && text.StartsWith(unexpectedStartingText2, StringComparison.OrdinalIgnoreCase))
             {
                 diagnosticProperties.Add(TextToRemoveKey, text.Substring(0, unexpectedStartingText2.Length));
+            }
+            else if ((unexpectedStartingText3 != null) && text.StartsWith(unexpectedStartingText3, StringComparison.OrdinalIgnoreCase))
+            {
+                diagnosticProperties.Add(TextToRemoveKey, text.Substring(0, unexpectedStartingText3.Length));
             }
 
             context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), expectedStartingText));

@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.LayoutRules
 {
@@ -52,10 +54,10 @@ namespace StyleCop.Analyzers.LayoutRules
         internal const string SuppressCodeFixKey = "SuppressCodeFix";
         internal const string SuppressCodeFixValue = "true";
 
-        private const string Title = "Statement should not be on a single line";
-        private const string MessageFormat = "Statement should not be on a single line";
-        private const string Description = "A C# statement containing opening and closing braces is written completely on a single line.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1501.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(LayoutResources.SA1501Title), LayoutResources.ResourceManager, typeof(LayoutResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(LayoutResources.SA1501MessageFormat), LayoutResources.ResourceManager, typeof(LayoutResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(LayoutResources.SA1501Description), LayoutResources.ResourceManager, typeof(LayoutResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -82,16 +84,16 @@ namespace StyleCop.Analyzers.LayoutRules
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             // If SA1503 is suppressed, we need to handle compound blocks as well.
-            if (context.IsAnalyzerSuppressed(SA1503BracesMustNotBeOmitted.DiagnosticId))
+            if (context.IsAnalyzerSuppressed(SA1503BracesMustNotBeOmitted.Descriptor))
             {
                 context.RegisterSyntaxNodeAction(HandleIfStatement, SyntaxKind.IfStatement);
-                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ctx.Node, ((DoStatementSyntax)ctx.Node).Statement), SyntaxKind.DoStatement);
-                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ctx.Node, ((WhileStatementSyntax)ctx.Node).Statement), SyntaxKind.WhileStatement);
-                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ctx.Node, ((ForStatementSyntax)ctx.Node).Statement), SyntaxKind.ForStatement);
-                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ctx.Node, ((ForEachStatementSyntax)ctx.Node).Statement), SyntaxKind.ForEachStatement);
-                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ctx.Node, ((LockStatementSyntax)ctx.Node).Statement), SyntaxKind.LockStatement);
-                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ctx.Node, ((UsingStatementSyntax)ctx.Node).Statement), SyntaxKind.UsingStatement);
-                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ctx.Node, ((FixedStatementSyntax)ctx.Node).Statement), SyntaxKind.FixedStatement);
+                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ((DoStatementSyntax)ctx.Node).Statement), SyntaxKind.DoStatement);
+                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ((WhileStatementSyntax)ctx.Node).Statement), SyntaxKind.WhileStatement);
+                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ((ForStatementSyntax)ctx.Node).Statement), SyntaxKind.ForStatement);
+                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ((ForEachStatementSyntax)ctx.Node).Statement), SyntaxKind.ForEachStatement);
+                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ((LockStatementSyntax)ctx.Node).Statement), SyntaxKind.LockStatement);
+                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ((UsingStatementSyntax)ctx.Node).Statement), SyntaxKind.UsingStatement);
+                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ((FixedStatementSyntax)ctx.Node).Statement), SyntaxKind.FixedStatement);
             }
         }
 
@@ -146,7 +148,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
             }
 
-            if (!context.IsAnalyzerSuppressed(SA1520UseBracesConsistently.DiagnosticId))
+            if (!context.IsAnalyzerSuppressed(SA1520UseBracesConsistently.Descriptor))
             {
                 // inconsistencies will be reported as SA1520, as long as it's not suppressed
                 if (clauses.OfType<BlockSyntax>().Any())
@@ -157,17 +159,11 @@ namespace StyleCop.Analyzers.LayoutRules
 
             foreach (StatementSyntax clause in clauses)
             {
-                SyntaxNode node = clause.Parent;
-                if (node.IsKind(SyntaxKind.IfStatement) && node.Parent.IsKind(SyntaxKind.ElseClause))
-                {
-                    node = node.Parent;
-                }
-
-                CheckChildStatement(context, node, clause);
+                CheckChildStatement(context, clause);
             }
         }
 
-        private static void CheckChildStatement(SyntaxNodeAnalysisContext context, SyntaxNode node, StatementSyntax childStatement)
+        private static void CheckChildStatement(SyntaxNodeAnalysisContext context, StatementSyntax childStatement)
         {
             bool reportAsHidden = false;
 
@@ -190,7 +186,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 return;
             }
 
-            if (!context.IsAnalyzerSuppressed(SA1519BracesMustNotBeOmittedFromMultiLineChildStatement.DiagnosticId))
+            if (!context.IsAnalyzerSuppressed(SA1519BracesMustNotBeOmittedFromMultiLineChildStatement.Descriptor))
             {
                 // diagnostics for multi-line statements is handled by SA1519, as long as it's not suppressed
                 FileLinePositionSpan lineSpan = childStatement.GetLineSpan();

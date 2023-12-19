@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.LayoutRules
 {
@@ -709,6 +711,34 @@ public class TestClass3
                 Diagnostic().WithLocation(43, 1),
                 Diagnostic().WithLocation(57, 1),
                 Diagnostic().WithLocation(71, 1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("namespace")]
+        [InlineData("public class")]
+        [WorkItem(1923, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1923")]
+        public async Task TestBlankLinesAroundAssemblyAttributesAsync(string followingElementKind)
+        {
+            string testCode = $@"using System.Runtime.CompilerServices;
+[assembly: InternalsVisibleTo(""AnotherAssembly"")]
+{followingElementKind} Foo
+{{
+}}";
+            string fixedTestCode = $@"using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo(""AnotherAssembly"")]
+
+{followingElementKind} Foo
+{{
+}}";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(2, 1),
+                Diagnostic().WithLocation(3, 1),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);

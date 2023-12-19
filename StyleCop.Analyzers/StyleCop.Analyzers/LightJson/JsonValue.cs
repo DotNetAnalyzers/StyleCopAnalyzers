@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace LightJson
 {
@@ -20,7 +22,7 @@ namespace LightJson
         /// <summary>
         /// Represents a null JsonValue.
         /// </summary>
-        public static readonly JsonValue Null = new JsonValue(JsonValueType.Null, default(double), null);
+        public static readonly JsonValue Null = new JsonValue(JsonValueType.Null, default, null);
 
         private readonly JsonValueType type;
         private readonly object reference;
@@ -74,7 +76,7 @@ namespace LightJson
         {
             if (value != null)
             {
-                this.value = default(double);
+                this.value = default;
 
                 this.type = JsonValueType.String;
 
@@ -94,7 +96,7 @@ namespace LightJson
         {
             if (value != null)
             {
-                this.value = default(double);
+                this.value = default;
 
                 this.type = JsonValueType.Object;
 
@@ -114,7 +116,7 @@ namespace LightJson
         {
             if (value != null)
             {
-                this.value = default(double);
+                this.value = default;
 
                 this.type = JsonValueType.Array;
 
@@ -604,7 +606,9 @@ namespace LightJson
         /// Throws System.InvalidCastException when the inner value type of the
         /// JsonValue is not the desired type of the conversion.
         /// </exception>
+#pragma warning disable IDE0055 // Fix formatting
         public static explicit operator int?(JsonValue jsonValue)
+#pragma warning restore IDE0055 // Fix formatting
         {
             if (jsonValue.IsNull)
             {
@@ -640,7 +644,9 @@ namespace LightJson
         /// Throws System.InvalidCastException when the inner value type of the
         /// JsonValue is not the desired type of the conversion.
         /// </exception>
+#pragma warning disable IDE0055 // Fix formatting
         public static explicit operator bool?(JsonValue jsonValue)
+#pragma warning restore IDE0055 // Fix formatting
         {
             if (jsonValue.IsNull)
             {
@@ -676,7 +682,9 @@ namespace LightJson
         /// Throws System.InvalidCastException when the inner value type of the
         /// JsonValue is not the desired type of the conversion.
         /// </exception>
+#pragma warning disable IDE0055 // Fix formatting
         public static explicit operator double?(JsonValue jsonValue)
+#pragma warning restore IDE0055 // Fix formatting
         {
             if (jsonValue.IsNull)
             {
@@ -758,7 +766,9 @@ namespace LightJson
         /// Converts the given JsonValue into a nullable DateTime.
         /// </summary>
         /// <param name="jsonValue">The JsonValue to be converted.</param>
+#pragma warning disable IDE0055 // Fix formatting
         public static explicit operator DateTime?(JsonValue jsonValue)
+#pragma warning restore IDE0055 // Fix formatting
         {
             if (jsonValue.IsDateTime || jsonValue.IsNull)
             {

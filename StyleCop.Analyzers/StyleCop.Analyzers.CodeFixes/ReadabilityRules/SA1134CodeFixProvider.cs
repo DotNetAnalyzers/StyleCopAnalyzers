@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
@@ -34,25 +36,29 @@ namespace StyleCop.Analyzers.ReadabilityRules
         }
 
         /// <inheritdoc/>
-        public override Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
             foreach (var diagnostic in context.Diagnostics)
             {
-                context.RegisterCodeFix(
-                    CodeAction.Create(
-                        ReadabilityResources.SA1134CodeFix,
-                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
-                        nameof(SA1134CodeFixProvider)),
-                    diagnostic);
+                // Do not offer the code fix if the error is found at an invalid node (like IncompleteMemberSyntax)
+                if (syntaxRoot.FindNode(diagnostic.Location.SourceSpan) is AttributeListSyntax)
+                {
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            ReadabilityResources.SA1134CodeFix,
+                            cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
+                            nameof(SA1134CodeFixProvider)),
+                        diagnostic);
+                }
             }
-
-            return SpecializedTasks.CompletedTask;
         }
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
+            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
             var tokensToReplace = new Dictionary<SyntaxToken, SyntaxToken>();
 
             AddTokensToReplaceToMap(tokensToReplace, syntaxRoot, diagnostic, settings);
@@ -109,7 +115,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
 
                 var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
-                var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, fixAllContext.CancellationToken);
+                var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, fixAllContext.CancellationToken);
                 var tokensToReplace = new Dictionary<SyntaxToken, SyntaxToken>();
 
                 foreach (var diagnostic in diagnostics)

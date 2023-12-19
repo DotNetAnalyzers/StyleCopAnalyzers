@@ -1,4 +1,4 @@
-﻿{
+{
   "$schema": "http://json-schema.org/draft-04/schema#",
   "id": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
   "title": "StyleCop Analyzers Configuration",
@@ -121,12 +121,35 @@
             "allowedHungarianPrefixes": {
               "type": "array",
               "description": "Allowed Hungarian notation prefixes.",
-              "default": [ ],
+              "default": [],
               "items": {
                 "type": "string",
                 "pattern": "^[a-z]{1,2}$",
                 "uniqueItems": true
               }
+            },
+            "allowedNamespaceComponents": {
+              "type": "array",
+              "description": "Allowed namespace components, such as ones beginning with a lowercase letter.",
+              "default": [],
+              "items": {
+                "type": "string",
+                "uniqueItems": true
+              }
+            },
+            "includeInferredTupleElementNames": {
+              "type": "boolean",
+              "description": "Specifies whether inferred tuple element names will be analyzed as well.",
+              "default": false
+            },
+            "tupleElementNameCasing": {
+              "type": "string",
+              "description": "Specifies the casing convention used for tuple element names.",
+              "enum": [
+                "camelCase",
+                "PascalCase"
+              ],
+              "default": "PascalCase"
             }
           }
         },
@@ -174,6 +197,11 @@
               "type": "boolean",
               "description": "Specifies if SA1519 will allow consecutive using statements without braces",
               "default": true
+            },
+            "allowDoWhileOnClosingBrace": {
+              "type": "boolean",
+              "description": "Specifies if SA1500 will allow the 'while' expression of a 'do'/'while' loop to be on the same line as the closing brace.",
+              "default": false
             }
           }
         },

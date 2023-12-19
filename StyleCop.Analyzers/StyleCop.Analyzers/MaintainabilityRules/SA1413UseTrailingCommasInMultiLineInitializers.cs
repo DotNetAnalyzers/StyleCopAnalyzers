@@ -1,16 +1,18 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System;
     using System.Collections.Immutable;
-    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A multi-line initializer should use a comma on the last item.
@@ -48,20 +50,21 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// The ID for diagnostics produced by the <see cref="SA1413UseTrailingCommasInMultiLineInitializers"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1413";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1413.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(MaintainabilityResources.SA1413Title), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(MaintainabilityResources.SA1413MessageFormat), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(MaintainabilityResources.SA1413Description), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
-        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1413.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<SyntaxNodeAnalysisContext> HandleObjectInitializerAction = HandleObjectInitializer;
         private static readonly Action<SyntaxNodeAnalysisContext> HandleAnonymousObjectInitializerAction = HandleAnonymousObjectInitializer;
         private static readonly Action<SyntaxNodeAnalysisContext> HandleEnumDeclarationAction = HandleEnumDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> HandleSwitchExpressionAction = HandleSwitchExpression;
 
         private static readonly ImmutableArray<SyntaxKind> ObjectInitializerKinds =
-            ImmutableArray.Create(SyntaxKind.ObjectInitializerExpression, SyntaxKind.ArrayInitializerExpression, SyntaxKind.CollectionInitializerExpression);
+            ImmutableArray.Create(SyntaxKind.ObjectInitializerExpression, SyntaxKind.ArrayInitializerExpression, SyntaxKind.CollectionInitializerExpression, SyntaxKindEx.WithInitializerExpression);
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -76,6 +79,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             context.RegisterSyntaxNodeAction(HandleObjectInitializerAction, ObjectInitializerKinds);
             context.RegisterSyntaxNodeAction(HandleAnonymousObjectInitializerAction, SyntaxKind.AnonymousObjectCreationExpression);
             context.RegisterSyntaxNodeAction(HandleEnumDeclarationAction, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeAction(HandleSwitchExpressionAction, SyntaxKindEx.SwitchExpression);
         }
 
         private static void HandleEnumDeclaration(SyntaxNodeAnalysisContext context)
@@ -118,6 +122,20 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             if (initializer.Initializers.SeparatorCount < initializer.Initializers.Count)
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, initializer.Initializers.Last().GetLocation()));
+            }
+        }
+
+        private static void HandleSwitchExpression(SyntaxNodeAnalysisContext context)
+        {
+            var switchExpression = (SwitchExpressionSyntaxWrapper)context.Node;
+            if (switchExpression.SyntaxNode == null || !switchExpression.SyntaxNode.SpansMultipleLines())
+            {
+                return;
+            }
+
+            if (switchExpression.Arms.SeparatorCount < switchExpression.Arms.Count)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, switchExpression.Arms.Last().SyntaxNode.GetLocation()));
             }
         }
     }

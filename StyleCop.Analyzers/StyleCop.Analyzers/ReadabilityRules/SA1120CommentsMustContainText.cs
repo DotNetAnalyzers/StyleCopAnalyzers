@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
@@ -25,10 +27,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// The ID for diagnostics produced by the <see cref="SA1120CommentsMustContainText"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1120";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1120.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1120Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1120MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1120Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1120.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -82,10 +84,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleSingleLineComment(SyntaxTreeAnalysisContext context, SyntaxTrivia singleLineComment)
         {
-            int index = 0;
-
             // PERF: Explicitly cast to IReadOnlyList so we only box once.
-            IReadOnlyList<SyntaxTrivia> list = TriviaHelper.GetContainingTriviaList(singleLineComment, out index);
+            IReadOnlyList<SyntaxTrivia> list = TriviaHelper.GetContainingTriviaList(singleLineComment, out int index);
             var firstNonWhiteSpace = TriviaHelper.IndexOfFirstNonWhitespaceTrivia(list);
 
             // When we encounter a block of single line comments, we only want to raise this diagnostic

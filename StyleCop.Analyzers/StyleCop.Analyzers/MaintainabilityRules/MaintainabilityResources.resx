@@ -120,23 +120,149 @@
   <data name="SA1119CodeFix" xml:space="preserve">
     <value>Remove parentheses</value>
   </data>
+  <data name="SA1119Description" xml:space="preserve">
+    <value>A C# statement contains parenthesis which are unnecessary and should be removed.</value>
+  </data>
+  <data name="SA1119MessageFormat" xml:space="preserve">
+    <value>Statement should not use unnecessary parenthesis</value>
+  </data>
+  <data name="SA1119Title" xml:space="preserve">
+    <value>Statement should not use unnecessary parenthesis</value>
+  </data>
   <data name="SA1400CodeFix" xml:space="preserve">
     <value>Declare accessibility</value>
+  </data>
+  <data name="SA1400Description" xml:space="preserve">
+    <value>The access modifier for a C# element has not been explicitly defined.</value>
+  </data>
+  <data name="SA1400MessageFormat" xml:space="preserve">
+    <value>Element '{0}' should declare an access modifier</value>
+  </data>
+  <data name="SA1400Title" xml:space="preserve">
+    <value>Access modifier should be declared</value>
+  </data>
+  <data name="SA1401Description" xml:space="preserve">
+    <value>A field within a C# class has an access modifier other than private.</value>
+  </data>
+  <data name="SA1401MessageFormat" xml:space="preserve">
+    <value>Field should be private</value>
+  </data>
+  <data name="SA1401Title" xml:space="preserve">
+    <value>Fields should be private</value>
   </data>
   <data name="SA1402CodeFix" xml:space="preserve">
     <value>Move type to new file</value>
   </data>
+  <data name="SA1402Description" xml:space="preserve">
+    <value>A C# code file contains more than one unique type.</value>
+  </data>
+  <data name="SA1402MessageFormat" xml:space="preserve">
+    <value>File may only contain a single type</value>
+  </data>
+  <data name="SA1402Title" xml:space="preserve">
+    <value>File may only contain a single type</value>
+  </data>
+  <data name="SA1403Description" xml:space="preserve">
+    <value>A C# code file contains more than one namespace.</value>
+  </data>
+  <data name="SA1403MessageFormat" xml:space="preserve">
+    <value>File may only contain a single namespace</value>
+  </data>
+  <data name="SA1403Title" xml:space="preserve">
+    <value>File may only contain a single namespace</value>
+  </data>
   <data name="SA1404CodeFix" xml:space="preserve">
     <value>Fix justification</value>
+  </data>
+  <data name="SA1404Description" xml:space="preserve">
+    <value>A Code Analysis SuppressMessage attribute does not include a justification.</value>
+  </data>
+  <data name="SA1404MessageFormat" xml:space="preserve">
+    <value>Code analysis suppression should have justification</value>
+  </data>
+  <data name="SA1404Title" xml:space="preserve">
+    <value>Code analysis suppression should have justification</value>
+  </data>
+  <data name="SA1405Description" xml:space="preserve">
+    <value>A call to Debug.Assert in C# code does not include a descriptive message.</value>
+  </data>
+  <data name="SA1405MessageFormat" xml:space="preserve">
+    <value>Debug.Assert should provide message text</value>
+  </data>
+  <data name="SA1405Title" xml:space="preserve">
+    <value>Debug.Assert should provide message text</value>
+  </data>
+  <data name="SA1406Description" xml:space="preserve">
+    <value>A call to Debug.Fail in C# code does not include a descriptive message.</value>
+  </data>
+  <data name="SA1406MessageFormat" xml:space="preserve">
+    <value>Debug.Fail should provide message text</value>
+  </data>
+  <data name="SA1406Title" xml:space="preserve">
+    <value>Debug.Fail should provide message text</value>
+  </data>
+  <data name="SA1407Description" xml:space="preserve">
+    <value>A C# statement contains a complex arithmetic expression which omits parenthesis around operators.</value>
+  </data>
+  <data name="SA1407MessageFormat" xml:space="preserve">
+    <value>Arithmetic expressions should declare precedence</value>
   </data>
   <data name="SA1407SA1408CodeFix" xml:space="preserve">
     <value>Add parentheses</value>
   </data>
+  <data name="SA1407Title" xml:space="preserve">
+    <value>Arithmetic expressions should declare precedence</value>
+  </data>
+  <data name="SA1408Description" xml:space="preserve">
+    <value>A C# statement contains a complex conditional expression which omits parenthesis around operators.</value>
+  </data>
+  <data name="SA1408MessageFormat" xml:space="preserve">
+    <value>Conditional expressions should declare precedence</value>
+  </data>
+  <data name="SA1408Title" xml:space="preserve">
+    <value>Conditional expressions should declare precedence</value>
+  </data>
+  <data name="SA1409Description" xml:space="preserve">
+    <value>A C# file contains code which is unnecessary and can be removed without changing the overall logic of the code.</value>
+  </data>
+  <data name="SA1409MessageFormat" xml:space="preserve">
+    <value>TODO: Message format</value>
+  </data>
+  <data name="SA1409Title" xml:space="preserve">
+    <value>Remove unnecessary code</value>
+  </data>
+  <data name="SA1410Description" xml:space="preserve">
+    <value>A call to a C# anonymous method does not contain any method parameters, yet the statement still includes parenthesis.</value>
+  </data>
+  <data name="SA1410MessageFormat" xml:space="preserve">
+    <value>Remove delegate parenthesis when possible</value>
+  </data>
   <data name="SA1410SA1411CodeFix" xml:space="preserve">
     <value>Remove parentheses</value>
   </data>
+  <data name="SA1410Title" xml:space="preserve">
+    <value>Remove delegate parenthesis when possible</value>
+  </data>
+  <data name="SA1411Description" xml:space="preserve">
+    <value>TODO.</value>
+  </data>
+  <data name="SA1411MessageFormat" xml:space="preserve">
+    <value>Attribute constructor should not use unnecessary parenthesis</value>
+  </data>
+  <data name="SA1411Title" xml:space="preserve">
+    <value>Attribute constructor should not use unnecessary parenthesis</value>
+  </data>
   <data name="SA1412CodeFix" xml:space="preserve">
     <value>Change encoding from '{0}' to UTF-8 with byte order mark</value>
+  </data>
+  <data name="SA1412Description" xml:space="preserve">
+    <value>Source files should be saved using the UTF-8 encoding with a byte order mark.</value>
+  </data>
+  <data name="SA1412MessageFormat" xml:space="preserve">
+    <value>Store files as UTF-8 with byte order mark</value>
+  </data>
+  <data name="SA1412Title" xml:space="preserve">
+    <value>Store files as UTF-8 with byte order mark</value>
   </data>
   <data name="SA1413CodeFix" xml:space="preserve">
     <value>Add trailing comma</value>
@@ -149,5 +275,14 @@
   </data>
   <data name="SA1413Title" xml:space="preserve">
     <value>Use trailing comma in multi-line initializers</value>
+  </data>
+  <data name="SA1414Description" xml:space="preserve">
+    <value>Tuple types appearing in member declarations should have explicitly named tuple elements.</value>
+  </data>
+  <data name="SA1414MessageFormat" xml:space="preserve">
+    <value>Tuple types in signatures should have element names</value>
+  </data>
+  <data name="SA1414Title" xml:space="preserve">
+    <value>Tuple types in signatures should have element names</value>
   </data>
 </root>

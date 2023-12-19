@@ -1,9 +1,12 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.Settings
 {
     using System.Collections.Immutable;
+    using System.Globalization;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -27,8 +30,11 @@ namespace StyleCop.Analyzers.Test.Settings
 
             Assert.Equal("PlaceholderCompany", styleCopSettings.DocumentationRules.CompanyName);
             Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
+            Assert.Equal("en-US", styleCopSettings.DocumentationRules.DocumentationCulture);
+            Assert.Same(CultureInfo.InvariantCulture, styleCopSettings.DocumentationRules.DocumentationCultureInfo);
             Assert.True(styleCopSettings.NamingRules.AllowCommonHungarianPrefixes);
             Assert.Empty(styleCopSettings.NamingRules.AllowedHungarianPrefixes);
+            Assert.Empty(styleCopSettings.NamingRules.AllowedNamespaceComponents);
 
             Assert.NotNull(styleCopSettings.OrderingRules);
             Assert.Equal(UsingDirectivesPlacement.InsideNamespace, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
@@ -36,10 +42,33 @@ namespace StyleCop.Analyzers.Test.Settings
 
             Assert.NotNull(styleCopSettings.LayoutRules);
             Assert.Equal(OptionSetting.Allow, styleCopSettings.LayoutRules.NewlineAtEndOfFile);
+            Assert.True(styleCopSettings.LayoutRules.AllowConsecutiveUsings);
+            Assert.False(styleCopSettings.LayoutRules.AllowDoWhileOnClosingBrace);
 
             Assert.NotNull(styleCopSettings.SpacingRules);
             Assert.NotNull(styleCopSettings.ReadabilityRules);
             Assert.NotNull(styleCopSettings.MaintainabilityRules);
+        }
+
+        [Fact]
+        [WorkItem(3402, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3402")]
+        public async Task VerifyDefaultCultureIsReadCorrectlyAsync()
+        {
+            var settings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""documentationCulture"": ""en-US""
+    },
+  }
+}
+";
+            var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+
+            Assert.Equal("en-US", styleCopSettings.DocumentationRules.DocumentationCulture);
+            Assert.Same(CultureInfo.InvariantCulture, styleCopSettings.DocumentationRules.DocumentationCultureInfo);
         }
 
         /// <summary>
@@ -61,6 +90,7 @@ namespace StyleCop.Analyzers.Test.Settings
     ""namingRules"": {
       ""allowCommonHungarianPrefixes"": false,
       ""allowedHungarianPrefixes"": [""a"", ""ab"", ""ignoredTooLong""],
+      ""allowedNamespaceComponents"": [""eBay"", ""iMac""],
       ""unrecognizedValue"": 3
     },
     ""layoutRules"": {
@@ -93,6 +123,7 @@ namespace StyleCop.Analyzers.Test.Settings
             Assert.Equal("ru-RU", styleCopSettings.DocumentationRules.DocumentationCulture);
             Assert.False(styleCopSettings.NamingRules.AllowCommonHungarianPrefixes);
             Assert.Equal(new[] { "a", "ab" }, styleCopSettings.NamingRules.AllowedHungarianPrefixes);
+            Assert.Equal(new[] { "eBay", "iMac" }, styleCopSettings.NamingRules.AllowedNamespaceComponents);
 
             Assert.NotNull(styleCopSettings.LayoutRules);
             Assert.Equal(OptionSetting.Require, styleCopSettings.LayoutRules.NewlineAtEndOfFile);
@@ -168,25 +199,28 @@ namespace StyleCop.Analyzers.Test.Settings
         /// <summary>
         /// Verifies that the settings will use the read company name in the default copyright text.
         /// </summary>
+        /// <param name="companyName">The company name to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task VerifySettingsWillUseCompanyNameInDefaultCopyrightTextAsync()
+        [Theory]
+        [InlineData("TestCompany")]
+        [InlineData("TestCompany2")]
+        public async Task VerifySettingsWillUseCompanyNameInDefaultCopyrightTextAsync(string companyName)
         {
-            var settings = @"
-{
-  ""settings"": {
-    ""documentationRules"": {
-      ""companyName"": ""TestCompany""
-    }
-  }
-}
+            var settings = $@"
+{{
+  ""settings"": {{
+    ""documentationRules"": {{
+      ""companyName"": ""{companyName}""
+    }}
+  }}
+}}
 ";
             var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
 
             var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
 
-            Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
-            Assert.Equal("Copyright (c) TestCompany. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
+            Assert.Equal(companyName, styleCopSettings.DocumentationRules.CompanyName);
+            Assert.Equal($"Copyright (c) {companyName}. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
         }
 
         [Fact]
@@ -371,7 +405,7 @@ namespace StyleCop.Analyzers.Test.Settings
             var additionalFiles = ImmutableArray.Create<AdditionalText>(stylecopJSONFile);
             var analyzerOptions = new AnalyzerOptions(additionalFiles);
 
-            return new SyntaxTreeAnalysisContext(syntaxTree, analyzerOptions, rd => { }, isd => { return true; }, CancellationToken.None);
+            return new SyntaxTreeAnalysisContext(syntaxTree, analyzerOptions, reportDiagnostic: _ => { }, isSupportedDiagnostic: _ => true, CancellationToken.None);
         }
 
         private class AdditionalTextHelper : AdditionalText
@@ -386,7 +420,7 @@ namespace StyleCop.Analyzers.Test.Settings
 
             public override string Path { get; }
 
-            public override SourceText GetText(CancellationToken cancellationToken = default(CancellationToken))
+            public override SourceText GetText(CancellationToken cancellationToken = default)
             {
                 return this.sourceText;
             }
