@@ -521,7 +521,55 @@ public class TypeName
         [InlineData("Method1", "Const1", false)]
         [InlineData("Method2", "Const1", false)]
         [WorkItem(3677, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3677")]
-        public async Task TestMethodsAsync(string expr1, string expr2, bool shouldTrigger)
+        public async Task TestSimpleMethodsAsync(string expr1, string expr2, bool shouldTrigger)
+        {
+            await this.TestMethodAsync(expr1, expr2, shouldTrigger).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("TestClass.Method1", "arg", true)]
+        [InlineData("this.Method2", "arg", true)]
+        [InlineData("TestClass.Method1", "field1", true)]
+        [InlineData("this.Method2", "field1", true)]
+        [InlineData("TestClass.Method1", "field2", true)]
+        [InlineData("this.Method2", "field2", true)]
+        [InlineData("Const1", "TestClass.Method1", false)]
+        [InlineData("Const1", "this.Method2", false)]
+        [InlineData("TestClass.Method1", "Const1", false)]
+        [InlineData("this.Method2", "Const1", false)]
+        [InlineData("Method3<int>", "arg", true)]
+        [InlineData("TestClass.Method3<int>", "arg", true)]
+        [WorkItem(3759, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3759")]
+        public async Task TestComplexMethodsAsync(string expr1, string expr2, bool shouldTrigger)
+        {
+            await this.TestMethodAsync(expr1, expr2, shouldTrigger).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("==")]
+        [InlineData("!=")]
+        [InlineData(">=")]
+        [InlineData("<=")]
+        [InlineData(">")]
+        [InlineData("<")]
+        [WorkItem(3759, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3759")]
+        public async Task TestComplexLeftHandSideExpressionAsync(string @operator)
+        {
+            var testCode = $@"
+using System;
+public class TypeName
+{{
+    public void Test(int x, int y, Func<int> a)
+    {{
+        var r1 = x + 1 {@operator} y;
+        var r2 = -x {@operator} y;
+        var r3 = a() {@operator} y;
+    }}
+}}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        private async Task TestMethodAsync(string expr1, string expr2, bool shouldTrigger)
         {
             var testExpr = $"{expr1} == {expr2}";
             var testCode = $@"
@@ -544,6 +592,10 @@ public class TestClass
     }}
 
     private void Method2()
+    {{
+    }}
+
+    private static void Method3<T>()
     {{
     }}
 }}
@@ -572,6 +624,10 @@ public class TestClass
     private void Method2()
     {{
     }}
+
+    private static void Method3<T>()
+    {{
+    }}
 }}
 ";
 
@@ -583,30 +639,6 @@ public class TestClass
             {
                 await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             }
-        }
-
-        [Theory]
-        [InlineData("==")]
-        [InlineData("!=")]
-        [InlineData(">=")]
-        [InlineData("<=")]
-        [InlineData(">")]
-        [InlineData("<")]
-        [WorkItem(3759, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3759")]
-        public async Task TestComplexLeftHandSideExpressionAsync(string @operator)
-        {
-            var testCode = $@"
-using System;
-public class TypeName
-{{
-    public void Test(int x, int y, Func<int> a)
-    {{
-        var r1 = x + 1 {@operator} y;
-        var r2 = -x {@operator} y;
-        var r3 = a() {@operator} y;
-    }}
-}}";
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
