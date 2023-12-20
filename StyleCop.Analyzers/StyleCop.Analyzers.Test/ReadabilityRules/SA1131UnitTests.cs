@@ -584,5 +584,29 @@ public class TestClass
                 await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             }
         }
+
+        [Theory]
+        [InlineData("==")]
+        [InlineData("!=")]
+        [InlineData(">=")]
+        [InlineData("<=")]
+        [InlineData(">")]
+        [InlineData("<")]
+        [WorkItem(3759, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3759")]
+        public async Task TestComplexLeftHandSideExpressionAsync(string @operator)
+        {
+            var testCode = $@"
+using System;
+public class TypeName
+{{
+    public void Test(int x, int y, Func<int> a)
+    {{
+        var r1 = x + 1 {@operator} y;
+        var r2 = -x {@operator} y;
+        var r3 = a() {@operator} y;
+    }}
+}}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

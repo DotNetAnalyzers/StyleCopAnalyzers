@@ -86,7 +86,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
             switch (symbol)
             {
             case IFieldSymbol fieldSymbol when fieldSymbol.IsStatic && fieldSymbol.IsReadOnly:
-            case IMethodSymbol:
+                return true;
+
+            // NOTE: Without the when clause, this would also treat e.g unary or binary expressions as literals,
+            // since GetSymbolInfo returns the operator method in those cases.
+            case IMethodSymbol when expression is IdentifierNameSyntax:
                 return true;
 
             default:
