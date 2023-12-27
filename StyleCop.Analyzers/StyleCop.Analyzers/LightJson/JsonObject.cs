@@ -188,7 +188,6 @@ namespace LightJson
             return this.GetEnumerator();
         }
 
-        [ExcludeFromCodeCoverageInternal]
         private class JsonObjectDebugView
         {
             private readonly JsonObject jsonObject;
