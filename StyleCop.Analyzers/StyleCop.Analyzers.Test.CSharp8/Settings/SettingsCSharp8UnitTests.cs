@@ -172,6 +172,22 @@ file_header_template = {variable}
             Assert.Equal("[InvalidReference]", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
         }
 
+        [Fact]
+        public async Task VerifyEditorConfigSettingsReadCorrectlyDirectivePlacementWithoutSeverityLevelAsync()
+        {
+            var settings = @"root = true
+
+[*]
+csharp_using_directive_placement = outside_namespace
+";
+            var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+
+            Assert.NotNull(styleCopSettings.OrderingRules);
+            Assert.Equal(UsingDirectivesPlacement.OutsideNamespace, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
+        }
+
         protected virtual AnalyzerConfigOptionsProvider CreateAnalyzerConfigOptionsProvider(AnalyzerConfigSet analyzerConfigSet)
             => new TestAnalyzerConfigOptionsProvider(analyzerConfigSet);
 
