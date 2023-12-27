@@ -30,7 +30,7 @@ namespace StyleCop.Analyzers
         /// <see cref="DiagnosticDescriptor(string, string, string, string, DiagnosticSeverity, bool, string, string, string[])"/>
         /// to disable a diagnostic which is currently untested.
         /// </value>
-        [ExcludeFromCodeCoverage]
+        [ExcludeFromCodeCoverageInternal]
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1623:Property summary documentation should match accessors.", Justification = "This property behaves more like an opaque value than a Boolean.")]
         internal static bool DisabledNoTests { get; }
 

@@ -846,7 +846,7 @@ namespace LightJson
             }
         }
 
-        [ExcludeFromCodeCoverage]
+        [ExcludeFromCodeCoverageInternal]
         private class JsonValueDebugView
         {
             private readonly JsonValue jsonValue;
