@@ -5,6 +5,7 @@
 
 namespace StyleCop.Analyzers.Test.CSharp8.Settings
 {
+    using System;
     using System.Collections.Immutable;
     using System.Threading;
     using System.Threading.Tasks;
@@ -172,20 +173,28 @@ file_header_template = {variable}
             Assert.Equal("[InvalidReference]", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
         }
 
-        [Fact]
-        public async Task VerifyEditorConfigSettingsReadCorrectlyDirectivePlacementWithoutSeverityLevelAsync()
+        [Theory]
+        [InlineData("outside_namespace")]
+        [InlineData("inside_namespace")]
+        public async Task VerifyEditorConfigSettingsReadCorrectlyDirectivePlacementWithoutSeverityLevelAsync(string placement)
         {
-            var settings = @"root = true
+            var expected = placement switch
+            {
+                "outside_namespace" => UsingDirectivesPlacement.OutsideNamespace,
+                "inside_namespace" => UsingDirectivesPlacement.InsideNamespace,
+                _ => throw new InvalidOperationException(),
+            };
+            var settings = $@"root = true
 
 [*]
-csharp_using_directive_placement = outside_namespace
+csharp_using_directive_placement = {placement}
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
             var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
 
             Assert.NotNull(styleCopSettings.OrderingRules);
-            Assert.Equal(UsingDirectivesPlacement.OutsideNamespace, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
+            Assert.Equal(expected, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
         }
 
         protected virtual AnalyzerConfigOptionsProvider CreateAnalyzerConfigOptionsProvider(AnalyzerConfigSet analyzerConfigSet)
