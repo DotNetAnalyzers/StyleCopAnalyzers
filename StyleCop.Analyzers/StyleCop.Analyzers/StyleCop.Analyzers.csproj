@@ -2,17 +2,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.1;net452</TargetFrameworks>
+    <TargetFramework>netstandard1.1</TargetFramework>
+    <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
+    <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
     <PackageId>StyleCop.Analyzers.NewIdRequiredDueToNuGetBug</PackageId>
   </PropertyGroup>
-
-  <Choose>
-    <When Condition="'$(TargetFramework)' == 'netstandard1.1'">
-      <PropertyGroup>
-        <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
-      </PropertyGroup>
-    </When>
-  </Choose>
 
   <PropertyGroup>
     <CodeAnalysisRuleSet>..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
