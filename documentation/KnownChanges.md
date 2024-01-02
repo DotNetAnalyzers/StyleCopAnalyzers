@@ -123,8 +123,14 @@ StyleCop Classic allowed multiple spaces to precede a comment placed at the end 
 int x;    // comment
 ```
 
-StyleCop Analyzers does not currently make an exception to the SA1025 rule for this case, although this decision is
-still under review.
+It also allowed multiple spaces preceding a symbol, such as in the second line of the following code:
+
+```csharp
+int xyz = 1;
+int w   = 1;
+```
+
+StyleCop Analyzers does not currently make an exception to the SA1025 rule for these cases.
 
 ## Readability Rules
 

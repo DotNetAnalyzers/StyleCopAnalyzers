@@ -17,8 +17,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// </summary>
     /// <remarks>
     /// <para>A violation of this rule occurs whenever the code contains multiple whitespace characters in a row, unless
-    /// the characters come at the beginning or end of a line of code, following a comma or semicolon or preceding a
-    /// symbol.</para>
+    /// the characters come at the beginning or end of a line of code, or following a comma or semicolon.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SA1025CodeMustNotContainMultipleWhitespaceInARow : DiagnosticAnalyzer
