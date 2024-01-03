@@ -91,9 +91,9 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 changes.Sort((left, right) => left.Span.Start.CompareTo(right.Span.Start));
 
-                var text = await document.GetTextAsync().ConfigureAwait(false);
-                var tree = await document.GetSyntaxTreeAsync().ConfigureAwait(false);
-                return await tree.WithChangedText(text.WithChanges(changes)).GetRootAsync().ConfigureAwait(false);
+                var text = await document.GetTextAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var tree = await document.GetSyntaxTreeAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                return await tree.WithChangedText(text.WithChanges(changes)).GetRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
             }
         }
     }
