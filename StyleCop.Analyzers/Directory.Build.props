@@ -41,7 +41,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <SharedMicrosoftCodeAnalysisAnalyzersVersion>3.11.0-beta1.23472.1</SharedMicrosoftCodeAnalysisAnalyzersVersion>
+    <SharedMicrosoftCodeAnalysisAnalyzersVersion>3.11.0-beta1.24052.1</SharedMicrosoftCodeAnalysisAnalyzersVersion>
   </PropertyGroup>
 
   <ItemGroup>
