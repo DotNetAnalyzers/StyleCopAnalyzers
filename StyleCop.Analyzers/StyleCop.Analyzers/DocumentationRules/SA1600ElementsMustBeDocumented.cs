@@ -6,8 +6,12 @@
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
+    using System.Reflection.Metadata;
+    using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -143,11 +147,29 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
                 Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
-                if (NeedsComment(settings.DocumentationRules, declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
+                if (!NeedsComment(settings.DocumentationRules, declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
                 {
-                    if (!XmlCommentHelper.HasDocumentation(declaration))
+                    return;
+                }
+
+                if (!XmlCommentHelper.HasDocumentation(declaration))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
+                }
+
+                if (context.Node is TypeDeclarationSyntax typeDeclaration && RecordDeclarationSyntaxWrapper.IsInstance(typeDeclaration))
+                {
+                    RecordDeclarationSyntaxWrapper recordDeclaration = typeDeclaration;
+
+                    string[] documentedParameterNames = GetDocumentedParameters(context, typeDeclaration, out bool hasInheritdoc);
+                    IEnumerable<ParameterSyntax> parameters = recordDeclaration.ParameterList?.Parameters ?? Enumerable.Empty<ParameterSyntax>();
+
+                    foreach (var parameter in parameters)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
+                        if (!hasInheritdoc && !documentedParameterNames.Contains(parameter.Identifier.ValueText))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, parameter.Identifier.GetLocation()));
+                        }
                     }
                 }
             }
@@ -340,6 +362,61 @@ namespace StyleCop.Analyzers.DocumentationRules
                         }
                     }
                 }
+            }
+
+            private static string[] GetDocumentedParameters(SyntaxNodeAnalysisContext context, RecordDeclarationSyntaxWrapper typeDeclarationSyntax, out bool hasInheritdoc)
+            {
+                hasInheritdoc = false;
+
+                var documentation = context.Node.GetDocumentationCommentTriviaSyntax();
+                if (documentation == null)
+                {
+                    return EmptyArray<string>.Instance;
+                }
+
+                if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag) != null)
+                {
+                    hasInheritdoc = true;
+                    return EmptyArray<string>.Instance;
+                }
+
+                var hasIncludedDocumentation =
+                    documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag) != null;
+
+                if (hasIncludedDocumentation)
+                {
+                    var declaredSymbol = context.SemanticModel.GetDeclaredSymbol(typeDeclarationSyntax, context.CancellationToken);
+                    var rawDocumentation = declaredSymbol?.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
+                    var includedDocumentation = XElement.Parse(rawDocumentation ?? "<doc></doc>", LoadOptions.None);
+
+                    if (includedDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.InheritdocXmlTag))
+                    {
+                        hasInheritdoc = true;
+                        return EmptyArray<string>.Instance;
+                    }
+
+                    IEnumerable<XElement> paramElements = includedDocumentation.Nodes()
+                        .OfType<XElement>()
+                        .Where(x => x.Name == XmlCommentHelper.ParamXmlTag);
+
+                    return paramElements
+                        .SelectMany(x => x.Attributes().Where(y => y.Name == XmlCommentHelper.NameArgumentName))
+                        .Select(x => x.Value)
+                        .ToArray();
+                }
+                else
+                {
+                    IEnumerable<XmlNodeSyntax> xmlNodes = documentation.Content.GetXmlElements(XmlCommentHelper.ParamXmlTag);
+                    return xmlNodes.Select(XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>)
+                        .Where(x => x != null)
+                        .Select(x => x.Identifier.Identifier.ValueText)
+                        .ToArray();
+                }
+            }
+
+            private static class EmptyArray<T>
+            {
+                public static T[] Instance { get; } = new T[0];
             }
         }
     }

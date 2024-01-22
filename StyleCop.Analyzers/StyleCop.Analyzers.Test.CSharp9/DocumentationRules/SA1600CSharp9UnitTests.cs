@@ -5,11 +5,205 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.DocumentationRules
 {
+    using System.Threading;
+    using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Test.CSharp8.DocumentationRules;
+    using StyleCop.Analyzers.Test.Helpers;
+    using StyleCop.Analyzers.Test.Verifiers;
+    using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<
+        StyleCop.Analyzers.DocumentationRules.SA1600ElementsMustBeDocumented>;
 
     public partial class SA1600CSharp9UnitTests : SA1600CSharp8UnitTests
     {
+        [Theory]
+        [MemberData(nameof(CommonMemberData.RecordTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        [WorkItem(3780, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3780")]
+        public async Task TestRecordPrimaryConstructorNoParameterDocumentationAsync(string keyword)
+        {
+            string testCode = $@"
+/// <summary>
+/// Record.
+/// </summary>
+public {keyword} MyRecord(int {{|#0:Param1|}}, string {{|#1:Param2|}});";
+
+            DiagnosticResult[] expectedResults = new[]
+            {
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+                Diagnostic().WithLocation(1),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.RecordTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        [WorkItem(3780, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3780")]
+        public async Task TestRecordPrimaryConstructorNoDocumentationAsync(string keyword)
+        {
+            string testCode = $@"
+public {keyword} {{|#0:MyRecord|}}(int {{|#1:Param1|}});";
+
+            DiagnosticResult[] expectedResults = new[]
+            {
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+                Diagnostic().WithLocation(1),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.RecordTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        [WorkItem(3780, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3780")]
+        public async Task TestRecordPrimaryConstructorCompleteParameterDocumentationAsync(string keyword)
+        {
+            string testCode = $@"
+/// <summary>
+/// Record.
+/// </summary>
+/// <param name=""Param1"">Parameter one.</param>
+/// <param name=""Param2"">Parameter two.</param>
+public {keyword} MyRecord(int Param1, string Param2);";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.RecordTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        [WorkItem(3780, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3780")]
+        public async Task TestRecordPrimaryConstructorPartialParameterDocumentationAsync(string keyword)
+        {
+            string testCode = $@"
+/// <summary>
+/// Record.
+/// </summary>
+/// <param name=""Param1"">Parameter one.</param>
+public {keyword} MyRecord(int Param1, string {{|#0:Param2|}});";
+
+            DiagnosticResult[] expectedResults = new[]
+            {
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(0),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.RecordTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        [WorkItem(3780, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3780")]
+        public async Task TestRecordPrimaryConstructorInheritdocAsync(string keyword)
+        {
+            string testCode = $@"
+/// <inheritdoc />
+public {keyword} MyRecord(int Param1, string Param2);";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.RecordTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        [WorkItem(3780, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3780")]
+        public async Task TestRecordPrimaryConstructorIncludeParameterDocumentationAsync(string keyword)
+        {
+            string testCode = $@"
+/// <include file='WithParameterDocumentation.xml' path='/TestType/*' />
+public {keyword} MyRecord(int Param1, string Param2, bool Param3);";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.RecordTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        [WorkItem(3780, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3780")]
+        public async Task TestRecordPrimaryConstructorIncludePartialParameterDocumentationAsync(string keyword)
+        {
+            string testCode = $@"
+/// <include file='WithPartialParameterDocumentation.xml' path='/TestType/*' />
+public {keyword} MyRecord(int {{|#0:Param1|}}, string Param2, bool Param3);";
+
+            DiagnosticResult[] expectedResults = new[]
+            {
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(0),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.RecordTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        [WorkItem(3780, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3780")]
+        public async Task TestRecordPrimaryConstructorIncludeMissingParameterDocumentationAsync(string keyword)
+        {
+            string testCode = $@"
+/// <include file='MissingParameterDocumentation.xml' path='/TestType/*' />
+public {keyword} MyRecord(int {{|#0:Param1|}}, string {{|#1:Param2|}}, bool {{|#2:Param3|}});";
+
+            DiagnosticResult[] expectedResults = new[]
+            {
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+                Diagnostic().WithLocation(1),
+                Diagnostic().WithLocation(2),
+                Diagnostic().WithLocation(2),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        {
+            string typeWithoutParameterDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+        <TestType>
+            <summary>
+                Foo
+            </summary>
+        </TestType>
+        ";
+            string typeWithPartialParameterDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+        <TestType>
+            <summary>
+                Foo
+            </summary>
+            <param name=""Param2"">Param 2.</param>
+            <param name=""Param3"">Param 3.</param>
+        </TestType>
+        ";
+            string typeWithParameterDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+        <TestType>
+            <summary>
+                Foo
+            </summary>
+            <param name=""Param1"">Param 1.</param>
+            <param name=""Param2"">Param 2.</param>
+            <param name=""Param3"">Param 3.</param>
+        </TestType>
+        ";
+
+            var test = new CSharpTest
+            {
+                TestCode = source,
+                XmlReferences =
+                        {
+                            { "MissingParameterDocumentation.xml", typeWithoutParameterDocumentation },
+                            { "WithParameterDocumentation.xml", typeWithParameterDocumentation },
+                            { "WithPartialParameterDocumentation.xml", typeWithPartialParameterDocumentation },
+                        },
+            };
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync(cancellationToken);
+        }
+
         protected override DiagnosticResult[] GetExpectedResultTestRegressionMethodGlobalNamespace(string code)
         {
             if (code == "public void {|#0:TestMember|}() { }")
