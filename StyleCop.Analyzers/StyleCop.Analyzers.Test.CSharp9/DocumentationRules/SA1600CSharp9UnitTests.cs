@@ -5,13 +5,12 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.DocumentationRules
 {
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
-    using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Test.CSharp8.DocumentationRules;
     using StyleCop.Analyzers.Test.Helpers;
-    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<
         StyleCop.Analyzers.DocumentationRules.SA1600ElementsMustBeDocumented>;
@@ -32,12 +31,10 @@ public {keyword} MyRecord(int {{|#0:Param1|}}, string {{|#1:Param2|}});";
             DiagnosticResult[] expectedResults = new[]
             {
                 Diagnostic().WithLocation(0),
-                Diagnostic().WithLocation(0),
-                Diagnostic().WithLocation(1),
                 Diagnostic().WithLocation(1),
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, this.GetExpectedResultTestRecordPrimaryConstructor(expectedResults), CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -51,12 +48,10 @@ public {keyword} {{|#0:MyRecord|}}(int {{|#1:Param1|}});";
             DiagnosticResult[] expectedResults = new[]
             {
                 Diagnostic().WithLocation(0),
-                Diagnostic().WithLocation(0),
-                Diagnostic().WithLocation(1),
                 Diagnostic().WithLocation(1),
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, this.GetExpectedResultTestRecordPrimaryConstructor(expectedResults), CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -90,10 +85,9 @@ public {keyword} MyRecord(int Param1, string {{|#0:Param2|}});";
             DiagnosticResult[] expectedResults = new[]
             {
                 Diagnostic().WithLocation(0),
-                Diagnostic().WithLocation(0),
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, this.GetExpectedResultTestRecordPrimaryConstructor(expectedResults), CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -123,6 +117,18 @@ public {keyword} MyRecord(int Param1, string Param2, bool Param3);";
         [Theory]
         [MemberData(nameof(CommonMemberData.RecordTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         [WorkItem(3780, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3780")]
+        public async Task TestRecordPrimaryConstructorIncludeInheritdocAsync(string keyword)
+        {
+            string testCode = $@"
+/// <include file='WithInheritdoc.xml' path='/TestType/*' />
+public {keyword} MyRecord(int Param1, string Param2, bool Param3);";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.RecordTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        [WorkItem(3780, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3780")]
         public async Task TestRecordPrimaryConstructorIncludePartialParameterDocumentationAsync(string keyword)
         {
             string testCode = $@"
@@ -132,10 +138,9 @@ public {keyword} MyRecord(int {{|#0:Param1|}}, string Param2, bool Param3);";
             DiagnosticResult[] expectedResults = new[]
             {
                 Diagnostic().WithLocation(0),
-                Diagnostic().WithLocation(0),
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, this.GetExpectedResultTestRecordPrimaryConstructor(expectedResults), CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -150,14 +155,11 @@ public {keyword} MyRecord(int {{|#0:Param1|}}, string {{|#1:Param2|}}, bool {{|#
             DiagnosticResult[] expectedResults = new[]
             {
                 Diagnostic().WithLocation(0),
-                Diagnostic().WithLocation(0),
                 Diagnostic().WithLocation(1),
-                Diagnostic().WithLocation(1),
-                Diagnostic().WithLocation(2),
                 Diagnostic().WithLocation(2),
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, this.GetExpectedResultTestRecordPrimaryConstructor(expectedResults), CancellationToken.None).ConfigureAwait(false);
         }
 
         protected static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
@@ -188,6 +190,11 @@ public {keyword} MyRecord(int {{|#0:Param1|}}, string {{|#1:Param2|}}, bool {{|#
             <param name=""Param3"">Param 3.</param>
         </TestType>
         ";
+            string typeWithIncludedInheritdoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+        <TestType>
+            <inheritdoc />
+        </TestType>
+        ";
 
             var test = new CSharpTest
             {
@@ -197,6 +204,7 @@ public {keyword} MyRecord(int {{|#0:Param1|}}, string {{|#1:Param2|}}, bool {{|#
                             { "MissingParameterDocumentation.xml", typeWithoutParameterDocumentation },
                             { "WithParameterDocumentation.xml", typeWithParameterDocumentation },
                             { "WithPartialParameterDocumentation.xml", typeWithPartialParameterDocumentation },
+                            { "WithInheritdoc.xml", typeWithIncludedInheritdoc },
                         },
             };
 
@@ -219,6 +227,12 @@ public {keyword} MyRecord(int {{|#0:Param1|}}, string {{|#1:Param2|}}, bool {{|#
             }
 
             return base.GetExpectedResultTestRegressionMethodGlobalNamespace(code);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestRecordPrimaryConstructor(DiagnosticResult[] results)
+        {
+            // Roslyn reports diagnostics twice for C# 9 and C# 10. Fixed in C# 11.
+            return results.Concat(results).ToArray();
         }
     }
 }
