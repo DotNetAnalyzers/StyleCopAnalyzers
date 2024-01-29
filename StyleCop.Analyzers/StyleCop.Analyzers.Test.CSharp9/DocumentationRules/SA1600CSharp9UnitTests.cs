@@ -28,13 +28,9 @@ namespace StyleCop.Analyzers.Test.CSharp9.DocumentationRules
 /// </summary>
 public {keyword} MyRecord(int {{|#0:Param1|}}, string {{|#1:Param2|}});";
 
-            DiagnosticResult[] expectedResults = new[]
-            {
-                Diagnostic().WithLocation(0),
-                Diagnostic().WithLocation(1),
-            };
+            DiagnosticResult[] expectedResults = this.GetExpectedResultTestRecordPrimaryConstructorNoParameterDocumentation();
 
-            await VerifyCSharpDiagnosticAsync(testCode, this.GetExpectedResultTestRecordPrimaryConstructor(expectedResults), CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -45,13 +41,9 @@ public {keyword} MyRecord(int {{|#0:Param1|}}, string {{|#1:Param2|}});";
             string testCode = $@"
 public {keyword} {{|#0:MyRecord|}}(int {{|#1:Param1|}});";
 
-            DiagnosticResult[] expectedResults = new[]
-            {
-                Diagnostic().WithLocation(0),
-                Diagnostic().WithLocation(1),
-            };
+            DiagnosticResult[] expectedResults = this.GetExpectedResultTestRecordPrimaryConstructorNoDocumentation();
 
-            await VerifyCSharpDiagnosticAsync(testCode, this.GetExpectedResultTestRecordPrimaryConstructor(expectedResults), CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -82,12 +74,9 @@ public {keyword} MyRecord(int Param1, string Param2);";
 /// <param name=""Param1"">Parameter one.</param>
 public {keyword} MyRecord(int Param1, string {{|#0:Param2|}});";
 
-            DiagnosticResult[] expectedResults = new[]
-            {
-                Diagnostic().WithLocation(0),
-            };
+            DiagnosticResult[] expectedResults = this.GetExpectedResultTestRecordPrimaryConstructorPartialParameterDocumentation();
 
-            await VerifyCSharpDiagnosticAsync(testCode, this.GetExpectedResultTestRecordPrimaryConstructor(expectedResults), CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -135,12 +124,9 @@ public {keyword} MyRecord(int Param1, string Param2, bool Param3);";
 /// <include file='WithPartialParameterDocumentation.xml' path='/TestType/*' />
 public {keyword} MyRecord(int {{|#0:Param1|}}, string Param2, bool Param3);";
 
-            DiagnosticResult[] expectedResults = new[]
-            {
-                Diagnostic().WithLocation(0),
-            };
+            DiagnosticResult[] expectedResults = this.GetExpectedResultTestRecordPrimaryConstructorIncludePartialParameterDocumentation();
 
-            await VerifyCSharpDiagnosticAsync(testCode, this.GetExpectedResultTestRecordPrimaryConstructor(expectedResults), CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -152,14 +138,9 @@ public {keyword} MyRecord(int {{|#0:Param1|}}, string Param2, bool Param3);";
 /// <include file='MissingParameterDocumentation.xml' path='/TestType/*' />
 public {keyword} MyRecord(int {{|#0:Param1|}}, string {{|#1:Param2|}}, bool {{|#2:Param3|}});";
 
-            DiagnosticResult[] expectedResults = new[]
-            {
-                Diagnostic().WithLocation(0),
-                Diagnostic().WithLocation(1),
-                Diagnostic().WithLocation(2),
-            };
+            DiagnosticResult[] expectedResults = this.GetExpectedResultTestRecordPrimaryConstructorIncludeMissingParameterDocumentation();
 
-            await VerifyCSharpDiagnosticAsync(testCode, this.GetExpectedResultTestRecordPrimaryConstructor(expectedResults), CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
@@ -229,10 +210,73 @@ public {keyword} MyRecord(int {{|#0:Param1|}}, string {{|#1:Param2|}}, bool {{|#
             return base.GetExpectedResultTestRegressionMethodGlobalNamespace(code);
         }
 
-        protected virtual DiagnosticResult[] GetExpectedResultTestRecordPrimaryConstructor(DiagnosticResult[] results)
+        /* The below result overrides are due to a Roslyn bug causing diagnostics to be reported twice, which was fixed in a later version. */
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestRecordPrimaryConstructorNoParameterDocumentation()
         {
-            // Roslyn reports diagnostics twice for C# 9 and C# 10. Fixed in C# 11.
-            return results.Concat(results).ToArray();
+            return new[]
+            {
+                // /0/Test0.cs(5,28): warning SA1600: Elements should be documented
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(0),
+
+                // /0/Test0.cs(5,43): warning SA1600: Elements should be documented
+                Diagnostic().WithLocation(1),
+                Diagnostic().WithLocation(1),
+            };
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestRecordPrimaryConstructorNoDocumentation()
+        {
+            return new[]
+            {
+                // /0/Test0.cs(2,15): warning SA1600: Elements should be documented
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(0),
+
+                // /0/Test0.cs(2,28): warning SA1600: Elements should be documented
+                Diagnostic().WithLocation(1),
+                Diagnostic().WithLocation(1),
+            };
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestRecordPrimaryConstructorPartialParameterDocumentation()
+        {
+            return new[]
+            {
+                // /0/Test0.cs(6,43): warning SA1600: Elements should be documented
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(0),
+            };
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestRecordPrimaryConstructorIncludePartialParameterDocumentation()
+        {
+
+            return new[]
+            {
+                // /0/Test0.cs(3,28): warning SA1600: Elements should be documented
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(0),
+            };
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestRecordPrimaryConstructorIncludeMissingParameterDocumentation()
+        {
+            return new[]
+            {
+                // /0/Test0.cs(3,28): warning SA1600: Elements should be documented
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(0),
+
+                // /0/Test0.cs(3,43): warning SA1600: Elements should be documented
+                Diagnostic().WithLocation(1),
+                Diagnostic().WithLocation(1),
+
+                // /0/Test0.cs(3,56): warning SA1600: Elements should be documented
+                Diagnostic().WithLocation(2),
+                Diagnostic().WithLocation(2),
+            };
         }
     }
 }
