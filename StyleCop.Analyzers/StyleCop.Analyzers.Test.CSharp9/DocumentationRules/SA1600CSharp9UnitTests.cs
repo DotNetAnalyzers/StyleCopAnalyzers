@@ -252,7 +252,6 @@ public {keyword} MyRecord(int {{|#0:Param1|}}, string {{|#1:Param2|}}, bool {{|#
 
         protected virtual DiagnosticResult[] GetExpectedResultTestRecordPrimaryConstructorIncludePartialParameterDocumentation()
         {
-
             return new[]
             {
                 // /0/Test0.cs(3,28): warning SA1600: Elements should be documented

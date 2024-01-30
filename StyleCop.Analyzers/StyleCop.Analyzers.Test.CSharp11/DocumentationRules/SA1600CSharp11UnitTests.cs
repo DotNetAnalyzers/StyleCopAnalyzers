@@ -10,7 +10,6 @@ namespace StyleCop.Analyzers.Test.CSharp11.DocumentationRules
 
     public partial class SA1600CSharp11UnitTests : SA1600CSharp10UnitTests
     {
-
         /* These methods reflect a fix for a Roslyn issue from C# 9 where diagnostics were reported twice. */
 
         protected override DiagnosticResult[] GetExpectedResultTestRecordPrimaryConstructorNoParameterDocumentation()
@@ -48,7 +47,6 @@ namespace StyleCop.Analyzers.Test.CSharp11.DocumentationRules
 
         protected override DiagnosticResult[] GetExpectedResultTestRecordPrimaryConstructorIncludePartialParameterDocumentation()
         {
-
             return new[]
             {
                 // /0/Test0.cs(3,28): warning SA1600: Elements should be documented
