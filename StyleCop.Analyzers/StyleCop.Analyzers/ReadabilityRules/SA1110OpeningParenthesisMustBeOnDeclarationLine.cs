@@ -53,6 +53,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
+        private static readonly Action<SyntaxNodeAnalysisContext> TypeDeclarationAction = HandleTypeDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> MethodDeclarationAction = HandleMethodDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> LocalFunctionStatementAction = HandleLocalFunctionStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> ConstructorDeclarationAction = HandleConstructorDeclaration;
@@ -77,6 +78,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
+            context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
             context.RegisterSyntaxNodeAction(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
             context.RegisterSyntaxNodeAction(LocalFunctionStatementAction, SyntaxKindEx.LocalFunctionStatement);
             context.RegisterSyntaxNodeAction(ConstructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
@@ -326,6 +328,20 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 bool preserveLayout = localFunctionStatement.ParameterList.Parameters.Any();
                 CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, localFunctionStatement.ParameterList.OpenParenToken, preserveLayout);
+            }
+        }
+
+        private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var typeDeclaration = (TypeDeclarationSyntax)context.Node;
+            var parameterList = typeDeclaration.ParameterList();
+
+            if (parameterList != null
+                && !parameterList.OpenParenToken.IsMissing
+                && !typeDeclaration.Identifier.IsMissing)
+            {
+                bool preserveLayout = parameterList.Parameters.Any();
+                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, parameterList.OpenParenToken, preserveLayout);
             }
         }
 
