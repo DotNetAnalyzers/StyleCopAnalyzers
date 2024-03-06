@@ -95,9 +95,12 @@ namespace StyleCop.Analyzers.SpacingRules
             if (token.Parent.IsKind(SyntaxKindEx.PropertyPatternClause))
             {
                 var prevToken = token.GetPreviousToken();
-                if (prevToken is { RawKind: (int)SyntaxKind.OpenParenToken, Parent: { RawKind: (int)SyntaxKindEx.PositionalPatternClause } })
+                if (prevToken.IsKind(SyntaxKind.OpenParenToken))
                 {
                     // value is ({ P: 0 }, { P: 0 })
+                    // value is ({ P: 0 } and { P: 0 })
+                    // value is ({ P: 0 } or { P: 0 })
+                    // value is ({ P: 0 })
                     expectPrecedingSpace = false;
                 }
                 else if (prevToken is { RawKind: (int)SyntaxKind.OpenBracketToken, Parent: { RawKind: (int)SyntaxKindEx.ListPattern } })
