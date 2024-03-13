@@ -20,21 +20,13 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     /// </summary>
     public class SA1612UnitTests
     {
-        public static IEnumerable<object[]> DeclarationsWithMemberColumn
-        {
-            get
-            {
-                yield return new object[] { "    public ClassName Method(string foo, string bar, string @new) { return null; }", 22 };
-                yield return new object[] { "    public delegate ClassName Method(string foo, string bar, string @new);", 31 };
-                yield return new object[] { "    public ClassName this[string foo, string bar, string @new] { get { return null; } set { } }", 22 };
-            }
-        }
-
         public static IEnumerable<object[]> Declarations
         {
             get
             {
-                return DeclarationsWithMemberColumn.Select(x => new[] { x[0] });
+                yield return new object[] { "    public ClassName {|#0:Method|}(string foo, string bar, string @new) { return null; }" };
+                yield return new object[] { "    public delegate ClassName {|#0:Method|}(string foo, string bar, string @new);" };
+                yield return new object[] { "    public ClassName {|#0:this|}[string foo, string bar, string @new] { get { return null; } set { } }" };
             }
         }
 
@@ -404,8 +396,8 @@ $$
         }
 
         [Theory]
-        [MemberData(nameof(DeclarationsWithMemberColumn))]
-        public async Task VerifyIncludedMemberWithInvalidParamsIsReportedAsync(string declaration, int memberColumn)
+        [MemberData(nameof(Declarations))]
+        public async Task VerifyIncludedMemberWithInvalidParamsIsReportedAsync(string declaration)
         {
             var testCode = @"
 /// <summary>
@@ -419,9 +411,9 @@ $$
 
             var expected = new[]
             {
-                Diagnostic().WithLocation(8, memberColumn).WithArguments("boo"),
-                Diagnostic().WithLocation(8, memberColumn).WithArguments("far"),
-                Diagnostic().WithLocation(8, memberColumn).WithArguments("foe"),
+                Diagnostic().WithLocation(0).WithArguments("boo"),
+                Diagnostic().WithLocation(0).WithArguments("far"),
+                Diagnostic().WithLocation(0).WithArguments("foe"),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
@@ -443,8 +435,8 @@ public class ClassName
         }
 
         [Theory]
-        [MemberData(nameof(DeclarationsWithMemberColumn))]
-        public async Task VerifyIncludedMemberWithAllDocumentationWrongOrderIsReportedAsync(string declaration, int memberColumn)
+        [MemberData(nameof(Declarations))]
+        public async Task VerifyIncludedMemberWithAllDocumentationWrongOrderIsReportedAsync(string declaration)
         {
             var testCode = @"
 /// <summary>
@@ -461,9 +453,9 @@ $$
 
             var expected = new[]
             {
-                diagnostic.WithLocation(8, memberColumn).WithArguments("new", 3),
-                diagnostic.WithLocation(8, memberColumn).WithArguments("foo", 1),
-                diagnostic.WithLocation(8, memberColumn).WithArguments("bar", 2),
+                diagnostic.WithLocation(0).WithArguments("new", 3),
+                diagnostic.WithLocation(0).WithArguments("foo", 1),
+                diagnostic.WithLocation(0).WithArguments("bar", 2),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
@@ -483,16 +475,16 @@ $$
 
             expected = new[]
             {
-                diagnostic.WithLocation(8, memberColumn).WithArguments("foo", 1),
-                diagnostic.WithLocation(8, memberColumn).WithArguments("bar", 2),
+                diagnostic.WithLocation(0).WithArguments("foo", 1),
+                diagnostic.WithLocation(0).WithArguments("bar", 2),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), testSettings, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
-        [MemberData(nameof(DeclarationsWithMemberColumn))]
-        public async Task VerifyIncludedMemberWithTooManyDocumentationIsReportedAsync(string declaration, int memberColumn)
+        [MemberData(nameof(Declarations))]
+        public async Task VerifyIncludedMemberWithTooManyDocumentationIsReportedAsync(string declaration)
         {
             var testCode = @"
 /// <summary>
@@ -507,7 +499,7 @@ $$
             var diagnostic = Diagnostic()
                 .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}");
 
-            var expected = diagnostic.WithLocation(8, memberColumn).WithArguments("bar", 2);
+            var expected = diagnostic.WithLocation(0).WithArguments("bar", 2);
 
             await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
         }
