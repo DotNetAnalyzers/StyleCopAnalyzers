@@ -137,5 +137,13 @@ namespace StyleCop.Analyzers.Test.Helpers
                 }
             }
         }
+
+        public static IEnumerable<object[]> ReferenceTypeKeywordsWhichSupportPrimaryConstructors
+        {
+            get
+            {
+                return TypeKeywordsWhichSupportPrimaryConstructors.Where(x => !((string)x[0]).Contains("struct"));
+            }
+        }
     }
 }
