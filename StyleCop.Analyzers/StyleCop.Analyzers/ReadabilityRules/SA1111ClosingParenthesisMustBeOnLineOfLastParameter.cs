@@ -111,250 +111,139 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     continue;
                 }
 
-                var lastSize = arrayRankSpecifierSyntax.Sizes
-                    .Last();
+                var lastSize = arrayRankSpecifierSyntax.Sizes.Last();
 
-                if (!arrayRankSpecifierSyntax.CloseBracketToken.IsMissing)
-                {
-                    CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(
-                        context,
-                        lastSize,
-                        arrayRankSpecifierSyntax.CloseBracketToken);
-                }
+                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(
+                    context,
+                    lastSize,
+                    arrayRankSpecifierSyntax.CloseBracketToken);
             }
         }
 
         private static void HandleParenthesizedLambdaExpression(SyntaxNodeAnalysisContext context)
         {
             var lambdaExpressionSyntax = (ParenthesizedLambdaExpressionSyntax)context.Node;
-
-            if (lambdaExpressionSyntax.ParameterList == null ||
-                lambdaExpressionSyntax.ParameterList.IsMissing ||
-                !lambdaExpressionSyntax.ParameterList.Parameters.Any())
-            {
-                return;
-            }
-
-            var lastParameter = lambdaExpressionSyntax.ParameterList
-                .Parameters
-                .Last();
-
-            if (!lambdaExpressionSyntax.ParameterList.CloseParenToken.IsMissing)
-            {
-                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(
-                    context,
-                    lastParameter,
-                    lambdaExpressionSyntax.ParameterList.CloseParenToken);
-            }
+            CheckParameterList(context, lambdaExpressionSyntax.ParameterList);
         }
 
         private static void HandleAnonymousMethodExpression(SyntaxNodeAnalysisContext context)
         {
             var anonymousMethod = (AnonymousMethodExpressionSyntax)context.Node;
-
-            if (anonymousMethod.ParameterList == null ||
-                anonymousMethod.ParameterList.IsMissing ||
-                !anonymousMethod.ParameterList.Parameters.Any())
-            {
-                return;
-            }
-
-            var lastParameter = anonymousMethod.ParameterList
-                .Parameters
-                .Last();
-
-            if (!anonymousMethod.ParameterList.CloseParenToken.IsMissing)
-            {
-                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(
-                    context,
-                    lastParameter,
-                    anonymousMethod.ParameterList.CloseParenToken);
-            }
+            CheckParameterList(context, anonymousMethod.ParameterList);
         }
 
         private static void HandleAttribute(SyntaxNodeAnalysisContext context)
         {
             var attribute = (AttributeSyntax)context.Node;
+            var argumentList = attribute.ArgumentList;
 
-            if (attribute.ArgumentList == null ||
-                attribute.ArgumentList.IsMissing ||
-                !attribute.ArgumentList.Arguments.Any())
+            if (argumentList == null || argumentList.IsMissing || !argumentList.Arguments.Any())
             {
                 return;
             }
 
-            var lastArgument = attribute.ArgumentList
-                .Arguments
-                .Last();
+            var lastParameter = argumentList.Arguments.Last();
 
-            if (!attribute.ArgumentList.CloseParenToken.IsMissing)
-            {
-                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(
-                    context,
-                    lastArgument,
-                    attribute.ArgumentList.CloseParenToken);
-            }
+            CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(
+                 context,
+                 lastParameter,
+                 argumentList.CloseParenToken);
         }
 
         private static void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
         {
             var delegateDeclaration = (DelegateDeclarationSyntax)context.Node;
-
-            if (delegateDeclaration.ParameterList == null ||
-                delegateDeclaration.ParameterList.IsMissing ||
-                !delegateDeclaration.ParameterList.Parameters.Any())
-            {
-                return;
-            }
-
-            var lastParameter = delegateDeclaration.ParameterList
-                .Parameters
-                .Last();
-
-            if (!delegateDeclaration.ParameterList.CloseParenToken.IsMissing)
-            {
-                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(
-                    context,
-                    lastParameter,
-                    delegateDeclaration.ParameterList.CloseParenToken);
-            }
+            CheckParameterList(context, delegateDeclaration.ParameterList);
         }
 
         private static void HandleElementAccessExpression(SyntaxNodeAnalysisContext context)
         {
             var elementAccess = (ElementAccessExpressionSyntax)context.Node;
+            var argumentList = elementAccess.ArgumentList;
 
-            if (elementAccess.ArgumentList == null ||
-                elementAccess.ArgumentList.IsMissing ||
-                !elementAccess.ArgumentList.Arguments.Any())
+            if (argumentList == null || argumentList.IsMissing || !argumentList.Arguments.Any())
             {
                 return;
             }
 
-            var lastArgument = elementAccess.ArgumentList
-                .Arguments
-                .Last();
+            var lastParameter = argumentList.Arguments.Last();
 
-            if (!elementAccess.ArgumentList.CloseBracketToken.IsMissing && !lastArgument.IsMissing)
-            {
-                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(
-                    context,
-                    lastArgument,
-                    elementAccess.ArgumentList.CloseBracketToken);
-            }
+            CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(
+                 context,
+                 lastParameter,
+                 argumentList.CloseBracketToken);
         }
 
         private static void HandleInvocationExpression(SyntaxNodeAnalysisContext context)
         {
             var invocationExpression = (InvocationExpressionSyntax)context.Node;
-
-            if (invocationExpression.ArgumentList == null ||
-                invocationExpression.ArgumentList.IsMissing ||
-                !invocationExpression.ArgumentList.Arguments.Any())
-            {
-                return;
-            }
-
-            var lastArgument = invocationExpression.ArgumentList
-                .Arguments
-                .Last();
-
-            if (!invocationExpression.ArgumentList.CloseParenToken.IsMissing &&
-                !lastArgument.IsMissing)
-            {
-                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(
-                    context,
-                    lastArgument,
-                    invocationExpression.ArgumentList.CloseParenToken);
-            }
+            CheckArgumentList(context, invocationExpression.ArgumentList);
         }
 
         private static void HandleObjectCreationExpression(SyntaxNodeAnalysisContext context)
         {
             var objectCreation = (ObjectCreationExpressionSyntax)context.Node;
-
-            if (objectCreation.ArgumentList == null ||
-                objectCreation.ArgumentList.IsMissing ||
-                !objectCreation.ArgumentList.Arguments.Any())
-            {
-                return;
-            }
-
-            var lastArgument = objectCreation.ArgumentList
-                .Arguments
-                .Last();
-
-            if (!objectCreation.ArgumentList.CloseParenToken.IsMissing &&
-                !lastArgument.IsMissing)
-            {
-                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(
-                    context,
-                    lastArgument,
-                    objectCreation.ArgumentList.CloseParenToken);
-            }
+            CheckArgumentList(context, objectCreation.ArgumentList);
         }
 
         private static void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)
         {
             var indexerDeclaration = (IndexerDeclarationSyntax)context.Node;
+            var parameterList = indexerDeclaration.ParameterList;
 
-            if (indexerDeclaration.ParameterList == null ||
-                indexerDeclaration.ParameterList.IsMissing ||
-                !indexerDeclaration.ParameterList.Parameters.Any())
+            if (parameterList == null || parameterList.IsMissing || !parameterList.Parameters.Any())
             {
                 return;
             }
 
-            var lastParameter = indexerDeclaration.ParameterList
-                         .Parameters
-                         .Last();
+            var lastParameter = parameterList.Parameters.Last();
 
-            if (!indexerDeclaration.ParameterList.CloseBracketToken.IsMissing)
-            {
-                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(context, lastParameter, indexerDeclaration.ParameterList.CloseBracketToken);
-            }
+            CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(
+                context,
+                lastParameter,
+                parameterList.CloseBracketToken);
         }
 
         private static void HandleBaseMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
             var baseMethodDeclarationSyntax = (BaseMethodDeclarationSyntax)context.Node;
-
-            if (baseMethodDeclarationSyntax.ParameterList == null ||
-                baseMethodDeclarationSyntax.ParameterList.IsMissing ||
-                !baseMethodDeclarationSyntax.ParameterList.Parameters.Any())
-            {
-                return;
-            }
-
-            var lastParameter = baseMethodDeclarationSyntax.ParameterList
-                .Parameters
-                .Last();
-
-            if (!baseMethodDeclarationSyntax.ParameterList.CloseParenToken.IsMissing)
-            {
-                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(context, lastParameter, baseMethodDeclarationSyntax.ParameterList.CloseParenToken);
-            }
+            CheckParameterList(context, baseMethodDeclarationSyntax.ParameterList);
         }
 
         private static void HandleLocalFunctionStatement(SyntaxNodeAnalysisContext context)
         {
             var localFunctionStatementSyntax = (LocalFunctionStatementSyntaxWrapper)context.Node;
+            CheckParameterList(context, localFunctionStatementSyntax.ParameterList);
+        }
 
-            if (localFunctionStatementSyntax.ParameterList == null ||
-                localFunctionStatementSyntax.ParameterList.IsMissing ||
-                !localFunctionStatementSyntax.ParameterList.Parameters.Any())
+        private static void CheckParameterList(SyntaxNodeAnalysisContext context, ParameterListSyntax parameterList)
+        {
+            if (parameterList == null || parameterList.IsMissing || !parameterList.Parameters.Any())
             {
                 return;
             }
 
-            var lastParameter = localFunctionStatementSyntax.ParameterList
-                .Parameters
-                .Last();
+            var lastParameter = parameterList.Parameters.Last();
 
-            if (!localFunctionStatementSyntax.ParameterList.CloseParenToken.IsMissing)
+            CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(
+                context,
+                lastParameter,
+                parameterList.CloseParenToken);
+        }
+
+        private static void CheckArgumentList(SyntaxNodeAnalysisContext context, ArgumentListSyntax argumentList)
+        {
+            if (argumentList == null || argumentList.IsMissing || !argumentList.Arguments.Any())
             {
-                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(context, lastParameter, localFunctionStatementSyntax.ParameterList.CloseParenToken);
+                return;
             }
+
+            var lastParameter = argumentList.Arguments.Last();
+
+            CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(
+                 context,
+                 lastParameter,
+                 argumentList.CloseParenToken);
         }
 
         private static void CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(
@@ -362,6 +251,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
             CSharpSyntaxNode parameterOrArgument,
             SyntaxToken closeToken)
         {
+            if (parameterOrArgument.IsMissing || closeToken.IsMissing)
+            {
+                return;
+            }
+
             var lastParameterLine = parameterOrArgument.GetLineSpan();
             var closeParenLine = closeToken.GetLineSpan();
             if (lastParameterLine.IsValid &&
