@@ -536,13 +536,13 @@ public class ClassName
         }
 
         private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
-            => VerifyCSharpDiagnosticAsync(source, testSettings: null, new[] { expected }, false, cancellationToken);
+            => VerifyCSharpDiagnosticAsync(source, testSettings: null, new[] { expected }, ignoreCompilerDiagnostics: false, cancellationToken);
 
         private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
-            => VerifyCSharpDiagnosticAsync(source, testSettings: null, expected, false, cancellationToken);
+            => VerifyCSharpDiagnosticAsync(source, testSettings: null, expected, ignoreCompilerDiagnostics: false, cancellationToken);
 
         private static Task VerifyCSharpDiagnosticAsync(string source, string testSettings, DiagnosticResult[] expected, CancellationToken cancellationToken)
-            => VerifyCSharpDiagnosticAsync(source, testSettings, expected, false, cancellationToken);
+            => VerifyCSharpDiagnosticAsync(source, testSettings, expected, ignoreCompilerDiagnostics: false, cancellationToken);
 
         private static Task VerifyCSharpDiagnosticAsync(string source, string testSettings, DiagnosticResult[] expected, bool ignoreCompilerDiagnostics, CancellationToken cancellationToken)
         {

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.Helpers
 {
     using System.Collections.Generic;
@@ -115,7 +113,7 @@ namespace StyleCop.Analyzers.Test.Helpers
             }
         }
 
-        public static IEnumerable<object[]> TypeKeywordsWhichSupportPrimaryConstructors
+        public static IEnumerable<object[]> ReferenceTypeKeywordsWhichSupportPrimaryConstructors
         {
             get
             {
@@ -127,22 +125,33 @@ namespace StyleCop.Analyzers.Test.Helpers
                 if (LightupHelpers.SupportsCSharp10)
                 {
                     yield return new[] { "record class" };
-                    yield return new[] { "record struct" };
                 }
 
                 if (LightupHelpers.SupportsCSharp12)
                 {
                     yield return new[] { "class" };
-                    yield return new[] { "struct" };
                 }
             }
         }
 
-        public static IEnumerable<object[]> ReferenceTypeKeywordsWhichSupportPrimaryConstructors
+        public static IEnumerable<object[]> TypeKeywordsWhichSupportPrimaryConstructors
         {
             get
             {
-                return TypeKeywordsWhichSupportPrimaryConstructors.Where(x => !((string)x[0]).Contains("struct"));
+                foreach (var keyword in ReferenceTypeKeywordsWhichSupportPrimaryConstructors)
+                {
+                    yield return keyword;
+                }
+
+                if (LightupHelpers.SupportsCSharp10)
+                {
+                    yield return new[] { "record struct" };
+                }
+
+                if (LightupHelpers.SupportsCSharp12)
+                {
+                    yield return new[] { "struct" };
+                }
             }
         }
     }
