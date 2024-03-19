@@ -114,5 +114,36 @@ namespace StyleCop.Analyzers.Test.Helpers
                     .Concat(new[] { new[] { "delegate" } });
             }
         }
+
+        public static IEnumerable<object[]> TypeKeywordsWhichSupportPrimaryConstructors
+        {
+            get
+            {
+                if (LightupHelpers.SupportsCSharp9)
+                {
+                    yield return new[] { "record" };
+                }
+
+                if (LightupHelpers.SupportsCSharp10)
+                {
+                    yield return new[] { "record class" };
+                    yield return new[] { "record struct" };
+                }
+
+                if (LightupHelpers.SupportsCSharp12)
+                {
+                    yield return new[] { "class" };
+                    yield return new[] { "struct" };
+                }
+            }
+        }
+
+        public static IEnumerable<object[]> ReferenceTypeKeywordsWhichSupportPrimaryConstructors
+        {
+            get
+            {
+                return TypeKeywordsWhichSupportPrimaryConstructors.Where(x => !((string)x[0]).Contains("struct"));
+            }
+        }
     }
 }

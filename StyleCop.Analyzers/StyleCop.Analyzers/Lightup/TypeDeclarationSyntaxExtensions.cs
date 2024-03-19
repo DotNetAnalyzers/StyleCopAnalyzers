@@ -19,6 +19,20 @@ internal static class TypeDeclarationSyntaxExtensions
 
     public static ParameterListSyntax? ParameterList(this TypeDeclarationSyntax syntax)
     {
+        if (!LightupHelpers.SupportsCSharp12)
+        {
+            // Prior to C# 12, the ParameterList property in RecordDeclarationSyntax did not override a base method.
+            switch (syntax.Kind())
+            {
+            case SyntaxKindEx.RecordDeclaration:
+            case SyntaxKindEx.RecordStructDeclaration:
+                return ((RecordDeclarationSyntaxWrapper)syntax).ParameterList;
+
+            default:
+                return null;
+            }
+        }
+
         return ParameterListAccessor(syntax);
     }
 
