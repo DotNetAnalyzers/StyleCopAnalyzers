@@ -58,7 +58,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterCompilationStartAction(context =>
+            context.RegisterCompilationStartActionWithSettings(context =>
             {
                 context.RegisterSyntaxNodeAction(this.methodDeclarationAction, SyntaxKind.MethodDeclaration);
                 context.RegisterSyntaxNodeAction(this.constructorDeclarationAction, SyntaxKind.ConstructorDeclaration);

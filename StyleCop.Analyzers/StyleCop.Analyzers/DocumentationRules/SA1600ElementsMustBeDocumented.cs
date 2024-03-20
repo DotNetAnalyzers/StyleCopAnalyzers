@@ -110,7 +110,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterCompilationStartAction(context =>
+            context.RegisterCompilationStartActionWithSettings(context =>
             {
                 context.RegisterSyntaxNodeAction(BaseTypeDeclarationAction, SyntaxKinds.BaseTypeDeclaration);
                 context.RegisterSyntaxNodeAction(MethodDeclarationAction, SyntaxKind.MethodDeclaration);

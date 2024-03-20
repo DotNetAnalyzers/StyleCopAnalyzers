@@ -75,7 +75,7 @@ namespace StyleCop.Analyzers.NamingRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterCompilationStartAction(context =>
+            context.RegisterCompilationStartActionWithSettings(context =>
             {
                 // Note: Interfaces are handled by SA1302
                 // Note: Fields are handled by SA1303 through SA1311

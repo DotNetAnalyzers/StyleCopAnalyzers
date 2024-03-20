@@ -50,7 +50,7 @@ namespace StyleCop.Analyzers.NamingRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterCompilationStartAction(context =>
+            context.RegisterCompilationStartActionWithSettings(context =>
             {
                 context.RegisterSyntaxNodeAction(TupleTypeAction, SyntaxKindEx.TupleType);
                 context.RegisterSyntaxNodeAction(TupleExpressionAction, SyntaxKindEx.TupleExpression);
