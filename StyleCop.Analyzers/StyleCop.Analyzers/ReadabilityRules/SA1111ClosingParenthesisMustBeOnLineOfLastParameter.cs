@@ -61,6 +61,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 SyntaxKind.ConversionOperatorDeclaration);
 
         private static readonly Action<SyntaxNodeAnalysisContext> TypeDeclarationAction = HandleTypeDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> PrimaryConstructorBaseTypeAction = HandlePrimaryConstructorBaseType;
         private static readonly Action<SyntaxNodeAnalysisContext> BaseMethodDeclarationAction = HandleBaseMethodDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> LocalFunctionStatementAction = HandleLocalFunctionStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> InvocationExpressionAction = HandleInvocationExpression;
@@ -84,6 +85,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.EnableConcurrentExecution();
 
             context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
+            context.RegisterSyntaxNodeAction(PrimaryConstructorBaseTypeAction, SyntaxKindEx.PrimaryConstructorBaseType);
             context.RegisterSyntaxNodeAction(BaseMethodDeclarationAction, HandledMethodSyntaxKinds);
             context.RegisterSyntaxNodeAction(LocalFunctionStatementAction, SyntaxKindEx.LocalFunctionStatement);
             context.RegisterSyntaxNodeAction(InvocationExpressionAction, SyntaxKind.InvocationExpression);
@@ -222,6 +224,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var typeDeclarationSyntax = (TypeDeclarationSyntax)context.Node;
             CheckParameterList(context, typeDeclarationSyntax.ParameterList());
+        }
+
+        private static void HandlePrimaryConstructorBaseType(SyntaxNodeAnalysisContext context)
+        {
+            var typeDeclarationSyntax = (PrimaryConstructorBaseTypeSyntaxWrapper)context.Node;
+            CheckArgumentList(context, typeDeclarationSyntax.ArgumentList);
         }
 
         private static void CheckParameterList(SyntaxNodeAnalysisContext context, ParameterListSyntax parameterList)

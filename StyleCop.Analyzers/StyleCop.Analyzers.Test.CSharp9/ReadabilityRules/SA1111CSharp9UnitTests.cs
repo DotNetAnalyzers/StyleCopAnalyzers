@@ -49,11 +49,67 @@ namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory]
+        [MemberData(nameof(CommonMemberData.ReferenceTypeKeywordsWhichSupportPrimaryConstructors), MemberType = typeof(CommonMemberData))]
+        [WorkItem(3785, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3785")]
+        public async Task TestPrimaryConstructorBaseListWithArgumentsAsync(string typeKeyword)
+        {
+            var testCode = $@"
+{typeKeyword} Foo(int x)
+{{
+}}
+
+{typeKeyword} Bar(int x) : Foo(x
+    {{|#0:)|}}
+{{
+}}";
+
+            var fixedCode = $@"
+{typeKeyword} Foo(int x)
+{{
+}}
+
+{typeKeyword} Bar(int x) : Foo(x)
+{{
+}}";
+
+            var expected = this.GetExpectedResultTestPrimaryConstructorBaseList();
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.ReferenceTypeKeywordsWhichSupportPrimaryConstructors), MemberType = typeof(CommonMemberData))]
+        [WorkItem(3785, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3785")]
+        public async Task TestPrimaryConstructorBaseListWithoutArgumentsAsync(string typeKeyword)
+        {
+            var testCode = $@"
+{typeKeyword} Foo()
+{{
+}}
+
+{typeKeyword} Bar(int x) : Foo(
+    )
+{{
+}}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected virtual DiagnosticResult[] GetExpectedResultTestPrimaryConstructorWithParameter()
         {
             return new[]
             {
                 // Diagnostic issued twice because of https://github.com/dotnet/roslyn/issues/53136
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(0),
+            };
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestPrimaryConstructorBaseList()
+        {
+            return new[]
+            {
+                // Diagnostic issued twice because of https://github.com/dotnet/roslyn/issues/70488
                 Diagnostic().WithLocation(0),
                 Diagnostic().WithLocation(0),
             };
