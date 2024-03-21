@@ -238,7 +238,8 @@ namespace StyleCop.Analyzers.LayoutRules
                     {
                         if (nextToken.Parent is QueryClauseSyntax
                             || nextToken.Parent is SelectOrGroupClauseSyntax
-                            || nextToken.Parent is QueryContinuationSyntax)
+                            || nextToken.Parent is QueryContinuationSyntax
+                            || nextToken.Parent is JoinIntoClauseSyntax)
                         {
                             // the close brace is part of a query expression
                             return;
