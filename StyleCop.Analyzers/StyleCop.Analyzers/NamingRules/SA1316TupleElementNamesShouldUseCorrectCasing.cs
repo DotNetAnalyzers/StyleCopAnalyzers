@@ -115,18 +115,18 @@ namespace StyleCop.Analyzers.NamingRules
             var firstCharacterIsLower = char.IsLower(tupleElementName[0]);
 
             bool reportDiagnostic;
-            string fixedName;
+            char fixedFirstChar;
 
             switch (settings.NamingRules.TupleElementNameCasing)
             {
             case TupleElementNameCase.PascalCase:
                 reportDiagnostic = firstCharacterIsLower;
-                fixedName = char.ToUpper(tupleElementName[0]) + tupleElementName.Substring(1);
+                fixedFirstChar = char.ToUpper(tupleElementName[0]);
                 break;
 
             default:
                 reportDiagnostic = !firstCharacterIsLower;
-                fixedName = char.ToLower(tupleElementName[0]) + tupleElementName.Substring(1);
+                fixedFirstChar = char.ToLower(tupleElementName[0]);
                 break;
             }
 
@@ -136,6 +136,7 @@ namespace StyleCop.Analyzers.NamingRules
 
                 if (prepareCodeFix)
                 {
+                    var fixedName = fixedFirstChar + tupleElementName.Substring(1);
                     diagnosticProperties.Add(ExpectedTupleElementNameKey, fixedName);
                 }
 
