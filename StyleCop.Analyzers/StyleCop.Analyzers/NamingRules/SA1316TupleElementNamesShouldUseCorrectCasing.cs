@@ -7,7 +7,10 @@ namespace StyleCop.Analyzers.NamingRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
@@ -90,7 +93,7 @@ namespace StyleCop.Analyzers.NamingRules
                 var inferredMemberName = SyntaxFactsEx.TryGetInferredMemberName(argument.NameColon?.Name ?? argument.Expression);
                 if (inferredMemberName != null)
                 {
-                    CheckName(context, settings, inferredMemberName, argument.Expression.GetLocation(), false);
+                    CheckName(context, settings, tupleElement: null, inferredMemberName, argument.Expression.GetLocation(), false);
                 }
             }
         }
@@ -102,10 +105,10 @@ namespace StyleCop.Analyzers.NamingRules
                 return;
             }
 
-            CheckName(context, settings, tupleElement.Identifier.ValueText, tupleElement.Identifier.GetLocation(), true);
+            CheckName(context, settings, tupleElement.SyntaxNode, tupleElement.Identifier.ValueText, tupleElement.Identifier.GetLocation(), true);
         }
 
-        private static void CheckName(SyntaxNodeAnalysisContext context, StyleCopSettings settings, string tupleElementName, Location location, bool prepareCodeFix)
+        private static void CheckName(SyntaxNodeAnalysisContext context, StyleCopSettings settings, SyntaxNode tupleElement, string tupleElementName, Location location, bool prepareCodeFix)
         {
             if (tupleElementName == "_")
             {
@@ -130,18 +133,116 @@ namespace StyleCop.Analyzers.NamingRules
                 break;
             }
 
-            if (reportDiagnostic)
+            if (!reportDiagnostic)
             {
-                var diagnosticProperties = ImmutableDictionary.CreateBuilder<string, string>();
-
-                if (prepareCodeFix)
-                {
-                    var fixedName = fixedFirstChar + tupleElementName.Substring(1);
-                    diagnosticProperties.Add(ExpectedTupleElementNameKey, fixedName);
-                }
-
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, location, diagnosticProperties.ToImmutableDictionary()));
+                return;
             }
+
+            if (!CanTupleElementNameBeChanged(context, tupleElement))
+            {
+                return;
+            }
+
+            var diagnosticProperties = ImmutableDictionary.CreateBuilder<string, string>();
+
+            if (prepareCodeFix)
+            {
+                var fixedName = fixedFirstChar + tupleElementName.Substring(1);
+                diagnosticProperties.Add(ExpectedTupleElementNameKey, fixedName);
+            }
+
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, location, diagnosticProperties.ToImmutableDictionary()));
+        }
+
+        /// <summary>
+        /// When overriding a base class or implementing an interface, the compiler requires the names to match
+        /// the original definition. This method checks if we are allowed to change the name of the specified tuple element.
+        /// </summary>
+        private static bool CanTupleElementNameBeChanged(SyntaxNodeAnalysisContext context, SyntaxNode tupleElement)
+        {
+            var memberDeclaration = GetAncestorMemberDeclaration(tupleElement);
+            if (memberDeclaration == null)
+            {
+                return true;
+            }
+
+            if (IsOverrideOrExplicitInterfaceImplementation(memberDeclaration))
+            {
+                return false;
+            }
+
+            var symbol = context.SemanticModel.GetDeclaredSymbol(memberDeclaration);
+            if (NamedTypeHelpers.IsImplementingAnInterfaceMember(symbol))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Returns the ancestor <see cref="MemberDeclarationSyntax"/>, if the node is part of its "signature",
+        /// otherwise returns null.
+        /// </summary>
+        private static MemberDeclarationSyntax GetAncestorMemberDeclaration(SyntaxNode node)
+        {
+            // NOTE: Avoiding a simple FirstAncestorOrSelf<MemberDeclarationSyntax>() call here, since
+            // that would also return true for e.g. tuple variable declarations inside a method body.
+            while (node != null)
+            {
+                switch (node.Kind())
+                {
+                case SyntaxKind.MethodDeclaration:
+                case SyntaxKind.PropertyDeclaration:
+                case SyntaxKind.EventDeclaration:
+                case SyntaxKind.IndexerDeclaration:
+                    return (MemberDeclarationSyntax)node;
+
+                case SyntaxKind.Parameter:
+                case SyntaxKind.ParameterList:
+                case SyntaxKindEx.TupleElement:
+                case SyntaxKind.TypeArgumentList:
+                case SyntaxKind when node is TypeSyntax:
+                    node = node.Parent;
+                    break;
+
+                default:
+                    return null;
+                }
+            }
+
+            return null;
+        }
+
+        private static bool IsOverrideOrExplicitInterfaceImplementation(MemberDeclarationSyntax memberDeclaration)
+        {
+            bool result;
+
+            switch (memberDeclaration.Kind())
+            {
+            case SyntaxKind.MethodDeclaration:
+                var methodDeclaration = (MethodDeclarationSyntax)memberDeclaration;
+                result =
+                    methodDeclaration.Modifiers.Any(SyntaxKind.OverrideKeyword) ||
+                    methodDeclaration.ExplicitInterfaceSpecifier != null;
+                break;
+
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.EventDeclaration:
+            case SyntaxKind.IndexerDeclaration:
+                var basePropertyDeclaration = (BasePropertyDeclarationSyntax)memberDeclaration;
+                result =
+                    basePropertyDeclaration.Modifiers.Any(SyntaxKind.OverrideKeyword) ||
+                    basePropertyDeclaration.ExplicitInterfaceSpecifier != null;
+                break;
+
+            default:
+                Debug.Assert(false, $"Unhandled type {memberDeclaration.Kind()}");
+                result = false;
+                break;
+            }
+
+            return result;
         }
     }
 }

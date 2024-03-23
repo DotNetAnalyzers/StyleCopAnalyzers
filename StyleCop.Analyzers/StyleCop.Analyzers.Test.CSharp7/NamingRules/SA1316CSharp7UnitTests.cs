@@ -5,11 +5,13 @@
 
 namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.NamingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Helpers.LanguageVersionTestExtensions;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -93,6 +95,14 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
   }
 }
 ";
+
+        public static IEnumerable<object[]> TypesWithOneLowerCaseTupleElement { get; } = new[]
+        {
+            new[] { "(int I, string foo)" },
+            new[] { "(int I, (bool foo, string S))" },
+            new[] { "(int foo, string S)[]" },
+            new[] { "List<(string S, bool foo)>" },
+        };
 
         /// <summary>
         /// Validates the properly named tuple element names will not produce diagnostics.
@@ -400,6 +410,404 @@ public class TypeName
 ";
 
             await VerifyCSharpDiagnosticAsync(testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(TypesWithOneLowerCaseTupleElement))]
+        [WorkItem(3781, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3781")]
+        public async Task TestImproperTupleElementNameInOverriddenMethodsParameterTypeAsync(string type)
+        {
+            var testCode = $@"
+using System.Collections.Generic;
+
+public class BaseType
+{{
+    public virtual void TestMethod({type.Replace("foo", "[|foo|]")} p)
+    {{
+    }}
+}}
+
+public class TestType : BaseType
+{{
+    public override void TestMethod({type} p)
+    {{
+    }}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(TypesWithOneLowerCaseTupleElement))]
+        [WorkItem(3781, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3781")]
+        public async Task TestImproperTupleElementNameInExplicitlyImplementedMethodsParameterTypeAsync(string type)
+        {
+            var testCode = $@"
+using System.Collections.Generic;
+
+public interface TestInterface
+{{
+    void TestMethod({type.Replace("foo", "[|foo|]")} p);
+}}
+
+public class TestType : TestInterface
+{{
+    void TestInterface.TestMethod({type} p)
+    {{
+    }}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(TypesWithOneLowerCaseTupleElement))]
+        [WorkItem(3781, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3781")]
+        public async Task TestImproperTupleElementNameInInterfaceImplementedMethodsParameterTypeAsync(string type)
+        {
+            var testCode = $@"
+using System.Collections.Generic;
+
+public interface TestInterface
+{{
+    void TestMethod({type.Replace("foo", "[|foo|]")} p);
+}}
+
+public class TestType : TestInterface
+{{
+    public void TestMethod({type} p)
+    {{
+    }}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(TypesWithOneLowerCaseTupleElement))]
+        [WorkItem(3781, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3781")]
+        public async Task TestImproperTupleElementNameInOverriddenMethodsReturnTypeAsync(string type)
+        {
+            var testCode = $@"
+using System.Collections.Generic;
+
+public class BaseType
+{{
+    public virtual {type.Replace("foo", "[|foo|]")} TestMethod()
+    {{
+        throw new System.Exception();
+    }}
+}}
+
+public class TestType : BaseType
+{{
+    public override {type} TestMethod()
+    {{
+        throw new System.Exception();
+    }}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(TypesWithOneLowerCaseTupleElement))]
+        [WorkItem(3781, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3781")]
+        public async Task TestImproperTupleElementNameInExplicitlyImplementedMethodsReturnTypeAsync(string type)
+        {
+            var testCode = $@"
+using System.Collections.Generic;
+
+public interface TestInterface
+{{
+    {type.Replace("foo", "[|foo|]")} TestMethod();
+}}
+
+public class TestType : TestInterface
+{{
+    {type} TestInterface.TestMethod()
+    {{
+        throw new System.Exception();
+    }}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(TypesWithOneLowerCaseTupleElement))]
+        [WorkItem(3781, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3781")]
+        public async Task TestImproperTupleElementNameInInterfaceImplementedMethodsReturnTypeAsync(string type)
+        {
+            var testCode = $@"
+using System.Collections.Generic;
+
+public interface TestInterface
+{{
+    {type.Replace("foo", "[|foo|]")} TestMethod();
+}}
+
+public class TestType : TestInterface
+{{
+    public {type} TestMethod()
+    {{
+        throw new System.Exception();
+    }}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(TypesWithOneLowerCaseTupleElement))]
+        [WorkItem(3781, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3781")]
+        public async Task TestImproperTupleElementNameInOverriddenPropertysTypeAsync(string type)
+        {
+            var testCode = $@"
+using System.Collections.Generic;
+
+public class BaseType
+{{
+    public virtual {type.Replace("foo", "[|foo|]")} TestProperty {{ get; set; }}
+}}
+
+public class TestType : BaseType
+{{
+    public override {type} TestProperty {{ get; set; }}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(TypesWithOneLowerCaseTupleElement))]
+        [WorkItem(3781, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3781")]
+        public async Task TestImproperTupleElementNameInExplicitlyImplementedPropertysTypeAsync(string type)
+        {
+            var testCode = $@"
+using System.Collections.Generic;
+
+public interface TestInterface
+{{
+    {type.Replace("foo", "[|foo|]")} TestProperty {{ get; set; }}
+}}
+
+public class TestType : TestInterface
+{{
+    {type} TestInterface.TestProperty {{ get; set; }}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(TypesWithOneLowerCaseTupleElement))]
+        [WorkItem(3781, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3781")]
+        public async Task TestImproperTupleElementNameInInterfaceImplementedPropertysTypeAsync(string type)
+        {
+            var testCode = $@"
+using System.Collections.Generic;
+
+public interface TestInterface
+{{
+    {type.Replace("foo", "[|foo|]")} TestProperty {{ get; set; }}
+}}
+
+public class TestType : TestInterface
+{{
+    public {type} TestProperty {{ get; set; }}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(TypesWithOneLowerCaseTupleElement))]
+        [WorkItem(3781, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3781")]
+        public async Task TestImproperTupleElementNameInOverriddenEventsTypeAsync(string type)
+        {
+            var testCode = $@"
+using System;
+using System.Collections.Generic;
+
+public class BaseType
+{{
+    public virtual event Action<{type.Replace("foo", "[|foo|]")}> TestEvent {{ add {{}} remove {{}} }}
+}}
+
+public class TestType : BaseType
+{{
+    public override event Action<{type}> TestEvent {{ add {{}} remove {{}} }}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(TypesWithOneLowerCaseTupleElement))]
+        [WorkItem(3781, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3781")]
+        public async Task TestImproperTupleElementNameInExplicitlyImplementedEventsTypeAsync(string type)
+        {
+            var testCode = $@"
+using System;
+using System.Collections.Generic;
+
+public interface TestInterface
+{{
+    event Action<{type.Replace("foo", "[|foo|]")}> TestEvent;
+}}
+
+public class TestType : TestInterface
+{{
+    event Action<{type}> TestInterface.TestEvent {{ add {{}} remove {{}} }}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(TypesWithOneLowerCaseTupleElement))]
+        [WorkItem(3781, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3781")]
+        public async Task TestImproperTupleElementNameInInterfaceImplementedEventsTypeAsync(string type)
+        {
+            var testCode = $@"
+using System;
+using System.Collections.Generic;
+
+public interface TestInterface
+{{
+    event Action<{type.Replace("foo", "[|foo|]")}> TestEvent;
+}}
+
+public class TestType : TestInterface
+{{
+    public event Action<{type}> TestEvent {{ add {{}} remove {{}} }}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(TypesWithOneLowerCaseTupleElement))]
+        [WorkItem(3781, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3781")]
+        public async Task TestImproperTupleElementNameInOverriddenIndexersReturnTypeAsync(string type)
+        {
+            var testCode = $@"
+using System.Collections.Generic;
+
+public abstract class BaseType
+{{
+    public abstract {type.Replace("foo", "[|foo|]")} this[int i] {{ get; }}
+}}
+
+public class TestType : BaseType
+{{
+    public override {type} this[int i] => throw new System.Exception();
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(TypesWithOneLowerCaseTupleElement))]
+        [WorkItem(3781, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3781")]
+        public async Task TestImproperTupleElementNameInExplicitlyImplementedIndexersReturnTypeAsync(string type)
+        {
+            var testCode = $@"
+using System.Collections.Generic;
+
+public interface TestInterface
+{{
+    {type.Replace("foo", "[|foo|]")} this[int i] {{ get; }}
+}}
+
+public class TestType : TestInterface
+{{
+    {type} TestInterface.this[int i] => throw new System.Exception();
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(TypesWithOneLowerCaseTupleElement))]
+        [WorkItem(3781, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3781")]
+        public async Task TestImproperTupleElementNameInInterfaceImplementedIndexersReturnTypeAsync(string type)
+        {
+            var testCode = $@"
+using System.Collections.Generic;
+
+public interface TestInterface
+{{
+    {type.Replace("foo", "[|foo|]")} this[int i] {{ get; }}
+}}
+
+public class TestType : TestInterface
+{{
+    public {type} this[int i] => throw new System.Exception();
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3781, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3781")]
+        public async Task TestImproperVariableTupleElementNameInsideOverriddenMethodAsync()
+        {
+            var testCode = @"
+using System.Collections.Generic;
+
+public abstract class BaseType
+{
+    public virtual void TestMethod()
+    {
+    }
+}
+
+public class TestType : BaseType
+{
+    public override void TestMethod()
+    {
+        (int I, bool [|b|]) x;
+    }
+}
+";
+
+            var fixedCode = @"
+using System.Collections.Generic;
+
+public abstract class BaseType
+{
+    public virtual void TestMethod()
+    {
+    }
+}
+
+public class TestType : BaseType
+{
+    public override void TestMethod()
+    {
+        (int I, bool B) x;
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
