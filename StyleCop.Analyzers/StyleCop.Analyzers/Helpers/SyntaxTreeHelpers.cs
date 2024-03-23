@@ -72,7 +72,7 @@ namespace StyleCop.Analyzers.Helpers
                 && TriviaHelper.IndexOfFirstNonWhitespaceTrivia(firstToken.LeadingTrivia) == -1;
         }
 
-        internal static bool ContainsUsingAlias(this SyntaxTree tree, ConcurrentDictionary<SyntaxTree, bool> cache)
+        internal static bool ContainsUsingAlias(this SyntaxTree tree, ConcurrentDictionary<SyntaxTree, bool> cache, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (tree == null)
             {
@@ -85,16 +85,23 @@ namespace StyleCop.Analyzers.Helpers
                 return result;
             }
 
-            bool generated = ContainsUsingAliasNoCache(tree);
+            bool generated = ContainsUsingAliasNoCache(tree, semanticModel, cancellationToken);
             cache.TryAdd(tree, generated);
             return generated;
         }
 
-        private static bool ContainsUsingAliasNoCache(SyntaxTree tree)
+        private static bool ContainsUsingAliasNoCache(SyntaxTree tree, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
+            // Check for "local" using aliases
             var nodes = tree.GetRoot().DescendantNodes(node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration) || node.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration));
+            if (nodes.OfType<UsingDirectiveSyntax>().Any(x => x.Alias != null))
+            {
+                return true;
+            }
 
-            return nodes.OfType<UsingDirectiveSyntax>().Any(x => x.Alias != null);
+            // Check for global using aliases
+            var scopes = semanticModel.GetImportScopes(0, cancellationToken);
+            return scopes.Any(x => x.Aliases.Length > 0);
         }
     }
 }
