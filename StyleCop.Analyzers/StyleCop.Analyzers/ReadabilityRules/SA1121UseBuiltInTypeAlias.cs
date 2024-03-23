@@ -211,7 +211,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 // Most source files will not have any using alias directives. Then we don't have to use semantics
                 // if the identifier name doesn't match the name of a special type
                 if (settings.ReadabilityRules.AllowBuiltInTypeAliases
-                    || !identifierNameSyntax.SyntaxTree.ContainsUsingAlias(this.usingAliasCache))
+                    || !identifierNameSyntax.SyntaxTree.ContainsUsingAlias(this.usingAliasCache, context.SemanticModel, context.CancellationToken))
                 {
                     switch (identifierNameSyntax.Identifier.ValueText)
                     {

@@ -96,7 +96,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 var attribute = (AttributeSyntax)context.Node;
 
                 // Return fast if the name doesn't match and the file doesn't contain any using alias directives
-                if (!attribute.SyntaxTree.ContainsUsingAlias(this.usingAliasCache))
+                if (!attribute.SyntaxTree.ContainsUsingAlias(this.usingAliasCache, context.SemanticModel, context.CancellationToken))
                 {
                     if (!(attribute.Name is SimpleNameSyntax simpleNameSyntax))
                     {
