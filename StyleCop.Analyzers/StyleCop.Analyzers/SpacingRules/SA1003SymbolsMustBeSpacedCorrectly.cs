@@ -86,6 +86,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 SyntaxKind.GreaterThanOrEqualExpression,
                 SyntaxKind.LeftShiftExpression,
                 SyntaxKind.RightShiftExpression,
+                SyntaxKindEx.UnsignedRightShiftExpression,
                 SyntaxKind.AddExpression,
                 SyntaxKind.SubtractExpression,
                 SyntaxKind.MultiplyExpression,
@@ -105,7 +106,10 @@ namespace StyleCop.Analyzers.SpacingRules
                 SyntaxKind.AddressOfExpression);
 
         private static readonly ImmutableArray<SyntaxKind> PostfixUnaryExpressionKinds =
-            ImmutableArray.Create(SyntaxKind.PostIncrementExpression, SyntaxKind.PostDecrementExpression);
+            ImmutableArray.Create(
+                SyntaxKind.PostIncrementExpression,
+                SyntaxKind.PostDecrementExpression,
+                SyntaxKindEx.SuppressNullableWarningExpression);
 
         private static readonly ImmutableArray<SyntaxKind> AssignmentExpressionKinds =
             ImmutableArray.Create(
@@ -114,11 +118,13 @@ namespace StyleCop.Analyzers.SpacingRules
                 SyntaxKind.ExclusiveOrAssignmentExpression,
                 SyntaxKind.LeftShiftAssignmentExpression,
                 SyntaxKind.RightShiftAssignmentExpression,
+                SyntaxKindEx.UnsignedRightShiftAssignmentExpression,
                 SyntaxKind.AddAssignmentExpression,
                 SyntaxKind.SubtractAssignmentExpression,
                 SyntaxKind.MultiplyAssignmentExpression,
                 SyntaxKind.DivideAssignmentExpression,
                 SyntaxKind.ModuloAssignmentExpression,
+                SyntaxKindEx.CoalesceAssignmentExpression,
                 SyntaxKind.SimpleAssignmentExpression);
 
         private static readonly Action<SyntaxNodeAnalysisContext> ConstructorDeclarationAction = HandleConstructorDeclaration;
