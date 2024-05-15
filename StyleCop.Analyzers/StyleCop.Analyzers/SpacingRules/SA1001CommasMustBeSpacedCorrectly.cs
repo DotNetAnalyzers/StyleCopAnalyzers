@@ -77,10 +77,14 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
-            // Check if the comma follows a preprocessor directive
+            // Check if the comma follows a conditional preprocessor directive
             if (token.HasLeadingTrivia && token.LeadingTrivia.Any(trivia =>
-                trivia.IsDirective))
+                trivia.IsKind(SyntaxKind.IfDirectiveTrivia) ||
+                trivia.IsKind(SyntaxKind.ElifDirectiveTrivia) ||
+                trivia.IsKind(SyntaxKind.ElseDirectiveTrivia) ||
+                trivia.IsKind(SyntaxKind.EndIfDirectiveTrivia)))
             {
+                // Ignore this comma as it follows a conditional preprocessor directive
                 return;
             }
 
