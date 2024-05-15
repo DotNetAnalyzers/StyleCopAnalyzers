@@ -81,7 +81,6 @@ namespace StyleCop.Analyzers.SpacingRules
             if (token.HasLeadingTrivia && token.LeadingTrivia.Any(trivia =>
                 trivia.IsDirective))
             {
-                // Ignore this comma as it follows a preprocessor directive
                 return;
             }
 
