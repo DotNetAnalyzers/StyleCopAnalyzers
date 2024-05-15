@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -73,6 +74,14 @@ namespace StyleCop.Analyzers.SpacingRules
         {
             if (token.IsMissing)
             {
+                return;
+            }
+
+            // Check if the comma follows a preprocessor directive
+            if (token.HasLeadingTrivia && token.LeadingTrivia.Any(trivia =>
+                trivia.IsDirective))
+            {
+                // Ignore this comma as it follows a preprocessor directive
                 return;
             }
 
