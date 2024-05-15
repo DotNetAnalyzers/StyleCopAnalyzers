@@ -30,6 +30,7 @@ namespace StyleCop.Analyzers.SpacingRules
         /// The ID for diagnostics produced by the <see cref="SA1001CommasMustBeSpacedCorrectly"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1001";
+
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1001.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1001Title), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpacingResources.SA1001MessageFormat), SpacingResources.ResourceManager, typeof(SpacingResources));
@@ -84,7 +85,6 @@ namespace StyleCop.Analyzers.SpacingRules
                 trivia.IsKind(SyntaxKind.ElseDirectiveTrivia) ||
                 trivia.IsKind(SyntaxKind.EndIfDirectiveTrivia)))
             {
-                // Ignore this comma as it follows a conditional preprocessor directive
                 return;
             }
 
