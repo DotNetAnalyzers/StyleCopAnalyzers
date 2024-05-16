@@ -8,10 +8,12 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System;
     using System.Collections.Immutable;
     using System.Linq;
+    using System.Text.RegularExpressions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
@@ -138,51 +140,50 @@ namespace StyleCop.Analyzers.DocumentationRules
                 (parent.IsKind(SyntaxKind.StructDeclaration) || parent.IsKind(SyntaxKindEx.RecordStructDeclaration));
             var typeKindText = resourceManager.GetString(isStruct ? nameof(DocumentationResources.TypeTextStruct) : nameof(DocumentationResources.TypeTextClass), culture);
 
+            string standardTextFirstPart, standardTextSecondPart;
             if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword))
             {
-                HandleDeclaration(
-                    context,
-                    string.Format(resourceManager.GetString(nameof(DocumentationResources.StaticConstructorStandardTextFirstPart), culture), typeKindText),
-                    string.Format(resourceManager.GetString(nameof(DocumentationResources.StaticConstructorStandardTextSecondPart), culture), typeKindText),
-                    Descriptor);
+                standardTextFirstPart = resourceManager.GetString(nameof(DocumentationResources.StaticConstructorStandardTextFirstPart), culture);
+                standardTextSecondPart = resourceManager.GetString(nameof(DocumentationResources.StaticConstructorStandardTextSecondPart), culture);
             }
             else if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword))
             {
-                var privateConstructorMatch = HandleDeclaration(
-                    context,
-                    string.Format(resourceManager.GetString(nameof(DocumentationResources.PrivateConstructorStandardTextFirstPart), culture), typeKindText),
-                    string.Format(
-                        resourceManager.GetString(nameof(DocumentationResources.PrivateConstructorStandardTextSecondPart), culture),
-                        typeKindText),
-                    null);
-
-                if (privateConstructorMatch == MatchResult.FoundMatch)
-                {
-                    return;
-                }
-
-                // also allow the non-private wording for private constructors
-                HandleDeclaration(
-                    context,
-                    string.Format(
-                        resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextFirstPart), culture),
-                        typeKindText),
-                    string.Format(
-                        resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextSecondPart), culture),
-                        typeKindText),
-                    Descriptor);
+                standardTextFirstPart = resourceManager.GetString(nameof(DocumentationResources.PrivateConstructorStandardTextFirstPart), culture);
+                standardTextSecondPart = resourceManager.GetString(nameof(DocumentationResources.PrivateConstructorStandardTextSecondPart), culture);
             }
             else
             {
-                HandleDeclaration(
-                    context,
-                    string.Format(
-                        resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextFirstPart), culture),
-                        typeKindText),
-                    string.Format(
-                        resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextSecondPart), culture),
-                        typeKindText),
-                    Descriptor);
+                standardTextFirstPart = resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextFirstPart), culture);
+                standardTextSecondPart = resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextSecondPart), culture);
+            }
+
+            standardTextFirstPart = string.Format(standardTextFirstPart, typeKindText);
+            standardTextSecondPart = string.Format(standardTextSecondPart, typeKindText);
+
+            // Get the documentation comment
+            var documentationComment = constructorDeclarationSyntax.GetDocumentationCommentTriviaSyntax();
+            if (documentationComment == null)
+            {
+                return;
+            }
+
+            // Get the summary node
+            var summaryNode = XmlCommentHelper.GetFirstXmlElementWithName(documentationComment, XmlCommentHelper.SummaryXmlTag);
+            if (summaryNode == null)
+            {
+                return;
+            }
+
+            // Extract inner text and remove <para> tags
+            var innerText = XmlCommentHelper.GetText(summaryNode, normalizeWhitespace: true);
+            innerText = Regex.Replace(innerText, @"<para>|</para>", string.Empty).Trim();
+
+            // Check if it starts with the standard text
+            if (!innerText.StartsWith(standardTextFirstPart, StringComparison.Ordinal) &&
+                !innerText.StartsWith(standardTextSecondPart, StringComparison.Ordinal))
+            {
+                var diagnostic = Diagnostic.Create(Descriptor, summaryNode.GetLocation());
+                context.ReportDiagnostic(diagnostic);
             }
         }
     }

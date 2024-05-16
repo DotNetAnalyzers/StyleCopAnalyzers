@@ -436,6 +436,19 @@ namespace StyleCop.Analyzers.Helpers
             return false;
         }
 
+        internal static XmlElementSyntax GetFirstXmlElementWithName(DocumentationCommentTriviaSyntax documentationComment, string xmlTagName)
+        {
+            foreach (var node in documentationComment.Content)
+            {
+                if (node is XmlElementSyntax element && element.StartTag.Name.LocalName.Text == xmlTagName)
+                {
+                    return element;
+                }
+            }
+
+            return null;
+        }
+
         private static bool IsInlineElement(string localName)
         {
             switch (localName)
