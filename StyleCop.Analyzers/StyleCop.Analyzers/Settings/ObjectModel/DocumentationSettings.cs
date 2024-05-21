@@ -116,7 +116,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         {
             this.companyName = DefaultCompanyName;
             this.copyrightText = DefaultCopyrightText;
-            this.headerDecoration = null;
+            this.headerDecoration = string.Empty;
             this.variables = ImmutableDictionary<string, string>.Empty;
             this.xmlHeader = true;
 
@@ -267,7 +267,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.documentPrivateFields = documentPrivateFields.GetValueOrDefault(false);
             this.companyName = companyName ?? DefaultCompanyName;
             this.copyrightText = copyrightText ?? DefaultCopyrightText;
-            this.headerDecoration = headerDecoration;
+            this.headerDecoration = headerDecoration ?? string.Empty;
             this.variables = variables?.ToImmutable() ?? ImmutableDictionary<string, string>.Empty;
             this.xmlHeader = xmlHeader.GetValueOrDefault(true);
             this.fileNamingConvention = fileNamingConvention.GetValueOrDefault(FileNamingConvention.StyleCop);
