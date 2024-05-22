@@ -113,6 +113,7 @@ namespace StyleCop.Analyzers.SpacingRules
             case SyntaxKind.InKeyword:
             case SyntaxKind.OutKeyword:
             case SyntaxKind.RefKeyword:
+            case SyntaxKind.ReadOnlyKeyword:
                 if (!token.HasLeadingTrivia)
                 {
                     break;
