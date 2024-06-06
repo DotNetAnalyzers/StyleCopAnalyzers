@@ -318,6 +318,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
         public static string @SX1101MessageFormat => GetResourceString("SX1101MessageFormat")!;
         /// <summary>Do not prefix local calls with 'this.'</summary>
         public static string @SX1101Title => GetResourceString("SX1101Title")!;
+        /// <summary>Move first argument to next line</summary>
+        public static string @SX1116CodeFix => GetResourceString("SX1116CodeFix")!;
+        /// <summary>The parameters to a C# method or indexer call or declaration span across multiple lines, but the first parameter does not start on the line after the opening bracket.</summary>
+        public static string @SX1116Description => GetResourceString("SX1116Description")!;
+        /// <summary>The parameters should begin on the line after the declaration, whenever the parameter span across multiple lines</summary>
+        public static string @SX1116MessageFormat => GetResourceString("SX1116MessageFormat")!;
+        /// <summary>Split parameters should start on line after declaration</summary>
+        public static string @SX1116Title => GetResourceString("SX1116Title")!;
 
     }
 }

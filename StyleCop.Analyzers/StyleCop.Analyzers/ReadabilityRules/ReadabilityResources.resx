@@ -573,4 +573,16 @@
   <data name="SX1101Title" xml:space="preserve">
     <value>Do not prefix local calls with 'this.'</value>
   </data>
+  <data name="SX1116CodeFix" xml:space="preserve">
+    <value>Move first argument to next line</value>
+  </data>
+  <data name="SX1116Description" xml:space="preserve">
+    <value>The parameters to a C# method or indexer call or declaration span across multiple lines, but the first parameter does not start on the line after the opening bracket.</value>
+  </data>
+  <data name="SX1116MessageFormat" xml:space="preserve">
+    <value>The parameters should begin on the line after the declaration, whenever the parameter span across multiple lines</value>
+  </data>
+  <data name="SX1116Title" xml:space="preserve">
+    <value>Split parameters should start on line after declaration</value>
+  </data>
 </root>
