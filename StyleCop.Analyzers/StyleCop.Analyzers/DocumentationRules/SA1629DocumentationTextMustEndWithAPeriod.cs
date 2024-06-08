@@ -9,9 +9,9 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
-    using System.Text.RegularExpressions;
     using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
@@ -66,8 +66,6 @@ namespace StyleCop.Analyzers.DocumentationRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableDictionary<string, string> NoCodeFixProperties = ImmutableDictionary.Create<string, string>().Add(NoCodeFixKey, string.Empty);
-
-        private static readonly Regex XmlEntityRegex = new Regex("&[a-z]+;$");
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SA1629DocumentationTextMustEndWithAPeriod"/> class.
@@ -134,9 +132,9 @@ namespace StyleCop.Analyzers.DocumentationRules
                             {
                                 int spanStart = textToken.SpanStart + textWithoutTrailingWhitespace.Length;
                                 ImmutableDictionary<string, string> properties = null;
-                                if (textWithoutTrailingWhitespace.EndsWith(",", StringComparison.Ordinal) ||
-                                    (textWithoutTrailingWhitespace.EndsWith(";", StringComparison.Ordinal) &&
-                                     !XmlEntityRegex.IsMatch(textWithoutTrailingWhitespace)))
+                                if (textWithoutTrailingWhitespace.EndsWith(",", StringComparison.Ordinal)
+                                    || (textWithoutTrailingWhitespace.EndsWith(";", StringComparison.Ordinal)
+                                        && !textToken.IsKind(SyntaxKind.XmlEntityLiteralToken)))
                                 {
                                     spanStart -= 1;
                                     SetReplaceChar();
