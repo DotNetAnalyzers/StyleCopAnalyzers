@@ -69,6 +69,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static readonly ImmutableDictionary<string, string> NoCodeFixProperties = ImmutableDictionary.Create<string, string>().Add(NoCodeFixKey, string.Empty);
         private static readonly ImmutableDictionary<string, string> ReplaceCharFixProperties = ImmutableDictionary.Create<string, string>().Add(ReplaceCharKey, string.Empty);
+        private static readonly char[] WhitespaceChars = new[] { ' ', '\r', '\n' };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SA1629DocumentationTextMustEndWithAPeriod"/> class.
@@ -96,7 +97,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             foreach (var node in completeDocumentation.Nodes().OfType<XElement>())
             {
-                var textWithoutTrailingWhitespace = node.Value.TrimEnd(' ', '\r', '\n');
+                var textWithoutTrailingWhitespace = node.Value.TrimEnd(WhitespaceChars);
                 if (!string.IsNullOrEmpty(textWithoutTrailingWhitespace))
                 {
                     if (!EndsWithValidPunctuation(textWithoutTrailingWhitespace))
@@ -126,7 +127,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     for (var j = contentNode.TextTokens.Count - 1; !currentParagraphDone && (j >= 0); j--)
                     {
                         var textToken = contentNode.TextTokens[j];
-                        var textWithoutTrailingWhitespace = textToken.Text.TrimEnd(' ', '\r', '\n');
+                        var textWithoutTrailingWhitespace = textToken.Text.TrimEnd(WhitespaceChars);
 
                         if (!string.IsNullOrEmpty(textWithoutTrailingWhitespace))
                         {
@@ -161,7 +162,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     var lastTextElement = XmlCommentHelper.TryGetLastTextElementWithContent(xmlElement.Content[i]);
 
                     if (lastTextElement is null // Treat empty XML elements as a "word not ending with a period"
-                        || IsMissingRequiredPunctuation(lastTextElement.TextTokens.Last().Text.TrimEnd(' ', '\r', '\n'), startingWithFinalParagraph))
+                        || IsMissingRequiredPunctuation(lastTextElement.TextTokens.Last().Text.TrimEnd(WhitespaceChars), startingWithFinalParagraph))
                     {
                         var location = Location.Create(xmlElement.SyntaxTree, new TextSpan(xmlElement.Content[i].Span.End, 1));
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
