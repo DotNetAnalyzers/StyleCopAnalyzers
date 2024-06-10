@@ -54,6 +54,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// </summary>
         internal const string NoCodeFixKey = "NoCodeFix";
 
+        /// <summary>
+        /// The key used for signalling that the codefix should replace characters with a period instead of append a period.
+        /// </summary>
         internal const string ReplaceCharKey = "CharToReplace";
 
         private static readonly string HelpLink = HelpLinkHelper.GetHelpLink(DiagnosticId);
@@ -65,6 +68,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableDictionary<string, string> NoCodeFixProperties = ImmutableDictionary.Create<string, string>().Add(NoCodeFixKey, string.Empty);
+        private static readonly ImmutableDictionary<string, string> ReplaceCharFixProperties = ImmutableDictionary.Create<string, string>().Add(ReplaceCharKey, string.Empty);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SA1629DocumentationTextMustEndWithAPeriod"/> class.
@@ -135,24 +139,17 @@ namespace StyleCop.Analyzers.DocumentationRules
                                         && !textToken.IsKind(SyntaxKind.XmlEntityLiteralToken)))
                                 {
                                     spanStart -= 1;
-                                    SetReplaceChar();
+                                    properties = ReplaceCharFixProperties;
                                 }
                                 else if (textWithoutTrailingWhitespace.EndsWith(",)", StringComparison.Ordinal)
                                     || textWithoutTrailingWhitespace.EndsWith(";)", StringComparison.Ordinal))
                                 {
                                     spanStart -= 2;
-                                    SetReplaceChar();
+                                    properties = ReplaceCharFixProperties;
                                 }
 
                                 var location = Location.Create(xmlElement.SyntaxTree, new TextSpan(spanStart, 1));
                                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, location, properties));
-
-                                void SetReplaceChar()
-                                {
-                                    var propertiesBuilder = ImmutableDictionary.CreateBuilder<string, string>();
-                                    propertiesBuilder.Add(ReplaceCharKey, string.Empty);
-                                    properties = propertiesBuilder.ToImmutable();
-                                }
                             }
 
                             currentParagraphDone = true;
