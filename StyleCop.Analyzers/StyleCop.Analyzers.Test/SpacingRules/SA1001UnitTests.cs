@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
     using Xunit;
@@ -358,7 +359,7 @@ interface IFormattable {}
 interface ISpanFormattable {}
 
 partial struct Money : IFormattable
-#if !NETSTANDARD
+#if true
     , ISpanFormattable
 #endif
 {
@@ -366,6 +367,188 @@ partial struct Money : IFormattable
 ";
 
             var expected = DiagnosticResult.EmptyDiagnosticResults;
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestCommaFollowingElifDirectiveAsync()
+        {
+            var testCode = @"
+interface IFormattable {}
+interface ISpanFormattable {}
+
+partial struct Money : IFormattable
+#if false
+#elif true
+    , ISpanFormattable
+#endif
+{
+}
+";
+
+            var expected = DiagnosticResult.EmptyDiagnosticResults;
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestCommaFollowingElseDirectiveAsync()
+        {
+            var testCode = @"
+interface IFormattable {}
+interface ISpanFormattable {}
+
+partial struct Money : IFormattable
+#if false
+#else
+    , ISpanFormattable
+#endif
+{
+}
+";
+
+            var expected = DiagnosticResult.EmptyDiagnosticResults;
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestCommaFollowingEndIfDirectiveAsync()
+        {
+            var testCode = @"
+interface IFormattable {}
+interface ISpanFormattable {}
+
+partial struct Money : IFormattable
+#if false
+#endif
+    , ISpanFormattable
+{
+}
+";
+
+            var expected = DiagnosticResult.EmptyDiagnosticResults;
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestCommaNotFollowingDirectiveAsync()
+        {
+            var testCode = @"
+interface IFormattable {}
+interface ISpanFormattable {}
+
+partial struct Money : IFormattable
+    , ISpanFormattable
+{
+}
+";
+
+            var expected = new[]
+            {
+                DiagnosticResult.CompilerWarning("SA1001").WithSpan(6, 5, 6, 6).WithArguments(" not", "preceded"),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestSpaceBeforeCommaFollowingIfDirectiveAsync()
+        {
+            var testCode = @"
+interface IFormattable {}
+interface ISpanFormattable {}
+
+partial struct Money : IFormattable
+#if true
+
+    , ISpanFormattable
+#endif
+{
+}
+";
+
+            var expected = new[]
+            {
+                DiagnosticResult.CompilerWarning("SA1001").WithSpan(8, 5, 8, 6).WithArguments(" not", "preceded"),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestSpaceBeforeCommaFollowingElifDirectiveAsync()
+        {
+            var testCode = @"
+interface IFormattable {}
+interface ISpanFormattable {}
+
+partial struct Money : IFormattable
+#if false
+#elif true
+
+    , ISpanFormattable
+#endif
+{
+}
+";
+
+            var expected = new[]
+            {
+                DiagnosticResult.CompilerWarning("SA1001").WithSpan(9, 5, 9, 6).WithArguments(" not", "preceded"),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestSpaceBeforeCommaFollowingElseDirectiveAsync()
+        {
+            var testCode = @"
+interface IFormattable {}
+interface ISpanFormattable {}
+
+partial struct Money : IFormattable
+#if false
+#else
+
+    , ISpanFormattable
+#endif
+{
+}
+";
+
+            var expected = new[]
+            {
+                DiagnosticResult.CompilerWarning("SA1001").WithSpan(9, 5, 9, 6).WithArguments(" not", "preceded"),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestSpaceBeforeCommaFollowingEndIfDirectiveAsync()
+        {
+            var testCode = @"
+interface IFormattable {}
+interface ISpanFormattable {}
+
+partial struct Money : IFormattable
+#if false
+#elif true
+#endif
+
+    , ISpanFormattable
+{
+}
+";
+
+            var expected = new[]
+            {
+                DiagnosticResult.CompilerWarning("SA1001").WithSpan(10, 5, 10, 6).WithArguments(" not", "preceded"),
+            };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
