@@ -1061,6 +1061,57 @@ public class TestClass
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(3575, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3575")]
+        public async Task TestConstructorSummaryWithParaTagsAsync()
+        {
+            var testCode = @"
+using System;
+/// <summary>
+/// Does a thing.
+/// </summary>
+public class B
+{
+    /// <summary>
+    /// <para>
+    /// Initializes a new instance of the <see cref=""B""/> class.
+    /// </para>
+    /// <para>
+    /// Some more info about B.
+    /// </para>
+    /// </summary>
+    public B()
+    {
+    }
+}
+";
+
+            var fixedCode = @"
+using System;
+/// <summary>
+/// Does a thing.
+/// </summary>
+public class B
+{
+    /// <summary>
+    /// <para>
+    /// Initializes a new instance of the <see cref=""B""/> class.
+    /// </para>
+    /// <para>
+    /// Some more info about B.
+    /// </para>
+    /// </summary>
+    public B()
+    {
+    }
+}
+";
+
+            var expectedDiagnostics = DiagnosticResult.EmptyDiagnosticResults;
+
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         private static async Task TestEmptyConstructorAsync(string typeKind, string modifiers)
         {
             var testCode = @"namespace FooNamespace
