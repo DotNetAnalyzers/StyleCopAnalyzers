@@ -441,14 +441,14 @@ interface IFormattable {}
 interface ISpanFormattable {}
 
 partial struct Money : IFormattable
-    , ISpanFormattable
+    {|#0:,|} ISpanFormattable
 {
 }
 ";
 
             var expected = new[]
             {
-                DiagnosticResult.CompilerWarning("SA1001").WithSpan(6, 5, 6, 6).WithArguments(" not", "preceded"),
+                Diagnostic().WithLocation(0).WithArguments(" not", "preceded"),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -464,7 +464,7 @@ interface ISpanFormattable {}
 partial struct Money : IFormattable
 #if true
 
-    , ISpanFormattable
+    {|#0:,|} ISpanFormattable
 #endif
 {
 }
@@ -472,7 +472,7 @@ partial struct Money : IFormattable
 
             var expected = new[]
             {
-                DiagnosticResult.CompilerWarning("SA1001").WithSpan(8, 5, 8, 6).WithArguments(" not", "preceded"),
+                Diagnostic().WithLocation(0).WithArguments(" not", "preceded"),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -489,7 +489,7 @@ partial struct Money : IFormattable
 #if false
 #elif true
 
-    , ISpanFormattable
+    {|#0:,|} ISpanFormattable
 #endif
 {
 }
@@ -497,7 +497,7 @@ partial struct Money : IFormattable
 
             var expected = new[]
             {
-                DiagnosticResult.CompilerWarning("SA1001").WithSpan(9, 5, 9, 6).WithArguments(" not", "preceded"),
+                Diagnostic().WithLocation(0).WithArguments(" not", "preceded"),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -514,7 +514,7 @@ partial struct Money : IFormattable
 #if false
 #else
 
-    , ISpanFormattable
+    {|#0:,|} ISpanFormattable
 #endif
 {
 }
@@ -522,7 +522,7 @@ partial struct Money : IFormattable
 
             var expected = new[]
             {
-                DiagnosticResult.CompilerWarning("SA1001").WithSpan(9, 5, 9, 6).WithArguments(" not", "preceded"),
+                Diagnostic().WithLocation(0).WithArguments(" not", "preceded"),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -540,14 +540,14 @@ partial struct Money : IFormattable
 #elif true
 #endif
 
-    , ISpanFormattable
+    {|#0:,|} ISpanFormattable
 {
 }
 ";
 
             var expected = new[]
             {
-                DiagnosticResult.CompilerWarning("SA1001").WithSpan(10, 5, 10, 6).WithArguments(" not", "preceded"),
+        Diagnostic().WithLocation(0).WithArguments(" not", "preceded"),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
