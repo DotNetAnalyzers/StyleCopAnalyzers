@@ -585,4 +585,13 @@
   <data name="SX1116Title" xml:space="preserve">
     <value>Split parameters should start on line after declaration</value>
   </data>
+  <data name="SX1117Description" xml:space="preserve">
+    <value>The parameters to a C# method or indexer call or declaration are not all on the same line or each on a separate line.</value>
+  </data>
+  <data name="SX1117MessageFormat" xml:space="preserve">
+    <value>The parameters should all be placed on the same line or each parameter should be placed on its own line</value>
+  </data>
+  <data name="SX1117Title" xml:space="preserve">
+    <value>Parameters should be on same line or separate lines</value>
+  </data>
 </root>

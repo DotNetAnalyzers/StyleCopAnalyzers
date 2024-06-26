@@ -326,6 +326,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
         public static string @SX1116MessageFormat => GetResourceString("SX1116MessageFormat")!;
         /// <summary>Split parameters should start on line after declaration</summary>
         public static string @SX1116Title => GetResourceString("SX1116Title")!;
+        /// <summary>The parameters to a C# method or indexer call or declaration are not all on the same line or each on a separate line.</summary>
+        public static string @SX1117Description => GetResourceString("SX1117Description")!;
+        /// <summary>The parameters should all be placed on the same line or each parameter should be placed on its own line</summary>
+        public static string @SX1117MessageFormat => GetResourceString("SX1117MessageFormat")!;
+        /// <summary>Parameters should be on same line or separate lines</summary>
+        public static string @SX1117Title => GetResourceString("SX1117Title")!;
 
     }
 }

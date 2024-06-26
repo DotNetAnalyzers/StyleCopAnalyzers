@@ -243,6 +243,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documentation", "documentat
 		documentation\SpecialRules.md = documentation\SpecialRules.md
 		documentation\SX1101.md = documentation\SX1101.md
 		documentation\SX1116.md = documentation\SX1116.md
+		documentation\SX1117.md = documentation\SX1117.md
 		documentation\SX1309.md = documentation\SX1309.md
 		documentation\SX1309S.md = documentation\SX1309S.md
 	EndProjectSection
