@@ -1151,5 +1151,23 @@ public class TestClass
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3849, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3849")]
+        public async Task TestClassInGlobalNamespaceAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// X.
+/// </summary>
+public class TestClass
+{
+}
+";
+
+            var expected = DiagnosticResult.EmptyDiagnosticResults;
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
