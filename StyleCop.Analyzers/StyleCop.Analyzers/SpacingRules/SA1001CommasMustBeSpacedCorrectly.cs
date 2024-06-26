@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -76,6 +77,9 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
+            // Check if the comma follows a conditional preprocessor directive
+            bool followsDirective = token.HasLeadingTrivia && IsPrecededByDirectiveTrivia(token.LeadingTrivia);
+
             // check for a following space
             bool missingFollowingSpace = true;
 
@@ -102,7 +106,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 }
             }
 
-            if (token.IsFirstInLine() || token.IsPrecededByWhitespace(context.CancellationToken))
+            if (!followsDirective && (token.IsFirstInLine() || token.IsPrecededByWhitespace(context.CancellationToken)))
             {
                 // comma should{ not} be {preceded} by whitespace
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemovePrecedingPreserveLayout, " not", "preceded"));
@@ -119,6 +123,31 @@ namespace StyleCop.Analyzers.SpacingRules
                 // comma should{ not} be {followed} by whitespace
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemoveFollowing, " not", "followed"));
             }
+        }
+
+        private static bool IsPrecededByDirectiveTrivia(SyntaxTriviaList triviaList)
+        {
+            int triviaIndex = triviaList.Count - 1;
+            while (triviaIndex >= 0)
+            {
+                switch (triviaList[triviaIndex].Kind())
+                {
+                case SyntaxKind.WhitespaceTrivia:
+                    triviaIndex--;
+                    break;
+
+                case SyntaxKind.IfDirectiveTrivia:
+                case SyntaxKind.ElifDirectiveTrivia:
+                case SyntaxKind.ElseDirectiveTrivia:
+                case SyntaxKind.EndIfDirectiveTrivia:
+                    return true;
+
+                default:
+                    return false;
+                }
+            }
+
+            return false;
         }
     }
 }
