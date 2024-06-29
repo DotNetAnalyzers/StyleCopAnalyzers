@@ -22,6 +22,7 @@ namespace StyleCop.Analyzers.Lightup
 
             builder.Add(typeof(AnalyzerConfigOptionsProviderWrapper), codeAnalysisAssembly.GetType(AnalyzerConfigOptionsProviderWrapper.WrappedTypeName));
             builder.Add(typeof(AnalyzerConfigOptionsWrapper), codeAnalysisAssembly.GetType(AnalyzerConfigOptionsWrapper.WrappedTypeName));
+            builder.Add(typeof(IImportScopeWrapper), codeAnalysisAssembly.GetType(IImportScopeWrapper.WrappedTypeName));
 
             WrappedTypes = builder.ToImmutable();
         }
