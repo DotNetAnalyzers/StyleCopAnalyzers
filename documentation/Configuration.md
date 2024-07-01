@@ -118,6 +118,38 @@ HRESULT hr = SomeNativeOperation(); // SA1121
 
 The `allowBuiltInTypeAliases` configuration property can be set to `true` to allow cases like this while continuing to report diagnostics for direct references to the metadata type name, `Int32`.
 
+### Treat Multiline Parameters as Split
+
+| Property | Default Value | Minimum Version | Summary |
+| --- | --- | --- | --- |
+| `treatMultilineParametersAsSplit` | **false** | 1.2.0 | Specifies whether multiline parameters are treated as split parameters. |
+
+By default, SA1116 and SA1117 will only check that parameters start on the same line. This can cause inconsistencies when multiline parameters are used:
+
+```csharp
+// Reports SA1117.
+Invoked("first argument", input =>
+{
+}, "third argument");
+
+// Does not report any violations.
+Invoked("first argument", input =>
+{
+});
+
+// Reports SA1116.
+Invoked(input =>
+{
+}, "second argument");
+
+// Does not report any violations.
+Invoked(input =>
+{
+});
+```
+
+The `treatMultilineParametersAsSplit` configuration property can be set to `true` to report diagnostics for multiline parameters as if they were split parameters, requiring them to be each on a separate line.
+
 ## Ordering Rules
 
 This section describes the features of ordering rules which can be configured in **stylecop.json**. Each of the described properties are configured in the `orderingRules` object, which is shown in the following sample file.
