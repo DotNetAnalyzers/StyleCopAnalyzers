@@ -14,9 +14,13 @@ namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
 
     public partial class SA1117CSharp9UnitTests : SA1117CSharp8UnitTests
     {
-        [Fact]
-        public async Task TestValidTargetTypedNewExpressionAsync()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task TestValidTargetTypedNewExpressionAsync(bool treatMultilineParametersAsSplit)
         {
+            var settings = GetSettings(treatMultilineParametersAsSplit);
+
             var testCode = @"
 class Foo
 {
@@ -33,12 +37,16 @@ class Foo
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(null, testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestInvalidTargetTypedNewExpressionAsync()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task TestInvalidTargetTypedNewExpressionAsync(bool treatMultilineParametersAsSplit)
         {
+            var settings = GetSettings(treatMultilineParametersAsSplit);
+
             var testCode = @"
 class Foo
 {
@@ -53,8 +61,8 @@ class Foo
     }
 }";
 
-            DiagnosticResult expected = Diagnostic().WithLocation(11, 16);
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult[] expected = new[] { Diagnostic().WithLocation(11, 16) };
+            await VerifyCSharpDiagnosticAsync(null, testCode, settings, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

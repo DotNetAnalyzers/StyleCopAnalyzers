@@ -14,87 +14,101 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
     public class SA1117UnitTests
     {
-        public static IEnumerable<object[]> GetTestDeclarations(string delimiter)
+        public static IEnumerable<object[]> GetTestDeclarations(string delimiter, bool treatMultilineParametersAsSplit)
         {
-            yield return new object[] { $"public Foo(int a, int b,{delimiter} {{|#0:string s|}}) {{ }}" };
-            yield return new object[] { $"public object Bar(int a, int b,{delimiter} {{|#0:string s|}}) => null;" };
-            yield return new object[] { $"public object this[int a, int b,{delimiter} {{|#0:string s|}}] => null;" };
-            yield return new object[] { $"public delegate void Bar(int a, int b,{delimiter} {{|#0:string s|}});" };
+            yield return new object[] { $"public Foo(int a, int b,{delimiter} {{|#0:string s|}}) {{ }}", treatMultilineParametersAsSplit };
+            yield return new object[] { $"public object Bar(int a, int b,{delimiter} {{|#0:string s|}}) => null;", treatMultilineParametersAsSplit };
+            yield return new object[] { $"public object this[int a, int b,{delimiter} {{|#0:string s|}}] => null;", treatMultilineParametersAsSplit };
+            yield return new object[] { $"public delegate void Bar(int a, int b,{delimiter} {{|#0:string s|}});", treatMultilineParametersAsSplit };
         }
 
-        public static IEnumerable<object[]> GetMultilineTestDeclarations(string delimiter)
+        public static IEnumerable<object[]> GetMultilineTestDeclarations(string delimiter, bool treatMultilineParametersAsSplit)
         {
-            yield return new object[] { $"public Foo(int a,{delimiter} string\r\ns) {{ }}" };
-            yield return new object[] { $"public object Bar(int a,{delimiter} string\r\ns) => null;" };
-            yield return new object[] { $"public object this[int a,{delimiter} string\r\ns] => null;" };
-            yield return new object[] { $"public delegate void Bar(int a,{delimiter} string\r\ns);" };
+            yield return new object[] { $"public Foo(int a,{delimiter} {{|#0:string\r\ns|}}) {{ }}", treatMultilineParametersAsSplit };
+            yield return new object[] { $"public object Bar(int a,{delimiter} {{|#0:string\r\ns|}}) => null;", treatMultilineParametersAsSplit };
+            yield return new object[] { $"public object this[int a,{delimiter} {{|#0:string\r\ns|}}] => null;", treatMultilineParametersAsSplit };
+            yield return new object[] { $"public delegate void Bar(int a,{delimiter} {{|#0:string\r\ns|}});", treatMultilineParametersAsSplit };
         }
 
-        public static IEnumerable<object[]> GetTestConstructorInitializers(string delimiter)
+        public static IEnumerable<object[]> GetTestConstructorInitializers(string delimiter, bool treatMultilineParametersAsSplit)
         {
-            yield return new object[] { $"this(42, 43, {delimiter} {{|#0:\"hello\"|}})" };
-            yield return new object[] { $"base(42, 43, {delimiter} {{|#0:\"hello\"|}})" };
+            yield return new object[] { $"this(42, 43, {delimiter} {{|#0:\"hello\"|}})", treatMultilineParametersAsSplit };
+            yield return new object[] { $"base(42, 43, {delimiter} {{|#0:\"hello\"|}})", treatMultilineParametersAsSplit };
+            yield return new object[] { $"this(42, 43, {delimiter} {{|#0:() => {{ }}|}})", treatMultilineParametersAsSplit };
+            yield return new object[] { $"base(42, 43, {delimiter} {{|#0:() => {{ }}|}})", treatMultilineParametersAsSplit };
         }
 
-        public static IEnumerable<object[]> GetMultilineTestConstructorInitializers(string delimiter)
+        public static IEnumerable<object[]> GetLeadingMultilineTestConstructorInitializers(string delimiter, bool treatMultilineParametersAsSplit)
         {
-            yield return new object[] { $"this(42\r\n+ 1, {delimiter} {{|#0:43|}}, {delimiter} \"hello\")" };
-            yield return new object[] { $"base(42\r\n+ 1, {delimiter} {{|#0:43|}}, {delimiter} \"hello\")" };
+            yield return new object[] { $"this(42\r\n+ 1, {delimiter} {{|#0:43|}}, {delimiter} \"hello\")", treatMultilineParametersAsSplit };
+            yield return new object[] { $"base(42\r\n+ 1, {delimiter} {{|#0:43|}}, {delimiter} \"hello\")", treatMultilineParametersAsSplit };
         }
 
-        public static IEnumerable<object[]> GetTestExpressions(string delimiter)
+        public static IEnumerable<object[]> GetTrailingMultilineTestConstructorInitializers(string delimiter, bool treatMultilineParametersAsSplit)
         {
-            yield return new object[] { $"Bar(1, 2, {delimiter} {{|#0:2|}})" };
-            yield return new object[] { $"System.Action<int, int, int> func = (int x, int y, {delimiter} {{|#0:int z|}}) => Bar(x, y, z)" };
-            yield return new object[] { $"System.Action<int, int, int> func = delegate(int x, int y, {delimiter} {{|#0:int z|}}) {{ Bar(x, y, z); }}" };
-            yield return new object[] { $"new System.DateTime(2015, 9, {delimiter} {{|#0:14|}})" };
-            yield return new object[] { $"var arr = new string[2, 2, {delimiter} {{|#0:2|}}];" };
-            yield return new object[] { $"char cc = (new char[3, 3, 3])[2, 2,{delimiter} {{|#0:2|}}];" };
-            yield return new object[] { $"char? c = (new char[3, 3, 3])?[2, 2,{delimiter} {{|#0:2|}}];" };
-            yield return new object[] { $"long ll = this[2, 2,{delimiter} {{|#0:2|}}];" };
+            yield return new object[] { $"this(42, {delimiter} 43, {delimiter} {{|#0:() =>\r\n{{\r\n}}|}})", treatMultilineParametersAsSplit };
+            yield return new object[] { $"base(42, {delimiter} 43, {delimiter} {{|#0:() =>\r\n{{\r\n}}|}})", treatMultilineParametersAsSplit };
         }
 
-        public static IEnumerable<object[]> GetTrailingMultilineTestExpressions(string delimiter)
+        public static IEnumerable<object[]> GetTestExpressions(string delimiter, bool treatMultilineParametersAsSplit)
         {
-            yield return new object[] { $"System.Action<int, int, int> func = (int x, {delimiter} int y, {delimiter} int\r\nz) => Bar(x, y, z)" };
-            yield return new object[] { $"System.Action<int, int, int> func = delegate(int x, {delimiter} int y, {delimiter} int\r\nz) {{ Bar(x, y, z); }}" };
-            yield return new object[] { $"var arr = new string[2, {delimiter} 2\r\n+ 2];" };
-            yield return new object[] { $"char cc = (new char[3, 3])[2, {delimiter} 2\r\n+ 2];" };
-            yield return new object[] { $"char? c = (new char[3, 3])?[2, {delimiter} 2\r\n+ 2];" };
-            yield return new object[] { $"long ll = this[2,{delimiter} 2,{delimiter} 2\r\n+ 1];" };
-            yield return new object[] { $"var str = string.Join(\r\n\"def\",{delimiter}\"abc\"\r\n + \"cba\");" };
+            yield return new object[] { $"Bar(1, 2, {delimiter} {{|#0:2|}})", treatMultilineParametersAsSplit };
+            yield return new object[] { $"System.Action<int, int, int> func = (int x, int y, {delimiter} {{|#0:int z|}}) => Bar(x, y, z)", treatMultilineParametersAsSplit };
+            yield return new object[] { $"System.Action<int, int, int> func = delegate(int x, int y, {delimiter} {{|#0:int z|}}) {{ Bar(x, y, z); }}", treatMultilineParametersAsSplit };
+            yield return new object[] { $"new System.DateTime(2015, 9, {delimiter} {{|#0:14|}})", treatMultilineParametersAsSplit };
+            yield return new object[] { $"var arr = new string[2, 2, {delimiter} {{|#0:2|}}];", treatMultilineParametersAsSplit };
+            yield return new object[] { $"char cc = (new char[3, 3, 3])[2, 2,{delimiter} {{|#0:2|}}];", treatMultilineParametersAsSplit };
+            yield return new object[] { $"char? c = (new char[3, 3, 3])?[2, 2,{delimiter} {{|#0:2|}}];", treatMultilineParametersAsSplit };
+            yield return new object[] { $"long ll = this[2, 2,{delimiter} {{|#0:2|}}];", treatMultilineParametersAsSplit };
+            yield return new object[] { $"Buz(() => {{ }}, 2,{delimiter} {{|#0:() => {{ }}|}});", treatMultilineParametersAsSplit };
         }
 
-        public static IEnumerable<object[]> GetLeadingMultilineTestExpressions(string delimiter)
+        public static IEnumerable<object[]> GetTrailingMultilineTestExpressions(string delimiter, bool treatMultilineParametersAsSplit)
         {
-            yield return new object[] { $"var str = string.Join(\r\n\"abc\"\r\n + \"cba\",{delimiter}{{|#0:\"def\"|}});" };
-            yield return new object[] { $"Bar(\r\n1\r\n + 2,{delimiter}{{|#0:3|}},\r\n 4);" };
+            yield return new object[] { $"System.Action<int, int, int> func = (int x, {delimiter} int y, {delimiter} {{|#0:int\r\nz|}}) => Bar(x, y, z)", treatMultilineParametersAsSplit };
+            yield return new object[] { $"System.Action<int, int, int> func = delegate(int x, {delimiter} int y, {delimiter} {{|#0:int\r\nz|}}) {{ Bar(x, y, z); }}", treatMultilineParametersAsSplit };
+            yield return new object[] { $"var arr = new string[2, {delimiter} {{|#0:2\r\n+ 2|}}];", treatMultilineParametersAsSplit };
+            yield return new object[] { $"char cc = (new char[3, 3])[2, {delimiter} {{|#0:2\r\n+ 2|}}];", treatMultilineParametersAsSplit };
+            yield return new object[] { $"char? c = (new char[3, 3])?[2, {delimiter} {{|#0:2\r\n+ 2|}}];", treatMultilineParametersAsSplit };
+            yield return new object[] { $"long ll = this[2,{delimiter} 2,{delimiter} {{|#0:2\r\n+ 1|}}];", treatMultilineParametersAsSplit };
+            yield return new object[] { $"var str = string.Join(\r\n\"def\",{delimiter}{{|#0:\"abc\"\r\n + \"cba\"|}});", treatMultilineParametersAsSplit };
+            yield return new object[] { $"Buz(() => {{ }},{delimiter} 2,{delimiter} {{|#0:() =>\r\n{{\r\n}}|}});", treatMultilineParametersAsSplit };
         }
 
-        public static IEnumerable<object[]> GetTestAttributes(string delimiter)
+        public static IEnumerable<object[]> GetLeadingMultilineTestExpressions(string delimiter, bool treatMultilineParametersAsSplit)
         {
-            yield return new object[] { $"[MyAttribute(1, {delimiter}2, {{|#0:3|}})]" };
+            yield return new object[] { $"var str = string.Join(\r\n\"abc\"\r\n + \"cba\",{delimiter}{{|#0:\"def\"|}});", treatMultilineParametersAsSplit };
+            yield return new object[] { $"Bar(\r\n1\r\n + 2,{delimiter}{{|#0:3|}},\r\n 4);", treatMultilineParametersAsSplit };
+            yield return new object[] { $"Buz(\r\n() =>\r\n{{\r\n}},{delimiter}{{|#0:3|}},\r\n () => {{ }});", treatMultilineParametersAsSplit };
+            yield return new object[] { $"new System.Lazy<int>(\r\n() =>\r\n{{\r\nreturn 1;\r\n}},{delimiter} {{|#0:true|}})", treatMultilineParametersAsSplit };
         }
 
-        public static IEnumerable<object[]> GetMultilineTestAttributes(string delimiter)
+        public static IEnumerable<object[]> GetTestAttributes(string delimiter, bool treatMultilineParametersAsSplit)
         {
-            yield return new object[] { $"[MyAttribute(1, {delimiter}2, {delimiter}3\r\n+ 5)]" };
+            yield return new object[] { $"[MyAttribute(1, {delimiter}2, {{|#0:3|}})]", treatMultilineParametersAsSplit };
         }
 
-        public static IEnumerable<object[]> ValidTestExpressions()
+        public static IEnumerable<object[]> GetMultilineTestAttributes(string delimiter, bool treatMultilineParametersAsSplit)
         {
-            yield return new object[] { $"System.Action func = () => Bar(0, 2, 3)" };
-            yield return new object[] { $"System.Action<int> func = x => Bar(x, 2, 3)" };
-            yield return new object[] { $"System.Action func = delegate {{ Bar(0, 0, 0); }}" };
-            yield return new object[] { "var weird = new int[10][,,,];" };
+            yield return new object[] { $"[MyAttribute(1, {delimiter}2, {delimiter}{{|#0:3\r\n+ 5|}})]", treatMultilineParametersAsSplit };
         }
 
-        public static IEnumerable<object[]> ValidTestDeclarations()
+        public static IEnumerable<object[]> ValidTestExpressions(bool treatMultilineParametersAsSplit)
+        {
+            yield return new object[] { $"System.Action func = () => Bar(0, 2, 3)", treatMultilineParametersAsSplit };
+            yield return new object[] { $"System.Action<int> func = x => Bar(x, 2, 3)", treatMultilineParametersAsSplit };
+            yield return new object[] { $"System.Action func = delegate {{ Bar(0, 0, 0); }}", treatMultilineParametersAsSplit };
+            yield return new object[] { "var weird = new int[10][,,,];", treatMultilineParametersAsSplit };
+            yield return new object[] { $"new System.Lazy<int>(() => {{ return 1; }}, true)", treatMultilineParametersAsSplit };
+        }
+
+        public static IEnumerable<object[]> ValidTestDeclarations(bool treatMultilineParametersAsSplit)
         {
             yield return new object[]
             {
                 $@"public Foo(
     int a, int b, string s) {{ }}",
+                treatMultilineParametersAsSplit,
             };
             yield return new object[]
             {
@@ -102,17 +116,19 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     int a,
     int b,
     string s) {{ }}",
+                treatMultilineParametersAsSplit,
             };
         }
 
-        public static IEnumerable<object[]> ValidTestAttribute()
+        public static IEnumerable<object[]> ValidTestAttribute(bool treatMultilineParametersAsSplit)
         {
             // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1211
-            yield return new object[] { @"[System.Obsolete]" };
+            yield return new object[] { @"[System.Obsolete]", treatMultilineParametersAsSplit };
             yield return new object[]
             {
                 @"[MyAttribute(
     1, 2, 3)]",
+                treatMultilineParametersAsSplit,
             };
             yield return new object[]
             {
@@ -120,47 +136,68 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     1,
     2,
     3)]",
+                treatMultilineParametersAsSplit,
             };
         }
 
         [Theory]
-        [MemberData(nameof(GetTestDeclarations), "")]
-        [MemberData(nameof(GetMultilineTestDeclarations), "\r\n")]
-        [MemberData(nameof(GetMultilineTestDeclarations), "")]
-        [MemberData(nameof(ValidTestDeclarations))]
-        public async Task TestValidDeclarationAsync(string declaration)
+        [MemberData(nameof(GetTestDeclarations), "", false)]
+        [MemberData(nameof(GetMultilineTestDeclarations), "\r\n", false)]
+        [MemberData(nameof(GetMultilineTestDeclarations), "", false)]
+        [MemberData(nameof(ValidTestDeclarations), false)]
+        [MemberData(nameof(GetTestDeclarations), "", true)]
+        [MemberData(nameof(GetMultilineTestDeclarations), "\r\n", true)]
+        [MemberData(nameof(ValidTestDeclarations), true)]
+        public async Task TestValidDeclarationAsync(string declaration, bool treatMultilineParametersAsSplit)
         {
+            var settings = GetSettings(treatMultilineParametersAsSplit);
+
             var testCode = $@"
 class Foo
 {{
     {declaration}
 }}";
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(null, testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
-        [MemberData(nameof(GetTestDeclarations), "\r\n")]
-        public async Task TestInvalidDeclarationAsync(string declaration)
+        [MemberData(nameof(GetTestDeclarations), "\r\n", false)]
+        [MemberData(nameof(GetTestDeclarations), "\r\n", true)]
+        [MemberData(nameof(GetMultilineTestDeclarations), "", true)]
+        public async Task TestInvalidDeclarationAsync(string declaration, bool treatMultilineParametersAsSplit)
         {
+            var settings = GetSettings(treatMultilineParametersAsSplit);
+
             var testCode = $@"
 class Foo
 {{
     {declaration}
 }}";
 
-            DiagnosticResult expected = Diagnostic().WithLocation(0);
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult[] expected = new[] { Diagnostic().WithLocation(0) };
+            await VerifyCSharpDiagnosticAsync(null, testCode, settings, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
-        [MemberData(nameof(GetTestConstructorInitializers), "")]
-        [MemberData(nameof(GetMultilineTestConstructorInitializers), "\r\n")]
-        public async Task TestValidConstructorInitializerAsync(string initializer)
+        [MemberData(nameof(GetTestConstructorInitializers), "", false)]
+        [MemberData(nameof(GetLeadingMultilineTestConstructorInitializers), "\r\n", false)]
+        [MemberData(nameof(GetTrailingMultilineTestConstructorInitializers), "", false)]
+        [MemberData(nameof(GetTrailingMultilineTestConstructorInitializers), "\r\n", false)]
+        [MemberData(nameof(GetTestConstructorInitializers), "", true)]
+        [MemberData(nameof(GetLeadingMultilineTestConstructorInitializers), "\r\n", true)]
+        [MemberData(nameof(GetTrailingMultilineTestConstructorInitializers), "\r\n", true)]
+        public async Task TestValidConstructorInitializerAsync(string initializer, bool treatMultilineParametersAsSplit)
         {
+            var settings = GetSettings(treatMultilineParametersAsSplit);
+
             var testCode = $@"
 class Base
 {{
-    public Base(int a, int b, string s)
+    public Base(int a, int b, string c)
+    {{
+    }}
+
+    public Base(int d, int e, System.Action f)
     {{
     }}
 }}
@@ -172,24 +209,38 @@ class Derived : Base
     {{
     }}
 
-    public Derived(int i, int j, string z)
-        : base(i, j, z)
+    public Derived(int u, int v, string w)
+        : base(u, v, w)
+    {{
+    }}
+
+    public Derived(int x, int y, System.Action z)
+        : base(x, y, z)
     {{
     }}
 }}";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(null, testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
-        [MemberData(nameof(GetTestConstructorInitializers), "\r\n")]
-        [MemberData(nameof(GetMultilineTestConstructorInitializers), "")]
-        public async Task TestInvalidConstructorInitializerAsync(string initializer)
+        [MemberData(nameof(GetTestConstructorInitializers), "\r\n", false)]
+        [MemberData(nameof(GetLeadingMultilineTestConstructorInitializers), "", false)]
+        [MemberData(nameof(GetTestConstructorInitializers), "\r\n", true)]
+        [MemberData(nameof(GetLeadingMultilineTestConstructorInitializers), "", true)]
+        [MemberData(nameof(GetTrailingMultilineTestConstructorInitializers), "", true)]
+        public async Task TestInvalidConstructorInitializerAsync(string initializer, bool treatMultilineParametersAsSplit)
         {
+            var settings = GetSettings(treatMultilineParametersAsSplit);
+
             var testCode = $@"
 class Base
 {{
-    public Base(int a, int b, string s)
+    public Base(int a, int b, string c)
+    {{
+    }}
+
+    public Base(int d, int e, System.Action f)
     {{
     }}
 }}
@@ -201,28 +252,43 @@ class Derived : Base
     {{
     }}
 
-    public Derived(int i, int j, string z)
-        : base(i, j, z)
+    public Derived(int u, int v, string w)
+        : base(u, v, w)
+    {{
+    }}
+
+    public Derived(int x, int y, System.Action z)
+        : base(x, y, z)
     {{
     }}
 }}";
 
-            DiagnosticResult expected = Diagnostic().WithLocation(0);
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult[] expected = new[] { Diagnostic().WithLocation(0) };
+            await VerifyCSharpDiagnosticAsync(null, testCode, settings, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
-        [MemberData(nameof(GetTestExpressions), "")]
-        [MemberData(nameof(GetLeadingMultilineTestExpressions), "\r\n")]
-        [MemberData(nameof(GetTrailingMultilineTestExpressions), "\r\n")]
-        [MemberData(nameof(GetTrailingMultilineTestExpressions), "")]
-        [MemberData(nameof(ValidTestExpressions))]
-        public async Task TestValidExpressionAsync(string expression)
+        [MemberData(nameof(GetTestExpressions), "", false)]
+        [MemberData(nameof(GetLeadingMultilineTestExpressions), "\r\n", false)]
+        [MemberData(nameof(GetTrailingMultilineTestExpressions), "\r\n", false)]
+        [MemberData(nameof(GetTrailingMultilineTestExpressions), "", false)]
+        [MemberData(nameof(ValidTestExpressions), false)]
+        [MemberData(nameof(GetTestExpressions), "", true)]
+        [MemberData(nameof(GetLeadingMultilineTestExpressions), "\r\n", true)]
+        [MemberData(nameof(GetTrailingMultilineTestExpressions), "\r\n", true)]
+        [MemberData(nameof(ValidTestExpressions), true)]
+        public async Task TestValidExpressionAsync(string expression, bool treatMultilineParametersAsSplit)
         {
+            var settings = GetSettings(treatMultilineParametersAsSplit);
+
             var testCode = $@"
 class Foo
 {{
-    public void Bar(int i, int j, int k)
+    public void Bar(int d, int e, int f)
+    {{
+    }}
+
+    public void Buz(System.Action h, int i, System.Action j)
     {{
     }}
 
@@ -231,21 +297,30 @@ class Foo
         {expression};
     }}
 
-    public long this[int a, int b, int s] => a + b + s;
+    public long this[int a, int b, int c] => a + b + c;
 }}";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(null, testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
-        [MemberData(nameof(GetTestExpressions), "\r\n")]
-        [MemberData(nameof(GetLeadingMultilineTestExpressions), "")]
-        public async Task TestInvalidExpressionAsync(string expression)
+        [MemberData(nameof(GetTestExpressions), "\r\n", false)]
+        [MemberData(nameof(GetLeadingMultilineTestExpressions), "", false)]
+        [MemberData(nameof(GetTestExpressions), "\r\n", true)]
+        [MemberData(nameof(GetLeadingMultilineTestExpressions), "", true)]
+        [MemberData(nameof(GetTrailingMultilineTestExpressions), "", true)]
+        public async Task TestInvalidExpressionAsync(string expression, bool treatMultilineParametersAsSplit)
         {
+            var settings = GetSettings(treatMultilineParametersAsSplit);
+
             var testCode = $@"
 class Foo
 {{
-    public void Bar(int i, int j, int k)
+    public void Bar(int d, int e, int f)
+    {{
+    }}
+
+    public void Buz(System.Action h, int i, System.Action j)
     {{
     }}
 
@@ -254,20 +329,25 @@ class Foo
         {expression};
     }}
 
-    public long this[int a, int b, int s] => a + b + s;
+    public long this[int a, int b, int c] => a + b + c;
 }}";
 
-            DiagnosticResult expected = Diagnostic().WithLocation(0);
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult[] expected = new[] { Diagnostic().WithLocation(0) };
+            await VerifyCSharpDiagnosticAsync(null, testCode, settings, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
-        [MemberData(nameof(GetTestAttributes), "")]
-        [MemberData(nameof(GetMultilineTestAttributes), "\r\n")]
-        [MemberData(nameof(GetMultilineTestAttributes), "")]
-        [MemberData(nameof(ValidTestAttribute))]
-        public async Task TestValidAttributeAsync(string attribute)
+        [MemberData(nameof(GetTestAttributes), "", false)]
+        [MemberData(nameof(GetMultilineTestAttributes), "\r\n", false)]
+        [MemberData(nameof(GetMultilineTestAttributes), "", false)]
+        [MemberData(nameof(ValidTestAttribute), false)]
+        [MemberData(nameof(GetTestAttributes), "", true)]
+        [MemberData(nameof(GetMultilineTestAttributes), "\r\n", true)]
+        [MemberData(nameof(ValidTestAttribute), true)]
+        public async Task TestValidAttributeAsync(string attribute, bool treatMultilineParametersAsSplit)
         {
+            var settings = GetSettings(treatMultilineParametersAsSplit);
+
             var testCode = $@"
 [System.AttributeUsage(System.AttributeTargets.Class)]
 public class MyAttribute : System.Attribute
@@ -282,13 +362,17 @@ class Foo
 {{
 }}";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(null, testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
-        [MemberData(nameof(GetTestAttributes), "\r\n")]
-        public async Task TestInvalidAttributeAsync(string attribute)
+        [MemberData(nameof(GetTestAttributes), "\r\n", false)]
+        [MemberData(nameof(GetTestAttributes), "\r\n", true)]
+        [MemberData(nameof(GetMultilineTestAttributes), "", true)]
+        public async Task TestInvalidAttributeAsync(string attribute, bool treatMultilineParametersAsSplit)
         {
+            var settings = GetSettings(treatMultilineParametersAsSplit);
+
             var testCode = $@"
 [System.AttributeUsage(System.AttributeTargets.Class)]
 public class MyAttribute : System.Attribute
@@ -303,9 +387,21 @@ class Foo
 {{
 }}";
 
-            DiagnosticResult expected = Diagnostic().WithLocation(0);
+            DiagnosticResult[] expected = new[] { Diagnostic().WithLocation(0) };
+            await VerifyCSharpDiagnosticAsync(null, testCode, settings, expected, CancellationToken.None).ConfigureAwait(false);
+        }
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        protected static string GetSettings(bool treatMultilineParametersAsSplit = false)
+        {
+            return $@"
+{{
+    ""settings"": {{
+        ""readabilityRules"": {{
+            ""treatMultilineParametersAsSplit"" : {treatMultilineParametersAsSplit.ToString().ToLowerInvariant()}
+        }}
+    }}
+}}
+";
         }
     }
 }

@@ -14,9 +14,13 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
 
     public partial class SA1117CSharp7UnitTests : SA1117UnitTests
     {
-        [Fact]
-        public async Task TestValidLocalFunctionsAsync()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task TestValidLocalFunctionsAsync(bool treatMultilineParametersAsSplit)
         {
+            var settings = GetSettings(treatMultilineParametersAsSplit);
+
             var testCode = @"
 class Foo
 {
@@ -33,12 +37,16 @@ class Foo
         object LocalFunction3(int a, int b, string s) => null;
     }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(null, testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestInvalidLocalFunctionsAsync()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task TestInvalidLocalFunctionsAsync(bool treatMultilineParametersAsSplit)
         {
+            var settings = GetSettings(treatMultilineParametersAsSplit);
+
             var testCode = @"
 class Foo
 {
@@ -59,10 +67,9 @@ class Foo
  string s) => null;
     }
 }";
-            DiagnosticResult expected = Diagnostic().WithLocation(7, 2);
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await VerifyCSharpDiagnosticAsync(fixedCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            ////await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult[] expected = new[] { Diagnostic().WithLocation(7, 2) };
+            await VerifyCSharpDiagnosticAsync(null, testCode, settings, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(null, fixedCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
