@@ -50,6 +50,11 @@
               "type": "boolean",
               "description": "When true, diagnostics will not be reported for using aliases of built-in types.",
               "default": false
+            },
+            "treatMultilineParametersAsSplit": {
+              "type": "boolean",
+              "description": "When true, SA1116 and SA1117 will treat multiline parameters as split parameters, requiring them to be each on a separate line.",
+              "default": false
             }
           }
         },

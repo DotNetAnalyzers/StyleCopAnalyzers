@@ -16,11 +16,17 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         private readonly bool allowBuiltInTypeAliases;
 
         /// <summary>
+        /// This is the backing field for the <see cref="TreatMultilineParametersAsSplit"/> property.
+        /// </summary>
+        private readonly bool treatMultilineParametersAsSplit;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ReadabilitySettings"/> class.
         /// </summary>
         protected internal ReadabilitySettings()
         {
             this.allowBuiltInTypeAliases = false;
+            this.treatMultilineParametersAsSplit = false;
         }
 
         /// <summary>
@@ -32,6 +38,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         protected internal ReadabilitySettings(JsonObject readabilitySettingsObject, AnalyzerConfigOptionsWrapper analyzerConfigOptions)
         {
             bool? allowBuiltInTypeAliases = null;
+            bool? treatMultilineParametersAsSplit = null;
 
             foreach (var kvp in readabilitySettingsObject)
             {
@@ -41,17 +48,26 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                     allowBuiltInTypeAliases = kvp.ToBooleanValue();
                     break;
 
+                case "treatMultilineParametersAsSplit":
+                    treatMultilineParametersAsSplit = kvp.ToBooleanValue();
+                    break;
+
                 default:
                     break;
                 }
             }
 
             allowBuiltInTypeAliases ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.readability.allowBuiltInTypeAliases");
+            treatMultilineParametersAsSplit ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.readability.treatMultilineParametersAsSplit");
 
             this.allowBuiltInTypeAliases = allowBuiltInTypeAliases.GetValueOrDefault(false);
+            this.treatMultilineParametersAsSplit = treatMultilineParametersAsSplit.GetValueOrDefault(false);
         }
 
         public bool AllowBuiltInTypeAliases =>
             this.allowBuiltInTypeAliases;
+
+        public bool TreatMultilineParametersAsSplit =>
+            this.treatMultilineParametersAsSplit;
     }
 }
