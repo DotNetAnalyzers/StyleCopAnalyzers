@@ -16,9 +16,13 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
 
     public partial class SA1116CSharp7UnitTests : SA1116UnitTests
     {
-        [Fact]
-        public async Task TestValidLocalFunctionAsync()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task TestValidLocalFunctionAsync(bool treatMultilineParametersAsSplit)
         {
+            var settings = GetSettings(treatMultilineParametersAsSplit);
+
             var testCode = @"
 class Foo
 {
@@ -27,12 +31,16 @@ class Foo
         object LocalFunction(int a, string s) => null;
     }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestInvalidLocalFunctionsAsync()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task TestInvalidLocalFunctionsAsync(bool treatMultilineParametersAsSplit)
         {
+            var settings = GetSettings(treatMultilineParametersAsSplit);
+
             var testCode = @"
 class Foo
 {
@@ -52,8 +60,8 @@ class Foo
  string s) => null;
     }
 }";
-            DiagnosticResult expected = Diagnostic().WithLocation(6, 30);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult[] expected = new[] { Diagnostic().WithLocation(6, 30) };
+            await VerifyCSharpFixAsync(testCode, settings, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

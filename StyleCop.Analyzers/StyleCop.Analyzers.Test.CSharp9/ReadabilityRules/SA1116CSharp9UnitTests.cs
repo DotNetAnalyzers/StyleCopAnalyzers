@@ -16,9 +16,13 @@ namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
 
     public partial class SA1116CSharp9UnitTests : SA1116CSharp8UnitTests
     {
-        [Fact]
-        public async Task TestTargetTypedNewExpressionnAsync()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task TestTargetTypedNewExpressionnAsync(bool treatMultilineParametersAsSplit)
         {
+            var settings = GetSettings(treatMultilineParametersAsSplit);
+
             var testCode = @"
 class Foo
 {
@@ -48,8 +52,8 @@ class Foo
     }
 }";
 
-            DiagnosticResult expected = Diagnostic().WithLocation(10, 21);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult[] expected = new[] { Diagnostic().WithLocation(10, 21) };
+            await VerifyCSharpFixAsync(testCode, settings, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
