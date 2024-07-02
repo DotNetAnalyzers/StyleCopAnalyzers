@@ -74,7 +74,7 @@ class TypeName
                 context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
                 context.EnableConcurrentExecution();
 
-                context.RegisterCompilationStartAction(
+                context.RegisterCompilationStartActionWithSettings(
                     compilationStartContext =>
                     {
                         compilationStartContext.RegisterSyntaxNodeAction(

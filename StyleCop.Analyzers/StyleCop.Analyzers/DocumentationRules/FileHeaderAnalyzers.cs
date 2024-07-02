@@ -85,7 +85,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly LocalizableString SA1641Description = new LocalizableResourceString(nameof(DocumentationResources.SA1641Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly string SA1641HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1641.md";
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<CompilationStartAnalysisContextWithSettings> CompilationStartAction = HandleCompilationStart;
 
         /// <summary>
         /// Gets the diagnostic descriptor for SA1633 with a missing header.
@@ -176,10 +176,10 @@ namespace StyleCop.Analyzers.DocumentationRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterCompilationStartAction(CompilationStartAction);
+            context.RegisterCompilationStartActionWithSettings(CompilationStartAction);
         }
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContextWithSettings context)
         {
             var compilation = context.Compilation;
 
