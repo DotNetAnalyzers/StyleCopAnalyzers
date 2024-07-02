@@ -53,23 +53,29 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var solution = document.Project.Solution;
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-
             var expectedFileName = diagnostic.Properties[SA1649FileNameMustMatchTypeName.ExpectedFileNameKey];
-            var newPath = document.FilePath != null ? Path.Combine(Path.GetDirectoryName(document.FilePath), expectedFileName) : null;
 
-            var newDocumentId = DocumentId.CreateNewId(document.Id.ProjectId);
+            var newSolution = ReplaceDocument(solution, document, document.Id, syntaxRoot, expectedFileName);
 
-            var newSolution = solution
-                .RemoveDocument(document.Id)
-                .AddDocument(newDocumentId, expectedFileName, syntaxRoot, document.Folders, newPath);
-
-            // Make sure to also add the file to linked projects
+            // Make sure to also update other projects which reference the same file
             foreach (var linkedDocumentId in document.GetLinkedDocumentIds())
             {
-                DocumentId linkedExtractedDocumentId = DocumentId.CreateNewId(linkedDocumentId.ProjectId);
-                newSolution = newSolution.AddDocument(linkedExtractedDocumentId, expectedFileName, syntaxRoot, document.Folders);
+                newSolution = ReplaceDocument(newSolution, null, linkedDocumentId, syntaxRoot, expectedFileName);
             }
 
+            return newSolution;
+        }
+
+        private static Solution ReplaceDocument(Solution solution, Document document, DocumentId documentId, SyntaxNode syntaxRoot, string expectedFileName)
+        {
+            document ??= solution.GetDocument(documentId);
+
+            var newDocumentFilePath = document.FilePath != null ? Path.Combine(Path.GetDirectoryName(document.FilePath), expectedFileName) : null;
+            var newDocumentId = DocumentId.CreateNewId(documentId.ProjectId);
+
+            var newSolution = solution
+                .RemoveDocument(documentId)
+                .AddDocument(newDocumentId, expectedFileName, syntaxRoot, document.Folders, newDocumentFilePath);
             return newSolution;
         }
     }
