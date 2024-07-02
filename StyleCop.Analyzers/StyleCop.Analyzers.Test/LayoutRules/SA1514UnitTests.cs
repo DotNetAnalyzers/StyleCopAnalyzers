@@ -1169,5 +1169,64 @@ public class TestClass
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestClassInGlobalNamespaceWithoutNewlineAsync()
+        {
+            var testCode = @"/// <summary>
+/// X.
+/// </summary>
+public class TestClass
+{
+}
+";
+
+            var expected = DiagnosticResult.EmptyDiagnosticResults;
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestClassInGlobalNamespaceWithCommentAsync()
+        {
+            var testCode = @"
+// Normal comment
+{|#0:///|} <summary>
+/// X.
+/// </summary>
+public class TestClass
+{
+}
+";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(0).WithArguments(" not", "preceded"),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestClassInGlobalNamespaceWithPreprocessorDirectiveAsync()
+        {
+            var testCode = @"
+#if DEBUG
+#endif
+{|#0:///|} <summary>
+/// X.
+/// </summary>
+public class TestClass
+{
+}
+";
+
+            var expected = new[]
+            {
+        Diagnostic().WithLocation(0).WithArguments(" not", "preceded"),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
