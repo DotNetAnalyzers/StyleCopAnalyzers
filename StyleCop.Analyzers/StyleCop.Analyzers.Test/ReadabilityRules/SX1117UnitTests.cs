@@ -34,16 +34,20 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         {
             yield return new object[] { $"this(42, 43, {delimiter} {{|#0:\"hello\"|}})" };
             yield return new object[] { $"base(42, 43, {delimiter} {{|#0:\"hello\"|}})" };
-            yield return new object[] { $"this(42, 43, {delimiter} {{|#0:new System.UriBuilder() {{ Port = 5000 }}|}})" };
-            yield return new object[] { $"base(42, 43, {delimiter} {{|#0:new System.UriBuilder() {{ Port = 5000 }}|}})" };
+            yield return new object[] { $"this(42, 43, {delimiter} {{|#0:() => {{ }}|}})" };
+            yield return new object[] { $"base(42, 43, {delimiter} {{|#0:() => {{ }}|}})" };
         }
 
-        public static IEnumerable<object[]> GetMultilineTestConstructorInitializers(string delimiter)
+        public static IEnumerable<object[]> GetLeadingMultilineTestConstructorInitializers(string delimiter)
         {
             yield return new object[] { $"this(42\r\n+ 1, {delimiter} {{|#0:43|}}, {delimiter} \"hello\")" };
             yield return new object[] { $"base(42\r\n+ 1, {delimiter} {{|#0:43|}}, {delimiter} \"hello\")" };
-            yield return new object[] { $"this(42, {delimiter} 43, {delimiter} {{|#0:new System.UriBuilder()\r\n{{\r\nPort = 5000\r\n}}|}})" };
-            yield return new object[] { $"base(42, {delimiter} 43, {delimiter} {{|#0:new System.UriBuilder()\r\n{{\r\nPort = 5000\r\n}}|}})" };
+        }
+
+        public static IEnumerable<object[]> GetTrailingMultilineTestConstructorInitializers(string delimiter)
+        {
+            yield return new object[] { $"this(42, {delimiter} 43, {delimiter} {{|#0:() =>\r\n{{\r\n}}|}})" };
+            yield return new object[] { $"base(42, {delimiter} 43, {delimiter} {{|#0:() =>\r\n{{\r\n}}|}})" };
         }
 
         public static IEnumerable<object[]> GetTestExpressions(string delimiter)
@@ -68,7 +72,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             yield return new object[] { $"char? c = (new char[3, 3])?[2, {delimiter} {{|#0:2\r\n+ 2|}}];" };
             yield return new object[] { $"long ll = this[2,{delimiter} 2,{delimiter} {{|#0:2\r\n+ 1|}}];" };
             yield return new object[] { $"var str = string.Join(\r\n\"def\",{delimiter}{{|#0:\"abc\"\r\n + \"cba\"|}});" };
-            yield return new object[] { $"Buz(() => {{ }},{delimiter} 3,\r\n {{|#0:() =>\r\n{{\r\n}}|}});" };
+            yield return new object[] { $"Buz(() => {{ }},{delimiter} 2,{delimiter} {{|#0:() =>\r\n{{\r\n}}|}});" };
         }
 
         public static IEnumerable<object[]> GetLeadingMultilineTestExpressions(string delimiter)
@@ -163,17 +167,18 @@ class Foo
 
         [Theory]
         [MemberData(nameof(GetTestConstructorInitializers), "")]
-        [MemberData(nameof(GetMultilineTestConstructorInitializers), "\r\n")]
+        [MemberData(nameof(GetLeadingMultilineTestConstructorInitializers), "\r\n")]
+        [MemberData(nameof(GetTrailingMultilineTestConstructorInitializers), "\r\n")]
         public async Task TestValidConstructorInitializerAsync(string initializer)
         {
             var testCode = $@"
 class Base
 {{
-    public Base(int a, int b, string s)
+    public Base(int a, int b, string c)
     {{
     }}
 
-    public Base(int a, int b, System.UriBuilder s)
+    public Base(int d, int e, System.Action f)
     {{
     }}
 }}
@@ -185,13 +190,13 @@ class Derived : Base
     {{
     }}
 
-    public Derived(int i, int j, string z)
-        : base(i, j, z)
+    public Derived(int u, int v, string w)
+        : base(u, v, w)
     {{
     }}
 
-    public Derived(int i, int j, System.UriBuilder z)
-        : base(i, j, z)
+    public Derived(int x, int y, System.Action z)
+        : base(x, y, z)
     {{
     }}
 }}";
@@ -201,17 +206,18 @@ class Derived : Base
 
         [Theory]
         [MemberData(nameof(GetTestConstructorInitializers), "\r\n")]
-        [MemberData(nameof(GetMultilineTestConstructorInitializers), "")]
+        [MemberData(nameof(GetLeadingMultilineTestConstructorInitializers), "")]
+        [MemberData(nameof(GetTrailingMultilineTestConstructorInitializers), "")]
         public async Task TestInvalidConstructorInitializerAsync(string initializer)
         {
             var testCode = $@"
 class Base
 {{
-    public Base(int a, int b, string s)
+    public Base(int a, int b, string c)
     {{
     }}
 
-    public Base(int a, int b, System.UriBuilder s)
+    public Base(int d, int e, System.Action f)
     {{
     }}
 }}
@@ -223,13 +229,13 @@ class Derived : Base
     {{
     }}
 
-    public Derived(int i, int j, string z)
-        : base(i, j, z)
+    public Derived(int u, int v, string w)
+        : base(u, v, w)
     {{
     }}
 
-    public Derived(int i, int j, System.UriBuilder z)
-        : base(i, j, z)
+    public Derived(int x, int y, System.Action z)
+        : base(x, y, z)
     {{
     }}
 }}";
@@ -248,11 +254,11 @@ class Derived : Base
             var testCode = $@"
 class Foo
 {{
-    public void Bar(int i, int j, int k)
+    public void Bar(int d, int e, int f)
     {{
     }}
 
-    public void Buz(System.Action i, int j, System.Action k)
+    public void Buz(System.Action h, int i, System.Action j)
     {{
     }}
 
@@ -261,7 +267,7 @@ class Foo
         {expression};
     }}
 
-    public long this[int a, int b, int s] => a + b + s;
+    public long this[int a, int b, int c] => a + b + c;
 }}";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -276,11 +282,11 @@ class Foo
             var testCode = $@"
 class Foo
 {{
-    public void Bar(int i, int j, int k)
+    public void Bar(int d, int e, int f)
     {{
     }}
 
-    public void Buz(System.Action i, int j, System.Action k)
+    public void Buz(System.Action h, int i, System.Action j)
     {{
     }}
 
@@ -289,7 +295,7 @@ class Foo
         {expression};
     }}
 
-    public long this[int a, int b, int s] => a + b + s;
+    public long this[int a, int b, int c] => a + b + c;
 }}";
 
             DiagnosticResult expected = Diagnostic().WithLocation(0);

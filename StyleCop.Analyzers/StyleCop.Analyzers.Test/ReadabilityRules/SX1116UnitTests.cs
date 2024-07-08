@@ -33,8 +33,12 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         {
             yield return new object[] { $"this(42,{delimiter} \"hello\")", $"this({fixDelimiter}42,{delimiter} \"hello\")" };
             yield return new object[] { $"base(42,{delimiter} \"hello\")", $"base({fixDelimiter}42,{delimiter} \"hello\")" };
-            yield return new object[] { $"this(new System.UriBuilder(){delimiter} {{{delimiter} Port = 5000{delimiter} }})", $"this({fixDelimiter}new System.UriBuilder(){delimiter} {{{delimiter} Port = 5000{delimiter} }})" };
-            yield return new object[] { $"base(new System.UriBuilder(){delimiter} {{{delimiter} Port = 5000{delimiter} }})", $"base({fixDelimiter}new System.UriBuilder(){delimiter} {{{delimiter} Port = 5000{delimiter} }})" };
+        }
+
+        public static IEnumerable<object[]> GetTrailingMultilineTestConstructorInitializers(string delimiter, string fixDelimiter)
+        {
+            yield return new object[] { $"this(42,{delimiter} () =>\r\n{{\r\n}})", $"this({fixDelimiter}42,{delimiter} () =>\r\n{{\r\n}})" };
+            yield return new object[] { $"base(42,{delimiter} () =>\r\n{{\r\n}})", $"base({fixDelimiter}42,{delimiter} () =>\r\n{{\r\n}})" };
         }
 
         public static IEnumerable<object[]> GetTestExpressions(string delimiter, string fixDelimiter)
@@ -47,7 +51,11 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             yield return new object[] { $"char cc = (new char[3, 3])[2,{delimiter} 2];", $"char cc = (new char[3, 3])[{fixDelimiter}2,{delimiter} 2];", 36 };
             yield return new object[] { $"char? c = (new char[3, 3])?[2,{delimiter} 2];", $"char? c = (new char[3, 3])?[{fixDelimiter}2,{delimiter} 2];", 37 };
             yield return new object[] { $"long ll = this[2,{delimiter} 2];", $"long ll = this[{fixDelimiter}2,{delimiter} 2];", 24 };
-            yield return new object[] { $"Buz(() =>{delimiter} {{{delimiter} }},{delimiter} () => {{ }})", $"Buz({fixDelimiter}() =>{delimiter} {{{delimiter} }},{delimiter} () => {{ }})", 13 };
+        }
+
+        public static IEnumerable<object[]> GetLambdaTestExpressions(string delimiter, string fixDelimiter)
+        {
+            yield return new object[] { $"Buz(() => {{ }}, () =>{delimiter} {{{delimiter} }})", $"Buz({fixDelimiter}() => {{ }}, () =>{delimiter} {{{delimiter} }})", 13 };
             yield return new object[] { $"new System.Lazy<int>(() =>{delimiter} {{{delimiter} return 1;{delimiter} }})", $"new System.Lazy<int>({fixDelimiter}() =>{delimiter} {{{delimiter} return 1;{delimiter} }})", 30 };
         }
 
@@ -102,11 +110,11 @@ class Foo
             var testCode = $@"
 class Base
 {{
-    public Base(int a, string s)
+    public Base(int a, string b)
     {{
     }}
 
-    public Base(System.UriBuilder b)
+    public Base(int c, System.Action d)
     {{
     }}
 }}
@@ -118,13 +126,13 @@ class Derived : Base
     {{
     }}
 
-    public Derived(int i, string z)
-        : base(i, z)
+    public Derived(int w, string x)
+        : base(w, x)
     {{
     }}
 
-    public Derived(System.UriBuilder u)
-        : base(u)
+    public Derived(int y, System.Action z)
+        : base(y, z)
     {{
     }}
 }}";
@@ -134,16 +142,18 @@ class Derived : Base
 
         [Theory]
         [MemberData(nameof(GetTestConstructorInitializers), "\r\n", "\r\n            ")]
+        [MemberData(nameof(GetTrailingMultilineTestConstructorInitializers), "", "\r\n            ")]
+        [MemberData(nameof(GetTrailingMultilineTestConstructorInitializers), "\r\n", "\r\n            ")]
         public async Task TestInvalidConstructorInitializerAsync(string initializer, string fixedInitializer)
         {
             var testCode = $@"
 class Base
 {{
-    public Base(int a, string s)
+    public Base(int a, string b)
     {{
     }}
 
-    public Base(System.UriBuilder b)
+    public Base(int c, System.Action d)
     {{
     }}
 }}
@@ -155,24 +165,24 @@ class Derived : Base
     {{
     }}
 
-    public Derived(int i, string z)
-        : base(i, z)
+    public Derived(int w, string x)
+        : base(w, x)
     {{
     }}
 
-    public Derived(System.UriBuilder u)
-        : base(u)
+    public Derived(int y, System.Action z)
+        : base(y, z)
     {{
     }}
 }}";
             var fixedCode = $@"
 class Base
 {{
-    public Base(int a, string s)
+    public Base(int a, string b)
     {{
     }}
 
-    public Base(System.UriBuilder b)
+    public Base(int c, System.Action d)
     {{
     }}
 }}
@@ -184,13 +194,13 @@ class Derived : Base
     {{
     }}
 
-    public Derived(int i, string z)
-        : base(i, z)
+    public Derived(int w, string x)
+        : base(w, x)
     {{
     }}
 
-    public Derived(System.UriBuilder u)
-        : base(u)
+    public Derived(int y, System.Action z)
+        : base(y, z)
     {{
     }}
 }}";
@@ -201,6 +211,7 @@ class Derived : Base
 
         [Theory]
         [MemberData(nameof(GetTestExpressions), "", "")]
+        [MemberData(nameof(GetLambdaTestExpressions), "", "")]
         [MemberData(nameof(ValidTestExpressions))]
         public async Task TestValidExpressionAsync(string expression, string fixedExpression, int column)
         {
@@ -211,11 +222,11 @@ class Derived : Base
             var testCode = $@"
 class Foo
 {{
-    public void Bar(int i, int z)
+    public void Bar(int a, int b)
     {{
     }}
 
-    public void Buz(System.Action x, System.Action y)
+    public void Buz(System.Action c, System.Action d)
     {{
     }}
 
@@ -224,7 +235,7 @@ class Foo
         {expression};
     }}
 
-    public long this[int a, int s] => a + s;
+    public long this[int e, int f] => e + f;
 }}";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -232,16 +243,17 @@ class Foo
 
         [Theory]
         [MemberData(nameof(GetTestExpressions), "\r\n", "\r\n            ")]
+        [MemberData(nameof(GetLambdaTestExpressions), "\r\n", "\r\n            ")]
         public async Task TestInvalidExpressionAsync(string expression, string fixedExpression, int column)
         {
             var testCode = $@"
 class Foo
 {{
-    public void Bar(int i, int z)
+    public void Bar(int a, int b)
     {{
     }}
 
-    public void Buz(System.Action x, System.Action y)
+    public void Buz(System.Action c, System.Action d)
     {{
     }}
 
@@ -250,16 +262,16 @@ class Foo
         {expression};
     }}
 
-    public long this[int a, int s] => a + s;
+    public long this[int e, int f] => e + f;
 }}";
             var fixedCode = $@"
 class Foo
 {{
-    public void Bar(int i, int z)
+    public void Bar(int a, int b)
     {{
     }}
 
-    public void Buz(System.Action x, System.Action y)
+    public void Buz(System.Action c, System.Action d)
     {{
     }}
 
@@ -268,7 +280,7 @@ class Foo
         {fixedExpression};
     }}
 
-    public long this[int a, int s] => a + s;
+    public long this[int e, int f] => e + f;
 }}";
 
             DiagnosticResult expected = Diagnostic().WithLocation(14, column);
