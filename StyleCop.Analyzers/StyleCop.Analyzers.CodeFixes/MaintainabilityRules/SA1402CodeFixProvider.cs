@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -16,6 +17,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
 
@@ -59,6 +61,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         private static async Task<Solution> GetTransformedSolutionAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+
             SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
             if (!(node is MemberDeclarationSyntax memberDeclarationSyntax))
             {
@@ -109,6 +113,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             SyntaxNode extractedDocumentNode = root.RemoveNodes(nodesToRemoveFromExtracted, SyntaxRemoveOptions.KeepUnbalancedDirectives);
             Solution updatedSolution = document.Project.Solution.AddDocument(extractedDocumentId, extractedDocumentName, extractedDocumentNode, document.Folders);
 
+            updatedSolution = await RemoveUnnecessaryUsingsAsync(updatedSolution, extractedDocumentId, cancellationToken).ConfigureAwait(false);
+
             // Make sure to also add the file to linked projects
             foreach (var linkedDocumentId in document.GetLinkedDocumentIds())
             {
@@ -117,9 +123,66 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             }
 
             // Remove the type from its original location
-            updatedSolution = updatedSolution.WithDocumentSyntaxRoot(document.Id, root.RemoveNode(node, SyntaxRemoveOptions.KeepUnbalancedDirectives));
+            var newRootOriginal = root.RemoveNode(node, SyntaxRemoveOptions.KeepUnbalancedDirectives);
+            updatedSolution = updatedSolution.WithDocumentSyntaxRoot(document.Id, newRootOriginal);
+
+            updatedSolution = await RemoveUnnecessaryUsingsAsync(updatedSolution, document.Id, cancellationToken).ConfigureAwait(false);
 
             return updatedSolution;
+        }
+
+        private static async Task<Solution> RemoveUnnecessaryUsingsAsync(Solution solution, DocumentId documentId, CancellationToken cancellationToken)
+        {
+            var document = solution.GetDocument(documentId);
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+
+            var diagnostics = semanticModel.GetDiagnostics();
+            var cs8019Diagnostics = diagnostics.Where(d => d.Id == "CS8019").ToList();
+
+            var unnecessaryUsings = cs8019Diagnostics.Select(diagnostic =>
+            {
+                var diagnosticSpan = diagnostic.Location.SourceSpan;
+                var usingDirective = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<UsingDirectiveSyntax>().First();
+                return usingDirective;
+            }).ToList();
+
+            var newRoot = root.RemoveNodes(unnecessaryUsings, SyntaxRemoveOptions.KeepNoTrivia);
+
+            newRoot = RemoveUnnecessaryConditionalDirectives(newRoot, unnecessaryUsings);
+
+            return solution.WithDocumentSyntaxRoot(documentId, newRoot);
+        }
+
+        // WIP
+        private static SyntaxNode RemoveUnnecessaryConditionalDirectives(SyntaxNode root, List<UsingDirectiveSyntax> unnecessaryUsings)
+        {
+            var nodesToRemove = new List<SyntaxNode>();
+
+            foreach (var usingDirective in unnecessaryUsings)
+            {
+                var ifDirectiveTrivia = usingDirective.GetLeadingTrivia().FirstOrDefault(t => t.IsKind(SyntaxKind.IfDirectiveTrivia));
+                var endIfDirectiveTrivia = usingDirective.GetTrailingTrivia().FirstOrDefault(t => t.IsKind(SyntaxKind.EndIfDirectiveTrivia));
+
+                if (ifDirectiveTrivia != default && endIfDirectiveTrivia != default)
+                {
+                    var directiveSpan = TextSpan.FromBounds(ifDirectiveTrivia.FullSpan.Start, endIfDirectiveTrivia.FullSpan.End);
+                    var directives = root.DescendantTrivia().Where(t => directiveSpan.Contains(t.Span)).ToList();
+
+                    foreach (var directive in directives)
+                    {
+                        var directiveNode = directive.GetStructure();
+                        if (directiveNode != null)
+                        {
+                            nodesToRemove.Add(directiveNode);
+                        }
+                    }
+                }
+            }
+
+            root = root.RemoveNodes(nodesToRemove, SyntaxRemoveOptions.KeepNoTrivia);
+
+            return root;
         }
     }
 }
