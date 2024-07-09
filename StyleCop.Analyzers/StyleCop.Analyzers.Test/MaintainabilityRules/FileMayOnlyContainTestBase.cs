@@ -306,6 +306,221 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             }
         }
 
+        [Fact]
+        [WorkItem(3109, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3109")]
+        public async Task TestCodeFixRemovesUnnecessaryUsingsAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    using System;
+    using System.Collections.Generic;
+
+    public class TestClass
+    {
+        public List<string> Items { get; set; }
+    }
+
+    public class {|#0:TestClass2|}
+    {
+        public DateTime Date { get; set; }
+    }
+}
+";
+
+            var fixedCode = new[]
+            {
+        ("/0/Test0.cs", @"
+namespace TestNamespace
+{
+    using System.Collections.Generic;
+
+    public class TestClass
+    {
+        public List<string> Items { get; set; }
+    }
+}
+"),
+        ("TestClass2.cs", @"
+namespace TestNamespace
+{
+    using System;    
+
+    public class TestClass2
+    {
+        public DateTime Date { get; set; }
+    }
+}
+"),
+            };
+
+            var expected = new[]
+            {
+                this.Diagnostic().WithLocation(0).WithArguments("not", "preceded"),
+            };
+
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestCodeFixKeepsUsingsAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    using System.Collections.Generic;
+
+    public class TestClass
+    {
+        public List<string> Items { get; set; }
+    }
+
+    public class {|#0:TestClass2|}
+    {
+        public List<string> Items2 { get; set; }
+    }
+}
+";
+
+            var fixedCode = new[]
+            {
+        ("/0/Test0.cs", @"
+namespace TestNamespace
+{
+    using System.Collections.Generic;
+
+    public class TestClass
+    {
+        public List<string> Items { get; set; }
+    }
+}
+"),
+        ("TestClass2.cs", @"
+namespace TestNamespace
+{
+    using System.Collections.Generic;
+
+    public class TestClass2
+    {
+        public List<string> Items2 { get; set; }
+    }
+}
+"),
+            };
+
+            var expected = new[]
+            {
+                this.Diagnostic().WithLocation(0).WithArguments("not", "preceded"),
+            };
+
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestTypeWithNoUsingsAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public int MyProperty { get; set; }
+    }
+
+    public class {|#0:TestClass2|}
+    {
+        public string MyProperty { get; set; }
+    }
+}
+";
+
+            var fixedCode = new[]
+            {
+        ("/0/Test0.cs", @"
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public int MyProperty { get; set; }
+    }
+}
+"),
+        ("TestClass2.cs", @"
+namespace TestNamespace
+{
+
+    public class TestClass2
+    {
+        public string MyProperty { get; set; }
+    }
+}
+"),
+            };
+
+            var expected = new[]
+            {
+                this.Diagnostic().WithLocation(0).WithArguments("not", "preceded"),
+            };
+
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestTypesWithConditionalCompilationDirectivesAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+#if true
+    using System;
+#endif
+
+    public class TestClass
+    {
+        public DateTime MyDate { get; set; }
+    }
+
+    public class {|#0:TestClass2|}
+    {
+        public string MyString { get; set; }
+    }
+}
+";
+
+            var fixedCode = new[]
+            {
+        ("/0/Test0.cs", @"
+namespace TestNamespace
+{
+#if true
+    using System;
+#endif
+
+    public class TestClass
+    {
+        public DateTime MyDate { get; set; }
+    }
+}
+"),
+        ("TestClass2.cs", @"
+namespace TestNamespace
+{
+    public class TestClass2
+    {
+        public string MyString { get; set; }
+    }
+}
+"),
+            };
+
+            var expected = new[]
+            {
+                this.Diagnostic().WithLocation(0).WithArguments("not", "preceded"),
+            };
+
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected DiagnosticResult Diagnostic()
             => new DiagnosticResult(this.Analyzer.SupportedDiagnostics.Single());
 
