@@ -135,51 +135,107 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         {
             var document = solution.GetDocument(documentId);
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
+            // First pass: detect and collect unnecessary using directives
+            var unnecessaryUsings = await GetUnnecessaryUsingsAsync(document, root, cancellationToken).ConfigureAwait(false);
+
+            // Check for preprocessor directives independently
+            var hasPreprocessorDirectives = root.DescendantTrivia().Any(t => t.IsKind(SyntaxKind.IfDirectiveTrivia) || t.IsKind(SyntaxKind.EndIfDirectiveTrivia));
+
+            if (hasPreprocessorDirectives)
+            {
+                root = RemoveUnnecessaryPreprocessorDirectives(root, unnecessaryUsings);
+
+                // Recalculate unnecessary usings after modifying the root
+                unnecessaryUsings = await GetUnnecessaryUsingsAsync(document, root, cancellationToken).ConfigureAwait(false);
+            }
+
+            // Remove the unnecessary using directives
+            var newRoot = root.RemoveNodes(unnecessaryUsings, SyntaxRemoveOptions.KeepNoTrivia);
+
+            return solution.WithDocumentSyntaxRoot(documentId, newRoot);
+        }
+
+        private static async Task<List<UsingDirectiveSyntax>> GetUnnecessaryUsingsAsync(Document document, SyntaxNode root, CancellationToken cancellationToken)
+        {
+            var semanticModel = await document.WithSyntaxRoot(root).GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             var diagnostics = semanticModel.GetDiagnostics();
             var cs8019Diagnostics = diagnostics.Where(d => d.Id == "CS8019").ToList();
 
-            var unnecessaryUsings = cs8019Diagnostics.Select(diagnostic =>
+            return cs8019Diagnostics.Select(diagnostic =>
             {
                 var diagnosticSpan = diagnostic.Location.SourceSpan;
                 var usingDirective = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<UsingDirectiveSyntax>().First();
                 return usingDirective;
             }).ToList();
-
-            var newRoot = root.RemoveNodes(unnecessaryUsings, SyntaxRemoveOptions.KeepNoTrivia);
-
-            newRoot = RemoveUnnecessaryConditionalDirectives(newRoot, unnecessaryUsings);
-
-            return solution.WithDocumentSyntaxRoot(documentId, newRoot);
         }
 
-        // WIP
-        private static SyntaxNode RemoveUnnecessaryConditionalDirectives(SyntaxNode root, List<UsingDirectiveSyntax> unnecessaryUsings)
+        private static SyntaxNode RemoveUnnecessaryPreprocessorDirectives(SyntaxNode root, List<UsingDirectiveSyntax> unnecessaryUsings)
         {
             var nodesToRemove = new List<SyntaxNode>();
+
+            foreach (var usingDirective in unnecessaryUsings)
+            {
+                var ifDirective = usingDirective.GetLeadingTrivia().FirstOrDefault(t => t.IsKind(SyntaxKind.IfDirectiveTrivia));
+                var endIfDirective = root.DescendantTrivia()
+                                         .FirstOrDefault(t => t.IsKind(SyntaxKind.EndIfDirectiveTrivia) &&
+                                                              t.SpanStart > usingDirective.Span.End);
+
+                if (ifDirective != default && endIfDirective != default)
+                {
+                    nodesToRemove.Add(ifDirective.GetStructure() as DirectiveTriviaSyntax);
+                    nodesToRemove.Add(endIfDirective.GetStructure() as DirectiveTriviaSyntax);
+                }
+            }
+
+            root = root.RemoveNodes(nodesToRemove, SyntaxRemoveOptions.KeepNoTrivia);
+            return root;
+        }
+
+        private static SyntaxNode AdjustPreprocessorDirectives(SyntaxNode root, List<UsingDirectiveSyntax> unnecessaryUsings)
+        {
+            var nodesToRemove = new List<SyntaxNode>();
+            var triviaList = root.GetLeadingTrivia().ToList();
 
             foreach (var usingDirective in unnecessaryUsings)
             {
                 var ifDirectiveTrivia = usingDirective.GetLeadingTrivia().FirstOrDefault(t => t.IsKind(SyntaxKind.IfDirectiveTrivia));
                 var endIfDirectiveTrivia = usingDirective.GetTrailingTrivia().FirstOrDefault(t => t.IsKind(SyntaxKind.EndIfDirectiveTrivia));
 
-                if (ifDirectiveTrivia != default && endIfDirectiveTrivia != default)
+                if (ifDirectiveTrivia != default)
                 {
-                    var directiveSpan = TextSpan.FromBounds(ifDirectiveTrivia.FullSpan.Start, endIfDirectiveTrivia.FullSpan.End);
-                    var directives = root.DescendantTrivia().Where(t => directiveSpan.Contains(t.Span)).ToList();
+                    // Find the corresponding #endif directive
+                    var endIfDirective = root.DescendantTrivia()
+                                             .Where(t => t.IsKind(SyntaxKind.EndIfDirectiveTrivia))
+                                             .FirstOrDefault(t => t.SpanStart > usingDirective.FullSpan.End);
 
-                    foreach (var directive in directives)
+                    if (endIfDirective != default)
                     {
-                        var directiveNode = directive.GetStructure();
-                        if (directiveNode != null)
+                        // Remove the if directive and add it back after the last using statement
+                        nodesToRemove.Add(ifDirectiveTrivia.GetStructure());
+                        nodesToRemove.Add(endIfDirective.GetStructure());
+
+                        triviaList.Remove(ifDirectiveTrivia);
+                        triviaList.Remove(endIfDirective);
+
+                        // Insert the if and endif directive after the last using statement
+                        var lastUsingIndex = triviaList.FindLastIndex(t => t.IsKind(SyntaxKind.UsingDirective));
+                        if (lastUsingIndex != -1)
                         {
-                            nodesToRemove.Add(directiveNode);
+                            triviaList.Insert(lastUsingIndex + 1, ifDirectiveTrivia);
+                            triviaList.Insert(lastUsingIndex + 2, endIfDirective);
+                        }
+                        else
+                        {
+                            // If no using directive is found, insert at the beginning
+                            triviaList.Insert(0, ifDirectiveTrivia);
+                            triviaList.Insert(1, endIfDirective);
                         }
                     }
                 }
             }
 
+            root = root.WithLeadingTrivia(triviaList);
             root = root.RemoveNodes(nodesToRemove, SyntaxRemoveOptions.KeepNoTrivia);
 
             return root;

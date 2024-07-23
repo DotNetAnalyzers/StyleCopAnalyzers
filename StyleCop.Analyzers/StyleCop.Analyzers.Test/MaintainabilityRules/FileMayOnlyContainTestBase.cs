@@ -465,61 +465,123 @@ namespace TestNamespace
             await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-//        [Fact]
-//        public async Task TestTypesWithConditionalCompilationDirectivesAsync()
-//        {
-//            var testCode = @"
-//namespace TestNamespace
-//{
-//#if true
-//    using System;
-//#endif
+        [Fact]
+        public async Task TestTypesWithConditionalCompilationDirectivesAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+#if true
+    using System;
+#endif
 
-//    public class TestClass
-//    {
-//        public DateTime MyDate { get; set; }
-//    }
+    public class TestClass
+    {
+        public DateTime MyDate { get; set; }
+    }
 
-//    public class {|#0:TestClass2|}
-//    {
-//        public string MyString { get; set; }
-//    }
-//}
-//";
+    public class {|#0:TestClass2|}
+    {
+        public string MyString { get; set; }
+    }
+}
+";
 
-//            var fixedCode = new[]
-//            {
-//        ("/0/Test0.cs", @"
-//namespace TestNamespace
-//{
-//#if true
-//    using System;
-//#endif
+            var fixedCode = new[]
+            {
+        ("/0/Test0.cs", @"
+namespace TestNamespace
+{
+#if true
+    using System;
+#endif
 
-//    public class TestClass
-//    {
-//        public DateTime MyDate { get; set; }
-//    }
-//}
-//"),
-//        ("TestClass2.cs", @"
-//namespace TestNamespace
-//{
-//    public class TestClass2
-//    {
-//        public string MyString { get; set; }
-//    }
-//}
-//"),
-//            };
+    public class TestClass
+    {
+        public DateTime MyDate { get; set; }
+    }
+}
+"),
+        ("TestClass2.cs", @"
+namespace TestNamespace
+{
 
-//            var expected = new[]
-//            {
-//        this.Diagnostic().WithLocation(0).WithArguments("not", "preceded"),
-//            };
+    public class TestClass2
+    {
+        public string MyString { get; set; }
+    }
+}
+"),
+            };
 
-//            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
-//        }
+            var expected = new[]
+            {
+                this.Diagnostic().WithLocation(0).WithArguments("not", "preceded"),
+            };
+
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestTypesWithSameConditionalCompilationDirectivesAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+#if true
+    using System;
+#endif
+
+    public class TestClass
+    {
+        public DateTime MyDate { get; set; }
+    }
+
+    public class {|#0:TestClass2|}
+    {
+        public DateTime MyDate2 { get; set; }
+    }
+}
+";
+
+            var fixedCode = new[]
+            {
+        ("/0/Test0.cs", @"
+namespace TestNamespace
+{
+#if true
+    using System;
+#endif
+
+    public class TestClass
+    {
+        public DateTime MyDate { get; set; }
+    }
+}
+"),
+        ("TestClass2.cs", @"
+namespace TestNamespace
+{
+#if true
+    using System;
+
+#endif
+
+    public class TestClass2
+    {
+        public DateTime MyDate2 { get; set; }
+    }
+}
+"),
+            };
+
+            var expected = new[]
+            {
+                this.Diagnostic().WithLocation(0).WithArguments("not", "preceded"),
+            };
+
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
 
         protected DiagnosticResult Diagnostic()
             => new DiagnosticResult(this.Analyzer.SupportedDiagnostics.Single());
