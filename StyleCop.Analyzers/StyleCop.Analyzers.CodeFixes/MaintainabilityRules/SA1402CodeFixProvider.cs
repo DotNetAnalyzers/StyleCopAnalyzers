@@ -146,6 +146,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             {
                 root = RemoveUnnecessaryPreprocessorDirectives(root, unnecessaryUsings);
 
+                root = RemoveLeadingBlankLines(root);
+
                 // Recalculate unnecessary usings after modifying the root
                 unnecessaryUsings = await GetUnnecessaryUsingsAsync(document, root, cancellationToken).ConfigureAwait(false);
             }
@@ -192,51 +194,21 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             return root;
         }
 
-        private static SyntaxNode AdjustPreprocessorDirectives(SyntaxNode root, List<UsingDirectiveSyntax> unnecessaryUsings)
+        private static SyntaxNode RemoveLeadingBlankLines(SyntaxNode root)
         {
-            var nodesToRemove = new List<SyntaxNode>();
-            var triviaList = root.GetLeadingTrivia().ToList();
+            var leadingTrivia = root.GetLeadingTrivia();
 
-            foreach (var usingDirective in unnecessaryUsings)
+            // Find the first non-whitespace trivia
+            var firstNonWhitespaceIndex = leadingTrivia
+                .Select((trivia, index) => new { trivia, index })
+                .FirstOrDefault(t => !t.trivia.IsKind(SyntaxKind.WhitespaceTrivia) && !t.trivia.IsKind(SyntaxKind.EndOfLineTrivia))?.index ?? 0;
+
+            // If the first non-whitespace index is not zero, we should remove the leading blank lines
+            if (firstNonWhitespaceIndex > 0)
             {
-                var ifDirectiveTrivia = usingDirective.GetLeadingTrivia().FirstOrDefault(t => t.IsKind(SyntaxKind.IfDirectiveTrivia));
-                var endIfDirectiveTrivia = usingDirective.GetTrailingTrivia().FirstOrDefault(t => t.IsKind(SyntaxKind.EndIfDirectiveTrivia));
-
-                if (ifDirectiveTrivia != default)
-                {
-                    // Find the corresponding #endif directive
-                    var endIfDirective = root.DescendantTrivia()
-                                             .Where(t => t.IsKind(SyntaxKind.EndIfDirectiveTrivia))
-                                             .FirstOrDefault(t => t.SpanStart > usingDirective.FullSpan.End);
-
-                    if (endIfDirective != default)
-                    {
-                        // Remove the if directive and add it back after the last using statement
-                        nodesToRemove.Add(ifDirectiveTrivia.GetStructure());
-                        nodesToRemove.Add(endIfDirective.GetStructure());
-
-                        triviaList.Remove(ifDirectiveTrivia);
-                        triviaList.Remove(endIfDirective);
-
-                        // Insert the if and endif directive after the last using statement
-                        var lastUsingIndex = triviaList.FindLastIndex(t => t.IsKind(SyntaxKind.UsingDirective));
-                        if (lastUsingIndex != -1)
-                        {
-                            triviaList.Insert(lastUsingIndex + 1, ifDirectiveTrivia);
-                            triviaList.Insert(lastUsingIndex + 2, endIfDirective);
-                        }
-                        else
-                        {
-                            // If no using directive is found, insert at the beginning
-                            triviaList.Insert(0, ifDirectiveTrivia);
-                            triviaList.Insert(1, endIfDirective);
-                        }
-                    }
-                }
+                var newLeadingTrivia = leadingTrivia.Skip(firstNonWhitespaceIndex);
+                return root.WithLeadingTrivia(newLeadingTrivia);
             }
-
-            root = root.WithLeadingTrivia(triviaList);
-            root = root.RemoveNodes(nodesToRemove, SyntaxRemoveOptions.KeepNoTrivia);
 
             return root;
         }
