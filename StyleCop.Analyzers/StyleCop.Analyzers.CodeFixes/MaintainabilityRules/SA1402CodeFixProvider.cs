@@ -61,7 +61,6 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         private static async Task<Solution> GetTransformedSolutionAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
             SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
             if (!(node is MemberDeclarationSyntax memberDeclarationSyntax))
@@ -136,23 +135,20 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             var document = solution.GetDocument(documentId);
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
-            // First pass: detect and collect unnecessary using directives
             var unnecessaryUsings = await GetUnnecessaryUsingsAsync(document, root, cancellationToken).ConfigureAwait(false);
 
-            // Check for preprocessor directives independently
             var hasPreprocessorDirectives = root.DescendantTrivia().Any(t => t.IsKind(SyntaxKind.IfDirectiveTrivia) || t.IsKind(SyntaxKind.EndIfDirectiveTrivia));
 
             if (hasPreprocessorDirectives)
             {
                 root = RemoveUnnecessaryPreprocessorDirectives(root, unnecessaryUsings);
 
-                root = RemoveLeadingBlankLines(root);
+                root = StripMultipleBlankLines(root);
 
                 // Recalculate unnecessary usings after modifying the root
                 unnecessaryUsings = await GetUnnecessaryUsingsAsync(document, root, cancellationToken).ConfigureAwait(false);
             }
 
-            // Remove the unnecessary using directives
             var newRoot = root.RemoveNodes(unnecessaryUsings, SyntaxRemoveOptions.KeepNoTrivia);
 
             return solution.WithDocumentSyntaxRoot(documentId, newRoot);
@@ -194,23 +190,65 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             return root;
         }
 
-        private static SyntaxNode RemoveLeadingBlankLines(SyntaxNode root)
+        private static SyntaxNode StripMultipleBlankLines(SyntaxNode syntaxRoot)
         {
-            var leadingTrivia = root.GetLeadingTrivia();
+            var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>();
 
-            // Find the first non-whitespace trivia
-            var firstNonWhitespaceIndex = leadingTrivia
-                .Select((trivia, index) => new { trivia, index })
-                .FirstOrDefault(t => !t.trivia.IsKind(SyntaxKind.WhitespaceTrivia) && !t.trivia.IsKind(SyntaxKind.EndOfLineTrivia))?.index ?? 0;
+            var usingDirectives = syntaxRoot.DescendantNodes().OfType<UsingDirectiveSyntax>();
 
-            // If the first non-whitespace index is not zero, we should remove the leading blank lines
-            if (firstNonWhitespaceIndex > 0)
+            foreach (var usingDirective in usingDirectives)
             {
-                var newLeadingTrivia = leadingTrivia.Skip(firstNonWhitespaceIndex);
-                return root.WithLeadingTrivia(newLeadingTrivia);
+                var nextToken = usingDirective.GetLastToken().GetNextToken();
+
+                // Start at -1 to compensate for the always present end-of-line.
+                var trailingCount = -1;
+
+                // Count the blank lines at the end of the using statement.
+                foreach (var trivia in usingDirective.GetTrailingTrivia().Reverse())
+                {
+                    if (!trivia.IsKind(SyntaxKind.EndOfLineTrivia))
+                    {
+                        break;
+                    }
+
+                    trailingCount++;
+                }
+
+                // Count the blank lines at the start of the next token
+                var leadingCount = 0;
+
+                foreach (var trivia in nextToken.LeadingTrivia)
+                {
+                    if (!trivia.IsKind(SyntaxKind.EndOfLineTrivia))
+                    {
+                        break;
+                    }
+
+                    leadingCount++;
+                }
+
+                if ((trailingCount + leadingCount) > 1)
+                {
+                    var totalStripCount = trailingCount + leadingCount - 1;
+
+                    if (trailingCount > 0)
+                    {
+                        var trailingStripCount = Math.Min(totalStripCount, trailingCount);
+
+                        var trailingTrivia = usingDirective.GetTrailingTrivia();
+                        replaceMap[usingDirective.GetLastToken()] = usingDirective.GetLastToken().WithTrailingTrivia(trailingTrivia.Take(trailingTrivia.Count - trailingStripCount));
+                        totalStripCount -= trailingStripCount;
+                    }
+
+                    if (totalStripCount > 0)
+                    {
+                        replaceMap[nextToken] = nextToken.WithLeadingTrivia(nextToken.LeadingTrivia.Skip(totalStripCount));
+                    }
+                }
             }
 
-            return root;
+            var newSyntaxRoot = syntaxRoot.ReplaceTokens(replaceMap.Keys, (original, rewritten) => replaceMap[original]);
+            return newSyntaxRoot;
         }
     }
 }
