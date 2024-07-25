@@ -333,6 +333,7 @@ namespace TestNamespace
         ("/0/Test0.cs", @"
 namespace TestNamespace
 {
+    using System;
     using System.Collections.Generic;
 
     public class TestClass
@@ -417,7 +418,60 @@ namespace TestNamespace
         }
 
         [Fact]
-        public async Task TestTypeWithNoUsingsAsync()
+        public async Task TestCodeFixRemovesUnnecessaryUsingsFromSecondFileOnlyAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{    
+    using System.Collections.Generic;
+
+    public class TestClass
+    {
+        public string Items { get; set; }
+    }
+
+    public class {|#0:TestClass2|}
+    {
+        public string Items2 { get; set; }
+    }
+}
+";
+
+            var fixedCode = new[]
+            {
+        ("/0/Test0.cs", @"
+namespace TestNamespace
+{    
+    using System.Collections.Generic;
+
+    public class TestClass
+    {
+        public string Items { get; set; }
+    }
+}
+"),
+        ("TestClass2.cs", @"
+namespace TestNamespace
+{    
+
+    public class TestClass2
+    {
+        public string Items2 { get; set; }
+    }
+}
+"),
+            };
+
+            var expected = new[]
+            {
+        this.Diagnostic().WithLocation(0).WithArguments("not", "preceded"),
+            };
+
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestCodeWithNoUsingsAsync()
         {
             var testCode = @"
 namespace TestNamespace
@@ -466,7 +520,7 @@ namespace TestNamespace
         }
 
         [Fact]
-        public async Task TestTypesWithConditionalCompilationDirectivesAsync()
+        public async Task TestCodeWithPreprocessorDirectivesAsync()
         {
             var testCode = @"
 namespace TestNamespace
@@ -523,7 +577,64 @@ namespace TestNamespace
         }
 
         [Fact]
-        public async Task TestTypesWithSameConditionalCompilationDirectivesAsync()
+        public async Task TestCodeFixRemovesUnnecessaryUsingsAndPreprocessorDirectivesFromSecondFileOnlyAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+#if true
+    using System.Collections.Generic;
+#endif
+
+    public class TestClass
+    {
+        public string Items { get; set; }
+    }
+
+    public class {|#0:TestClass2|}
+    {
+        public string Items2 { get; set; }
+    }
+}
+";
+
+            var fixedCode = new[]
+            {
+        ("/0/Test0.cs", @"
+namespace TestNamespace
+{
+#if true
+    using System.Collections.Generic;
+#endif
+
+    public class TestClass
+    {
+        public string Items { get; set; }
+    }
+}
+"),
+        ("TestClass2.cs", @"
+namespace TestNamespace
+{
+
+    public class TestClass2
+    {
+        public string Items2 { get; set; }
+    }
+}
+"),
+            };
+
+            var expected = new[]
+            {
+        this.Diagnostic().WithLocation(0).WithArguments("not", "preceded"),
+            };
+
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestCodeWithSameConditionalCompilationDirectivesAsync()
         {
             var testCode = @"
 namespace TestNamespace

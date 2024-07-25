@@ -17,7 +17,6 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
 
@@ -61,7 +60,6 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         private static async Task<Solution> GetTransformedSolutionAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-
             SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
             if (!(node is MemberDeclarationSyntax memberDeclarationSyntax))
             {
@@ -124,8 +122,6 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             // Remove the type from its original location
             var newRootOriginal = root.RemoveNode(node, SyntaxRemoveOptions.KeepUnbalancedDirectives);
             updatedSolution = updatedSolution.WithDocumentSyntaxRoot(document.Id, newRootOriginal);
-
-            updatedSolution = await RemoveUnnecessaryUsingsAsync(updatedSolution, document.Id, cancellationToken).ConfigureAwait(false);
 
             return updatedSolution;
         }
