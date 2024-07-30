@@ -171,13 +171,33 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             foreach (var usingDirective in unnecessaryUsings)
             {
                 var ifDirective = usingDirective.GetLeadingTrivia().FirstOrDefault(t => t.IsKind(SyntaxKind.IfDirectiveTrivia));
+                var elifDirective = root.DescendantTrivia()
+                                        .FirstOrDefault(t => t.IsKind(SyntaxKind.ElifDirectiveTrivia) &&
+                                                             t.SpanStart > usingDirective.Span.End);
+                var elseDirective = root.DescendantTrivia()
+                                        .FirstOrDefault(t => t.IsKind(SyntaxKind.ElseDirectiveTrivia) &&
+                                                             t.SpanStart > usingDirective.Span.End);
                 var endIfDirective = root.DescendantTrivia()
                                          .FirstOrDefault(t => t.IsKind(SyntaxKind.EndIfDirectiveTrivia) &&
                                                               t.SpanStart > usingDirective.Span.End);
 
-                if (ifDirective != default && endIfDirective != default)
+                if (ifDirective != default)
                 {
                     nodesToRemove.Add(ifDirective.GetStructure() as DirectiveTriviaSyntax);
+                }
+
+                if (elifDirective != default)
+                {
+                    nodesToRemove.Add(elifDirective.GetStructure() as DirectiveTriviaSyntax);
+                }
+
+                if (elseDirective != default)
+                {
+                    nodesToRemove.Add(elseDirective.GetStructure() as DirectiveTriviaSyntax);
+                }
+
+                if (endIfDirective != default)
+                {
                     nodesToRemove.Add(endIfDirective.GetStructure() as DirectiveTriviaSyntax);
                 }
             }

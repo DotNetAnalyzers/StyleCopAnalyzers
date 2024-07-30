@@ -364,7 +364,7 @@ namespace TestNamespace
         }
 
         [Fact]
-        public async Task TestCodeFixKeepsUsingsAsync()
+        public async Task TestCodeFixKeepsNeededUsingsAsync()
         {
             var testCode = @"
 namespace TestNamespace
@@ -681,6 +681,236 @@ namespace TestNamespace
     public class TestClass2
     {
         public DateTime MyDate2 { get; set; }
+    }
+}
+"),
+            };
+
+            var expected = new[]
+            {
+                this.Diagnostic().WithLocation(0).WithArguments("not", "preceded"),
+            };
+
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestCodeFixWithDifferentPreprocessorDirectivesAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+#if true
+    using System;
+#else
+    using System.Collections.Generic;
+#endif
+
+    public class TestClass
+    {
+        public DateTime MyDate { get; set; }
+    }
+
+    public class {|#0:TestClass2|}
+    {
+        public string MyString { get; set; }
+    }
+}
+";
+
+            var fixedCode = new[]
+            {
+("/0/Test0.cs", @"
+namespace TestNamespace
+{
+#if true
+    using System;
+#else
+    using System.Collections.Generic;
+#endif
+
+    public class TestClass
+    {
+        public DateTime MyDate { get; set; }
+    }
+}
+"),
+("TestClass2.cs", @"
+namespace TestNamespace
+{
+
+    public class TestClass2
+    {
+        public string MyString { get; set; }
+    }
+}
+"),
+            };
+
+            var expected = new[]
+            {
+                this.Diagnostic().WithLocation(0).WithArguments("not", "preceded"),
+            };
+
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestCodeWithElifPreprocessorDirectivesAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+#if true
+    using System;
+#elif false
+    using System.Collections.Generic;
+#endif
+
+    public class TestClass
+    {
+        public DateTime MyDate { get; set; }
+    }
+
+    public class {|#0:TestClass2|}
+    {
+        public string MyString { get; set; }
+    }
+}
+";
+
+            var fixedCode = new[]
+            {
+    ("/0/Test0.cs", @"
+namespace TestNamespace
+{
+#if true
+    using System;
+#elif false
+    using System.Collections.Generic;
+#endif
+
+    public class TestClass
+    {
+        public DateTime MyDate { get; set; }
+    }
+}
+"),
+    ("TestClass2.cs", @"
+namespace TestNamespace
+{
+
+    public class TestClass2
+    {
+        public string MyString { get; set; }
+    }
+}
+"),
+            };
+
+            var expected = new[]
+            {
+                this.Diagnostic().WithLocation(0).WithArguments("not", "preceded"),
+            };
+
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestCodeFixRemovesUsingsWithCommentsAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    using System.Collections.Generic; // Comment
+
+    public class TestClass
+    {
+        public string Items { get; set; }
+    }
+
+    public class {|#0:TestClass2|}
+    {
+        public string Items2 { get; set; }
+    }
+}
+";
+
+            var fixedCode = new[]
+            {
+("/0/Test0.cs", @"
+namespace TestNamespace
+{
+    using System.Collections.Generic; // Comment
+
+    public class TestClass
+    {
+        public string Items { get; set; }
+    }
+}
+"),
+("TestClass2.cs", @"
+namespace TestNamespace
+{
+
+    public class TestClass2
+    {
+        public string Items2 { get; set; }
+    }
+}
+"),
+            };
+
+            var expected = new[]
+            {
+                this.Diagnostic().WithLocation(0).WithArguments("not", "preceded"),
+            };
+
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestCodeWithTrailingBlankLinesAfterUsingDirectiveAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    using System.Collections.Generic;
+
+
+    public class TestClass
+    {
+        public List<string> Items { get; set; }
+    }
+
+    public class {|#0:TestClass2|}
+    {
+        public string MyString { get; set; }
+    }
+}
+";
+
+            var fixedCode = new[]
+            {
+    ("/0/Test0.cs", @"
+namespace TestNamespace
+{
+    using System.Collections.Generic;
+
+
+    public class TestClass
+    {
+        public List<string> Items { get; set; }
+    }
+}
+"),
+    ("TestClass2.cs", @"
+namespace TestNamespace
+{
+
+    public class TestClass2
+    {
+        public string MyString { get; set; }
     }
 }
 "),
