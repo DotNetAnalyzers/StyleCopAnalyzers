@@ -870,12 +870,16 @@ namespace TestNamespace
         }
 
         [Fact]
-        public async Task TestCodeWithTrailingBlankLinesAfterUsingDirectiveAsync()
+        public async Task TestCodeWithTrailingBlankLinesAfterPreprocessorDirectivesAsync()
         {
             var testCode = @"
 namespace TestNamespace
 {
+#if true
     using System.Collections.Generic;
+
+
+#endif
 
 
     public class TestClass
@@ -885,7 +889,71 @@ namespace TestNamespace
 
     public class {|#0:TestClass2|}
     {
-        public string MyString { get; set; }
+        public List<string> Items2 { get; set; }
+    }
+}
+";
+
+            var fixedCode = new[]
+            {
+    ("/0/Test0.cs", @"
+namespace TestNamespace
+{
+#if true
+    using System.Collections.Generic;
+
+
+#endif
+
+
+    public class TestClass
+    {
+        public List<string> Items { get; set; }
+    }
+}
+"),
+    ("TestClass2.cs", @"
+namespace TestNamespace
+{
+#if true
+    using System.Collections.Generic;
+
+#endif
+
+    public class TestClass2
+    {
+        public List<string> Items2 { get; set; }
+    }
+}
+"),
+            };
+
+            var expected = new[]
+            {
+                this.Diagnostic().WithLocation(0).WithArguments("not", "preceded"),
+            };
+
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestCodeWithTrailingBlankLinesAfterUsingDirectiveAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    using System.Collections.Generic;
+
+
+
+    public class TestClass
+    {
+        public List<string> Items { get; set; }
+    }
+
+    public class {|#0:TestClass2|}
+    {
+        public List<string> Items2 { get; set; }
     }
 }
 ";
@@ -898,6 +966,7 @@ namespace TestNamespace
     using System.Collections.Generic;
 
 
+
     public class TestClass
     {
         public List<string> Items { get; set; }
@@ -907,10 +976,11 @@ namespace TestNamespace
     ("TestClass2.cs", @"
 namespace TestNamespace
 {
+    using System.Collections.Generic;
 
     public class TestClass2
     {
-        public string MyString { get; set; }
+        public List<string> Items2 { get; set; }
     }
 }
 "),
