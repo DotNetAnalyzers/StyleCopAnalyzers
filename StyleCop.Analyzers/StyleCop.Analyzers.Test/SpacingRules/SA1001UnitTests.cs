@@ -8,7 +8,6 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
     using Xunit;
@@ -446,26 +445,12 @@ partial struct Money : IFormattable
 }
 ";
 
-            var expected = new[]
-            {
-                Diagnostic().WithLocation(0).WithArguments(" not", "preceded"),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestSpaceBeforeCommaFollowingIfDirectiveAsync()
-        {
-            var testCode = @"
+            var fixedCode = @"
 interface IFormattable {}
 interface ISpanFormattable {}
 
-partial struct Money : IFormattable
-#if true
-
-    {|#0:,|} ISpanFormattable
-#endif
+partial struct Money : IFormattable,
+    ISpanFormattable
 {
 }
 ";
@@ -475,82 +460,7 @@ partial struct Money : IFormattable
                 Diagnostic().WithLocation(0).WithArguments(" not", "preceded"),
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestSpaceBeforeCommaFollowingElifDirectiveAsync()
-        {
-            var testCode = @"
-interface IFormattable {}
-interface ISpanFormattable {}
-
-partial struct Money : IFormattable
-#if false
-#elif true
-
-    {|#0:,|} ISpanFormattable
-#endif
-{
-}
-";
-
-            var expected = new[]
-            {
-                Diagnostic().WithLocation(0).WithArguments(" not", "preceded"),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestSpaceBeforeCommaFollowingElseDirectiveAsync()
-        {
-            var testCode = @"
-interface IFormattable {}
-interface ISpanFormattable {}
-
-partial struct Money : IFormattable
-#if false
-#else
-
-    {|#0:,|} ISpanFormattable
-#endif
-{
-}
-";
-
-            var expected = new[]
-            {
-                Diagnostic().WithLocation(0).WithArguments(" not", "preceded"),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestSpaceBeforeCommaFollowingEndIfDirectiveAsync()
-        {
-            var testCode = @"
-interface IFormattable {}
-interface ISpanFormattable {}
-
-partial struct Money : IFormattable
-#if false
-#elif true
-#endif
-
-    {|#0:,|} ISpanFormattable
-{
-}
-";
-
-            var expected = new[]
-            {
-        Diagnostic().WithLocation(0).WithArguments(" not", "preceded"),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         private Task TestCommaInStatementOrDeclAsync(string originalStatement, DiagnosticResult expected, string fixedStatement)
