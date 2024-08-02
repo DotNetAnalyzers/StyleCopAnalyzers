@@ -67,6 +67,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
+            if (summaryElement.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag) != null)
+            {
+                // Ignore nodes with an <inheritdoc/> tag.
+                return;
+            }
+
             var propertyDeclaration = (PropertyDeclarationSyntax)context.Node;
             var propertyType = context.SemanticModel.GetTypeInfo(propertyDeclaration.Type.StripRefFromType());
             var culture = settings.DocumentationRules.DocumentationCultureInfo;
