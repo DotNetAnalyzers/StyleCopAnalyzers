@@ -61,6 +61,12 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, XmlNodeSyntax syntax, XElement completeDocumentation, Location diagnosticLocation)
         {
+            if (!(syntax is XmlElementSyntax summaryElement))
+            {
+                // This is reported by SA1604 or SA1606.
+                return;
+            }
+
             var propertyDeclaration = (PropertyDeclarationSyntax)context.Node;
             var propertyType = context.SemanticModel.GetTypeInfo(propertyDeclaration.Type.StripRefFromType());
             var culture = settings.DocumentationRules.DocumentationCultureInfo;
@@ -70,7 +76,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             {
                 AnalyzeSummaryElement(
                     context,
-                    syntax,
+                    summaryElement,
                     diagnosticLocation,
                     propertyDeclaration,
                     resourceManager.GetString(nameof(DocumentationResources.StartingTextGetsWhether), culture),
@@ -82,7 +88,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             {
                 AnalyzeSummaryElement(
                     context,
-                    syntax,
+                    summaryElement,
                     diagnosticLocation,
                     propertyDeclaration,
                     resourceManager.GetString(nameof(DocumentationResources.StartingTextGets), culture),
@@ -92,7 +98,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
         }
 
-        private static void AnalyzeSummaryElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location diagnosticLocation, PropertyDeclarationSyntax propertyDeclaration, string startingTextGets, string startingTextSets, string startingTextGetsOrSets, string startingTextReturns)
+        private static void AnalyzeSummaryElement(SyntaxNodeAnalysisContext context, XmlElementSyntax summaryElement, Location diagnosticLocation, PropertyDeclarationSyntax propertyDeclaration, string startingTextGets, string startingTextSets, string startingTextGetsOrSets, string startingTextReturns)
         {
             var diagnosticProperties = ImmutableDictionary.CreateBuilder<string, string>();
             ArrowExpressionClauseSyntax expressionBody = propertyDeclaration.ExpressionBody;
@@ -114,12 +120,6 @@ namespace StyleCop.Analyzers.DocumentationRules
                         break;
                     }
                 }
-            }
-
-            if (!(syntax is XmlElementSyntax summaryElement))
-            {
-                // This is reported by SA1604 or SA1606.
-                return;
             }
 
             // Add a no code fix tag when the summary element is empty.
