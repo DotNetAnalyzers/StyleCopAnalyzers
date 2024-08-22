@@ -85,7 +85,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         internal static ImmutableArray<string> GenerateStandardText(Document document, BaseMethodDeclarationSyntax methodDeclaration, BaseTypeDeclarationSyntax typeDeclaration, CancellationToken cancellationToken)
         {
             bool isStruct = typeDeclaration.IsKind(SyntaxKind.StructDeclaration) || typeDeclaration.IsKind(SyntaxKindEx.RecordStructDeclaration);
-            var settings = document.Project.AnalyzerOptions.GetStyleCopSettings(methodDeclaration.SyntaxTree, cancellationToken);
+            var settings = document.Project.AnalyzerOptions.GetStyleCopSettingsInCodeFix(methodDeclaration.SyntaxTree, cancellationToken);
             var culture = settings.DocumentationRules.DocumentationCultureInfo;
             var resourceManager = DocumentationResources.ResourceManager;
 

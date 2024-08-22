@@ -144,7 +144,7 @@ namespace StyleCop.Analyzers
         /// <param name="tree">The syntax tree.</param>
         /// <param name="cancellationToken">The cancellation token that the operation will observe.</param>
         /// <returns>A <see cref="StyleCopSettings"/> instance that represents the StyleCop settings for the given context.</returns>
-        internal static StyleCopSettings GetStyleCopSettings(this AnalyzerOptions options, SyntaxTree tree, CancellationToken cancellationToken)
+        internal static StyleCopSettings GetStyleCopSettingsInCodeFix(this AnalyzerOptions options, SyntaxTree tree, CancellationToken cancellationToken)
         {
             var settingsFile = GetSettingsFile(options, ParseJson, cancellationToken);
             return GetSettings(options, settingsStorage: new StrongBox<StyleCopSettings>(), tree, settingsFile, DeserializationFailureBehavior.ReturnDefaultSettings);
