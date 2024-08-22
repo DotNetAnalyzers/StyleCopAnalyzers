@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers
     using System.Collections.Concurrent;
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
+    using System.Runtime.CompilerServices;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Settings.ObjectModel;
@@ -32,9 +33,12 @@ namespace StyleCop.Analyzers
             context.RegisterSyntaxTreeAction(
                 context =>
                 {
-                    StyleCopSettings settings = context.GetStyleCopSettings(settingsFile);
+                    StyleCopSettings settings = context.GetStyleCopSettings(GetOrCreateSettingsStorage(context.Tree), settingsFile);
                     action(context, settings);
                 });
+
+            StrongBox<StyleCopSettings> GetOrCreateSettingsStorage(SyntaxTree tree)
+                => SettingsHelper.GetOrCreateSettingsStorage(context, tree);
         }
 
         /// <summary>
@@ -74,10 +78,13 @@ namespace StyleCop.Analyzers
             context.RegisterSyntaxNodeAction(
                 context =>
                 {
-                    StyleCopSettings settings = context.GetStyleCopSettings(settingsFile);
+                    StyleCopSettings settings = context.GetStyleCopSettings(GetOrCreateSettingsStorage(context.Node.SyntaxTree), settingsFile);
                     action(context, settings);
                 },
                 syntaxKinds);
+
+            StrongBox<StyleCopSettings> GetOrCreateSettingsStorage(SyntaxTree tree)
+                => SettingsHelper.GetOrCreateSettingsStorage(context, tree);
         }
 
         private static class LanguageKindArrays<TLanguageKindEnum>
