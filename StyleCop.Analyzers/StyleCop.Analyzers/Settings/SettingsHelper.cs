@@ -110,7 +110,7 @@ namespace StyleCop.Analyzers
         /// <param name="context">The context that will be used to determine the StyleCop settings.</param>
         /// <param name="cancellationToken">The cancellation token that the operation will observe.</param>
         /// <returns>A <see cref="StyleCopSettings"/> instance that represents the StyleCop settings for the given context.</returns>
-        internal static StyleCopSettings GetStyleCopSettings(this SyntaxTreeAnalysisContext context, CancellationToken cancellationToken)
+        internal static StyleCopSettings GetStyleCopSettingsInTests(this SyntaxTreeAnalysisContext context, CancellationToken cancellationToken)
         {
             var settingsFile = GetSettingsFile(context.Options, ParseJson, cancellationToken);
             return GetSettings(context.Options, settingsStorage: new StrongBox<StyleCopSettings>(), context.Tree, settingsFile, DeserializationFailureBehavior.ReturnDefaultSettings);
