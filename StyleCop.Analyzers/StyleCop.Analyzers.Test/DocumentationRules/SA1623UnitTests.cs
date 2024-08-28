@@ -345,5 +345,25 @@ public class TestClass
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Theory]
+        [InlineData("<inheritdoc/>")]
+        [InlineData("XYZ <inheritdoc/>")]
+        [InlineData("<inheritdoc/> XYZ")]
+        [WorkItem(3465, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3465")]
+        public async Task VerifyInheritdocInSummaryTagIsAllowedAsync(string summary)
+        {
+            var testCode = $@"
+public class TestClass
+{{
+    /// <summary>
+    /// {summary}
+    /// </summary>
+    public int TestProperty {{ get; set; }}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
