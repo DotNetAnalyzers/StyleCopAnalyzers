@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -109,6 +110,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             SyntaxNode extractedDocumentNode = root.RemoveNodes(nodesToRemoveFromExtracted, SyntaxRemoveOptions.KeepUnbalancedDirectives);
             Solution updatedSolution = document.Project.Solution.AddDocument(extractedDocumentId, extractedDocumentName, extractedDocumentNode, document.Folders);
 
+            updatedSolution = await RemoveUnnecessaryUsingsAsync(updatedSolution, extractedDocumentId, cancellationToken).ConfigureAwait(false);
+
             // Make sure to also add the file to linked projects
             foreach (var linkedDocumentId in document.GetLinkedDocumentIds())
             {
@@ -117,9 +120,151 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             }
 
             // Remove the type from its original location
-            updatedSolution = updatedSolution.WithDocumentSyntaxRoot(document.Id, root.RemoveNode(node, SyntaxRemoveOptions.KeepUnbalancedDirectives));
+            var newRootOriginal = root.RemoveNode(node, SyntaxRemoveOptions.KeepUnbalancedDirectives);
+            updatedSolution = updatedSolution.WithDocumentSyntaxRoot(document.Id, newRootOriginal);
 
             return updatedSolution;
+        }
+
+        private static async Task<Solution> RemoveUnnecessaryUsingsAsync(Solution solution, DocumentId documentId, CancellationToken cancellationToken)
+        {
+            var document = solution.GetDocument(documentId);
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+
+            var unnecessaryUsings = await GetUnnecessaryUsingsAsync(document, root, cancellationToken).ConfigureAwait(false);
+
+            var hasPreprocessorDirectives = root.DescendantTrivia().Any(t => t.IsKind(SyntaxKind.IfDirectiveTrivia) || t.IsKind(SyntaxKind.EndIfDirectiveTrivia));
+
+            if (hasPreprocessorDirectives)
+            {
+                root = RemoveUnnecessaryPreprocessorDirectives(root, unnecessaryUsings);
+
+                root = StripMultipleBlankLines(root);
+
+                // Recalculate unnecessary usings after modifying the root
+                unnecessaryUsings = await GetUnnecessaryUsingsAsync(document, root, cancellationToken).ConfigureAwait(false);
+            }
+
+            var newRoot = root.RemoveNodes(unnecessaryUsings, SyntaxRemoveOptions.KeepNoTrivia);
+
+            return solution.WithDocumentSyntaxRoot(documentId, newRoot);
+        }
+
+        private static async Task<List<UsingDirectiveSyntax>> GetUnnecessaryUsingsAsync(Document document, SyntaxNode root, CancellationToken cancellationToken)
+        {
+            var semanticModel = await document.WithSyntaxRoot(root).GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            var diagnostics = semanticModel.GetDiagnostics();
+            var cs8019Diagnostics = diagnostics.Where(d => d.Id == "CS8019").ToList();
+
+            return cs8019Diagnostics.Select(diagnostic =>
+            {
+                var diagnosticSpan = diagnostic.Location.SourceSpan;
+                var usingDirective = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<UsingDirectiveSyntax>().First();
+                return usingDirective;
+            }).ToList();
+        }
+
+        private static SyntaxNode RemoveUnnecessaryPreprocessorDirectives(SyntaxNode root, List<UsingDirectiveSyntax> unnecessaryUsings)
+        {
+            var nodesToRemove = new List<SyntaxNode>();
+
+            foreach (var usingDirective in unnecessaryUsings)
+            {
+                var ifDirective = usingDirective.GetLeadingTrivia().FirstOrDefault(t => t.IsKind(SyntaxKind.IfDirectiveTrivia));
+                var elifDirective = root.DescendantTrivia()
+                                        .FirstOrDefault(t => t.IsKind(SyntaxKind.ElifDirectiveTrivia) &&
+                                                             t.SpanStart > usingDirective.Span.End);
+                var elseDirective = root.DescendantTrivia()
+                                        .FirstOrDefault(t => t.IsKind(SyntaxKind.ElseDirectiveTrivia) &&
+                                                             t.SpanStart > usingDirective.Span.End);
+                var endIfDirective = root.DescendantTrivia()
+                                         .FirstOrDefault(t => t.IsKind(SyntaxKind.EndIfDirectiveTrivia) &&
+                                                              t.SpanStart > usingDirective.Span.End);
+
+                if (ifDirective != default)
+                {
+                    nodesToRemove.Add(ifDirective.GetStructure() as DirectiveTriviaSyntax);
+                }
+
+                if (elifDirective != default)
+                {
+                    nodesToRemove.Add(elifDirective.GetStructure() as DirectiveTriviaSyntax);
+                }
+
+                if (elseDirective != default)
+                {
+                    nodesToRemove.Add(elseDirective.GetStructure() as DirectiveTriviaSyntax);
+                }
+
+                if (endIfDirective != default)
+                {
+                    nodesToRemove.Add(endIfDirective.GetStructure() as DirectiveTriviaSyntax);
+                }
+            }
+
+            root = root.RemoveNodes(nodesToRemove, SyntaxRemoveOptions.KeepNoTrivia);
+            return root;
+        }
+
+        private static SyntaxNode StripMultipleBlankLines(SyntaxNode syntaxRoot)
+        {
+            var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>();
+
+            var usingDirectives = syntaxRoot.DescendantNodes().OfType<UsingDirectiveSyntax>();
+
+            foreach (var usingDirective in usingDirectives)
+            {
+                var nextToken = usingDirective.GetLastToken().GetNextToken();
+
+                // Start at -1 to compensate for the always present end-of-line.
+                var trailingCount = -1;
+
+                // Count the blank lines at the end of the using statement.
+                foreach (var trivia in usingDirective.GetTrailingTrivia().Reverse())
+                {
+                    if (!trivia.IsKind(SyntaxKind.EndOfLineTrivia))
+                    {
+                        break;
+                    }
+
+                    trailingCount++;
+                }
+
+                // Count the blank lines at the start of the next token
+                var leadingCount = 0;
+
+                foreach (var trivia in nextToken.LeadingTrivia)
+                {
+                    if (!trivia.IsKind(SyntaxKind.EndOfLineTrivia))
+                    {
+                        break;
+                    }
+
+                    leadingCount++;
+                }
+
+                if ((trailingCount + leadingCount) > 1)
+                {
+                    var totalStripCount = trailingCount + leadingCount - 1;
+
+                    if (trailingCount > 0)
+                    {
+                        var trailingStripCount = Math.Min(totalStripCount, trailingCount);
+
+                        var trailingTrivia = usingDirective.GetTrailingTrivia();
+                        replaceMap[usingDirective.GetLastToken()] = usingDirective.GetLastToken().WithTrailingTrivia(trailingTrivia.Take(trailingTrivia.Count - trailingStripCount));
+                        totalStripCount -= trailingStripCount;
+                    }
+
+                    if (totalStripCount > 0)
+                    {
+                        replaceMap[nextToken] = nextToken.WithLeadingTrivia(nextToken.LeadingTrivia.Skip(totalStripCount));
+                    }
+                }
+            }
+
+            var newSyntaxRoot = syntaxRoot.ReplaceTokens(replaceMap.Keys, (original, rewritten) => replaceMap[original]);
+            return newSyntaxRoot;
         }
     }
 }
