@@ -252,5 +252,27 @@ namespace TestNamespace
             // this case is handled by SA1026, so it shouldn't be reported here
             await this.TestKeywordStatementAsync(statementWithSpace, DiagnosticResult.EmptyDiagnosticResults, statementWithSpace, languageVersion: LanguageVersion.CSharp7_3.OrLaterDefault()).ConfigureAwait(false);
         }
+
+        [Theory]
+        [InlineData("var x = b ? default : 3;")]
+        [InlineData("var x = b ?default: 3;")]
+        [InlineData("int x = default;")]
+        [InlineData("int x =default ;")]
+        [WorkItem(2420, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2420")]
+        public async Task TestDefaultLiteralExpressionAsync(string statement)
+        {
+            var testCode = $@"namespace TestNamespace
+{{
+    public class TestClass
+    {{
+        public void TestMethod(bool b)
+        {{
+            {statement}
+        }}
+    }}
+}}";
+
+            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp7_1.OrLaterDefault(), testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

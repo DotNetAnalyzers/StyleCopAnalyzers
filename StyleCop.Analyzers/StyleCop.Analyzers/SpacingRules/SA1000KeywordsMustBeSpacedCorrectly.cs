@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
@@ -143,7 +141,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 case SyntaxKind.DefaultKeyword:
                     if (token.Parent.IsKind(SyntaxKindEx.DefaultLiteralExpression))
                     {
-                        // Ignore spacing around a default literal expression for now
+                        // Ignore spacing around a default literal expression
                         break;
                     }
 
