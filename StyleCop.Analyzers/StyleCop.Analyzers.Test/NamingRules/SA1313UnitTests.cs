@@ -436,6 +436,7 @@ public class Test : Testbase
 
         [Fact]
         [WorkItem(1606, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1606")]
+        [WorkItem(2974, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2974")]
         public async Task TestLambdaParameterNamedDoubleUnderscoreAsync()
         {
             var testCode = @"public class TypeName
@@ -448,7 +449,13 @@ public class Test : Testbase
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithArguments("__").WithLocation(5, 38),
+                Diagnostic().WithArguments("__").WithLocation(6, 39),
+                Diagnostic().WithArguments("__").WithLocation(7, 51),
+            };
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -457,6 +464,7 @@ public class Test : Testbase
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [Fact]
         [WorkItem(1606, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1606")]
+        [WorkItem(2974, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2974")]
         public async Task TestLambdaParameterNamedDoubleUnderscoreUsageAsync()
         {
             var testCode = @"public class TypeName
@@ -469,7 +477,13 @@ public class Test : Testbase
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithArguments("__").WithLocation(5, 43),
+                Diagnostic().WithArguments("__").WithLocation(6, 44),
+                Diagnostic().WithArguments("__").WithLocation(7, 56),
+            };
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -492,21 +506,85 @@ public class Test : Testbase
                 Diagnostic().WithArguments("___").WithLocation(6, 39),
                 Diagnostic().WithArguments("___").WithLocation(7, 51),
             };
-            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2974, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2974")]
+        public async Task TestLambdaParameterWithIncreasingNumberOfUnderscoresAsync()
+        {
+            var testCode = @"public class TypeName
+{
+    public void MethodName()
+    {
+        System.Action<int> action1 = _ => { };
+        System.Action<int, int> action2 = (_, __) => { };
+        System.Action<int, int, int> action3 = (_, __, ___) => { };
+        System.Action<int, int, int, int> action4 = (_, __, ___, ____) => { };
+        System.Action<int> action5 = delegate(int _) { };
+        System.Action<int, int> action6 = delegate(int _, int __) { };
+        System.Action<int, int, int> action7 = delegate(int _, int __, int ___) { };
+        System.Action<int, int, int, int> action8 = delegate(int _, int __, int ___, int ____) { };
+
+        System.Action<int, int> action9 = (a, _) => { };
+        System.Action<int, int> action10 = (a, __) => { };
+        System.Action<int, int, int> action11 = (_, a, __) => { };
+        System.Action<int, int, int> action12 = (_, __, a) => { };
+        System.Action<int, int, int> action13 = (_, a, ___) => { };
+    }
+}";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithArguments("__").WithLocation(15, 48),
+                Diagnostic().WithArguments("___").WithLocation(18, 56),
+            };
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         [WorkItem(1343, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1343")]
+        [WorkItem(2974, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2974")]
         public async Task TestMethodParameterNamedUnderscoreAsync()
         {
             var testCode = @"public class TypeName
 {
     public void MethodName(int _)
     {
+        ++_;
     }
 }";
 
             DiagnosticResult expected = Diagnostic().WithArguments("_").WithLocation(3, 32);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2974, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2974")]
+        public async Task TestMethodParameterNamedUnderscoresUsedAsync()
+        {
+            var testCode = @"public class TypeName
+{
+    public void MethodName1(int _1, short _2)
+    {
+        ++_1;
+        ++_2;
+    }
+
+    public void MethodName2(int _, short __)
+    {
+        ++_;
+        ++__;
+    }
+}";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithArguments("_1").WithLocation(3, 33),
+                Diagnostic().WithArguments("_2").WithLocation(3, 43),
+                Diagnostic().WithArguments("_").WithLocation(9, 33),
+                Diagnostic().WithArguments("__").WithLocation(9, 42),
+            };
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -586,6 +664,28 @@ public class TestClass
 
             var expected = Diagnostic().WithLocation(4, 29).WithArguments("_text");
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2974, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2974")]
+        public async Task TestMethodParameterNamedUnusedAsync()
+        {
+            var testCode = @"public class TypeName
+{
+    public int MethodName(int _used, int _unused, int _, int _1, int _2, int ___, int __)
+    {
+        return _used + _2;
+    }
+}";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithArguments("_used").WithLocation(3, 31),
+                Diagnostic().WithArguments("_2").WithLocation(3, 70),
+                Diagnostic().WithArguments("___").WithLocation(3, 78),
+                Diagnostic().WithArguments("__").WithLocation(3, 87),
+            };
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
