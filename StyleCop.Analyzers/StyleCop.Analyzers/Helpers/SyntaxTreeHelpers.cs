@@ -74,24 +74,6 @@ namespace StyleCop.Analyzers.Helpers
         }
 
         /// <summary>
-        /// Recursively descends through the tree structure, enumerating all Statement nodes encountered during the traversal.
-        /// </summary>
-        /// <param name="syntaxNode">The syntax node to recursively.</param>
-        /// <returns>Enumerated StatementSyntax.</returns>
-        public static IEnumerable<StatementSyntax> StatementDescendRecursively(this SyntaxNode syntaxNode)
-        {
-            foreach (var statement in syntaxNode.ChildNodes().OfType<StatementSyntax>())
-            {
-                yield return statement;
-
-                foreach (var innerItem in StatementDescendRecursively(statement))
-                {
-                    yield return innerItem;
-                }
-            }
-        }
-
-        /// <summary>
         /// Recursively descends through the tree structure, enumerating all Expression nodes encountered during the traversal.
         /// </summary>
         /// <param name="syntaxNode">The syntax node to recursively.</param>

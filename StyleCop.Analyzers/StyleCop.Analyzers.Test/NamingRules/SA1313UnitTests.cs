@@ -594,12 +594,49 @@ public class Test : Testbase
         {
             var testCode = @"public class TypeName
 {
-    public void MethodName(int __)
+    public void MethodName(int __, int _)
     {
     }
 }";
 
-            DiagnosticResult expected = Diagnostic().WithArguments("__").WithLocation(3, 32);
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithArguments("__").WithLocation(3, 32),
+                Diagnostic().WithArguments("_").WithLocation(3, 40),
+            };
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2974, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2974")]
+        public async Task TestMethodParameterNamedIncrementUnderscoreAsync()
+        {
+            var testCode = @"public class TypeName
+{
+    public void MethodName(int _, int __, int ___)
+    {
+    }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2974, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2974")]
+        public async Task TestMethodParameterNamedIrregularUnderscoreAsync()
+        {
+            var testCode = @"public class TypeName
+{
+    public void MethodName1(int __, int _) { }
+    public void MethodName2(int _, int ___, int __) { }
+}";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithArguments("__").WithLocation(3, 33),
+                Diagnostic().WithArguments("_").WithLocation(3, 41),
+                Diagnostic().WithArguments("___").WithLocation(4, 40),
+                Diagnostic().WithArguments("__").WithLocation(4, 49),
+            };
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
