@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.Test.CSharp12.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp11.SpacingRules;
     using Xunit;
 
@@ -27,6 +28,49 @@ using TestAlias = (string X, bool Y);";
 
             var expected = Diagnostic(DescriptorPreceded).WithLocation(0);
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3894, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3894")]
+        public async Task TestCollectionExpressionAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            int[] x = [ {|#0:(|} 0 + 0)];
+        }
+    }
+}
+";
+
+            var fixedCode = @"
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            int[] x = [(0 + 0)];
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(DescriptorNotPreceded).WithLocation(0),
+                Diagnostic(DescriptorNotFollowed).WithLocation(0),
+            };
+
+            await VerifyCSharpFixAsync(
+                testCode,
+                expectedResults,
+                fixedCode,
+                CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

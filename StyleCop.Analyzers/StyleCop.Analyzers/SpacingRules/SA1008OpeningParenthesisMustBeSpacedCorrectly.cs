@@ -223,7 +223,7 @@ namespace StyleCop.Analyzers.SpacingRules
             case SyntaxKind.ParenthesizedExpression:
             case SyntaxKindEx.TupleExpression:
                 if (prevToken.Parent.IsKind(SyntaxKind.Interpolation)
-                    || token.Parent.Parent.IsKind(SyntaxKindEx.RangeExpression))
+                    || (token.Parent.Parent.IsKind(SyntaxKindEx.RangeExpression) && ((RangeExpressionSyntaxWrapper)token.Parent.Parent).RightOperand == token.Parent))
                 {
                     haveLeadingSpace = false;
                     break;
