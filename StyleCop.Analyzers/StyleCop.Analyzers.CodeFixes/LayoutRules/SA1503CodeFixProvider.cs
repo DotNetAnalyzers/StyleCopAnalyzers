@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.LayoutRules
 {
@@ -8,12 +10,12 @@ namespace StyleCop.Analyzers.LayoutRules
     using System.Composition;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1503BracesMustNotBeOmitted"/>.
@@ -42,8 +44,7 @@ namespace StyleCop.Analyzers.LayoutRules
 
             foreach (Diagnostic diagnostic in context.Diagnostics)
             {
-                var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, false, true) as StatementSyntax;
-                if (node == null || node.IsMissing)
+                if (!(syntaxRoot.FindNode(diagnostic.Location.SourceSpan, false, true) is StatementSyntax node) || node.IsMissing)
                 {
                     continue;
                 }
@@ -65,6 +66,9 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, StatementSyntax node, CancellationToken cancellationToken)
         {
+            // Currently unused
+            _ = cancellationToken;
+
             var newSyntaxRoot = root.ReplaceNode(node, SyntaxFactory.Block(node));
             return Task.FromResult(document.WithSyntaxRoot(newSyntaxRoot));
         }
@@ -94,9 +98,8 @@ namespace StyleCop.Analyzers.LayoutRules
             protected override string CodeActionTitle =>
                 LayoutResources.SA1503CodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
-                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
                 if (diagnostics.IsEmpty)
                 {
                     return null;
@@ -107,8 +110,7 @@ namespace StyleCop.Analyzers.LayoutRules
 
                 foreach (Diagnostic diagnostic in diagnostics)
                 {
-                    var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, false, true) as StatementSyntax;
-                    if (node == null || node.IsMissing)
+                    if (!(syntaxRoot.FindNode(diagnostic.Location.SourceSpan, false, true) is StatementSyntax node) || node.IsMissing)
                     {
                         continue;
                     }

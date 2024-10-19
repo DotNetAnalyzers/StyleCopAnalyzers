@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.LayoutRules
 {
@@ -28,6 +30,8 @@ namespace StyleCop.Analyzers.LayoutRules
         /// The ID for diagnostics produced by the <see cref="SA1518UseLineEndingsCorrectlyAtEndOfFile"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1518";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1518.md";
+
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(LayoutResources.SA1518Title), LayoutResources.ResourceManager, typeof(LayoutResources));
 
         private static readonly LocalizableString MessageFormatAllow = new LocalizableResourceString(nameof(LayoutResources.SA1518MessageFormatAllow), LayoutResources.ResourceManager, typeof(LayoutResources));
@@ -37,19 +41,18 @@ namespace StyleCop.Analyzers.LayoutRules
         private static readonly LocalizableString MessageFormatOmit = new LocalizableResourceString(nameof(LayoutResources.SA1518MessageFormatOmit), LayoutResources.ResourceManager, typeof(LayoutResources));
         private static readonly LocalizableString DescriptionOmit = new LocalizableResourceString(nameof(LayoutResources.SA1518DescriptionOmit), LayoutResources.ResourceManager, typeof(LayoutResources));
 
-        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1518.md";
-
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
-        private static readonly Action<SyntaxTreeAnalysisContext, StyleCopSettings> SyntaxTreeAction = HandleSyntaxTree;
-
-        public static DiagnosticDescriptor DescriptorAllow { get; } =
+#pragma warning disable SA1202 // Elements should be ordered by access
+        internal static readonly DiagnosticDescriptor DescriptorAllow =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatAllow, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionAllow, HelpLink);
 
-        public static DiagnosticDescriptor DescriptorRequire { get; } =
+        internal static readonly DiagnosticDescriptor DescriptorRequire =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatRequire, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionRequire, HelpLink);
 
-        public static DiagnosticDescriptor DescriptorOmit { get; } =
+        internal static readonly DiagnosticDescriptor DescriptorOmit =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatOmit, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionOmit, HelpLink);
+#pragma warning restore SA1202 // Elements should be ordered by access
+
+        private static readonly Action<SyntaxTreeAnalysisContext, StyleCopSettings> SyntaxTreeAction = HandleSyntaxTree;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -58,12 +61,13 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxTreeActionHonorExclusions(SyntaxTreeAction);
+            context.RegisterCompilationStartAction(context =>
+            {
+                context.RegisterSyntaxTreeAction(SyntaxTreeAction);
+            });
         }
 
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context, StyleCopSettings settings)
@@ -71,7 +75,7 @@ namespace StyleCop.Analyzers.LayoutRules
             var endOfFileToken = context.Tree.GetRoot().GetLastToken(includeZeroWidth: true);
             TextSpan reportedSpan = new TextSpan(endOfFileToken.SpanStart, 0);
 
-            SyntaxTrivia precedingTrivia = default(SyntaxTrivia);
+            SyntaxTrivia precedingTrivia = default;
             bool checkPrecedingToken;
             if (endOfFileToken.HasLeadingTrivia)
             {
@@ -111,7 +115,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 else if (trailingWhitespaceIndex == 0)
                 {
                     reportedSpan = TextSpan.FromBounds(previousToken.TrailingTrivia[trailingWhitespaceIndex].SpanStart, reportedSpan.End);
-                    precedingTrivia = default(SyntaxTrivia);
+                    precedingTrivia = default;
                 }
                 else
                 {
@@ -124,8 +128,8 @@ namespace StyleCop.Analyzers.LayoutRules
 
             if (precedingTrivia.IsDirective)
             {
-                DirectiveTriviaSyntax directiveTriviaSyntax = precedingTrivia.GetStructure() as DirectiveTriviaSyntax;
-                if (directiveTriviaSyntax != null && directiveTriviaSyntax.EndOfDirectiveToken.HasTrailingTrivia)
+                if (precedingTrivia.GetStructure() is DirectiveTriviaSyntax directiveTriviaSyntax
+                    && directiveTriviaSyntax.EndOfDirectiveToken.HasTrailingTrivia)
                 {
                     var trailingWhitespaceIndex = TriviaHelper.IndexOfTrailingWhitespace(directiveTriviaSyntax.EndOfDirectiveToken.TrailingTrivia);
                     if (trailingWhitespaceIndex >= 0)
@@ -147,7 +151,7 @@ namespace StyleCop.Analyzers.LayoutRules
             DiagnosticDescriptor descriptorToReport;
             switch (settings.LayoutRules.NewlineAtEndOfFile)
             {
-            case EndOfFileHandling.Omit:
+            case OptionSetting.Omit:
                 if (firstNewline < 0)
                 {
                     return;
@@ -156,7 +160,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 descriptorToReport = DescriptorOmit;
                 break;
 
-            case EndOfFileHandling.Require:
+            case OptionSetting.Require:
                 if (firstNewline >= 0 && firstNewline == trailingWhitespaceText.Length - 1)
                 {
                     return;
@@ -165,7 +169,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 descriptorToReport = DescriptorRequire;
                 break;
 
-            case EndOfFileHandling.Allow:
+            case OptionSetting.Allow:
             default:
                 if (secondNewline < 0)
                 {

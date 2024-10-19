@@ -1,31 +1,30 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.Settings
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Settings;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.DocumentationRules.FileHeaderAnalyzers,
+        StyleCop.Analyzers.Settings.SettingsFileCodeFixProvider>;
 
     /// <summary>
-    /// Unit tests for the <see cref="SettingsFileCodeFixProvider"/>
+    /// Unit tests for the <see cref="SettingsFileCodeFixProvider"/>.
     /// </summary>
-    public class SettingsFileCodeFixProviderUnitTests : CodeFixVerifier
+    public class SettingsFileCodeFixProviderUnitTests
     {
         private const string TestCode = @"
 namespace NamespaceName
 {
 }
 ";
-
-        private bool createSettingsFile;
 
         /// <summary>
         /// Verifies that a file without a header, but with leading trivia will produce the correct diagnostic message.
@@ -34,13 +33,21 @@ namespace NamespaceName
         [Fact]
         public async Task TestMissingFileHeaderWithLeadingTriviaAsync()
         {
-            this.createSettingsFile = false;
+            var test = new CSharpTest
+            {
+                TestCode = TestCode,
+                ExpectedDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
+                FixedCode = TestCode,
+                RemainingDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
+                FixedAdditionalFiles =
+                {
+                    (SettingsHelper.SettingsFileName, SettingsFileCodeFixProvider.DefaultSettingsFileContent),
+                },
+                Settings = null,
+            };
 
-            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
-            await this.VerifyCSharpDiagnosticAsync(TestCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-
-            // verify that the code fix does not alter the document
-            await this.VerifyCSharpFixAsync(TestCode, TestCode).ConfigureAwait(false);
+            test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -50,10 +57,21 @@ namespace NamespaceName
         [Fact]
         public async Task TestSettingsFileDoesNotExistAsync()
         {
-            this.createSettingsFile = false;
+            var test = new CSharpTest
+            {
+                TestCode = TestCode,
+                ExpectedDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
+                FixedCode = TestCode,
+                RemainingDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
+                FixedAdditionalFiles =
+                {
+                    (SettingsHelper.SettingsFileName, SettingsFileCodeFixProvider.DefaultSettingsFileContent),
+                },
+                Settings = null,
+            };
 
-            var offeredFixes = await this.GetOfferedCSharpFixesAsync(TestCode).ConfigureAwait(false);
-            Assert.Equal(1, offeredFixes.Length);
+            test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -63,33 +81,37 @@ namespace NamespaceName
         [Fact]
         public async Task TestSettingsFileAlreadyExistsAsync()
         {
-            this.createSettingsFile = true;
-
-            var offeredFixes = await this.GetOfferedCSharpFixesAsync(TestCode).ConfigureAwait(false);
-            Assert.Empty(offeredFixes);
-        }
-
-        /// <inheritdoc/>
-        protected override string GetSettings()
-        {
-            if (this.createSettingsFile)
+            var test = new CSharpTest
             {
-                return "{}";
-            }
+                TestCode = TestCode,
+                ExpectedDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
+                FixedCode = TestCode,
+                Settings = "{}",
+                SettingsFileName = SettingsHelper.SettingsFileName,
+            };
 
-            return null;
+            test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        /// <summary>
+        /// Verifies that a code fix will not be offered if the settings file is already present.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestDotPrefixedSettingsFileAlreadyExistsAsync()
         {
-            yield return new FileHeaderAnalyzers();
-        }
+            var test = new CSharpTest
+            {
+                TestCode = TestCode,
+                ExpectedDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
+                FixedCode = TestCode,
+                Settings = "{}",
+                SettingsFileName = SettingsHelper.AltSettingsFileName,
+            };
 
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SettingsFileCodeFixProvider();
+            test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

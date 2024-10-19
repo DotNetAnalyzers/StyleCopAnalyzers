@@ -1,21 +1,22 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
-    using TestHelper;
+    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1610PropertyDocumentationMustHaveValueText>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1610PropertyDocumentationMustHaveValueText"/>.
     /// </summary>
-    public class SA1610UnitTests : CodeFixVerifier
+    public class SA1610UnitTests
     {
         [Fact]
         public async Task TestPropertyWithDocumentationAsync()
@@ -31,7 +32,7 @@ public class ClassName
     /// </value>
     public ClassName Property { get; set; }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -46,7 +47,7 @@ public class ClassName
     /// <inheritdoc/>
     public ClassName Property { get; set; }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -60,7 +61,7 @@ public class ClassName
 {
     public ClassName Property { get; set; }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -79,7 +80,7 @@ public class ClassName
 }";
 
             // Reported by SA1609 instead.
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -97,9 +98,8 @@ public class ClassName
     public ClassName Property { get; set; }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 22);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, testCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(10, 22);
+            await VerifyCSharpFixAsync(testCode, expected, testCode, offerEmptyFixer: true, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -123,9 +123,8 @@ public class ClassName
             // No changes are made.
             var fixedCode = testCode;
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(13, 22);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(13, 22);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, offerEmptyFixer: true, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -161,9 +160,8 @@ public class ClassName
     public ClassName Property { get; set; }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(13, 22);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(13, 22);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, offerEmptyFixer: false, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -199,9 +197,8 @@ public class ClassName
     public ClassName Property { get; }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(13, 22);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(13, 22);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, offerEmptyFixer: false, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -237,9 +234,8 @@ public class ClassName
     public ClassName Property { set { } }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(13, 22);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(13, 22);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, offerEmptyFixer: false, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -275,19 +271,159 @@ public class ClassName
     public ClassName Property { get; set; }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(13, 22);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(13, 22);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, offerEmptyFixer: false, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        /// <summary>
+        /// Verifies that included property documentation will be accepted.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestPropertyWithValidIncludeAsync()
         {
-            yield return new SA1610PropertyDocumentationMustHaveValueText();
+            var testCode = @"
+public class ClassName
+{
+    /// <include file='PropertyWithValue.xml' path='/ClassName/Property/*'/>
+    public int Property
+    {
+        get;
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        /// <summary>
+        /// Verifies that included property documentation without a value tag will be accepted (this is handled by SA1609).
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestPropertyWithoutValueInIncludeAsync()
         {
-            return new SA1609SA1610CodeFixProvider();
+            var testCode = @"
+public class ClassName
+{
+    /// <include file='PropertyWithoutValue.xml' path='/ClassName/Property/*'/>
+    public int Property
+    {
+        get;
+    }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that included property documentation with an empty value tag will be flagged.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestPropertyWithEmptyValueInIncludeAsync()
+        {
+            var testCode = @"
+public class ClassName
+{
+    /// <include file='PropertyWithEmptyValue.xml' path='/ClassName/Property/*'/>
+    public int Property
+    {
+        get;
+    }
+}";
+            var expected = Diagnostic().WithLocation(5, 16);
+            await VerifyCSharpFixAsync(testCode, expected, testCode, offerEmptyFixer: false, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that included property documentation containing &gt;inheritdoc/&lt; will be accepted.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestPropertyWithInheritdocInIncludeAsync()
+        {
+            var testCode = @"
+public interface ITestInterface
+{
+  /// <summary>
+  /// Gets the test property value.
+  /// </summary>
+  /// <value>Test number.</value>
+  int Property { get; }
+}
+
+public class ClassName : ITestInterface
+{
+    /// <include file='PropertyWithInheritdoc.xml' path='/ClassName/Property/*'/>
+    public int Property
+    {
+        get;
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+            => VerifyCSharpFixAsync(source, expected, fixedSource: null, offerEmptyFixer: false, cancellationToken);
+
+        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult expected, string fixedSource, bool offerEmptyFixer, CancellationToken cancellationToken)
+            => VerifyCSharpFixAsync(source, new[] { expected }, fixedSource, offerEmptyFixer, cancellationToken);
+
+        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, bool offerEmptyFixer, CancellationToken cancellationToken)
+        {
+            string contentWithValue = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<ClassName>
+  <Property>
+    <summary>Foo</summary>
+    <value>Bar</value>
+  </Property>
+</ClassName>
+";
+            string contentWithoutValue = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<ClassName>
+  <Property>
+    <summary>Foo</summary>
+  </Property>
+</ClassName>
+";
+            string contentWithEmptyValue = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<ClassName>
+  <Property>
+    <summary>Foo</summary>
+    <value>  </value>
+  </Property>
+</ClassName>
+";
+            string contentWithInheritdocValue = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<ClassName>
+  <Property>
+    <inheritdoc/>
+  </Property>
+</ClassName>
+";
+
+            var test = new StyleCopCodeFixVerifier<SA1610PropertyDocumentationMustHaveValueText, SA1609SA1610CodeFixProvider>.CSharpTest
+            {
+                TestCode = source,
+                FixedCode = fixedSource,
+                XmlReferences =
+                {
+                    { "PropertyWithValue.xml", contentWithValue },
+                    { "PropertyWithoutValue.xml", contentWithoutValue },
+                    { "PropertyWithEmptyValue.xml", contentWithEmptyValue },
+                    { "PropertyWithInheritdoc.xml", contentWithInheritdocValue },
+                },
+            };
+
+            if (source == fixedSource && offerEmptyFixer)
+            {
+                test.NumberOfIncrementalIterations = 1;
+                test.NumberOfFixAllIterations = 1;
+            }
+
+            test.ExpectedDiagnostics.AddRange(expected);
+
+            return test.RunAsync(cancellationToken);
         }
     }
 }

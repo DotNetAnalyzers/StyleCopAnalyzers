@@ -1,16 +1,20 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
     using System.Collections.Immutable;
     using System.Linq;
+    using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// A generic, partial C# element is missing documentation for one or more of its generic type parameters, and the
@@ -18,10 +22,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     /// <remarks>
     /// <para>C# syntax provides a mechanism for inserting documentation for classes and elements directly into the
-    /// code, through the use of XML documentation headers. For an introduction to these headers and a description of
-    /// the header syntax, see the following article:
-    /// <see href="http://msdn.microsoft.com/en-us/magazine/cc302121.aspx">XML Comments Let You Build Documentation
-    /// Directly From Your Visual Studio .NET Source Files</see>.</para>
+    /// code, through the use of XML documentation headers.</para>
     ///
     /// <para>A violation of this rule occurs when a generic, partial element is missing documentation for one or more
     /// of its generic type parameters, and the documentation for the element contains a <c>&lt;summary&gt;</c> tag
@@ -51,7 +52,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// When the documentation for this class is built into an SDK, the tool building the documentation will either
     /// choose to use only one part of the documentation for the class and ignore the other parts, or, in some cases, it
     /// may merge the two sources of documentation together, to form a string like: "Documentation for the first part of
-    /// Class1. Documentation for the second part of Class1."</para>
+    /// Class1. Documentation for the second part of Class1.".</para>
     ///
     /// <para>For these reasons, it can be problematic to provide SDK documentation on more than one part of the partial
     /// class. However, it is still advisable to document each part of the class, to increase the readability and
@@ -82,19 +83,15 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1619";
-        private const string Title = "Generic type parameters must be documented partial class";
-        private const string MessageFormat = "The documentation for type parameter '{0}' is missing";
-        private const string Description = "A generic, partial C# element is missing documentation for one or more of its generic type parameters, and the documentation for the element contains a <summary> tag.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1619.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1619Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1619MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1619Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly ImmutableArray<SyntaxKind> TypeDeclarationKinds =
-            ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration);
-
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
-        private static readonly Action<SyntaxNodeAnalysisContext> TypeDeclarationAction = HandleTypeDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> TypeDeclarationAction = HandleTypeDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -103,15 +100,16 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+
+            context.RegisterCompilationStartAction(context =>
+            {
+                context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
+            });
         }
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(TypeDeclarationAction, TypeDeclarationKinds);
-        }
-
-        private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             TypeDeclarationSyntax typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
@@ -134,28 +132,79 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag) != null)
+            Accessibility declaredAccessibility = typeDeclaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+            Accessibility effectiveAccessibility = typeDeclaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+            bool needsComment = SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, typeDeclaration.Kind(), typeDeclaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility);
+            if (!needsComment)
             {
-                // Ignore nodes with an <inheritdoc/> tag.
+                // Omitting documentation is allowed for this element.
                 return;
             }
 
-            if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.SummaryXmlTag) == null)
+            var includeElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag);
+            if (includeElement != null)
             {
-                // Ignore nodes without a <summary> tag.
-                return;
-            }
+                string rawDocumentation;
 
-            var xmlParameterNames = documentation.Content.GetXmlElements(XmlCommentHelper.TypeParamXmlTag)
-                .Select(XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>)
-                .Where(x => x != null)
-                .ToImmutableArray();
-
-            foreach (var parameter in typeDeclaration.TypeParameterList.Parameters)
-            {
-                if (!xmlParameterNames.Any(x => x.Identifier.Identifier.ValueText == parameter.Identifier.ValueText))
+                var declaration = context.SemanticModel.GetDeclaredSymbol(typeDeclaration, context.CancellationToken);
+                if (declaration == null)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, parameter.Identifier.GetLocation(), parameter.Identifier.ValueText));
+                    return;
+                }
+
+                rawDocumentation = declaration.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
+                var completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
+                if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.InheritdocXmlTag))
+                {
+                    // Ignore nodes with an <inheritdoc/> tag in the included XML.
+                    return;
+                }
+
+                if (completeDocumentation.Nodes().OfType<XElement>().All(element => element.Name != XmlCommentHelper.SummaryXmlTag))
+                {
+                    // Ignore nodes without a <summary> tag.
+                    return;
+                }
+
+                var typeParameterAttributes = completeDocumentation.Nodes()
+                    .OfType<XElement>()
+                    .Where(element => element.Name == XmlCommentHelper.TypeParamXmlTag)
+                    .Select(element => element.Attribute(XmlCommentHelper.NameArgumentName))
+                    .Where(x => x != null);
+
+                foreach (var parameter in typeDeclaration.TypeParameterList.Parameters)
+                {
+                    if (!typeParameterAttributes.Any(x => x.Value == parameter.Identifier.ValueText))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, parameter.Identifier.GetLocation(), parameter.Identifier.ValueText));
+                    }
+                }
+            }
+            else
+            {
+                if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag) != null)
+                {
+                    // Ignore nodes with an <inheritdoc/> tag.
+                    return;
+                }
+
+                if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.SummaryXmlTag) == null)
+                {
+                    // Ignore nodes without a <summary> tag.
+                    return;
+                }
+
+                var xmlParameterNames = documentation.Content.GetXmlElements(XmlCommentHelper.TypeParamXmlTag)
+                    .Select(XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>)
+                    .Where(x => x != null)
+                    .ToImmutableArray();
+
+                foreach (var parameter in typeDeclaration.TypeParameterList.Parameters)
+                {
+                    if (!xmlParameterNames.Any(x => x.Identifier.Identifier.ValueText == parameter.Identifier.ValueText))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, parameter.Identifier.GetLocation(), parameter.Identifier.ValueText));
+                    }
                 }
             }
         }

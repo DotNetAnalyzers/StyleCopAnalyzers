@@ -1,18 +1,20 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.LayoutRules
 {
-    using System.Collections.Generic;
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.LayoutRules;
-    using TestHelper;
+    using Microsoft.CodeAnalysis.Testing;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1515SingleLineCommentMustBePrecededByBlankLine,
+        StyleCop.Analyzers.LayoutRules.SA1515CodeFixProvider>;
 
-    public class SA1515UnitTests : CodeFixVerifier
+    public class SA1515UnitTests
     {
         /// <summary>
         /// Verifies that all known types valid single line comment lines will not produce a diagnostic.
@@ -68,7 +70,7 @@ namespace Foo
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -116,13 +118,11 @@ namespace Foo
 
             DiagnosticResult[] expectedDiagnostic =
             {
-                this.CSharpDiagnostic().WithLocation(6, 9),
-                this.CSharpDiagnostic().WithLocation(12, 9)
+                Diagnostic().WithLocation(6, 9),
+                Diagnostic().WithLocation(12, 9),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace Foo
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -186,7 +186,7 @@ using System.Resources;
 using System.Runtime.InteropServices;
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -207,19 +207,99 @@ public class TestClass
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        /// <summary>
+        /// Verifies that a comment between two statements with an end of line comment is handled properly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2176, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2176")]
+        public async Task TestCommentBetweenStatementsWithEndOfLineCommentAsync()
         {
-            yield return new SA1515SingleLineCommentMustBePrecededByBlankLine();
+            var testCode = @"
+public class TestConstants
+{
+  public const string Constant1 = ""1""; // my end of line comment
+  // my comment
+  public const string Constant2 = ""2""; // my second end of line comment
+}
+";
+
+            var fixedTestCode = @"
+public class TestConstants
+{
+  public const string Constant1 = ""1""; // my end of line comment
+
+  // my comment
+  public const string Constant2 = ""2""; // my second end of line comment
+}
+";
+
+            DiagnosticResult[] expectedDiagnostic =
+            {
+                Diagnostic().WithLocation(5, 3),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        /// <summary>
+        /// Verifies that the analyzer will properly handle documentation followed by a comment,
+        /// even if there is another non-adjacent comment earlier.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3481, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3481")]
+        public async Task TestDocumentationFollowedByCommentWhenThereIsAlsoAnEarlierCommentAsync()
         {
-            return new SA1515CodeFixProvider();
+            var testCode = @"
+public class Class1 // Comment 1
+{
+    public Class1()
+    {
+    }
+
+    /// <summary>
+    /// Gets value.
+    /// </summary>
+    // Comment 2
+    public double Value { get; }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer does not fire in file headers (i.e. one line comments at the start of the file).
+        /// </summary>
+        /// <param name="startWithPragma"><see langword="true"/> if the source code should start with a pragma; otherwise, <see langword="false"/>.</param>
+        /// <param name="numberOfHeaderLines">The number of lines in the header.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [CombinatorialData]
+        [WorkItem(3630, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3630")]
+        public async Task TestFileHeaderAsync(
+            bool startWithPragma,
+            [CombinatorialValues(1, 2, 3)] int numberOfHeaderLines)
+        {
+            var testCode = @"
+class TestClass
+{
+}";
+
+            for (var i = 0; i < numberOfHeaderLines; i++)
+            {
+                testCode = "// A comment line." + Environment.NewLine + testCode;
+            }
+
+            if (startWithPragma)
+            {
+                testCode = "#pragma warning disable CS1591" + Environment.NewLine + testCode;
+            }
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

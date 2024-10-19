@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Helpers
 {
@@ -25,9 +27,28 @@ namespace StyleCop.Analyzers.Helpers
 
         public static XmlElementSyntax MultiLineElement(XmlNameSyntax name, string newLineText, SyntaxList<XmlNodeSyntax> content)
         {
+            var newContent = content.Insert(0, NewLine(newLineText)).Add(NewLine(newLineText));
+
+            for (var i = 1; i < newContent.Count; i++)
+            {
+                if (newContent[i] is XmlTextSyntax xmlTextSyntax
+                    && xmlTextSyntax.TextTokens[0].ValueText == newLineText)
+                {
+                    var previousTrailingTrivia = newContent[i - 1].GetTrailingTrivia();
+                    if (previousTrailingTrivia.Count > 0)
+                    {
+                        var lastTrivia = previousTrailingTrivia.Last();
+                        var updatedLastTriviaText = lastTrivia.ToString().TrimEnd(' ', '\t');
+
+                        var updatedTrailingTrivia = previousTrailingTrivia.Replace(lastTrivia, SyntaxFactory.SyntaxTrivia(lastTrivia.Kind(), updatedLastTriviaText));
+                        newContent = newContent.Replace(newContent[i - 1], newContent[i - 1].WithTrailingTrivia(updatedTrailingTrivia));
+                    }
+                }
+            }
+
             return SyntaxFactory.XmlElement(
                 SyntaxFactory.XmlElementStartTag(name),
-                content.Insert(0, NewLine(newLineText)).Add(NewLine(newLineText)),
+                newContent,
                 SyntaxFactory.XmlElementEndTag(name));
         }
 
@@ -181,14 +202,14 @@ namespace StyleCop.Analyzers.Helpers
             return MultiLineElement("remarks", newLineText, content);
         }
 
-        public static XmlElementSyntax ReturnsElement(string newLineText, params XmlNodeSyntax[] content)
+        public static XmlElementSyntax ReturnsElement(params XmlNodeSyntax[] content)
         {
-            return ReturnsElement(newLineText, List(content));
+            return ReturnsElement(List(content));
         }
 
-        public static XmlElementSyntax ReturnsElement(string newLineText, SyntaxList<XmlNodeSyntax> content)
+        public static XmlElementSyntax ReturnsElement(SyntaxList<XmlNodeSyntax> content)
         {
-            return MultiLineElement(XmlCommentHelper.ReturnsXmlTag, newLineText, content);
+            return Element(XmlCommentHelper.ReturnsXmlTag, content);
         }
 
         public static XmlElementSyntax ValueElement(string newLineText, params XmlNodeSyntax[] content)
@@ -233,6 +254,17 @@ namespace StyleCop.Analyzers.Helpers
             return element.WithStartTag(element.StartTag.AddAttributes(NameAttribute(parameterName)));
         }
 
+        public static XmlElementSyntax TypeParamElement(string parameterName, params XmlNodeSyntax[] content)
+        {
+            return TypeParamElement(parameterName, List(content));
+        }
+
+        public static XmlElementSyntax TypeParamElement(string parameterName, SyntaxList<XmlNodeSyntax> content)
+        {
+            XmlElementSyntax element = Element(XmlCommentHelper.TypeParamXmlTag, content);
+            return element.WithStartTag(element.StartTag.AddAttributes(NameAttribute(parameterName)));
+        }
+
         public static XmlEmptyElementSyntax ParamRefElement(string parameterName)
         {
             return EmptyElement("paramref").AddAttributes(NameAttribute(parameterName));
@@ -245,12 +277,12 @@ namespace StyleCop.Analyzers.Helpers
 
         public static XmlEmptyElementSyntax SeeAlsoElement(CrefSyntax cref)
         {
-            return EmptyElement("seealso").AddAttributes(CrefAttribute(cref));
+            return EmptyElement(XmlCommentHelper.SeeAlsoXmlTag).AddAttributes(CrefAttribute(cref));
         }
 
         public static XmlElementSyntax SeeAlsoElement(Uri linkAddress, SyntaxList<XmlNodeSyntax> linkText)
         {
-            XmlElementSyntax element = Element("seealso", linkText);
+            XmlElementSyntax element = Element(XmlCommentHelper.SeeAlsoXmlTag, linkText);
             return element.WithStartTag(element.StartTag.AddAttributes(TextAttribute("href", linkAddress.ToString())));
         }
 

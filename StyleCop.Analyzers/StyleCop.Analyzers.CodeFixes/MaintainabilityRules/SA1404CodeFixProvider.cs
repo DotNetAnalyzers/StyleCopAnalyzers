@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
@@ -7,12 +9,12 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using System.Composition;
     using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1404CodeAnalysisSuppressionMustHaveJustification"/>.
@@ -43,26 +45,26 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             {
                 var node = root.FindNode(diagnostic.Location.SourceSpan);
 
-                var attribute = node as AttributeSyntax;
-                if (attribute != null)
+                if (node is AttributeSyntax attribute)
                 {
                     // In this case there is no justification at all
                     context.RegisterCodeFix(
                         CodeAction.Create(
                             MaintainabilityResources.SA1404CodeFix,
                             token => AddJustificationToAttributeAsync(context.Document, root, attribute),
-                            nameof(SA1404CodeFixProvider) + "-Add"), diagnostic);
+                            nameof(SA1404CodeFixProvider) + "-Add"),
+                        diagnostic);
                     return;
                 }
 
-                var argument = node as AttributeArgumentSyntax;
-                if (argument != null)
+                if (node is AttributeArgumentSyntax argument)
                 {
                     context.RegisterCodeFix(
                         CodeAction.Create(
                             MaintainabilityResources.SA1404CodeFix,
                             token => UpdateValueOfArgumentAsync(context.Document, root, argument),
-                            nameof(SA1404CodeFixProvider) + "-Update"), diagnostic);
+                            nameof(SA1404CodeFixProvider) + "-Update"),
+                        diagnostic);
                     return;
                 }
             }

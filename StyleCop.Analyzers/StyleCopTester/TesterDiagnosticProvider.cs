@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCopTester
 {
@@ -24,7 +26,19 @@ namespace StyleCopTester
 
         public override Task<IEnumerable<Diagnostic>> GetAllDiagnosticsAsync(Project project, CancellationToken cancellationToken)
         {
-            return Task.FromResult(this.projectDiagnostics.Values.SelectMany(i => i).Concat(this.documentDiagnostics.Values.SelectMany(i => i.Values).SelectMany(i => i)));
+            ImmutableArray<Diagnostic> filteredProjectDiagnostics;
+            if (!this.projectDiagnostics.TryGetValue(project.Id, out filteredProjectDiagnostics))
+            {
+                filteredProjectDiagnostics = ImmutableArray<Diagnostic>.Empty;
+            }
+
+            ImmutableDictionary<string, ImmutableArray<Diagnostic>> filteredDocumentDiagnostics;
+            if (!this.documentDiagnostics.TryGetValue(project.Id, out filteredDocumentDiagnostics))
+            {
+                filteredDocumentDiagnostics = ImmutableDictionary<string, ImmutableArray<Diagnostic>>.Empty;
+            }
+
+            return Task.FromResult(filteredProjectDiagnostics.Concat(filteredDocumentDiagnostics.Values.SelectMany(i => i)));
         }
 
         public override Task<IEnumerable<Diagnostic>> GetDocumentDiagnosticsAsync(Document document, CancellationToken cancellationToken)

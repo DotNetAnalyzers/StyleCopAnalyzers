@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.OrderingRules
 {
@@ -10,6 +12,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -20,15 +23,15 @@ namespace StyleCop.Analyzers.OrderingRules
     /// <para>A violation of this rule occurs when the code elements within a file do not follow a standard ordering
     /// scheme based on access level.</para>
     ///
-    /// <para>To comply with this rule, adjacent elements of the same type must be positioned in the following order by
+    /// <para>To comply with this rule, adjacent elements of the same type should be positioned in the following order by
     /// access level:</para>
     ///
     /// <list type="bullet">
-    /// <item>public</item>
-    /// <item>internal</item>
-    /// <item>protected internal</item>
-    /// <item>protected</item>
-    /// <item>private</item>
+    /// <item><description>public</description></item>
+    /// <item><description>internal</description></item>
+    /// <item><description>protected internal</description></item>
+    /// <item><description>protected</description></item>
+    /// <item><description>private</description></item>
     /// </list>
     ///
     /// <para>Complying with a standard ordering scheme based on access level can increase the readability and
@@ -42,16 +45,13 @@ namespace StyleCop.Analyzers.OrderingRules
         /// The ID for diagnostics produced by the <see cref="SA1202ElementsMustBeOrderedByAccess"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1202";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1202.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(OrderingResources.SA1202Title), OrderingResources.ResourceManager, typeof(OrderingResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(OrderingResources.SA1202MessageFormat), OrderingResources.ResourceManager, typeof(OrderingResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(OrderingResources.SA1202Description), OrderingResources.ResourceManager, typeof(OrderingResources));
-        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1202.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
-
-        private static readonly ImmutableArray<SyntaxKind> TypeDeclarationKinds =
-            ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration);
 
         private static readonly ImmutableHashSet<SyntaxKind> MemberKinds = ImmutableHashSet.Create(
             SyntaxKind.DelegateDeclaration,
@@ -66,11 +66,12 @@ namespace StyleCop.Analyzers.OrderingRules
             SyntaxKind.IndexerDeclaration,
             SyntaxKind.MethodDeclaration,
             SyntaxKind.ConversionOperatorDeclaration,
-            SyntaxKind.OperatorDeclaration);
+            SyntaxKind.OperatorDeclaration,
+            SyntaxKindEx.RecordDeclaration,
+            SyntaxKindEx.RecordStructDeclaration);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CompilationUnitAction = HandleCompilationUnit;
-        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> NamespaceDeclarationAction = HandleNamespaceDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> BaseNamespaceDeclarationAction = HandleBaseNamespaceDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> TypeDeclarationAction = HandleTypeDeclaration;
 
         /// <inheritdoc/>
@@ -80,14 +81,15 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(CompilationUnitAction, SyntaxKind.CompilationUnit);
-            context.RegisterSyntaxNodeActionHonorExclusions(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(TypeDeclarationAction, TypeDeclarationKinds);
+            context.RegisterCompilationStartAction(context =>
+            {
+                context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
+                context.RegisterSyntaxNodeAction(BaseNamespaceDeclarationAction, SyntaxKinds.BaseNamespaceDeclaration);
+                context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
+            });
         }
 
         private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
@@ -101,10 +103,10 @@ namespace StyleCop.Analyzers.OrderingRules
 
             var compilationUnit = (CompilationUnitSyntax)context.Node;
 
-            HandleMemberList(context, elementOrder, accessibilityIndex, compilationUnit.Members, AccessLevel.Internal);
+            HandleMemberList(context, elementOrder, accessibilityIndex, compilationUnit.Members);
         }
 
-        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        private static void HandleBaseNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             var elementOrder = settings.OrderingRules.ElementOrder;
             int accessibilityIndex = elementOrder.IndexOf(OrderingTrait.Accessibility);
@@ -113,9 +115,9 @@ namespace StyleCop.Analyzers.OrderingRules
                 return;
             }
 
-            var compilationUnit = (NamespaceDeclarationSyntax)context.Node;
+            var baseNamespaceDeclaration = (BaseNamespaceDeclarationSyntaxWrapper)context.Node;
 
-            HandleMemberList(context, elementOrder, accessibilityIndex, compilationUnit.Members, AccessLevel.Internal);
+            HandleMemberList(context, elementOrder, accessibilityIndex, baseNamespaceDeclaration.Members);
         }
 
         private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
@@ -129,12 +131,11 @@ namespace StyleCop.Analyzers.OrderingRules
 
             var typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
-            HandleMemberList(context, elementOrder, accessibilityIndex, typeDeclaration.Members, AccessLevel.Private);
+            HandleMemberList(context, elementOrder, accessibilityIndex, typeDeclaration.Members);
         }
 
-        private static void HandleMemberList(SyntaxNodeAnalysisContext context, ImmutableArray<OrderingTrait> elementOrder, int accessibilityIndex, SyntaxList<MemberDeclarationSyntax> members, AccessLevel defaultAccessLevel)
+        private static void HandleMemberList(SyntaxNodeAnalysisContext context, ImmutableArray<OrderingTrait> elementOrder, int accessibilityIndex, SyntaxList<MemberDeclarationSyntax> members)
         {
-            MemberDeclarationSyntax previousMember = null;
             var previousSyntaxKind = SyntaxKind.None;
             var previousAccessLevel = AccessLevel.NotSpecified;
             bool previousIsConst = false;
@@ -215,7 +216,6 @@ namespace StyleCop.Analyzers.OrderingRules
                     }
                 }
 
-                previousMember = member;
                 previousSyntaxKind = currentSyntaxKind;
                 previousAccessLevel = currentAccessLevel;
                 previousIsConst = currentIsConst;

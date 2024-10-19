@@ -1,10 +1,11 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Immutable;
-    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -37,19 +38,23 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// Joinsnames to a CustomDictionary.xml file.</para>
     ///
     /// <list type="bullet">
-    /// <item>CustomDictionary.xml files can contain words that the spelling checker does not normally recognize.</item>
-    /// <item>The CustomDictionary.xml file should be placed in the same folder as the StyleCop.dll and the Rules. That
-    /// folder (and all subfolders) are checked for the dictionary files.</item>
-    /// <item>StyleCop loads CustomDictionary.xml, CustomDictionary.en-GB.xml and then CustomDictionary.en.xml (where
-    /// en-GB is the culture specified in the Settings.StyleCop file).</item>
-    /// <item>StyleCop also loads custom.dic, custom.en-GB.dic and then custom.en.dic (where en-GB is the culture
-    /// specified in the Settings.StyleCop file).</item>
-    /// <item>Recognized words can also be added to the Settings.StyleCop file using the Settings Editor on the spelling
-    /// tab.</item>
-    /// <item>Attribute values in the documentation xml of the element are not checked for spelling.</item>
-    /// <item>Any text inside <c> </c> or <code> </code> elements is also ignored.</item>
-    /// <item>Any text starting with and ending with '$' or starting and ending with '$$' is also ignored. i.e.
-    /// $$(thtp kthpo kthpk)$$.</item>
+    /// <item><description>CustomDictionary.xml files can contain words that the spelling checker does not normally
+    /// recognize.</description></item>
+    /// <item><description>The CustomDictionary.xml file should be placed in the same folder as the StyleCop.dll and the
+    /// Rules. That folder (and all subfolders) are checked for the dictionary files.</description></item>
+    /// <item><description>StyleCop loads CustomDictionary.xml, CustomDictionary.en-GB.xml and then
+    /// CustomDictionary.en.xml (where en-GB is the culture specified in the Settings.StyleCop
+    /// file).</description></item>
+    /// <item><description>StyleCop also loads custom.dic, custom.en-GB.dic and then custom.en.dic (where en-GB is the
+    /// culture specified in the Settings.StyleCop file).</description></item>
+    /// <item><description>Recognized words can also be added to the Settings.StyleCop file using the Settings Editor on
+    /// the spelling tab.</description></item>
+    /// <item><description>Attribute values in the documentation xml of the element are not checked for
+    /// spelling.</description></item>
+    /// <item><description>Any text inside <c>&lt;c&gt;</c> or <c>&lt;code&gt;</c> elements is also
+    /// ignored.</description></item>
+    /// <item><description>Any text starting with and ending with '$' or starting and ending with '$$' is also ignored.
+    /// i.e. $$(thtp kthpo kthpk)$$.</description></item>
     /// </list>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
@@ -61,21 +66,26 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1650";
-        private const string Title = "Element documentation must be spelled correctly";
-        private const string MessageFormat = "TODO: Message format";
-        private const string Description = "The element documentation for the element contains one or more spelling mistakes or unrecognized words.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1650.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1650Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1650MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1650Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
+#pragma warning disable RS2000 // Add analyzer diagnostic IDs to analyzer release.
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.NotConfigurable);
+#pragma warning restore RS2000 // Add analyzer diagnostic IDs to analyzer release.
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        [ExcludeFromCodeCoverage]
+#pragma warning disable RS1025 // Configure generated code analysis
+#pragma warning disable RS1026 // Enable concurrent execution
         public override void Initialize(AnalysisContext context)
+#pragma warning restore RS1026 // Enable concurrent execution
+#pragma warning restore RS1025 // Configure generated code analysis
         {
             // This diagnostic is not implemented (by design) in StyleCopAnalyzers.
         }

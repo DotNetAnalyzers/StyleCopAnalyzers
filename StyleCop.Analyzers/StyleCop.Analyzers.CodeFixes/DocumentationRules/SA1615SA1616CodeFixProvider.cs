@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
@@ -75,7 +77,13 @@ namespace StyleCop.Analyzers.DocumentationRules
             DocumentationCommentTriviaSyntax documentationComment =
                 methodDeclarationSyntax?.GetDocumentationCommentTriviaSyntax()
                 ?? delegateDeclarationSyntax?.GetDocumentationCommentTriviaSyntax();
-            if (documentationComment == null)
+            bool canIgnoreDocumentation =
+                documentationComment == null
+                || documentationComment.Content
+                    .Where(x => x is XmlElementSyntax || x is XmlEmptyElementSyntax)
+                    .All(x => string.Equals(x.GetName()?.ToString(), XmlCommentHelper.IncludeXmlTag));
+
+            if (canIgnoreDocumentation)
             {
                 return document;
             }
@@ -85,12 +93,12 @@ namespace StyleCop.Analyzers.DocumentationRules
             bool isAsynchronousTestMethod;
             if (methodDeclarationSyntax != null)
             {
-                isTask = IsTaskReturningMethod(semanticModel, methodDeclarationSyntax, cancellationToken);
+                isTask = TaskHelper.IsTaskReturningMethod(semanticModel, methodDeclarationSyntax, cancellationToken);
                 isAsynchronousTestMethod = isTask && IsAsynchronousTestMethod(semanticModel, methodDeclarationSyntax, cancellationToken);
             }
             else
             {
-                isTask = IsTaskReturningMethod(semanticModel, delegateDeclarationSyntax, cancellationToken);
+                isTask = TaskHelper.IsTaskReturningMethod(semanticModel, delegateDeclarationSyntax, cancellationToken);
                 isAsynchronousTestMethod = false;
             }
 
@@ -119,8 +127,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             if (returnsElement != null)
             {
-                XmlEmptyElementSyntax emptyElement = returnsElement as XmlEmptyElementSyntax;
-                if (emptyElement != null)
+                if (returnsElement is XmlEmptyElementSyntax emptyElement)
                 {
                     XmlElementSyntax updatedReturns = XmlSyntaxFactory.Element(XmlCommentHelper.ReturnsXmlTag, content)
                         .WithLeadingTrivia(returnsElement.GetLeadingTrivia())
@@ -162,38 +169,6 @@ namespace StyleCop.Analyzers.DocumentationRules
             return document.WithSyntaxRoot(newRoot);
         }
 
-        private static bool IsTaskReturningMethod(SemanticModel semanticModel, MethodDeclarationSyntax methodDeclarationSyntax, CancellationToken cancellationToken)
-        {
-            return IsTaskType(semanticModel, methodDeclarationSyntax.ReturnType, cancellationToken);
-        }
-
-        private static bool IsTaskReturningMethod(SemanticModel semanticModel, DelegateDeclarationSyntax delegateDeclarationSyntax, CancellationToken cancellationToken)
-        {
-            return IsTaskType(semanticModel, delegateDeclarationSyntax.ReturnType, cancellationToken);
-        }
-
-        private static bool IsTaskType(SemanticModel semanticModel, TypeSyntax typeSyntax, CancellationToken cancellationToken)
-        {
-            SymbolInfo symbolInfo = semanticModel.GetSymbolInfo(typeSyntax, cancellationToken);
-            INamedTypeSymbol namedTypeSymbol = symbolInfo.Symbol as INamedTypeSymbol;
-            if (namedTypeSymbol == null)
-            {
-                return false;
-            }
-
-            if (!string.Equals(nameof(Task), namedTypeSymbol.Name, StringComparison.Ordinal))
-            {
-                return false;
-            }
-
-            if (!string.Equals(typeof(Task).Namespace, namedTypeSymbol.ContainingNamespace?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat.WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted)), StringComparison.Ordinal))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
         private static bool IsAsynchronousTestMethod(SemanticModel semanticModel, MethodDeclarationSyntax methodDeclarationSyntax, CancellationToken cancellationToken)
         {
             foreach (AttributeListSyntax attributeList in methodDeclarationSyntax.AttributeLists)
@@ -205,8 +180,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 foreach (AttributeSyntax attribute in attributeList.Attributes)
                 {
-                    IMethodSymbol methodSymbol = semanticModel.GetSymbolInfo(attribute.Name, cancellationToken).Symbol as IMethodSymbol;
-                    if (methodSymbol == null)
+                    if (!(semanticModel.GetSymbolInfo(attribute.Name, cancellationToken).Symbol is IMethodSymbol methodSymbol))
                     {
                         continue;
                     }

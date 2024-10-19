@@ -1,21 +1,23 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.LayoutRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1511WhileDoFooterMustNotBePrecededByBlankLine,
+        StyleCop.Analyzers.LayoutRules.SA1511CodeFixProvider>;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1511WhileDoFooterMustNotBePrecededByBlankLine"/>
+    /// Unit tests for <see cref="SA1511WhileDoFooterMustNotBePrecededByBlankLine"/>.
     /// </summary>
-    public class SA1511UnitTests : CodeFixVerifier
+    public class SA1511UnitTests
     {
         /// <summary>
         /// Verifies that a valid do ... while statement will not produce a diagnostic.
@@ -75,7 +77,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -220,27 +222,13 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 
             DiagnosticResult[] expectedDiagnostic =
             {
-                this.CSharpDiagnostic().WithLocation(14, 13),
-                this.CSharpDiagnostic().WithLocation(29, 13),
-                this.CSharpDiagnostic().WithLocation(44, 13),
-                this.CSharpDiagnostic().WithLocation(61, 13)
+                Diagnostic().WithLocation(14, 13),
+                Diagnostic().WithLocation(29, 13),
+                Diagnostic().WithLocation(44, 13),
+                Diagnostic().WithLocation(61, 13),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1511WhileDoFooterMustNotBePrecededByBlankLine();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1511CodeFixProvider();
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

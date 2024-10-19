@@ -1,21 +1,23 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.OrderingRules.SA1200UsingDirectivesMustBePlacedCorrectly,
+        StyleCop.Analyzers.OrderingRules.UsingCodeFixProvider>;
 
     /// <summary>
-    /// Unit tests for the <see cref="SA1200UsingDirectivesMustBePlacedCorrectly"/>
+    /// Unit tests for the <see cref="SA1200UsingDirectivesMustBePlacedCorrectly"/>.
     /// </summary>
-    public class SA1200UnitTests : CodeFixVerifier
+    public class SA1200UnitTests
     {
         private const string ClassDefinition = @"public class TestClass
 {
@@ -50,7 +52,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -71,7 +73,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 {typeDefinition}
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -92,7 +94,7 @@ namespace TestNamespace
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -119,25 +121,235 @@ namespace TestNamespace
 
             DiagnosticResult[] expectedResults =
             {
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(1, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(2, 1)
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(1, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(2, 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        [Fact]
+        public async Task TestInvalidUsingStatementsInCompilationUnitWithPragmaAsync()
         {
-            yield return new SA1200UsingDirectivesMustBePlacedCorrectly();
+            var testCode = @"#pragma warning disable 1573 // Comment
+using System;
+using System.Threading;
+
+namespace TestNamespace
+{
+}
+";
+
+            var fixedTestCode = @"namespace TestNamespace
+{
+#pragma warning disable 1573 // Comment
+    using System;
+    using System.Threading;
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(2, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(3, 1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        [Fact]
+        public async Task TestInvalidUsingStatementsInCompilationUnitWithRegionBeforeAsync()
         {
-            return new UsingCodeFixProvider();
+            var testCode = @"#region Comment
+#endregion Comment
+using System;
+using System.Threading;
+
+namespace TestNamespace
+{
+}
+";
+
+            var fixedTestCode = @"namespace TestNamespace
+{
+    #region Comment
+    #endregion Comment
+    using System;
+    using System.Threading;
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(3, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(4, 1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2363, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2363")]
+        public async Task TestInvalidUsingStatementsWithFileHeaderTriviaAsync()
+        {
+            var testCode = @"// Some comment
+using System;
+using System.Threading;
+
+namespace TestNamespace
+{
+}
+";
+
+            var fixedTestCode = @"// Some comment
+namespace TestNamespace
+{
+    using System;
+    using System.Threading;
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(2, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(3, 1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2363, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2363")]
+        public async Task TestInvalidUsingStatementsWithSeparatedFileHeaderTriviaAsync()
+        {
+            var testCode = @"// Some comment
+
+using System;
+using System.Threading;
+
+namespace TestNamespace
+{
+}
+";
+
+            var fixedTestCode = @"// Some comment
+
+namespace TestNamespace
+{
+    using System;
+    using System.Threading;
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(3, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(4, 1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2363, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2363")]
+        public async Task TestInvalidUsingStatementsWithSeparatedFileHeaderAndTriviaAsync()
+        {
+            var testCode = @"// File Header
+
+// Leading Comment
+
+using System;
+using System.Threading;
+
+namespace TestNamespace
+{
+}
+";
+
+            var fixedTestCode = @"// File Header
+
+namespace TestNamespace
+{
+    // Leading Comment
+
+    using System;
+    using System.Threading;
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(5, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(6, 1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2363, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2363")]
+        public async Task TestInvalidUsingStatementsWithTriviaAsync()
+        {
+            var testCode = @"
+// Some comment
+using System;
+using System.Threading;
+
+namespace TestNamespace
+{
+}
+";
+
+            var fixedTestCode = @"
+namespace TestNamespace
+{
+    // Some comment
+    using System;
+    using System.Threading;
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(3, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(4, 1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2363, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2363")]
+        public async Task TestInvalidUsingStatementsWithHeaderAndTriviaAsync()
+        {
+            var testCode = @"// Copyright notice here
+
+// Some comment
+using System;
+using System.Threading;
+
+namespace TestNamespace
+{
+}
+";
+
+            var fixedTestCode = @"// Copyright notice here
+
+namespace TestNamespace
+{
+    // Some comment
+    using System;
+    using System.Threading;
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(4, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(5, 1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

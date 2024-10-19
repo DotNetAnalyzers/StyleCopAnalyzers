@@ -1,21 +1,23 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.LayoutRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1517CodeMustNotContainBlankLinesAtStartOfFile,
+        StyleCop.Analyzers.LayoutRules.SA1517CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1517CodeMustNotContainBlankLinesAtStartOfFile"/>.
     /// </summary>
-    public class SA1517UnitTests : CodeFixVerifier
+    public class SA1517UnitTests
     {
         private const string BaseCode = @"using System.Diagnostics;
 public class Foo
@@ -34,7 +36,7 @@ public class Foo
         public async Task TestWithBlankLinesAtStartOfFileAsync()
         {
             var testCode = "\r\n\r\n" + BaseCode;
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.GenerateExpectedWarning(1, 1), CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, this.GenerateExpectedWarning(1, 1), CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -45,7 +47,7 @@ public class Foo
         public async Task TestWithBlankLinefeedOnlyLinesAtStartOfFileAsync()
         {
             var testCode = "\n\n" + BaseCode;
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.GenerateExpectedWarning(1, 1), CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, this.GenerateExpectedWarning(1, 1), CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -56,7 +58,7 @@ public class Foo
         public async Task TestWithNonWhitespaceTriviaAsync()
         {
             var testCode = "#if true\r\n" + BaseCode + "\r\n#endif\r\n";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -67,7 +69,7 @@ public class Foo
         public async Task TestWithNonWhitespaceTriviaAndLeadingBlankLinesAsync()
         {
             var testCode = "\r\n\r\n#if true\r\n" + BaseCode + "\r\n#endif\r\n";
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.GenerateExpectedWarning(1, 1), CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, this.GenerateExpectedWarning(1, 1), CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -77,7 +79,7 @@ public class Foo
         [Fact]
         public async Task TestWithoutCarriageReturnLineFeedAtStartOfFileAsync()
         {
-            await this.VerifyCSharpDiagnosticAsync(BaseCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(BaseCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -88,7 +90,7 @@ public class Foo
         public async Task TestWithInvalidSpacingAsync()
         {
             var testCode = "    " + BaseCode;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -101,7 +103,8 @@ public class Foo
             var testCode = "\r\n\r\n" + BaseCode;
             var fixedTestCode = BaseCode;
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(1, 1);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -114,7 +117,8 @@ public class Foo
             var testCode = "\r\n   " + BaseCode;
             var fixedTestCode = "   " + BaseCode;
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(1, 1);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -127,7 +131,8 @@ public class Foo
             var testCode = "   \r\n   \r\n" + BaseCode;
             var fixedTestCode = BaseCode;
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(1, 1);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -140,24 +145,13 @@ public class Foo
             var testCode = "\r\n\r\n#if true\r\n" + BaseCode + "\r\n#endif\r\n";
             var fixedTestCode = "#if true\r\n" + BaseCode + "\r\n#endif\r\n";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1517CodeMustNotContainBlankLinesAtStartOfFile();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1517CodeFixProvider();
+            var expected = Diagnostic().WithLocation(1, 1);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         private DiagnosticResult GenerateExpectedWarning(int line, int column)
         {
-            return this.CSharpDiagnostic().WithLocation(line, column);
+            return Diagnostic().WithLocation(line, column);
         }
     }
 }

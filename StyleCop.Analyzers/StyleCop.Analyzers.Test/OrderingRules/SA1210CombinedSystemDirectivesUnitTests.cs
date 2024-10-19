@@ -1,24 +1,35 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Analyzers.OrderingRules;
-    using Analyzers.Settings.ObjectModel;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using TestHelper;
+    using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.OrderingRules;
+    using StyleCop.Analyzers.Settings.ObjectModel;
+    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.OrderingRules.SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace"/> for the special case
     /// where <see cref="OrderingSettings.SystemUsingDirectivesFirst"/> is <see langword="false"/>.
     /// </summary>
-    public class SA1210CombinedSystemDirectivesUnitTests : CodeFixVerifier
+    public class SA1210CombinedSystemDirectivesUnitTests
     {
+        protected const string CombinedUsingDirectivesTestSettings = @"
+{
+  ""settings"": {
+    ""orderingRules"": {
+      ""systemUsingDirectivesFirst"": false
+    }
+  }
+}
+";
+
         [Fact]
         public async Task TestProperOrderedUsingDirectivesInNamespaceDeclarationAsync()
         {
@@ -35,7 +46,7 @@ namespace Bar
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(namespaceDeclaration, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(namespaceDeclaration, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -71,14 +82,12 @@ namespace Bar
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(3, 5),
-                this.CSharpDiagnostic().WithLocation(9, 5),
-                this.CSharpDiagnostic().WithLocation(11, 5)
+                Diagnostic().WithLocation(3, 5),
+                Diagnostic().WithLocation(9, 5),
+                Diagnostic().WithLocation(11, 5),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -96,26 +105,25 @@ namespace Food
     using System;
 }";
 
-            var fixedTestCode = @"namespace Food
+            var fixedTestCode = @"using global::System;
+using global::System.IO;
+using global::System.Linq;
+using System.Threading;
+using XYZ = System.IO;
+
+namespace Food
 {
     using global::Food;
-    using global::System;
-    using global::System.IO;
-    using global::System.Linq;
     using System;
-    using System.Threading;
-    using XYZ = System.IO;
 }";
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(1, 1),
-                this.CSharpDiagnostic().WithLocation(3, 1),
+                Diagnostic().WithLocation(1, 1),
+                Diagnostic().WithLocation(3, 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -134,28 +142,28 @@ namespace Food
     using System;
 }";
 
-            var fixedTestCode = @"namespace Food
+            var fixedTestCode = @"using Food;
+using global::Food;
+using global::System;
+using global::System.IO;
+using global::System.Linq;
+using System.Threading;
+
+namespace Food
 {
-    using Food;
     using global::Food;
-    using global::System;
-    using global::System.IO;
-    using global::System.Linq;
     using System;
-    using System.Threading;
 }";
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(1, 1),
-                this.CSharpDiagnostic().WithLocation(3, 1),
-                this.CSharpDiagnostic().WithLocation(4, 1),
-                this.CSharpDiagnostic().WithLocation(5, 1)
+                Diagnostic().WithLocation(1, 1),
+                Diagnostic().WithLocation(3, 1),
+                Diagnostic().WithLocation(4, 1),
+                Diagnostic().WithLocation(5, 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -169,7 +177,7 @@ namespace Food
     using static System.Math;
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(namespaceDeclaration, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(namespaceDeclaration, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -177,7 +185,7 @@ namespace Food
         {
             var testCode = @"
 using System;
-using Microsoft.VisualStudio;
+using Microsoft.Win32;
 using MyList = System.Collections.Generic.List<int>;
 
 #if true
@@ -188,7 +196,8 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 #endif";
 
-            var fixedTestCode = @"using Microsoft.VisualStudio;
+            var fixedTestCode = @"
+using Microsoft.Win32;
 using System;
 using MyList = System.Collections.Generic.List<int>;
 
@@ -203,48 +212,27 @@ using Microsoft.CodeAnalysis;
             // else block is skipped
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(2, 1),
-                this.CSharpDiagnostic().WithLocation(7, 1),
+                Diagnostic().WithLocation(2, 1),
+                Diagnostic().WithLocation(7, 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override string GetSettings()
-        {
-            const string CombinedUsingDirectivesTestSettings = @"
-{
-  ""settings"": {
-    ""orderingRules"": {
-      ""systemUsingDirectivesFirst"": false
-    }
-  }
-}
-";
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+            => VerifyCSharpFixAsync(source, expected, fixedSource: null, cancellationToken);
 
-            return CombinedUsingDirectivesTestSettings;
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<string> GetDisabledDiagnostics()
+        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
         {
-            // Using directive appeared previously in this namespace
-            yield return "CS0105";
-        }
+            var test = new StyleCopCodeFixVerifier<SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace, UsingCodeFixProvider>.CSharpTest
+            {
+                TestCode = source,
+                FixedCode = fixedSource,
+                Settings = CombinedUsingDirectivesTestSettings,
+            };
 
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new UsingCodeFixProvider();
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync(cancellationToken);
         }
     }
 }

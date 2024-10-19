@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.LayoutRules
 {
@@ -12,6 +14,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A single-line comment within C# code is not preceded by a blank line.
@@ -79,15 +82,14 @@ namespace StyleCop.Analyzers.LayoutRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1515";
-        private const string Title = "Single-line comment must be preceded by blank line";
-        private const string MessageFormat = "Single-line comment must be preceded by blank line";
-        private const string Description = "A single-line comment within C# code is not preceded by a blank line.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1515.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(LayoutResources.SA1515Title), LayoutResources.ResourceManager, typeof(LayoutResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(LayoutResources.SA1515MessageFormat), LayoutResources.ResourceManager, typeof(LayoutResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(LayoutResources.SA1515Description), LayoutResources.ResourceManager, typeof(LayoutResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
 
         /// <inheritdoc/>
@@ -97,12 +99,10 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxTreeActionHonorExclusions(SyntaxTreeAction);
+            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
         }
 
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -124,8 +124,6 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
 
                 int triviaIndex;
-
-                // PERF: Explicitly cast to IReadOnlyList so we only box once.
                 var triviaList = TriviaHelper.GetContainingTriviaList(trivia, out triviaIndex);
 
                 if (!IsOnOwnLine(triviaList, triviaIndex))
@@ -140,7 +138,7 @@ namespace StyleCop.Analyzers.LayoutRules
                     continue;
                 }
 
-                if (IsPrecededBySingleLineCommentOrDocumentation(triviaList, triviaIndex))
+                if (IsPrecededBySingleLineCommentOnOwnLineOrDocumentation(triviaList, triviaIndex))
                 {
                     // allow consecutive single line comments.
                     continue;
@@ -166,8 +164,19 @@ namespace StyleCop.Analyzers.LayoutRules
         private static bool IsOnOwnLine<T>(T triviaList, int triviaIndex)
             where T : IReadOnlyList<SyntaxTrivia>
         {
+            if (triviaList[triviaIndex].Span.Start == 0)
+            {
+                return true;
+            }
+
             while (triviaIndex >= 0)
             {
+                if (triviaList[triviaIndex].IsDirective)
+                {
+                    // directive trivia are special, as they have a 'built-in' end-of-line.
+                    return true;
+                }
+
                 if (triviaList[triviaIndex].IsKind(SyntaxKind.EndOfLineTrivia))
                 {
                     return true;
@@ -179,7 +188,7 @@ namespace StyleCop.Analyzers.LayoutRules
             return false;
         }
 
-        private static bool IsPrecededBySingleLineCommentOrDocumentation<T>(T triviaList, int triviaIndex)
+        private static bool IsPrecededBySingleLineCommentOnOwnLineOrDocumentation<T>(T triviaList, int triviaIndex)
             where T : IReadOnlyList<SyntaxTrivia>
         {
             var eolCount = 0;
@@ -187,7 +196,8 @@ namespace StyleCop.Analyzers.LayoutRules
             triviaIndex--;
             while ((eolCount < 2) && (triviaIndex >= 0))
             {
-                switch (triviaList[triviaIndex].Kind())
+                var currentTrivia = triviaList[triviaIndex];
+                switch (currentTrivia.Kind())
                 {
                 case SyntaxKind.WhitespaceTrivia:
                     triviaIndex--;
@@ -199,6 +209,8 @@ namespace StyleCop.Analyzers.LayoutRules
                     break;
 
                 case SyntaxKind.SingleLineCommentTrivia:
+                    return IsOnOwnLine(triviaList, triviaIndex);
+
                 case SyntaxKind.SingleLineDocumentationCommentTrivia:
                     return true;
 
@@ -254,8 +266,10 @@ namespace StyleCop.Analyzers.LayoutRules
 
             var prevToken = token.GetPreviousToken();
             return prevToken.IsKind(SyntaxKind.OpenBraceToken)
-                   || prevToken.Parent.IsKind(SyntaxKind.CaseSwitchLabel)
-                   || prevToken.Parent.IsKind(SyntaxKind.DefaultSwitchLabel);
+                || (prevToken.IsKind(SyntaxKind.OpenBracketToken) && prevToken.Parent.IsKind(SyntaxKindEx.CollectionExpression))
+                || prevToken.Parent.IsKind(SyntaxKind.CaseSwitchLabel)
+                || prevToken.Parent.IsKind(SyntaxKindEx.CasePatternSwitchLabel)
+                || prevToken.Parent.IsKind(SyntaxKind.DefaultSwitchLabel);
         }
 
         private static bool IsPrecededByDirectiveTrivia<T>(T triviaList, int triviaIndex)
@@ -273,6 +287,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 case SyntaxKind.IfDirectiveTrivia:
                 case SyntaxKind.ElifDirectiveTrivia:
                 case SyntaxKind.ElseDirectiveTrivia:
+                case SyntaxKind.PragmaWarningDirectiveTrivia:
                     return true;
 
                 default:

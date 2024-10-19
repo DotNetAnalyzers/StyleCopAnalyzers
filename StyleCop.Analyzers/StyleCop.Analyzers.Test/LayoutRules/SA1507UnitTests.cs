@@ -1,21 +1,23 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.LayoutRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1507CodeMustNotContainMultipleBlankLinesInARow,
+        StyleCop.Analyzers.LayoutRules.SA1507CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1507CodeMustNotContainMultipleBlankLinesInARow"/>.
     /// </summary>
-    public class SA1507UnitTests : CodeFixVerifier
+    public class SA1507UnitTests
     {
         private const string TestCode = @"namespace MyTest
 {
@@ -58,7 +60,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 
         /// <summary>
         /// Verifies that empty lines at the start of the file do not trigger any diagnostics.
-        /// (This will be handled by SA1517)
+        /// (This will be handled by SA1517).
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -70,12 +72,12 @@ public class Foo
 {
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that empty lines at the end of the file do not trigger any diagnostics.
-        /// (This will be handled by SA1518)
+        /// (This will be handled by SA1518).
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -88,7 +90,7 @@ public class Foo
 
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -102,7 +104,7 @@ namespace Microsoft
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -115,7 +117,7 @@ namespace Microsoft
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -132,15 +134,15 @@ namespace Microsoft
 
             var expectedDiagnostics = new[]
             {
-                this.CSharpDiagnostic().WithLocation(3, 1),
+                Diagnostic().WithLocation(3, 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that a verbatim string literal does not trigger any diagnostics.
-        /// (This will be handled by SA1518)
+        /// (This will be handled by SA1518).
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -159,7 +161,7 @@ namespace Microsoft
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -171,18 +173,18 @@ namespace Microsoft
         {
             var expectedDiagnostics = new[]
             {
-                this.CSharpDiagnostic().WithLocation(3, 1),
-                this.CSharpDiagnostic().WithLocation(6, 1),
-                this.CSharpDiagnostic().WithLocation(12, 1),
-                this.CSharpDiagnostic().WithLocation(16, 1),
-                this.CSharpDiagnostic().WithLocation(19, 1),
+                Diagnostic().WithLocation(3, 1),
+                Diagnostic().WithLocation(6, 1),
+                Diagnostic().WithLocation(12, 1),
+                Diagnostic().WithLocation(16, 1),
+                Diagnostic().WithLocation(19, 1),
                 /* line 23 should not report a diagnostic, as it's part of the directive is inactive */
-                this.CSharpDiagnostic().WithLocation(27, 1),
+                Diagnostic().WithLocation(27, 1),
                 /* line 30 should not report a diagnostic, as it's part of a comment */
-                this.CSharpDiagnostic().WithLocation(35, 1)
+                Diagnostic().WithLocation(35, 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(TestCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(TestCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -224,7 +226,17 @@ namespace Microsoft
 }
 ";
 
-            await this.VerifyCSharpFixAsync(TestCode, fixedTestCode).ConfigureAwait(false);
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(3, 1),
+                Diagnostic().WithLocation(6, 1),
+                Diagnostic().WithLocation(12, 1),
+                Diagnostic().WithLocation(16, 1),
+                Diagnostic().WithLocation(19, 1),
+                Diagnostic().WithLocation(27, 1),
+                Diagnostic().WithLocation(35, 1),
+            };
+            await VerifyCSharpFixAsync(TestCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -247,19 +259,7 @@ class FooBar
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1507CodeMustNotContainMultipleBlankLinesInARow();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1507CodeFixProvider();
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

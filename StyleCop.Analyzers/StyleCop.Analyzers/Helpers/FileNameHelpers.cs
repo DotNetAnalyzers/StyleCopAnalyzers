@@ -1,11 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Helpers
 {
     using System.Linq;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Settings.ObjectModel;
+    using StyleCop.Analyzers.Settings.ObjectModel;
     using Path = System.IO.Path;
 
     internal static class FileNameHelpers
@@ -27,26 +29,48 @@ namespace StyleCop.Analyzers.Helpers
             return fileName;
         }
 
-        internal static string GetConventionalFileName(TypeDeclarationSyntax typeDeclaration, FileNamingConvention convention)
+        internal static string GetConventionalFileName(MemberDeclarationSyntax declaration, FileNamingConvention convention)
         {
-            if (typeDeclaration.TypeParameterList == null)
+            if (declaration is TypeDeclarationSyntax typeDeclaration)
             {
-                return GetSimpleFileName(typeDeclaration);
+                if (typeDeclaration.TypeParameterList == null)
+                {
+                    return GetSimpleFileName(typeDeclaration);
+                }
+
+                switch (convention)
+                {
+                case FileNamingConvention.Metadata:
+                    return GetMetadataFileName(typeDeclaration);
+
+                default:
+                    return GetStyleCopFileName(typeDeclaration);
+                }
+            }
+            else if (declaration is DelegateDeclarationSyntax delegateDeclaration)
+            {
+                if (delegateDeclaration.TypeParameterList == null)
+                {
+                    return GetSimpleFileName(delegateDeclaration);
+                }
+
+                switch (convention)
+                {
+                case FileNamingConvention.Metadata:
+                    return GetMetadataFileName(delegateDeclaration);
+
+                default:
+                    return GetStyleCopFileName(delegateDeclaration);
+                }
             }
 
-            switch (convention)
-            {
-            case FileNamingConvention.Metadata:
-                return GetMetadataFileName(typeDeclaration);
-
-            default:
-                return GetStyleCopFileName(typeDeclaration);
-            }
+            return GetSimpleFileName(declaration);
         }
 
-        internal static string GetSimpleFileName(TypeDeclarationSyntax typeDeclaration)
+        internal static string GetSimpleFileName(MemberDeclarationSyntax memberDeclaration)
         {
-            return $"{typeDeclaration.Identifier.ValueText}";
+            var nameOrIdentifier = NamedTypeHelpers.GetNameOrIdentifier(memberDeclaration);
+            return nameOrIdentifier;
         }
 
         private static string GetMetadataFileName(TypeDeclarationSyntax typeDeclaration)
@@ -54,10 +78,21 @@ namespace StyleCop.Analyzers.Helpers
             return $"{typeDeclaration.Identifier.ValueText}`{typeDeclaration.Arity}";
         }
 
+        private static string GetMetadataFileName(DelegateDeclarationSyntax delegateDeclaration)
+        {
+            return $"{delegateDeclaration.Identifier.ValueText}`{delegateDeclaration.Arity}";
+        }
+
         private static string GetStyleCopFileName(TypeDeclarationSyntax typeDeclaration)
         {
             var typeParameterList = string.Join(",", typeDeclaration.TypeParameterList.Parameters.Select(p => p.Identifier.ValueText));
             return $"{typeDeclaration.Identifier.ValueText}{{{typeParameterList}}}";
+        }
+
+        private static string GetStyleCopFileName(DelegateDeclarationSyntax delegateDeclaration)
+        {
+            var typeParameterList = string.Join(",", delegateDeclaration.TypeParameterList.Parameters.Select(p => p.Identifier.ValueText));
+            return $"{delegateDeclaration.Identifier.ValueText}{{{typeParameterList}}}";
         }
     }
 }

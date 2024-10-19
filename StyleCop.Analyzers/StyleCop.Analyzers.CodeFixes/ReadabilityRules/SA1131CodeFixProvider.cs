@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
@@ -8,12 +10,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1131UseReadableConditions"/>.
@@ -64,33 +66,48 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static BinaryExpressionSyntax TransformExpression(BinaryExpressionSyntax binaryExpression)
         {
+            // NOTE: This code also changes the syntax node kind, besides the operator token. The modified source code would
+            // have been the same without this, but we do this to make tests pass with the default CodeActionValidationMode.
             var newLeft = binaryExpression.Right.WithTriviaFrom(binaryExpression.Left);
             var newRight = binaryExpression.Left.WithTriviaFrom(binaryExpression.Right);
-            return binaryExpression.WithLeft(newLeft).WithRight(newRight).WithOperatorToken(GetCorrectOperatorToken(binaryExpression.OperatorToken));
+            GetReplacementInfo(binaryExpression.OperatorToken, out var newOperatorToken, out var newNodeKind);
+            return SyntaxFactory.BinaryExpression(newNodeKind, newLeft, newOperatorToken, newRight);
         }
 
-        private static SyntaxToken GetCorrectOperatorToken(SyntaxToken operatorToken)
+        private static void GetReplacementInfo(SyntaxToken operatorToken, out SyntaxToken newToken, out SyntaxKind newNodeKind)
         {
             switch (operatorToken.Kind())
             {
             case SyntaxKind.EqualsEqualsToken:
             case SyntaxKind.ExclamationEqualsToken:
-                return operatorToken;
+                newToken = operatorToken;
+                newNodeKind = operatorToken.Parent.Kind();
+                break;
 
             case SyntaxKind.GreaterThanToken:
-                return SyntaxFactory.Token(operatorToken.LeadingTrivia, SyntaxKind.LessThanToken, operatorToken.TrailingTrivia);
+                newToken = SyntaxFactory.Token(operatorToken.LeadingTrivia, SyntaxKind.LessThanToken, operatorToken.TrailingTrivia);
+                newNodeKind = SyntaxKind.LessThanExpression;
+                break;
 
             case SyntaxKind.GreaterThanEqualsToken:
-                return SyntaxFactory.Token(operatorToken.LeadingTrivia, SyntaxKind.LessThanEqualsToken, operatorToken.TrailingTrivia);
+                newToken = SyntaxFactory.Token(operatorToken.LeadingTrivia, SyntaxKind.LessThanEqualsToken, operatorToken.TrailingTrivia);
+                newNodeKind = SyntaxKind.LessThanOrEqualExpression;
+                break;
 
             case SyntaxKind.LessThanToken:
-                return SyntaxFactory.Token(operatorToken.LeadingTrivia, SyntaxKind.GreaterThanToken, operatorToken.TrailingTrivia);
+                newToken = SyntaxFactory.Token(operatorToken.LeadingTrivia, SyntaxKind.GreaterThanToken, operatorToken.TrailingTrivia);
+                newNodeKind = SyntaxKind.GreaterThanExpression;
+                break;
 
             case SyntaxKind.LessThanEqualsToken:
-                return SyntaxFactory.Token(operatorToken.LeadingTrivia, SyntaxKind.GreaterThanEqualsToken, operatorToken.TrailingTrivia);
+                newToken = SyntaxFactory.Token(operatorToken.LeadingTrivia, SyntaxKind.GreaterThanEqualsToken, operatorToken.TrailingTrivia);
+                newNodeKind = SyntaxKind.GreaterThanOrEqualExpression;
+                break;
 
             default:
-                return SyntaxFactory.Token(SyntaxKind.None);
+                newToken = SyntaxFactory.Token(SyntaxKind.None);
+                newNodeKind = (SyntaxKind)operatorToken.Parent.RawKind;
+                break;
             }
         }
 
@@ -102,9 +119,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             protected override string CodeActionTitle =>
                 ReadabilityResources.SA1131CodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
-                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
                 if (diagnostics.IsEmpty)
                 {
                     return null;

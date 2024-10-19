@@ -1,13 +1,18 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.LayoutRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1500BracesForMultiLineStatementsMustNotShareLine,
+        StyleCop.Analyzers.LayoutRules.SA1500CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1500BracesForMultiLineStatementsMustNotShareLine"/>.
@@ -18,7 +23,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// Verifies that no diagnostics are reported for the valid try ... catch ... finally statements defined in this test.
         /// </summary>
         /// <remarks>
-        /// These are valid for SA1500 only, some will report other diagnostics from the layout (SA15xx) series.
+        /// <para>These are valid for SA1500 only, some will report other diagnostics from the layout (SA15xx)
+        /// series.</para>
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -85,7 +91,7 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -256,42 +262,40 @@ public class Foo
             DiagnosticResult[] expectedDiagnostics =
             {
                 // Invalid try ... catch ... finally #1
-                this.CSharpDiagnostic().WithLocation(10, 13),
-                this.CSharpDiagnostic().WithLocation(12, 27),
-                this.CSharpDiagnostic().WithLocation(14, 17),
+                Diagnostic().WithLocation(10, 13),
+                Diagnostic().WithLocation(12, 27),
+                Diagnostic().WithLocation(14, 17),
 
                 // Invalid try ... catch ... finally #2
-                this.CSharpDiagnostic().WithLocation(18, 13),
-                this.CSharpDiagnostic().WithLocation(21, 27),
-                this.CSharpDiagnostic().WithLocation(24, 17),
+                Diagnostic().WithLocation(18, 13),
+                Diagnostic().WithLocation(21, 27),
+                Diagnostic().WithLocation(24, 17),
 
                 // Invalid try ... catch ... finally #3
-                this.CSharpDiagnostic().WithLocation(29, 13),
-                this.CSharpDiagnostic().WithLocation(30, 21),
-                this.CSharpDiagnostic().WithLocation(31, 27),
-                this.CSharpDiagnostic().WithLocation(32, 21),
-                this.CSharpDiagnostic().WithLocation(33, 17),
-                this.CSharpDiagnostic().WithLocation(34, 21),
+                Diagnostic().WithLocation(29, 13),
+                Diagnostic().WithLocation(30, 21),
+                Diagnostic().WithLocation(31, 27),
+                Diagnostic().WithLocation(32, 21),
+                Diagnostic().WithLocation(33, 17),
+                Diagnostic().WithLocation(34, 21),
 
                 // Invalid try ... catch ... finally #4
-                this.CSharpDiagnostic().WithLocation(37, 13),
-                this.CSharpDiagnostic().WithLocation(39, 27),
-                this.CSharpDiagnostic().WithLocation(41, 17),
+                Diagnostic().WithLocation(37, 13),
+                Diagnostic().WithLocation(39, 27),
+                Diagnostic().WithLocation(41, 17),
 
                 // Invalid try ... catch ... finally #5
-                this.CSharpDiagnostic().WithLocation(47, 21),
-                this.CSharpDiagnostic().WithLocation(50, 21),
-                this.CSharpDiagnostic().WithLocation(53, 21),
+                Diagnostic().WithLocation(47, 21),
+                Diagnostic().WithLocation(50, 21),
+                Diagnostic().WithLocation(53, 21),
 
                 // Invalid try ... catch ... finally #6
-                this.CSharpDiagnostic().WithLocation(57, 9),
-                this.CSharpDiagnostic().WithLocation(60, 9),
-                this.CSharpDiagnostic().WithLocation(63, 9)
+                Diagnostic().WithLocation(57, 9),
+                Diagnostic().WithLocation(60, 9),
+                Diagnostic().WithLocation(63, 9),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

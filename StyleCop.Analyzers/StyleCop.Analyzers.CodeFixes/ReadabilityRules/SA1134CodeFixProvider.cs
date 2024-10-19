@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
@@ -8,12 +10,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using System.Composition;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1134AttributesMustNotShareLine"/>.
@@ -29,38 +32,51 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
-        public override Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
             foreach (var diagnostic in context.Diagnostics)
             {
-                context.RegisterCodeFix(
-                    CodeAction.Create(
-                        ReadabilityResources.SA1134CodeFix,
-                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
-                        nameof(SA1134CodeFixProvider)),
-                    diagnostic);
+                // Do not offer the code fix if the error is found at an invalid node (like IncompleteMemberSyntax)
+                if (syntaxRoot.FindNode(diagnostic.Location.SourceSpan) is AttributeListSyntax)
+                {
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            ReadabilityResources.SA1134CodeFix,
+                            cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
+                            nameof(SA1134CodeFixProvider)),
+                        diagnostic);
+                }
             }
-
-            return SpecializedTasks.CompletedTask;
         }
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var indentationOptions = IndentationOptions.FromDocument(document);
+            var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
+            var tokensToReplace = new Dictionary<SyntaxToken, SyntaxToken>();
 
+            AddTokensToReplaceToMap(tokensToReplace, syntaxRoot, diagnostic, settings);
+
+            var newSyntaxRoot = syntaxRoot.ReplaceTokens(tokensToReplace.Keys, (original, rewritten) => tokensToReplace[original]);
+            var newDocument = document.WithSyntaxRoot(newSyntaxRoot.WithoutFormatting());
+
+            return newDocument;
+        }
+
+        private static void AddTokensToReplaceToMap(Dictionary<SyntaxToken, SyntaxToken> tokensToReplace, SyntaxNode syntaxRoot, Diagnostic diagnostic, StyleCopSettings settings)
+        {
             var attributeListSyntax = (AttributeListSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
 
             // use the containing type to determine the indentation level, anything else is less reliable.
             var containingType = attributeListSyntax.Parent?.Parent;
-            var indentationSteps = (containingType != null) ? IndentationHelper.GetIndentationSteps(indentationOptions, containingType) + 1 : 0;
-            var indentationTrivia = IndentationHelper.GenerateWhitespaceTrivia(indentationOptions, indentationSteps);
-
-            var tokensToReplace = new Dictionary<SyntaxToken, SyntaxToken>();
+            var indentationSteps = (containingType != null) ? IndentationHelper.GetIndentationSteps(settings.Indentation, containingType) + 1 : 0;
+            var indentationTrivia = IndentationHelper.GenerateWhitespaceTrivia(settings.Indentation, indentationSteps);
 
             if (diagnostic.Properties.ContainsKey(SA1134AttributesMustNotShareLine.FixWithNewLineBeforeKey))
             {
@@ -83,11 +99,34 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 var newLeadingTrivia = nextToken.LeadingTrivia.Insert(0, indentationTrivia);
                 tokensToReplace[nextToken] = nextToken.WithLeadingTrivia(newLeadingTrivia);
             }
+        }
 
-            var newSyntaxRoot = syntaxRoot.ReplaceTokens(tokensToReplace.Keys, (original, rewritten) => tokensToReplace[original]);
-            var newDocument = document.WithSyntaxRoot(newSyntaxRoot.WithoutFormatting());
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; } = new FixAll();
 
-            return newDocument;
+            protected override string CodeActionTitle => ReadabilityResources.SA1134CodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+            {
+                if (diagnostics.IsEmpty)
+                {
+                    return null;
+                }
+
+                var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, fixAllContext.CancellationToken);
+                var tokensToReplace = new Dictionary<SyntaxToken, SyntaxToken>();
+
+                foreach (var diagnostic in diagnostics)
+                {
+                    AddTokensToReplaceToMap(tokensToReplace, syntaxRoot, diagnostic, settings);
+                }
+
+                var newSyntaxRoot = syntaxRoot.ReplaceTokens(tokensToReplace.Keys, (original, rewritten) => tokensToReplace[original]);
+
+                return newSyntaxRoot;
+            }
         }
     }
 }

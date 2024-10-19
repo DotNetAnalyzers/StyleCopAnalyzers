@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.LayoutRules
 {
@@ -7,12 +9,12 @@ namespace StyleCop.Analyzers.LayoutRules
     using System.Composition;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Text;
-    using Settings.ObjectModel;
+    using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1518UseLineEndingsCorrectlyAtEndOfFile"/>.
@@ -32,9 +34,10 @@ namespace StyleCop.Analyzers.LayoutRules
         }
 
         /// <inheritdoc/>
-        public override Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var settings = SettingsHelper.GetStyleCopSettings(context.Document.Project.AnalyzerOptions, context.CancellationToken);
+            var syntaxTree = await context.Document.GetSyntaxTreeAsync(context.CancellationToken).ConfigureAwait(false);
+            var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(context.Document.Project.AnalyzerOptions, syntaxTree, context.CancellationToken);
             foreach (var diagnostic in context.Diagnostics)
             {
                 context.RegisterCodeFix(
@@ -44,8 +47,6 @@ namespace StyleCop.Analyzers.LayoutRules
                         nameof(SA1518CodeFixProvider)),
                     diagnostic);
             }
-
-            return SpecializedTasks.CompletedTask;
         }
 
         /// <summary>
@@ -53,13 +54,13 @@ namespace StyleCop.Analyzers.LayoutRules
         /// </summary>
         /// <param name="document">The document to be changed.</param>
         /// <param name="diagnostic">The diagnostic to fix.</param>
-        /// <param name="newlineAtEndOfFile">A <see cref="EndOfFileHandling"/> value indicating the desired behavior.</param>
+        /// <param name="newlineAtEndOfFile">A <see cref="OptionSetting"/> value indicating the desired behavior.</param>
         /// <param name="cancellationToken">The cancellation token associated with the fix action.</param>
         /// <returns>The transformed document.</returns>
-        private static async Task<Document> FixEndOfFileAsync(Document document, Diagnostic diagnostic, EndOfFileHandling newlineAtEndOfFile, CancellationToken cancellationToken)
+        private static async Task<Document> FixEndOfFileAsync(Document document, Diagnostic diagnostic, OptionSetting newlineAtEndOfFile, CancellationToken cancellationToken)
         {
             var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
-            string replacement = newlineAtEndOfFile == EndOfFileHandling.Omit ? string.Empty : "\r\n";
+            string replacement = newlineAtEndOfFile == OptionSetting.Omit ? string.Empty : "\r\n";
             return document.WithText(text.WithChanges(new TextChange(diagnostic.Location.SourceSpan, replacement)));
         }
 
@@ -71,15 +72,15 @@ namespace StyleCop.Analyzers.LayoutRules
             protected override string CodeActionTitle =>
                 LayoutResources.SA1518CodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
-                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
                 if (diagnostics.IsEmpty)
                 {
                     return null;
                 }
 
-                var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, fixAllContext.CancellationToken);
+                var syntaxTree = await document.GetSyntaxTreeAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxTree, fixAllContext.CancellationToken);
                 Document updatedDocument = await FixEndOfFileAsync(document, diagnostics[0], settings.LayoutRules.NewlineAtEndOfFile, fixAllContext.CancellationToken).ConfigureAwait(false);
                 return await updatedDocument.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
             }

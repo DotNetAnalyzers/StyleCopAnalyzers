@@ -1,17 +1,19 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using SpacingRules;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
+    using StyleCop.Analyzers.SpacingRules;
 
     /// <summary>
     /// The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or
@@ -36,16 +38,16 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <see cref="SA1112ClosingParenthesisMustBeOnLineOfOpeningParenthesis"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1112";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1112.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1112Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1112MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1112Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1112.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> MethodDeclarationAction = HandleMethodDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> LocalFunctionStatementAction = HandleLocalFunctionStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> ConstructorDeclarationAction = HandleConstructorDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> InvocationExpressionAction = HandleInvocationExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> ObjectCreationExpressionAction = HandleObjectCreationExpression;
@@ -57,15 +59,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(ConstructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(InvocationExpressionAction, SyntaxKind.InvocationExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(ObjectCreationExpressionAction, SyntaxKind.ObjectCreationExpression);
+            context.RegisterSyntaxNodeAction(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(LocalFunctionStatementAction, SyntaxKindEx.LocalFunctionStatement);
+            context.RegisterSyntaxNodeAction(ConstructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeAction(InvocationExpressionAction, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeAction(ObjectCreationExpressionAction, SyntaxKind.ObjectCreationExpression);
         }
 
         private static void HandleObjectCreationExpression(SyntaxNodeAnalysisContext context)
@@ -111,22 +112,25 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
         {
             var constructotDeclarationSyntax = (ConstructorDeclarationSyntax)context.Node;
-            HandleBaseMethodDeclaration(context, constructotDeclarationSyntax);
+            HandleParameterList(context, constructotDeclarationSyntax.ParameterList);
         }
 
         private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
             var methodDeclaration = (MethodDeclarationSyntax)context.Node;
-            HandleBaseMethodDeclaration(context, methodDeclaration);
+            HandleParameterList(context, methodDeclaration.ParameterList);
         }
 
-        private static void HandleBaseMethodDeclaration(
-            SyntaxNodeAnalysisContext context,
-            BaseMethodDeclarationSyntax baseMethodDeclarationSyntax)
+        private static void HandleLocalFunctionStatement(SyntaxNodeAnalysisContext context)
         {
-            var parameterListSyntax =
-                baseMethodDeclarationSyntax.ParameterList;
+            var localFunctionStatement = (LocalFunctionStatementSyntaxWrapper)context.Node;
+            HandleParameterList(context, localFunctionStatement.ParameterList);
+        }
 
+        private static void HandleParameterList(
+            SyntaxNodeAnalysisContext context,
+            ParameterListSyntax parameterListSyntax)
+        {
             if (parameterListSyntax != null && !parameterListSyntax.Parameters.Any())
             {
                 if (!parameterListSyntax.OpenParenToken.IsMissing &&

@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.SpacingRules
 {
@@ -9,12 +11,12 @@ namespace StyleCop.Analyzers.SpacingRules
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1018NullableTypeSymbolsMustNotBePrecededBySpace"/>.
@@ -44,8 +46,7 @@ namespace StyleCop.Analyzers.SpacingRules
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                var nullableType = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) as NullableTypeSyntax;
-                if (nullableType == null)
+                if (!(syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) is NullableTypeSyntax nullableType))
                 {
                     continue;
                 }
@@ -97,7 +98,7 @@ namespace StyleCop.Analyzers.SpacingRules
             var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>()
             {
                 [precedingToken] = precedingToken.WithTrailingTrivia(correctedTriviaList),
-                [questionToken] = questionToken.WithLeadingTrivia()
+                [questionToken] = questionToken.WithLeadingTrivia(),
             };
 
             var newSyntaxRoot = syntaxRoot.ReplaceTokens(replaceMap.Keys, (t1, t2) => replaceMap[t1]);

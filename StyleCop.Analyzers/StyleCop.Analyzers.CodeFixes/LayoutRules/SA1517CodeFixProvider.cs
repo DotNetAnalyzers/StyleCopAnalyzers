@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.LayoutRules
 {
@@ -7,11 +9,11 @@ namespace StyleCop.Analyzers.LayoutRules
     using System.Composition;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1517CodeMustNotContainBlankLinesAtStartOfFile"/>.
@@ -27,7 +29,7 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
@@ -48,6 +50,13 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, CancellationToken token)
         {
+            var newSyntaxRoot = await GetTransformedSyntaxRootAsync(document, token).ConfigureAwait(false);
+
+            return document.WithSyntaxRoot(newSyntaxRoot);
+        }
+
+        private static async Task<SyntaxNode> GetTransformedSyntaxRootAsync(Document document, CancellationToken token)
+        {
             var syntaxRoot = await document.GetSyntaxRootAsync(token).ConfigureAwait(false);
 
             var firstToken = syntaxRoot.GetFirstToken(includeZeroWidth: true);
@@ -66,9 +75,26 @@ namespace StyleCop.Analyzers.LayoutRules
 
             var newFirstToken = firstToken.WithLeadingTrivia(newTriviaList);
             var newSyntaxRoot = syntaxRoot.ReplaceToken(firstToken, newFirstToken);
-            var newDocument = document.WithSyntaxRoot(newSyntaxRoot);
+            return newSyntaxRoot;
+        }
 
-            return newDocument;
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; } =
+                new FixAll();
+
+            protected override string CodeActionTitle =>
+                LayoutResources.SA1517CodeFix;
+
+            protected override Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+            {
+                if (diagnostics.IsEmpty)
+                {
+                    return null;
+                }
+
+                return GetTransformedSyntaxRootAsync(document, fixAllContext.CancellationToken);
+            }
         }
     }
 }

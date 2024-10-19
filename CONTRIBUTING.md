@@ -5,9 +5,13 @@ If you want to contribute code you can get started by looking for issues marked 
 We also have the [easy](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/labels/easy) tag
 for issues suitable if you are unfamiliar with roslyn.
 
-Also see the [contributing guide](CONTRIBUTING.md).
-
 You can also help by filing issues, participating in discussions and doing code review.
+
+## Building prerequisites
+
+* Visual Studio 2017 (Community Edition or higher) is required for building this repository.
+* The version of the [.NET Core SDK](https://dotnet.microsoft.com/download/dotnet-core) as specified in the global.json file at the root of this repo.
+  Use the init script at the root of the repo to conveniently acquire and install the right version.
 
 ## Implementing a diagnostic
 
@@ -25,9 +29,3 @@ You can also help by filing issues, participating in discussions and doing code 
    2. A new issue was created for implementing tests for the item (e.g. #176).
    3. Evidence was given that the feature is currently operational, and the code appears to be a solid starting point
       for other contributors to continue the implementation effort.
-
-## Building
-
-Visual Studio 2015 RC is required for building this repository.
-The Visual Studio 2015 RC SDK is required for building the vsix extension project and for
-debugging in an experimental visual studio hive.

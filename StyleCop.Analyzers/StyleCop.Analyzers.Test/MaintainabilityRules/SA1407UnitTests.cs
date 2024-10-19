@@ -1,18 +1,19 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.MaintainabilityRules;
-    using TestHelper;
+    using Microsoft.CodeAnalysis.Testing;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.MaintainabilityRules.SA1407ArithmeticExpressionsMustDeclarePrecedence,
+        StyleCop.Analyzers.MaintainabilityRules.SA1407SA1408CodeFixProvider>;
 
-    public class SA1407UnitTests : CodeFixVerifier
+    public class SA1407UnitTests
     {
         [Fact]
         public async Task TestAdditionAndSubtractionAsync()
@@ -24,7 +25,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         int x = 1 - 1 + 1 - 1;
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -37,7 +38,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         int x = 1 / 1 * 1 / 1;
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -50,7 +51,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         int x = 1 >> 1 << 1 >> 1;
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -63,9 +64,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         int x = 1 + 1 * 1;
     }
 }";
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 21);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(5, 21);
 
             var fixedCode = @"public class Foo
 {
@@ -75,7 +74,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -88,9 +87,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         int x = 1 * 1 + 1;
     }
 }";
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 17);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(5, 17);
 
             var fixedCode = @"public class Foo
 {
@@ -100,7 +97,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -113,7 +110,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         int x = 1 + (1 * 1);
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -126,7 +123,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         int x = (1 * 1) * 1;
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -141,11 +138,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 }";
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic().WithLocation(5, 17),
-                    this.CSharpDiagnostic().WithLocation(5, 25)
+                    Diagnostic().WithLocation(5, 17),
+                    Diagnostic().WithLocation(5, 25),
                 };
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class Foo
 {
@@ -155,7 +150,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -170,11 +165,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 }";
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic().WithLocation(5, 22),
-                    this.CSharpDiagnostic().WithLocation(5, 26)
+                    Diagnostic().WithLocation(5, 22),
+                    Diagnostic().WithLocation(5, 26),
                 };
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class Foo
 {
@@ -184,7 +177,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -215,26 +208,14 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic().WithLocation(6, 17),
-                    this.CSharpDiagnostic().WithLocation(6, 25),
-                    this.CSharpDiagnostic().WithLocation(7, 21),
-                    this.CSharpDiagnostic().WithLocation(7, 21),
-                    this.CSharpDiagnostic().WithLocation(9, 24),
+                    Diagnostic().WithLocation(6, 17),
+                    Diagnostic().WithLocation(6, 25),
+                    Diagnostic().WithLocation(7, 21),
+                    Diagnostic().WithLocation(7, 21),
+                    Diagnostic().WithLocation(9, 24),
                 };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1407ArithmeticExpressionsMustDeclarePrecedence();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1407SA1408CodeFixProvider();
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

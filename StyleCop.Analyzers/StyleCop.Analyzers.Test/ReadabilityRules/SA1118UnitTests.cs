@@ -1,18 +1,39 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.ReadabilityRules;
-    using TestHelper;
+    using Microsoft.CodeAnalysis.Testing;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.ReadabilityRules.SA1118ParameterMustNotSpanMultipleLines>;
 
-    public class SA1118UnitTests : DiagnosticVerifier
+    public class SA1118UnitTests
     {
+        public static IEnumerable<object[]> ArrayCreationExpressions { get; } = new List<object[]>
+        {
+            new object[]
+            {
+                @"new[]
+                {
+                    0,
+                    1
+                }",
+            },
+            new object[]
+            {
+                @"new int[]
+                {
+                    0,
+                    1
+                }",
+            },
+        };
+
         [Fact]
         public async Task TestMethodCallWithTwoParametersSecondSpansMoreThanOneLineAsync()
         {
@@ -31,9 +52,9 @@ class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(11, 13);
+            DiagnosticResult expected = Diagnostic().WithLocation(11, 13);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -58,9 +79,9 @@ class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(11, 13);
+            DiagnosticResult expected = Diagnostic().WithLocation(11, 13);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -85,9 +106,9 @@ class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(11, 13);
+            DiagnosticResult expected = Diagnostic().WithLocation(11, 13);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -110,9 +131,59 @@ class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(11, 13);
+            DiagnosticResult expected = Diagnostic().WithLocation(11, 13);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMethodCallWithTwoParametersSecondSpansMultipleLinesButIsObjectCreationExpressionAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    Foo(int a, int b)
+    {
+    }
+
+    public void FunA(int i, Foo j)
+    {
+    }
+
+    public void FunB()
+    {
+        FunA(1,
+             new Foo(
+                 2,
+                 3));
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMethodCallWithTwoParametersSecondSpansMultipleLinesButIsAnonymousObjectCreationExpressionAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    public void FunA(int i, object j)
+    {
+    }
+
+    public void FunB()
+    {
+        FunA(1,
+             new
+             {
+                 Foo = 1,
+                 Bar = 2,
+             });
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -133,7 +204,7 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -154,9 +225,9 @@ class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(11, 11);
+            DiagnosticResult expected = Diagnostic().WithLocation(11, 11);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -178,7 +249,7 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -201,9 +272,9 @@ class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(11, 11);
+            DiagnosticResult expected = Diagnostic().WithLocation(11, 11);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -221,13 +292,13 @@ class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 11);
+            DiagnosticResult expected = Diagnostic().WithLocation(8, 11);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLambdaCallSecondParameterIsAnonynousMethodAsync()
+        public async Task TestLambdaCallSecondParameterIsAnonymousMethodAsync()
         {
             var testCode = @"
 class Foo
@@ -241,7 +312,7 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -267,9 +338,9 @@ class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 24);
+            DiagnosticResult expected = Diagnostic().WithLocation(8, 24);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -286,13 +357,13 @@ class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 20);
+            DiagnosticResult expected = Diagnostic().WithLocation(7, 20);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAttributeSecondParameterSpandsMultipleLinesAsync()
+        public async Task TestAttributeSecondParameterSpansMultipleLinesAsync()
         {
             var testCode = @"
 [System.AttributeUsage(System.AttributeTargets.Class,AllowMultiple = true)]
@@ -310,14 +381,31 @@ public class Foo
 {
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(11, 16);
+            DiagnosticResult expected = Diagnostic().WithLocation(11, 16);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        [Theory]
+        [MemberData(nameof(ArrayCreationExpressions))]
+        public async Task TestArrayCreationSpansMultipleLinesAsync(string arrayCreationExpression)
         {
-            yield return new SA1118ParameterMustNotSpanMultipleLines();
+            var testCode = $@"
+class Foo
+{{
+    public void Fun(int i, int[] j)
+    {{
+    }}
+
+    public void Bar()
+    {{
+        Fun(
+            1,
+            {arrayCreationExpression});
+    }}
+}}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace System.Linq
 {
-    using Collections.Generic;
+    using System.Collections.Generic;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
 
     /// <summary>
     /// This class supports a subset of LINQ operations on <see cref="SyntaxTriviaList"/> without requiring boxing of
@@ -92,6 +95,27 @@ namespace System.Linq
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Returns the last trivia of a specified kind in a trivia list.
+        /// </summary>
+        /// <param name="list">The trivia list.</param>
+        /// <param name="kind">The syntax kind.</param>
+        /// <returns>The last <see cref="SyntaxTrivia"/> in <paramref name="list"/> with the specified
+        /// <paramref name="kind"/>; otherwise, a default <see cref="SyntaxTrivia"/> instance if no matching trivia was
+        /// found.</returns>
+        internal static SyntaxTrivia LastOrDefault(this SyntaxTriviaList list, SyntaxKind kind)
+        {
+            foreach (var trivia in list.Reverse())
+            {
+                if (trivia.IsKind(kind))
+                {
+                    return trivia;
+                }
+            }
+
+            return default;
         }
     }
 }

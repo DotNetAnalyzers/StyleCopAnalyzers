@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.NamingRules
 {
@@ -16,7 +18,7 @@ namespace StyleCop.Analyzers.NamingRules
     /// </summary>
     /// <remarks>
     /// <para>A violation of this rule occurs when the name of a public or internal field begins with a lower-case
-    /// letter. Public or internal fields must being with an upper-case letter.</para>
+    /// letter. Public or internal fields should being with an upper-case letter.</para>
     ///
     /// <para>If the field or variable name is intended to match the name of an item associated with Win32 or COM, and
     /// thus needs to start with a lower-case letter, place the field or variable within a special <c>NativeMethods</c>
@@ -32,15 +34,16 @@ namespace StyleCop.Analyzers.NamingRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1307";
-        private const string Title = "Accessible fields must begin with upper-case letter";
-        private const string MessageFormat = "Field '{0}' must begin with upper-case letter";
-        private const string Description = "The name of a public or internal field in C# does not begin with an upper-case letter.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1307.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(NamingResources.SA1307Title), NamingResources.ResourceManager, typeof(NamingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(NamingResources.SA1307MessageFormat), NamingResources.ResourceManager, typeof(NamingResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(NamingResources.SA1307Description), NamingResources.ResourceManager, typeof(NamingResources));
 
-        private static readonly DiagnosticDescriptor Descriptor =
+#pragma warning disable SA1202 // Elements should be ordered by access
+        internal static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+#pragma warning restore SA1202 // Elements should be ordered by access
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> FieldDeclarationAction = HandleFieldDeclaration;
 
         /// <inheritdoc/>
@@ -50,12 +53,10 @@ namespace StyleCop.Analyzers.NamingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(FieldDeclarationAction, SyntaxKind.FieldDeclaration);
+            context.RegisterSyntaxNodeAction(FieldDeclarationAction, SyntaxKind.FieldDeclaration);
         }
 
         private static void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
@@ -74,7 +75,7 @@ namespace StyleCop.Analyzers.NamingRules
                 {
                     foreach (VariableDeclaratorSyntax declarator in declaration.Declaration.Variables)
                     {
-                        string name = declarator.Identifier.ToString();
+                        string name = declarator.Identifier.ValueText;
 
                         if (!string.IsNullOrEmpty(name)
                             && char.IsLower(name[0])

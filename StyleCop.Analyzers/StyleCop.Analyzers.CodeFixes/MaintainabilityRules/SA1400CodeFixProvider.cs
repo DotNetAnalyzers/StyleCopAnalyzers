@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
@@ -7,12 +9,13 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1400AccessModifierMustBeDeclared"/>.
@@ -80,6 +83,11 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
             case SyntaxKind.StructDeclaration:
                 updatedDeclarationNode = HandleStructDeclaration((StructDeclarationSyntax)declarationNode);
+                break;
+
+            case SyntaxKindEx.RecordDeclaration:
+            case SyntaxKindEx.RecordStructDeclaration:
+                updatedDeclarationNode = HandleRecordDeclaration((RecordDeclarationSyntaxWrapper)declarationNode);
                 break;
 
             case SyntaxKind.DelegateDeclaration:
@@ -191,6 +199,23 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             return node
                 .WithKeyword(triviaToken)
                 .WithModifiers(modifiers)
+                .WithoutFormatting();
+        }
+
+        private static SyntaxNode HandleRecordDeclaration(RecordDeclarationSyntaxWrapper node)
+        {
+            SyntaxToken triviaToken = node.Keyword;
+            if (triviaToken.IsMissing)
+            {
+                return null;
+            }
+
+            SyntaxKind defaultVisibility = IsNestedType(node) ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword;
+            SyntaxTokenList modifiers = DeclarationModifiersHelper.AddModifier(node.Modifiers, ref triviaToken, defaultVisibility);
+            return node
+                .WithKeyword(triviaToken)
+                .WithModifiers(modifiers)
+                .SyntaxNode
                 .WithoutFormatting();
         }
 
@@ -355,6 +380,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 case SyntaxKind.InterfaceDeclaration:
                 case SyntaxKind.EnumDeclaration:
                 case SyntaxKind.StructDeclaration:
+                case SyntaxKindEx.RecordDeclaration:
+                case SyntaxKindEx.RecordStructDeclaration:
                 case SyntaxKind.DelegateDeclaration:
                 case SyntaxKind.EventDeclaration:
                 case SyntaxKind.EventFieldDeclaration:

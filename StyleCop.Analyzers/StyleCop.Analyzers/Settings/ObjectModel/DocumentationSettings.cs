@@ -1,13 +1,17 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Globalization;
     using System.Text.RegularExpressions;
-    using Newtonsoft.Json;
+    using LightJson;
+    using StyleCop.Analyzers.Lightup;
 
-    [JsonObject(MemberSerialization.OptIn)]
     internal class DocumentationSettings
     {
         /// <summary>
@@ -16,84 +20,104 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         internal const string DefaultCompanyName = "PlaceholderCompany";
 
         /// <summary>
-        /// The default value for the <see cref="CopyrightText"/> property.
+        /// The default value for the <see cref="GetCopyrightText(string)"/> method.
         /// </summary>
         internal const string DefaultCopyrightText = "Copyright (c) {companyName}. All rights reserved.";
 
         /// <summary>
+        /// The default value for the <see cref="DocumentationCulture"/> property.
+        /// </summary>
+        internal const string DefaultDocumentationCulture = "en-US";
+
+        /// <summary>
+        /// The default value for the <see cref="ExcludeFromPunctuationCheck"/> property.
+        /// </summary>
+        internal static readonly ImmutableArray<string> DefaultExcludeFromPunctuationCheck = ImmutableArray.Create("seealso");
+
+        /// <summary>
         /// This is the backing field for the <see cref="CompanyName"/> property.
         /// </summary>
-        [JsonProperty("companyName", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        private string companyName;
+        private readonly string companyName;
 
         /// <summary>
-        /// This is the backing field for the <see cref="CopyrightText"/> property.
+        /// This is the backing field for the <see cref="GetCopyrightText(string)"/> method.
         /// </summary>
-        [JsonProperty("copyrightText", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        private string copyrightText;
+        private readonly string copyrightText;
 
         /// <summary>
-        /// This is the cache for the <see cref="CopyrightText"/> property.
+        /// This is the backing field for the <see cref="HeaderDecoration"/> property.
         /// </summary>
-        private string copyrightTextCache;
+        private readonly string headerDecoration;
 
         /// <summary>
         /// This is the backing field for the <see cref="Variables"/> property.
         /// </summary>
-        [JsonProperty("variables", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        private ImmutableDictionary<string, string>.Builder variables;
+        private readonly ImmutableDictionary<string, string> variables;
 
         /// <summary>
         /// This is the backing field for the <see cref="XmlHeader"/> property.
         /// </summary>
-        [JsonProperty("xmlHeader", DefaultValueHandling = DefaultValueHandling.Include)]
-        private bool xmlHeader;
+        private readonly bool xmlHeader;
 
         /// <summary>
         /// This is the backing field for the <see cref="DocumentExposedElements"/> property.
         /// </summary>
-        [JsonProperty("documentExposedElements", DefaultValueHandling = DefaultValueHandling.Include)]
-        private bool documentExposedElements;
+        private readonly bool documentExposedElements;
 
         /// <summary>
         /// This is the backing field for the <see cref="DocumentInternalElements"/> property.
         /// </summary>
-        [JsonProperty("documentInternalElements", DefaultValueHandling = DefaultValueHandling.Include)]
-        private bool documentInternalElements;
+        private readonly bool documentInternalElements;
 
         /// <summary>
         /// This is the backing field for the <see cref="DocumentPrivateElements"/> property.
         /// </summary>
-        [JsonProperty("documentPrivateElements", DefaultValueHandling = DefaultValueHandling.Include)]
-        private bool documentPrivateElements;
+        private readonly bool documentPrivateElements;
 
         /// <summary>
         /// This is the backing field for the <see cref="DocumentInterfaces"/> property.
         /// </summary>
-        [JsonProperty("documentInterfaces", DefaultValueHandling = DefaultValueHandling.Include)]
-        private bool documentInterfaces;
+        private readonly bool documentInterfaces;
 
         /// <summary>
         /// This is the backing field for the <see cref="DocumentPrivateFields"/> property.
         /// </summary>
-        [JsonProperty("documentPrivateFields", DefaultValueHandling = DefaultValueHandling.Include)]
-        private bool documentPrivateFields;
+        private readonly bool documentPrivateFields;
 
         /// <summary>
         /// This is the backing field for the <see cref="FileNamingConvention"/> property.
         /// </summary>
-        [JsonProperty("fileNamingConvention", DefaultValueHandling = DefaultValueHandling.Include)]
-        private FileNamingConvention fileNamingConvention;
+        private readonly FileNamingConvention fileNamingConvention;
+
+        /// <summary>
+        /// This is the backing field for the <see cref="DocumentationCulture"/> property.
+        /// </summary>
+        private readonly string documentationCulture;
+
+        /// <summary>
+        /// This is backing field for the <see cref="DocumentationCultureInfo"/> property.
+        /// </summary>
+        private readonly CultureInfo documentationCultureInfo;
+
+        /// <summary>
+        /// This is the backing field for the <see cref="ExcludeFromPunctuationCheck"/> property.
+        /// </summary>
+        private readonly ImmutableArray<string> excludeFromPunctuationCheck;
+
+        /// <summary>
+        /// This is the cache for the <see cref="GetCopyrightText(string)"/> method.
+        /// </summary>
+        private string copyrightTextCache;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DocumentationSettings"/> class during JSON deserialization.
         /// </summary>
-        [JsonConstructor]
         protected internal DocumentationSettings()
         {
             this.companyName = DefaultCompanyName;
             this.copyrightText = DefaultCopyrightText;
-            this.variables = ImmutableDictionary<string, string>.Empty.ToBuilder();
+            this.headerDecoration = string.Empty;
+            this.variables = ImmutableDictionary<string, string>.Empty;
             this.xmlHeader = true;
 
             this.documentExposedElements = true;
@@ -103,6 +127,153 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.documentPrivateFields = false;
 
             this.fileNamingConvention = FileNamingConvention.StyleCop;
+
+            this.documentationCulture = DefaultDocumentationCulture;
+            this.documentationCultureInfo = CultureInfo.InvariantCulture;
+
+            this.excludeFromPunctuationCheck = DefaultExcludeFromPunctuationCheck;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DocumentationSettings"/> class.
+        /// </summary>
+        /// <param name="documentationSettingsObject">The JSON object containing the settings.</param>
+        /// <param name="analyzerConfigOptions">The <strong>.editorconfig</strong> options to use if
+        /// <strong>stylecop.json</strong> does not provide values.</param>
+        protected internal DocumentationSettings(JsonObject documentationSettingsObject, AnalyzerConfigOptionsWrapper analyzerConfigOptions)
+        {
+            bool? documentExposedElements = null;
+            bool? documentInternalElements = null;
+            bool? documentPrivateElements = null;
+            bool? documentInterfaces = null;
+            bool? documentPrivateFields = null;
+            string companyName = null;
+            string copyrightText = null;
+            string headerDecoration = null;
+            ImmutableDictionary<string, string>.Builder variables = null;
+            bool? xmlHeader = null;
+            FileNamingConvention? fileNamingConvention = null;
+            string documentationCulture = null;
+            ImmutableArray<string>.Builder excludeFromPunctuationCheck = null;
+
+            foreach (var kvp in documentationSettingsObject)
+            {
+                switch (kvp.Key)
+                {
+                case "documentExposedElements":
+                    documentExposedElements = kvp.ToBooleanValue();
+                    break;
+
+                case "documentInternalElements":
+                    documentInternalElements = kvp.ToBooleanValue();
+                    break;
+
+                case "documentPrivateElements":
+                    documentPrivateElements = kvp.ToBooleanValue();
+                    break;
+
+                case "documentInterfaces":
+                    documentInterfaces = kvp.ToBooleanValue();
+                    break;
+
+                case "documentPrivateFields":
+                    documentPrivateFields = kvp.ToBooleanValue();
+                    break;
+
+                case "companyName":
+                    companyName = kvp.ToStringValue();
+                    break;
+
+                case "copyrightText":
+                    copyrightText = kvp.ToStringValue();
+                    break;
+
+                case "headerDecoration":
+                    headerDecoration = kvp.ToStringValue();
+                    break;
+
+                case "variables":
+                    kvp.AssertIsObject();
+                    variables = ImmutableDictionary.CreateBuilder<string, string>();
+                    foreach (var child in kvp.Value.AsJsonObject)
+                    {
+                        string name = child.Key;
+
+                        if (!IsValidVariableName(name))
+                        {
+                            continue;
+                        }
+
+                        string value = child.ToStringValue();
+
+                        variables.Add(name, value);
+                    }
+
+                    break;
+
+                case "xmlHeader":
+                    xmlHeader = kvp.ToBooleanValue();
+                    break;
+
+                case "fileNamingConvention":
+                    fileNamingConvention = kvp.ToEnumValue<FileNamingConvention>();
+                    break;
+
+                case "documentationCulture":
+                    documentationCulture = kvp.ToStringValue();
+                    break;
+
+                case "excludeFromPunctuationCheck":
+                    kvp.AssertIsArray();
+                    excludeFromPunctuationCheck = ImmutableArray.CreateBuilder<string>();
+                    foreach (var value in kvp.Value.AsJsonArray)
+                    {
+                        excludeFromPunctuationCheck.Add(value.AsString);
+                    }
+
+                    break;
+
+                default:
+                    break;
+                }
+            }
+
+            documentExposedElements ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.documentExposedElements");
+            documentInternalElements ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.documentInternalElements");
+            documentPrivateElements ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.documentPrivateElements");
+            documentInterfaces ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.documentInterfaces");
+            documentPrivateFields ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.documentPrivateFields");
+
+            companyName ??= AnalyzerConfigHelper.TryGetStringValue(analyzerConfigOptions, "stylecop.documentation.companyName");
+            copyrightText ??= AnalyzerConfigHelper.TryGetMultiLineStringValue(analyzerConfigOptions, "stylecop.documentation.copyrightText")
+                ?? AnalyzerConfigHelper.TryGetMultiLineStringValue(analyzerConfigOptions, "file_header_template");
+            headerDecoration ??= AnalyzerConfigHelper.TryGetStringValue(analyzerConfigOptions, "stylecop.documentation.headerDecoration");
+
+            xmlHeader ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.xmlHeader");
+            fileNamingConvention ??= AnalyzerConfigHelper.TryGetStringValue(analyzerConfigOptions, "stylecop.documentation.fileNamingConvention") switch
+            {
+                "stylecop" => FileNamingConvention.StyleCop,
+                "metadata" => FileNamingConvention.Metadata,
+                _ => null,
+            };
+
+            documentationCulture ??= AnalyzerConfigHelper.TryGetStringValue(analyzerConfigOptions, "stylecop.documentation.documentationCulture");
+            excludeFromPunctuationCheck ??= AnalyzerConfigHelper.TryGetStringListValue(analyzerConfigOptions, "stylecop.documentation.excludeFromPunctuationCheck")?.ToBuilder();
+
+            this.documentExposedElements = documentExposedElements.GetValueOrDefault(true);
+            this.documentInternalElements = documentInternalElements.GetValueOrDefault(true);
+            this.documentPrivateElements = documentPrivateElements.GetValueOrDefault(false);
+            this.documentInterfaces = documentInterfaces.GetValueOrDefault(true);
+            this.documentPrivateFields = documentPrivateFields.GetValueOrDefault(false);
+            this.companyName = companyName ?? DefaultCompanyName;
+            this.copyrightText = copyrightText ?? DefaultCopyrightText;
+            this.headerDecoration = headerDecoration ?? string.Empty;
+            this.variables = variables?.ToImmutable() ?? ImmutableDictionary<string, string>.Empty;
+            this.xmlHeader = xmlHeader.GetValueOrDefault(true);
+            this.fileNamingConvention = fileNamingConvention.GetValueOrDefault(FileNamingConvention.StyleCop);
+            this.documentationCulture = documentationCulture ?? DefaultDocumentationCulture;
+            this.documentationCultureInfo = this.documentationCulture == DefaultDocumentationCulture ? CultureInfo.InvariantCulture : new CultureInfo(this.documentationCulture);
+            this.excludeFromPunctuationCheck = excludeFromPunctuationCheck?.ToImmutable() ?? DefaultExcludeFromPunctuationCheck;
         }
 
         public string CompanyName
@@ -113,16 +284,11 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             }
         }
 
-        public string CopyrightText
+        public string HeaderDecoration
         {
             get
             {
-                if (this.copyrightTextCache == null)
-                {
-                    this.copyrightTextCache = this.BuildCopyrightText();
-                }
-
-                return this.copyrightTextCache;
+                return this.headerDecoration;
             }
         }
 
@@ -130,7 +296,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         {
             get
             {
-                return this.variables.ToImmutable();
+                return this.variables;
             }
         }
 
@@ -160,35 +326,87 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         public FileNamingConvention FileNamingConvention =>
             this.fileNamingConvention;
 
-        private string BuildCopyrightText()
+        public string DocumentationCulture =>
+            this.documentationCulture;
+
+        public ImmutableArray<string> ExcludeFromPunctuationCheck
+            => this.excludeFromPunctuationCheck;
+
+        public CultureInfo DocumentationCultureInfo
+            => this.documentationCultureInfo;
+
+        public string GetCopyrightText(string fileName)
         {
-            string pattern = Regex.Escape("{") + "(?<Property>[a-zA-Z0-9]+)" + Regex.Escape("}");
-            MatchEvaluator evaluator =
-                match =>
+            string copyrightText = this.copyrightTextCache;
+            if (copyrightText != null)
+            {
+                return copyrightText;
+            }
+
+            var expandedCopyrightText = this.BuildCopyrightText(fileName);
+            if (!expandedCopyrightText.Value)
+            {
+                // Unable to cache the copyright text due to use of a {fileName} variable.
+                return expandedCopyrightText.Key;
+            }
+
+            this.copyrightTextCache = expandedCopyrightText.Key;
+            return this.copyrightTextCache;
+        }
+
+        private static bool IsValidVariableName(string name)
+        {
+            // Equivalent to Regex.IsMatch(prefix, "^[a-zA-Z0-9]+$")
+            for (var i = 0; i < name.Length; i++)
+            {
+                if (name[i] is not ((>= 'a' and <= 'z') or (>= 'A' and <= 'Z') or (>= '0' and <= '9')))
                 {
-                    string key = match.Groups["Property"].Value;
-                    switch (key)
+                    return false;
+                }
+            }
+
+            return name.Length > 0;
+        }
+
+        private KeyValuePair<string, bool> BuildCopyrightText(string fileName)
+        {
+            bool canCache = true;
+
+            string Evaluator(Match match)
+            {
+                string key = match.Groups["Property"].Value;
+                switch (key)
+                {
+                case "companyName":
+                    return this.CompanyName;
+
+                case "copyrightText":
+                    return "[CircularReference]";
+
+                default:
+                    string value;
+                    if (this.Variables.TryGetValue(key, out value))
                     {
-                    case "companyName":
-                        return this.CompanyName;
-
-                    case "copyrightText":
-                        return "[CircularReference]";
-
-                    default:
-                        string value;
-                        if (this.Variables.TryGetValue(key, out value))
-                        {
-                            return value;
-                        }
-
-                        break;
+                        return value;
                     }
 
-                    return "[InvalidReference]";
-                };
+                    if (key == "fileName")
+                    {
+                        // The 'fileName' built-in variable is only applied when the user did not include an
+                        // explicit value for a custom 'fileName' variable.
+                        canCache = false;
+                        return fileName;
+                    }
 
-            return Regex.Replace(this.copyrightText, pattern, evaluator);
+                    break;
+                }
+
+                return "[InvalidReference]";
+            }
+
+            string pattern = Regex.Escape("{") + "(?<Property>[a-zA-Z0-9]+)" + Regex.Escape("}");
+            string expanded = Regex.Replace(this.copyrightText, pattern, Evaluator);
+            return new KeyValuePair<string, bool>(expanded, canCache);
         }
     }
 }

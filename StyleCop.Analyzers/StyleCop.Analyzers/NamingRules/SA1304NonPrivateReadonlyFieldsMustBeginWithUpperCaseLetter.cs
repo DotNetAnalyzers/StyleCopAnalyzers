@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.NamingRules
 {
@@ -13,11 +15,11 @@ namespace StyleCop.Analyzers.NamingRules
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// The name of a non-private readonly C# field must begin with an upper-case letter.
+    /// The name of a non-private readonly C# field should begin with an upper-case letter.
     /// </summary>
     /// <remarks>
     /// <para>A violation of this rule occurs when the name of a readonly field which is not private does not begin with
-    /// an upper-case letter. Non-private readonly fields must always start with an upper-case letter.</para>
+    /// an upper-case letter. Non-private readonly fields should always start with an upper-case letter.</para>
     ///
     /// <para>If the field or variable name is intended to match the name of an item associated with Win32 or COM, and
     /// thus needs to begin with a lower-case letter, place the field or variable within a special <c>NativeMethods</c>
@@ -33,17 +35,14 @@ namespace StyleCop.Analyzers.NamingRules
         /// <see cref="SA1304NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1304";
-        private const string Title = "Non-private readonly fields must begin with upper-case letter";
-        private const string MessageFormat = "Non-private readonly fields must begin with upper-case letter";
-
-        private const string Description = "The name of a non-private readonly C# field must being with an upper-case letter.";
-
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1304.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(NamingResources.SA1304Title), NamingResources.ResourceManager, typeof(NamingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(NamingResources.SA1304MessageFormat), NamingResources.ResourceManager, typeof(NamingResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(NamingResources.SA1304Description), NamingResources.ResourceManager, typeof(NamingResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> FieldDeclarationAction = HandleFieldDeclaration;
 
         /// <inheritdoc/>
@@ -53,12 +52,10 @@ namespace StyleCop.Analyzers.NamingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(FieldDeclarationAction, SyntaxKind.FieldDeclaration);
+            context.RegisterSyntaxNodeAction(FieldDeclarationAction, SyntaxKind.FieldDeclaration);
         }
 
         private static void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
@@ -87,8 +84,7 @@ namespace StyleCop.Analyzers.NamingRules
             {
                 // SA1307 is taken precedence here. SA1307 should be reported if the field is accessible.
                 // So if SA1307 is enabled this diagnostic will only be reported for internal fields.
-                if (context.SemanticModel.Compilation.Options.SpecificDiagnosticOptions
-                    .GetValueOrDefault(SA1307AccessibleFieldsMustBeginWithUpperCaseLetter.DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
+                if (!context.IsAnalyzerSuppressed(SA1307AccessibleFieldsMustBeginWithUpperCaseLetter.Descriptor))
                 {
                     return;
                 }
@@ -119,7 +115,7 @@ namespace StyleCop.Analyzers.NamingRules
                     continue;
                 }
 
-                // Non-private readonly fields must begin with upper-case letter.
+                // Non-private readonly fields should begin with upper-case letter.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation()));
             }
         }

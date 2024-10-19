@@ -1,23 +1,25 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.NamingRules
 {
     using System;
     using System.Collections.Immutable;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The name of a field in C# does not begin with a lower-case letter.
     /// </summary>
     /// <remarks>
     /// <para>A violation of this rule occurs when the name of a field begins with an upper-case letter. Constants,
-    /// non-private readonly fields and static readonly fields must always start with an uppercase letter, whilst
-    /// private readonly fields must start with a lowercase letter. Also, public or internal fields must always start
+    /// non-private readonly fields and static readonly fields should always start with an uppercase letter, whilst
+    /// private readonly fields should start with a lowercase letter. Also, public or internal fields should always start
     /// with an uppercase letter.</para>
     ///
     /// <para>If the field name is intended to match the name of an item associated with Win32 or COM, and thus needs to
@@ -33,15 +35,14 @@ namespace StyleCop.Analyzers.NamingRules
         /// The ID for diagnostics produced by the <see cref="SA1306FieldNamesMustBeginWithLowerCaseLetter"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1306";
-        private const string Title = "Field names must begin with lower-case letter";
-        private const string MessageFormat = "Field '{0}' must begin with lower-case letter";
-        private const string Description = "The name of a field in C# does not begin with a lower-case letter.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1306.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(NamingResources.SA1306Title), NamingResources.ResourceManager, typeof(NamingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(NamingResources.SA1306MessageFormat), NamingResources.ResourceManager, typeof(NamingResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(NamingResources.SA1306Description), NamingResources.ResourceManager, typeof(NamingResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> FieldDeclarationAction = HandleFieldDeclaration;
 
         /// <inheritdoc/>
@@ -51,12 +52,10 @@ namespace StyleCop.Analyzers.NamingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(FieldDeclarationAction, SyntaxKind.FieldDeclaration);
+            context.RegisterSyntaxNodeAction(FieldDeclarationAction, SyntaxKind.FieldDeclaration);
         }
 
         private static void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
@@ -136,7 +135,7 @@ namespace StyleCop.Analyzers.NamingRules
                     continue;
                 }
 
-                // Field names must begin with lower-case letter
+                // Field names should begin with lower-case letter
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), name));
             }
         }

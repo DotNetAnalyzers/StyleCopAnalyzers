@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "StyleCop.Analyzers.Status.Generator": {
+      "commandName": "Project",
+      "commandLineArgs": "..\\..\\..\\..\\..\\StyleCopAnalyzers.sln",
+      "environmentVariables": {
+        "Configuration": "$(Configuration)"
+      }
+    }
+  }
+}

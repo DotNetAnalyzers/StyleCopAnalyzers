@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers
 {
@@ -13,8 +15,8 @@ namespace StyleCop.Analyzers
     /// <para>There are several reasons an analyzer does not have a code fix, including but not limited to the
     /// following:</para>
     /// <list type="bullet">
-    /// <item>Visual Studio provides a built-in code fix.</item>
-    /// <item>A code fix could not provide a useful solution.</item>
+    /// <item><description>Visual Studio provides a built-in code fix.</description></item>
+    /// <item><description>A code fix could not provide a useful solution.</description></item>
     /// </list>
     /// <para>The <see cref="Reason"/> should be provided.</para>
     /// </remarks>

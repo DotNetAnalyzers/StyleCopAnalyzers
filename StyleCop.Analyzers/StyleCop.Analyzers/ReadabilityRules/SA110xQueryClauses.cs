@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
@@ -16,10 +18,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// <summary>
     /// This analyzer will analyze several diagnostics related to query expressions.
     /// </summary>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1102.md">SA1102 Query clause must follow previous clause</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1103.md">SA1103 Query clauses must be on separate lines or all on one line</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1104.md">SA1104 Query clause must begin on new line when previous clause spans multiple lines</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1105.md">SA1105 Query clauses spanning multiple lines must begin on own line</seealso>
+    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1102.md">SA1102 Query clause should follow previous clause</seealso>
+    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1103.md">SA1103 Query clauses should be on separate lines or all on one line</seealso>
+    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1104.md">SA1104 Query clause should begin on new line when previous clause spans multiple lines</seealso>
+    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1105.md">SA1105 Query clauses spanning multiple lines should begin on own line</seealso>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SA110xQueryClauses : DiagnosticAnalyzer
     {
@@ -48,7 +50,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly LocalizableString SA1105Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1105Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly string SA1105HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1105.md";
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> QueryExpressionAction = HandleQueryExpression;
 
         /// <summary>
@@ -90,12 +91,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(QueryExpressionAction, SyntaxKind.QueryExpression);
+            context.RegisterSyntaxNodeAction(QueryExpressionAction, SyntaxKind.QueryExpression);
         }
 
         private static void HandleQueryExpression(SyntaxNodeAnalysisContext context)
@@ -106,10 +105,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
             HandleQueryClause(queryExpression.FromClause, tokensToCheck);
             HandleQueryBody(queryExpression.Body, tokensToCheck);
 
-            bool isEnabledSA1102 = !context.IsAnalyzerSuppressed(SA1102Identifier);
-            bool isEnabledSA1103 = !context.IsAnalyzerSuppressed(SA1103Identifier);
-            bool isEnabledSA1104 = !context.IsAnalyzerSuppressed(SA1104Identifier);
-            bool isEnabledSA1105 = !context.IsAnalyzerSuppressed(SA1105Identifier);
+            bool isEnabledSA1102 = !context.IsAnalyzerSuppressed(SA1102Descriptor);
+            bool isEnabledSA1103 = !context.IsAnalyzerSuppressed(SA1103Descriptor);
+            bool isEnabledSA1104 = !context.IsAnalyzerSuppressed(SA1104Descriptor);
+            bool isEnabledSA1105 = !context.IsAnalyzerSuppressed(SA1105Descriptor);
 
             bool allOnSameLine = true;
             bool allOnSeparateLine = true;
@@ -221,7 +220,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
             case SyntaxKind.SelectClause:
                 var selectClause = (SelectClauseSyntax)selectOrGroup;
-                tokensToCheck.Add(selectClause.SelectKeyword);
+                if (!selectClause.IsMissing)
+                {
+                    tokensToCheck.Add(selectClause.SelectKeyword);
+                }
+
                 break;
             case SyntaxKind.GroupClause:
                 var groupClause = (GroupClauseSyntax)selectOrGroup;

@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
@@ -58,15 +60,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <see cref="SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1100";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1100.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1100Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1100MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1100Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1100.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> BaseExpressionAction = HandleBaseExpression;
 
         /// <inheritdoc/>
@@ -76,12 +77,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(BaseExpressionAction, SyntaxKind.BaseExpression);
+            context.RegisterSyntaxNodeAction(BaseExpressionAction, SyntaxKind.BaseExpression);
         }
 
         private static void HandleBaseExpression(SyntaxNodeAnalysisContext context)
@@ -94,22 +93,18 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
-            var memberAccessExpression = parent as MemberAccessExpressionSyntax;
-            var elementAccessExpression = parent as ElementAccessExpressionSyntax;
-
             ExpressionSyntax speculativeExpression;
 
-            if (memberAccessExpression != null)
+            if (parent is MemberAccessExpressionSyntax memberAccessExpression)
             {
                 // make sure to evaluate the complete invocation expression if this is a call, or overload resolution will fail
                 speculativeExpression = memberAccessExpression.WithExpression(SyntaxFactory.ThisExpression());
-                InvocationExpressionSyntax invocationExpression = memberAccessExpression.Parent as InvocationExpressionSyntax;
-                if (invocationExpression != null)
+                if (memberAccessExpression.Parent is InvocationExpressionSyntax invocationExpression)
                 {
                     speculativeExpression = invocationExpression.WithExpression(speculativeExpression);
                 }
             }
-            else if (elementAccessExpression != null)
+            else if (parent is ElementAccessExpressionSyntax elementAccessExpression)
             {
                 speculativeExpression = elementAccessExpression.WithExpression(SyntaxFactory.ThisExpression());
             }
@@ -119,7 +114,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             var speculativeSymbol = context.SemanticModel.GetSpeculativeSymbolInfo(parent.SpanStart, speculativeExpression, SpeculativeBindingOption.BindAsExpression);
-            if (speculativeSymbol.Symbol != targetSymbol.Symbol)
+            if (!targetSymbol.Symbol.Equals(speculativeSymbol.Symbol))
             {
                 return;
             }

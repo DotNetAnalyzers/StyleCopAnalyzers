@@ -1,22 +1,39 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.SpacingRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.SpacingRules.SA1004DocumentationLinesMustBeginWithSingleSpace,
+        StyleCop.Analyzers.SpacingRules.SA1004CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1004DocumentationLinesMustBeginWithSingleSpace"/>.
     /// </summary>
-    public class SA1004UnitTests : CodeFixVerifier
+    public class SA1004UnitTests
     {
+        public static IEnumerable<object[]> ParameterModifiers
+        {
+            get
+            {
+                yield return new[] { "out" };
+                yield return new[] { "ref" };
+
+                if (LightupHelpers.SupportsCSharp72)
+                {
+                    yield return new[] { "in" };
+                }
+            }
+        }
+
         [Fact]
         public async Task TestFixedExampleAsync()
         {
@@ -34,7 +51,7 @@ public class TypeName
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -70,15 +87,13 @@ public class TypeName
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(4, 8),
-                this.CSharpDiagnostic().WithLocation(6, 8),
-                this.CSharpDiagnostic().WithLocation(7, 8),
-                this.CSharpDiagnostic().WithLocation(8, 8),
+                Diagnostic().WithLocation(4, 8),
+                Diagnostic().WithLocation(6, 8),
+                Diagnostic().WithLocation(7, 8),
+                Diagnostic().WithLocation(8, 8),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -124,14 +139,12 @@ public class TypeName
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(8, 8),
-                this.CSharpDiagnostic().WithLocation(9, 8),
-                this.CSharpDiagnostic().WithLocation(12, 8),
+                Diagnostic().WithLocation(8, 8),
+                Diagnostic().WithLocation(9, 8),
+                Diagnostic().WithLocation(12, 8),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -163,7 +176,7 @@ public class TypeName
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -207,27 +220,41 @@ public class TypeName
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(5, 7),
-                this.CSharpDiagnostic().WithLocation(7, 7),
-                this.CSharpDiagnostic().WithLocation(8, 7),
-                this.CSharpDiagnostic().WithLocation(9, 7)
+                Diagnostic().WithLocation(5, 7),
+                Diagnostic().WithLocation(7, 7),
+                Diagnostic().WithLocation(8, 7),
+                Diagnostic().WithLocation(9, 7),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        [Theory]
+        [MemberData(nameof(ParameterModifiers))]
+        [WorkItem(3817, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3817")]
+        public async Task TestParameterModifierFirstOnLineAsync(string keyword)
         {
-            yield return new SA1004DocumentationLinesMustBeginWithSingleSpace();
-        }
+            string testCode = $@"
+/// <summary>
+/// Description of some remarks that refer to a method: <see cref=""SomeMethod(int, int,
+/// {keyword} string)""/>.
+/// </summary>
+public class TypeName
+{{
+    public void SomeMethod(int x, int y, {keyword} string z)
+    {{
+        throw new System.Exception();
+    }}
+}}";
 
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1004CodeFixProvider();
+            var languageVersion = (LightupHelpers.SupportsCSharp8, LightupHelpers.SupportsCSharp72) switch
+            {
+                // Make sure to use C# 7.2 if supported, unless we are going to default to something greater
+                (false, true) => LanguageVersionEx.CSharp7_2,
+                _ => (LanguageVersion?)null,
+            };
+
+            await VerifyCSharpDiagnosticAsync(languageVersion, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

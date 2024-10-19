@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Helpers
 {
@@ -10,6 +12,7 @@ namespace StyleCop.Analyzers.Helpers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Lightup;
 
     internal static class SyntaxTreeHelpers
     {
@@ -17,8 +20,8 @@ namespace StyleCop.Analyzers.Helpers
         /// A cache of the result of computing whether a document has using alias directives.
         /// </summary>
         /// <remarks>
-        /// This allows many analyzers that run on every token in the file to avoid checking
-        /// the same state in the document repeatedly.
+        /// <para>This allows many analyzers that run on every token in the file to avoid checking
+        /// the same state in the document repeatedly.</para>
         /// </remarks>
         private static Tuple<WeakReference<Compilation>, ConcurrentDictionary<SyntaxTree, bool>> usingAliasCache
             = Tuple.Create(new WeakReference<Compilation>(null), default(ConcurrentDictionary<SyntaxTree, bool>));
@@ -51,6 +54,24 @@ namespace StyleCop.Analyzers.Helpers
             return cache.Item2;
         }
 
+        /// <summary>
+        /// Checks if a given <see cref="SyntaxTree"/> only contains whitespace. We don't want to analyze empty files.
+        /// </summary>
+        /// <param name="tree">The syntax tree to examine.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        /// <returns>
+        /// <see langword="true"/> if <paramref name="tree"/> only contains whitespace; otherwise,
+        /// <see langword="false"/>.
+        /// </returns>
+        public static bool IsWhitespaceOnly(this SyntaxTree tree, CancellationToken cancellationToken)
+        {
+            var root = tree.GetRoot(cancellationToken);
+            var firstToken = root.GetFirstToken(includeZeroWidth: true);
+
+            return firstToken.IsKind(SyntaxKind.EndOfFileToken)
+                && TriviaHelper.IndexOfFirstNonWhitespaceTrivia(firstToken.LeadingTrivia) == -1;
+        }
+
         internal static bool ContainsUsingAlias(this SyntaxTree tree, ConcurrentDictionary<SyntaxTree, bool> cache)
         {
             if (tree == null)
@@ -71,7 +92,7 @@ namespace StyleCop.Analyzers.Helpers
 
         private static bool ContainsUsingAliasNoCache(SyntaxTree tree)
         {
-            var nodes = tree.GetRoot().DescendantNodes(node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration));
+            var nodes = tree.GetRoot().DescendantNodes(node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration) || node.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration));
 
             return nodes.OfType<UsingDirectiveSyntax>().Any(x => x.Alias != null);
         }

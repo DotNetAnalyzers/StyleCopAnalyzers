@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Helpers
 {
@@ -19,9 +21,9 @@ namespace StyleCop.Analyzers.Helpers
         /// <see cref="FixAllScope.Document"/>, <see cref="FixAllScope.Project"/> and <see cref="FixAllScope.Solution"/>.
         /// </summary>
         /// <remarks>
-        /// The batch fix all provider only batches operations (i.e. <see cref="CodeActionOperation"/>) of type
+        /// <para>The batch fix all provider only batches operations (i.e. <see cref="CodeActionOperation"/>) of type
         /// <see cref="ApplyChangesOperation"/> present within the individual diagnostic fixes. Other types of
-        /// operations present within these fixes are ignored.
+        /// operations present within these fixes are ignored.</para>
         /// </remarks>
         /// <value>
         /// The default batch fix all provider.

@@ -1,22 +1,23 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.SpacingRules.SA1011ClosingSquareBracketsMustBeSpacedCorrectly,
+        StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1011ClosingSquareBracketsMustBeSpacedCorrectly"/>.
     /// </summary>
-    public class SA1011UnitTests : CodeFixVerifier
+    public class SA1011UnitTests
     {
         /// <summary>
         /// Verifies that the analyzer will properly handles valid closing square brackets.
@@ -44,7 +45,7 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -94,19 +95,17 @@ public class Foo
             DiagnosticResult[] expected =
             {
                 // 5, 41 should be reported by SA1017
-                this.CSharpDiagnostic().WithLocation(5, 52).WithArguments(" not",  "preceded"),
-                this.CSharpDiagnostic().WithLocation(9, 18).WithArguments(" not",  "preceded"),
-                this.CSharpDiagnostic().WithLocation(9, 21).WithArguments(" not",  "preceded"),
-                this.CSharpDiagnostic().WithLocation(9, 40).WithArguments(" not",  "preceded"),
-                this.CSharpDiagnostic().WithLocation(12, 27).WithArguments(" not",  "preceded"),
-                this.CSharpDiagnostic().WithLocation(13, 4).WithArguments(" not",  "preceded"),
-                this.CSharpDiagnostic().WithLocation(15, 27).WithArguments(" not",  "preceded"),
-                this.CSharpDiagnostic().WithLocation(15, 31).WithArguments(" not",  "preceded")
+                Diagnostic().WithLocation(5, 52).WithArguments(" not",  "preceded"),
+                Diagnostic().WithLocation(9, 18).WithArguments(" not",  "preceded"),
+                Diagnostic().WithLocation(9, 21).WithArguments(" not",  "preceded"),
+                Diagnostic().WithLocation(9, 40).WithArguments(" not",  "preceded"),
+                Diagnostic().WithLocation(12, 27).WithArguments(" not",  "preceded"),
+                Diagnostic().WithLocation(13, 4).WithArguments(" not",  "preceded"),
+                Diagnostic().WithLocation(15, 27).WithArguments(" not",  "preceded"),
+                Diagnostic().WithLocation(15, 31).WithArguments(" not",  "preceded"),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -135,7 +134,7 @@ public class Foo
 }";
 
             // spacing violations should be covered SA1010, SA1001, SA1009, SA1008, and then SA1002
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -159,7 +158,7 @@ public class Foo
 ";
 
             // spacing violation should be reported by SA1019
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -180,7 +179,7 @@ public class Foo
 ";
 
             // spacing violation should be reported by SA1013
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -213,15 +212,13 @@ public class Foo
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(5, 16).WithArguments(string.Empty, "followed"),
-                this.CSharpDiagnostic().WithLocation(5, 32).WithArguments(string.Empty, "followed"),
-                this.CSharpDiagnostic().WithLocation(7, 13).WithArguments(string.Empty, "followed"),
-                this.CSharpDiagnostic().WithLocation(7, 30).WithArguments(string.Empty, "followed")
+                Diagnostic().WithLocation(5, 16).WithArguments(string.Empty, "followed"),
+                Diagnostic().WithLocation(5, 32).WithArguments(string.Empty, "followed"),
+                Diagnostic().WithLocation(7, 13).WithArguments(string.Empty, "followed"),
+                Diagnostic().WithLocation(7, 30).WithArguments(string.Empty, "followed"),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -252,11 +249,9 @@ public class ClassName
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 38).WithArguments(" not", "preceded");
+            DiagnosticResult expected = Diagnostic().WithLocation(8, 38).WithArguments(" not", "preceded");
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -266,9 +261,10 @@ public class ClassName
         {
             string validStatament = string.Format(
                 @"var i = new int[1];
-            i[0]{0};", operatorText);
+            i[0]{0};",
+                operatorText);
 
-            await this.TestWhitespaceInStatementOrDeclAsync(validStatament, string.Empty, EmptyDiagnosticResults).ConfigureAwait(false);
+            await this.TestWhitespaceInStatementOrDeclAsync(validStatament, null, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Theory]
@@ -278,13 +274,15 @@ public class ClassName
         {
             string invalidStatament = string.Format(
                 @"var i = new int[1];
-            i[0] {0};", operatorText);
+            i[0] {0};",
+                operatorText);
 
             string fixedStatament = string.Format(
                 @"var i = new int[1];
-            i[0]{0};", operatorText);
+            i[0]{0};",
+                operatorText);
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 16).WithArguments(" not", "followed");
+            DiagnosticResult expected = Diagnostic().WithLocation(8, 16).WithArguments(" not", "followed");
 
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatament, fixedStatament, expected).ConfigureAwait(false);
         }
@@ -304,42 +302,68 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                new DiagnosticResult
-                {
-                    Id = "CS0443",
-                    Severity = DiagnosticSeverity.Error,
-                    Message = "Syntax error; value expected",
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 28) }
-                },
-                new DiagnosticResult
-                {
-                    Id = "CS1003",
-                    Severity = DiagnosticSeverity.Error,
-                    Message = "Syntax error, ',' expected",
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 28) }
-                },
-                new DiagnosticResult
-                {
-                    Id = "CS1003",
-                    Severity = DiagnosticSeverity.Error,
-                    Message = "Syntax error, ']' expected",
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 28) }
-                }
+                DiagnosticResult.CompilerError("CS0443").WithMessage("Syntax error; value expected").WithLocation(6, 28),
+                DiagnosticResult.CompilerError("CS1003").WithMessage("Syntax error, ',' expected").WithLocation(6, 28),
+                DiagnosticResult.CompilerError("CS1003").WithMessage("Syntax error, ']' expected").WithLocation(6, 28),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        [Fact]
+        [WorkItem(2564, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2564")]
+        public async Task TestArrayElementPointerDeferenceAsync()
         {
-            yield return new SA1011ClosingSquareBracketsMustBeSpacedCorrectly();
+            var testCode = @"public class TestClass
+{
+    public unsafe string TestMethod(int[] a)
+    {
+        fixed (int* p = a)
+        {
+            int*[] xx = new[] { p };
+            return xx[0]->ToString(""n2"");
+        }
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        [Fact]
+        [WorkItem(2289, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2289")]
+        public async Task TestColonCanFollowSquareBracketWhenPartOfInterpolationFormatClauseAsync()
         {
-            return new TokenSpacingCodeFixProvider();
+            string testCode = @"
+class ClassName
+{
+    void Method()
+    {
+        var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
+        var t = $""{ x[2]:C}"";
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2289, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2289")]
+        public async Task TestCommaCanFollowSquareBracketWhenPartOfInterpolationFormatClauseAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    void Method()
+    {
+        var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
+        var t = $""{ x[2],3}"";
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         private async Task TestWhitespaceInStatementOrDeclAsync(string originalStatement, string fixedStatement, params DiagnosticResult[] expected)
@@ -356,14 +380,16 @@ class ClassName
 }}
 ";
             string originalCode = string.Format(template, originalStatement);
-            string fixedCode = string.Format(template, fixedStatement);
+            string fixedCode = string.Format(template, fixedStatement ?? originalStatement);
 
-            await this.VerifyCSharpDiagnosticAsync(originalCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            if (!string.IsNullOrEmpty(fixedStatement))
+            var test = new CSharpTest
             {
-                await this.VerifyCSharpFixAsync(originalCode, fixedCode).ConfigureAwait(false);
-            }
+                TestCode = originalCode,
+                FixedCode = fixedCode,
+            };
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

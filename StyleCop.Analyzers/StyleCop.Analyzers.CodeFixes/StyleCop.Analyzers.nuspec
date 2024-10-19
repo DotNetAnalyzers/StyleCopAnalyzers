@@ -1,35 +1,43 @@
 ﻿<?xml version="1.0"?>
 <package>
   <metadata minClientVersion="2.7">
-    <id>StyleCop.Analyzers</id>
+    <id>$id$</id>
     <version>0.0.0</version>
-    <title>StyleCop.Analyzers</title>
+    <title>$id$</title>
     <authors>Sam Harwell et. al.</authors>
     <owners>Sam Harwell</owners>
-    <licenseUrl>https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/$version$/LICENSE</licenseUrl>
+    <license type="expression">MIT</license>
     <projectUrl>https://github.com/DotNetAnalyzers/StyleCopAnalyzers</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>An implementation of StyleCop's rules using Roslyn analyzers and code fixes</description>
-    <releaseNotes>https://github.com/DotNetAnalyzers/StyleCopAnalyzers/releases/$version$</releaseNotes>
-    <copyright>Copyright Sam Harwell 2015</copyright>
+    <releaseNotes>https://github.com/DotNetAnalyzers/StyleCopAnalyzers/releases/$tag$</releaseNotes>
+    <copyright>Copyright 2015 Tunnel Vision Laboratories, LLC</copyright>
     <tags>StyleCop DotNetAnalyzers Roslyn Diagnostic Analyzer</tags>
     <developmentDependency>true</developmentDependency>
   </metadata>
   <files>
 
-    <!-- Binaries and symbols -->
-    <file src="bin\$Configuration$\StyleCop.Analyzers.dll" target="analyzers\dotnet\cs" />
-    <file src="bin\$Configuration$\StyleCop.Analyzers.pdb" target="analyzers\dotnet\cs" />
-    <file src="bin\$Configuration$\StyleCop.Analyzers.CodeFixes.dll" target="analyzers\dotnet\cs" />
-    <file src="bin\$Configuration$\StyleCop.Analyzers.CodeFixes.pdb" target="analyzers\dotnet\cs" />
-    <file src="..\..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll" target="analyzers\dotnet\cs" />
+    <!-- Additional Files -->
+    <file src="..\..\LICENSE" />
+    <file src="..\..\THIRD-PARTY-NOTICES.txt" />
 
+    <!-- Binaries and symbols -->
+    <file src="bin\$Configuration$\netstandard1.1\StyleCop.Analyzers.dll" target="analyzers\dotnet\cs" />
+    <file src="bin\$Configuration$\netstandard1.1\**\StyleCop.Analyzers.resources.dll" target="analyzers\dotnet\cs" />
+    <file src="bin\$Configuration$\netstandard1.1\StyleCop.Analyzers.pdb" target="analyzers\dotnet\cs" />
+    <file src="bin\$Configuration$\netstandard1.1\StyleCop.Analyzers.CodeFixes.dll" target="analyzers\dotnet\cs" />
+    <file src="bin\$Configuration$\netstandard1.1\**\StyleCop.Analyzers.CodeFixes.resources.dll" target="analyzers\dotnet\cs" />
+    <file src="bin\$Configuration$\netstandard1.1\StyleCop.Analyzers.CodeFixes.pdb" target="analyzers\dotnet\cs" />
+
+	<!-- Rulesets -->
+	<file src="rulesets\StyleCopAnalyzersDefault.ruleset" target="rulesets\" />
+	
     <!-- Scripts -->
     <file src="tools\install.ps1" target="tools\" />
     <file src="tools\uninstall.ps1" target="tools\" />
 
     <!-- Source code -->
-    <file src="..\StyleCop.Analyzers\**\*.cs" exclude="..\StyleCop.Analyzers\obj\**\*.cs" target="src"/>
+    <file src="..\StyleCop.Analyzers\**\*.cs" exclude="..\StyleCop.Analyzers\obj\**\*.cs;..\StyleCop.Analyzers\Lightup\.generated\**\*.cs" target="src"/>
     <file src="**\*.cs" exclude="obj\**\*.cs;Properties\AssemblyInfo.cs" target="src"/>
 
   </files>

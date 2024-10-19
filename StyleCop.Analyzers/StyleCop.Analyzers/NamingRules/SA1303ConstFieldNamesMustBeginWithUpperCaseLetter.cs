@@ -1,10 +1,11 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.NamingRules
 {
     using System;
-    using System.Collections.Concurrent;
     using System.Collections.Immutable;
     using System.Linq;
     using Microsoft.CodeAnalysis;
@@ -12,7 +13,7 @@ namespace StyleCop.Analyzers.NamingRules
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// The name of a constant C# field must begin with an upper-case letter.
+    /// The name of a constant C# field should begin with an upper-case letter.
     /// </summary>
     /// <remarks>
     /// <para>A violation of this rule occurs when the name of a field marked with the <c>const</c> attribute does not
@@ -32,15 +33,15 @@ namespace StyleCop.Analyzers.NamingRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1303";
-        private const string Title = "Const field names must begin with upper-case letter";
-        private const string MessageFormat = "Const field names must begin with upper-case letter.";
-        private const string Description = "The name of a constant C# field must begin with an upper-case letter.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1303.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(NamingResources.SA1303Title), NamingResources.ResourceManager, typeof(NamingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(NamingResources.SA1303MessageFormat), NamingResources.ResourceManager, typeof(NamingResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(NamingResources.SA1303Description), NamingResources.ResourceManager, typeof(NamingResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SymbolAnalysisContext> FieldDeclarationAction = Analyzer.HandleFieldDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -49,29 +50,17 @@ namespace StyleCop.Analyzers.NamingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+
+            context.RegisterSymbolAction(FieldDeclarationAction, SymbolKind.Field);
         }
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private static class Analyzer
         {
-            Analyzer analyzer = new Analyzer(context.Compilation.GetOrCreateGeneratedDocumentCache());
-            context.RegisterSymbolAction(analyzer.HandleFieldDeclaration, SymbolKind.Field);
-        }
-
-        private sealed class Analyzer
-        {
-            private readonly ConcurrentDictionary<SyntaxTree, bool> generatedHeaderCache;
-
-            public Analyzer(ConcurrentDictionary<SyntaxTree, bool> generatedHeaderCache)
+            public static void HandleFieldDeclaration(SymbolAnalysisContext context)
             {
-                this.generatedHeaderCache = generatedHeaderCache;
-            }
-
-            public void HandleFieldDeclaration(SymbolAnalysisContext context)
-            {
-                var symbol = context.Symbol as IFieldSymbol;
-
-                if (symbol == null || !symbol.IsConst || symbol.ContainingType?.TypeKind == TypeKind.Enum)
+                if (!(context.Symbol is IFieldSymbol symbol) || !symbol.IsConst || symbol.ContainingType?.TypeKind == TypeKind.Enum)
                 {
                     return;
                 }
@@ -98,11 +87,6 @@ namespace StyleCop.Analyzers.NamingRules
                         if (!location.IsInSource)
                         {
                             // assume symbols not defined in a source document are "out of reach"
-                            return;
-                        }
-
-                        if (location.SourceTree.IsGeneratedDocument(this.generatedHeaderCache, context.CancellationToken))
-                        {
                             return;
                         }
                     }

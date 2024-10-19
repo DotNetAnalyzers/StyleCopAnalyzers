@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test
 {
@@ -7,9 +7,9 @@ namespace StyleCop.Analyzers.Test
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-    using Analyzers.SpacingRules;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using StyleCop.Analyzers.SpacingRules;
     using Xunit;
 
     public class ExportCodeFixProviderAttributeNameTest
@@ -43,7 +43,7 @@ namespace StyleCop.Analyzers.Test
 
             Assert.NotNull(exportCodeFixProviderAttribute);
             Assert.Equal(codeFixProvider.Name, exportCodeFixProviderAttribute.Name);
-            Assert.Equal(1, exportCodeFixProviderAttribute.Languages.Length);
+            Assert.Single(exportCodeFixProviderAttribute.Languages);
             Assert.Equal(LanguageNames.CSharp, exportCodeFixProviderAttribute.Languages[0]);
         }
     }

@@ -1,15 +1,19 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
-    using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
-    using Helpers;
+    using System.Linq;
+    using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// A <c>&lt;param&gt;</c> tag within a C# element's documentation header is missing a <c>name</c> attribute
@@ -17,77 +21,70 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     /// <remarks>
     /// <para>C# syntax provides a mechanism for inserting documentation for classes and elements directly into the
-    /// code, through the use of XML documentation headers. For an introduction to these headers and a description of
-    /// the header syntax, see the following article:
-    /// <see href="http://msdn.microsoft.com/en-us/magazine/cc302121.aspx">XML Comments Let You Build Documentation
-    /// Directly From Your Visual Studio .NET Source Files</see>.</para>
+    /// code, through the use of XML documentation headers.</para>
     ///
     /// <para>A violation of this rule occurs if the documentation for an element contains a <c>&lt;param&gt;</c> tag
     /// which is missing a <c>name</c> attribute, or which contains an empty <c>name</c> attribute.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1613ElementParameterDocumentationMustDeclareParameterName : DiagnosticAnalyzer
+    internal class SA1613ElementParameterDocumentationMustDeclareParameterName : ElementDocumentationBase
     {
         /// <summary>
         /// The ID for diagnostics produced by the
         /// <see cref="SA1613ElementParameterDocumentationMustDeclareParameterName"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1613";
-        private const string Title = "Element parameter documentation must declare parameter name";
-        private const string MessageFormat = "Element parameter documentation must declare parameter name";
-        private const string Description = "A <param> tag within a C# element's documentation header is missing a name attribute containing the name of the parameter.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1613.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1613Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1613MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1613Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
-        private static readonly Action<SyntaxNodeAnalysisContext> XmlElementAction = HandleXmlElement;
-        private static readonly Action<SyntaxNodeAnalysisContext> XmlEmptyElementAction = HandleXmlEmptyElement;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SA1613ElementParameterDocumentationMustDeclareParameterName"/> class.
+        /// </summary>
+        /// <remarks><para>The presence of a &lt;inheritdoc/&gt; tag should NOT suppress warnings from this diagnostic.
+        /// See DotNetAnalyzers/StyleCopAnalyzers#631.</para></remarks>
+        public SA1613ElementParameterDocumentationMustDeclareParameterName()
+            : base(matchElementName: XmlCommentHelper.ParamXmlTag, inheritDocSuppressesWarnings: false)
+        {
+        }
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        public override void Initialize(AnalysisContext context)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, IEnumerable<XmlNodeSyntax> syntaxList, params Location[] diagnosticLocations)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
-
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(XmlElementAction, SyntaxKind.XmlElement);
-            context.RegisterSyntaxNodeActionHonorExclusions(XmlEmptyElementAction, SyntaxKind.XmlEmptyElement);
-        }
-
-        private static void HandleXmlElement(SyntaxNodeAnalysisContext context)
-        {
-            XmlElementSyntax emptyElement = context.Node as XmlElementSyntax;
-
-            var name = emptyElement?.StartTag?.Name;
-
-            HandleElement(context, emptyElement, name, emptyElement?.StartTag?.GetLocation());
-        }
-
-        private static void HandleXmlEmptyElement(SyntaxNodeAnalysisContext context)
-        {
-            XmlEmptyElementSyntax emptyElement = context.Node as XmlEmptyElementSyntax;
-
-            var name = emptyElement?.Name;
-
-            HandleElement(context, emptyElement, name, emptyElement?.GetLocation());
-        }
-
-        private static void HandleElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax element, XmlNameSyntax name, Location alternativeDiagnosticLocation)
-        {
-            if (string.Equals(name.ToString(), XmlCommentHelper.ParamXmlTag))
+            foreach (var syntax in syntaxList)
             {
-                var nameAttribute = XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>(element);
+                var nameParameter = XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>(syntax);
+                var parameterValue = nameParameter?.Identifier?.Identifier.ValueText;
 
-                if (string.IsNullOrWhiteSpace(nameAttribute?.Identifier?.Identifier.ValueText))
+                if (string.IsNullOrWhiteSpace(parameterValue))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, nameAttribute?.GetLocation() ?? alternativeDiagnosticLocation));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, nameParameter?.GetLocation() ?? syntax.GetLocation()));
+                }
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, XElement completeDocumentation, params Location[] diagnosticLocations)
+        {
+            var xmlParamTags = completeDocumentation.Nodes()
+                .OfType<XElement>()
+                .Where(e => e.Name == XmlCommentHelper.ParamXmlTag);
+
+            foreach (var paramTag in xmlParamTags)
+            {
+                var name = paramTag.Attributes().FirstOrDefault(a => a.Name == "name")?.Value;
+
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, diagnosticLocations.First()));
                 }
             }
         }

@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Helpers.ObjectPools
 {
@@ -41,7 +43,9 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
         private T firstItem;
 
         internal ObjectPool(Func<T> factory)
+#pragma warning disable RS1035 // Do not use APIs banned for analyzers (false positive: https://github.com/dotnet/roslyn-analyzers/issues/6571)
             : this(factory, Environment.ProcessorCount * 2)
+#pragma warning restore RS1035 // Do not use APIs banned for analyzers
         {
         }
 
@@ -56,9 +60,9 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
         /// Produces an instance.
         /// </summary>
         /// <remarks>
-        /// Search strategy is a simple linear probing which is chosen for it cache-friendliness.
+        /// <para>Search strategy is a simple linear probing which is chosen for it cache-friendliness.
         /// Note that Free will try to store recycled objects close to the start thus statistically
-        /// reducing how far we will typically search.
+        /// reducing how far we will typically search.</para>
         /// </remarks>
         /// <returns>A (possibly) cached instance of type <typeparamref name="T"/>.</returns>
         internal T Allocate()
@@ -80,9 +84,9 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
         /// Returns objects to the pool.
         /// </summary>
         /// <remarks>
-        /// Search strategy is a simple linear probing which is chosen for it cache-friendliness.
+        /// <para>Search strategy is a simple linear probing which is chosen for it cache-friendliness.
         /// Note that Free will try to store recycled objects close to the start thus statistically
-        /// reducing how far we will typically search in Allocate.
+        /// reducing how far we will typically search in Allocate.</para>
         /// </remarks>
         /// <param name="obj">The object to free.</param>
         internal void Free(T obj)

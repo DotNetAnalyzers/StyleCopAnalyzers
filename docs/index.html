@@ -1,0 +1,186 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleCopAnalyzers Status</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap-theme.min.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsrender/0.9.90/jsrender.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+    <style type="text/css">
+        body {
+            padding-top: 50px;
+            padding-bottom: 20px;
+        }
+
+        /* Set padding to keep content from hitting the edges */
+        .body-content {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+
+        /* Override the default bootstrap behavior where horizontal description lists
+         * will truncate terms that are too long to fit in the left column
+         */
+        .dl-horizontal dt {
+            white-space: normal;
+        }
+
+        /* Set width on the form input elements since they're 100% wide by default */
+        input,
+        select,
+        textarea {
+            max-width: 280px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">StyleCopAnalyzers Status</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav"></ul>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+    <h2>This page is reporting the current status of <a href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers">StyleCopAnalyzers</a></h2>
+
+    <div class="table-responsive">
+        <table id="no-more-tables" class="table table-hover table-condensed">
+            <thead>
+                <tr>
+                    <td>
+                        Category
+                    </td>
+                    <td>
+                        ID
+                    </td>
+                    <td>
+                        Title
+                    </td>
+                    <td>
+                        Has Implementation
+                    </td>
+                    <td>
+                        Status
+                    </td>
+                    <td style="overflow: visible; width: 0;">
+                        Code Fix
+                    </td>
+                    <td style="overflow: visible; width: 0;">
+                        Fix All Provider
+                    </td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody id="renderedDiagnostics"></tbody>
+        </table>
+
+        <div id="renderedCommitInfo"></div>
+    </div>
+
+    <script id="diagnostic-color" type="text/x-jsrender">
+        {{if HasImplementation}}
+        {{if Status !== "DisabledNoTests"}}
+        success
+        {{else}}
+        warning
+        {{/if}}
+        {{else }}
+        danger
+        {{/if}}
+    </script>
+
+    <script id="diagnostic" type="text/x-jsrender">
+        <tr class="{{include tmpl="#diagnostic-color"/}}">
+            <td>
+                {{>Category.replace("StyleCop.CSharp.", "")}}
+            </td>
+            <td>
+                <a href="{{>HelpLink}}">{{>Id}}</a>
+            </td>
+            <td>
+                {{>Title}}
+            </td>
+            <td>
+                {{>HasImplementation}}
+            </td>
+            <td>
+                {{>Status}}
+            </td>
+            <td style="overflow: visible; width: 0;">
+                {{if CodeFixStatus === "Implemented"}}
+                <i class="fa fa-check" style="color: green;"></i>
+                {{else CodeFixStatus === "NotImplemented"}}
+                <i class="fa fa-times" style="color: red;" title="{{>NoCodeFixReason}}"></i>
+                {{else}}
+                <i class="fa fa-exclamation" style="color: blue;"></i>
+                {{/if}}
+            </td>
+            <td style="overflow: visible; width: 0;">
+                {{if FixAllStatus === "BatchFixer"}}
+                <i class="fa fa-hourglass" style="color: blue;"></i>
+                {{else FixAllStatus === "CustomImplementation"}}
+                <i class="fa fa-check" style="color: green;"></i>
+                {{else}}
+                <i class="fa fa-times" style="color: red;"></i>
+                {{/if}}
+            </td>
+            <td></td>
+        </tr>
+
+    </script>
+
+    <script id="diagnostics" type="text/x-jsrender">
+        {{for diagnostics tmpl="#diagnostic"/}}
+    </script>
+
+    <script id="commitInfo" type="text/x-jsrender">
+        <h3>Commit information</h3>
+        <table>
+            <tr>
+                <td>Sha1</td>
+                <td><a href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/tree/{{>Sha}}">{{>Sha}}</a></td>
+            </tr>
+            <tr>
+                <td>Message</td>
+                <td>{{>Message}}</td>
+            </tr>
+            <tr>
+                <td>Author</td>
+                <td>{{>Author.Name}} &lt;{{>Author.Email}}&gt; ({{>Author.When}})</td>
+            </tr>
+            <tr>
+                <td>Committer</td>
+                <td>{{>Committer.Name}} &lt;{{>Committer.Email}}&gt; ({{>Committer.When}})</td>
+            </tr>
+            <tr>
+                <td>Parents</td>
+                <td>{{>Parents}}</td>
+            </tr>
+        </table>
+    </script>
+
+    <script type="text/javascript">
+        $.getJSON("https://ci.appveyor.com/api/projects/sharwell/stylecopanalyzers/artifacts/StyleCop.Analyzers.Status.json?branch=master&pr=false&stream=true&job=Configuration:%20Release", function (data) {
+            $("#renderedDiagnostics").html($.templates($("#diagnostics").html()).render(data));
+            $("#renderedCommitInfo").html($.templates($("#commitInfo").html()).render(data.git));
+        });
+    </script>
+        <hr />
+        <footer></footer>
+    </div>
+
+</body>
+</html>

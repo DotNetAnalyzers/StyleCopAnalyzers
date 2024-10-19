@@ -1,18 +1,24 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.LayoutRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
-    using TestHelper;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1502ElementMustNotBeOnASingleLine,
+        StyleCop.Analyzers.LayoutRules.SA1502CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for the methods part of <see cref="SA1502ElementMustNotBeOnASingleLine"/>.
     /// </summary>
-    public partial class SA1502UnitTests : CodeFixVerifier
+    public partial class SA1502UnitTests
     {
         /// <summary>
         /// Verifies that a valid method will pass without diagnostic.
@@ -20,8 +26,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="elementType">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestValidEmptyMethodAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
@@ -31,7 +36,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -40,8 +45,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="elementType">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestEmptyMethodOnSingleLineAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
@@ -49,8 +53,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     public void Bar() { }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(3, 23);
-            await this.VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), expected, CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(3, 23);
+            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -59,8 +63,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="elementType">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestMethodOnSingleLineAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
@@ -68,8 +71,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     public bool Bar() { return false; }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(3, 23);
-            await this.VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), expected, CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(3, 23);
+            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -78,8 +81,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="elementType">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestMethodWithBlockOnSingleLineAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
@@ -88,8 +90,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     { return false; }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(4, 5);
-            await this.VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), expected, CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(4, 5);
+            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -98,8 +100,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="elementType">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestMethodWithBlockStartOnSameLineAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
@@ -108,7 +109,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         return false; }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -117,8 +118,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="elementType">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestMethodWithExpressionBodyAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
@@ -126,7 +126,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     public bool Bar(int x, int y) => x > y;
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -135,8 +135,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="elementType">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestEmptyMethodOnSingleLineCodeFixAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
@@ -150,7 +149,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(FormatTestCode(testCode, elementType), FormatTestCode(fixedTestCode, elementType)).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(3, 23);
+            await VerifyCSharpFixAsync(FormatTestCode(testCode, elementType), expected, FormatTestCode(fixedTestCode, elementType), CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -159,8 +159,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="elementType">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestMethodOnSingleLineCodeFixAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
@@ -175,7 +174,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(FormatTestCode(testCode, elementType), FormatTestCode(fixedTestCode, elementType)).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(3, 23);
+            await VerifyCSharpFixAsync(FormatTestCode(testCode, elementType), expected, FormatTestCode(fixedTestCode, elementType), CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -184,8 +184,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="elementType">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestMethodWithBlockOnSingleLineCodeFixAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
@@ -201,7 +200,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(FormatTestCode(testCode, elementType), FormatTestCode(fixedTestCode, elementType)).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(4, 5);
+            await VerifyCSharpFixAsync(FormatTestCode(testCode, elementType), expected, FormatTestCode(fixedTestCode, elementType), CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -210,8 +210,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="elementType">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestMethodWithLotsOfTriviaCodeFixAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
@@ -226,7 +225,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     } /* TR4 */
 }";
 
-            await this.VerifyCSharpFixAsync(FormatTestCode(testCode, elementType), FormatTestCode(fixedTestCode, elementType)).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(3, 33);
+            await VerifyCSharpFixAsync(FormatTestCode(testCode, elementType), expected, FormatTestCode(fixedTestCode, elementType), CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

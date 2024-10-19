@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.OrderingRules
 {
@@ -9,6 +11,8 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
+    using static ModifierOrderHelper;
 
     /// <summary>
     /// The keywords within the declaration of an element do not follow a standard ordering scheme.
@@ -17,12 +21,12 @@ namespace StyleCop.Analyzers.OrderingRules
     /// <para>A violation of this rule occurs when the keywords within an element’s declaration do not follow a standard
     /// ordering scheme.</para>
     ///
-    /// <para>Within an element declaration, keywords must appear in the following order:</para>
+    /// <para>Within an element declaration, keywords should appear in the following order:</para>
     ///
     /// <list type="bullet">
-    /// <item>Access modifiers</item>
-    /// <item><see langword="static"/></item>
-    /// <item>All other keywords</item>
+    /// <item><description>Access modifiers</description></item>
+    /// <item><description><see langword="static"/></description></item>
+    /// <item><description>All other keywords</description></item>
     /// </list>
     ///
     /// <para>Using a standard ordering scheme for element declaration keywords can make the code more readable by
@@ -36,10 +40,10 @@ namespace StyleCop.Analyzers.OrderingRules
         /// The ID for diagnostics produced by the <see cref="SA1206DeclarationKeywordsMustFollowOrder"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1206";
-        private const string Title = "Declaration keywords must follow order";
-        private const string MessageFormat = "The '{0}' modifier must appear before '{1}'";
-        private const string Description = "The keywords within the declaration of an element do not follow a standard ordering scheme.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1206.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(OrderingResources.SA1206Title), OrderingResources.ResourceManager, typeof(OrderingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(OrderingResources.SA1206MessageFormat), OrderingResources.ResourceManager, typeof(OrderingResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(OrderingResources.SA1206Description), OrderingResources.ResourceManager, typeof(OrderingResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -61,34 +65,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 SyntaxKind.ConversionOperatorDeclaration,
                 SyntaxKind.ConstructorDeclaration);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> DeclarationAction = HandleDeclaration;
-
-        /// <summary>
-        /// Represents modifier type for implementing SA1206 rule
-        /// </summary>
-        private enum ModifierType
-        {
-            /// <summary>
-            /// Represents default value
-            /// </summary>
-            None,
-
-            /// <summary>
-            /// Represents any of access modifiers i.e public, protected, internal, private
-            /// </summary>
-            Access,
-
-            /// <summary>
-            /// Represents static modifier
-            /// </summary>
-            Static,
-
-            /// <summary>
-            /// Represents other modifiers i.e partial, virtual, abstract, override, extern, unsafe, new, async, const, sealed, readonly, volatile, fixed
-            /// </summary>
-            Other
-        }
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -97,76 +74,49 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(DeclarationAction, HandledSyntaxKinds);
+            context.RegisterSyntaxNodeAction(DeclarationAction, HandledSyntaxKinds);
         }
 
         private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var modifiers = GetModifiersFromDeclaration(context.Node);
+            var modifiers = DeclarationModifiersHelper.GetModifiers(context.Node as MemberDeclarationSyntax);
             CheckModifiersOrderAndReportDiagnostics(context, modifiers);
-        }
-
-        private static SyntaxTokenList GetModifiersFromDeclaration(SyntaxNode node)
-        {
-            SyntaxTokenList result = default(SyntaxTokenList);
-
-            switch (node.Kind())
-            {
-            case SyntaxKind.ClassDeclaration:
-            case SyntaxKind.StructDeclaration:
-            case SyntaxKind.InterfaceDeclaration:
-                result = ((BaseTypeDeclarationSyntax)node).Modifiers;
-                break;
-            case SyntaxKind.EnumDeclaration:
-                result = ((EnumDeclarationSyntax)node).Modifiers;
-                break;
-            case SyntaxKind.DelegateDeclaration:
-                result = ((DelegateDeclarationSyntax)node).Modifiers;
-                break;
-            case SyntaxKind.FieldDeclaration:
-            case SyntaxKind.EventFieldDeclaration:
-                result = ((BaseFieldDeclarationSyntax)node).Modifiers;
-                break;
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.EventDeclaration:
-            case SyntaxKind.IndexerDeclaration:
-                result = ((BasePropertyDeclarationSyntax)node).Modifiers;
-                break;
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.ConstructorDeclaration:
-            case SyntaxKind.OperatorDeclaration:
-            case SyntaxKind.ConversionOperatorDeclaration:
-                result = ((BaseMethodDeclarationSyntax)node).Modifiers;
-                break;
-            }
-
-            return result;
         }
 
         private static void CheckModifiersOrderAndReportDiagnostics(SyntaxNodeAnalysisContext context, SyntaxTokenList modifiers)
         {
             var previousModifierType = ModifierType.None;
             var otherModifiersAppearEarlier = false;
-            SyntaxToken previousModifier = default(SyntaxToken);
-            SyntaxToken previousOtherModifier = default(SyntaxToken);
+            SyntaxToken previousModifier = default;
+            SyntaxToken previousOtherModifier = default;
 
             foreach (var modifier in modifiers)
             {
                 var currentModifierType = GetModifierType(modifier);
 
+                bool reportPreviousModifier = false;
+                bool reportPreviousOtherModifier = false;
                 if (CompareModifiersType(currentModifierType, previousModifierType) < 0)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, modifier.GetLocation(), modifier.ValueText, previousModifier.ValueText));
+                    reportPreviousModifier = true;
                 }
 
                 if (AccessOrStaticModifierNotFollowingOtherModifier(currentModifierType, previousModifierType) && otherModifiersAppearEarlier)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, modifier.GetLocation(), modifier.ValueText, previousOtherModifier.ValueText));
+                    reportPreviousOtherModifier = true;
+                }
+
+                if (reportPreviousModifier || reportPreviousOtherModifier)
+                {
+                    // Note: Only report one diagnostic per modifier. If both diagnostics apply, report the diagnostic
+                    // relative to the earlier modifier.
+                    var reportedModifier = reportPreviousModifier && (!reportPreviousOtherModifier || previousModifier.SpanStart < previousOtherModifier.SpanStart)
+                        ? previousModifier.ValueText
+                        : previousOtherModifier.ValueText;
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, modifier.GetLocation(), modifier.ValueText, reportedModifier));
                 }
 
                 if (!otherModifiersAppearEarlier && currentModifierType == ModifierType.Other)
@@ -178,41 +128,6 @@ namespace StyleCop.Analyzers.OrderingRules
                 previousModifierType = currentModifierType;
                 previousModifier = modifier;
             }
-        }
-
-        private static ModifierType GetModifierType(SyntaxToken modifier)
-        {
-            var result = default(ModifierType);
-
-            switch (modifier.Kind())
-            {
-            case SyntaxKind.PublicKeyword:
-            case SyntaxKind.ProtectedKeyword:
-            case SyntaxKind.InternalKeyword:
-            case SyntaxKind.PrivateKeyword:
-                result = ModifierType.Access;
-                break;
-            case SyntaxKind.StaticKeyword:
-                result = ModifierType.Static;
-                break;
-            case SyntaxKind.VirtualKeyword:
-            case SyntaxKind.AbstractKeyword:
-            case SyntaxKind.OverrideKeyword:
-            case SyntaxKind.ExternKeyword:
-            case SyntaxKind.UnsafeKeyword:
-            case SyntaxKind.NewKeyword:
-            case SyntaxKind.SealedKeyword:
-            case SyntaxKind.ReadOnlyKeyword:
-            case SyntaxKind.VolatileKeyword:
-            case SyntaxKind.FixedKeyword:
-            case SyntaxKind.ConstKeyword:
-            case SyntaxKind.AsyncKeyword:
-            case SyntaxKind.PartialKeyword:
-                result = ModifierType.Other;
-                break;
-            }
-
-            return result;
         }
 
         private static int CompareModifiersType(ModifierType first, ModifierType second)
@@ -249,26 +164,6 @@ namespace StyleCop.Analyzers.OrderingRules
             else if (first == ModifierType.Other && (second == ModifierType.Static || second == ModifierType.Access))
             {
                 result = greaterThan;
-            }
-
-            return result;
-        }
-
-        private static string GetModifierTypeText(ModifierType modifierType)
-        {
-            var result = string.Empty;
-
-            switch (modifierType)
-            {
-            case ModifierType.Access:
-                result = "access modifier";
-                break;
-            case ModifierType.Static:
-                result = "static";
-                break;
-            case ModifierType.Other:
-                result = "other";
-                break;
             }
 
             return result;

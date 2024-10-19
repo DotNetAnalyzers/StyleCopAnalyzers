@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Helpers.ObjectPools
 {
@@ -9,7 +11,7 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
     using System.Text;
 
     /// <summary>
-    /// this is RAII object to automatically release pooled object when its owning pool
+    /// this is RAII object to automatically release pooled object when its owning pool.
     /// </summary>
     /// <typeparam name="T">The type of the pooled object.</typeparam>
     internal struct PooledObject<T> : IDisposable

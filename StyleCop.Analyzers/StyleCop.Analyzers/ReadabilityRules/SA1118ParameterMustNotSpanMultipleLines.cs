@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
@@ -11,6 +13,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A parameter to a C# method or indexer, other than the first parameter, spans across multiple lines.
@@ -61,18 +64,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// The ID for diagnostics produced by the <see cref="SA1118ParameterMustNotSpanMultipleLines"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1118";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1118.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1118Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1118MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1118Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1118.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly ImmutableArray<SyntaxKind> BaseArgumentListKinds =
-            ImmutableArray.Create(SyntaxKind.ArgumentList, SyntaxKind.BracketedArgumentList);
-
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> BaseArgumentListAction = HandleBaseArgumentList;
         private static readonly Action<SyntaxNodeAnalysisContext> AttributeArgumentListAction = HandleAttributeArgumentList;
 
@@ -81,7 +80,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
             SyntaxKind.AnonymousMethodExpression,
             SyntaxKind.ParenthesizedLambdaExpression,
             SyntaxKind.SimpleLambdaExpression,
-            SyntaxKind.InvocationExpression
+            SyntaxKind.InvocationExpression,
+            SyntaxKind.ObjectCreationExpression,
+            SyntaxKind.AnonymousObjectCreationExpression,
+            SyntaxKind.ArrayCreationExpression,
+            SyntaxKind.ImplicitArrayCreationExpression,
+            SyntaxKindEx.WithExpression,
+            SyntaxKindEx.ImplicitObjectCreationExpression,
+            SyntaxKindEx.CollectionExpression,
         };
 
         /// <inheritdoc/>
@@ -91,13 +97,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(BaseArgumentListAction, BaseArgumentListKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(AttributeArgumentListAction, SyntaxKind.AttributeArgumentList);
+            context.RegisterSyntaxNodeAction(BaseArgumentListAction, SyntaxKinds.BaseArgumentList);
+            context.RegisterSyntaxNodeAction(AttributeArgumentListAction, SyntaxKind.AttributeArgumentList);
         }
 
         private static void HandleAttributeArgumentList(SyntaxNodeAnalysisContext context)
@@ -135,10 +139,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
             return lineSpan.EndLinePosition.Line > lineSpan.StartLinePosition.Line;
         }
 
-        private static bool IsArgumentOnExceptionList(ExpressionSyntax argumentExpresson)
+        private static bool IsArgumentOnExceptionList(ExpressionSyntax argumentExpression)
         {
-            return argumentExpresson != null
-                && ArgumentExceptionSyntaxKinds.Any(argumentExpresson.IsKind);
+            return argumentExpression != null
+                && ArgumentExceptionSyntaxKinds.Any(argumentExpression.IsKind);
         }
     }
 }

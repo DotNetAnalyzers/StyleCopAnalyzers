@@ -1,21 +1,24 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.SpacingRules.SA1024ColonsMustBeSpacedCorrectly;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.SpacingRules.SA1024ColonsMustBeSpacedCorrectly,
+        StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1024ColonsMustBeSpacedCorrectly"/>
+    /// Unit tests for <see cref="SA1024ColonsMustBeSpacedCorrectly"/>.
     /// </summary>
-    public class SA1024UnitTests : CodeFixVerifier
+    public class SA1024UnitTests
     {
         private const string ExpectedCode = @"using System;
 
@@ -37,6 +40,9 @@ public class Foo<T> : object where T : IFormattable
             case 2:
             case 3:
                 return value;
+            case 4:
+                return (int)Convert.ToDouble($""{3:N}"");
+                return (int)Convert.ToDouble($""{3: N}"");
             default:
                 goto _label;
         }
@@ -70,13 +76,16 @@ public class Foo<T> : object where T/* test */ : IFormattable
             case 2:
             case 3:
                 return value;
+            case 4:
+                return (int)Convert.ToDouble($""{3:N}"");
+                return (int)Convert.ToDouble($""{3: N}"");
             default:
                 goto _label;
         }
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -111,13 +120,16 @@ base()
             case 2:
             case 3:
                 return value;
+            case 4:
+                return (int)Convert.ToDouble($""{3:N}"");
+                return (int)Convert.ToDouble($""{3: N}"");
             default:
                 goto _label;
         }
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -147,6 +159,9 @@ public class Foo<T> :object where T :IFormattable
             case 2:
             case 3:
                 return value;
+            case 4:
+                return (int)Convert.ToDouble($""{3:N}"");
+                return (int)Convert.ToDouble($""{3: N}"");
             default:
                 goto _label;
         }
@@ -155,15 +170,14 @@ public class Foo<T> :object where T :IFormattable
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(3, 21).WithArguments(string.Empty, "followed", string.Empty),
-                this.CSharpDiagnostic().WithLocation(3, 37).WithArguments(string.Empty, "followed", string.Empty),
-                this.CSharpDiagnostic().WithLocation(5, 28).WithArguments(string.Empty, "followed", string.Empty),
-                this.CSharpDiagnostic().WithLocation(8, 23).WithArguments(string.Empty, "followed", string.Empty),
-                this.CSharpDiagnostic().WithLocation(10, 30).WithArguments(string.Empty, "followed", string.Empty),
+                Diagnostic(DescriptorFollowed).WithLocation(3, 21),
+                Diagnostic(DescriptorFollowed).WithLocation(3, 37),
+                Diagnostic(DescriptorFollowed).WithLocation(5, 28),
+                Diagnostic(DescriptorFollowed).WithLocation(8, 23),
+                Diagnostic(DescriptorFollowed).WithLocation(10, 30),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, ExpectedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, ExpectedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -193,6 +207,9 @@ public class Foo<T>: object where T: IFormattable
             case 2:
             case 3:
                 return value;
+            case 4:
+                return (int)Convert.ToDouble($""{3:N}"");
+                return (int)Convert.ToDouble($""{3: N}"");
             default:
                 goto _label;
         }
@@ -201,19 +218,18 @@ public class Foo<T>: object where T: IFormattable
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(3, 20).WithArguments(string.Empty, "preceded", string.Empty),
-                this.CSharpDiagnostic().WithLocation(3, 36).WithArguments(string.Empty, "preceded", string.Empty),
-                this.CSharpDiagnostic().WithLocation(5, 27).WithArguments(string.Empty, "preceded", string.Empty),
-                this.CSharpDiagnostic().WithLocation(8, 22).WithArguments(string.Empty, "preceded", string.Empty),
-                this.CSharpDiagnostic().WithLocation(10, 29).WithArguments(string.Empty, "preceded", string.Empty),
+                Diagnostic(DescriptorPreceded).WithLocation(3, 20),
+                Diagnostic(DescriptorPreceded).WithLocation(3, 36),
+                Diagnostic(DescriptorPreceded).WithLocation(5, 27),
+                Diagnostic(DescriptorPreceded).WithLocation(8, 22),
+                Diagnostic(DescriptorPreceded).WithLocation(10, 29),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, ExpectedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, ExpectedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// Verifies that the analyzer will produce the proper diagnostics when the colons must not preceded by space.
+        /// Verifies that the analyzer will produce the proper diagnostics when the colons should not preceded by space.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -239,6 +255,9 @@ public class Foo<T> : object where T : IFormattable
             case 2:
             case 3 :
                 return value;
+            case 4:
+                return (int)Convert.ToDouble($""{3 :N}"");
+                return (int)Convert.ToDouble($""{3 : N}"");
             default :
                 goto _label;
         }
@@ -247,14 +266,15 @@ public class Foo<T> : object where T : IFormattable
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(10, 19).WithArguments(" not", "preceded", string.Empty),
-                this.CSharpDiagnostic().WithLocation(15, 12).WithArguments(" not", "preceded", string.Empty),
-                this.CSharpDiagnostic().WithLocation(19, 20).WithArguments(" not", "preceded", string.Empty),
-                this.CSharpDiagnostic().WithLocation(21, 21).WithArguments(" not", "preceded", string.Empty),
+                Diagnostic(DescriptorNotPreceded).WithLocation(10, 19),
+                Diagnostic(DescriptorNotPreceded).WithLocation(15, 12),
+                Diagnostic(DescriptorNotPreceded).WithLocation(19, 20),
+                Diagnostic(DescriptorNotPreceded).WithLocation(22, 51),
+                Diagnostic(DescriptorNotPreceded).WithLocation(23, 51),
+                Diagnostic(DescriptorNotPreceded).WithLocation(24, 21),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, ExpectedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, ExpectedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -284,6 +304,9 @@ public class Foo<T>:object where T:IFormattable
             case 2:
             case 3:
                 return value;
+            case 4:
+                return (int)Convert.ToDouble($""{3:N}"");
+                return (int)Convert.ToDouble($""{3: N}"");
             default:
                 goto _label;
         }
@@ -292,32 +315,19 @@ public class Foo<T>:object where T:IFormattable
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(3, 20).WithArguments(string.Empty, "preceded", string.Empty),
-                this.CSharpDiagnostic().WithLocation(3, 20).WithArguments(string.Empty, "followed", string.Empty),
-                this.CSharpDiagnostic().WithLocation(3, 35).WithArguments(string.Empty, "preceded", string.Empty),
-                this.CSharpDiagnostic().WithLocation(3, 35).WithArguments(string.Empty, "followed", string.Empty),
-                this.CSharpDiagnostic().WithLocation(5, 27).WithArguments(string.Empty, "preceded", string.Empty),
-                this.CSharpDiagnostic().WithLocation(5, 27).WithArguments(string.Empty, "followed", string.Empty),
-                this.CSharpDiagnostic().WithLocation(8, 22).WithArguments(string.Empty, "preceded", string.Empty),
-                this.CSharpDiagnostic().WithLocation(8, 22).WithArguments(string.Empty, "followed", string.Empty),
-                this.CSharpDiagnostic().WithLocation(10, 29).WithArguments(string.Empty, "preceded", string.Empty),
-                this.CSharpDiagnostic().WithLocation(10, 29).WithArguments(string.Empty, "followed", string.Empty),
+                Diagnostic(DescriptorPreceded).WithLocation(3, 20),
+                Diagnostic(DescriptorFollowed).WithLocation(3, 20),
+                Diagnostic(DescriptorPreceded).WithLocation(3, 35),
+                Diagnostic(DescriptorFollowed).WithLocation(3, 35),
+                Diagnostic(DescriptorPreceded).WithLocation(5, 27),
+                Diagnostic(DescriptorFollowed).WithLocation(5, 27),
+                Diagnostic(DescriptorPreceded).WithLocation(8, 22),
+                Diagnostic(DescriptorFollowed).WithLocation(8, 22),
+                Diagnostic(DescriptorPreceded).WithLocation(10, 29),
+                Diagnostic(DescriptorFollowed).WithLocation(10, 29),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, ExpectedCode).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1024ColonsMustBeSpacedCorrectly();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new TokenSpacingCodeFixProvider();
+            await VerifyCSharpFixAsync(testCode, expected, ExpectedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

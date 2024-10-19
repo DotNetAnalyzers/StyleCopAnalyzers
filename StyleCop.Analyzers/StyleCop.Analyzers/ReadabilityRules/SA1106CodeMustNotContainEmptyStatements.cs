@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
@@ -9,6 +11,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The C# code contains an extra semicolon.
@@ -24,18 +27,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// The ID for diagnostics produced by the <see cref="SA1106CodeMustNotContainEmptyStatements"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1106";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1106.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1106Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1106MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1106Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1106.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);
 
-        private static readonly ImmutableArray<SyntaxKind> BaseTypeDeclarationKinds =
-            ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EnumDeclaration);
-
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> EmptyStatementAction = HandleEmptyStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> BaseTypeDeclarationAction = HandleBaseTypeDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> NamespaceDeclarationAction = HandleNamespaceDeclaration;
@@ -47,21 +46,20 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(EmptyStatementAction, SyntaxKind.EmptyStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(BaseTypeDeclarationAction, BaseTypeDeclarationKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeAction(EmptyStatementAction, SyntaxKind.EmptyStatement);
+            context.RegisterSyntaxNodeAction(BaseTypeDeclarationAction, SyntaxKinds.BaseTypeDeclaration);
+            context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
         }
 
         private static void HandleBaseTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
             var declaration = (BaseTypeDeclarationSyntax)context.Node;
 
-            if (declaration.SemicolonToken.IsKind(SyntaxKind.SemicolonToken))
+            if (declaration.SemicolonToken.IsKind(SyntaxKind.SemicolonToken)
+                && !declaration.OpenBraceToken.IsKind(SyntaxKind.None))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.SemicolonToken.GetLocation()));
             }
@@ -81,11 +79,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             EmptyStatementSyntax syntax = (EmptyStatementSyntax)context.Node;
 
-            LabeledStatementSyntax labeledStatementSyntax = syntax.Parent as LabeledStatementSyntax;
-            if (labeledStatementSyntax != null)
+            if (syntax.Parent is LabeledStatementSyntax labeledStatementSyntax)
             {
-                BlockSyntax blockSyntax = labeledStatementSyntax.Parent as BlockSyntax;
-                if (blockSyntax != null)
+                if (labeledStatementSyntax.Parent is BlockSyntax blockSyntax)
                 {
                     for (int i = blockSyntax.Statements.Count - 1; i >= 0; i--)
                     {
@@ -106,7 +102,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
             }
 
-            // Code must not contain empty statements
+            // Code should not contain empty statements
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.GetLocation()));
         }
     }

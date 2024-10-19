@@ -1,15 +1,17 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Immutable;
     using System.Linq;
-    using Helpers;
+    using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The <c>&lt;summary&gt;</c> or <c>&lt;content&gt;</c> tag within the documentation header for a C# code element
@@ -17,10 +19,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     /// <remarks>
     /// <para>C# syntax provides a mechanism for inserting documentation for classes and elements directly into the
-    /// code, through the use of XML documentation headers. For an introduction to these headers and a description of
-    /// the header syntax, see the following article:
-    /// <see href="http://msdn.microsoft.com/en-us/magazine/cc302121.aspx">XML Comments Let You Build Documentation
-    /// Directly From Your Visual Studio .NET Source Files</see>.</para>
+    /// code, through the use of XML documentation headers.</para>
     ///
     /// <para>A violation of this rule occurs when the documentation header for a partial element (an element with the
     /// partial attribute) is missing a <c>&lt;summary&gt;</c> or <c>&lt;content&gt;</c> tag, or contains an empty
@@ -51,7 +50,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// When the documentation for this class is built into an SDK, the tool building the documentation will either
     /// choose to use only one part of the documentation for the class and ignore the other parts, or, in some cases, it
     /// may merge the two sources of documentation together, to form a string like: "Documentation for the first part of
-    /// Class1. Documentation for the second part of Class1."</para>
+    /// Class1. Documentation for the second part of Class1.".</para>
     ///
     /// <para>For these reasons, it can be problematic to provide SDK documentation on more than one part of the partial
     /// class. However, it is still advisable to document each part of the class, to increase the readability and
@@ -75,10 +74,10 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1605";
-        private const string Title = "Partial element documentation must have summary";
-        private const string MessageFormat = "Partial element documentation must have summary";
-        private const string Description = "The <summary> or <content> tag within the documentation header for a C# code element is missing or empty.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1605.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1605Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1605MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1605Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -88,14 +87,35 @@ namespace StyleCop.Analyzers.DocumentationRules
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location[] diagnosticLocations)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, bool needsComment, XmlNodeSyntax syntax, XElement completeDocumentation, Location[] diagnosticLocations)
         {
-            if (syntax == null)
+            if (!needsComment)
             {
-                foreach (var location in diagnosticLocations)
+                // A missing summary is allowed for this element.
+                return;
+            }
+
+            if (completeDocumentation != null)
+            {
+                var hasSummaryTag = completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.SummaryXmlTag);
+                var hasContentTag = completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.ContentXmlTag);
+
+                if (hasSummaryTag || hasContentTag)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                    return;
                 }
+            }
+            else
+            {
+                if (syntax != null)
+                {
+                    return;
+                }
+            }
+
+            foreach (var location in diagnosticLocations)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
             }
         }
     }

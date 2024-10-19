@@ -1,18 +1,20 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.NamingRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.NamingRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.NamingRules.SA1306FieldNamesMustBeginWithLowerCaseLetter,
+        StyleCop.Analyzers.NamingRules.RenameToLowerCaseCodeFixProvider>;
 
-    public class SA1306UnitTests : CodeFixVerifier
+    public class SA1306UnitTests
     {
         [Theory]
         [InlineData("const")]
@@ -44,7 +46,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
 string Bar = """", car = """", Dar = """";
 }}";
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -59,7 +61,7 @@ public class TypeName
     event EventHandler Car;
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -72,7 +74,7 @@ public class TypeName
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -89,7 +91,7 @@ public class TypeName
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -114,7 +116,7 @@ public class TypeName
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -151,14 +153,12 @@ string ___Jar;
 
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic().WithArguments("Bar").WithLocation(4, 8),
-                    this.CSharpDiagnostic().WithArguments("Dar").WithLocation(8, 8),
-                    this.CSharpDiagnostic().WithArguments("_Far").WithLocation(12, 8),
-                    this.CSharpDiagnostic().WithArguments("__Har").WithLocation(16, 8),
-                    this.CSharpDiagnostic().WithArguments("___Jar").WithLocation(20, 8),
+                    Diagnostic().WithArguments("Bar").WithLocation(4, 8),
+                    Diagnostic().WithArguments("Dar").WithLocation(8, 8),
+                    Diagnostic().WithArguments("_Far").WithLocation(12, 8),
+                    Diagnostic().WithArguments("__Har").WithLocation(16, 8),
+                    Diagnostic().WithArguments("___Jar").WithLocation(20, 8),
                 };
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class Foo
 {{
@@ -182,8 +182,15 @@ string ___iar;
 string ___jar;
 }}";
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(fixedCode, modifiers), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers)).ConfigureAwait(false);
+            var test = new CSharpTest
+            {
+                TestCode = string.Format(testCode, modifiers),
+                FixedCode = string.Format(fixedCode, modifiers),
+                NumberOfFixAllIterations = 4,
+            };
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -204,11 +211,9 @@ string Bar, car, Dar;
 
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic().WithArguments("Bar").WithLocation(4, 8),
-                    this.CSharpDiagnostic().WithArguments("Dar").WithLocation(4, 18)
+                    Diagnostic().WithArguments("Bar").WithLocation(4, 8),
+                    Diagnostic().WithArguments("Dar").WithLocation(4, 18),
                 };
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class Foo
 {{
@@ -216,7 +221,7 @@ string Bar, car, Dar;
 string bar, car, dar;
 }}";
 
-            await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers)).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(string.Format(testCode, modifiers), expected, string.Format(fixedCode, modifiers), CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -227,7 +232,7 @@ string bar, car, dar;
     public string bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -240,7 +245,7 @@ string bar, car, dar;
     private string ___ = ""qux"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -251,7 +256,7 @@ string bar, car, dar;
     private string someVar_ = ""bar"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -269,11 +274,8 @@ string bar, car, dar;
     private string _test1 = ""test2"";
 }";
 
-            var expected = this.CSharpDiagnostic().WithArguments("_Test").WithLocation(4, 20);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expected = Diagnostic().WithArguments("_Test").WithLocation(4, 20);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -284,17 +286,7 @@ string bar, car, dar;
     string Bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1306FieldNamesMustBeginWithLowerCaseLetter();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new RenameToLowerCaseCodeFixProvider();
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

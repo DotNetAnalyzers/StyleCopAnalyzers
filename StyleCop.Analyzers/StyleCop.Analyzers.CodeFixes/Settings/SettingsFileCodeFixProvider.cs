@@ -1,9 +1,10 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Settings
 {
-    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
@@ -23,8 +24,7 @@ namespace StyleCop.Analyzers.Settings
     [Shared]
     internal class SettingsFileCodeFixProvider : CodeFixProvider
     {
-        private const string StyleCopSettingsFileName = "stylecop.json";
-        private const string DefaultSettingsFileContent = @"{
+        internal const string DefaultSettingsFileContent = @"{
   // ACTION REQUIRED: This file was automatically added to your project, but it
   // will not take effect until additional steps are taken to enable it. See the
   // following page for additional information:
@@ -64,7 +64,7 @@ namespace StyleCop.Analyzers.Settings
             var workspace = project.Solution.Workspace;
 
             // check if the settings file already exists
-            if (project.AdditionalDocuments.Any(IsStyleCopSettingsDocument))
+            if (project.AdditionalDocuments.Any(document => SettingsHelper.IsStyleCopSettingsFile(document.Name)))
             {
                 return SpecializedTasks.CompletedTask;
             }
@@ -80,7 +80,7 @@ namespace StyleCop.Analyzers.Settings
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         SettingsResources.SettingsFileCodeFix,
-                        cancellationToken => GetTransformedSolutionAsync(context.Document, diagnostic, cancellationToken),
+                        cancellationToken => GetTransformedSolutionAsync(context.Document, cancellationToken),
                         nameof(SettingsFileCodeFixProvider)),
                     diagnostic);
             }
@@ -95,19 +95,17 @@ namespace StyleCop.Analyzers.Settings
             return null;
         }
 
-        private static bool IsStyleCopSettingsDocument(TextDocument document)
+        private static Task<Solution> GetTransformedSolutionAsync(Document document, CancellationToken cancellationToken)
         {
-            return string.Equals(document.Name, StyleCopSettingsFileName, StringComparison.OrdinalIgnoreCase);
-        }
+            // Currently unused
+            _ = cancellationToken;
 
-        private static Task<Solution> GetTransformedSolutionAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
-        {
             var project = document.Project;
             var solution = project.Solution;
 
             var newDocumentId = DocumentId.CreateNewId(project.Id);
 
-            var newSolution = solution.AddAdditionalDocument(newDocumentId, StyleCopSettingsFileName, DefaultSettingsFileContent);
+            var newSolution = solution.AddAdditionalDocument(newDocumentId, SettingsHelper.SettingsFileName, DefaultSettingsFileContent);
 
             return Task.FromResult(newSolution);
         }

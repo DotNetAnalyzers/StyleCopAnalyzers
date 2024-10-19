@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test
 {
@@ -21,6 +23,16 @@ namespace StyleCop.Analyzers.Test
             string reason = "Reason";
             var attribute = new NoDiagnosticAttribute(reason);
             Assert.Same(reason, attribute.Reason);
+        }
+
+        [Fact]
+        public void TestWorkItemAttribute()
+        {
+            int id = 1234;
+            string issueUri = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2419";
+            var attribute = new WorkItemAttribute(id, issueUri);
+            Assert.Equal(id, attribute.Id);
+            Assert.Same(issueUri, attribute.Location);
         }
     }
 }

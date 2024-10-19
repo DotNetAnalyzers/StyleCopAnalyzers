@@ -1,21 +1,23 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.ReadabilityRules.SA1133DoNotCombineAttributes,
+        StyleCop.Analyzers.ReadabilityRules.SA1133CodeFixProvider>;
 
     /// <summary>
     /// This class contains unit tests for the <see cref="SA1133DoNotCombineAttributes"/> class.
     /// </summary>
-    public class SA1133UnitTests : CodeFixVerifier
+    public class SA1133UnitTests
     {
         /// <summary>
         /// Verifies that a single attribute will not produce a diagnostic.
@@ -31,7 +33,7 @@ public class TestClass
 {
 }
 ";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -48,7 +50,7 @@ public class TestClass
 {
 }
 ";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -93,13 +95,11 @@ public class TestClass
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(3, 47),
-                this.CSharpDiagnostic().WithLocation(9, 51)
+                Diagnostic().WithLocation(3, 47),
+                Diagnostic().WithLocation(9, 51),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -155,14 +155,12 @@ public class TestClass
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(3, 47),
-                this.CSharpDiagnostic().WithLocation(7, 20),
-                this.CSharpDiagnostic().WithLocation(14, 51)
+                Diagnostic().WithLocation(3, 47),
+                Diagnostic().WithLocation(7, 20),
+                Diagnostic().WithLocation(14, 51),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -205,20 +203,18 @@ public class Ear : Attribute
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(line, column)
+                Diagnostic().WithLocation(line, column),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(codeBefore, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(codeAfter, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(codeBefore, codeAfter).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(codeBefore, expected, codeAfter, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// Regression test for issue 1878 (SA1133CodeFixProvider crash), https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1878
-        /// Fixing exception "Unable to cast object of type 'Microsoft.CodeAnalysis.CSharp.Syntax.AttributeListSyntax' to type 'Microsoft.CodeAnalysis.CSharp.Syntax.AttributeSyntax'."
+        /// Fixing exception "Unable to cast object of type 'Microsoft.CodeAnalysis.CSharp.Syntax.AttributeListSyntax' to type 'Microsoft.CodeAnalysis.CSharp.Syntax.AttributeSyntax'".
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1878, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1878")]
         public async Task TestRegressionIssue1878Async()
         {
             var testCode = @"namespace Stylecop_rc1_bug_repro
@@ -268,20 +264,18 @@ public class Ear : Attribute
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(7, 15)
+                Diagnostic().WithLocation(7, 15),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that attribute list with multiple attributes for (generic) parameters will not produce diagnostics.
-        /// Regression test for #1882
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1882, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1882")]
         public async Task VerifyAttributeListForParametersAsync()
         {
             var testCode = @"using System;
@@ -303,14 +297,15 @@ internal class BarAttribute : Attribute
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// Regression test for issue 1879 (SA1133CodeFixProvider does only half the work), https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1879
+        /// Regression test for "SA1133CodeFixProvider does only half the work".
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1879, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1879")]
         public async Task TestFixAllAsync()
         {
             var testCode = @"
@@ -405,32 +400,61 @@ public enum ImplicitUseKindFlags { Assign }
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(6, 21),
-                this.CSharpDiagnostic().WithLocation(9, 21),
-                this.CSharpDiagnostic().WithLocation(12, 21),
-                this.CSharpDiagnostic().WithLocation(15, 21),
-                this.CSharpDiagnostic().WithLocation(18, 21),
-                this.CSharpDiagnostic().WithLocation(21, 21),
-                this.CSharpDiagnostic().WithLocation(24, 21),
-                this.CSharpDiagnostic().WithLocation(27, 21)
+                Diagnostic().WithLocation(6, 21),
+                Diagnostic().WithLocation(9, 21),
+                Diagnostic().WithLocation(12, 21),
+                Diagnostic().WithLocation(15, 21),
+                Diagnostic().WithLocation(18, 21),
+                Diagnostic().WithLocation(21, 21),
+                Diagnostic().WithLocation(24, 21),
+                Diagnostic().WithLocation(27, 21),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
-            await this.VerifyCSharpFixAllFixAsync(testCode, fixedTestCode, maxNumberOfIterations: 1).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        /// <summary>
+        /// Regression test for "whitespace is preserved incorrectly".
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(1883, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1883")]
+        public async Task TestWhitespaceIsHandledCorrectlyAsync()
         {
-            return new SA1133CodeFixProvider();
-        }
+            var testCode = @"
+namespace SA1133CodeFix
+{
+    using System.ComponentModel;
+    using System.Diagnostics.CodeAnalysis;
 
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1133DoNotCombineAttributes();
+    [DefaultValue(true),
+    SuppressMessage(null, null)]
+    internal class Foo
+    {
+    }
+}
+";
+
+            var fixedTestCode = @"
+namespace SA1133CodeFix
+{
+    using System.ComponentModel;
+    using System.Diagnostics.CodeAnalysis;
+
+    [DefaultValue(true)]
+    [SuppressMessage(null, null)]
+    internal class Foo
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(8, 5),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

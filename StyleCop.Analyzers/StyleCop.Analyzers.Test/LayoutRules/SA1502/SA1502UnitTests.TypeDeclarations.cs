@@ -1,43 +1,39 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.LayoutRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
-    using TestHelper;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1502ElementMustNotBeOnASingleLine,
+        StyleCop.Analyzers.LayoutRules.SA1502CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for the type declaration part of <see cref="SA1502ElementMustNotBeOnASingleLine"/>.
     /// </summary>
-    public partial class SA1502UnitTests : CodeFixVerifier
+    public partial class SA1502UnitTests
     {
-        public static IEnumerable<object[]> TokensToTest
-        {
-            get
-            {
-                yield return new[] { "class" };
-                yield return new[] { "struct" };
-            }
-        }
-
         /// <summary>
         /// Verifies that a correct empty type will pass without diagnostic.
         /// </summary>
         /// <param name="token">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TokensToTest))]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestValidEmptyTypeAsync(string token)
         {
             var testCode = @"public ##PH## Foo 
 {
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, token), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, token), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -46,13 +42,13 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="token">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TokensToTest))]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestEmptyTypeOnSingleLineAsync(string token)
         {
             var testCode = "public ##PH## Foo { }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(1, 13 + token.Length);
-            await this.VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, token), expected, CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(1, 13 + token.Length);
+            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, token), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -61,13 +57,13 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="token">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TokensToTest))]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeOnSingleLineAsync(string token)
         {
             var testCode = "public ##PH## Foo { private int bar; }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(1, 13 + token.Length);
-            await this.VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, token), expected, CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(1, 13 + token.Length);
+            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, token), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -76,14 +72,14 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="token">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TokensToTest))]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeWithBlockOnSingleLineAsync(string token)
         {
             var testCode = @"public ##PH## Foo
 { private int bar; }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(2, 1);
-            await this.VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, token), expected, CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(2, 1);
+            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, token), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -92,14 +88,14 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="token">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TokensToTest))]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeWithBlockStartOnSameLineAsync(string token)
         {
             var testCode = @"public ##PH## Foo { 
     private int bar; 
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, token), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, token), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -108,7 +104,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="token">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TokensToTest))]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestEmptyTypeOnSingleLineCodeFixAsync(string token)
         {
             var testCode = "public ##PH## Foo { }";
@@ -117,7 +113,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 }
 ";
 
-            await this.VerifyCSharpFixAsync(FormatTestCode(testCode, token), FormatTestCode(fixedTestCode, token)).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(1, 13 + token.Length);
+            await VerifyCSharpFixAsync(FormatTestCode(testCode, token), expected, FormatTestCode(fixedTestCode, token), CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -126,7 +123,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="token">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TokensToTest))]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeOnSingleLineCodeFixAsync(string token)
         {
             var testCode = "public ##PH## Foo { private int bar; }";
@@ -136,7 +133,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 }
 ";
 
-            await this.VerifyCSharpFixAsync(FormatTestCode(testCode, token), FormatTestCode(fixedTestCode, token)).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(1, 13 + token.Length);
+            await VerifyCSharpFixAsync(FormatTestCode(testCode, token), expected, FormatTestCode(fixedTestCode, token), CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -145,7 +143,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="token">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TokensToTest))]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeOnSingleLineWithMultipleStatementsCodeFixAsync(string token)
         {
             var testCode = "public ##PH## Foo { private int bar; private bool baz; }";
@@ -155,7 +153,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 }
 ";
 
-            await this.VerifyCSharpFixAsync(FormatTestCode(testCode, token), FormatTestCode(fixedTestCode, token)).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(1, 13 + token.Length);
+            await VerifyCSharpFixAsync(FormatTestCode(testCode, token), expected, FormatTestCode(fixedTestCode, token), CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -164,7 +163,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="token">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TokensToTest))]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeWithBlockOnSingleLineCodeFixAsync(string token)
         {
             var testCode = @"public ##PH## Foo
@@ -175,7 +174,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 }
 ";
 
-            await this.VerifyCSharpFixAsync(FormatTestCode(testCode, token), FormatTestCode(fixedTestCode, token)).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(2, 1);
+            await VerifyCSharpFixAsync(FormatTestCode(testCode, token), expected, FormatTestCode(fixedTestCode, token), CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -184,7 +184,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <param name="token">The type of element to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TokensToTest))]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeWithLotsOfTriviaCodeFixAsync(string token)
         {
             var testCode = @"public ##PH## Foo /* TR1 */ { /* TR2 */ private int bar; /* TR3 */ private int baz; /* TR4 */ } /* TR5 */";
@@ -194,7 +194,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 } /* TR5 */
 ";
 
-            await this.VerifyCSharpFixAsync(FormatTestCode(testCode, token), FormatTestCode(fixedTestCode, token)).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(1, 23 + token.Length);
+            await VerifyCSharpFixAsync(FormatTestCode(testCode, token), expected, FormatTestCode(fixedTestCode, token), CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

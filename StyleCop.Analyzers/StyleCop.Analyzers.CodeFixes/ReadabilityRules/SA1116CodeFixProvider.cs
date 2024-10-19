@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
@@ -7,12 +9,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using System.Composition;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Text;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1116SplitParametersMustStartOnLineAfterDeclaration"/>.
@@ -70,11 +72,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
             }
 
-            IndentationOptions indentationOptions = IndentationOptions.FromDocument(document);
+            var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, tree, cancellationToken);
             SyntaxTriviaList newTrivia =
                 SyntaxFactory.TriviaList(
                     SyntaxFactory.CarriageReturnLineFeed,
-                    SyntaxFactory.Whitespace(lineText.Substring(0, indentLength) + IndentationHelper.GenerateIndentationString(indentationOptions, 1)));
+                    SyntaxFactory.Whitespace(lineText.Substring(0, indentLength) + IndentationHelper.GenerateIndentationString(settings.Indentation, 1)));
 
             SyntaxToken updatedToken = originalToken.WithLeadingTrivia(originalToken.LeadingTrivia.AddRange(newTrivia));
             SyntaxNode updatedRoot = root.ReplaceToken(originalToken, updatedToken);

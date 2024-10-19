@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
@@ -9,6 +11,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Store files as UTF-8 with byte order mark.
@@ -28,18 +31,17 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// <see cref="SA1412StoreFilesAsUtf8"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1412";
-        private const string Title = "Store files as UTF-8 with byte order mark";
-        private const string MessageFormat = "Store files as UTF-8 with byte order mark";
-        private const string Description = "Source files should be saved using the UTF-8 encoding with a byte order mark";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1412.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(MaintainabilityResources.SA1412Title), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(MaintainabilityResources.SA1412MessageFormat), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(MaintainabilityResources.SA1412Description), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
 
-        private static byte[] utf8Preamble = Encoding.UTF8.GetPreamble();
+        private static readonly byte[] Utf8Preamble = Encoding.UTF8.GetPreamble();
 
         /// <summary>
         /// Gets the key for the detected encoding name in the <see cref="Diagnostic.Properties"/> collection.
@@ -56,16 +58,20 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxTreeActionHonorExclusions(SyntaxTreeAction);
+            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
         }
 
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
+            if (context.Tree.IsWhitespaceOnly(context.CancellationToken))
+            {
+                // Handling of empty documents is now the responsibility of the analyzers
+                return;
+            }
+
             byte[] preamble = context.Tree.Encoding.GetPreamble();
 
             if (!IsUtf8Preamble(preamble))
@@ -77,15 +83,15 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
         private static bool IsUtf8Preamble(byte[] preamble)
         {
-            if (preamble == null || preamble.Length != utf8Preamble.Length)
+            if (preamble == null || preamble.Length != Utf8Preamble.Length)
             {
                 return false;
             }
             else
             {
-                for (int i = 0; i < utf8Preamble.Length; i++)
+                for (int i = 0; i < Utf8Preamble.Length; i++)
                 {
-                    if (utf8Preamble[i] != preamble[i])
+                    if (Utf8Preamble[i] != preamble[i])
                     {
                         return false;
                     }

@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Helpers
 {
@@ -86,14 +88,13 @@ namespace StyleCop.Analyzers.Helpers
                 // GetStructure() returns SyntaxNode instead of StructuredTriviaSyntax. For C# code, this should always
                 // be an actual instance of StructuredTriviaSyntax, but we handle the case where it is not by leaving
                 // the structure node unaltered rather than throwing some sort of exception.
-                StructuredTriviaSyntax structure = trivia.GetStructure() as StructuredTriviaSyntax;
-                if (structure != null)
+                if (trivia.GetStructure() is StructuredTriviaSyntax structure)
                 {
                     result = SyntaxFactory.Trivia(structure.WithoutFormatting());
                 }
             }
 
-            return WithoutFormattingImpl(trivia);
+            return WithoutFormattingImpl(result);
         }
 
         /// <summary>

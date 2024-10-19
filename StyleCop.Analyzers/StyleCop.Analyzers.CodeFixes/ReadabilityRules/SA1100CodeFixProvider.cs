@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
@@ -8,12 +10,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using System.Composition;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Text;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// This class provides a code fix for <see cref="SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists"/>.
@@ -51,26 +54,22 @@ namespace StyleCop.Analyzers.ReadabilityRules
             return SpecializedTasks.CompletedTask;
         }
 
-        private static SyntaxToken GetBaseKeywordToken(SyntaxNode root, TextSpan sourceSpan)
+        private static BaseExpressionSyntax GetBaseExpressionNode(SyntaxNode root, TextSpan sourceSpan)
         {
-            return root.FindToken(sourceSpan.Start);
+            return (BaseExpressionSyntax)root.FindToken(sourceSpan.Start).Parent;
         }
 
-        private static SyntaxToken RewriteBaseAsThis(SyntaxToken token)
+        private static ThisExpressionSyntax RewriteBaseAsThis(BaseExpressionSyntax token)
         {
-            // By creating a `base` token with the literal text `this`, we can replace a token with the code fix instead
-            // of replacing an entire syntax node. This improves the performance of the code fix, but the resulting tree
-            // could be considered in a bad state. However, this is not a problem under any interpretation of the result
-            // because SA1100 is only reported in cases where `base.` and `this.` have the same meaning.
-            return SyntaxFactory.Token(token.LeadingTrivia, SyntaxKind.BaseKeyword, "this", "this", token.TrailingTrivia);
+            return SyntaxFactory.ThisExpression(SyntaxFactory.Token(SyntaxKind.ThisKeyword).WithTriviaFrom(token.Token));
         }
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var token = GetBaseKeywordToken(root, diagnostic.Location.SourceSpan);
+            var node = GetBaseExpressionNode(root, diagnostic.Location.SourceSpan);
 
-            SyntaxNode newSyntaxRoot = root.ReplaceToken(token, RewriteBaseAsThis(token));
+            SyntaxNode newSyntaxRoot = root.ReplaceNode(node, RewriteBaseAsThis(node));
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
 
@@ -82,9 +81,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             protected override string CodeActionTitle
                 => ReadabilityResources.SA1100CodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
-                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
                 if (diagnostics.IsEmpty)
                 {
                     return null;
@@ -92,13 +90,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
 
-                List<SyntaxToken> tokensToReplace = new List<SyntaxToken>(diagnostics.Length);
+                List<BaseExpressionSyntax> nodesToReplace = new List<BaseExpressionSyntax>(diagnostics.Length);
                 foreach (var diagnostic in diagnostics)
                 {
-                    tokensToReplace.Add(GetBaseKeywordToken(syntaxRoot, diagnostic.Location.SourceSpan));
+                    nodesToReplace.Add(GetBaseExpressionNode(syntaxRoot, diagnostic.Location.SourceSpan));
                 }
 
-                return syntaxRoot.ReplaceTokens(tokensToReplace, (originalToken, rewrittenToken) => RewriteBaseAsThis(rewrittenToken));
+                return syntaxRoot.ReplaceNodes(nodesToReplace, (originalNode, rewrittenNode) => RewriteBaseAsThis(rewrittenNode));
             }
         }
     }

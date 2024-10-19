@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
@@ -9,19 +11,19 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1133DoNotCombineAttributes"/>.
     /// </summary>
     /// <remarks>
-    /// The SA1133 code fix adds the new lines to make sure that it doesn't immediately introduces a SA1134 after code fixing,
-    /// but it will not / should not attempt to fix any preexisting SA1134 cases.
+    /// <para>The SA1133 code fix adds the new lines to make sure that it doesn't immediately introduces a SA1134 after
+    /// code fixing, but it will not / should not attempt to fix any preexisting SA1134 cases.</para>
     /// </remarks>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1133CodeFixProvider))]
     [Shared]
@@ -59,9 +61,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var nodeInSourceSpan = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
             AttributeListSyntax attributeList = nodeInSourceSpan.FirstAncestorOrSelf<AttributeListSyntax>();
 
-            var indentationOptions = IndentationOptions.FromDocument(document);
-            var indentationSteps = IndentationHelper.GetIndentationSteps(indentationOptions, attributeList);
-            var indentationTrivia = IndentationHelper.GenerateWhitespaceTrivia(indentationOptions, indentationSteps);
+            var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
+            var indentationSteps = IndentationHelper.GetIndentationSteps(settings.Indentation, attributeList);
+            var indentationTrivia = IndentationHelper.GenerateWhitespaceTrivia(settings.Indentation, indentationSteps);
 
             List<AttributeListSyntax> newAttributeLists = GetNewAttributeList(attributeList, indentationTrivia);
 
@@ -77,7 +79,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             for (var i = 0; i < attributeList.Attributes.Count; i++)
             {
-                var newAttributes = SyntaxFactory.SingletonSeparatedList(attributeList.Attributes[i]);
+                var newAttributes = SyntaxFactory.SingletonSeparatedList(
+                    attributeList.Attributes[i].WithLeadingTrivia(
+                        attributeList.Attributes[i].GetLeadingTrivia().WithoutLeadingWhitespace()));
                 var newAttributeList = SyntaxFactory.AttributeList(attributeList.Target, newAttributes);
 
                 newAttributeList = (i == 0)
@@ -102,25 +106,26 @@ namespace StyleCop.Analyzers.ReadabilityRules
             protected override string CodeActionTitle =>
                 ReadabilityResources.SA1133CodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
-                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
                 if (diagnostics.IsEmpty)
                 {
                     return null;
                 }
 
-                var indentationOptions = IndentationOptions.FromDocument(document);
                 var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, fixAllContext.CancellationToken);
 
-                var nodes = diagnostics.Select(diagnostic => syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true).FirstAncestorOrSelf<AttributeListSyntax>());
+                // 🐉 Need to eagerly evaluate this with ToList() to ensure nodes are not garbage collected between the
+                // call to TrackNodes and subsequent enumeration.
+                var nodes = diagnostics.Select(diagnostic => syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true).FirstAncestorOrSelf<AttributeListSyntax>()).ToList();
 
                 var newRoot = syntaxRoot.TrackNodes(nodes);
 
                 foreach (var attributeList in nodes)
                 {
-                    var indentationSteps = IndentationHelper.GetIndentationSteps(indentationOptions, attributeList);
-                    var indentationTrivia = IndentationHelper.GenerateWhitespaceTrivia(indentationOptions, indentationSteps);
+                    var indentationSteps = IndentationHelper.GetIndentationSteps(settings.Indentation, attributeList);
+                    var indentationTrivia = IndentationHelper.GenerateWhitespaceTrivia(settings.Indentation, indentationSteps);
                     newRoot = newRoot.ReplaceNode(newRoot.GetCurrentNode(attributeList), GetNewAttributeList(attributeList, indentationTrivia));
                 }
 

@@ -1,17 +1,19 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
     using System.Collections.Immutable;
-    using System.IO;
     using System.Linq;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -33,15 +35,14 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// </summary>
         internal const string ExpectedFileNameKey = "ExpectedFileName";
 
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1649.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1649Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1649MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1649Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
-        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1649.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxTreeAnalysisContext, StyleCopSettings> SyntaxTreeAction = Analyzer.HandleSyntaxTree;
 
         /// <inheritdoc/>
@@ -51,12 +52,13 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxTreeActionHonorExclusions(SyntaxTreeAction);
+            context.RegisterCompilationStartAction(context =>
+            {
+                context.RegisterSyntaxTreeAction(SyntaxTreeAction);
+            });
         }
 
         private static class Analyzer
@@ -71,7 +73,8 @@ namespace StyleCop.Analyzers.DocumentationRules
                     return;
                 }
 
-                if (firstTypeDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                var modifiers = (firstTypeDeclaration as BaseTypeDeclarationSyntax)?.Modifiers ?? SyntaxFactory.TokenList();
+                if (modifiers.Any(SyntaxKind.PartialKeyword))
                 {
                     return;
                 }
@@ -91,15 +94,31 @@ namespace StyleCop.Analyzers.DocumentationRules
                     var properties = ImmutableDictionary.Create<string, string>()
                         .Add(ExpectedFileNameKey, expectedFileName + suffix);
 
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstTypeDeclaration.Identifier.GetLocation(), properties));
+                    var identifier = (firstTypeDeclaration as BaseTypeDeclarationSyntax)?.Identifier
+                        ?? ((DelegateDeclarationSyntax)firstTypeDeclaration).Identifier;
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), properties));
                 }
             }
 
-            private static TypeDeclarationSyntax GetFirstTypeDeclaration(SyntaxNode root)
+            private static MemberDeclarationSyntax GetFirstTypeDeclaration(SyntaxNode root)
             {
-                return root.DescendantNodes(descendIntoChildren: node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration))
+                // Prefer to find the first type which is a true TypeDeclarationSyntax
+                MemberDeclarationSyntax firstTypeDeclaration = root.DescendantNodes(descendIntoChildren: node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration) || node.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration))
                     .OfType<TypeDeclarationSyntax>()
                     .FirstOrDefault();
+
+                // If no TypeDeclarationSyntax is found, expand the search to any type declaration as long as only one
+                // is present
+                var expandedTypeDeclarations = root.DescendantNodes(descendIntoChildren: node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration) || node.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration))
+                    .OfType<MemberDeclarationSyntax>()
+                    .Where(node => node is BaseTypeDeclarationSyntax || node.IsKind(SyntaxKind.DelegateDeclaration))
+                    .ToList();
+                if (expandedTypeDeclarations.Count == 1)
+                {
+                    firstTypeDeclaration = expandedTypeDeclarations[0];
+                }
+
+                return firstTypeDeclaration;
             }
         }
     }

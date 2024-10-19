@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.NamingRules
 {
@@ -7,10 +9,10 @@ namespace StyleCop.Analyzers.NamingRules
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1308VariableNamesMustNotBePrefixed"/>.
@@ -42,18 +44,12 @@ namespace StyleCop.Analyzers.NamingRules
             {
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
 
-                // The variable name is the full suffix. In this case we cannot generate a valid variable name and thus will not offer a code fix.
-                if (token.ValueText.Length <= 2)
-                {
-                    continue;
-                }
-
-                var numberOfCharsToRemove = 2;
+                var numberOfCharsToRemove = 0;
 
                 // If a variable contains multiple prefixes that would result in this diagnostic,
                 // we detect that and remove all of the bad prefixes such that after
                 // the fix is applied there are no more violations of this rule.
-                for (int i = 2; i < token.ValueText.Length; i += 2)
+                for (int i = 0; i < token.ValueText.Length; i += 2)
                 {
                     if (string.Compare("m_", 0, token.ValueText, i, 2, StringComparison.Ordinal) == 0
                         || string.Compare("s_", 0, token.ValueText, i, 2, StringComparison.Ordinal) == 0
@@ -66,16 +62,19 @@ namespace StyleCop.Analyzers.NamingRules
                     break;
                 }
 
-                if (!string.IsNullOrEmpty(token.ValueText))
+                // The prefix is the full variable name. In this case we cannot generate a valid variable name and thus will not offer a code fix.
+                if (token.ValueText.Length == numberOfCharsToRemove)
                 {
-                    var newName = token.ValueText.Substring(numberOfCharsToRemove);
-                    context.RegisterCodeFix(
-                        CodeAction.Create(
-                            string.Format(NamingResources.RenameToCodeFix, newName),
-                            cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken),
-                            nameof(SA1308CodeFixProvider)),
-                        diagnostic);
+                    continue;
                 }
+
+                var newName = token.ValueText.Substring(numberOfCharsToRemove);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        string.Format(NamingResources.RenameToCodeFix, newName),
+                        cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken),
+                        nameof(SA1308CodeFixProvider)),
+                    diagnostic);
             }
         }
     }

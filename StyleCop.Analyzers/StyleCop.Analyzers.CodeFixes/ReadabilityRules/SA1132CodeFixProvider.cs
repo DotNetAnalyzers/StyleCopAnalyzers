@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
@@ -9,13 +11,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using System.Composition;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1132DoNotCombineFields"/>.
@@ -63,7 +65,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 var editor = new SyntaxEditor(syntaxRoot, document.Project.Solution.Workspace);
                 editor.InsertAfter(baseFieldDeclaration, newFieldDeclarations);
-                editor.RemoveNode(baseFieldDeclaration);
+                editor.RemoveNode(baseFieldDeclaration, SyntaxRemoveOptions.KeepNoTrivia);
                 return document.WithSyntaxRoot(editor.GetChangedRoot().WithoutFormatting());
             }
 
@@ -72,8 +74,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static List<BaseFieldDeclarationSyntax> SplitDeclaration(Document document, BaseFieldDeclarationSyntax baseFieldDeclaration)
         {
-            var fieldDeclaration = baseFieldDeclaration as FieldDeclarationSyntax;
-            if (fieldDeclaration != null)
+            if (baseFieldDeclaration is FieldDeclarationSyntax fieldDeclaration)
             {
                 return DeclarationSplitter(
                     document,
@@ -82,8 +83,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     fieldDeclaration.SemicolonToken.TrailingTrivia);
             }
 
-            var eventFieldDeclaration = baseFieldDeclaration as EventFieldDeclarationSyntax;
-            if (eventFieldDeclaration != null)
+            if (baseFieldDeclaration is EventFieldDeclarationSyntax eventFieldDeclaration)
             {
                 return DeclarationSplitter(
                     document,
@@ -118,6 +118,27 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     if (variable != first)
                     {
                         var triviaList = previous.GetLeadingTrivia().WithoutDirectiveTrivia();
+
+                        // Remove all leading blank lines
+                        var nonBlankLinetriviaIndex = TriviaHelper.IndexOfFirstNonBlankLineTrivia(triviaList);
+                        if (nonBlankLinetriviaIndex > 0)
+                        {
+                            triviaList = triviaList.RemoveRange(0, nonBlankLinetriviaIndex);
+                        }
+
+                        // Add a blank line if the first line contains a comment.
+                        var nonWhitespaceTriviaIndex = TriviaHelper.IndexOfFirstNonWhitespaceTrivia(triviaList, false);
+                        if (nonWhitespaceTriviaIndex >= 0)
+                        {
+                            switch (triviaList[nonWhitespaceTriviaIndex].Kind())
+                            {
+                            case SyntaxKind.SingleLineCommentTrivia:
+                            case SyntaxKind.MultiLineCommentTrivia:
+                                triviaList = triviaList.Insert(0, SyntaxFactory.CarriageReturnLineFeed);
+                                break;
+                            }
+                        }
+
                         previous = previous.WithLeadingTrivia(triviaList);
                     }
                 }

@@ -1,19 +1,23 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.LayoutRules
 {
+    using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1501StatementMustNotBeOnASingleLine"/>.
@@ -29,7 +33,7 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
@@ -37,6 +41,11 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             foreach (Diagnostic diagnostic in context.Diagnostics)
             {
+                if (diagnostic.Properties.GetValueOrDefault(SA1501StatementMustNotBeOnASingleLine.SuppressCodeFixKey) == SA1501StatementMustNotBeOnASingleLine.SuppressCodeFixValue)
+                {
+                    continue;
+                }
+
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         LayoutResources.SA1501CodeFix,
@@ -51,123 +60,88 @@ namespace StyleCop.Analyzers.LayoutRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var statement = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) as StatementSyntax;
-            if (statement == null)
+            var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
+            if (!(syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) is StatementSyntax statement))
             {
                 return document;
             }
 
-            SyntaxNode newSyntaxRoot;
-            BlockSyntax block = statement as BlockSyntax;
-            if (block != null)
-            {
-                newSyntaxRoot = ReformatBlockAndParent(document, syntaxRoot, block);
-            }
-            else
-            {
-                newSyntaxRoot = ReformatStatementAndParent(document, syntaxRoot, statement);
-            }
+            var tokenReplaceMap = new Dictionary<SyntaxToken, SyntaxToken>();
 
-            var newDocument = document.WithSyntaxRoot(newSyntaxRoot);
+            ReformatStatementAndSurroundings(statement, settings.Indentation, tokenReplaceMap);
+
+            var newSyntaxRoot = syntaxRoot.ReplaceTokens(tokenReplaceMap.Keys, (original, rewritten) => tokenReplaceMap[original]);
+            var newDocument = document.WithSyntaxRoot(newSyntaxRoot.WithoutFormatting());
             return newDocument;
         }
 
-        private static SyntaxNode ReformatBlockAndParent(Document document, SyntaxNode syntaxRoot, BlockSyntax block)
+        private static void ReformatStatementAndSurroundings(StatementSyntax statement, IndentationSettings indentationSettings, Dictionary<SyntaxToken, SyntaxToken> tokenReplaceMap)
         {
-            var parentLastToken = block.OpenBraceToken.GetPreviousToken();
+            var block = statement as BlockSyntax;
 
-            var parentEndLine = parentLastToken.GetEndLine();
-            var blockStartLine = block.OpenBraceToken.GetLine();
-
-            var newParentLastToken = parentLastToken;
-            if (parentEndLine == blockStartLine)
-            {
-                var newTrailingTrivia = parentLastToken.TrailingTrivia
-                    .WithoutTrailingWhitespace()
-                    .Add(SyntaxFactory.CarriageReturnLineFeed);
-
-                newParentLastToken = newParentLastToken.WithTrailingTrivia(newTrailingTrivia);
-            }
-
-            var parentNextToken = block.CloseBraceToken.GetNextToken();
-
-            var nextTokenLine = parentNextToken.GetLine();
-            var blockCloseLine = block.CloseBraceToken.GetEndLine();
-
-            var newParentNextToken = parentNextToken;
-            if (nextTokenLine == blockCloseLine)
-            {
-                newParentNextToken = newParentNextToken.WithLeadingTrivia(parentLastToken.LeadingTrivia);
-            }
-
-            var newBlock = ReformatBlock(document, block);
-            var rewriter = new BlockRewriter(parentLastToken, newParentLastToken, block, newBlock, parentNextToken, newParentNextToken);
-
-            var newSyntaxRoot = rewriter.Visit(syntaxRoot);
-            return newSyntaxRoot.WithoutFormatting();
-        }
-
-        private static SyntaxNode ReformatStatementAndParent(Document document, SyntaxNode syntaxRoot, StatementSyntax statement)
-        {
-            var parentLastToken = statement.GetFirstToken().GetPreviousToken();
-
-            var parentEndLine = parentLastToken.GetEndLine();
+            var previousToken = statement.GetFirstToken().GetPreviousToken();
+            var previousTokenEndLine = previousToken.GetEndLine();
             var statementStartLine = statement.GetFirstToken().GetLine();
 
-            var newParentLastToken = parentLastToken;
-            if (parentEndLine == statementStartLine)
+            if (previousTokenEndLine == statementStartLine)
             {
-                var newTrailingTrivia = parentLastToken.TrailingTrivia
+                var newTrailingTrivia = previousToken.TrailingTrivia
                     .WithoutTrailingWhitespace()
                     .Add(SyntaxFactory.CarriageReturnLineFeed);
 
-                newParentLastToken = newParentLastToken.WithTrailingTrivia(newTrailingTrivia);
+                AddToReplaceMap(tokenReplaceMap, previousToken, previousToken.WithTrailingTrivia(newTrailingTrivia));
             }
 
-            var parentNextToken = statement.GetLastToken().GetNextToken();
-
-            var nextTokenLine = parentNextToken.GetLine();
-            var statementCloseLine = statement.GetLastToken().GetEndLine();
-
-            var newParentNextToken = parentNextToken;
-            if (nextTokenLine == statementCloseLine)
+            if (block != null)
             {
-                var indentationOptions = IndentationOptions.FromDocument(document);
-                var parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationOptions, GetStatementParent(statement.Parent));
-                var indentationString = IndentationHelper.GenerateIndentationString(indentationOptions, parentIndentationLevel);
-                newParentNextToken = newParentNextToken.WithLeadingTrivia(SyntaxFactory.Whitespace(indentationString));
+                ReformatBlock(indentationSettings, block, tokenReplaceMap);
+            }
+            else
+            {
+                ReformatStatement(indentationSettings, statement, tokenReplaceMap);
             }
 
-            var newStatement = ReformatStatement(document, statement);
-            var newSyntaxRoot = syntaxRoot.ReplaceSyntax(
-                new[] { statement },
-                (originalNode, rewrittenNode) => originalNode == statement ? newStatement : rewrittenNode,
-                new[] { parentLastToken, parentNextToken },
-                (originalToken, rewrittenToken) =>
-                {
-                    if (originalToken == parentLastToken)
-                    {
-                        return newParentLastToken;
-                    }
-                    else if (originalToken == parentNextToken)
-                    {
-                        return newParentNextToken;
-                    }
-                    else
-                    {
-                        return rewrittenToken;
-                    }
-                },
-                Enumerable.Empty<SyntaxTrivia>(),
-                (originalTrivia, rewrittenTrivia) => rewrittenTrivia);
+            var nextToken = statement.GetLastToken().GetNextToken();
+            if ((block != null) && nextToken.IsKind(SyntaxKind.SemicolonToken))
+            {
+                // skip trailing semicolon tokens for blocks
+                nextToken = nextToken.GetNextToken();
+            }
 
-            return newSyntaxRoot.WithoutFormatting();
+            var nextTokenStartLine = nextToken.GetLine();
+            var statementEndLine = statement.GetLastToken().GetEndLine();
+
+            if (nextTokenStartLine == statementEndLine)
+            {
+                var indentationLevel = DetermineIndentationLevel(indentationSettings, tokenReplaceMap, statement);
+                var indentationTrivia = IndentationHelper.GenerateWhitespaceTrivia(indentationSettings, indentationLevel);
+
+                AddToReplaceMap(tokenReplaceMap, nextToken, nextToken.WithLeadingTrivia(indentationTrivia));
+            }
         }
 
-        private static BlockSyntax ReformatBlock(Document document, BlockSyntax block)
+        private static int DetermineIndentationLevel(IndentationSettings indentationSettings, Dictionary<SyntaxToken, SyntaxToken> tokenReplaceMap, StatementSyntax statement)
         {
-            var indentationOptions = IndentationOptions.FromDocument(document);
-            var parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationOptions, GetStatementParent(block.Parent));
+            var parent = GetStatementParent(statement.Parent);
+            int parentIndentationLevel;
+
+            SyntaxToken replacementToken;
+            if (tokenReplaceMap.TryGetValue(parent.GetFirstToken(), out replacementToken))
+            {
+                // if the parent is being modified, use the new leading trivia from the parent for determining the indentation
+                parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationSettings, replacementToken);
+            }
+            else
+            {
+                parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationSettings, GetFirstOnLineParent(parent));
+            }
+
+            return parentIndentationLevel;
+        }
+
+        private static void ReformatBlock(IndentationSettings indentationSettings, BlockSyntax block, Dictionary<SyntaxToken, SyntaxToken> tokenReplaceMap)
+        {
+            var parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationSettings, GetStatementParent(block.Parent));
 
             // use one additional step of indentation for lambdas / anonymous methods
             switch (block.Parent.Kind())
@@ -179,8 +153,8 @@ namespace StyleCop.Analyzers.LayoutRules
                 break;
             }
 
-            var indentationString = IndentationHelper.GenerateIndentationString(indentationOptions, parentIndentationLevel);
-            var statementIndentationString = IndentationHelper.GenerateIndentationString(indentationOptions, parentIndentationLevel + 1);
+            var indentationString = IndentationHelper.GenerateIndentationString(indentationSettings, parentIndentationLevel);
+            var statementIndentationString = IndentationHelper.GenerateIndentationString(indentationSettings, parentIndentationLevel + 1);
 
             var newOpenBraceLeadingTrivia = block.OpenBraceToken.LeadingTrivia
                 .WithoutTrailingWhitespace()
@@ -215,39 +189,30 @@ namespace StyleCop.Analyzers.LayoutRules
                 newCloseBraceTrailingTrivia = newCloseBraceTrailingTrivia.Add(SyntaxFactory.CarriageReturnLineFeed);
             }
 
-            var openBraceToken = SyntaxFactory.Token(SyntaxKind.OpenBraceToken)
-                .WithLeadingTrivia(newOpenBraceLeadingTrivia)
-                .WithTrailingTrivia(newOpenBraceTrailingTrivia);
+            AddToReplaceMap(tokenReplaceMap, block.OpenBraceToken, block.OpenBraceToken.WithLeadingTrivia(newOpenBraceLeadingTrivia).WithTrailingTrivia(newOpenBraceTrailingTrivia));
+            AddToReplaceMap(tokenReplaceMap, block.CloseBraceToken, block.CloseBraceToken.WithLeadingTrivia(newCloseBraceLeadingTrivia).WithTrailingTrivia(newCloseBraceTrailingTrivia));
 
-            var closeBraceToken = SyntaxFactory.Token(SyntaxKind.CloseBraceToken)
-                .WithLeadingTrivia(newCloseBraceLeadingTrivia)
-                .WithTrailingTrivia(newCloseBraceTrailingTrivia);
-
-            var statements = SyntaxFactory.List<StatementSyntax>();
             foreach (var statement in block.Statements)
             {
-                var newLeadingTrivia = statement.GetLeadingTrivia()
+                var firstToken = statement.GetFirstToken();
+                var lastToken = statement.GetLastToken();
+
+                var newLeadingTrivia = firstToken.LeadingTrivia
                     .WithoutTrailingWhitespace()
                     .Add(SyntaxFactory.Whitespace(statementIndentationString));
 
-                var newTrailingTrivia = statement.GetTrailingTrivia()
+                var newTrailingTrivia = lastToken.TrailingTrivia
                     .WithoutTrailingWhitespace()
                     .Add(SyntaxFactory.CarriageReturnLineFeed);
 
-                var modifiedStatement = statement
-                    .WithLeadingTrivia(newLeadingTrivia)
-                    .WithTrailingTrivia(newTrailingTrivia);
-
-                statements = statements.Add(modifiedStatement);
+                AddToReplaceMap(tokenReplaceMap, firstToken, firstToken.WithLeadingTrivia(newLeadingTrivia));
+                AddToReplaceMap(tokenReplaceMap, lastToken, lastToken.WithTrailingTrivia(newTrailingTrivia));
             }
-
-            return SyntaxFactory.Block(openBraceToken, statements, closeBraceToken);
         }
 
-        private static StatementSyntax ReformatStatement(Document document, StatementSyntax statement)
+        private static void ReformatStatement(IndentationSettings indentationSettings, StatementSyntax statement, Dictionary<SyntaxToken, SyntaxToken> tokenReplaceMap)
         {
-            var indentationOptions = IndentationOptions.FromDocument(document);
-            var parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationOptions, GetStatementParent(statement.Parent));
+            var indentationLevel = DetermineIndentationLevel(indentationSettings, tokenReplaceMap, statement);
 
             // use one additional step of indentation for lambdas / anonymous methods
             switch (statement.Parent.Kind())
@@ -255,40 +220,43 @@ namespace StyleCop.Analyzers.LayoutRules
             case SyntaxKind.AnonymousMethodExpression:
             case SyntaxKind.SimpleLambdaExpression:
             case SyntaxKind.ParenthesizedLambdaExpression:
-                parentIndentationLevel++;
+                indentationLevel++;
                 break;
             }
 
-            var statementIndentationString = IndentationHelper.GenerateIndentationString(indentationOptions, parentIndentationLevel + 1);
+            var statementIndentationTrivia = IndentationHelper.GenerateWhitespaceTrivia(indentationSettings, indentationLevel + 1);
 
             var newFirstTokenLeadingTrivia = statement.GetFirstToken().LeadingTrivia
                 .WithoutTrailingWhitespace()
-                .Add(SyntaxFactory.Whitespace(statementIndentationString));
+                .Add(statementIndentationTrivia);
 
             var newLastTokenTrailingTrivia = statement.GetLastToken().TrailingTrivia
                 .WithoutTrailingWhitespace()
                 .Add(SyntaxFactory.CarriageReturnLineFeed);
 
-            var firstToken = statement.GetFirstToken().WithLeadingTrivia(newFirstTokenLeadingTrivia);
-            var lastToken = statement.GetLastToken().WithTrailingTrivia(newLastTokenTrailingTrivia);
+            AddToReplaceMap(tokenReplaceMap, statement.GetFirstToken(), statement.GetFirstToken().WithLeadingTrivia(newFirstTokenLeadingTrivia));
+            AddToReplaceMap(tokenReplaceMap, statement.GetLastToken(), statement.GetLastToken().WithTrailingTrivia(newLastTokenTrailingTrivia));
+        }
 
-            return statement.ReplaceTokens(
-                new[] { statement.GetFirstToken(), statement.GetLastToken() },
-                (originalToken, rewrittenToken) =>
-                {
-                    if (originalToken == statement.GetFirstToken())
-                    {
-                        return firstToken;
-                    }
-                    else if (originalToken == statement.GetLastToken())
-                    {
-                        return lastToken;
-                    }
-                    else
-                    {
-                        return rewrittenToken;
-                    }
-                });
+        private static void AddToReplaceMap(Dictionary<SyntaxToken, SyntaxToken> tokenReplaceMap, SyntaxToken original, SyntaxToken replacement)
+        {
+            SyntaxToken existingReplacement;
+            SyntaxToken reprocessedReplacement = replacement;
+
+            // Check if there is already a replacement for the token. If so -> merge the replacements.
+            // This assumes that the overlapping token replacements do not overlap in trivia replacements.
+            if (tokenReplaceMap.TryGetValue(original, out existingReplacement))
+            {
+                reprocessedReplacement = AreTriviaEqual(original.LeadingTrivia, existingReplacement.LeadingTrivia) ? replacement : existingReplacement;
+                reprocessedReplacement = reprocessedReplacement.WithTrailingTrivia(AreTriviaEqual(original.TrailingTrivia, existingReplacement.TrailingTrivia) ? replacement.TrailingTrivia : existingReplacement.TrailingTrivia);
+            }
+
+            tokenReplaceMap[original] = reprocessedReplacement;
+        }
+
+        private static bool AreTriviaEqual(SyntaxTriviaList left, SyntaxTriviaList right)
+        {
+            return string.Equals(left.ToString(), right.ToString(), StringComparison.Ordinal);
         }
 
         private static SyntaxNode GetStatementParent(SyntaxNode node)
@@ -307,48 +275,60 @@ namespace StyleCop.Analyzers.LayoutRules
             return statementSyntax;
         }
 
-        private class BlockRewriter : CSharpSyntaxRewriter
+        private static SyntaxNode GetFirstOnLineParent(SyntaxNode parent)
         {
-            private readonly SyntaxToken parentToken;
-            private readonly SyntaxToken newParentToken;
-            private readonly BlockSyntax block;
-            private readonly BlockSyntax newBlock;
-            private readonly SyntaxToken nextToken;
-            private readonly SyntaxToken newNextToken;
-
-            public BlockRewriter(SyntaxToken parentToken, SyntaxToken newParentToken, BlockSyntax block, BlockSyntax newBlock, SyntaxToken nextToken, SyntaxToken newNextToken)
+            // if the parent is not the first on a line, find the parent that is.
+            // This mainly happens for 'else if' statements.
+            while (!parent.GetFirstToken().IsFirstInLine())
             {
-                this.parentToken = parentToken;
-                this.newParentToken = newParentToken;
-                this.block = block;
-                this.newBlock = newBlock;
-                this.nextToken = nextToken;
-                this.newNextToken = newNextToken;
+                parent = parent.Parent;
             }
 
-            public override SyntaxToken VisitToken(SyntaxToken token)
+            return parent;
+        }
+
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; } =
+                new FixAll();
+
+            protected override string CodeActionTitle =>
+                LayoutResources.SA1501CodeFixAll;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
-                if (token == this.parentToken)
+                if (diagnostics.IsEmpty)
                 {
-                    return this.newParentToken;
+                    return null;
                 }
 
-                if (token == this.nextToken)
+                var tokenReplaceMap = new Dictionary<SyntaxToken, SyntaxToken>();
+                SyntaxNode syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, fixAllContext.CancellationToken);
+
+                foreach (var diagnostic in diagnostics.Sort(DiagnosticComparer.Instance))
                 {
-                    return this.newNextToken;
+                    if (!(syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) is StatementSyntax statement))
+                    {
+                        continue;
+                    }
+
+                    ReformatStatementAndSurroundings(statement, settings.Indentation, tokenReplaceMap);
                 }
 
-                return base.VisitToken(token);
+                var newSyntaxRoot = syntaxRoot.ReplaceTokens(tokenReplaceMap.Keys, (original, rewritten) => tokenReplaceMap[original]);
+                return newSyntaxRoot.WithoutFormatting();
             }
 
-            public override SyntaxNode VisitBlock(BlockSyntax node)
+            private class DiagnosticComparer : IComparer<Diagnostic>
             {
-                if (node == this.block)
-                {
-                    return this.newBlock;
-                }
+                public static DiagnosticComparer Instance { get; } = new DiagnosticComparer();
 
-                return base.VisitBlock(node);
+                /// <inheritdoc/>
+                public int Compare(Diagnostic x, Diagnostic y)
+                {
+                    return x.Location.SourceSpan.Start - y.Location.SourceSpan.Start;
+                }
             }
         }
     }

@@ -1,13 +1,18 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.LayoutRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1500BracesForMultiLineStatementsMustNotShareLine,
+        StyleCop.Analyzers.LayoutRules.SA1500CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1500BracesForMultiLineStatementsMustNotShareLine"/>.
@@ -18,7 +23,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// Verifies that no diagnostics are reported for the valid switch statements defined in this test.
         /// </summary>
         /// <remarks>
-        /// These are valid for SA1500 only, some will report other diagnostics outside of the unit test scenario.
+        /// <para>These are valid for SA1500 only, some will report other diagnostics outside of the unit test
+        /// scenario.</para>
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -46,7 +52,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -138,25 +144,23 @@ namespace StyleCop.Analyzers.Test.LayoutRules
             DiagnosticResult[] expectedDiagnostics =
             {
                 // invalid switch #1
-                this.CSharpDiagnostic().WithLocation(8, 25),
+                Diagnostic().WithLocation(8, 25),
 
                 // invalid switch #2
-                this.CSharpDiagnostic().WithLocation(14, 25),
-                this.CSharpDiagnostic().WithLocation(16, 24),
+                Diagnostic().WithLocation(14, 25),
+                Diagnostic().WithLocation(16, 24),
 
                 // invalid switch #3
-                this.CSharpDiagnostic().WithLocation(19, 25),
+                Diagnostic().WithLocation(19, 25),
 
                 // invalid switch #4
-                this.CSharpDiagnostic().WithLocation(27, 24),
+                Diagnostic().WithLocation(27, 24),
 
                 // invalid switch #5
-                this.CSharpDiagnostic().WithLocation(31, 9)
+                Diagnostic().WithLocation(31, 9),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

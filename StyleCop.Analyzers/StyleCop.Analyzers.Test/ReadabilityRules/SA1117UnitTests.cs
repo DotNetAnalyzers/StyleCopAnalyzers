@@ -1,50 +1,92 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.ReadabilityRules;
-    using TestHelper;
+    using Microsoft.CodeAnalysis.Testing;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.ReadabilityRules.SA1117ParametersMustBeOnSameLineOrSeparateLines>;
 
-    public class SA1117UnitTests : DiagnosticVerifier
+    public class SA1117UnitTests
     {
         public static IEnumerable<object[]> GetTestDeclarations(string delimiter)
         {
-            yield return new object[] { $"public Foo(int a, int b,{delimiter} string s) {{ }}" };
-            yield return new object[] { $"public object Bar(int a, int b,{delimiter} string s) => null;" };
-            yield return new object[] { $"public object this[int a, int b,{delimiter} string s] => null;" };
-            yield return new object[] { $"public delegate void Bar(int a, int b,{delimiter} string s);" };
+            yield return new object[] { $"public Foo(int a, int b,{delimiter} {{|#0:string s|}}) {{ }}" };
+            yield return new object[] { $"public object Bar(int a, int b,{delimiter} {{|#0:string s|}}) => null;" };
+            yield return new object[] { $"public object this[int a, int b,{delimiter} {{|#0:string s|}}] => null;" };
+            yield return new object[] { $"public delegate void Bar(int a, int b,{delimiter} {{|#0:string s|}});" };
+        }
+
+        public static IEnumerable<object[]> GetMultilineTestDeclarations(string delimiter)
+        {
+            yield return new object[] { $"public Foo(int a,{delimiter} string\r\ns) {{ }}" };
+            yield return new object[] { $"public object Bar(int a,{delimiter} string\r\ns) => null;" };
+            yield return new object[] { $"public object this[int a,{delimiter} string\r\ns] => null;" };
+            yield return new object[] { $"public delegate void Bar(int a,{delimiter} string\r\ns);" };
         }
 
         public static IEnumerable<object[]> GetTestConstructorInitializers(string delimiter)
         {
-            yield return new object[] { $"this(42, 43, {delimiter} \"hello\")" };
-            yield return new object[] { $"base(42, 43, {delimiter} \"hello\")" };
+            yield return new object[] { $"this(42, 43, {delimiter} {{|#0:\"hello\"|}})" };
+            yield return new object[] { $"base(42, 43, {delimiter} {{|#0:\"hello\"|}})" };
+        }
+
+        public static IEnumerable<object[]> GetMultilineTestConstructorInitializers(string delimiter)
+        {
+            yield return new object[] { $"this(42\r\n+ 1, {delimiter} {{|#0:43|}}, {delimiter} \"hello\")" };
+            yield return new object[] { $"base(42\r\n+ 1, {delimiter} {{|#0:43|}}, {delimiter} \"hello\")" };
         }
 
         public static IEnumerable<object[]> GetTestExpressions(string delimiter)
         {
-            yield return new object[] { $"Bar(1, 2, {delimiter} 2)", 13 };
-            yield return new object[] { $"System.Action<int, int, int> func = (int x, int y, {delimiter} int z) => Bar(x, y, z)", 41 };
-            yield return new object[] { $"System.Action<int, int, int> func = delegate(int x, int y, {delimiter} int z) {{ Bar(x, y, z); }}", 49 };
-            yield return new object[] { $"new System.DateTime(2015, 9, {delimiter} 14)", 20 };
-            yield return new object[] { $"var arr = new string[2, 2, {delimiter} 2];", 30 };
-            yield return new object[] { $"char cc = (new char[3, 3, 3])[2, 2,{delimiter} 2];", 36 };
-            yield return new object[] { $"char? c = (new char[3, 3, 3])?[2, 2,{delimiter} 2];", 37 };
-            yield return new object[] { $"long ll = this[2, 2,{delimiter} 2];", 24 };
+            yield return new object[] { $"Bar(1, 2, {delimiter} {{|#0:2|}})" };
+            yield return new object[] { $"System.Action<int, int, int> func = (int x, int y, {delimiter} {{|#0:int z|}}) => Bar(x, y, z)" };
+            yield return new object[] { $"System.Action<int, int, int> func = delegate(int x, int y, {delimiter} {{|#0:int z|}}) {{ Bar(x, y, z); }}" };
+            yield return new object[] { $"new System.DateTime(2015, 9, {delimiter} {{|#0:14|}})" };
+            yield return new object[] { $"var arr = new string[2, 2, {delimiter} {{|#0:2|}}];" };
+            yield return new object[] { $"char cc = (new char[3, 3, 3])[2, 2,{delimiter} {{|#0:2|}}];" };
+            yield return new object[] { $"char? c = (new char[3, 3, 3])?[2, 2,{delimiter} {{|#0:2|}}];" };
+            yield return new object[] { $"long ll = this[2, 2,{delimiter} {{|#0:2|}}];" };
+        }
+
+        public static IEnumerable<object[]> GetTrailingMultilineTestExpressions(string delimiter)
+        {
+            yield return new object[] { $"System.Action<int, int, int> func = (int x, {delimiter} int y, {delimiter} int\r\nz) => Bar(x, y, z)" };
+            yield return new object[] { $"System.Action<int, int, int> func = delegate(int x, {delimiter} int y, {delimiter} int\r\nz) {{ Bar(x, y, z); }}" };
+            yield return new object[] { $"var arr = new string[2, {delimiter} 2\r\n+ 2];" };
+            yield return new object[] { $"char cc = (new char[3, 3])[2, {delimiter} 2\r\n+ 2];" };
+            yield return new object[] { $"char? c = (new char[3, 3])?[2, {delimiter} 2\r\n+ 2];" };
+            yield return new object[] { $"long ll = this[2,{delimiter} 2,{delimiter} 2\r\n+ 1];" };
+            yield return new object[] { $"var str = string.Join(\r\n\"def\",{delimiter}\"abc\"\r\n + \"cba\");" };
+        }
+
+        public static IEnumerable<object[]> GetLeadingMultilineTestExpressions(string delimiter)
+        {
+            yield return new object[] { $"var str = string.Join(\r\n\"abc\"\r\n + \"cba\",{delimiter}{{|#0:\"def\"|}});" };
+            yield return new object[] { $"Bar(\r\n1\r\n + 2,{delimiter}{{|#0:3|}},\r\n 4);" };
+        }
+
+        public static IEnumerable<object[]> GetTestAttributes(string delimiter)
+        {
+            yield return new object[] { $"[MyAttribute(1, {delimiter}2, {{|#0:3|}})]" };
+        }
+
+        public static IEnumerable<object[]> GetMultilineTestAttributes(string delimiter)
+        {
+            yield return new object[] { $"[MyAttribute(1, {delimiter}2, {delimiter}3\r\n+ 5)]" };
         }
 
         public static IEnumerable<object[]> ValidTestExpressions()
         {
-            yield return new object[] { $"System.Action func = () => Bar(0, 2, 3)", 0 };
-            yield return new object[] { $"System.Action<int> func = x => Bar(x, 2, 3)", 0 };
-            yield return new object[] { $"System.Action func = delegate {{ Bar(0, 0, 0); }}", 0 };
-            yield return new object[] { "var weird = new int[10][,,,];", 0 };
+            yield return new object[] { $"System.Action func = () => Bar(0, 2, 3)" };
+            yield return new object[] { $"System.Action<int> func = x => Bar(x, 2, 3)" };
+            yield return new object[] { $"System.Action func = delegate {{ Bar(0, 0, 0); }}" };
+            yield return new object[] { "var weird = new int[10][,,,];" };
         }
 
         public static IEnumerable<object[]> ValidTestDeclarations()
@@ -52,19 +94,39 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             yield return new object[]
             {
                 $@"public Foo(
-    int a, int b, string s) {{ }}"
+    int a, int b, string s) {{ }}",
             };
             yield return new object[]
             {
                 $@"public Foo(
     int a,
     int b,
-    string s) {{ }}"
+    string s) {{ }}",
+            };
+        }
+
+        public static IEnumerable<object[]> ValidTestAttribute()
+        {
+            // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1211
+            yield return new object[] { @"[System.Obsolete]" };
+            yield return new object[]
+            {
+                @"[MyAttribute(
+    1, 2, 3)]",
+            };
+            yield return new object[]
+            {
+                @"[MyAttribute(
+    1,
+    2,
+    3)]",
             };
         }
 
         [Theory]
         [MemberData(nameof(GetTestDeclarations), "")]
+        [MemberData(nameof(GetMultilineTestDeclarations), "\r\n")]
+        [MemberData(nameof(GetMultilineTestDeclarations), "")]
         [MemberData(nameof(ValidTestDeclarations))]
         public async Task TestValidDeclarationAsync(string declaration)
         {
@@ -73,7 +135,7 @@ class Foo
 {{
     {declaration}
 }}";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -86,12 +148,13 @@ class Foo
     {declaration}
 }}";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 2);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
         [MemberData(nameof(GetTestConstructorInitializers), "")]
+        [MemberData(nameof(GetMultilineTestConstructorInitializers), "\r\n")]
         public async Task TestValidConstructorInitializerAsync(string initializer)
         {
             var testCode = $@"
@@ -115,11 +178,12 @@ class Derived : Base
     }}
 }}";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
         [MemberData(nameof(GetTestConstructorInitializers), "\r\n")]
+        [MemberData(nameof(GetMultilineTestConstructorInitializers), "")]
         public async Task TestInvalidConstructorInitializerAsync(string initializer)
         {
             var testCode = $@"
@@ -143,14 +207,17 @@ class Derived : Base
     }}
 }}";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(13, 2);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
         [MemberData(nameof(GetTestExpressions), "")]
+        [MemberData(nameof(GetLeadingMultilineTestExpressions), "\r\n")]
+        [MemberData(nameof(GetTrailingMultilineTestExpressions), "\r\n")]
+        [MemberData(nameof(GetTrailingMultilineTestExpressions), "")]
         [MemberData(nameof(ValidTestExpressions))]
-        public async Task TestValidExpressionAsync(string expression, int column)
+        public async Task TestValidExpressionAsync(string expression)
         {
             var testCode = $@"
 class Foo
@@ -167,12 +234,13 @@ class Foo
     public long this[int a, int b, int s] => a + b + s;
 }}";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
         [MemberData(nameof(GetTestExpressions), "\r\n")]
-        public async Task TestInvalidExpressionAsync(string expression, int column)
+        [MemberData(nameof(GetLeadingMultilineTestExpressions), "")]
+        public async Task TestInvalidExpressionAsync(string expression)
         {
             var testCode = $@"
 class Foo
@@ -189,63 +257,55 @@ class Foo
     public long this[int a, int b, int s] => a + b + s;
 }}";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(11, 2);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestValidAttributeAsync()
+        [Theory]
+        [MemberData(nameof(GetTestAttributes), "")]
+        [MemberData(nameof(GetMultilineTestAttributes), "\r\n")]
+        [MemberData(nameof(GetMultilineTestAttributes), "")]
+        [MemberData(nameof(ValidTestAttribute))]
+        public async Task TestValidAttributeAsync(string attribute)
         {
-            var testCode = @"
+            var testCode = $@"
 [System.AttributeUsage(System.AttributeTargets.Class)]
 public class MyAttribute : System.Attribute
-{
+{{
     public MyAttribute(int a, int b, int c)
-    {
-    }
-}
+    {{
+    }}
+}}
 
-[MyAttribute(1, 2, 3)]
+{attribute}
 class Foo
-{
-}
+{{
+}}";
 
-// This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1211
-[System.Obsolete]
-class ObsoleteType
-{
-}";
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestInvalidAttributeAsync()
+        [Theory]
+        [MemberData(nameof(GetTestAttributes), "\r\n")]
+        public async Task TestInvalidAttributeAsync(string attribute)
         {
-            var testCode = @"
+            var testCode = $@"
 [System.AttributeUsage(System.AttributeTargets.Class)]
 public class MyAttribute : System.Attribute
-{
+{{
     public MyAttribute(int a, int b, int c)
-    {
-    }
-}
+    {{
+    }}
+}}
 
-[MyAttribute(
-    1,
-    2, 3)]
+{attribute}
 class Foo
-{
-}";
+{{
+}}";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(12, 8);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
 
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1117ParametersMustBeOnSameLineOrSeparateLines();
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

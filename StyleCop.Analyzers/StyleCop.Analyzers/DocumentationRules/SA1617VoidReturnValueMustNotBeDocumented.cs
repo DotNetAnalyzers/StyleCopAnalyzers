@@ -1,10 +1,14 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Linq;
+    using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -17,10 +21,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     /// <remarks>
     /// <para>C# syntax provides a mechanism for inserting documentation for classes and elements directly into the
-    /// code, through the use of XML documentation headers. For an introduction to these headers and a description of
-    /// the header syntax, see the following article:
-    /// <see href="http://msdn.microsoft.com/en-us/magazine/cc302121.aspx">XML Comments Let You Build Documentation
-    /// Directly From Your Visual Studio .NET Source Files</see>.</para>
+    /// code, through the use of XML documentation headers.</para>
     ///
     /// <para>A violation of this rule occurs if an element which returns <c>void</c> contains a <c>&lt;returns&gt;</c>
     /// tag within its documentation header.</para>
@@ -32,17 +33,24 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// The ID for diagnostics produced by the <see cref="SA1617VoidReturnValueMustNotBeDocumented"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1617";
-        private const string Title = "Void return value must not be documented";
-        private const string MessageFormat = "Void return value must not be documented";
-        private const string Description = "A C# code element does not contain a return value, or returns void, but the documentation header for the element contains a <returns> tag.";
+
+        /// <summary>
+        /// The key used for signalling that no codefix should be offered.
+        /// </summary>
+        internal const string NoCodeFixKey = "NoCodeFix";
+
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1617.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1617Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1617MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1617Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> MethodDeclarationAction = HandleMethodDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> DelegateDeclarationAction = HandleDelegateDeclaration;
+
+        private static readonly ImmutableDictionary<string, string> NoCodeFixProperties = ImmutableDictionary.Create<string, string>().Add(NoCodeFixKey, string.Empty);
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -51,46 +59,71 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(DelegateDeclarationAction, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeAction(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(DelegateDeclarationAction, SyntaxKind.DelegateDeclaration);
         }
 
         private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var methodDeclaration = context.Node as MethodDeclarationSyntax;
-            HandleMember(context, methodDeclaration?.ReturnType);
+            var methodDeclaration = (MethodDeclarationSyntax)context.Node;
+            HandleMember(context, methodDeclaration.ReturnType);
         }
 
         private static void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var delegateDeclaration = context.Node as DelegateDeclarationSyntax;
+            var delegateDeclaration = (DelegateDeclarationSyntax)context.Node;
             HandleMember(context, delegateDeclaration?.ReturnType);
         }
 
         private static void HandleMember(SyntaxNodeAnalysisContext context, TypeSyntax returnValue)
         {
             var documentation = context.Node.GetDocumentationCommentTriviaSyntax();
-
-            if (context.Node != null && documentation != null)
+            if (documentation == null)
             {
-                var returnType = returnValue as PredefinedTypeSyntax;
+                return;
+            }
 
-                // Check if the return type is void.
-                if (returnType != null && returnType.Keyword.IsKind(SyntaxKind.VoidKeyword))
+            // Check if the return type is void.
+            if (!(returnValue is PredefinedTypeSyntax returnType) || !returnType.Keyword.IsKind(SyntaxKind.VoidKeyword))
+            {
+                return;
+            }
+
+            // Check if the return value is documented
+            var returnsElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.ReturnsXmlTag);
+            if (returnsElement == null)
+            {
+                var includeElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag);
+                if (includeElement != null)
                 {
-                    // Check if the return value is documented
-                    var returnsElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.ReturnsXmlTag);
-
-                    if (returnsElement != null)
+                    string rawDocumentation;
+                    var declaration = context.SemanticModel.GetDeclaredSymbol(context.Node, context.CancellationToken);
+                    if (declaration == null)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, returnsElement.GetLocation()));
+                        return;
+                    }
+
+                    rawDocumentation = declaration.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
+                    var completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
+                    if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.InheritdocXmlTag))
+                    {
+                        // Ignore nodes with an <inheritdoc/> tag in the included XML.
+                        return;
+                    }
+
+                    var includedReturnsElement = completeDocumentation.Nodes().OfType<XElement>().FirstOrDefault(element => element.Name == XmlCommentHelper.ReturnsXmlTag);
+                    if (includedReturnsElement != null)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, includeElement.GetLocation(), NoCodeFixProperties));
                     }
                 }
+            }
+            else
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, returnsElement.GetLocation()));
             }
         }
     }

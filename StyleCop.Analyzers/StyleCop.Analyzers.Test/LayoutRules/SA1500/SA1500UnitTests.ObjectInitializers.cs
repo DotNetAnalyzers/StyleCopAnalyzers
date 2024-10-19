@@ -1,13 +1,18 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.LayoutRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1500BracesForMultiLineStatementsMustNotShareLine,
+        StyleCop.Analyzers.LayoutRules.SA1500CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1500BracesForMultiLineStatementsMustNotShareLine"/>.
@@ -18,7 +23,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// Verifies that no diagnostics are reported for the valid object initializers defined in this test.
         /// </summary>
         /// <remarks>
-        /// These are valid for SA1500 only, some will report other diagnostics.
+        /// <para>These are valid for SA1500 only, some will report other diagnostics.</para>
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -137,7 +142,7 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -384,59 +389,57 @@ public class Foo
             DiagnosticResult[] expectedDiagnostics =
             {
                 // Invalid object initializer #1
-                this.CSharpDiagnostic().WithLocation(14, 32),
-                this.CSharpDiagnostic().WithLocation(14, 34),
-                this.CSharpDiagnostic().WithLocation(14, 36),
+                Diagnostic().WithLocation(14, 32),
+                Diagnostic().WithLocation(14, 34),
+                Diagnostic().WithLocation(14, 36),
 
                 // Invalid object initializer #2
-                this.CSharpDiagnostic().WithLocation(18, 5),
-                this.CSharpDiagnostic().WithLocation(19, 9),
-                this.CSharpDiagnostic().WithLocation(21, 13),
+                Diagnostic().WithLocation(18, 5),
+                Diagnostic().WithLocation(19, 9),
+                Diagnostic().WithLocation(21, 13),
 
                 // Invalid object initializer #3
-                this.CSharpDiagnostic().WithLocation(28, 41),
-                this.CSharpDiagnostic().WithLocation(29, 21),
-                this.CSharpDiagnostic().WithLocation(31, 28),
+                Diagnostic().WithLocation(28, 41),
+                Diagnostic().WithLocation(29, 21),
+                Diagnostic().WithLocation(31, 28),
 
                 // Invalid object initializer #4
-                this.CSharpDiagnostic().WithLocation(49, 36),
-                this.CSharpDiagnostic().WithLocation(49, 38),
-                this.CSharpDiagnostic().WithLocation(49, 40),
+                Diagnostic().WithLocation(49, 36),
+                Diagnostic().WithLocation(49, 38),
+                Diagnostic().WithLocation(49, 40),
 
                 // Invalid object initializer #5
-                this.CSharpDiagnostic().WithLocation(53, 9),
-                this.CSharpDiagnostic().WithLocation(54, 13),
-                this.CSharpDiagnostic().WithLocation(56, 17),
+                Diagnostic().WithLocation(53, 9),
+                Diagnostic().WithLocation(54, 13),
+                Diagnostic().WithLocation(56, 17),
 
                 // Invalid object initializer #6
-                this.CSharpDiagnostic().WithLocation(63, 31),
-                this.CSharpDiagnostic().WithLocation(64, 25),
-                this.CSharpDiagnostic().WithLocation(66, 32),
+                Diagnostic().WithLocation(63, 31),
+                Diagnostic().WithLocation(64, 25),
+                Diagnostic().WithLocation(66, 32),
 
                 // Invalid object initializer #7
-                this.CSharpDiagnostic().WithLocation(79, 32),
-                this.CSharpDiagnostic().WithLocation(79, 34),
+                Diagnostic().WithLocation(79, 32),
+                Diagnostic().WithLocation(79, 34),
 
                 // Invalid object initializer #8
-                this.CSharpDiagnostic().WithLocation(83, 9),
-                this.CSharpDiagnostic().WithLocation(85, 13),
+                Diagnostic().WithLocation(83, 9),
+                Diagnostic().WithLocation(85, 13),
 
                 // Invalid object initializer #9
-                this.CSharpDiagnostic().WithLocation(90, 29),
-                this.CSharpDiagnostic().WithLocation(92, 34)
+                Diagnostic().WithLocation(90, 29),
+                Diagnostic().WithLocation(92, 34),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that complex element initializers are handled properly.
-        /// Regression for #1679
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1679, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1679")]
         public async Task TestComplexElementInitializerAsync()
         {
             var testCode = @"using System.Collections.Generic;
@@ -486,19 +489,17 @@ public class TestClass
             DiagnosticResult[] expected =
             {
                 // Invalid object initializer #1
-                this.CSharpDiagnostic().WithLocation(6, 67),
+                Diagnostic().WithLocation(6, 67),
 
                 // Invalid object initializer #2
-                this.CSharpDiagnostic().WithLocation(13, 18),
+                Diagnostic().WithLocation(13, 18),
 
                 // Invalid object initializer #3
-                this.CSharpDiagnostic().WithLocation(16, 67),
-                this.CSharpDiagnostic().WithLocation(17, 18)
+                Diagnostic().WithLocation(16, 67),
+                Diagnostic().WithLocation(17, 18),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

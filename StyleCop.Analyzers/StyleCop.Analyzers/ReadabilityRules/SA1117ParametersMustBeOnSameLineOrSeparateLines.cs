@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
@@ -10,6 +12,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// The parameters to a C# method or indexer call or declaration are not all on the same line or each on a separate
@@ -53,10 +56,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1117";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1117.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1117Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1117MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1117Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1117.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -64,16 +67,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly ImmutableArray<SyntaxKind> BaseMethodDeclarationKinds =
             ImmutableArray.Create(SyntaxKind.ConstructorDeclaration, SyntaxKind.MethodDeclaration);
 
-        private static readonly ImmutableArray<SyntaxKind> ConstructorInitializerKinds =
-            ImmutableArray.Create(SyntaxKind.BaseConstructorInitializer, SyntaxKind.ThisConstructorInitializer);
-
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> BaseMethodDeclarationAction = HandleBaseMethodDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> LocalFunctionStatementAction = HandleLocalFunctionStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> ConstructorInitializerAction = HandleConstructorInitializer;
         private static readonly Action<SyntaxNodeAnalysisContext> DelegateDeclarationAction = HandleDelegateDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> IndexerDeclarationAction = HandleIndexerDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> InvocationExpressionAction = HandleInvocationExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> ObjectCreationExpressionAction = HandleObjectCreationExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> ImplicitObjectCreationExpressionAction = HandleImplicitObjectCreationExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> ElementAccessExpressionAction = HandleElementAccessExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> ElementBindingExpressionAction = HandleElementBindingExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> ArrayCreationExpressionAction = HandleArrayCreationExpression;
@@ -88,29 +89,35 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(BaseMethodDeclarationAction, BaseMethodDeclarationKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(ConstructorInitializerAction, ConstructorInitializerKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(DelegateDeclarationAction, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(IndexerDeclarationAction, SyntaxKind.IndexerDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(InvocationExpressionAction, SyntaxKind.InvocationExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(ObjectCreationExpressionAction, SyntaxKind.ObjectCreationExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(ElementAccessExpressionAction, SyntaxKind.ElementAccessExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(ElementBindingExpressionAction, SyntaxKind.ElementBindingExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(ArrayCreationExpressionAction, SyntaxKind.ArrayCreationExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(AttributeAction, SyntaxKind.Attribute);
-            context.RegisterSyntaxNodeActionHonorExclusions(AnonymousMethodExpressionAction, SyntaxKind.AnonymousMethodExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(ParenthesizedLambdaExpressionAction, SyntaxKind.ParenthesizedLambdaExpression);
+            context.RegisterSyntaxNodeAction(BaseMethodDeclarationAction, BaseMethodDeclarationKinds);
+            context.RegisterSyntaxNodeAction(LocalFunctionStatementAction, SyntaxKindEx.LocalFunctionStatement);
+            context.RegisterSyntaxNodeAction(ConstructorInitializerAction, SyntaxKinds.ConstructorInitializer);
+            context.RegisterSyntaxNodeAction(DelegateDeclarationAction, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeAction(IndexerDeclarationAction, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeAction(InvocationExpressionAction, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeAction(ObjectCreationExpressionAction, SyntaxKind.ObjectCreationExpression);
+            context.RegisterSyntaxNodeAction(ImplicitObjectCreationExpressionAction, SyntaxKindEx.ImplicitObjectCreationExpression);
+            context.RegisterSyntaxNodeAction(ElementAccessExpressionAction, SyntaxKind.ElementAccessExpression);
+            context.RegisterSyntaxNodeAction(ElementBindingExpressionAction, SyntaxKind.ElementBindingExpression);
+            context.RegisterSyntaxNodeAction(ArrayCreationExpressionAction, SyntaxKind.ArrayCreationExpression);
+            context.RegisterSyntaxNodeAction(AttributeAction, SyntaxKind.Attribute);
+            context.RegisterSyntaxNodeAction(AnonymousMethodExpressionAction, SyntaxKind.AnonymousMethodExpression);
+            context.RegisterSyntaxNodeAction(ParenthesizedLambdaExpressionAction, SyntaxKind.ParenthesizedLambdaExpression);
         }
 
         private static void HandleBaseMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
             var declaration = (BaseMethodDeclarationSyntax)context.Node;
             HandleParameterListSyntax(context, declaration.ParameterList);
+        }
+
+        private static void HandleLocalFunctionStatement(SyntaxNodeAnalysisContext context)
+        {
+            var statement = (LocalFunctionStatementSyntaxWrapper)context.Node;
+            HandleParameterListSyntax(context, statement.ParameterList);
         }
 
         private static void HandleInvocationExpression(SyntaxNodeAnalysisContext context)
@@ -125,16 +132,19 @@ namespace StyleCop.Analyzers.ReadabilityRules
             HandleArgumentListSyntax(context, objectCreation.ArgumentList);
         }
 
+        private static void HandleImplicitObjectCreationExpression(SyntaxNodeAnalysisContext context)
+        {
+            var implicitObjectCreation = (ImplicitObjectCreationExpressionSyntaxWrapper)context.Node;
+            HandleArgumentListSyntax(context, implicitObjectCreation.ArgumentList);
+        }
+
         private static void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)
         {
             var indexerDeclaration = (IndexerDeclarationSyntax)context.Node;
             BracketedParameterListSyntax argumentListSyntax = indexerDeclaration.ParameterList;
             SeparatedSyntaxList<ParameterSyntax> arguments = argumentListSyntax.Parameters;
 
-            if (arguments.Count > 2)
-            {
-                Analyze(context, argumentListSyntax.Parameters);
-            }
+            Analyze(context, arguments);
         }
 
         private static void HandleElementAccessExpression(SyntaxNodeAnalysisContext context)
@@ -150,41 +160,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             foreach (var rankSpecifier in arrayCreation.Type.RankSpecifiers)
             {
                 SeparatedSyntaxList<ExpressionSyntax> sizes = rankSpecifier.Sizes;
-                if (sizes.Count < 3)
-                {
-                    continue;
-                }
-
-                ExpressionSyntax previousParameter = sizes[1];
-                int firstParameterLine = sizes[0].GetLine();
-                int previousLine = previousParameter.GetLine();
-                Func<int, int, bool> lineCondition;
-
-                if (firstParameterLine == previousLine)
-                {
-                    // arguments must be on same line
-                    lineCondition = (param1Line, param2Line) => param1Line == param2Line;
-                }
-                else
-                {
-                    // each argument must be on its own line
-                    lineCondition = (param1Line, param2Line) => param1Line != param2Line;
-                }
-
-                for (int i = 2; i < sizes.Count; ++i)
-                {
-                    ExpressionSyntax currentParameter = sizes[i];
-                    int currentLine = currentParameter.GetLine();
-
-                    if (lineCondition(previousLine, currentLine))
-                    {
-                        previousLine = currentLine;
-                        continue;
-                    }
-
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentParameter.GetLocation()));
-                    return;
-                }
+                Analyze(context, sizes);
             }
         }
 
@@ -198,41 +174,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             SeparatedSyntaxList<AttributeArgumentSyntax> arguments = argumentListSyntax.Arguments;
-            if (arguments.Count < 3)
-            {
-                return;
-            }
-
-            AttributeArgumentSyntax previousParameter = arguments[1];
-            int firstParameterLine = arguments[0].GetLine();
-            int previousLine = previousParameter.GetLine();
-            Func<int, int, bool> lineCondition;
-
-            if (firstParameterLine == previousLine)
-            {
-                // arguments must be on same line
-                lineCondition = (param1Line, param2Line) => param1Line == param2Line;
-            }
-            else
-            {
-                // each argument must be on its own line
-                lineCondition = (param1Line, param2Line) => param1Line != param2Line;
-            }
-
-            for (int i = 2; i < arguments.Count; ++i)
-            {
-                AttributeArgumentSyntax currentParameter = arguments[i];
-                int currentLine = currentParameter.GetLine();
-
-                if (lineCondition(previousLine, currentLine))
-                {
-                    previousLine = currentLine;
-                    continue;
-                }
-
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentParameter.GetLocation()));
-                return;
-            }
+            Analyze(context, arguments);
         }
 
         private static void HandleAnonymousMethodExpression(SyntaxNodeAnalysisContext context)
@@ -273,10 +215,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             SeparatedSyntaxList<ArgumentSyntax> arguments = argumentList.Arguments;
-            if (arguments.Count > 2)
-            {
-                Analyze(context, arguments);
-            }
+            Analyze(context, arguments);
         }
 
         private static void HandleParameterListSyntax(SyntaxNodeAnalysisContext context, ParameterListSyntax parameterList)
@@ -287,81 +226,45 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             SeparatedSyntaxList<ParameterSyntax> parameters = parameterList.Parameters;
-            if (parameters.Count > 2)
-            {
-                Analyze(context, parameters);
-            }
+            Analyze(context, parameters);
         }
 
         private static void HandleBracketedArgumentListSyntax(SyntaxNodeAnalysisContext context, BracketedArgumentListSyntax bracketedArgumentList)
         {
             SeparatedSyntaxList<ArgumentSyntax> arguments = bracketedArgumentList.Arguments;
-            if (arguments.Count > 2)
-            {
-                Analyze(context, arguments);
-            }
+            Analyze(context, arguments);
         }
 
-        private static void Analyze(SyntaxNodeAnalysisContext context, SeparatedSyntaxList<ParameterSyntax> parameters)
+        private static void Analyze<T>(SyntaxNodeAnalysisContext context, SeparatedSyntaxList<T> arguments)
+            where T : SyntaxNode
         {
-            ParameterSyntax previousParameter = parameters[1];
-            int firstParameterLine = parameters[0].GetLine();
-            int previousLine = previousParameter.GetLine();
-            Func<int, int, bool> lineCondition;
-
-            if (firstParameterLine == previousLine)
+            if (arguments.Count < 2)
             {
-                // parameters must be on same line
-                lineCondition = (param1Line, param2Line) => param1Line == param2Line;
-            }
-            else
-            {
-                // each parameter must be on its own line
-                lineCondition = (param1Line, param2Line) => param1Line != param2Line;
-            }
-
-            for (int i = 2; i < parameters.Count; ++i)
-            {
-                ParameterSyntax currentParameter = parameters[i];
-                int currentLine = currentParameter.GetLine();
-
-                if (lineCondition(previousLine, currentLine))
-                {
-                    previousLine = currentLine;
-                    continue;
-                }
-
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentParameter.GetLocation()));
                 return;
             }
-        }
 
-        private static void Analyze(SyntaxNodeAnalysisContext context, SeparatedSyntaxList<ArgumentSyntax> arguments)
-        {
-            ArgumentSyntax previousParameter = arguments[1];
-            int firstParameterLine = arguments[0].GetLine();
-            int previousLine = previousParameter.GetLine();
-            Func<int, int, bool> lineCondition;
+            SyntaxNode firstParameter = arguments[0];
+            SyntaxNode secondParameter = arguments[1];
+            Func<SyntaxNode, SyntaxNode, bool> lineCondition;
 
-            if (firstParameterLine == previousLine)
+            if (firstParameter.GetLine() == secondParameter.GetLine())
             {
-                // arguments must be on same line
-                lineCondition = (param1Line, param2Line) => param1Line == param2Line;
+                // arguments should be on same line
+                lineCondition = (param1, param2) => param1.GetLine() == param2.GetLine();
             }
             else
             {
-                // each argument must be on its own line
-                lineCondition = (param1Line, param2Line) => param1Line != param2Line;
+                // each argument should be on its own line
+                lineCondition = (param1, param2) => param1.GetEndLine() != param2.GetLine();
             }
 
-            for (int i = 2; i < arguments.Count; ++i)
+            SyntaxNode previousParameter = firstParameter;
+            for (int i = 1; i < arguments.Count; ++i)
             {
-                ArgumentSyntax currentParameter = arguments[i];
-                int currentLine = currentParameter.GetLine();
-
-                if (lineCondition(previousLine, currentLine))
+                SyntaxNode currentParameter = arguments[i];
+                if (lineCondition(previousParameter, currentParameter))
                 {
-                    previousLine = currentLine;
+                    previousParameter = currentParameter;
                     continue;
                 }
 

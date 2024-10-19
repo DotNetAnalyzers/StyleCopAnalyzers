@@ -1,12 +1,14 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.HelperTests
 {
     using System;
-    using Analyzers.Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using StyleCop.Analyzers.Helpers;
     using Xunit;
 
     public class XmlSyntaxFactoryTests
@@ -58,6 +60,17 @@ namespace StyleCop.Analyzers.Test.HelperTests
         }
 
         [Fact]
+        [WorkItem(2672, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2672")]
+        public void TestEmptySummaryElement()
+        {
+            string expected =
+                "<summary>\r\n"
+                + "///\r\n"
+                + "/// </summary>";
+            Assert.Equal(expected, XmlSyntaxFactory.SummaryElement("\r\n").ToFullString());
+        }
+
+        [Fact]
         public void TestRemarksElement()
         {
             string expected =
@@ -70,11 +83,8 @@ namespace StyleCop.Analyzers.Test.HelperTests
         [Fact]
         public void TestReturnsElement()
         {
-            string expected =
-                "<returns>\r\n"
-                + "/// Returns.\r\n"
-                + "/// </returns>";
-            Assert.Equal(expected, XmlSyntaxFactory.ReturnsElement("\r\n", XmlSyntaxFactory.Text("Returns.")).ToFullString());
+            string expected = "<returns>Returns.</returns>";
+            Assert.Equal(expected, XmlSyntaxFactory.ReturnsElement(XmlSyntaxFactory.Text("Returns.")).ToFullString());
         }
 
         [Fact]

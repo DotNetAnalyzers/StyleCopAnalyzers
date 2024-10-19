@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
@@ -7,11 +9,11 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using System.Collections.Concurrent;
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A Code Analysis SuppressMessage attribute does not include a justification.
@@ -42,10 +44,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1404";
-        private const string Title = "Code analysis suppression must have justification";
-        private const string MessageFormat = "Code analysis suppression must have justification";
-        private const string Description = "A Code Analysis SuppressMessage attribute does not include a justification.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1404.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(MaintainabilityResources.SA1404Title), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(MaintainabilityResources.SA1404MessageFormat), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(MaintainabilityResources.SA1404Description), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -59,13 +61,16 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+
             context.RegisterCompilationStartAction(CompilationStartAction);
         }
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             AnalyzerInstance instance = new AnalyzerInstance(context.Compilation.GetOrCreateUsingAliasCache());
-            context.RegisterSyntaxNodeActionHonorExclusions(instance.HandleAttributeNode, SyntaxKind.Attribute);
+            context.RegisterSyntaxNodeAction(instance.HandleAttributeNode, SyntaxKind.Attribute);
         }
 
         /// <summary>
@@ -93,11 +98,17 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 // Return fast if the name doesn't match and the file doesn't contain any using alias directives
                 if (!attribute.SyntaxTree.ContainsUsingAlias(this.usingAliasCache))
                 {
-                    SimpleNameSyntax simpleNameSyntax = attribute.Name as SimpleNameSyntax;
-                    if (simpleNameSyntax == null)
+                    if (!(attribute.Name is SimpleNameSyntax simpleNameSyntax))
                     {
-                        QualifiedNameSyntax qualifiedNameSyntax = attribute.Name as QualifiedNameSyntax;
-                        simpleNameSyntax = qualifiedNameSyntax.Right;
+                        if (attribute.Name is AliasQualifiedNameSyntax aliasQualifiedNameSyntax)
+                        {
+                            simpleNameSyntax = aliasQualifiedNameSyntax.Name;
+                        }
+                        else
+                        {
+                            QualifiedNameSyntax qualifiedNameSyntax = attribute.Name as QualifiedNameSyntax;
+                            simpleNameSyntax = qualifiedNameSyntax.Right;
+                        }
                     }
 
                     if (simpleNameSyntax.Identifier.ValueText != nameof(SuppressMessageAttribute)
@@ -116,7 +127,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                         this.suppressMessageAttribute = context.SemanticModel.Compilation.GetTypeByMetadataName(typeof(SuppressMessageAttribute).FullName);
                     }
 
-                    if (symbol.ContainingType == this.suppressMessageAttribute)
+                    if (Equals(symbol.ContainingType, this.suppressMessageAttribute))
                     {
                         foreach (var attributeArgument in attribute.ArgumentList.Arguments)
                         {

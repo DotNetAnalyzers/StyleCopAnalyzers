@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.SpacingRules
 {
@@ -8,14 +10,14 @@ namespace StyleCop.Analyzers.SpacingRules
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The code contains multiple whitespace characters in a row.
     /// </summary>
     /// <remarks>
     /// <para>A violation of this rule occurs whenever the code contains multiple whitespace characters in a row, unless
-    /// the characters come at the beginning or end of a line of code, following a comma or semicolon or preceding a
-    /// symbol.</para>
+    /// the characters come at the beginning or end of a line of code, or following a comma or semicolon.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SA1025CodeMustNotContainMultipleWhitespaceInARow : DiagnosticAnalyzer
@@ -25,15 +27,14 @@ namespace StyleCop.Analyzers.SpacingRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1025";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1025.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1025Title), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpacingResources.SA1025MessageFormat), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1025Description), SpacingResources.ResourceManager, typeof(SpacingResources));
-        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1025.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
 
         /// <inheritdoc/>
@@ -43,16 +44,20 @@ namespace StyleCop.Analyzers.SpacingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxTreeActionHonorExclusions(SyntaxTreeAction);
+            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
         }
 
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
+            if (context.Tree.IsWhitespaceOnly(context.CancellationToken))
+            {
+                // Handling of empty documents is now the responsibility of the analyzers
+                return;
+            }
+
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var trivia in root.DescendantTrivia())
             {
@@ -105,7 +110,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
-            var followingTrivia = index + 1 < list.Count ? list[index + 1] : default(SyntaxTrivia);
+            var followingTrivia = index + 1 < list.Count ? list[index + 1] : default;
 
             if (precedingToken.IsKind(SyntaxKind.CommaToken)
                 || precedingToken.IsKind(SyntaxKind.SemicolonToken)
@@ -115,7 +120,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
-            // Code must not contain multiple whitespace characters in a row.
+            // Code should not contain multiple whitespace characters in a row.
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation()));
         }
     }

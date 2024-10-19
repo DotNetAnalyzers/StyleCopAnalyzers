@@ -1,18 +1,19 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.NamingRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.NamingRules;
-    using TestHelper;
+    using Microsoft.CodeAnalysis.Testing;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.NamingRules.SA1309FieldNamesMustNotBeginWithUnderscore,
+        StyleCop.Analyzers.NamingRules.SA1309CodeFixProvider>;
 
-    public class SA1309UnitTests : CodeFixVerifier
+    public class SA1309UnitTests
     {
         [Fact]
         public async Task TestFieldStartingWithAnUnderscoreAsync()
@@ -22,16 +23,14 @@ namespace StyleCop.Analyzers.Test.NamingRules
     public string _bar = ""baz"";
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("_bar").WithLocation(3, 19);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithArguments("_bar").WithLocation(3, 19);
 
             var fixedCode = @"public class Foo
 {
     public string bar = ""baz"";
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -42,7 +41,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     public string bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -53,7 +52,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     internal string _bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -64,16 +63,14 @@ namespace StyleCop.Analyzers.Test.NamingRules
     internal string _bar = ""baz"";
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("_bar").WithLocation(3, 21);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithArguments("_bar").WithLocation(3, 21);
 
             var fixedCode = @"public class FooNativeMethodsClass
 {
     internal string bar = ""baz"";
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -87,7 +84,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -98,12 +95,11 @@ namespace StyleCop.Analyzers.Test.NamingRules
     internal string _ = ""baz"";
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("_").WithLocation(3, 21);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithArguments("_").WithLocation(3, 21);
 
             // no changes will be made
             var fixedCode = testCode;
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -120,26 +116,47 @@ namespace StyleCop.Analyzers.Test.NamingRules
     public string ____bar = ""baz"";
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("____bar").WithLocation(3, 19);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithArguments("____bar").WithLocation(3, 19);
 
             var fixedCode = @"public class Foo
 {
     public string bar = ""baz"";
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        // This a regression test for issue #2360.
+        [Fact]
+        public async Task VerifyThatAFieldStartingWithAnUnderscoreAndADigitIsNotAffectedByCodeFixAsync()
         {
-            yield return new SA1309FieldNamesMustNotBeginWithUnderscore();
+            var testCode = @"public class Foo
+{
+    private string _1bar = ""baz"";
+}";
+
+            DiagnosticResult expected = Diagnostic().WithArguments("_1bar").WithLocation(3, 20);
+
+            // no changes will be made
+            var fixedCode = testCode;
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        [Fact]
+        public async Task VerifyThatAFieldStartingWithUnderscoreAndFollowedByKeywordTriggersDiagnosticAndIsCorrectedByCodefixAsync()
         {
-            return new SA1309CodeFixProvider();
+            var testCode = @"public class Foo
+{
+    private string _int = ""baz"";
+}";
+
+            var fixedCode = @"public class Foo
+{
+    private string @int = ""baz"";
+}";
+
+            DiagnosticResult expected = Diagnostic().WithArguments("_int").WithLocation(3, 20);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -1,18 +1,21 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1127GenericTypeConstraintsMustBeOnOwnLine"/>.
@@ -59,8 +62,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var afterEndToken = endToken.GetNextToken();
 
             var parentIndentation = GetParentIndentation(whereToken);
-            var indentationOptions = IndentationOptions.FromDocument(document);
-            var indentationTrivia = SyntaxFactory.Whitespace(parentIndentation + IndentationHelper.GenerateIndentationString(indentationOptions, 1));
+            var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
+            var indentationTrivia = SyntaxFactory.Whitespace(parentIndentation + IndentationHelper.GenerateIndentationString(settings.Indentation, 1));
 
             var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>()
             {
@@ -88,18 +91,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static string GetParentIndentation(SyntaxToken token)
         {
-            var parentLine = token.Parent.Parent;
-            var parentIndentation = string.Empty;
-            var parentTrivia = parentLine.GetLeadingTrivia();
-            foreach (var trivia in parentTrivia)
-            {
-                if (trivia.IsKind(SyntaxKind.WhitespaceTrivia))
-                {
-                    parentIndentation += trivia.ToString();
-                }
-            }
+            var parentTrivia = token.Parent.Parent.GetLeadingTrivia();
 
-            return parentIndentation;
+            return parentTrivia
+                .LastOrDefault(SyntaxKind.WhitespaceTrivia)
+                .ToString();
         }
 
         // This function will remove any unnecessary whitespace or end-of-line trivia from a token.

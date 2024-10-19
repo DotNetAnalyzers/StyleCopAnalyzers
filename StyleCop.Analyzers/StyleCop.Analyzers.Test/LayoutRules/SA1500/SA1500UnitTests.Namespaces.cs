@@ -1,13 +1,18 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.LayoutRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1500BracesForMultiLineStatementsMustNotShareLine,
+        StyleCop.Analyzers.LayoutRules.SA1500CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1500BracesForMultiLineStatementsMustNotShareLine"/>.
@@ -18,7 +23,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// Verifies that no diagnostics are reported for the valid namespace defined in this test.
         /// </summary>
         /// <remarks>
-        /// These are valid for SA1500 only, some will report other diagnostics.
+        /// <para>These are valid for SA1500 only, some will report other diagnostics.</para>
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -41,7 +46,7 @@ namespace ValidNamespace5 /* Valid only for SA1500 */
 { using System; }  
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -106,28 +111,52 @@ namespace InvalidNamespace6
             DiagnosticResult[] expectedDiagnostics =
             {
                 // InvalidNamespace1
-                this.CSharpDiagnostic().WithLocation(1, 29),
+                Diagnostic().WithLocation(1, 29),
 
                 // InvalidNamespace2
-                this.CSharpDiagnostic().WithLocation(4, 29),
+                Diagnostic().WithLocation(4, 29),
 
                 // InvalidNamespace3
-                this.CSharpDiagnostic().WithLocation(8, 29),
-                this.CSharpDiagnostic().WithLocation(9, 19),
+                Diagnostic().WithLocation(8, 29),
+                Diagnostic().WithLocation(9, 19),
 
                 // InvalidNamespace4
-                this.CSharpDiagnostic().WithLocation(11, 29),
+                Diagnostic().WithLocation(11, 29),
 
                 // InvalidNamespace5
-                this.CSharpDiagnostic().WithLocation(16, 19),
+                Diagnostic().WithLocation(16, 19),
 
                 // InvalidNamespace6
-                this.CSharpDiagnostic().WithLocation(19, 1)
+                Diagnostic().WithLocation(19, 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an invalid namespace at the end of the source file will be handled correctly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestNamespaceInvalidAtEndOfFileAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+  using System; }";
+
+            var fixedTestCode = @"
+namespace TestNamespace
+{
+  using System;
+}";
+
+            DiagnosticResult[] expectedDiagnostics =
+            {
+                Diagnostic().WithLocation(4, 17),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

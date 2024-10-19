@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers
 {
@@ -13,9 +15,9 @@ namespace StyleCop.Analyzers
     /// <para>There are several reasons an analyzer for a StyleCop diagnostic does not have an implementation, including
     /// but not limited to the following:</para>
     /// <list type="bullet">
-    /// <item>Visual Studio provides a built-in diagnostic.</item>
-    /// <item>The diagnostic is vaguely defined, so there is no clear direction for the implementation.</item>
-    /// <item>The diagnostic has been superseded by a fine-grained set of new rules for customization.</item>
+    /// <item><description>Visual Studio provides a built-in diagnostic.</description></item>
+    /// <item><description>The diagnostic is vaguely defined, so there is no clear direction for the implementation.</description></item>
+    /// <item><description>The diagnostic has been superseded by a fine-grained set of new rules for customization.</description></item>
     /// </list>
     /// <para>The <see cref="Reason"/> should be provided.</para>
     /// </remarks>

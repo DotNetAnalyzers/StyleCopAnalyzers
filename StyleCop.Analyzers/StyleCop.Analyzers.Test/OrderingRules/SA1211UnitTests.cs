@@ -1,22 +1,23 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
-    using System;
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.OrderingRules.SA1211UsingAliasDirectivesMustBeOrderedAlphabeticallyByAliasName,
+        StyleCop.Analyzers.OrderingRules.UsingCodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1211UsingAliasDirectivesMustBeOrderedAlphabeticallyByAliasName"/>.
     /// </summary>
-    public class SA1211UnitTests : CodeFixVerifier
+    public class SA1211UnitTests
     {
         /// <summary>
         /// Verifies that the analyzer will not produce diagnostics for correctly ordered using directives inside a namespace.
@@ -35,7 +36,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -69,7 +70,7 @@ namespace Spam
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -90,7 +91,7 @@ public class Foo
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -150,14 +151,12 @@ namespace Spam
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                this.CSharpDiagnostic().WithLocation(5, 5).WithArguments("character", "int"),
-                this.CSharpDiagnostic().WithLocation(14, 5).WithArguments("MemoryStream", "Stream"),
-                this.CSharpDiagnostic().WithLocation(21, 5).WithArguments("Character", "int")
+                Diagnostic().WithLocation(5, 5).WithArguments("character", "int"),
+                Diagnostic().WithLocation(14, 5).WithArguments("MemoryStream", "Stream"),
+                Diagnostic().WithLocation(21, 5).WithArguments("Character", "int"),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -165,7 +164,7 @@ namespace Spam
         {
             var testCode = @"
 using System;
-using Microsoft.VisualStudio;
+using Microsoft.Win32;
 using MyList = System.Collections.Generic.List<int>;
 
 #if true
@@ -176,8 +175,9 @@ using BThing = System.Threading.Tasks;
 using AThing = System.Threading;
 #endif";
 
-            var fixedTestCode = @"using System;
-using Microsoft.VisualStudio;
+            var fixedTestCode = @"
+using System;
+using Microsoft.Win32;
 using MyList = System.Collections.Generic.List<int>;
 
 #if true
@@ -189,23 +189,39 @@ using AThing = System.Threading;
 #endif";
 
             // else block is skipped
-            var expected = this.CSharpDiagnostic().WithLocation(8, 1).WithArguments("AThing", "BThing");
+            var expected = Diagnostic().WithLocation(8, 1).WithArguments("AThing", "BThing");
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        /// <summary>
+        /// Verifies that the analyzer will not combine using directives that refer to the same type. This is a
+        /// regression test for DotNetAnalyzers/StyleCopAnalyzers#2000.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestSameUsingWithDifferentAliasAsync()
         {
-            yield return new SA1211UsingAliasDirectivesMustBeOrderedAlphabeticallyByAliasName();
-        }
+            string testCode = @"namespace NamespaceName
+{
+    using Func2 = System.Func<int>;
+    using Func1 = System.Func<int>;
 
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new UsingCodeFixProvider();
+    internal delegate void DelegateName(Func1 arg1, Func2 arg2);
+}
+";
+            string fixedCode = @"namespace NamespaceName
+{
+    using Func1 = System.Func<int>;
+    using Func2 = System.Func<int>;
+
+    internal delegate void DelegateName(Func1 arg1, Func2 arg2);
+}
+";
+
+            var expected = Diagnostic().WithLocation(4, 5).WithArguments("Func1", "Func2");
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

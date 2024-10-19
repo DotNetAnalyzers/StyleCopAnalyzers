@@ -1,0 +1,16 @@
+﻿pool:
+  name: Azure Pipelines
+  vmImage: windows-latest
+  demands:
+  - msbuild
+  - visualstudio
+  - vstest
+
+stages:
+- template: build/build-and-test.yml
+  parameters:
+    BuildConfiguration: Debug
+
+- template: build/build-and-test.yml
+  parameters:
+    BuildConfiguration: Release

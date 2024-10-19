@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Helpers.ObjectPools
 {
@@ -20,8 +22,11 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
 
         public static string ReturnAndFree(StringBuilder builder)
         {
-            SharedPools.Default<StringBuilder>();
-            return builder.ToString();
+            string result = builder.ToString();
+
+            StringBuilderPool.Free(builder);
+
+            return result;
         }
     }
 }

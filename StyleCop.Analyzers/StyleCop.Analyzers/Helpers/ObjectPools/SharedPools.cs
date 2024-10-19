@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Helpers.ObjectPools
 {
@@ -17,7 +19,7 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
     internal static class SharedPools
     {
         /// <summary>
-        /// pool that uses default constructor with 100 elements pooled
+        /// pool that uses default constructor with 100 elements pooled.
         /// </summary>
         /// <typeparam name="T">The type of the object pool.</typeparam>
         /// <returns>A default big object pool.</returns>
@@ -28,7 +30,7 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
         }
 
         /// <summary>
-        /// pool that uses default constructor with 20 elements pooled
+        /// pool that uses default constructor with 20 elements pooled.
         /// </summary>
         /// <typeparam name="T">The type of the object pool.</typeparam>
         /// <returns>A default object pool.</returns>

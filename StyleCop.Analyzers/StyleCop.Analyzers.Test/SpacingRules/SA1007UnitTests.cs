@@ -1,23 +1,24 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.SpacingRules.SA1007OperatorKeywordMustBeFollowedBySpace,
+        StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1007OperatorKeywordMustBeFollowedBySpace"/> and
     /// <see cref="TokenSpacingCodeFixProvider"/>.
     /// </summary>
-    public class SA1007UnitTests : CodeFixVerifier
+    public class SA1007UnitTests
     {
         [Fact]
         public async Task TestOperatorKeywordCasesAsync()
@@ -50,15 +51,13 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(5, 24),
-                this.CSharpDiagnostic().WithLocation(6, 24),
-                this.CSharpDiagnostic().WithLocation(7, 28),
-                this.CSharpDiagnostic().WithLocation(10, 28),
+                Diagnostic().WithLocation(5, 24),
+                Diagnostic().WithLocation(6, 24),
+                Diagnostic().WithLocation(7, 28),
+                Diagnostic().WithLocation(10, 28),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -76,26 +75,10 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                new DiagnosticResult
-                {
-                    Id = "CS1003",
-                    Severity = DiagnosticSeverity.Error,
-                    Message = "Syntax error, 'operator' expected",
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 4, 28) }
-                }
+                DiagnosticResult.CompilerError("CS1003").WithMessage("Syntax error, 'operator' expected").WithLocation(4, 28),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1007OperatorKeywordMustBeFollowedBySpace();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new TokenSpacingCodeFixProvider();
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

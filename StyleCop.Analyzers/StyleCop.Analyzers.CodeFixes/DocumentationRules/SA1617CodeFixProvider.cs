@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
@@ -39,12 +41,15 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             foreach (Diagnostic diagnostic in context.Diagnostics)
             {
-                context.RegisterCodeFix(
-                    CodeAction.Create(
-                        DocumentationResources.SA1617CodeFix,
-                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
-                        nameof(SA1617CodeFixProvider)),
-                    diagnostic);
+                if (!diagnostic.Properties.ContainsKey(SA1617VoidReturnValueMustNotBeDocumented.NoCodeFixKey))
+                {
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            DocumentationResources.SA1617CodeFix,
+                            cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
+                            nameof(SA1617CodeFixProvider)),
+                        diagnostic);
+                }
             }
 
             return SpecializedTasks.CompletedTask;
@@ -80,8 +85,8 @@ namespace StyleCop.Analyzers.DocumentationRules
             List<SyntaxNode> nodesToFix = new List<SyntaxNode>();
             nodesToFix.Add(returnsElement);
 
-            var previousAsTextSyntax = previous as XmlTextSyntax;
-            if (previousAsTextSyntax != null && XmlCommentHelper.IsConsideredEmpty(previousAsTextSyntax))
+            if (previous is XmlTextSyntax previousAsTextSyntax
+                && XmlCommentHelper.IsConsideredEmpty(previousAsTextSyntax))
             {
                 nodesToFix.Add(previous);
             }

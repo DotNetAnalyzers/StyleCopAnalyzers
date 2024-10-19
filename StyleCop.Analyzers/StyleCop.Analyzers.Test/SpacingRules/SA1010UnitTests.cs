@@ -1,21 +1,24 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.SpacingRules.SA1010OpeningSquareBracketsMustBeSpacedCorrectly;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.SpacingRules.SA1010OpeningSquareBracketsMustBeSpacedCorrectly,
+        StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1010OpeningSquareBracketsMustBeSpacedCorrectly"/>
+    /// Unit tests for <see cref="SA1010OpeningSquareBracketsMustBeSpacedCorrectly"/>.
     /// </summary>
-    public class SA1010UnitTests : CodeFixVerifier
+    public class SA1010UnitTests
     {
         private const string ExpectedCode = @"using System;
 
@@ -39,7 +42,7 @@ public class Foo
         [Fact]
         public async Task TestValidSpacingOfOpenSquareBracketAsync()
         {
-            await this.VerifyCSharpDiagnosticAsync(ExpectedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(ExpectedCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -66,18 +69,17 @@ public class Foo
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(5, 21).WithArguments("not be preceded"),
-                this.CSharpDiagnostic().WithLocation(9, 17).WithArguments("not be preceded"),
-                this.CSharpDiagnostic().WithLocation(9, 20).WithArguments("not be preceded"),
-                this.CSharpDiagnostic().WithLocation(9, 38).WithArguments("not be preceded"),
-                this.CSharpDiagnostic().WithLocation(9, 41).WithArguments("not be preceded"),
-                this.CSharpDiagnostic().WithLocation(12, 27).WithArguments("not be preceded"),
-                this.CSharpDiagnostic().WithLocation(15, 25).WithArguments("not be preceded"),
-                this.CSharpDiagnostic().WithLocation(15, 29).WithArguments("not be preceded"),
+                Diagnostic(DescriptorNotPreceded).WithLocation(5, 21),
+                Diagnostic(DescriptorNotPreceded).WithLocation(9, 17),
+                Diagnostic(DescriptorNotPreceded).WithLocation(9, 20),
+                Diagnostic(DescriptorNotPreceded).WithLocation(9, 38),
+                Diagnostic(DescriptorNotPreceded).WithLocation(9, 41),
+                Diagnostic(DescriptorNotPreceded).WithLocation(12, 27),
+                Diagnostic(DescriptorNotPreceded).WithLocation(15, 25),
+                Diagnostic(DescriptorNotPreceded).WithLocation(15, 29),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, ExpectedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, ExpectedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -104,17 +106,16 @@ public class Foo
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(5, 20).WithArguments("not be followed"),
-                this.CSharpDiagnostic().WithLocation(9, 16).WithArguments("not be followed"),
-                this.CSharpDiagnostic().WithLocation(9, 19).WithArguments("not be followed"),
-                this.CSharpDiagnostic().WithLocation(9, 37).WithArguments("not be followed"),
-                this.CSharpDiagnostic().WithLocation(12, 24).WithArguments("not be followed"),
-                this.CSharpDiagnostic().WithLocation(15, 24).WithArguments("not be followed"),
-                this.CSharpDiagnostic().WithLocation(15, 28).WithArguments("not be followed"),
+                Diagnostic(DescriptorNotFollowed).WithLocation(5, 20),
+                Diagnostic(DescriptorNotFollowed).WithLocation(9, 16),
+                Diagnostic(DescriptorNotFollowed).WithLocation(9, 19),
+                Diagnostic(DescriptorNotFollowed).WithLocation(9, 37),
+                Diagnostic(DescriptorNotFollowed).WithLocation(12, 24),
+                Diagnostic(DescriptorNotFollowed).WithLocation(15, 24),
+                Diagnostic(DescriptorNotFollowed).WithLocation(15, 28),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, ExpectedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, ExpectedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -141,32 +142,31 @@ public class Foo
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(5, 21).WithArguments("not be preceded"),
-                this.CSharpDiagnostic().WithLocation(5, 21).WithArguments("not be followed"),
-                this.CSharpDiagnostic().WithLocation(9, 17).WithArguments("not be preceded"),
-                this.CSharpDiagnostic().WithLocation(9, 17).WithArguments("not be followed"),
-                this.CSharpDiagnostic().WithLocation(9, 21).WithArguments("not be preceded"),
-                this.CSharpDiagnostic().WithLocation(9, 21).WithArguments("not be followed"),
-                this.CSharpDiagnostic().WithLocation(9, 40).WithArguments("not be preceded"),
-                this.CSharpDiagnostic().WithLocation(9, 40).WithArguments("not be followed"),
-                this.CSharpDiagnostic().WithLocation(12, 27).WithArguments("not be preceded"),
-                this.CSharpDiagnostic().WithLocation(12, 27).WithArguments("not be followed"),
-                this.CSharpDiagnostic().WithLocation(15, 25).WithArguments("not be preceded"),
-                this.CSharpDiagnostic().WithLocation(15, 25).WithArguments("not be followed"),
-                this.CSharpDiagnostic().WithLocation(15, 30).WithArguments("not be preceded"),
-                this.CSharpDiagnostic().WithLocation(15, 30).WithArguments("not be followed"),
+                Diagnostic(DescriptorNotPreceded).WithLocation(5, 21),
+                Diagnostic(DescriptorNotFollowed).WithLocation(5, 21),
+                Diagnostic(DescriptorNotPreceded).WithLocation(9, 17),
+                Diagnostic(DescriptorNotFollowed).WithLocation(9, 17),
+                Diagnostic(DescriptorNotPreceded).WithLocation(9, 21),
+                Diagnostic(DescriptorNotFollowed).WithLocation(9, 21),
+                Diagnostic(DescriptorNotPreceded).WithLocation(9, 40),
+                Diagnostic(DescriptorNotFollowed).WithLocation(9, 40),
+                Diagnostic(DescriptorNotPreceded).WithLocation(12, 27),
+                Diagnostic(DescriptorNotFollowed).WithLocation(12, 27),
+                Diagnostic(DescriptorNotPreceded).WithLocation(15, 25),
+                Diagnostic(DescriptorNotFollowed).WithLocation(15, 25),
+                Diagnostic(DescriptorNotPreceded).WithLocation(15, 30),
+                Diagnostic(DescriptorNotFollowed).WithLocation(15, 30),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, ExpectedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, ExpectedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verify that index initializers are properly handled.
-        /// Regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1617
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1617, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1617")]
         public async Task VerifyIndexInitializerAsync()
         {
             var testCode = @"using System.Collections.Generic;
@@ -180,7 +180,7 @@ public class TestClass
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -213,22 +213,26 @@ public class TestClass
     }
 }
 ";
-            var expected = this.CSharpDiagnostic().WithLocation(8, 62).WithArguments("not be preceded");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expected = Diagnostic(DescriptorNotPreceded).WithLocation(8, 62);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        // NOTE: This case is handled by SA1026, so it's intentionally allowed here
+        [Fact]
+        public async Task TestImplicitlyTypedArrayCreationAsync()
         {
-            yield return new SA1010OpeningSquareBracketsMustBeSpacedCorrectly();
+            var testCode = @"
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            var x = new [] { 0, 1 };
         }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new TokenSpacingCodeFixProvider();
+    }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

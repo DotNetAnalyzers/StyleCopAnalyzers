@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers
 {
@@ -42,5 +44,10 @@ namespace StyleCop.Analyzers
         /// Category definition for spacing rules.
         /// </summary>
         internal const string SpacingRules = "StyleCop.CSharp.SpacingRules";
+
+        /// <summary>
+        /// Category definition for special purpose rules.
+        /// </summary>
+        internal const string SpecialRules = "StyleCop.CSharp.SpecialRules";
     }
 }

@@ -1,21 +1,24 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+#nullable disable
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.ReadabilityRules.SA110xQueryClauses,
+        StyleCop.Analyzers.ReadabilityRules.SA1103CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for the SA1103 analyzer.
     /// </summary>
-    public class SA1103UnitTests : CodeFixVerifier
+    public class SA1103UnitTests
     {
         /// <summary>
         /// Verifies that a select query expression produces the expected results.
@@ -59,12 +62,10 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                this.CSharpDiagnostic(SA110xQueryClauses.SA1103Descriptor).WithLocation(11, 21)
+                Diagnostic(SA110xQueryClauses.SA1103Descriptor).WithLocation(11, 21),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, codeFixIndex: 0).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -111,12 +112,18 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                this.CSharpDiagnostic(SA110xQueryClauses.SA1103Descriptor).WithLocation(11, 21)
+                Diagnostic(SA110xQueryClauses.SA1103Descriptor).WithLocation(11, 21),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, codeFixIndex: 1).ConfigureAwait(false);
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                CodeActionIndex = 1,
+                FixedCode = fixedTestCode,
+            };
+
+            test.ExpectedDiagnostics.AddRange(expectedDiagnostics);
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -183,12 +190,18 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                this.CSharpDiagnostic(SA110xQueryClauses.SA1103Descriptor).WithLocation(12, 17)
+                Diagnostic(SA110xQueryClauses.SA1103Descriptor).WithLocation(12, 17),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, codeFixIndex: 1).ConfigureAwait(false);
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                CodeActionIndex = 1,
+                FixedCode = fixedTestCode,
+            };
+
+            test.ExpectedDiagnostics.AddRange(expectedDiagnostics);
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -233,12 +246,10 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                this.CSharpDiagnostic(SA110xQueryClauses.SA1103Descriptor).WithLocation(11, 21)
+                Diagnostic(SA110xQueryClauses.SA1103Descriptor).WithLocation(11, 21),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, codeFixIndex: 0).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -285,12 +296,18 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                this.CSharpDiagnostic(SA110xQueryClauses.SA1103Descriptor).WithLocation(11, 21)
+                Diagnostic(SA110xQueryClauses.SA1103Descriptor).WithLocation(11, 21),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, codeFixIndex: 1).ConfigureAwait(false);
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                CodeActionIndex = 1,
+                FixedCode = fixedTestCode,
+            };
+
+            test.ExpectedDiagnostics.AddRange(expectedDiagnostics);
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -345,24 +362,96 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                this.CSharpDiagnostic(SA110xQueryClauses.SA1103Descriptor).WithLocation(11, 21)
+                Diagnostic(SA110xQueryClauses.SA1103Descriptor).WithLocation(11, 21),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, codeFixIndex: 0).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        [Fact]
+        [WorkItem(2888, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2888")]
+        public async Task TestQueryExpressionWithMissingSelectAsync()
         {
-            yield return new SA110xQueryClauses();
+            var testCode = @"namespace TestNamespace
+{
+    using System.Linq;
+
+    public class TestClass
+    {
+        private int[] testArray = { 1, 2, 3, 4, 5 };
+
+        public void TestMethod()
+        {
+            var x = from element in testArray
+                    where element > 1;
+        }
+    }
+}
+";
+
+            var expectedDiagnostics = new DiagnosticResult("CS0742", DiagnosticSeverity.Error).WithLocation(12, 38).WithMessage("A query body must end with a select clause or a group clause");
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        [Fact]
+        [WorkItem(2888, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2888")]
+        public async Task TestQueryExpressionWithMissingSelect2Async()
         {
-            return new SA1103CodeFixProvider();
+            var testCode = @"namespace TestNamespace
+{
+    using System.Linq;
+
+    public class TestClass
+    {
+        private int[] testArray = { 1, 2, 3, 4, 5 };
+
+        public void TestMethod()
+        {
+            var x = from element in testArray where element < 3
+                    where element > 1;
+        }
+    }
+}
+";
+            var fixedTestCode = @"namespace TestNamespace
+{
+    using System.Linq;
+
+    public class TestClass
+    {
+        private int[] testArray = { 1, 2, 3, 4, 5 };
+
+        public void TestMethod()
+        {
+            var x = from element in testArray
+                where element < 3
+                    where element > 1;
+        }
+    }
+}
+";
+
+            await new CSharpTest
+            {
+                TestState =
+                {
+                    Sources = { testCode },
+                    ExpectedDiagnostics =
+                    {
+                        Diagnostic(SA110xQueryClauses.SA1103Descriptor).WithLocation(11, 21),
+                        new DiagnosticResult("CS0742", DiagnosticSeverity.Error).WithLocation(12, 38).WithMessage("A query body must end with a select clause or a group clause"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources = { fixedTestCode },
+                    ExpectedDiagnostics =
+                    {
+                        new DiagnosticResult("CS0742", DiagnosticSeverity.Error).WithLocation(13, 38).WithMessage("A query body must end with a select clause or a group clause"),
+                    },
+                },
+                CodeActionIndex = 1,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
