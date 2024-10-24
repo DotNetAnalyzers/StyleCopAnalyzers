@@ -65,5 +65,54 @@ namespace StyleCop.Analyzers.Test.CSharp9.MaintainabilityRules
 
             await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3240, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3240")]
+        public async Task VerifyWithInitializerNestedDiagnosticsAsync()
+        {
+            var testCode = @"public record R1(int X, R2 r2);
+public record R2(int Y);
+
+public class C
+{
+    public void M(R1 r1, R2 r2)
+    {
+        _ = r1 with
+        {
+            X = 0,
+            [|r2 = r2 with
+            {
+                [|Y = 0|]
+            }|]
+        };
+    }
+}
+";
+            var fixedCode = @"public record R1(int X, R2 r2);
+public record R2(int Y);
+
+public class C
+{
+    public void M(R1 r1, R2 r2)
+    {
+        _ = r1 with
+        {
+            X = 0,
+            r2 = r2 with
+            {
+                Y = 0,
+            },
+        };
+    }
+}
+";
+
+            await new CSharpTest()
+            {
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                TestCode = testCode,
+                FixedCode = fixedCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
