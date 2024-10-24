@@ -139,16 +139,16 @@
     <value />
   </data>
   <data name="StartingTextGets" xml:space="preserve">
-    <value>Получает</value>
+    <value>Возвращает</value>
   </data>
   <data name="StartingTextGetsOrSets" xml:space="preserve">
-    <value>Получает или задает</value>
+    <value>Возвращает или задает</value>
   </data>
   <data name="StartingTextGetsOrSetsWhether" xml:space="preserve">
-    <value>Получает или задает значение, показывающее,</value>
+    <value>Возвращает или задает значение, показывающее,</value>
   </data>
   <data name="StartingTextGetsWhether" xml:space="preserve">
-    <value>Получает значение, показывающее,</value>
+    <value>Возвращает значение, показывающее,</value>
   </data>
   <data name="StartingTextSets" xml:space="preserve">
     <value>Задает</value>
