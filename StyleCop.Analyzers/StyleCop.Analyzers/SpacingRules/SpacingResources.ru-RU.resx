@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="SA1000Description" xml:space="preserve">
+    <value>Неправильно выбран интервал вокруг ключевого слова C#.</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="SA1000MessageFormat" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="SA1000Title" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="SA1001Description" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="SA1000MessageFormat" xml:space="preserve">
+    <value>За ключевым словом '{0}' должен{1} следовать пробел</value>
+  </data>
+  <data name="SA1000Title" xml:space="preserve">
+    <value>Ключевые слова должны быть расставлены правильно</value>
+  </data>
+  <data name="SA1001Description" xml:space="preserve">
+    <value>В файле кода на языке C# неверно задан пробел вокруг запятой.</value>
+  </data>
+  <data name="SA1001MessageFormat" xml:space="preserve">
+    <value>Запятые должны{0} {1} пробелами</value>
+  </data>
+  <data name="SA1001Title" xml:space="preserve">
+    <value>Запятые должны быть расставлены правильно</value>
+  </data>
+  <data name="SA1002Description" xml:space="preserve">
+    <value>В файле кода на языке C# неправильно задан пробел вокруг точки с запятой.</value>
+  </data>
+  <data name="SA1002MessageFormat" xml:space="preserve">
+    <value>Точки с запятой должны {0} быть {1} пробелом</value>
+  </data>
+  <data name="SA1002Title" xml:space="preserve">
+    <value>Точки с запятой должны быть расставлены правильно</value>
+  </data>
+  <data name="SA1003CodeFix" xml:space="preserve">
+    <value>Исправить пробелы</value>
+  </data>
+  <data name="SA1003Description" xml:space="preserve">
+    <value>В файле кода на языке C# неверно задан пробелы вокруг символа оператора.</value>
+  </data>
+  <data name="SA1003MessageFormatFollowedByWhitespace" xml:space="preserve">
+    <value>За оператором '{0}' должен следовать пробел.</value>
+  </data>
+  <data name="SA1003MessageFormatNotAtEndOfLine" xml:space="preserve">
+    <value>Оператор '{0}' не должен появляться в конце строки.</value>
+  </data>
+  <data name="SA1003MessageFormatNotFollowedByComment" xml:space="preserve">
+    <value>За оператором '{0}' не должен следовать комментарий.</value>
+  </data>
+  <data name="SA1003MessageFormatNotFollowedByWhitespace" xml:space="preserve">
+    <value>После оператора '{0}' не должно быть пробельных символов.</value>
+  </data>
+  <data name="SA1003MessageFormatNotPrecededByWhitespace" xml:space="preserve">
+    <value>Оператору '{0}' не должны предшествовать пробельные символы.</value>
+  </data>
+  <data name="SA1003MessageFormatPrecededByWhitespace" xml:space="preserve">
+    <value>Оператору '{0}' должен предшествовать пробел.</value>
+  </data>
+  <data name="SA1003Title" xml:space="preserve">
+    <value>Символы должны быть расположены правильно</value>
+  </data>
+  <data name="SA1004CodeFix" xml:space="preserve">
+    <value>Исправить пробелы</value>
+  </data>
+  <data name="SA1004Description" xml:space="preserve">
+    <value>Строка в заголовке документации над элементом C# не начинается с одинарного пробела.</value>
+  </data>
+  <data name="SA1004MessageFormat" xml:space="preserve">
+    <value>Строка документации должна начинаться с пробела</value>
+  </data>
+  <data name="SA1004Title" xml:space="preserve">
+    <value>Строки документации должны начинаться с одинарного пробела</value>
+  </data>
+  <data name="SA1005CodeFix" xml:space="preserve">
+    <value>Исправить пробелы</value>
+  </data>
+  <data name="SA1005Description" xml:space="preserve">
+    <value>Однострочный комментарий в файле кода C# не начинается с пробела.</value>
+  </data>
+  <data name="SA1005MessageFormat" xml:space="preserve">
+    <value>Однострочный комментарий должен начинаться с пробела</value>
+  </data>
+  <data name="SA1005Title" xml:space="preserve">
+    <value>Однострочные комментарии должны начинаться с одинарного пробела</value>
+  </data>
+  <data name="SA1006Description" xml:space="preserve">
+    <value>Ключевому слову препроцессора C# предшествует пробел.</value>
+  </data>
+  <data name="SA1006MessageFormat" xml:space="preserve">
+    <value>Ключевому слову препроцессора '{0}' не должен предшествовать пробел</value>
+  </data>
+  <data name="SA1006Title" xml:space="preserve">
+    <value>Ключевым словам препроцессора не должен предшествовать пробел</value>
+  </data>
+  <data name="SA1007Description" xml:space="preserve">
+    <value>За ключевым словом operator в методе перегрузки оператора C# не следует пробел.</value>
+  </data>
+  <data name="SA1007MessageFormat" xml:space="preserve">
+    <value>За ключевым словом оператора должен следовать пробел</value>
+  </data>
+  <data name="SA1007Title" xml:space="preserve">
+    <value>За ключевым словом оператора должен следовать пробел</value>
+  </data>
+  <data name="SA1008CodeFix" xml:space="preserve">
+    <value>Исправить пробелы</value>
+  </data>
+  <data name="SA1008Description" xml:space="preserve">
+    <value>Открывающая скобка в операторе C# расставлены с неправильно.</value>
+  </data>
+  <data name="SA1008MessageNotFollowed" xml:space="preserve">
+    <value>За открывающей скобкой не должен следовать пробел.</value>
+  </data>
+  <data name="SA1008MessageNotPreceded" xml:space="preserve">
+    <value>Открывающей скобке не должен предшествовать пробел.</value>
+  </data>
+  <data name="SA1008MessagePreceded" xml:space="preserve">
+    <value>Открывающей скобке должен предшествовать пробел.</value>
+  </data>
+  <data name="SA1008Title" xml:space="preserve">
+    <value>Открывающая скобка должна быть расположена правильно</value>
+  </data>
+  <data name="SA1009Description" xml:space="preserve">
+    <value>Закрывающая скобка в операторе C# расположена с неправильно.</value>
+  </data>
+  <data name="SA1009MessageFollowed" xml:space="preserve">
+    <value>За закрывающей скобкой должен следовать пробел</value>
+  </data>
+  <data name="SA1009MessageNotFollowed" xml:space="preserve">
+    <value>За закрывающей скобкой не должен следовать пробел</value>
+  </data>
+  <data name="SA1009MessageNotPreceded" xml:space="preserve">
+    <value>Закрывающей скобке не должен предшествовать пробел</value>
+  </data>
+  <data name="SA1009Title" xml:space="preserve">
+    <value>Закрывающая скобка должна быть расположена правильно</value>
+  </data>
+  <data name="SA1010Description" xml:space="preserve">
+    <value>Открывающая квадратная скобка в операторе C# расположена не правильно.</value>
+  </data>
+  <data name="SA1010MessageNotFollowed" xml:space="preserve">
+    <value>За открывающими квадратными скобками не должен следовать пробел</value>
+  </data>
+  <data name="SA1010MessageNotPreceded" xml:space="preserve">
+    <value>Открывающим квадратным скобкам не должен предшествовать пробел</value>
+  </data>
+  <data name="SA1010Title" xml:space="preserve">
+    <value>Открывающие квадратные скобки должны быть расставлены правильно</value>
+  </data>
+  <data name="SA1011Description" xml:space="preserve">
+    <value>Закрывающая квадратная скобка в операторе C# расположена неправильно.</value>
+  </data>
+  <data name="SA1011MessageFormat" xml:space="preserve">
+    <value>Закрывающая квадратная скобка должна{0} быть {1} пробел</value>
+  </data>
+  <data name="SA1011Title" xml:space="preserve">
+    <value>Закрывающие квадратные скобки должны быть расставлены правильно</value>
+  </data>
+  <data name="SA1012Description" xml:space="preserve">
+    <value>Открывающая скобка в элементе C# расположена неправильно.</value>
+  </data>
+  <data name="SA1012MessageFormat" xml:space="preserve">
+    <value>Открывающая скобка должна {0} быть {1} пробел</value>
+  </data>
+  <data name="SA1012Title" xml:space="preserve">
+    <value>Открывающие скобки должны быть расставлены правильно</value>
+  </data>
+  <data name="SA1013Description" xml:space="preserve">
+    <value>Закрывающая скобка в элементе C# расположена неправильно.</value>
+  </data>
+  <data name="SA1013MessageFormat" xml:space="preserve">
+    <value>Закрывающая скобка должна {0} быть {1} пробел</value>
+  </data>
+  <data name="SA1013Title" xml:space="preserve">
+    <value>Закрывающие скобки должны быть расставлены правильно</value>
+  </data>
+  <data name="SA1014Description" xml:space="preserve">
+    <value>Открывающая скобка обобщенного типа в элементе C# расположена неправильно.</value>
+  </data>
+  <data name="SA1014MessageFormat" xml:space="preserve">
+    <value>Открывающие скобки обобщенного типа не должны {0} пробел</value>
+  </data>
+  <data name="SA1014Title" xml:space="preserve">
+    <value>Открывающие скобки обобщенного типа должны быть расставлены правильно</value>
+  </data>
+  <data name="SA1015Description" xml:space="preserve">
+    <value>Закрывающая скобка обобщенного типа в элементе C# расположена неправильно.</value>
+  </data>
+  <data name="SA1015MessageFollowed" xml:space="preserve">
+    <value>За закрывающей скобкой обобщенного типа должен следовать пробел</value>
+  </data>
+  <data name="SA1015MessageNotFollowed" xml:space="preserve">
+    <value>За закрывающей скобкой обобщенного типа не должен следовать пробел</value>
+  </data>
+  <data name="SA1015MessageNotPreceded" xml:space="preserve">
+    <value>Закрывающейся скобке обобщенного типа не должен предшествовать пробел</value>
+  </data>
+  <data name="SA1015Title" xml:space="preserve">
+    <value>Закрывающие скобки обобщенного типа должны быть расставлены правильно</value>
+  </data>
+  <data name="SA1016Description" xml:space="preserve">
+    <value>Открывающая скобка атрибута в элементе C# расставлена неправильно.</value>
+  </data>
+  <data name="SA1016MessageFormat" xml:space="preserve">
+    <value>За открывающими скобками атрибутов не должен следовать пробел</value>
+  </data>
+  <data name="SA1016Title" xml:space="preserve">
+    <value>Открывающие скобки атрибутов должны быть расставлены правильно</value>
+  </data>
+  <data name="SA1017Description" xml:space="preserve">
+    <value>Закрывающая скобка атрибута в элементе C# расположена с неправильно.</value>
+  </data>
+  <data name="SA1017MessageFormat" xml:space="preserve">
+    <value>Закрывающие скобки атрибута не должны предваряться пробелом</value>
+  </data>
+  <data name="SA1017Title" xml:space="preserve">
+    <value>Закрывающие скобки атрибута должны быть расставлены правильно</value>
+  </data>
+  <data name="SA1018CodeFix" xml:space="preserve">
+    <value>Исправить пробелы</value>
+  </data>
+  <data name="SA1018Description" xml:space="preserve">
+    <value>Символ nullable типа в элементе C# расположен неправильно.</value>
+  </data>
+  <data name="SA1018MessageFormat" xml:space="preserve">
+    <value>Перед символом nullable типа не должен стоять пробел</value>
+  </data>
+  <data name="SA1018Title" xml:space="preserve">
+    <value>Символы nullable типа должны быть расставлены правильно</value>
+  </data>
+  <data name="SA1019Description" xml:space="preserve">
+    <value>В файле кода C# неверно задан пробел вокруг символа доступа к члену.</value>
+  </data>
+  <data name="SA1019MessageNotFollowed" xml:space="preserve">
+    <value>За символом доступа к члену '{0}' не должен следовать пробел</value>
+  </data>
+  <data name="SA1019MessageNotPreceded" xml:space="preserve">
+    <value>Символ доступа к члену '{0}' не должен предваряться пробелом</value>
+  </data>
+  <data name="SA1019Title" xml:space="preserve">
+    <value>Символы доступа к члену должны быть правильно расставлены</value>
+  </data>
+  <data name="SA1020Description" xml:space="preserve">
+    <value>Символ инкремента или декремента в элементе C# расположен неправильно.</value>
+  </data>
+  <data name="SA1020MessageFormat" xml:space="preserve">
+    <value>{0} '{1}' не должен {2} пробел</value>
+  </data>
+  <data name="SA1020Title" xml:space="preserve">
+    <value>Символы инкремента и декремента должны быть расставлены правильно</value>
+  </data>
+  <data name="SA1021Description" xml:space="preserve">
+    <value>Отрицательный знак в элементе C# расположен неправильно.</value>
+  </data>
+  <data name="SA1021MessageFormat" xml:space="preserve">
+    <value>Отрицательный знак должен {0} быть {1} пробел</value>
+  </data>
+  <data name="SA1021Title" xml:space="preserve">
+    <value>Отрицательные знаки должны быть правильно расставлены</value>
+  </data>
+  <data name="SA1022Description" xml:space="preserve">
+    <value>Положительный знак в элементе C# расположен неправильно.</value>
+  </data>
+  <data name="SA1022MessageFormat" xml:space="preserve">
+    <value>Положительный знак должен {0} быть {1} пробел</value>
+  </data>
+  <data name="SA1022Title" xml:space="preserve">
+    <value>Положительные знаки должны быть правильно расставлены</value>
+  </data>
+  <data name="SA1023Description" xml:space="preserve">
+    <value>Символ разыменования или символ доступа к элементу C# расположен неправильно.</value>
+  </data>
+  <data name="SA1023MessageFollowed" xml:space="preserve">
+    <value>За символом ссылки '*' должен следовать пробел</value>
+  </data>
+  <data name="SA1023MessageNotAtBeginningOfLine" xml:space="preserve">
+    <value>Символ ссылки '*' не должен появляться в начале строки</value>
+  </data>
+  <data name="SA1023MessageNotAtEndOfLine" xml:space="preserve">
+    <value>Символ ссылки '*' не должен появляться в конце строки</value>
+  </data>
+  <data name="SA1023MessageNotFollowed" xml:space="preserve">
+    <value>За символом ссылки '*' не должен следовать пробел</value>
+  </data>
+  <data name="SA1023MessageNotPreceded" xml:space="preserve">
+    <value>Символ ссылки '*' не должен предваряться пробелом</value>
+  </data>
+  <data name="SA1023Title" xml:space="preserve">
+    <value>Между символами ссылок и доступа должны быть правильно расставлены пробелы</value>
+  </data>
+  <data name="SA1024Description" xml:space="preserve">
+    <value>Двоеточие в элементе C# расставлено неправильно.</value>
+  </data>
+  <data name="SA1024MessageFollowed" xml:space="preserve">
+    <value>После двоеточия должен стоять пробел</value>
+  </data>
+  <data name="SA1024MessageNotPreceded" xml:space="preserve">
+    <value>Двоеточию не должен предшествовать пробел</value>
+  </data>
+  <data name="SA1024MessagePreceded" xml:space="preserve">
+    <value>Двоеточию должен предшествовать пробел</value>
+  </data>
+  <data name="SA1024Title" xml:space="preserve">
+    <value>Двоеточия должны быть расставлены правильно</value>
+  </data>
+  <data name="SA1025CodeFix" xml:space="preserve">
+    <value>Исправить пробелы</value>
+  </data>
+  <data name="SA1025Description" xml:space="preserve">
+    <value>Код содержит несколько пробельных символов подряд.</value>
+  </data>
+  <data name="SA1025MessageFormat" xml:space="preserve">
+    <value>Код не должен содержать несколько пробельных символов подряд</value>
+  </data>
+  <data name="SA1025Title" xml:space="preserve">
+    <value>Код не должен содержать несколько пробельных символов в строке</value>
+  </data>
+  <data name="SA1026Description" xml:space="preserve">
+    <value>Неявно типизированное выделение массива в файле кода C# располагается неправильно.</value>
+  </data>
+  <data name="SA1026MessageFormat" xml:space="preserve">
+    <value>За ключевым словом '{0}' не должен следовать пробел или пустая строка</value>
+  </data>
+  <data name="SA1026Title" xml:space="preserve">
+    <value>Код не должен содержать пробел после ключевого слова new или stackalloc при неявно типизированном выделении массива</value>
+  </data>
+  <data name="SA1027CodeFix" xml:space="preserve">
+    <value>Исправить символы табуляции</value>
+  </data>
+  <data name="SA1027Description" xml:space="preserve">
+    <value>Код содержит символы табуляции или пробела, которые не соответствуют текущим настройкам проекта.</value>
+  </data>
+  <data name="SA1027MessageFormat" xml:space="preserve">
+    <value>Табуляция и пробелы должны использоваться правильно</value>
+  </data>
+  <data name="SA1027Title" xml:space="preserve">
+    <value>Используйте табуляцию правильно</value>
+  </data>
+  <data name="SA1028CodeFix" xml:space="preserve">
+    <value>Удалить пробельные символы в конце строки</value>
+  </data>
+  <data name="SA1028Description" xml:space="preserve">
+    <value>В конце строки кода не должно быть пробелов.</value>
+  </data>
+  <data name="SA1028MessageFormat" xml:space="preserve">
+    <value>Код не должен содержать пробельные символы в конце строки</value>
+  </data>
+  <data name="SA1028Title" xml:space="preserve">
+    <value>Код не должен содержать пробельные символы в конце строки</value>
+  </data>
+  <data name="TokenSpacingCodeFix" xml:space="preserve">
+    <value>Исправить пробелы</value>
+  </data>
+</root>
