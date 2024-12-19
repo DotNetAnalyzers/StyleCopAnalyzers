@@ -6,8 +6,12 @@
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
+    using System.Reflection.Metadata;
+    using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -143,11 +147,35 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
                 Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
-                if (NeedsComment(settings.DocumentationRules, declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
+                if (!NeedsComment(settings.DocumentationRules, declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
                 {
-                    if (!XmlCommentHelper.HasDocumentation(declaration))
+                    return;
+                }
+
+                XmlComment xmlComment = context.GetParsedXmlComment(context.Node);
+
+                if (xmlComment.IsMissing)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
+                }
+
+                if (xmlComment.HasInheritdoc)
+                {
+                    return;
+                }
+
+                if (context.Node is TypeDeclarationSyntax typeDeclaration && RecordDeclarationSyntaxWrapper.IsInstance(typeDeclaration))
+                {
+                    RecordDeclarationSyntaxWrapper recordDeclaration = (RecordDeclarationSyntaxWrapper)typeDeclaration;
+
+                    IEnumerable<ParameterSyntax> parameters = recordDeclaration.ParameterList?.Parameters ?? Enumerable.Empty<ParameterSyntax>();
+
+                    foreach (var parameter in parameters)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
+                        if (!xmlComment.DocumentedParameterNames.Contains(parameter.Identifier.ValueText))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, parameter.Identifier.GetLocation()));
+                        }
                     }
                 }
             }

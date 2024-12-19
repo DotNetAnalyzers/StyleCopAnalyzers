@@ -5,11 +5,13 @@
 
 namespace StyleCop.Analyzers.Helpers
 {
+    using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers.ObjectPools;
 
     /// <summary>
@@ -434,6 +436,63 @@ namespace StyleCop.Analyzers.Helpers
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Parses a <see cref="XmlComment"/> object from a <see cref="SyntaxNodeAnalysisContext"/>.
+        /// </summary>
+        /// <param name="context">The analysis context that will be checked.</param>
+        /// <param name="node">The node to parse the documentation for.</param>
+        /// <returns>The parsed <see cref="XmlComment"/>.</returns>
+        internal static XmlComment GetParsedXmlComment(this SyntaxNodeAnalysisContext context, SyntaxNode node)
+        {
+            var documentation = node.GetDocumentationCommentTriviaSyntax();
+
+            if (documentation == null || IsMissingOrEmpty(documentation.ParentTrivia))
+            {
+                return XmlComment.MissingSummary;
+            }
+
+            bool hasInheritdoc = false;
+            string[] documentedParameterNames;
+
+            if (documentation.Content.GetFirstXmlElement(InheritdocXmlTag) != null)
+            {
+                hasInheritdoc = true;
+            }
+
+            bool hasIncludedDocumentation = documentation.Content.GetFirstXmlElement(IncludeXmlTag) != null;
+
+            if (hasIncludedDocumentation)
+            {
+                var declaredSymbol = context.SemanticModel.GetDeclaredSymbol(node, context.CancellationToken);
+                var rawDocumentation = declaredSymbol?.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
+                var includedDocumentation = XElement.Parse(rawDocumentation ?? "<doc></doc>", LoadOptions.None);
+
+                if (includedDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == InheritdocXmlTag))
+                {
+                    hasInheritdoc = true;
+                }
+
+                IEnumerable<XElement> paramElements = includedDocumentation.Nodes()
+                    .OfType<XElement>()
+                    .Where(x => x.Name == ParamXmlTag);
+
+                documentedParameterNames = paramElements
+                    .SelectMany(x => x.Attributes().Where(y => y.Name == NameArgumentName))
+                    .Select(x => x.Value)
+                    .ToArray();
+            }
+            else
+            {
+                IEnumerable<XmlNodeSyntax> xmlNodes = documentation.Content.GetXmlElements(ParamXmlTag);
+                documentedParameterNames = xmlNodes.Select(GetFirstAttributeOrDefault<XmlNameAttributeSyntax>)
+                    .Where(x => x != null)
+                    .Select(x => x.Identifier.Identifier.ValueText)
+                    .ToArray();
+            }
+
+            return new XmlComment(documentedParameterNames, hasInheritdoc);
         }
 
         private static bool IsInlineElement(string localName)
