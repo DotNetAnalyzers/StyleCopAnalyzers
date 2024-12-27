@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.NamingRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -86,9 +87,19 @@ namespace StyleCop.Analyzers.NamingRules
                 return;
             }
 
-            if ((name == "_" || name == "__") && IsInLambda(syntax))
+            var nameChars = name.ToCharArray();
+            if (nameChars[0] == '_')
             {
-                return;
+                var isAllUnderscore = nameChars.All(c => c == '_');
+                if (IsUnused(syntax, isAllUnderscore ? name.Length : null))
+                {
+                    return;
+                }
+
+                if (isAllUnderscore && IsInLambda(syntax, name.Length))
+                {
+                    return;
+                }
             }
 
             if (NameMatchesAbstraction(syntax, context.SemanticModel))
@@ -100,25 +111,97 @@ namespace StyleCop.Analyzers.NamingRules
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), name));
         }
 
-        private static bool IsInLambda(ParameterSyntax syntax)
+        private static bool IsUnused(ParameterSyntax syntax, int? underscoreCount)
         {
-            if (syntax.Parent.IsKind(SyntaxKind.SimpleLambdaExpression))
+            var parent = syntax.Parent.Parent;
+            if (parent.IsKind(SyntaxKind.MethodDeclaration))
             {
-                return true;
+                var methodSyntax = (MethodDeclarationSyntax)parent;
+                return !IsParameterUsed(methodSyntax.Body)
+                    && (!underscoreCount.HasValue
+                        || IsIncrementalName(syntax, underscoreCount.Value, methodSyntax.ParameterList));
+            }
+            else
+            {
+                try
+                {
+                    var methodSyntax = (LocalFunctionStatementSyntaxWrapper)parent;
+
+                    return !IsParameterUsed(methodSyntax.Body)
+                        && (!underscoreCount.HasValue
+                            || IsIncrementalName(syntax, underscoreCount.Value, methodSyntax.ParameterList));
+                }
+                catch
+                {
+                }
             }
 
-            if (syntax.Parent.Parent.IsKind(SyntaxKind.ParenthesizedLambdaExpression)
-                || syntax.Parent.Parent.IsKind(SyntaxKind.AnonymousMethodExpression))
+            return false;
+
+            bool IsParameterUsed(BlockSyntax blockSyntax)
             {
-                return true;
+                var valueName = syntax.Identifier.ValueText;
+                return blockSyntax.ExpressionDescendRecursively()
+                    .OfType<IdentifierNameSyntax>()
+                    .Any(x => x.Identifier.ValueText == valueName);
+            }
+        }
+
+        private static bool IsInLambda(ParameterSyntax syntax, int underscoreCount)
+        {
+            var parent = syntax.Parent;
+            if (parent.IsKind(SyntaxKind.SimpleLambdaExpression))
+            {
+                return underscoreCount == 1;
+            }
+
+            parent = parent.Parent;
+            if (parent.IsKind(SyntaxKind.ParenthesizedLambdaExpression))
+            {
+                return IsIncrementalName(syntax, underscoreCount, ((ParenthesizedLambdaExpressionSyntax)parent).ParameterList);
+            }
+            else if (parent.IsKind(SyntaxKind.AnonymousMethodExpression))
+            {
+                return IsIncrementalName(syntax, underscoreCount, ((AnonymousMethodExpressionSyntax)parent).ParameterList);
             }
 
             return false;
         }
 
+        private static bool IsIncrementalName(ParameterSyntax syntax, int underscoreCount, ParameterListSyntax parameterList)
+        {
+            bool isSingleUnderscore = underscoreCount == 1;
+            int lastUnderscoreCount = 0;
+            foreach (var parameter in parameterList.Parameters)
+            {
+                if (parameter == syntax)
+                {
+                    break;
+                }
+
+                var name = parameter.Identifier.ValueText;
+                if (string.IsNullOrEmpty(name)
+                    || name.ToCharArray().Any(c => c != '_'))
+                {
+                    continue;
+                }
+
+                if (isSingleUnderscore
+                    && name.Length != 1)
+                {
+                    isSingleUnderscore = false;
+                }
+
+                lastUnderscoreCount = name.Length;
+            }
+
+            return isSingleUnderscore
+                || lastUnderscoreCount == (underscoreCount - 1);
+        }
+
         private static bool NameMatchesAbstraction(ParameterSyntax syntax, SemanticModel semanticModel)
         {
-            if (!(syntax.Parent is ParameterListSyntax parameterList))
+            if (syntax.Parent is not ParameterListSyntax parameterList)
             {
                 // This occurs for simple lambda expressions (without parentheses)
                 return false;
