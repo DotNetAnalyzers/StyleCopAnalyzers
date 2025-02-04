@@ -107,6 +107,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 case SyntaxKind.OpenBracketToken:
                 case SyntaxKind.CloseParenToken:
                 case SyntaxKind.MinusGreaterThanToken:
+                case SyntaxKind.QuestionToken:
                 case SyntaxKindEx.DotDotToken:
                     precedesSpecialCharacter = true;
                     break;
