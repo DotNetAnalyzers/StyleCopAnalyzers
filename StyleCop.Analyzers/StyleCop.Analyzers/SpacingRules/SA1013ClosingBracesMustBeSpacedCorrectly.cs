@@ -76,11 +76,12 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
-            bool precededBySpace = token.IsFirstInLine() || token.IsPrecededByWhitespace(context.CancellationToken);
+            var firstInLine = token.IsFirstInLine();
+            bool precededBySpace = token.IsPrecededByWhitespace(context.CancellationToken);
 
             if (token.Parent is InterpolationSyntax)
             {
-                if (precededBySpace)
+                if (precededBySpace && !firstInLine)
                 {
                     // Closing brace should{ not} be {preceded} by a space.
                     var properties = TokenSpacingProperties.RemovePreceding;
@@ -113,7 +114,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 precedesSpecialCharacter = false;
             }
 
-            if (!precededBySpace)
+            if (!firstInLine && !precededBySpace)
             {
                 // Closing brace should{} be {preceded} by a space.
                 var properties = TokenSpacingProperties.InsertPreceding;
