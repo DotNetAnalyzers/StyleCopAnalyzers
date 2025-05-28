@@ -50,6 +50,22 @@ public class Foo
         }
 
         /// <summary>
+        /// Verifies that empty files will not produce a warning.
+        /// </summary>
+        /// <param name="newlineAtEndOfFile">The effective <see cref="OptionSetting"/> setting.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData(null)]
+        [InlineData(OptionSetting.Allow)]
+        [InlineData(OptionSetting.Require)]
+        [InlineData(OptionSetting.Omit)]
+        internal async Task TestWithEmptyFileAsync(OptionSetting? newlineAtEndOfFile)
+        {
+            var testCode = string.Empty;
+            await VerifyCSharpDiagnosticAsync(newlineAtEndOfFile, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that linefeed only blank lines at the end of the file will produce a warning.
         /// </summary>
         /// <param name="newlineAtEndOfFile">The effective <see cref="OptionSetting"/> setting.</param>

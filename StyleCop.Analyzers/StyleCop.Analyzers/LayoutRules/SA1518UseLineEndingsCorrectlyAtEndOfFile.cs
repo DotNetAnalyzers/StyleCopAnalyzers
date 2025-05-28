@@ -72,6 +72,12 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context, StyleCopSettings settings)
         {
+            if (context.Tree.IsEmpty(context.CancellationToken))
+            {
+                // Empty file never contain line endings.
+                return;
+            }
+
             var endOfFileToken = context.Tree.GetRoot().GetLastToken(includeZeroWidth: true);
             TextSpan reportedSpan = new TextSpan(endOfFileToken.SpanStart, 0);
 

@@ -72,6 +72,14 @@ namespace StyleCop.Analyzers.Helpers
                 && TriviaHelper.IndexOfFirstNonWhitespaceTrivia(firstToken.LeadingTrivia) == -1;
         }
 
+        public static bool IsEmpty(this SyntaxTree tree, CancellationToken cancellationToken)
+        {
+            var root = tree.GetRoot(cancellationToken);
+            var firstToken = root.GetFirstToken(includeZeroWidth: true);
+
+            return firstToken.IsKind(SyntaxKind.EndOfFileToken) && firstToken.FullSpan.Length == 0;
+        }
+
         internal static bool ContainsUsingAlias(this SyntaxTree tree, ConcurrentDictionary<SyntaxTree, bool> cache)
         {
             if (tree == null)
