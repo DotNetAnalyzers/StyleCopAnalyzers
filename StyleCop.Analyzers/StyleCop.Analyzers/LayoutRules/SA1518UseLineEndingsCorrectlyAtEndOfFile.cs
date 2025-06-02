@@ -185,6 +185,12 @@ namespace StyleCop.Analyzers.LayoutRules
                 break;
             }
 
+            if (context.Tree.IsEmpty(context.CancellationToken))
+            {
+                // Empty files never contain line endings.
+                return;
+            }
+
             context.ReportDiagnostic(Diagnostic.Create(descriptorToReport, Location.Create(context.Tree, reportedSpan)));
         }
     }
