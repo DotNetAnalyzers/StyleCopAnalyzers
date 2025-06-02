@@ -77,7 +77,7 @@ namespace StyleCop.Analyzers.Helpers
             var root = tree.GetRoot(cancellationToken);
             var firstToken = root.GetFirstToken(includeZeroWidth: true);
 
-            return firstToken.IsKind(SyntaxKind.EndOfFileToken) && firstToken.FullSpan.Length == 0;
+            return firstToken.IsKind(SyntaxKind.EndOfFileToken) && firstToken.FullSpan.IsEmpty;
         }
 
         internal static bool ContainsUsingAlias(this SyntaxTree tree, ConcurrentDictionary<SyntaxTree, bool> cache)
