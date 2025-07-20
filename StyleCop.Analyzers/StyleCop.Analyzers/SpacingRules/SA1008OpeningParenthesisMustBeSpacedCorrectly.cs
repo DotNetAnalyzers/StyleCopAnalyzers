@@ -248,7 +248,8 @@ namespace StyleCop.Analyzers.SpacingRules
 
             case SyntaxKind.ParameterList:
                 var partOfLambdaExpression = token.Parent.Parent.IsKind(SyntaxKind.ParenthesizedLambdaExpression);
-                haveLeadingSpace = partOfLambdaExpression;
+                var startOfCollectionExpression = prevToken.IsKind(SyntaxKind.OpenBracketToken) && prevToken.Parent.IsKind(SyntaxKindEx.CollectionExpression);
+                haveLeadingSpace = partOfLambdaExpression && !startOfCollectionExpression;
                 break;
 
             case SyntaxKindEx.TupleType:
