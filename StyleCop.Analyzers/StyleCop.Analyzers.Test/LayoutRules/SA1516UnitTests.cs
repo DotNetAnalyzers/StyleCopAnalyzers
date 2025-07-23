@@ -32,7 +32,6 @@ namespace Foo
         public string Test3;
 
         public string TestProperty1 { get; set; }
-
         public string TestProperty2 { get; set; }
         /// <summary>
         /// A summary.
@@ -149,7 +148,6 @@ namespace Foot
                 Diagnostic().WithLocation(2, 1),
                 Diagnostic().WithLocation(5, 1),
                 Diagnostic().WithLocation(12, 1),
-                Diagnostic().WithLocation(13, 1),
                 Diagnostic().WithLocation(18, 1),
                 Diagnostic().WithLocation(24, 1),
                 Diagnostic().WithLocation(29, 1),
