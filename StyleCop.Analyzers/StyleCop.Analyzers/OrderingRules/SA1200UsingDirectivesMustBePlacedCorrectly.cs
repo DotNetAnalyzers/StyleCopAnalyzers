@@ -216,6 +216,7 @@ namespace StyleCop.Analyzers.OrderingRules
             CompilationUnitSyntax syntax = (CompilationUnitSyntax)context.Node;
 
             List<SyntaxNode> usingDirectives = new List<SyntaxNode>();
+            bool containsOnlyGlobalUsingDirectives = true;
             foreach (SyntaxNode child in syntax.ChildNodes())
             {
                 switch (child.Kind())
@@ -238,14 +239,23 @@ namespace StyleCop.Analyzers.OrderingRules
 
                 case SyntaxKind.UsingDirective:
                     usingDirectives.Add(child);
+                    bool isGlobalUsing = ((UsingDirectiveSyntax)child).GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword);
+                    containsOnlyGlobalUsingDirectives = containsOnlyGlobalUsingDirectives && isGlobalUsing;
                     continue;
 
-                case SyntaxKind.ExternAliasDirective:
                 case SyntaxKind.NamespaceDeclaration:
                 case SyntaxKindEx.FileScopedNamespaceDeclaration:
+                case SyntaxKind.ExternAliasDirective:
                 default:
+                    containsOnlyGlobalUsingDirectives = false;
                     continue;
                 }
+            }
+
+            if (containsOnlyGlobalUsingDirectives)
+            {
+                // Suppress SA1200 if file only contains global using directives
+                return;
             }
 
             foreach (var directive in usingDirectives)
