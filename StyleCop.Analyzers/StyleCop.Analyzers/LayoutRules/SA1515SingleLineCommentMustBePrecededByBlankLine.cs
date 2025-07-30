@@ -269,7 +269,8 @@ namespace StyleCop.Analyzers.LayoutRules
                 || (prevToken.IsKind(SyntaxKind.OpenBracketToken) && prevToken.Parent.IsKind(SyntaxKindEx.CollectionExpression))
                 || prevToken.Parent.IsKind(SyntaxKind.CaseSwitchLabel)
                 || prevToken.Parent.IsKind(SyntaxKindEx.CasePatternSwitchLabel)
-                || prevToken.Parent.IsKind(SyntaxKind.DefaultSwitchLabel);
+                || prevToken.Parent.IsKind(SyntaxKind.DefaultSwitchLabel)
+                || prevToken.IsKind(SyntaxKind.EqualsGreaterThanToken);
         }
 
         private static bool IsPrecededByDirectiveTrivia<T>(T triviaList, int triviaIndex)
