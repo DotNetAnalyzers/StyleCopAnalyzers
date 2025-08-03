@@ -19,3 +19,4 @@ Identifier | Name | Description
 [SA1313](SA1313.md) | ParameterNamesMustBeginWithLowerCaseLetter | The name of a parameter in C# does not begin with a lower-case letter. 
 [SA1314](SA1314.md) | TypeParameterNamesMustBeginWithT | The name of a C# type parameter does not begin with the capital letter T.
 [SA1316](SA1316.md) | TupleElementNamesShouldUseCorrectCasing | Element names within a tuple type should have the correct casing.
+[SA1317](SA1317.md) | IdentifierShouldBeNamedOnlyWithLatinLetters | An identifier should be named only with Latin letters.
