@@ -118,6 +118,12 @@ namespace StyleCop.Analyzers.NamingRules
         public static string @SA1316MessageFormat => GetResourceString("SA1316MessageFormat")!;
         /// <summary>Tuple element names should use correct casing</summary>
         public static string @SA1316Title => GetResourceString("SA1316Title")!;
+        /// <summary>An identifier should be named only with Latin letters.</summary>
+        public static string @SA1317Description => GetResourceString("SA1317Description")!;
+        /// <summary>Identifier '{0}' should be named only with Latin letters. Position {1}.</summary>
+        public static string @SA1317MessageFormat => GetResourceString("SA1317MessageFormat")!;
+        /// <summary>Identifier should be named only with Latin letters</summary>
+        public static string @SA1317Title => GetResourceString("SA1317Title")!;
         /// <summary>A field name in C# does not begin with an underscore.</summary>
         public static string @SX1309Description => GetResourceString("SX1309Description")!;
         /// <summary>Field '{0}' should begin with an underscore</summary>

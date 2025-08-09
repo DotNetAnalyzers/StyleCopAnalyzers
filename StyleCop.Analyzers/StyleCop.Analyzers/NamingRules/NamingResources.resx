@@ -273,6 +273,15 @@
   <data name="SA1316Title" xml:space="preserve">
     <value>Tuple element names should use correct casing</value>
   </data>
+  <data name="SA1317Description" xml:space="preserve">
+    <value>An identifier should be named only with Latin letters.</value>
+  </data>
+  <data name="SA1317MessageFormat" xml:space="preserve">
+    <value>Identifier '{0}' should be named only with Latin letters. Position {1}.</value>
+  </data>
+  <data name="SA1317Title" xml:space="preserve">
+    <value>Identifier should be named only with Latin letters</value>
+  </data>
   <data name="SX1309Description" xml:space="preserve">
     <value>A field name in C# does not begin with an underscore.</value>
   </data>
