@@ -14,7 +14,14 @@ namespace StyleCop.Analyzers.Lightup
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.FileScopedNamespaceDeclarationSyntax";
         private static readonly Type WrappedType;
 
+        private static readonly Func<MemberDeclarationSyntax, SyntaxList<AttributeListSyntax>> AttributeListsAccessor;
+        private static readonly Func<MemberDeclarationSyntax, SyntaxTokenList> ModifiersAccessor;
+        private static readonly Func<MemberDeclarationSyntax, SyntaxToken> NamespaceKeywordAccessor;
+        private static readonly Func<MemberDeclarationSyntax, NameSyntax> NameAccessor;
         private static readonly Func<MemberDeclarationSyntax, SyntaxToken> SemicolonTokenAccessor;
+        private static readonly Func<MemberDeclarationSyntax, SyntaxList<ExternAliasDirectiveSyntax>> ExternsAccessor;
+        private static readonly Func<MemberDeclarationSyntax, SyntaxList<UsingDirectiveSyntax>> UsingsAccessor;
+        private static readonly Func<MemberDeclarationSyntax, SyntaxList<MemberDeclarationSyntax>> MembersAccessor;
         private static readonly Func<MemberDeclarationSyntax, SyntaxList<AttributeListSyntax>, MemberDeclarationSyntax> WithAttributeListsAccessor;
         private static readonly Func<MemberDeclarationSyntax, SyntaxTokenList, MemberDeclarationSyntax> WithModifiersAccessor;
         private static readonly Func<MemberDeclarationSyntax, SyntaxToken, MemberDeclarationSyntax> WithNamespaceKeywordAccessor;
@@ -29,7 +36,14 @@ namespace StyleCop.Analyzers.Lightup
         static FileScopedNamespaceDeclarationSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(FileScopedNamespaceDeclarationSyntaxWrapper));
+            AttributeListsAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<MemberDeclarationSyntax, SyntaxList<AttributeListSyntax>>(WrappedType, nameof(AttributeLists));
+            ModifiersAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<MemberDeclarationSyntax, SyntaxTokenList>(WrappedType, nameof(Modifiers));
+            NamespaceKeywordAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<MemberDeclarationSyntax, SyntaxToken>(WrappedType, nameof(NamespaceKeyword));
+            NameAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<MemberDeclarationSyntax, NameSyntax>(WrappedType, nameof(Name));
             SemicolonTokenAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<MemberDeclarationSyntax, SyntaxToken>(WrappedType, nameof(SemicolonToken));
+            ExternsAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<MemberDeclarationSyntax, SyntaxList<ExternAliasDirectiveSyntax>>(WrappedType, nameof(Externs));
+            UsingsAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<MemberDeclarationSyntax, SyntaxList<UsingDirectiveSyntax>>(WrappedType, nameof(Usings));
+            MembersAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<MemberDeclarationSyntax, SyntaxList<MemberDeclarationSyntax>>(WrappedType, nameof(Members));
             WithAttributeListsAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<MemberDeclarationSyntax, SyntaxList<AttributeListSyntax>>(WrappedType, nameof(AttributeLists));
             WithModifiersAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<MemberDeclarationSyntax, SyntaxTokenList>(WrappedType, nameof(Modifiers));
             WithNamespaceKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<MemberDeclarationSyntax, SyntaxToken>(WrappedType, nameof(NamespaceKeyword));
@@ -51,7 +65,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return this.SyntaxNode.AttributeLists();
+                return AttributeListsAccessor(this.SyntaxNode);
             }
         }
 
@@ -59,7 +73,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return this.SyntaxNode.Modifiers();
+                return ModifiersAccessor(this.SyntaxNode);
             }
         }
 
@@ -67,7 +81,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ((BaseNamespaceDeclarationSyntaxWrapper)this).NamespaceKeyword;
+                return NamespaceKeywordAccessor(this.SyntaxNode);
             }
         }
 
@@ -75,7 +89,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ((BaseNamespaceDeclarationSyntaxWrapper)this).Name;
+                return NameAccessor(this.SyntaxNode);
             }
         }
 
@@ -91,7 +105,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ((BaseNamespaceDeclarationSyntaxWrapper)this).Externs;
+                return ExternsAccessor(this.SyntaxNode);
             }
         }
 
@@ -99,7 +113,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ((BaseNamespaceDeclarationSyntaxWrapper)this).Usings;
+                return UsingsAccessor(this.SyntaxNode);
             }
         }
 
@@ -107,7 +121,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ((BaseNamespaceDeclarationSyntaxWrapper)this).Members;
+                return MembersAccessor(this.SyntaxNode);
             }
         }
 

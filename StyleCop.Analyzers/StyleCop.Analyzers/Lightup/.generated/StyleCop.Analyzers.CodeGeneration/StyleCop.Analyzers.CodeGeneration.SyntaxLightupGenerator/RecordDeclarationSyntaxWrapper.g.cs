@@ -14,7 +14,19 @@ namespace StyleCop.Analyzers.Lightup
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.RecordDeclarationSyntax";
         private static readonly Type WrappedType;
 
+        private static readonly Func<TypeDeclarationSyntax, SyntaxList<AttributeListSyntax>> AttributeListsAccessor;
+        private static readonly Func<TypeDeclarationSyntax, SyntaxTokenList> ModifiersAccessor;
+        private static readonly Func<TypeDeclarationSyntax, SyntaxToken> KeywordAccessor;
         private static readonly Func<TypeDeclarationSyntax, SyntaxToken> ClassOrStructKeywordAccessor;
+        private static readonly Func<TypeDeclarationSyntax, SyntaxToken> IdentifierAccessor;
+        private static readonly Func<TypeDeclarationSyntax, TypeParameterListSyntax> TypeParameterListAccessor;
+        private static readonly Func<TypeDeclarationSyntax, ParameterListSyntax> ParameterListAccessor;
+        private static readonly Func<TypeDeclarationSyntax, BaseListSyntax> BaseListAccessor;
+        private static readonly Func<TypeDeclarationSyntax, SyntaxList<TypeParameterConstraintClauseSyntax>> ConstraintClausesAccessor;
+        private static readonly Func<TypeDeclarationSyntax, SyntaxToken> OpenBraceTokenAccessor;
+        private static readonly Func<TypeDeclarationSyntax, SyntaxList<MemberDeclarationSyntax>> MembersAccessor;
+        private static readonly Func<TypeDeclarationSyntax, SyntaxToken> CloseBraceTokenAccessor;
+        private static readonly Func<TypeDeclarationSyntax, SyntaxToken> SemicolonTokenAccessor;
         private static readonly Func<TypeDeclarationSyntax, SyntaxList<AttributeListSyntax>, TypeDeclarationSyntax> WithAttributeListsAccessor;
         private static readonly Func<TypeDeclarationSyntax, SyntaxTokenList, TypeDeclarationSyntax> WithModifiersAccessor;
         private static readonly Func<TypeDeclarationSyntax, SyntaxToken, TypeDeclarationSyntax> WithKeywordAccessor;
@@ -34,7 +46,19 @@ namespace StyleCop.Analyzers.Lightup
         static RecordDeclarationSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(RecordDeclarationSyntaxWrapper));
+            AttributeListsAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<TypeDeclarationSyntax, SyntaxList<AttributeListSyntax>>(WrappedType, nameof(AttributeLists));
+            ModifiersAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<TypeDeclarationSyntax, SyntaxTokenList>(WrappedType, nameof(Modifiers));
+            KeywordAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<TypeDeclarationSyntax, SyntaxToken>(WrappedType, nameof(Keyword));
             ClassOrStructKeywordAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<TypeDeclarationSyntax, SyntaxToken>(WrappedType, nameof(ClassOrStructKeyword));
+            IdentifierAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<TypeDeclarationSyntax, SyntaxToken>(WrappedType, nameof(Identifier));
+            TypeParameterListAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<TypeDeclarationSyntax, TypeParameterListSyntax>(WrappedType, nameof(TypeParameterList));
+            ParameterListAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<TypeDeclarationSyntax, ParameterListSyntax>(WrappedType, nameof(ParameterList));
+            BaseListAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<TypeDeclarationSyntax, BaseListSyntax>(WrappedType, nameof(BaseList));
+            ConstraintClausesAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<TypeDeclarationSyntax, SyntaxList<TypeParameterConstraintClauseSyntax>>(WrappedType, nameof(ConstraintClauses));
+            OpenBraceTokenAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<TypeDeclarationSyntax, SyntaxToken>(WrappedType, nameof(OpenBraceToken));
+            MembersAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<TypeDeclarationSyntax, SyntaxList<MemberDeclarationSyntax>>(WrappedType, nameof(Members));
+            CloseBraceTokenAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<TypeDeclarationSyntax, SyntaxToken>(WrappedType, nameof(CloseBraceToken));
+            SemicolonTokenAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<TypeDeclarationSyntax, SyntaxToken>(WrappedType, nameof(SemicolonToken));
             WithAttributeListsAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, SyntaxList<AttributeListSyntax>>(WrappedType, nameof(AttributeLists));
             WithModifiersAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, SyntaxTokenList>(WrappedType, nameof(Modifiers));
             WithKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, SyntaxToken>(WrappedType, nameof(Keyword));
@@ -61,7 +85,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return this.SyntaxNode.AttributeLists();
+                return AttributeListsAccessor(this.SyntaxNode);
             }
         }
 
@@ -69,7 +93,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return this.SyntaxNode.Modifiers();
+                return ModifiersAccessor(this.SyntaxNode);
             }
         }
 
@@ -77,7 +101,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return this.SyntaxNode.Keyword;
+                return KeywordAccessor(this.SyntaxNode);
             }
         }
 
@@ -93,7 +117,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return this.SyntaxNode.Identifier;
+                return IdentifierAccessor(this.SyntaxNode);
             }
         }
 
@@ -101,7 +125,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return this.SyntaxNode.TypeParameterList;
+                return TypeParameterListAccessor(this.SyntaxNode);
             }
         }
 
@@ -109,7 +133,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return this.SyntaxNode.ParameterList();
+                return ParameterListAccessor(this.SyntaxNode);
             }
         }
 
@@ -117,7 +141,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return this.SyntaxNode.BaseList;
+                return BaseListAccessor(this.SyntaxNode);
             }
         }
 
@@ -125,7 +149,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return this.SyntaxNode.ConstraintClauses;
+                return ConstraintClausesAccessor(this.SyntaxNode);
             }
         }
 
@@ -133,7 +157,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return this.SyntaxNode.OpenBraceToken;
+                return OpenBraceTokenAccessor(this.SyntaxNode);
             }
         }
 
@@ -141,7 +165,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return this.SyntaxNode.Members;
+                return MembersAccessor(this.SyntaxNode);
             }
         }
 
@@ -149,7 +173,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return this.SyntaxNode.CloseBraceToken;
+                return CloseBraceTokenAccessor(this.SyntaxNode);
             }
         }
 
@@ -157,7 +181,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return this.SyntaxNode.SemicolonToken;
+                return SemicolonTokenAccessor(this.SyntaxNode);
             }
         }
 

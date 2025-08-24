@@ -1359,7 +1359,11 @@ namespace StyleCop.Analyzers.CodeGeneration
                     _ => type,
                 };
 
-                this.IsOverride = element.Attribute("Override")?.Value == "true";
+                // TODO: Investigate this more
+                // Handling of overridden properties has been temporarily disabled, since the current behavior
+                // led to infinite recursion in certain scenarios, like this:
+                // TypeDeclarationSyntaxExtensions.ParameterList() -> RecordDeclarationSyntaxWrapper.ParameterList -> TypeDeclarationSyntaxExtensions.ParameterList() -> ...
+                this.IsOverride = false; // element.Attribute("Override")?.Value == "true";
 
                 this.AccessorName = this.Name + "Accessor";
                 this.WithAccessorName = "With" + this.Name + "Accessor";
