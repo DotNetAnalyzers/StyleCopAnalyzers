@@ -42,6 +42,7 @@ namespace StyleCop.Analyzers.Lightup
             builder.Add(typeof(ExpressionColonSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ExpressionColonSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(ExpressionElementSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ExpressionElementSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(ExpressionOrPatternSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ExpressionOrPatternSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(ExtensionDeclarationSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ExtensionDeclarationSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(FieldExpressionSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(FieldExpressionSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(FileScopedNamespaceDeclarationSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(FileScopedNamespaceDeclarationSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(ForEachVariableStatementSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ForEachVariableStatementSyntaxWrapper.WrappedTypeName));
@@ -51,6 +52,7 @@ namespace StyleCop.Analyzers.Lightup
             builder.Add(typeof(FunctionPointerTypeSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(FunctionPointerTypeSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(FunctionPointerUnmanagedCallingConventionListSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(FunctionPointerUnmanagedCallingConventionListSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(FunctionPointerUnmanagedCallingConventionSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(FunctionPointerUnmanagedCallingConventionSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(IgnoredDirectiveTriviaSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(IgnoredDirectiveTriviaSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(ImplicitObjectCreationExpressionSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ImplicitObjectCreationExpressionSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(ImplicitStackAllocArrayCreationExpressionSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ImplicitStackAllocArrayCreationExpressionSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(IsPatternExpressionSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(IsPatternExpressionSyntaxWrapper.WrappedTypeName));
