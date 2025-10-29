@@ -85,7 +85,7 @@ namespace StyleCop.Analyzers.OrderingRules
             /// <inheritdoc/>
             public override bool Equals(object obj)
             {
-                return (obj is TreeTextSpan) && this.Equals((TreeTextSpan)obj);
+                return (obj is TreeTextSpan span) && this.Equals(span);
             }
 
             /// <inheritdoc/>
