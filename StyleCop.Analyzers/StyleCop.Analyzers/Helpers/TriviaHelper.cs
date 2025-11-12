@@ -522,7 +522,7 @@ namespace StyleCop.Analyzers.Helpers
         /// <summary>
         /// Helper class that merges two SyntaxTriviaLists with (hopefully) the lowest possible performance penalty.
         /// </summary>
-        internal struct DualTriviaListHelper : IReadOnlyList<SyntaxTrivia>
+        internal readonly struct DualTriviaListHelper : IReadOnlyList<SyntaxTrivia>
         {
             private readonly SyntaxTriviaList part1;
             private readonly int part1Count;

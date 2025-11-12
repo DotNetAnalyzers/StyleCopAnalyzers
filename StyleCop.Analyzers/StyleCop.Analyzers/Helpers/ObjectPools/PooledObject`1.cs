@@ -29,7 +29,7 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
             this.releaser = releaser;
         }
 
-        public T Object
+        public readonly T Object
         {
             get
             {
