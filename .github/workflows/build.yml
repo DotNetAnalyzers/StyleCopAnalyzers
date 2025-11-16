@@ -1,0 +1,51 @@
+name: Build
+
+on:
+  push:
+    branches: [ master ]
+    tags-ignore: [ '**' ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Configure git line endings
+      run: git config --global core.autocrlf true
+
+    - name: Setup .NET SDK
+      run: .\init.ps1 -NoRestore
+      shell: pwsh
+
+    - name: Setup NuGet
+      uses: nuget/setup-nuget@v2
+      with:
+        nuget-version: '5.x'
+
+    - name: Restore NuGet packages
+      run: nuget restore StyleCopAnalyzers.sln
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Build solution
+      run: msbuild StyleCopAnalyzers.sln /p:Configuration=${{ matrix.configuration }} /v:minimal
+
+    - name: Upload NuGet packages
+      if: matrix.configuration == 'Release'
+      uses: actions/upload-artifact@v4
+      with:
+        name: NuGet-Packages
+        path: StyleCop.Analyzers/StyleCop.Analyzers.CodeFixes/bin/Release/*.nupkg

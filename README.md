@@ -4,7 +4,7 @@
 
 [![Join the chat at https://gitter.im/DotNetAnalyzers/StyleCopAnalyzers](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/DotNetAnalyzers/StyleCopAnalyzers?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-[![Build status](https://ci.appveyor.com/api/projects/status/8jw2lq431kgg44jl/branch/master?svg=true)](https://ci.appveyor.com/project/sharwell/stylecopanalyzers/branch/master)
+[![Build status](https://github.com/AArnott/StyleCopAnalyzers/workflows/Build/badge.svg)](https://github.com/AArnott/StyleCopAnalyzers/actions)
 
 [![codecov.io](https://codecov.io/github/DotNetAnalyzers/StyleCopAnalyzers/coverage.svg?branch=master)](https://codecov.io/github/DotNetAnalyzers/StyleCopAnalyzers?branch=master)
 
