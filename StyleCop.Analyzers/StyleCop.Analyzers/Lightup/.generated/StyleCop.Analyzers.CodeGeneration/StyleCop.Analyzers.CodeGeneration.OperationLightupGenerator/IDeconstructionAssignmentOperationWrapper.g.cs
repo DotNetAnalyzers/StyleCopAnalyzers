@@ -24,10 +24,12 @@ namespace StyleCop.Analyzers.Lightup
 
         public IOperation WrappedOperation => this.operation;
         public ITypeSymbol Type => this.WrappedOperation.Type;
+
         public static explicit operator IDeconstructionAssignmentOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IDeconstructionAssignmentOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public IOperation Target => ((IAssignmentOperationWrapper)this).Target;
         public IOperation Value => ((IAssignmentOperationWrapper)this).Value;
+
         public static explicit operator IDeconstructionAssignmentOperationWrapper(IAssignmentOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IAssignmentOperationWrapper(IDeconstructionAssignmentOperationWrapper wrapper) => IAssignmentOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IDeconstructionAssignmentOperationWrapper FromOperation(IOperation operation)

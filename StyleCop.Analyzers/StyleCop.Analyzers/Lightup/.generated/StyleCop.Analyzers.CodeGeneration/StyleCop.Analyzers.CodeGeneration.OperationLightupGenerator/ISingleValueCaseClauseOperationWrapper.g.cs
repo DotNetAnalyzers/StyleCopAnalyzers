@@ -27,10 +27,12 @@ namespace StyleCop.Analyzers.Lightup
         public IOperation WrappedOperation => this.operation;
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public IOperation Value => ValueAccessor(this.WrappedOperation);
+
         public static explicit operator ISingleValueCaseClauseOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(ISingleValueCaseClauseOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public object CaseKind => ((ICaseClauseOperationWrapper)this).CaseKind;
         public ILabelSymbol Label => ((ICaseClauseOperationWrapper)this).Label;
+
         public static explicit operator ISingleValueCaseClauseOperationWrapper(ICaseClauseOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator ICaseClauseOperationWrapper(ISingleValueCaseClauseOperationWrapper wrapper) => ICaseClauseOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static ISingleValueCaseClauseOperationWrapper FromOperation(IOperation operation)

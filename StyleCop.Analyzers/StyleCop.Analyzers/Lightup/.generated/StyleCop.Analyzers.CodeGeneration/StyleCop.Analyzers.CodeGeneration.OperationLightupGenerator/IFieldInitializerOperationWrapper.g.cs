@@ -27,10 +27,12 @@ namespace StyleCop.Analyzers.Lightup
         public IOperation WrappedOperation => this.operation;
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public ImmutableArray<IFieldSymbol> InitializedFields => InitializedFieldsAccessor(this.WrappedOperation);
+
         public static explicit operator IFieldInitializerOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IFieldInitializerOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public ImmutableArray<ILocalSymbol> Locals => ((ISymbolInitializerOperationWrapper)this).Locals;
         public IOperation Value => ((ISymbolInitializerOperationWrapper)this).Value;
+
         public static explicit operator IFieldInitializerOperationWrapper(ISymbolInitializerOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator ISymbolInitializerOperationWrapper(IFieldInitializerOperationWrapper wrapper) => ISymbolInitializerOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IFieldInitializerOperationWrapper FromOperation(IOperation operation)

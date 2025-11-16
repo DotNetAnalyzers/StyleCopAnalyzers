@@ -33,10 +33,12 @@ namespace StyleCop.Analyzers.Lightup
         public ITypeSymbol MatchedType => MatchedTypeAccessor(this.WrappedOperation);
         public bool MatchesNull => MatchesNullAccessor(this.WrappedOperation);
         public ISymbol DeclaredSymbol => DeclaredSymbolAccessor(this.WrappedOperation);
+
         public static explicit operator IDeclarationPatternOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IDeclarationPatternOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public ITypeSymbol InputType => ((IPatternOperationWrapper)this).InputType;
         public ITypeSymbol NarrowedType => ((IPatternOperationWrapper)this).NarrowedType;
+
         public static explicit operator IDeclarationPatternOperationWrapper(IPatternOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IPatternOperationWrapper(IDeclarationPatternOperationWrapper wrapper) => IPatternOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IDeclarationPatternOperationWrapper FromOperation(IOperation operation)

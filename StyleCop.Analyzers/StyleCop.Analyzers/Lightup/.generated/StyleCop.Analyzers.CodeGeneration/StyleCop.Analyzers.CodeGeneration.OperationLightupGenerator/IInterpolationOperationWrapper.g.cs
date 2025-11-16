@@ -33,6 +33,7 @@ namespace StyleCop.Analyzers.Lightup
         public IOperation Expression => ExpressionAccessor(this.WrappedOperation);
         public IOperation Alignment => AlignmentAccessor(this.WrappedOperation);
         public IOperation FormatString => FormatStringAccessor(this.WrappedOperation);
+
         public static explicit operator IInterpolationOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IInterpolationOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static explicit operator IInterpolationOperationWrapper(IInterpolatedStringContentOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);

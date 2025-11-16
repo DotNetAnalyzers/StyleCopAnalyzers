@@ -33,6 +33,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public CSharpSyntaxNode SyntaxNode => this.node;
 
+
         public TypeSyntax Type
         {
             get

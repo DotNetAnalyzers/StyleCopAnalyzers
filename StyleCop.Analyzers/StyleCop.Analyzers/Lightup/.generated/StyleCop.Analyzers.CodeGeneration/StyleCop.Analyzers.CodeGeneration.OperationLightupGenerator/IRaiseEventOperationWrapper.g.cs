@@ -30,6 +30,7 @@ namespace StyleCop.Analyzers.Lightup
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public IEventReferenceOperationWrapper EventReference => IEventReferenceOperationWrapper.FromOperation(EventReferenceAccessor(this.WrappedOperation));
         public ImmutableArray<IOperation> Arguments => ArgumentsAccessor(this.WrappedOperation);
+
         public static explicit operator IRaiseEventOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IRaiseEventOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IRaiseEventOperationWrapper FromOperation(IOperation operation)

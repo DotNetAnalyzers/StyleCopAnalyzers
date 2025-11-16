@@ -33,6 +33,7 @@ namespace StyleCop.Analyzers.Lightup
         public IMethodSymbol Symbol => SymbolAccessor(this.WrappedOperation);
         public IBlockOperationWrapper Body => IBlockOperationWrapper.FromOperation(BodyAccessor(this.WrappedOperation));
         public IBlockOperationWrapper IgnoredBody => IBlockOperationWrapper.FromOperation(IgnoredBodyAccessor(this.WrappedOperation));
+
         public static explicit operator ILocalFunctionOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(ILocalFunctionOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static ILocalFunctionOperationWrapper FromOperation(IOperation operation)

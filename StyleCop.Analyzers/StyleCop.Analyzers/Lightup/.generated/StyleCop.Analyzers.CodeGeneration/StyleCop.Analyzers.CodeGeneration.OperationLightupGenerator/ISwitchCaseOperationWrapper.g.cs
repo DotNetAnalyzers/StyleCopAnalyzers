@@ -33,6 +33,7 @@ namespace StyleCop.Analyzers.Lightup
         public ImmutableArray<IOperation> Clauses => ClausesAccessor(this.WrappedOperation);
         public ImmutableArray<IOperation> Body => BodyAccessor(this.WrappedOperation);
         public ImmutableArray<ILocalSymbol> Locals => LocalsAccessor(this.WrappedOperation);
+
         public static explicit operator ISwitchCaseOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(ISwitchCaseOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static ISwitchCaseOperationWrapper FromOperation(IOperation operation)

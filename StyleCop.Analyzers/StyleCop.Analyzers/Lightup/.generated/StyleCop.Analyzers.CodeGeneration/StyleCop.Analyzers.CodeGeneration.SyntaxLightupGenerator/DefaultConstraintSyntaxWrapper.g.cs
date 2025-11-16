@@ -33,6 +33,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public TypeParameterConstraintSyntax SyntaxNode => this.node;
 
+
         public SyntaxToken DefaultKeyword
         {
             get

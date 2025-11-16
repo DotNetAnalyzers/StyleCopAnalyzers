@@ -36,6 +36,7 @@ namespace StyleCop.Analyzers.Lightup
         public IOperation Value => ValueAccessor(this.WrappedOperation);
         public ImmutableArray<IOperation> Cases => CasesAccessor(this.WrappedOperation);
         public ILabelSymbol ExitLabel => ExitLabelAccessor(this.WrappedOperation);
+
         public static explicit operator ISwitchOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(ISwitchOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static ISwitchOperationWrapper FromOperation(IOperation operation)

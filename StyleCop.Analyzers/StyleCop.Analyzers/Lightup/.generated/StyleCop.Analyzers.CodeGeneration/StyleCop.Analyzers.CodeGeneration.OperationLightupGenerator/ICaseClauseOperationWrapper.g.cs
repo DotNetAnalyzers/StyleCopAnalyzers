@@ -28,6 +28,7 @@ namespace StyleCop.Analyzers.Lightup
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public object CaseKind => throw new NotImplementedException("Property 'ICaseClauseOperation.CaseKind' has unsupported type 'CaseKind'");
         public ILabelSymbol Label => LabelAccessor(this.WrappedOperation);
+
         public static explicit operator ICaseClauseOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(ICaseClauseOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static ICaseClauseOperationWrapper FromOperation(IOperation operation)

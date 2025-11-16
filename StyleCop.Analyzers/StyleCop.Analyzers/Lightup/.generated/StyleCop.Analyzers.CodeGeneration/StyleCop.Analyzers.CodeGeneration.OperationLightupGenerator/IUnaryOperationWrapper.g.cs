@@ -37,6 +37,7 @@ namespace StyleCop.Analyzers.Lightup
         public bool IsLifted => IsLiftedAccessor(this.WrappedOperation);
         public bool IsChecked => IsCheckedAccessor(this.WrappedOperation);
         public IMethodSymbol OperatorMethod => OperatorMethodAccessor(this.WrappedOperation);
+
         public static explicit operator IUnaryOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IUnaryOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IUnaryOperationWrapper FromOperation(IOperation operation)

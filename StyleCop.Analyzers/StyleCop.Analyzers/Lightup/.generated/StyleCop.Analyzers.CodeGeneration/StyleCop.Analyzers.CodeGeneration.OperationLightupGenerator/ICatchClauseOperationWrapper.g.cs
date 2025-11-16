@@ -39,6 +39,7 @@ namespace StyleCop.Analyzers.Lightup
         public ImmutableArray<ILocalSymbol> Locals => LocalsAccessor(this.WrappedOperation);
         public IOperation Filter => FilterAccessor(this.WrappedOperation);
         public IBlockOperationWrapper Handler => IBlockOperationWrapper.FromOperation(HandlerAccessor(this.WrappedOperation));
+
         public static explicit operator ICatchClauseOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(ICatchClauseOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static ICatchClauseOperationWrapper FromOperation(IOperation operation)

@@ -45,6 +45,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public CSharpSyntaxNode SyntaxNode => this.node;
 
+
         public PatternSyntaxWrapper Pattern
         {
             get

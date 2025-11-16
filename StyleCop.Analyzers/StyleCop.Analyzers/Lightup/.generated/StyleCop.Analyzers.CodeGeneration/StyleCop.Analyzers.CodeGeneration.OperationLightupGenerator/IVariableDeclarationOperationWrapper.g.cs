@@ -33,6 +33,7 @@ namespace StyleCop.Analyzers.Lightup
         public ImmutableArray<IOperation> Declarators => DeclaratorsAccessor(this.WrappedOperation);
         public IVariableInitializerOperationWrapper Initializer => IVariableInitializerOperationWrapper.FromOperation(InitializerAccessor(this.WrappedOperation));
         public ImmutableArray<IOperation> IgnoredDimensions => IgnoredDimensionsAccessor(this.WrappedOperation);
+
         public static explicit operator IVariableDeclarationOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IVariableDeclarationOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IVariableDeclarationOperationWrapper FromOperation(IOperation operation)

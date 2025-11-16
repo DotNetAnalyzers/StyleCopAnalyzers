@@ -49,6 +49,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public MemberDeclarationSyntax SyntaxNode => this.node;
 
+
         public SyntaxToken NamespaceKeyword
         {
             get

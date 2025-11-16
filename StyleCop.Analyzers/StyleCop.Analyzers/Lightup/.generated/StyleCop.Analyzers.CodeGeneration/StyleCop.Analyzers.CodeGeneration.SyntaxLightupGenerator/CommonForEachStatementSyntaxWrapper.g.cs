@@ -57,6 +57,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public StatementSyntax SyntaxNode => this.node;
 
+
         public SyntaxToken AwaitKeyword
         {
             get

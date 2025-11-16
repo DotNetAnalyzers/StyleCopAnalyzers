@@ -41,6 +41,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public CSharpSyntaxNode SyntaxNode => this.node;
 
+
         public SyntaxList<AttributeListSyntax> AttributeLists
         {
             get
