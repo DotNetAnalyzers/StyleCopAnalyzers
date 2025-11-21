@@ -156,6 +156,12 @@
   <data name="StartingTextSetsWhether" xml:space="preserve">
     <value>Schrijft een waarde welke aangeeft</value>
   </data>
+  <data name="StartingTextReturns" xml:space="preserve">
+    <value>Retourneert</value>
+  </data>
+  <data name="StartingTextReturnsWhether" xml:space="preserve">
+    <value>Retourneert een waarde welke aangeeft</value>
+  </data>
   <data name="StaticConstructorStandardTextFirstPart" xml:space="preserve">
     <value>Initialiseert statische leden van de </value>
   </data>
