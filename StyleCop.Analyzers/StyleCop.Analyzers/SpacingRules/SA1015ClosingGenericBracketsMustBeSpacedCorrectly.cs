@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
@@ -127,6 +125,8 @@ namespace StyleCop.Analyzers.SpacingRules
 
                 case SyntaxKind.CloseParenToken:
                 case SyntaxKind.GreaterThanToken:
+                case SyntaxKind.CloseBraceToken:
+                case SyntaxKind.CloseBracketToken when nextToken.Parent.IsKind(SyntaxKindEx.CollectionExpression):
                     allowTrailingNoSpace = true;
                     allowTrailingSpace = true;
                     break;

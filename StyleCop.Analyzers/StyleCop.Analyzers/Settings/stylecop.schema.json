@@ -263,7 +263,7 @@
             "headerDecoration": {
               "type": "string",
               "description": "The text used as decoration for the copyright header comment.",
-              "default": null
+              "default": ""
             },
             "fileNamingConvention": {
               "type": "string",
