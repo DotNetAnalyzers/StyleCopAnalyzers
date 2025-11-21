@@ -3,6 +3,7 @@
 
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
+    <EnforceExtendedAnalyzerRules>false</EnforceExtendedAnalyzerRules>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
@@ -26,6 +27,7 @@
     <ProjectReference Include="..\StyleCop.Analyzers.CodeFixes\StyleCop.Analyzers.CodeFixes.csproj" />
     <ProjectReference Include="..\StyleCop.Analyzers.Test\StyleCop.Analyzers.Test.csproj" />
     <ProjectReference Include="..\StyleCop.Analyzers\StyleCop.Analyzers.csproj" />
+    <ProjectReference Include="..\StyleCop.Analyzers.PrivateCodeFixes\StyleCop.Analyzers.PrivateCodeFixes.csproj" PrivateAssets="all" SetTargetFramework="TargetFramework=netstandard2.0" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <ItemGroup>

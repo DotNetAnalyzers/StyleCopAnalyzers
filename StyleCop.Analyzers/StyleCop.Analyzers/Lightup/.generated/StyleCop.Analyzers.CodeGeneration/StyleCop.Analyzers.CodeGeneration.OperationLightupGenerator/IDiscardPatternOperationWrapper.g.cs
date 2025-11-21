@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct IDiscardPatternOperationWrapper : IOperationWrapper
+    internal readonly struct IDiscardPatternOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IDiscardPatternOperation";
         private static readonly Type WrappedType;
@@ -24,6 +24,8 @@ namespace StyleCop.Analyzers.Lightup
 
         public IOperation WrappedOperation => this.operation;
         public ITypeSymbol Type => this.WrappedOperation.Type;
+        public static explicit operator IDiscardPatternOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(IDiscardPatternOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public ITypeSymbol InputType => ((IPatternOperationWrapper)this).InputType;
         public ITypeSymbol NarrowedType => ((IPatternOperationWrapper)this).NarrowedType;
         public static explicit operator IDiscardPatternOperationWrapper(IPatternOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);

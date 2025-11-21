@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
@@ -77,7 +79,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static async Task<SyntaxNode> GetTransformedSyntaxRootAsync(Document document, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var settings = document.Project.AnalyzerOptions.GetStyleCopSettings(root.SyntaxTree, cancellationToken);
+            var settings = document.Project.AnalyzerOptions.GetStyleCopSettingsInCodeFix(root.SyntaxTree, cancellationToken);
 
             var fileHeader = FileHeaderHelpers.ParseFileHeader(root);
             SyntaxNode newSyntaxRoot;
@@ -447,12 +449,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 for (int i = 0; i < trivia.Count; i++)
                 {
                     var triviaLine = trivia[i];
-                    if (triviaLine.Kind() == SyntaxKind.SingleLineCommentTrivia && triviaLine.ToFullString().Contains(settings.DocumentationRules.HeaderDecoration))
+                    if (triviaLine.IsKind(SyntaxKind.SingleLineCommentTrivia) && triviaLine.ToFullString().Contains(settings.DocumentationRules.HeaderDecoration))
                     {
                         decorationRemovalList.Add(i);
 
                         // also remove the line break
-                        if (i + 1 < trivia.Count && trivia[i + 1].Kind() == SyntaxKind.EndOfLineTrivia)
+                        if (i + 1 < trivia.Count && trivia[i + 1].IsKind(SyntaxKind.EndOfLineTrivia))
                         {
                             decorationRemovalList.Add(i + 1);
                         }

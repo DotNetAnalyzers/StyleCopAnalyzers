@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
 {
     using System.Threading;
@@ -9,11 +11,12 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.ReadabilityRules;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Helpers.LanguageVersionTestExtensions;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1137ElementsShouldHaveTheSameIndentation,
         StyleCop.Analyzers.ReadabilityRules.IndentationCodeFixProvider>;
 
-    public class SA1137CSharp7UnitTests : SA1137UnitTests
+    public partial class SA1137CSharp7UnitTests : SA1137UnitTests
     {
         [Fact]
         public async Task TestTupleTypeAsync()
@@ -158,7 +161,7 @@ class Container
                 Diagnostic().WithLocation(17, 1),
             };
 
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3.OrLaterDefault(), testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -218,7 +221,7 @@ class Container
                 Diagnostic().WithLocation(17, 1),
             };
 
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3.OrLaterDefault(), testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

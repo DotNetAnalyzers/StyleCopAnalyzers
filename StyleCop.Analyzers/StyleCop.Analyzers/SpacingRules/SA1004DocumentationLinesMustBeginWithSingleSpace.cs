@@ -110,6 +110,10 @@ namespace StyleCop.Analyzers.SpacingRules
             case SyntaxKind.XmlCommentEndToken:
             case SyntaxKind.XmlCDataStartToken:
             case SyntaxKind.XmlCDataEndToken:
+            case SyntaxKind.InKeyword:
+            case SyntaxKind.OutKeyword:
+            case SyntaxKind.RefKeyword:
+            case SyntaxKind.ReadOnlyKeyword:
                 if (!token.HasLeadingTrivia)
                 {
                     break;

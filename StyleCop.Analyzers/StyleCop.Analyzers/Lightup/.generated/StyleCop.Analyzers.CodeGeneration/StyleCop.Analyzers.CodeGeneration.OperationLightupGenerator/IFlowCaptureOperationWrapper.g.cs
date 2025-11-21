@@ -7,9 +7,9 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct IFlowCaptureOperationWrapper : IOperationWrapper
+    internal readonly struct IFlowCaptureOperationWrapper
     {
-        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IFlowCaptureOperation";
+        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.FlowAnalysis.IFlowCaptureOperation";
         private static readonly Type WrappedType;
         private static readonly Func<IOperation, IOperation> ValueAccessor;
         private readonly IOperation operation;
@@ -28,6 +28,8 @@ namespace StyleCop.Analyzers.Lightup
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public object Id => throw new NotImplementedException("Property 'IFlowCaptureOperation.Id' has unsupported type 'CaptureId'");
         public IOperation Value => ValueAccessor(this.WrappedOperation);
+        public static explicit operator IFlowCaptureOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(IFlowCaptureOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IFlowCaptureOperationWrapper FromOperation(IOperation operation)
         {
             if (operation == null)

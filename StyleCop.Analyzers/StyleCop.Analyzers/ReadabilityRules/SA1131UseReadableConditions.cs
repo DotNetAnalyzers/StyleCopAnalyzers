@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
@@ -80,12 +82,20 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return true;
             }
 
-            if (semanticModel.GetSymbolInfo(expression).Symbol is IFieldSymbol fieldSymbol)
+            var symbol = semanticModel.GetSymbolInfo(expression).Symbol;
+            switch (symbol)
             {
-                return fieldSymbol.IsStatic && fieldSymbol.IsReadOnly;
-            }
+            case IFieldSymbol fieldSymbol when fieldSymbol.IsStatic && fieldSymbol.IsReadOnly:
+                return true;
 
-            return false;
+            // NOTE: Without the when clause, this would also treat e.g unary or binary expressions as literals,
+            // since GetSymbolInfo returns the operator method in those cases.
+            case IMethodSymbol when expression is NameSyntax or MemberAccessExpressionSyntax:
+                return true;
+
+            default:
+                return false;
+            }
         }
     }
 }

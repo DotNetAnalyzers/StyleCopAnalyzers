@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct IConditionalAccessOperationWrapper : IOperationWrapper
+    internal readonly struct IConditionalAccessOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IConditionalAccessOperation";
         private static readonly Type WrappedType;
@@ -30,6 +30,8 @@ namespace StyleCop.Analyzers.Lightup
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public IOperation Operation => OperationAccessor(this.WrappedOperation);
         public IOperation WhenNotNull => WhenNotNullAccessor(this.WrappedOperation);
+        public static explicit operator IConditionalAccessOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(IConditionalAccessOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IConditionalAccessOperationWrapper FromOperation(IOperation operation)
         {
             if (operation == null)

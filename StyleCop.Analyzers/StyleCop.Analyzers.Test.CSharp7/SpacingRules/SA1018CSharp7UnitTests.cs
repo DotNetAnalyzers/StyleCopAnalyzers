@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 {
     using System.Threading;
@@ -11,7 +13,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1018NullableTypeSymbolsMustNotBePrecededBySpace,
         StyleCop.Analyzers.SpacingRules.SA1018CodeFixProvider>;
 
-    public class SA1018CSharp7UnitTests : SA1018UnitTests
+    public partial class SA1018CSharp7UnitTests : SA1018UnitTests
     {
         /// <summary>
         /// Verifies that nullable tuple types with different kinds of spacing will report.

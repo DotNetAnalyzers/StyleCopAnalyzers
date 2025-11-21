@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System;
@@ -117,6 +119,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                     && !node.Expression.IsKind(SyntaxKind.CoalesceExpression)
                     && !node.Expression.IsKind(SyntaxKind.QueryExpression)
                     && !node.Expression.IsKind(SyntaxKind.AwaitExpression)
+                    && !node.Expression.IsKind(SyntaxKindEx.RangeExpression)
                     && !node.IsKind(SyntaxKind.ConstructorDeclaration))
                 {
                     if (node.Expression.IsKind(SyntaxKind.ConditionalAccessExpression)
@@ -127,12 +130,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                         return;
                     }
 
-                    if (IsSwitchOrWithExpressionPrecededByTypeCast(node))
-                    {
-                        return;
-                    }
-
-                    if (IsSwitchOrWithExpressionExpressionOfMemberAccess(node))
+                    if (IsSwitchOrWithExpressionWithRequiredParentheses(node))
                     {
                         return;
                     }
@@ -151,6 +149,15 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                     if (node.Parent is InterpolationSyntax
                         && IsConditionalAccessInInterpolation(node.Expression))
                     {
+                        // Parenthesis can't be removed here
+                        return;
+                    }
+
+                    if (node.Parent is AssignmentExpressionSyntax assignmentExpression
+                        && node.Expression.IsKind(SyntaxKind.ConditionalExpression)
+                        && assignmentExpression.Left == node)
+                    {
+                        // NOTE: This is only valid syntax if the conditional expression is a ref expression
                         // Parenthesis can't be removed here
                         return;
                     }
@@ -216,7 +223,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             return false;
         }
 
-        private static bool IsSwitchOrWithExpressionPrecededByTypeCast(ParenthesizedExpressionSyntax node)
+        private static bool IsSwitchOrWithExpressionWithRequiredParentheses(ParenthesizedExpressionSyntax node)
         {
             if (!node.Expression.IsKind(SyntaxKindEx.SwitchExpression)
                 && !node.Expression.IsKind(SyntaxKindEx.WithExpression))
@@ -224,29 +231,15 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 return false;
             }
 
-            var previousToken = node.OpenParenToken.GetPreviousToken();
-
-            while (previousToken.IsKind(SyntaxKind.OpenParenToken) && previousToken.Parent.IsKind(SyntaxKind.ParenthesizedExpression))
+            var outerExpression = node.WalkUpParentheses();
+            return outerExpression.Parent switch
             {
-                previousToken = previousToken.GetPreviousToken();
-            }
-
-            return previousToken.IsKind(SyntaxKind.CloseParenToken) && previousToken.Parent.IsKind(SyntaxKind.CastExpression);
-        }
-
-        private static bool IsSwitchOrWithExpressionExpressionOfMemberAccess(ParenthesizedExpressionSyntax node)
-        {
-            if (!node.Expression.IsKind(SyntaxKindEx.SwitchExpression)
-                && !node.Expression.IsKind(SyntaxKindEx.WithExpression))
-            {
-                return false;
-            }
-
-            return node.Parent switch
-            {
-                MemberAccessExpressionSyntax memberAccessExpression => memberAccessExpression.Expression == node,
-                ConditionalAccessExpressionSyntax conditionalAccessExpression => conditionalAccessExpression.Expression == node,
-                ElementAccessExpressionSyntax elementAccessExpression => elementAccessExpression.Expression == node,
+                AwaitExpressionSyntax awaitExpression => awaitExpression.Expression == outerExpression,
+                CastExpressionSyntax castExpression => castExpression.Expression == outerExpression,
+                MemberAccessExpressionSyntax memberAccessExpression => memberAccessExpression.Expression == outerExpression,
+                ConditionalAccessExpressionSyntax conditionalAccessExpression => conditionalAccessExpression.Expression == outerExpression,
+                ElementAccessExpressionSyntax elementAccessExpression => elementAccessExpression.Expression == outerExpression,
+                InvocationExpressionSyntax invocationExpression => invocationExpression.Expression == outerExpression,
                 _ => false,
             };
         }

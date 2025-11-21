@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.LayoutRules
 {
     using System;
@@ -58,7 +60,7 @@ namespace StyleCop.Analyzers.LayoutRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
+            var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
             if (!(syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) is StatementSyntax statement))
             {
                 return document;
@@ -302,7 +304,7 @@ namespace StyleCop.Analyzers.LayoutRules
 
                 var tokenReplaceMap = new Dictionary<SyntaxToken, SyntaxToken>();
                 SyntaxNode syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
-                var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, fixAllContext.CancellationToken);
+                var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, fixAllContext.CancellationToken);
 
                 foreach (var diagnostic in diagnostics.Sort(DiagnosticComparer.Instance))
                 {

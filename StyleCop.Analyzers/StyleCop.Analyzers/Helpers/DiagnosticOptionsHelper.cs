@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 // There are no start actions in this file. This warning should not be reported.
 #pragma warning disable RS1012 // Start action has no registered actions.
 

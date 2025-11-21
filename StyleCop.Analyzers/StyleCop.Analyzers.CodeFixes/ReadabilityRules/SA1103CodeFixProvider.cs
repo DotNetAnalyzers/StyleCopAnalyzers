@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Generic;
@@ -118,7 +120,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             var nodeList = CreateQueryNodeList(queryExpression);
 
-            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
+            var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
             var indentationTrivia = QueryIndentationHelpers.GetQueryIndentationTrivia(settings.Indentation, queryExpression);
 
             for (var i = 1; i < nodeList.Length; i++)

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 {
     using System.Threading;
@@ -13,7 +15,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1009ClosingParenthesisMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1009CSharp7UnitTests : SA1009UnitTests
+    public partial class SA1009CSharp7UnitTests : SA1009UnitTests
     {
         /// <summary>
         /// Verifies spacing around a <c>]</c> character in tuple types and expressions.

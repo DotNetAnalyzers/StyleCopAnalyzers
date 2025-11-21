@@ -1,12 +1,15 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
+    using StyleCop.Analyzers.Test.ReadabilityRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1141UseTupleSyntax,
@@ -17,7 +20,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
     /// </summary>
     /// <seealso cref="SA1141UseTupleSyntax"/>
     /// <seealso cref="SA1141CodeFixProvider"/>
-    public class SA1141CSharp7UnitTests
+    public partial class SA1141CSharp7UnitTests : SA1141UnitTests
     {
         /// <summary>
         /// Verifies that member declarations containing ValueTuple will result in the proper diagnostics and fixes.

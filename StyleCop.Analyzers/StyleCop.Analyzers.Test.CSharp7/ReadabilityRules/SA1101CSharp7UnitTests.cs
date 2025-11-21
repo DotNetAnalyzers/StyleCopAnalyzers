@@ -12,7 +12,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
         StyleCop.Analyzers.ReadabilityRules.SA1101PrefixLocalCallsWithThis,
         StyleCop.Analyzers.ReadabilityRules.SA1101CodeFixProvider>;
 
-    public class SA1101CSharp7UnitTests : SA1101UnitTests
+    public partial class SA1101CSharp7UnitTests : SA1101UnitTests
     {
         /// <summary>
         /// Verifies that a value tuple is handled properly.

@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct ICaseClauseOperationWrapper : IOperationWrapper
+    internal readonly struct ICaseClauseOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.ICaseClauseOperation";
         private static readonly Type WrappedType;
@@ -28,6 +28,8 @@ namespace StyleCop.Analyzers.Lightup
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public object CaseKind => throw new NotImplementedException("Property 'ICaseClauseOperation.CaseKind' has unsupported type 'CaseKind'");
         public ILabelSymbol Label => LabelAccessor(this.WrappedOperation);
+        public static explicit operator ICaseClauseOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(ICaseClauseOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static ICaseClauseOperationWrapper FromOperation(IOperation operation)
         {
             if (operation == null)

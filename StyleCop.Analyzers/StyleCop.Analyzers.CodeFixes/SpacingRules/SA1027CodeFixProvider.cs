@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.SpacingRules
 {
     using System.Collections.Generic;
@@ -53,7 +55,7 @@ namespace StyleCop.Analyzers.SpacingRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxTree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
-            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxTree, cancellationToken);
+            var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxTree, cancellationToken);
             SourceText sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
             return document.WithText(sourceText.WithChanges(FixDiagnostic(settings.Indentation, sourceText, diagnostic)));
         }
@@ -159,7 +161,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 }
 
                 SyntaxTree tree = await document.GetSyntaxTreeAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
-                var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, tree, fixAllContext.CancellationToken);
+                var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, tree, fixAllContext.CancellationToken);
                 SourceText sourceText = await document.GetTextAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
 
                 List<TextChange> changes = new List<TextChange>();

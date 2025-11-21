@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
@@ -51,6 +53,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
+        private static readonly Action<SyntaxNodeAnalysisContext> TypeDeclarationAction = HandleTypeDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> PrimaryConstructorBaseTypeAction = HandlePrimaryConstructorBaseType;
         private static readonly Action<SyntaxNodeAnalysisContext> MethodDeclarationAction = HandleMethodDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> LocalFunctionStatementAction = HandleLocalFunctionStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> ConstructorDeclarationAction = HandleConstructorDeclaration;
@@ -75,6 +79,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
+            context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
+            context.RegisterSyntaxNodeAction(PrimaryConstructorBaseTypeAction, SyntaxKindEx.PrimaryConstructorBaseType);
             context.RegisterSyntaxNodeAction(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
             context.RegisterSyntaxNodeAction(LocalFunctionStatementAction, SyntaxKindEx.LocalFunctionStatement);
             context.RegisterSyntaxNodeAction(ConstructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
@@ -324,6 +330,41 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 bool preserveLayout = localFunctionStatement.ParameterList.Parameters.Any();
                 CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, localFunctionStatement.ParameterList.OpenParenToken, preserveLayout);
+            }
+        }
+
+        private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var typeDeclaration = (TypeDeclarationSyntax)context.Node;
+            var parameterList = typeDeclaration.ParameterList();
+
+            if (parameterList != null
+                && !parameterList.OpenParenToken.IsMissing
+                && !typeDeclaration.Identifier.IsMissing)
+            {
+                bool preserveLayout = parameterList.Parameters.Any();
+                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, parameterList.OpenParenToken, preserveLayout);
+            }
+        }
+
+        private static void HandlePrimaryConstructorBaseType(SyntaxNodeAnalysisContext context)
+        {
+            var primaryConstructorBaseType = (PrimaryConstructorBaseTypeSyntaxWrapper)context.Node;
+
+            var identifierName = ((BaseTypeSyntax)primaryConstructorBaseType).ChildNodes()
+                .OfType<IdentifierNameSyntax>()
+                .FirstOrDefault();
+            if (identifierName == null || identifierName.Identifier.IsMissing)
+            {
+                return;
+            }
+
+            var argumentListSyntax = primaryConstructorBaseType.ArgumentList;
+
+            if (argumentListSyntax != null && !argumentListSyntax.OpenParenToken.IsMissing)
+            {
+                bool preserveLayout = argumentListSyntax.Arguments.Any();
+                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, argumentListSyntax.OpenParenToken, preserveLayout);
             }
         }
 

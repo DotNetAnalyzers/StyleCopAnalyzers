@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Globalization;
     using System.Text.RegularExpressions;
     using LightJson;
     using StyleCop.Analyzers.Lightup;
@@ -92,6 +95,11 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         private readonly string documentationCulture;
 
         /// <summary>
+        /// This is backing field for the <see cref="DocumentationCultureInfo"/> property.
+        /// </summary>
+        private readonly CultureInfo documentationCultureInfo;
+
+        /// <summary>
         /// This is the backing field for the <see cref="ExcludeFromPunctuationCheck"/> property.
         /// </summary>
         private readonly ImmutableArray<string> excludeFromPunctuationCheck;
@@ -108,7 +116,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         {
             this.companyName = DefaultCompanyName;
             this.copyrightText = DefaultCopyrightText;
-            this.headerDecoration = null;
+            this.headerDecoration = string.Empty;
             this.variables = ImmutableDictionary<string, string>.Empty;
             this.xmlHeader = true;
 
@@ -121,6 +129,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.fileNamingConvention = FileNamingConvention.StyleCop;
 
             this.documentationCulture = DefaultDocumentationCulture;
+            this.documentationCultureInfo = CultureInfo.InvariantCulture;
 
             this.excludeFromPunctuationCheck = DefaultExcludeFromPunctuationCheck;
         }
@@ -190,7 +199,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                     {
                         string name = child.Key;
 
-                        if (!Regex.IsMatch(name, "^[a-zA-Z0-9]+$"))
+                        if (!IsValidVariableName(name))
                         {
                             continue;
                         }
@@ -236,8 +245,8 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             documentPrivateFields ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.documentPrivateFields");
 
             companyName ??= AnalyzerConfigHelper.TryGetStringValue(analyzerConfigOptions, "stylecop.documentation.companyName");
-            copyrightText ??= AnalyzerConfigHelper.TryGetStringValue(analyzerConfigOptions, "stylecop.documentation.copyrightText")
-                ?? AnalyzerConfigHelper.TryGetStringValue(analyzerConfigOptions, "file_header_template");
+            copyrightText ??= AnalyzerConfigHelper.TryGetMultiLineStringValue(analyzerConfigOptions, "stylecop.documentation.copyrightText")
+                ?? AnalyzerConfigHelper.TryGetMultiLineStringValue(analyzerConfigOptions, "file_header_template");
             headerDecoration ??= AnalyzerConfigHelper.TryGetStringValue(analyzerConfigOptions, "stylecop.documentation.headerDecoration");
 
             xmlHeader ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.xmlHeader");
@@ -258,11 +267,12 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.documentPrivateFields = documentPrivateFields.GetValueOrDefault(false);
             this.companyName = companyName ?? DefaultCompanyName;
             this.copyrightText = copyrightText ?? DefaultCopyrightText;
-            this.headerDecoration = headerDecoration;
+            this.headerDecoration = headerDecoration ?? string.Empty;
             this.variables = variables?.ToImmutable() ?? ImmutableDictionary<string, string>.Empty;
             this.xmlHeader = xmlHeader.GetValueOrDefault(true);
             this.fileNamingConvention = fileNamingConvention.GetValueOrDefault(FileNamingConvention.StyleCop);
             this.documentationCulture = documentationCulture ?? DefaultDocumentationCulture;
+            this.documentationCultureInfo = this.documentationCulture == DefaultDocumentationCulture ? CultureInfo.InvariantCulture : new CultureInfo(this.documentationCulture);
             this.excludeFromPunctuationCheck = excludeFromPunctuationCheck?.ToImmutable() ?? DefaultExcludeFromPunctuationCheck;
         }
 
@@ -322,6 +332,9 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         public ImmutableArray<string> ExcludeFromPunctuationCheck
             => this.excludeFromPunctuationCheck;
 
+        public CultureInfo DocumentationCultureInfo
+            => this.documentationCultureInfo;
+
         public string GetCopyrightText(string fileName)
         {
             string copyrightText = this.copyrightTextCache;
@@ -339,6 +352,20 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
             this.copyrightTextCache = expandedCopyrightText.Key;
             return this.copyrightTextCache;
+        }
+
+        private static bool IsValidVariableName(string name)
+        {
+            // Equivalent to Regex.IsMatch(prefix, "^[a-zA-Z0-9]+$")
+            for (var i = 0; i < name.Length; i++)
+            {
+                if (name[i] is not ((>= 'a' and <= 'z') or (>= 'A' and <= 'Z') or (>= '0' and <= '9')))
+                {
+                    return false;
+                }
+            }
+
+            return name.Length > 0;
         }
 
         private KeyValuePair<string, bool> BuildCopyrightText(string fileName)

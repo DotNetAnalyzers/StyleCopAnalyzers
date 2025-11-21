@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace LightJson
 {
     using System;
@@ -164,7 +166,6 @@ namespace LightJson
             return this.GetEnumerator();
         }
 
-        [ExcludeFromCodeCoverage]
         private class JsonArrayDebugView
         {
             private readonly JsonArray jsonArray;

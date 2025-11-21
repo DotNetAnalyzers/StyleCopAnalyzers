@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
@@ -101,7 +103,10 @@ namespace StyleCop.Analyzers.DocumentationRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
+            context.RegisterCompilationStartAction(context =>
+            {
+                context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
+            });
         }
 
         private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)

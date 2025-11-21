@@ -17,5 +17,16 @@ namespace StyleCop.Analyzers.Helpers
 
             return result;
         }
+
+        public static ExpressionSyntax WalkUpParentheses(this ExpressionSyntax expression)
+        {
+            var result = expression;
+            while (result.Parent is ParenthesizedExpressionSyntax parenthesizedExpression)
+            {
+                result = parenthesizedExpression;
+            }
+
+            return result;
+        }
     }
 }

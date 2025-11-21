@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
@@ -11,6 +13,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -52,7 +55,10 @@ namespace StyleCop.Analyzers.DocumentationRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
+            context.RegisterCompilationStartAction(context =>
+            {
+                context.RegisterSyntaxTreeAction(SyntaxTreeAction);
+            });
         }
 
         private static class Analyzer
@@ -97,13 +103,13 @@ namespace StyleCop.Analyzers.DocumentationRules
             private static MemberDeclarationSyntax GetFirstTypeDeclaration(SyntaxNode root)
             {
                 // Prefer to find the first type which is a true TypeDeclarationSyntax
-                MemberDeclarationSyntax firstTypeDeclaration = root.DescendantNodes(descendIntoChildren: node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration))
+                MemberDeclarationSyntax firstTypeDeclaration = root.DescendantNodes(descendIntoChildren: node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration) || node.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration))
                     .OfType<TypeDeclarationSyntax>()
                     .FirstOrDefault();
 
                 // If no TypeDeclarationSyntax is found, expand the search to any type declaration as long as only one
                 // is present
-                var expandedTypeDeclarations = root.DescendantNodes(descendIntoChildren: node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration))
+                var expandedTypeDeclarations = root.DescendantNodes(descendIntoChildren: node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration) || node.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration))
                     .OfType<MemberDeclarationSyntax>()
                     .Where(node => node is BaseTypeDeclarationSyntax || node.IsKind(SyntaxKind.DelegateDeclaration))
                     .ToList();

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Threading;
@@ -337,7 +339,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestAutoPropertydDeclarationSetterBeforeGetterAsync()
+        public async Task TestAutoPropertyDeclarationSetterBeforeGetterAsync()
         {
             var testCode = @"
 public class Foo

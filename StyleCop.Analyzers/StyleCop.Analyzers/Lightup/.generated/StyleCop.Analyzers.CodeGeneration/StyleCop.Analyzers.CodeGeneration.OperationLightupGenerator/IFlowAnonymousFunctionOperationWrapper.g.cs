@@ -7,9 +7,9 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct IFlowAnonymousFunctionOperationWrapper : IOperationWrapper
+    internal readonly struct IFlowAnonymousFunctionOperationWrapper
     {
-        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IFlowAnonymousFunctionOperation";
+        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.FlowAnalysis.IFlowAnonymousFunctionOperation";
         private static readonly Type WrappedType;
         private static readonly Func<IOperation, IMethodSymbol> SymbolAccessor;
         private readonly IOperation operation;
@@ -27,6 +27,8 @@ namespace StyleCop.Analyzers.Lightup
         public IOperation WrappedOperation => this.operation;
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public IMethodSymbol Symbol => SymbolAccessor(this.WrappedOperation);
+        public static explicit operator IFlowAnonymousFunctionOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(IFlowAnonymousFunctionOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IFlowAnonymousFunctionOperationWrapper FromOperation(IOperation operation)
         {
             if (operation == null)

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
 {
     using System.Threading;
@@ -11,7 +13,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1011ClosingSquareBracketsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1011CSharp9UnitTests : SA1011CSharp8UnitTests
+    public partial class SA1011CSharp9UnitTests : SA1011CSharp8UnitTests
     {
         [Fact]
         public async Task TestFunctionPointerUnmanagedCallingConventionListAsync()

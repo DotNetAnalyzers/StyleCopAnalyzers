@@ -1,17 +1,18 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.ReadabilityRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.ReadabilityRules.SA1118ParameterMustNotSpanMultipleLines>;
 
-    public class SA1118CSharp9UnitTests : SA1118CSharp8UnitTests
+    public partial class SA1118CSharp9UnitTests : SA1118CSharp8UnitTests
     {
         [Fact]
         [WorkItem(3314, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3314")]
@@ -37,7 +38,7 @@ class Foo
     }
 }";
 
-            await new CSharpTest(LanguageVersion.CSharp9)
+            await new CSharpTest()
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestCode = testCode,
@@ -69,7 +70,7 @@ class Foo
     }
 }";
 
-            await new CSharpTest(LanguageVersion.CSharp9)
+            await new CSharpTest()
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestCode = testCode,
@@ -101,7 +102,7 @@ class Foo
         }
     }";
 
-            await new CSharpTest(LanguageVersion.CSharp9)
+            await new CSharpTest()
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestCode = testCode,

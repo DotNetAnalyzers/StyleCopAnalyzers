@@ -1,17 +1,19 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
     using System.Collections.Immutable;
-    using System.Globalization;
     using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// Analyzes the correct usage of property summary documentation.
@@ -57,12 +59,11 @@ namespace StyleCop.Analyzers.DocumentationRules
         protected override string XmlTagToHandle => XmlCommentHelper.SummaryXmlTag;
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, bool needsComment, XmlNodeSyntax syntax, XElement completeDocumentation, Location diagnosticLocation)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, XmlNodeSyntax syntax, XElement completeDocumentation, Location diagnosticLocation)
         {
             var propertyDeclaration = (PropertyDeclarationSyntax)context.Node;
             var propertyType = context.SemanticModel.GetTypeInfo(propertyDeclaration.Type.StripRefFromType());
-            var settings = context.GetStyleCopSettings(context.CancellationToken);
-            var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
+            var culture = settings.DocumentationRules.DocumentationCultureInfo;
             var resourceManager = DocumentationResources.ResourceManager;
 
             if (propertyType.Type.SpecialType == SpecialType.System_Boolean)

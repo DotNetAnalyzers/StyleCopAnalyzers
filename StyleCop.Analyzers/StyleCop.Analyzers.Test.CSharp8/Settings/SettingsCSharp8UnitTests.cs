@@ -1,8 +1,11 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp8.Settings
 {
+    using System;
     using System.Collections.Immutable;
     using System.Threading;
     using System.Threading.Tasks;
@@ -14,7 +17,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.Settings
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
 
-    public class SettingsCSharp8UnitTests : SettingsCSharp7UnitTests
+    public partial class SettingsCSharp8UnitTests : SettingsCSharp7UnitTests
     {
         private const string TestProjectName = "TestProject";
 
@@ -50,7 +53,7 @@ stylecop.unrecognizedValue = 3
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
 
             Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
             Assert.Equal("Custom copyright text.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
@@ -64,7 +67,37 @@ stylecop.unrecognizedValue = 3
 
             Assert.NotNull(styleCopSettings.OrderingRules);
             Assert.Equal(UsingDirectivesPlacement.OutsideNamespace, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
-            Assert.Equal(OptionSetting.Omit, styleCopSettings.OrderingRules.BlankLinesBetweenUsingGroups);
+            Assert.Equal(OptionSetting.Allow, styleCopSettings.OrderingRules.BlankLinesBetweenUsingGroups);
+        }
+
+        [Fact]
+        public async Task VerifyFileHeaderTemplateFromEditorConfigAsync()
+        {
+            var settings = @"root = true
+
+[*]
+file_header_template = Line 1\nLine 2.
+";
+            var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+
+            Assert.Equal("Line 1\nLine 2.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
+        }
+
+        [Fact]
+        public async Task VerifyStyleCopDocumentationCopyrightTextFromEditorConfigAsync()
+        {
+            var settings = @"root = true
+
+[*]
+stylecop.documentation.copyrightText = Line 1\nLine 2.
+";
+            var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+
+            Assert.Equal("Line 1\nLine 2.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
         }
 
         [Theory]
@@ -83,7 +116,7 @@ stylecop.documentation.documentPrivateFields = {valueText}
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
 
             Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentExposedElements);
             Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentInternalElements);
@@ -104,7 +137,7 @@ stylecop.documentation.companyName = {companyName}
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
 
             Assert.Equal(companyName, styleCopSettings.DocumentationRules.CompanyName);
             Assert.Equal($"Copyright (c) {companyName}. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
@@ -120,7 +153,7 @@ file_header_template = {copyrightText}
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
 
             Assert.Equal("[CircularReference]", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
         }
@@ -135,9 +168,33 @@ file_header_template = {variable}
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
 
             Assert.Equal("[InvalidReference]", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
+        }
+
+        [Theory]
+        [InlineData("outside_namespace")]
+        [InlineData("inside_namespace")]
+        public async Task VerifyEditorConfigSettingsReadCorrectlyDirectivePlacementWithoutSeverityLevelAsync(string placement)
+        {
+            var expected = placement switch
+            {
+                "outside_namespace" => UsingDirectivesPlacement.OutsideNamespace,
+                "inside_namespace" => UsingDirectivesPlacement.InsideNamespace,
+                _ => throw new InvalidOperationException(),
+            };
+            var settings = $@"root = true
+
+[*]
+csharp_using_directive_placement = {placement}
+";
+            var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+
+            Assert.NotNull(styleCopSettings.OrderingRules);
+            Assert.Equal(expected, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
         }
 
         protected virtual AnalyzerConfigOptionsProvider CreateAnalyzerConfigOptionsProvider(AnalyzerConfigSet analyzerConfigSet)

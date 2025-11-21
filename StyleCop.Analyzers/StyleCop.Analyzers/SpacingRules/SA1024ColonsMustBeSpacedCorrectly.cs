@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
@@ -103,7 +105,7 @@ namespace StyleCop.Analyzers.SpacingRules
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
             {
-                if (token.Kind() == SyntaxKind.ColonToken)
+                if (token.IsKind(SyntaxKind.ColonToken))
                 {
                     HandleColonToken(context, token);
                 }

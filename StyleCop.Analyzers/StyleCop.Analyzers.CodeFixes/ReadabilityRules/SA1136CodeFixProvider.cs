@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Generic;
@@ -51,7 +53,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
+            var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
 
             var enumMemberDeclaration = (EnumMemberDeclarationSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
             var enumDeclaration = (EnumDeclarationSyntax)enumMemberDeclaration.Parent;

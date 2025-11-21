@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Generic;
@@ -11,6 +13,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -43,7 +46,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             new DiagnosticDescriptor(DiagnosticId, Title, MissingParamForDocumentationMessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly DiagnosticDescriptor OrderDescriptor =
-                   new DiagnosticDescriptor(DiagnosticId, Title, ParamWrongOrderMessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, ParamWrongOrderMessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         public SA1612ElementParameterDocumentationMustMatchElementParameters()
             : base(matchElementName: XmlCommentHelper.ParamXmlTag, inheritDocSuppressesWarnings: true)
@@ -68,8 +71,8 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             var parameterList = GetParameters(node)?.ToImmutableArray();
 
-            bool hasNoParameters = !parameterList?.Any() ?? false;
-            if (hasNoParameters)
+            bool hasParameters = parameterList?.Any() ?? false;
+            if (!hasParameters)
             {
                 return;
             }
@@ -125,7 +128,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         }
 
         /// <inheritdoc/>
-        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, bool needsComment, XElement completeDocumentation, params Location[] diagnosticLocations)
+        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, XElement completeDocumentation, params Location[] diagnosticLocations)
         {
             var node = context.Node;
             var identifier = GetIdentifier(node);
@@ -139,8 +142,8 @@ namespace StyleCop.Analyzers.DocumentationRules
             var identifierLocation = identifier.Value.GetLocation();
             var parameterList = GetParameters(node)?.ToImmutableArray();
 
-            bool hasNoParameters = !parameterList?.Any() ?? false;
-            if (hasNoParameters)
+            bool hasParameters = parameterList?.Any() ?? false;
+            if (!hasParameters)
             {
                 return;
             }
@@ -201,14 +204,16 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             return (node as BaseMethodDeclarationSyntax)?.ParameterList?.Parameters
                 ?? (node as IndexerDeclarationSyntax)?.ParameterList?.Parameters
-                ?? (node as DelegateDeclarationSyntax)?.ParameterList?.Parameters;
+                ?? (node as DelegateDeclarationSyntax)?.ParameterList?.Parameters
+                ?? (node as TypeDeclarationSyntax)?.ParameterList()?.Parameters;
         }
 
         private static SyntaxToken? GetIdentifier(SyntaxNode node)
         {
             return (node as MethodDeclarationSyntax)?.Identifier
                 ?? (node as IndexerDeclarationSyntax)?.ThisKeyword
-                ?? (node as DelegateDeclarationSyntax)?.Identifier;
+                ?? (node as DelegateDeclarationSyntax)?.Identifier
+                ?? (node as TypeDeclarationSyntax)?.Identifier;
         }
     }
 }

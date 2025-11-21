@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct IDeclarationExpressionOperationWrapper : IOperationWrapper
+    internal readonly struct IDeclarationExpressionOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IDeclarationExpressionOperation";
         private static readonly Type WrappedType;
@@ -27,6 +27,8 @@ namespace StyleCop.Analyzers.Lightup
         public IOperation WrappedOperation => this.operation;
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public IOperation Expression => ExpressionAccessor(this.WrappedOperation);
+        public static explicit operator IDeclarationExpressionOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(IDeclarationExpressionOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IDeclarationExpressionOperationWrapper FromOperation(IOperation operation)
         {
             if (operation == null)

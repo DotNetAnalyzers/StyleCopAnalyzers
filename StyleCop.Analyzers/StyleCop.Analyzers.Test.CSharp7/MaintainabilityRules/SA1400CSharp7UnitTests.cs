@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
 {
     using System.Threading;
@@ -12,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
         StyleCop.Analyzers.MaintainabilityRules.SA1400AccessModifierMustBeDeclared,
         StyleCop.Analyzers.MaintainabilityRules.SA1400CodeFixProvider>;
 
-    public class SA1400CSharp7UnitTests : SA1400UnitTests
+    public partial class SA1400CSharp7UnitTests : SA1400UnitTests
     {
         /// <summary>
         /// Verifies that local functions, which do not support access modifiers, do not trigger SA1400.

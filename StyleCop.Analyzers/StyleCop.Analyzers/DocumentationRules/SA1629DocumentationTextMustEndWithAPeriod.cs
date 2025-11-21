@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
@@ -9,6 +11,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System.Linq;
     using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
@@ -86,7 +89,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         }
 
         /// <inheritdoc/>
-        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, bool needsComment, XElement completeDocumentation, params Location[] diagnosticLocations)
+        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, XElement completeDocumentation, params Location[] diagnosticLocations)
         {
             foreach (var node in completeDocumentation.Nodes().OfType<XElement>())
             {
@@ -125,15 +128,13 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                         if (!string.IsNullOrEmpty(textWithoutTrailingWhitespace))
                         {
-                            if (!textWithoutTrailingWhitespace.EndsWith(".", StringComparison.Ordinal)
-                                && !textWithoutTrailingWhitespace.EndsWith(".)", StringComparison.Ordinal)
-                                && (startingWithFinalParagraph || !textWithoutTrailingWhitespace.EndsWith(":", StringComparison.Ordinal))
-                                && !textWithoutTrailingWhitespace.EndsWith("-or-", StringComparison.Ordinal))
+                            if (IsMissingRequiredPeriod(textWithoutTrailingWhitespace, startingWithFinalParagraph))
                             {
                                 int spanStart = textToken.SpanStart + textWithoutTrailingWhitespace.Length;
                                 ImmutableDictionary<string, string> properties = null;
                                 if (textWithoutTrailingWhitespace.EndsWith(",", StringComparison.Ordinal)
-                                    || textWithoutTrailingWhitespace.EndsWith(";", StringComparison.Ordinal))
+                                    || (textWithoutTrailingWhitespace.EndsWith(";", StringComparison.Ordinal)
+                                        && !textToken.IsKind(SyntaxKind.XmlEntityLiteralToken)))
                                 {
                                     spanStart -= 1;
                                     SetReplaceChar();
@@ -162,10 +163,15 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
                 else if (xmlElement.Content[i].IsInlineElement() && !currentParagraphDone)
                 {
-                    // Treat empty XML elements as a "word not ending with a period"
-                    var location = Location.Create(xmlElement.SyntaxTree, new TextSpan(xmlElement.Content[i].Span.End, 1));
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
-                    currentParagraphDone = true;
+                    var lastTextElement = XmlCommentHelper.TryGetLastTextElementWithContent(xmlElement.Content[i]);
+
+                    if (lastTextElement is null // Treat empty XML elements as a "word not ending with a period"
+                        || IsMissingRequiredPeriod(lastTextElement.TextTokens.Last().Text.TrimEnd(' ', '\r', '\n'), startingWithFinalParagraph))
+                    {
+                        var location = Location.Create(xmlElement.SyntaxTree, new TextSpan(xmlElement.Content[i].Span.End, 1));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                        currentParagraphDone = true;
+                    }
                 }
                 else if (xmlElement.Content[i] is XmlElementSyntax childXmlElement)
                 {
@@ -197,6 +203,14 @@ namespace StyleCop.Analyzers.DocumentationRules
                     }
                 }
             }
+        }
+
+        private static bool IsMissingRequiredPeriod(string textWithoutTrailingWhitespace, bool startingWithFinalParagraph)
+        {
+            return !textWithoutTrailingWhitespace.EndsWith(".", StringComparison.Ordinal)
+                && !textWithoutTrailingWhitespace.EndsWith(".)", StringComparison.Ordinal)
+                && (startingWithFinalParagraph || !textWithoutTrailingWhitespace.EndsWith(":", StringComparison.Ordinal))
+                && !textWithoutTrailingWhitespace.EndsWith("-or-", StringComparison.Ordinal);
         }
     }
 }

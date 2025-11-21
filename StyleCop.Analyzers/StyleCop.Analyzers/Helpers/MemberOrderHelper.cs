@@ -8,12 +8,13 @@ namespace StyleCop.Analyzers.Helpers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// Helper for dealing with member priority.
     /// </summary>
-    internal struct MemberOrderHelper
+    internal readonly struct MemberOrderHelper
     {
         private static readonly ImmutableArray<SyntaxKind> TypeMemberOrder = ImmutableArray.Create(
             SyntaxKind.ClassDeclaration,
@@ -41,8 +42,13 @@ namespace StyleCop.Analyzers.Helpers
         {
             this.Member = member;
             var modifiers = member.GetModifiers();
-            var type = member.Kind();
-            type = type == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : type;
+            var type = member.Kind() switch
+            {
+                SyntaxKind.EventFieldDeclaration => SyntaxKind.EventDeclaration,
+                SyntaxKindEx.RecordDeclaration => SyntaxKind.ClassDeclaration,
+                SyntaxKindEx.RecordStructDeclaration => SyntaxKind.StructDeclaration,
+                var kind => kind,
+            };
 
             this.Priority = 0;
             foreach (OrderingTrait trait in elementOrder)
@@ -151,9 +157,13 @@ namespace StyleCop.Analyzers.Helpers
                 accessibility = AccessLevelHelper.GetAccessLevel(modifiers);
                 if (accessibility == AccessLevel.NotSpecified)
                 {
-                    if (member.Parent.IsKind(SyntaxKind.CompilationUnit) || member.Parent.IsKind(SyntaxKind.NamespaceDeclaration))
+                    if (member.Parent.IsKind(SyntaxKind.CompilationUnit) || member.Parent.IsKind(SyntaxKind.NamespaceDeclaration) || member.Parent.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration))
                     {
                         accessibility = AccessLevel.Internal;
+                    }
+                    else if (member.Parent.IsKind(SyntaxKind.InterfaceDeclaration))
+                    {
+                        accessibility = AccessLevel.Public;
                     }
                     else
                     {

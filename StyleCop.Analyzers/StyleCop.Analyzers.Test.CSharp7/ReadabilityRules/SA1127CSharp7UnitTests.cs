@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
 {
     using System.Threading;
@@ -11,7 +13,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
         StyleCop.Analyzers.ReadabilityRules.SA1127GenericTypeConstraintsMustBeOnOwnLine,
         StyleCop.Analyzers.ReadabilityRules.SA1127CodeFixProvider>;
 
-    public class SA1127CSharp7UnitTests : SA1127UnitTests
+    public partial class SA1127CSharp7UnitTests : SA1127UnitTests
     {
         [Fact]
         public async Task TestViolationWithLocalFunctionDeclarationAsync()

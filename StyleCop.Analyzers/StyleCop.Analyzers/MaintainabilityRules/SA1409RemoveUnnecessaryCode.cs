@@ -1,10 +1,11 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System.Collections.Immutable;
-    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -74,7 +75,6 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        [ExcludeFromCodeCoverage]
 #pragma warning disable RS1025 // Configure generated code analysis
 #pragma warning disable RS1026 // Enable concurrent execution
         public override void Initialize(AnalysisContext context)

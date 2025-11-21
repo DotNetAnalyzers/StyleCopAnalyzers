@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.Verifiers
 {
     using System.Threading;
@@ -11,6 +13,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Testing;
     using Microsoft.CodeAnalysis.Testing.Verifiers;
+    using StyleCop.Analyzers.Lightup;
 
     internal static class StyleCopDiagnosticVerifier<TAnalyzer>
         where TAnalyzer : DiagnosticAnalyzer, new()
@@ -62,7 +65,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
 
             public CSharpTest(LanguageVersion? languageVersion)
             {
-                this.LanguageVersion = languageVersion;
+                this.LanguageVersion = languageVersion ?? this.GetDefaultLanguageVersion();
             }
 
             private LanguageVersion? LanguageVersion { get; }
@@ -76,6 +79,12 @@ namespace StyleCop.Analyzers.Test.Verifiers
                 }
 
                 return parseOptions;
+            }
+
+            // NOTE: If needed, this method can be temporarily updated to default to a preview version
+            private LanguageVersion? GetDefaultLanguageVersion()
+            {
+                return null;
             }
         }
     }

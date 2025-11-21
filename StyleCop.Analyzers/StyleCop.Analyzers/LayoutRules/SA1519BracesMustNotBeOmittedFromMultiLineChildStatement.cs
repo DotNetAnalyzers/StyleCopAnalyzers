@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.LayoutRules
 {
     using System;
@@ -66,14 +68,17 @@ namespace StyleCop.Analyzers.LayoutRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxNodeAction(IfStatementAction, SyntaxKind.IfStatement);
-            context.RegisterSyntaxNodeAction(DoStatementAction, SyntaxKind.DoStatement);
-            context.RegisterSyntaxNodeAction(WhileStatementAction, SyntaxKind.WhileStatement);
-            context.RegisterSyntaxNodeAction(ForStatementAction, SyntaxKind.ForStatement);
-            context.RegisterSyntaxNodeAction(ForEachStatementAction, SyntaxKind.ForEachStatement);
-            context.RegisterSyntaxNodeAction(LockStatementAction, SyntaxKind.LockStatement);
-            context.RegisterSyntaxNodeAction(FixedStatementAction, SyntaxKind.FixedStatement);
-            context.RegisterSyntaxNodeAction(UsingStatementAction, SyntaxKind.UsingStatement);
+            context.RegisterCompilationStartAction(context =>
+            {
+                context.RegisterSyntaxNodeAction(IfStatementAction, SyntaxKind.IfStatement);
+                context.RegisterSyntaxNodeAction(DoStatementAction, SyntaxKind.DoStatement);
+                context.RegisterSyntaxNodeAction(WhileStatementAction, SyntaxKind.WhileStatement);
+                context.RegisterSyntaxNodeAction(ForStatementAction, SyntaxKind.ForStatement);
+                context.RegisterSyntaxNodeAction(ForEachStatementAction, SyntaxKind.ForEachStatement);
+                context.RegisterSyntaxNodeAction(LockStatementAction, SyntaxKind.LockStatement);
+                context.RegisterSyntaxNodeAction(FixedStatementAction, SyntaxKind.FixedStatement);
+                context.RegisterSyntaxNodeAction(UsingStatementAction, SyntaxKind.UsingStatement);
+            });
         }
 
         private static void HandleIfStatement(SyntaxNodeAnalysisContext context)

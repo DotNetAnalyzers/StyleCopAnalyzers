@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.LayoutRules
 {
     using System.Collections.Immutable;
@@ -35,7 +37,7 @@ namespace StyleCop.Analyzers.LayoutRules
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var syntaxTree = await context.Document.GetSyntaxTreeAsync(context.CancellationToken).ConfigureAwait(false);
-            var settings = SettingsHelper.GetStyleCopSettings(context.Document.Project.AnalyzerOptions, syntaxTree, context.CancellationToken);
+            var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(context.Document.Project.AnalyzerOptions, syntaxTree, context.CancellationToken);
             foreach (var diagnostic in context.Diagnostics)
             {
                 context.RegisterCodeFix(
@@ -78,7 +80,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
 
                 var syntaxTree = await document.GetSyntaxTreeAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
-                var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxTree, fixAllContext.CancellationToken);
+                var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxTree, fixAllContext.CancellationToken);
                 Document updatedDocument = await FixEndOfFileAsync(document, diagnostics[0], settings.LayoutRules.NewlineAtEndOfFile, fixAllContext.CancellationToken).ConfigureAwait(false);
                 return await updatedDocument.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
             }

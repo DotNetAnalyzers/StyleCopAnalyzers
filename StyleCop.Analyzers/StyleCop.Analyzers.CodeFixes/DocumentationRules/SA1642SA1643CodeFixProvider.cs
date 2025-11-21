@@ -1,12 +1,14 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Globalization;
+    using System.Diagnostics;
     using System.Linq;
     using System.Text.RegularExpressions;
     using System.Threading;
@@ -18,6 +20,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Formatting;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1642ConstructorSummaryDocumentationMustBeginWithStandardText"/>
@@ -81,9 +84,9 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         internal static ImmutableArray<string> GenerateStandardText(Document document, BaseMethodDeclarationSyntax methodDeclaration, BaseTypeDeclarationSyntax typeDeclaration, CancellationToken cancellationToken)
         {
-            bool isStruct = typeDeclaration.IsKind(SyntaxKind.StructDeclaration);
-            var settings = document.Project.AnalyzerOptions.GetStyleCopSettings(methodDeclaration.SyntaxTree, cancellationToken);
-            var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
+            bool isStruct = typeDeclaration.IsKind(SyntaxKind.StructDeclaration) || typeDeclaration.IsKind(SyntaxKindEx.RecordStructDeclaration);
+            var settings = document.Project.AnalyzerOptions.GetStyleCopSettingsInCodeFix(methodDeclaration.SyntaxTree, cancellationToken);
+            var culture = settings.DocumentationRules.DocumentationCultureInfo;
             var resourceManager = DocumentationResources.ResourceManager;
 
             if (methodDeclaration is ConstructorDeclarationSyntax)
@@ -145,7 +148,19 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return classDeclaration.TypeParameterList;
             }
 
-            return (typeDeclaration as StructDeclarationSyntax)?.TypeParameterList;
+            if (typeDeclaration is StructDeclarationSyntax structDeclaration)
+            {
+                return structDeclaration.TypeParameterList;
+            }
+
+            if (RecordDeclarationSyntaxWrapper.IsInstance(typeDeclaration))
+            {
+                var recordDeclaration = (RecordDeclarationSyntaxWrapper)typeDeclaration;
+                return recordDeclaration.TypeParameterList;
+            }
+
+            Debug.Assert(false, $"Unhandled type {typeDeclaration.Kind()}");
+            return null;
         }
 
         private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, XmlElementSyntax node, CancellationToken cancellationToken)
@@ -200,21 +215,10 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, XmlEmptyElementSyntax node)
         {
             var typeDeclaration = node.FirstAncestorOrSelf<BaseTypeDeclarationSyntax>();
-
-            TypeParameterListSyntax typeParameterList;
-            if (typeDeclaration is ClassDeclarationSyntax classDeclaration)
-            {
-                typeParameterList = classDeclaration.TypeParameterList;
-            }
-            else
-            {
-                typeParameterList = (typeDeclaration as StructDeclarationSyntax)?.TypeParameterList;
-            }
+            var typeParameterList = GetTypeParameterList(typeDeclaration);
 
             var newRoot = root.ReplaceNode(node, BuildSeeElement(typeDeclaration.Identifier, typeParameterList));
-
             var newDocument = document.WithSyntaxRoot(newRoot);
-
             return Task.FromResult(newDocument);
         }
 

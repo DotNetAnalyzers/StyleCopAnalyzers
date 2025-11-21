@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 {
     using System.Threading;
@@ -9,11 +11,12 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.SpacingRules;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Helpers.LanguageVersionTestExtensions;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1026CSharp7UnitTests : SA1026UnitTests
+    public partial class SA1026CSharp7UnitTests : SA1026UnitTests
     {
         [Theory]
         [InlineData(" ")]
@@ -30,7 +33,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
             const string expectedCode = "public class Foo { public unsafe Foo() { int* ints = stackalloc[] { 1, 2, 3 }; } }";
             DiagnosticResult[] expected = { Diagnostic().WithArguments("stackalloc").WithLocation(1, 54) };
 
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, expected, expectedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3.OrLaterDefault(), testCode, expected, expectedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

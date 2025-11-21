@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct ICatchClauseOperationWrapper : IOperationWrapper
+    internal readonly struct ICatchClauseOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.ICatchClauseOperation";
         private static readonly Type WrappedType;
@@ -39,6 +39,8 @@ namespace StyleCop.Analyzers.Lightup
         public ImmutableArray<ILocalSymbol> Locals => LocalsAccessor(this.WrappedOperation);
         public IOperation Filter => FilterAccessor(this.WrappedOperation);
         public IBlockOperationWrapper Handler => IBlockOperationWrapper.FromOperation(HandlerAccessor(this.WrappedOperation));
+        public static explicit operator ICatchClauseOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(ICatchClauseOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static ICatchClauseOperationWrapper FromOperation(IOperation operation)
         {
             if (operation == null)

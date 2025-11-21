@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
@@ -72,6 +74,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly Action<SyntaxNodeAnalysisContext> IndexerDeclarationAction = HandleIndexerDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> InvocationExpressionAction = HandleInvocationExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> ObjectCreationExpressionAction = HandleObjectCreationExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> ImplicitObjectCreationExpressionAction = HandleImplicitObjectCreationExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> ElementAccessExpressionAction = HandleElementAccessExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> ElementBindingExpressionAction = HandleElementBindingExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> ArrayCreationExpressionAction = HandleArrayCreationExpression;
@@ -96,6 +99,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(IndexerDeclarationAction, SyntaxKind.IndexerDeclaration);
             context.RegisterSyntaxNodeAction(InvocationExpressionAction, SyntaxKind.InvocationExpression);
             context.RegisterSyntaxNodeAction(ObjectCreationExpressionAction, SyntaxKind.ObjectCreationExpression);
+            context.RegisterSyntaxNodeAction(ImplicitObjectCreationExpressionAction, SyntaxKindEx.ImplicitObjectCreationExpression);
             context.RegisterSyntaxNodeAction(ElementAccessExpressionAction, SyntaxKind.ElementAccessExpression);
             context.RegisterSyntaxNodeAction(ElementBindingExpressionAction, SyntaxKind.ElementBindingExpression);
             context.RegisterSyntaxNodeAction(ArrayCreationExpressionAction, SyntaxKind.ArrayCreationExpression);
@@ -126,6 +130,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var objectCreation = (ObjectCreationExpressionSyntax)context.Node;
             HandleArgumentListSyntax(context, objectCreation.ArgumentList);
+        }
+
+        private static void HandleImplicitObjectCreationExpression(SyntaxNodeAnalysisContext context)
+        {
+            var implicitObjectCreation = (ImplicitObjectCreationExpressionSyntaxWrapper)context.Node;
+            HandleArgumentListSyntax(context, implicitObjectCreation.ArgumentList);
         }
 
         private static void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)

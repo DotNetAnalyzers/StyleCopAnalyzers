@@ -5,7 +5,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpecialRules
 {
     using StyleCop.Analyzers.Test.SpecialRules;
 
-    public class SA0001CSharp7UnitTests : SA0001UnitTests
+    public partial class SA0001CSharp7UnitTests : SA0001UnitTests
     {
     }
 }

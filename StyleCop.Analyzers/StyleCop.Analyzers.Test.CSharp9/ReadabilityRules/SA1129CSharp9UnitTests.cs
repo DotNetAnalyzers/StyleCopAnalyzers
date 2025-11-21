@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
 {
     using System.Threading;
@@ -12,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
         StyleCop.Analyzers.ReadabilityRules.SA1129DoNotUseDefaultValueTypeConstructor,
         StyleCop.Analyzers.ReadabilityRules.SA1129CodeFixProvider>;
 
-    public class SA1129CSharp9UnitTests : SA1129CSharp8UnitTests
+    public partial class SA1129CSharp9UnitTests : SA1129CSharp8UnitTests
     {
         /// <summary>
         /// Verifies that target type new expressions for value types will generate diagnostics.
