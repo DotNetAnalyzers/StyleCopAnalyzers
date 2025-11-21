@@ -61,20 +61,18 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             if (syntaxKind == SyntaxKind.InterfaceDeclaration || parentSyntaxKind == SyntaxKind.InterfaceDeclaration)
             {
-                if (documentationSettings.DocumentInterfaces == "all" || documentationSettings.DocumentInterfaces == "true")
+                switch (documentationSettings.DocumentInterfaces)
                 {
+                case InterfaceDocumentationMode.All:
                     // DocumentInterfaces => all interfaces should be documented
                     return true;
-                }
-
-                if (documentationSettings.DocumentInterfaces == "exposed" && declaredAccessibility != Accessibility.Internal)
-                {
+                case InterfaceDocumentationMode.Exposed:
                     // DocumentInterfaces => only externally visible (exposed) interfaces should be documented
-                    return true;
+                    return declaredAccessibility != Accessibility.Internal;
+                default:
+                    // DocumentInterfaces => no interfaces should be exposed
+                    return false;
                 }
-
-                // DocumentInterfaces => no interfaces should be exposed
-                return false;
             }
 
             if (syntaxKind == SyntaxKind.FieldDeclaration && documentationSettings.DocumentPrivateFields)

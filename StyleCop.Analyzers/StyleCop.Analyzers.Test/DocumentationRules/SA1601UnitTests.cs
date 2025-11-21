@@ -67,7 +67,7 @@ TypeName
   ""settings"": {{
     ""documentationRules"": {{
       ""documentExposedElements"": false,
-      ""{interfaceSettingName}"": ""false""
+      ""{interfaceSettingName}"": false
     }}
   }}
 }}
@@ -101,7 +101,7 @@ TypeName
   ""settings"": {{
     ""documentationRules"": {{
       ""documentExposedElements"": false,
-      ""{interfaceSettingName}"": ""false""
+      ""{interfaceSettingName}"": false
     }}
   }}
 }}

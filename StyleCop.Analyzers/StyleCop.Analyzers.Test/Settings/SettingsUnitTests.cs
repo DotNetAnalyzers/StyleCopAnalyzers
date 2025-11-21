@@ -170,29 +170,30 @@ namespace StyleCop.Analyzers.Test.Settings
         /// Verifies that the settings are properly read.
         /// </summary>
         /// <param name="value">The value for testing the settings.</param>
+        /// <param name="expected">The expected interface documentation mode.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("true")]
-        [InlineData("false")]
-        [InlineData("all")]
-        [InlineData("none")]
-        [InlineData("exposed")]
-        public async Task VerifyInheritanceDocumentationSettingsAsync(string value)
+        [InlineData("true", InterfaceDocumentationMode.All)]
+        [InlineData("false", InterfaceDocumentationMode.None)]
+        [InlineData("\"all\"", InterfaceDocumentationMode.All)]
+        [InlineData("\"none\"", InterfaceDocumentationMode.None)]
+        [InlineData("\"exposed\"", InterfaceDocumentationMode.Exposed)]
+        public async Task VerifyInheritanceDocumentationSettingsAsync(string value, object expected)
         {
             var settings = $@"
 {{
   ""settings"": {{
     ""documentationRules"": {{
-      ""documentInterfaces"": ""{value}""
+      ""documentInterfaces"": {value}
     }}
   }}
 }}
 ";
             var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
 
-            Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentInterfaces);
+            Assert.Equal((InterfaceDocumentationMode)expected, styleCopSettings.DocumentationRules.DocumentInterfaces);
         }
 
         /// <summary>
