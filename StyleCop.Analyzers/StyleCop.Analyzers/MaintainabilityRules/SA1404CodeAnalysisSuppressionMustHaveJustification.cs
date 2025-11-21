@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System;
@@ -98,8 +100,15 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 {
                     if (!(attribute.Name is SimpleNameSyntax simpleNameSyntax))
                     {
-                        QualifiedNameSyntax qualifiedNameSyntax = attribute.Name as QualifiedNameSyntax;
-                        simpleNameSyntax = qualifiedNameSyntax.Right;
+                        if (attribute.Name is AliasQualifiedNameSyntax aliasQualifiedNameSyntax)
+                        {
+                            simpleNameSyntax = aliasQualifiedNameSyntax.Name;
+                        }
+                        else
+                        {
+                            QualifiedNameSyntax qualifiedNameSyntax = attribute.Name as QualifiedNameSyntax;
+                            simpleNameSyntax = qualifiedNameSyntax.Right;
+                        }
                     }
 
                     if (simpleNameSyntax.Identifier.ValueText != nameof(SuppressMessageAttribute)

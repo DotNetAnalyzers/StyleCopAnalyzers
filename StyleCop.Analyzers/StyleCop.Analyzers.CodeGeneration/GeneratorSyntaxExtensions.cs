@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.CodeGeneration
 {
-    using System;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
 
@@ -13,7 +12,7 @@ namespace StyleCop.Analyzers.CodeGeneration
             where TSyntax : SyntaxNode
         {
             return syntax.WithLeadingTrivia(SyntaxFactory.TriviaList(
-                SyntaxFactory.PreprocessingMessage(Environment.NewLine)));
+                SyntaxFactory.PreprocessingMessage(XmlSyntaxFactory.CrLf)));
         }
     }
 }

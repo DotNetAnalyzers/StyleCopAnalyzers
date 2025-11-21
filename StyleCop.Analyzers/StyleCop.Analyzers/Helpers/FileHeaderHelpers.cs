@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Helpers
 {
     using System;
@@ -54,7 +56,7 @@ namespace StyleCop.Analyzers.Helpers
                     fileHeaderStart = Math.Min(trivia.FullSpan.Start, fileHeaderStart);
                     fileHeaderEnd = trivia.FullSpan.End;
 
-                    sb.AppendLine(commentString.Substring(2).Trim());
+                    sb.Append(commentString.Substring(2).Trim()).Append('\n');
                     break;
                 case SyntaxKind.MultiLineCommentTrivia:
                     // only process a MultiLineCommentTrivia if no SingleLineCommentTrivia have been processed
@@ -77,7 +79,7 @@ namespace StyleCop.Analyzers.Helpers
                         foreach (var part in triviaStringParts)
                         {
                             var trimmedPart = part.TrimStart(' ', '*');
-                            sb.AppendLine(trimmedPart);
+                            sb.Append(trimmedPart).Append('\n');
                         }
 
                         fileHeaderStart = trivia.FullSpan.Start;
@@ -104,9 +106,9 @@ namespace StyleCop.Analyzers.Helpers
 
             if (sb.Length > 0)
             {
-                // remove the final newline
-                var eolLength = Environment.NewLine.Length;
-                sb.Remove(sb.Length - eolLength, eolLength);
+                // remove the final newline, which is always in '\n' form
+                const int EolLength = 1;
+                sb.Remove(sb.Length - EolLength, EolLength);
             }
 
             return new FileHeader(StringBuilderPool.ReturnAndFree(sb), fileHeaderStart, fileHeaderEnd);
@@ -177,7 +179,7 @@ namespace StyleCop.Analyzers.Helpers
             fileHeaderEnd = int.MinValue;
 
             // wrap the XML from the file header in a single root element to make XML parsing work.
-            sb.AppendLine("<root>");
+            sb.Append("<root>\n");
 
             int i;
             for (i = startIndex; !done && (i < triviaList.Count); i++)
@@ -204,7 +206,7 @@ namespace StyleCop.Analyzers.Helpers
                     fileHeaderStart = Math.Min(trivia.FullSpan.Start, fileHeaderStart);
                     fileHeaderEnd = trivia.FullSpan.End;
 
-                    sb.AppendLine(commentString.Substring(2));
+                    sb.Append(commentString.Substring(2)).Append('\n');
                     break;
 
                 case SyntaxKind.EndOfLineTrivia:
@@ -218,7 +220,7 @@ namespace StyleCop.Analyzers.Helpers
                 }
             }
 
-            sb.AppendLine("</root>");
+            sb.Append("</root>\n");
             return StringBuilderPool.ReturnAndFree(sb);
         }
 
@@ -227,7 +229,7 @@ namespace StyleCop.Analyzers.Helpers
             var sb = StringBuilderPool.Allocate();
 
             // wrap the XML from the file header in a single root element to make XML parsing work.
-            sb.AppendLine("<root>");
+            sb.Append("<root>\n");
 
             fileHeaderStart = multiLineComment.FullSpan.Start;
             fileHeaderEnd = multiLineComment.FullSpan.End;
@@ -240,10 +242,10 @@ namespace StyleCop.Analyzers.Helpers
 
             foreach (var commentLine in commentLines)
             {
-                sb.AppendLine(commentLine.TrimStart(' ', '*'));
+                sb.Append(commentLine.TrimStart(' ', '*')).Append('\n');
             }
 
-            sb.AppendLine("</root>");
+            sb.Append("</root>\n");
             return StringBuilderPool.ReturnAndFree(sb);
         }
     }

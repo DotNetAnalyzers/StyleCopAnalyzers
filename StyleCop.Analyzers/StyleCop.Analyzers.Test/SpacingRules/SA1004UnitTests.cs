@@ -3,9 +3,12 @@
 
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.SpacingRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -17,6 +20,20 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     /// </summary>
     public class SA1004UnitTests
     {
+        public static IEnumerable<object[]> ParameterModifiers
+        {
+            get
+            {
+                yield return new[] { "out" };
+                yield return new[] { "ref" };
+
+                if (LightupHelpers.SupportsCSharp72)
+                {
+                    yield return new[] { "in" };
+                }
+            }
+        }
+
         [Fact]
         public async Task TestFixedExampleAsync()
         {
@@ -210,6 +227,34 @@ public class TypeName
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(ParameterModifiers))]
+        [WorkItem(3817, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3817")]
+        public async Task TestParameterModifierFirstOnLineAsync(string keyword)
+        {
+            string testCode = $@"
+/// <summary>
+/// Description of some remarks that refer to a method: <see cref=""SomeMethod(int, int,
+/// {keyword} string)""/>.
+/// </summary>
+public class TypeName
+{{
+    public void SomeMethod(int x, int y, {keyword} string z)
+    {{
+        throw new System.Exception();
+    }}
+}}";
+
+            var languageVersion = (LightupHelpers.SupportsCSharp8, LightupHelpers.SupportsCSharp72) switch
+            {
+                // Make sure to use C# 7.2 if supported, unless we are going to default to something greater
+                (false, true) => LanguageVersionEx.CSharp7_2,
+                _ => (LanguageVersion?)null,
+            };
+
+            await VerifyCSharpDiagnosticAsync(languageVersion, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

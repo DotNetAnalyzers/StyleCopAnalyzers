@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
@@ -90,11 +92,22 @@ namespace StyleCop.Analyzers.SpacingRules
             }
 
             bool expectPrecedingSpace = true;
-            if (token.Parent.IsKind(SyntaxKindEx.PropertyPatternClause)
-                && token.GetPreviousToken() is { RawKind: (int)SyntaxKind.OpenParenToken, Parent: { RawKind: (int)SyntaxKindEx.PositionalPatternClause } })
+            if (token.Parent.IsKind(SyntaxKindEx.PropertyPatternClause))
             {
-                // value is ({ P: 0 }, { P: 0 })
-                expectPrecedingSpace = false;
+                var prevToken = token.GetPreviousToken();
+                if (prevToken.IsKind(SyntaxKind.OpenParenToken))
+                {
+                    // value is ({ P: 0 }, { P: 0 })
+                    // value is ({ P: 0 } and { P: 0 })
+                    // value is ({ P: 0 } or { P: 0 })
+                    // value is ({ P: 0 })
+                    expectPrecedingSpace = false;
+                }
+                else if (prevToken is { RawKind: (int)SyntaxKind.OpenBracketToken, Parent: { RawKind: (int)SyntaxKindEx.ListPattern } })
+                {
+                    // value is [{ P: 0 }, { P: 0 }]
+                    expectPrecedingSpace = false;
+                }
             }
 
             bool precededBySpace = token.IsFirstInLine() || token.IsPrecededByWhitespace(context.CancellationToken);

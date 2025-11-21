@@ -1,10 +1,14 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.LightJson
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Reflection;
     using global::LightJson;
     using Xunit;
     using IEnumerable = System.Collections.IEnumerable;
@@ -105,6 +109,35 @@ namespace StyleCop.Analyzers.Test.LightJson
             Assert.Same(obj, obj.Rename("bogus", "y"));
             Assert.Equal(1, obj.Count);
             Assert.Same(value, obj["y"].AsString);
+        }
+
+        [Fact]
+        public void TestDebugView()
+        {
+            var obj = new JsonObject
+            {
+                ["x"] = "string value",
+                ["y"] = new JsonObject(),
+                ["z"] = new JsonArray("a", "b", "c"),
+            };
+            var proxyAttribute = obj.GetType().GetCustomAttribute<DebuggerTypeProxyAttribute>();
+            Assert.NotNull(proxyAttribute);
+
+            var proxyType = Type.GetType(proxyAttribute.ProxyTypeName);
+            Assert.NotNull(proxyType);
+
+            var proxy = Activator.CreateInstance(proxyType, obj);
+            Assert.NotNull(proxy);
+
+            var keys = proxyType.GetTypeInfo().GetDeclaredProperty("Keys").GetValue(proxy);
+            var keysArray = Assert.IsAssignableFrom<Array>(keys);
+
+            Assert.NotEmpty(keysArray);
+            foreach (var key in keysArray)
+            {
+                var view = key.GetType().GetTypeInfo().GetDeclaredProperty("View").GetValue(key);
+                Assert.NotNull(view);
+            }
         }
 
 #pragma warning disable IDE0060 // Remove unused parameter

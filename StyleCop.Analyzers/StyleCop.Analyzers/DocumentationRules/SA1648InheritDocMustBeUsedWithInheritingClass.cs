@@ -68,7 +68,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static void HandleBaseTypeLikeDeclaration(SyntaxNodeAnalysisContext context)
         {
-            BaseTypeDeclarationSyntax baseType = context.Node as BaseTypeDeclarationSyntax;
+            BaseTypeDeclarationSyntax? baseType = context.Node as BaseTypeDeclarationSyntax;
 
             // baseType can be null here if we are looking at a delegate declaration
             if (baseType != null && baseType.BaseList != null && baseType.BaseList.Types.Any())
@@ -147,10 +147,24 @@ namespace StyleCop.Analyzers.DocumentationRules
             Location location;
 
             ISymbol declaredSymbol = context.SemanticModel.GetDeclaredSymbol(memberSyntax, context.CancellationToken);
+
+            if (memberSyntax is ConstructorDeclarationSyntax constructorDeclarationSyntax && declaredSymbol is IMethodSymbol constructorMethodSymbol)
+            {
+                if (constructorMethodSymbol.ContainingType != null)
+                {
+                    INamedTypeSymbol baseType = constructorMethodSymbol.ContainingType.BaseType;
+
+                    if (HasMatchingSignature(baseType.Constructors, constructorMethodSymbol))
+                    {
+                        return;
+                    }
+                }
+            }
+
             if (declaredSymbol == null && memberSyntax.IsKind(SyntaxKind.EventFieldDeclaration))
             {
                 var eventFieldDeclarationSyntax = (EventFieldDeclarationSyntax)memberSyntax;
-                VariableDeclaratorSyntax firstVariable = eventFieldDeclarationSyntax.Declaration?.Variables.FirstOrDefault();
+                VariableDeclaratorSyntax? firstVariable = eventFieldDeclarationSyntax.Declaration?.Variables.FirstOrDefault();
                 if (firstVariable != null)
                 {
                     declaredSymbol = context.SemanticModel.GetDeclaredSymbol(firstVariable, context.CancellationToken);
@@ -204,15 +218,54 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
         }
 
+        /// <summary>
+        /// Method compares a <paramref name="constructorMethodSymbol">constructor method</paramref> signature against its
+        /// <paramref name="baseConstructorSymbols">base type constructors</paramref> to find if there is a method signature match.
+        /// </summary>
+        /// <returns><see langword="true"/> if any base type constructor's signature matches the signature of <paramref name="constructorMethodSymbol"/>, <see langword="false"/> otherwise.</returns>
+        private static bool HasMatchingSignature(ImmutableArray<IMethodSymbol> baseConstructorSymbols, IMethodSymbol constructorMethodSymbol)
+        {
+            foreach (IMethodSymbol baseConstructorMethod in baseConstructorSymbols)
+            {
+                // Constructors must have the same number of parameters.
+                if (constructorMethodSymbol.Parameters.Length != baseConstructorMethod.Parameters.Length)
+                {
+                    continue;
+                }
+
+                // Our constructor and the base constructor must have the same signature. But variable names can be different.
+                bool success = true;
+
+                for (int i = 0; i < constructorMethodSymbol.Parameters.Length; i++)
+                {
+                    IParameterSymbol constructorParameter = constructorMethodSymbol.Parameters[i];
+                    IParameterSymbol baseParameter = baseConstructorMethod.Parameters[i];
+
+                    if (!constructorParameter.Type.Equals(baseParameter.Type))
+                    {
+                        success = false;
+                        break;
+                    }
+                }
+
+                if (success)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private static bool HasXmlCrefAttribute(XmlNodeSyntax inheritDocElement)
         {
-            XmlElementSyntax xmlElementSyntax = inheritDocElement as XmlElementSyntax;
+            XmlElementSyntax? xmlElementSyntax = inheritDocElement as XmlElementSyntax;
             if (xmlElementSyntax?.StartTag?.Attributes.Any(SyntaxKind.XmlCrefAttribute) ?? false)
             {
                 return true;
             }
 
-            XmlEmptyElementSyntax xmlEmptyElementSyntax = inheritDocElement as XmlEmptyElementSyntax;
+            XmlEmptyElementSyntax? xmlEmptyElementSyntax = inheritDocElement as XmlEmptyElementSyntax;
             if (xmlEmptyElementSyntax?.Attributes.Any(SyntaxKind.XmlCrefAttribute) ?? false)
             {
                 return true;

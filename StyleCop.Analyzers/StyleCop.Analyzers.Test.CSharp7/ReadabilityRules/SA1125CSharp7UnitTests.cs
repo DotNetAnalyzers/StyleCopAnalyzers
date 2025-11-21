@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
 {
     using System;
@@ -11,7 +13,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.ReadabilityRules.SA1125UseShorthandForNullableTypes>;
 
-    public class SA1125CSharp7UnitTests : SA1125UnitTests
+    public partial class SA1125CSharp7UnitTests : SA1125UnitTests
     {
         /// <summary>
         /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#386.

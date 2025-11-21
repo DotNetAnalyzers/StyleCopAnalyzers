@@ -25,6 +25,18 @@
     <Entry Value="0x64"/>
   </UnusedOperationKinds>
 
+  <AbstractNode Name="IOperation" Namespace="">
+    <OperationKind Include="false" />
+    <Property Name="Parent" Type="IOperation" />
+    <Property Name="Kind" Type="OperationKind" />
+    <Property Name="Syntax" Type="SyntaxNode" />
+    <Property Name="Type" Type="ITypeSymbol" />
+    <Property Name="ConstantValue" Type="Optional&lt;object&gt;" />
+    <Property Name="Children" Type="IEnumerable&lt;IOperation&gt;" />
+    <Property Name="Language" Type="string" />
+    <Property Name="IsImplicit" Type="bool" />
+    <Property Name="SemanticModel" Type="SemanticModel" />
+  </AbstractNode>
   <Node Name="IInvalidOperation" Base="IOperation" SkipClassGeneration="true">
     <Comments>
       <summary>

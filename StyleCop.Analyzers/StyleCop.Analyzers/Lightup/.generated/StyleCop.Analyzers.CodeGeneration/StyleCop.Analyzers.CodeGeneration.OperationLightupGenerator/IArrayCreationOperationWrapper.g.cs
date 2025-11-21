@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct IArrayCreationOperationWrapper : IOperationWrapper
+    internal readonly struct IArrayCreationOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IArrayCreationOperation";
         private static readonly Type WrappedType;
@@ -30,6 +30,8 @@ namespace StyleCop.Analyzers.Lightup
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public ImmutableArray<IOperation> DimensionSizes => DimensionSizesAccessor(this.WrappedOperation);
         public IArrayInitializerOperationWrapper Initializer => IArrayInitializerOperationWrapper.FromOperation(InitializerAccessor(this.WrappedOperation));
+        public static explicit operator IArrayCreationOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(IArrayCreationOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IArrayCreationOperationWrapper FromOperation(IOperation operation)
         {
             if (operation == null)

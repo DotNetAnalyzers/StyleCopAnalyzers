@@ -1,12 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp9.OrderingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.OrderingRules;
     using Xunit;
@@ -14,7 +15,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.OrderingRules
         StyleCop.Analyzers.OrderingRules.SA1200UsingDirectivesMustBePlacedCorrectly,
         StyleCop.Analyzers.OrderingRules.UsingCodeFixProvider>;
 
-    public class SA1200CSharp9UnitTests : SA1200CSharp8UnitTests
+    public partial class SA1200CSharp9UnitTests : SA1200CSharp8UnitTests
     {
         /// <summary>
         /// Verifies that having using statements in the compilation unit will not produce diagnostics for top-level
@@ -31,7 +32,7 @@ using System.Threading;
 return 0;
 ";
 
-            await new CSharpTest(LanguageVersion.CSharp9)
+            await new CSharpTest()
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestState =

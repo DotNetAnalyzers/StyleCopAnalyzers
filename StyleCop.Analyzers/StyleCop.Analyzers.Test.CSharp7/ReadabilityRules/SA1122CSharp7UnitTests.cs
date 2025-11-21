@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
 {
     using System.Threading;
@@ -12,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
         StyleCop.Analyzers.ReadabilityRules.SA1122UseStringEmptyForEmptyStrings,
         StyleCop.Analyzers.ReadabilityRules.SA1122CodeFixProvider>;
 
-    public class SA1122CSharp7UnitTests : SA1122UnitTests
+    public partial class SA1122CSharp7UnitTests : SA1122UnitTests
     {
         /// <summary>
         /// Verifies the analyzer will properly handle an empty string in a case label.

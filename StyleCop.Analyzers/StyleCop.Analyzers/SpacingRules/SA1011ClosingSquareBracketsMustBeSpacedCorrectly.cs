@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
@@ -105,6 +107,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 case SyntaxKind.OpenBracketToken:
                 case SyntaxKind.CloseParenToken:
                 case SyntaxKind.MinusGreaterThanToken:
+                case SyntaxKindEx.DotDotToken:
                     precedesSpecialCharacter = true;
                     break;
 
@@ -133,7 +136,9 @@ namespace StyleCop.Analyzers.SpacingRules
                     break;
 
                 case SyntaxKind.ColonToken:
-                    precedesSpecialCharacter = nextToken.Parent.IsKind(SyntaxKind.InterpolationFormatClause);
+                    precedesSpecialCharacter =
+                        nextToken.Parent.IsKind(SyntaxKind.InterpolationFormatClause) ||
+                        nextToken.Parent.IsKind(SyntaxKindEx.CasePatternSwitchLabel);
                     suppressFollowingSpaceError = false;
                     break;
 

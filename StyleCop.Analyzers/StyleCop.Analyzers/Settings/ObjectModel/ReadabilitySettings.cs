@@ -1,9 +1,12 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
     using LightJson;
+    using StyleCop.Analyzers.Lightup;
 
     internal class ReadabilitySettings
     {
@@ -24,21 +27,28 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// Initializes a new instance of the <see cref="ReadabilitySettings"/> class.
         /// </summary>
         /// <param name="readabilitySettingsObject">The JSON object containing the settings.</param>
-        protected internal ReadabilitySettings(JsonObject readabilitySettingsObject)
-            : this()
+        /// <param name="analyzerConfigOptions">The <strong>.editorconfig</strong> options to use if
+        /// <strong>stylecop.json</strong> does not provide values.</param>
+        protected internal ReadabilitySettings(JsonObject readabilitySettingsObject, AnalyzerConfigOptionsWrapper analyzerConfigOptions)
         {
+            bool? allowBuiltInTypeAliases = null;
+
             foreach (var kvp in readabilitySettingsObject)
             {
                 switch (kvp.Key)
                 {
                 case "allowBuiltInTypeAliases":
-                    this.allowBuiltInTypeAliases = kvp.ToBooleanValue();
+                    allowBuiltInTypeAliases = kvp.ToBooleanValue();
                     break;
 
                 default:
                     break;
                 }
             }
+
+            allowBuiltInTypeAliases ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.readability.allowBuiltInTypeAliases");
+
+            this.allowBuiltInTypeAliases = allowBuiltInTypeAliases.GetValueOrDefault(false);
         }
 
         public bool AllowBuiltInTypeAliases =>

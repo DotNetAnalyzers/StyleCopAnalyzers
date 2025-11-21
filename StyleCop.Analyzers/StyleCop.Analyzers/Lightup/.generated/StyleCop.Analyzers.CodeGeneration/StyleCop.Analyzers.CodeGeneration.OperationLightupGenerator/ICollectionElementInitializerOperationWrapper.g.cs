@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct ICollectionElementInitializerOperationWrapper : IOperationWrapper
+    internal readonly struct ICollectionElementInitializerOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.ICollectionElementInitializerOperation";
         private static readonly Type WrappedType;
@@ -33,6 +33,8 @@ namespace StyleCop.Analyzers.Lightup
         public IMethodSymbol AddMethod => AddMethodAccessor(this.WrappedOperation);
         public ImmutableArray<IOperation> Arguments => ArgumentsAccessor(this.WrappedOperation);
         public bool IsDynamic => IsDynamicAccessor(this.WrappedOperation);
+        public static explicit operator ICollectionElementInitializerOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(ICollectionElementInitializerOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static ICollectionElementInitializerOperationWrapper FromOperation(IOperation operation)
         {
             if (operation == null)

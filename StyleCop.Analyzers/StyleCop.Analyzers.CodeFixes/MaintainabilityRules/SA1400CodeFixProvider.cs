@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System;
@@ -84,6 +86,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 break;
 
             case SyntaxKindEx.RecordDeclaration:
+            case SyntaxKindEx.RecordStructDeclaration:
                 updatedDeclarationNode = HandleRecordDeclaration((RecordDeclarationSyntaxWrapper)declarationNode);
                 break;
 
@@ -378,6 +381,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 case SyntaxKind.EnumDeclaration:
                 case SyntaxKind.StructDeclaration:
                 case SyntaxKindEx.RecordDeclaration:
+                case SyntaxKindEx.RecordStructDeclaration:
                 case SyntaxKind.DelegateDeclaration:
                 case SyntaxKind.EventDeclaration:
                 case SyntaxKind.EventFieldDeclaration:

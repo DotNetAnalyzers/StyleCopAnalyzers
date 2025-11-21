@@ -1,11 +1,12 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp8.MaintainabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules;
     using Xunit;
@@ -13,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.MaintainabilityRules
         StyleCop.Analyzers.MaintainabilityRules.SA1413UseTrailingCommasInMultiLineInitializers,
         StyleCop.Analyzers.MaintainabilityRules.SA1413CodeFixProvider>;
 
-    public class SA1413CSharp8UnitTests : SA1413CSharp7UnitTests
+    public partial class SA1413CSharp8UnitTests : SA1413CSharp7UnitTests
     {
         [Fact]
         [WorkItem(3056, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3056")]
@@ -55,7 +56,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.MaintainabilityRules
 }
 ";
 
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp9.OrderingRules
 {
     using System.Threading;
@@ -12,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.OrderingRules
         StyleCop.Analyzers.OrderingRules.SA1201ElementsMustAppearInTheCorrectOrder,
         StyleCop.Analyzers.OrderingRules.ElementOrderCodeFixProvider>;
 
-    public class SA1201CSharp9UnitTests : SA1201CSharp8UnitTests
+    public partial class SA1201CSharp9UnitTests : SA1201CSharp8UnitTests
     {
         [Fact]
         [WorkItem(3236, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3236")]

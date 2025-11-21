@@ -1,8 +1,11 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.LayoutRules
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
@@ -240,6 +243,63 @@ public class TestConstants
             };
 
             await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer will properly handle documentation followed by a comment,
+        /// even if there is another non-adjacent comment earlier.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3481, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3481")]
+        public async Task TestDocumentationFollowedByCommentWhenThereIsAlsoAnEarlierCommentAsync()
+        {
+            var testCode = @"
+public class Class1 // Comment 1
+{
+    public Class1()
+    {
+    }
+
+    /// <summary>
+    /// Gets value.
+    /// </summary>
+    // Comment 2
+    public double Value { get; }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer does not fire in file headers (i.e. one line comments at the start of the file).
+        /// </summary>
+        /// <param name="startWithPragma"><see langword="true"/> if the source code should start with a pragma; otherwise, <see langword="false"/>.</param>
+        /// <param name="numberOfHeaderLines">The number of lines in the header.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [CombinatorialData]
+        [WorkItem(3630, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3630")]
+        public async Task TestFileHeaderAsync(
+            bool startWithPragma,
+            [CombinatorialValues(1, 2, 3)] int numberOfHeaderLines)
+        {
+            var testCode = @"
+class TestClass
+{
+}";
+
+            for (var i = 0; i < numberOfHeaderLines; i++)
+            {
+                testCode = "// A comment line." + Environment.NewLine + testCode;
+            }
+
+            if (startWithPragma)
+            {
+                testCode = "#pragma warning disable CS1591" + Environment.NewLine + testCode;
+            }
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

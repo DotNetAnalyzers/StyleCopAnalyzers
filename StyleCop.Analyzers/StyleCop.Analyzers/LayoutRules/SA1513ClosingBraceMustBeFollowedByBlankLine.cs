@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.LayoutRules
 {
     using System;
@@ -13,6 +15,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A closing brace within a C# element, statement, or expression is not followed by a blank line.
@@ -176,6 +179,13 @@ namespace StyleCop.Analyzers.LayoutRules
 
             private void AnalyzeCloseBrace(SyntaxToken token)
             {
+                if (token.Parent.IsKind(SyntaxKind.Interpolation))
+                {
+                    // The text after an interpolation is part of a string literal, and therefore does not require a
+                    // blank line in source.
+                    return;
+                }
+
                 var nextToken = token.GetNextToken(true, true);
 
                 if (nextToken.HasLeadingTrivia
@@ -228,7 +238,8 @@ namespace StyleCop.Analyzers.LayoutRules
                     {
                         if (nextToken.Parent is QueryClauseSyntax
                             || nextToken.Parent is SelectOrGroupClauseSyntax
-                            || nextToken.Parent is QueryContinuationSyntax)
+                            || nextToken.Parent is QueryContinuationSyntax
+                            || nextToken.Parent is JoinIntoClauseSyntax)
                         {
                             // the close brace is part of a query expression
                             return;
@@ -242,9 +253,10 @@ namespace StyleCop.Analyzers.LayoutRules
                          IsPartOf<EqualsValueClauseSyntax>(token) ||
                          IsPartOf<AssignmentExpressionSyntax>(token) ||
                          IsPartOf<ReturnStatementSyntax>(token) ||
+                         IsPartOf<ThrowStatementSyntax>(token) ||
                          IsPartOf<ObjectCreationExpressionSyntax>(token)))
                     {
-                        // the close brace is part of a variable initialization statement or a return statement
+                        // the close brace is part of a variable initialization statement or a return/throw statement
                         return;
                     }
 
@@ -261,10 +273,17 @@ namespace StyleCop.Analyzers.LayoutRules
                         return;
                     }
 
+                    if (nextToken.IsKind(SyntaxKind.CloseBracketToken))
+                    {
+                        // the close brace is for example in an object initializer at the end of a collection expression.
+                        return;
+                    }
+
                     if (nextToken.IsKind(SyntaxKind.AddKeyword)
                         || nextToken.IsKind(SyntaxKind.RemoveKeyword)
                         || nextToken.IsKind(SyntaxKind.GetKeyword)
-                        || nextToken.IsKind(SyntaxKind.SetKeyword))
+                        || nextToken.IsKind(SyntaxKind.SetKeyword)
+                        || nextToken.IsKind(SyntaxKindEx.InitKeyword))
                     {
                         // the close brace is followed by an accessor (SA1516 will handle that)
                         return;

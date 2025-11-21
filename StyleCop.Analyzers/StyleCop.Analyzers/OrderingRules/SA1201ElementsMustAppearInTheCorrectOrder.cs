@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.OrderingRules
 {
     using System;
@@ -123,6 +125,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
         // extern alias and usings are missing here because the compiler itself is enforcing the right order.
         private static readonly ImmutableArray<SyntaxKind> OuterOrder = ImmutableArray.Create(
+            SyntaxKindEx.FileScopedNamespaceDeclaration,
             SyntaxKind.NamespaceDeclaration,
             SyntaxKind.DelegateDeclaration,
             SyntaxKind.EnumDeclaration,
@@ -149,20 +152,19 @@ namespace StyleCop.Analyzers.OrderingRules
         private static readonly Dictionary<SyntaxKind, string> MemberNames = new Dictionary<SyntaxKind, string>
         {
             [SyntaxKind.NamespaceDeclaration] = "namespace",
+            [SyntaxKindEx.FileScopedNamespaceDeclaration] = "namespace",
             [SyntaxKind.DelegateDeclaration] = "delegate",
             [SyntaxKind.EnumDeclaration] = "enum",
             [SyntaxKind.InterfaceDeclaration] = "interface",
             [SyntaxKind.StructDeclaration] = "struct",
             [SyntaxKind.ClassDeclaration] = "class",
             [SyntaxKindEx.RecordDeclaration] = "record",
+            [SyntaxKindEx.RecordStructDeclaration] = "record struct",
             [SyntaxKind.FieldDeclaration] = "field",
             [SyntaxKind.ConstructorDeclaration] = "constructor",
             [SyntaxKind.DestructorDeclaration] = "destructor",
-            [SyntaxKind.DelegateDeclaration] = "delegate",
             [SyntaxKind.EventDeclaration] = "event",
             [SyntaxKind.EventFieldDeclaration] = "event",
-            [SyntaxKind.EnumDeclaration] = "enum",
-            [SyntaxKind.InterfaceDeclaration] = "interface",
             [SyntaxKind.PropertyDeclaration] = "property",
             [SyntaxKind.IndexerDeclaration] = "indexer",
             [SyntaxKind.MethodDeclaration] = "method",
@@ -171,7 +173,7 @@ namespace StyleCop.Analyzers.OrderingRules
         };
 
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CompilationUnitAction = HandleCompilationUnit;
-        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> NamespaceDeclarationAction = HandleNamespaceDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> BaseNamespaceDeclarationAction = HandleBaseNamespaceDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> TypeDeclarationAction = HandleTypeDeclaration;
 
         /// <inheritdoc/>
@@ -184,9 +186,12 @@ namespace StyleCop.Analyzers.OrderingRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
-            context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
-            context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
+            context.RegisterCompilationStartAction(context =>
+            {
+                context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
+                context.RegisterSyntaxNodeAction(BaseNamespaceDeclarationAction, SyntaxKinds.BaseNamespaceDeclaration);
+                context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
+            });
         }
 
         private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
@@ -217,7 +222,7 @@ namespace StyleCop.Analyzers.OrderingRules
             HandleMemberList(context, elementOrder, kindIndex, compilationUnit.Members, OuterOrder);
         }
 
-        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        private static void HandleBaseNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             var elementOrder = settings.OrderingRules.ElementOrder;
             int kindIndex = elementOrder.IndexOf(OrderingTrait.Kind);
@@ -226,9 +231,9 @@ namespace StyleCop.Analyzers.OrderingRules
                 return;
             }
 
-            var compilationUnit = (NamespaceDeclarationSyntax)context.Node;
+            var baseNamespaceDeclaration = (BaseNamespaceDeclarationSyntaxWrapper)context.Node;
 
-            HandleMemberList(context, elementOrder, kindIndex, compilationUnit.Members, OuterOrder);
+            HandleMemberList(context, elementOrder, kindIndex, baseNamespaceDeclaration.Members, OuterOrder);
         }
 
         private static void HandleMemberList(SyntaxNodeAnalysisContext context, ImmutableArray<OrderingTrait> elementOrder, int kindIndex, SyntaxList<MemberDeclarationSyntax> members, ImmutableArray<SyntaxKind> order)
@@ -309,6 +314,7 @@ namespace StyleCop.Analyzers.OrderingRules
             {
                 SyntaxKind.EventFieldDeclaration => SyntaxKind.EventDeclaration,
                 SyntaxKindEx.RecordDeclaration => SyntaxKind.ClassDeclaration,
+                SyntaxKindEx.RecordStructDeclaration => SyntaxKind.StructDeclaration,
                 _ => syntaxKind,
             };
         }

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.LayoutRules
 {
     using System.Threading;
@@ -303,6 +305,165 @@ namespace StyleCop.Analyzers.Test.LayoutRules
             };
 
             await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that no diagnostics are reported for the do/while loop when the <see langword="while"/>
+        /// expression is on the same line as the closing brace and the setting is enabled.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestDoWhileOnClosingBraceWithAllowSettingAsync()
+        {
+            var testSettings = @"
+{
+    ""settings"": {
+        ""layoutRules"": {
+            ""allowDoWhileOnClosingBrace"": true
+        }
+    }
+}";
+
+            var testCode = @"public class Foo
+{
+    private void Bar()
+    {
+        var x = 0;
+
+        do
+        {
+            x = 1;
+        } while (x == 0);
+    }
+}";
+
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                Settings = testSettings,
+            };
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that diagnostics will be reported for the invalid <see langword="while"/> loop that
+        /// is on the same line as the closing brace which is not part of a <c>do/while</c> loop. This
+        /// ensures that the <c>allowDoWhileOnClosingBrace</c> setting is only applicable to a <c>do/while</c>
+        /// loop and will not mistakenly allow a plain <see langword="while"/> loop after any arbitrary
+        /// closing brace.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestJustWhileLoopOnClosingBraceWithAllowDoWhileOnClosingBraceSettingAsync()
+        {
+            var testSettings = @"
+{
+    ""settings"": {
+        ""layoutRules"": {
+            ""allowDoWhileOnClosingBrace"": true
+        }
+    }
+}";
+
+            var testCode = @"public class Foo
+{
+    private void Bar()
+    {
+        var x = 0;
+
+        while (x == 0)
+        {
+            x = 1;
+        [|}|] while (x == 0)
+        {
+            x = 1;
+        }
+    }
+}";
+
+            var fixedCode = @"public class Foo
+{
+    private void Bar()
+    {
+        var x = 0;
+
+        while (x == 0)
+        {
+            x = 1;
+        }
+        while (x == 0)
+        {
+            x = 1;
+        }
+    }
+}";
+
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                Settings = testSettings,
+            };
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that no diagnostics are reported for the do/while loop when the <see langword="while"/>
+        /// expression is on the same line as the closing brace and the setting is allowed.
+        /// </summary>
+        /// <remarks>
+        /// <para>The "Invalid do ... while #6" code in the <see cref="TestDoWhileInvalidAsync"/> unit test
+        /// should account for the proper fix when the <c>allowDoWhileOnClosingBrace</c> is <see langword="false"/>,
+        /// which is the default.</para>
+        /// </remarks>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestFixDoWhileOnClosingBraceWithAllowSettingAsync()
+        {
+            var testSettings = @"
+{
+    ""settings"": {
+        ""layoutRules"": {
+            ""allowDoWhileOnClosingBrace"": true
+        }
+    }
+}";
+
+            var testCode = @"public class Foo
+{
+    private void Bar()
+    {
+        var x = 0;
+
+        do
+        {
+            x = 1; [|}|] while (x == 0);
+    }
+}";
+
+            var fixedTestCode = @"public class Foo
+{
+    private void Bar()
+    {
+        var x = 0;
+
+        do
+        {
+            x = 1;
+        } while (x == 0);
+    }
+}";
+
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedTestCode,
+                Settings = testSettings,
+            };
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -1,13 +1,15 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp8.ReadabilityRules
 {
     using System.Threading.Tasks;
 
     using StyleCop.Analyzers.Test.CSharp7.ReadabilityRules;
 
-    public class SA1134CSharp8UnitTests : SA1134CSharp7UnitTests
+    public partial class SA1134CSharp8UnitTests : SA1134CSharp7UnitTests
     {
         /// <inheritdoc/>
         public override Task VerifyInvalidMemberSyntaxInCodeFixAsync()

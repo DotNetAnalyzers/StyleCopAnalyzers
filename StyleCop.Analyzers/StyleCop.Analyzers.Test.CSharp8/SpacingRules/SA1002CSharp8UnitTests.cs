@@ -1,11 +1,12 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp7.SpacingRules;
     using Xunit;
@@ -13,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1002SemicolonsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1002CSharp8UnitTests : SA1002CSharp7UnitTests
+    public partial class SA1002CSharp8UnitTests : SA1002CSharp7UnitTests
     {
         [Fact]
         [WorkItem(3052, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3052")]
@@ -53,7 +54,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
                 Diagnostic().WithArguments(" not", "preceded").WithLocation(9, 40),
             };
 
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp8, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -1,11 +1,12 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Helpers
 {
     using System.Linq;
     using System.Text;
-    using System.Text.RegularExpressions;
     using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -192,6 +193,37 @@ namespace StyleCop.Analyzers.Helpers
         }
 
         /// <summary>
+        /// Returns the last <see cref="XmlTextSyntax"/> which is not simply empty or whitespace.
+        /// </summary>
+        /// <param name="node">The XML content to search.</param>
+        /// <returns>The last <see cref="XmlTextSyntax"/> which is not simply empty or whitespace, or
+        /// <see langword="null"/> if no such element exists.</returns>
+        internal static XmlTextSyntax TryGetLastTextElementWithContent(XmlNodeSyntax node)
+        {
+            if (node is XmlEmptyElementSyntax)
+            {
+                return null;
+            }
+            else if (node is XmlTextSyntax xmlText)
+            {
+                return !IsConsideredEmpty(node) ? xmlText : null;
+            }
+            else if (node is XmlElementSyntax xmlElement)
+            {
+                for (var i = xmlElement.Content.Count - 1; i >= 0; i--)
+                {
+                    var nestedContent = TryGetFirstTextElementWithContent(xmlElement.Content[i]);
+                    if (nestedContent != null)
+                    {
+                        return nestedContent;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Checks if a <see cref="SyntaxTrivia"/> contains a <see cref="DocumentationCommentTriviaSyntax"/> and returns
         /// <see langword="true"/> if it is considered empty.
         /// </summary>
@@ -266,20 +298,101 @@ namespace StyleCop.Analyzers.Helpers
                 return null;
             }
 
-            StringBuilder stringBuilder = StringBuilderPool.Allocate();
+            bool lastWhitespace = false;
+
+            string single = string.Empty;
+
+            StringBuilder stringBuilder = null;
 
             foreach (var item in textElement.TextTokens)
             {
-                stringBuilder.Append(item);
+                if (single.Length == 0)
+                {
+                    single = item.ToString();
+                }
+                else
+                {
+                    if (stringBuilder == null)
+                    {
+                        stringBuilder = StringBuilderPool.Allocate();
+                        stringBuilder.AppendNormalize(single, normalizeWhitespace, ref lastWhitespace);
+                    }
+
+                    stringBuilder.AppendNormalize(item.ToString(), normalizeWhitespace, ref lastWhitespace);
+                }
             }
 
-            string result = StringBuilderPool.ReturnAndFree(stringBuilder);
+            if (stringBuilder == null)
+            {
+                if (normalizeWhitespace)
+                {
+                    stringBuilder = StringBuilderPool.Allocate();
+
+                    if (!stringBuilder.AppendNormalize(single, normalizeWhitespace, ref lastWhitespace))
+                    {
+                        StringBuilderPool.Free(stringBuilder);
+
+                        // No change is needed, return original string.
+                        return single;
+                    }
+                }
+                else
+                {
+                    return single;
+                }
+            }
+
+            return StringBuilderPool.ReturnAndFree(stringBuilder);
+        }
+
+        /// <summary>
+        /// Append to StringBuilder and perform white space normalization.
+        /// </summary>
+        /// <param name="builder">StringBuilder to append to.</param>
+        /// <param name="text">String to append.</param>
+        /// <param name="normalizeWhitespace">Normalize flag.</param>
+        /// <param name="lastWhitespace">last char is white space flag.</param>
+        /// <returns>True if output is different.</returns>
+        internal static bool AppendNormalize(this StringBuilder builder, string text, bool normalizeWhitespace, ref bool lastWhitespace)
+        {
+            bool diff = false;
+
             if (normalizeWhitespace)
             {
-                result = Regex.Replace(result, @"\s+", " ");
+                foreach (char ch in text)
+                {
+                    if (char.IsWhiteSpace(ch))
+                    {
+                        if (lastWhitespace)
+                        {
+                            diff = true;
+                        }
+                        else
+                        {
+                            if (ch != ' ')
+                            {
+                                diff = true;
+                            }
+
+                            builder.Append(' ');
+                        }
+
+                        lastWhitespace = true;
+                    }
+                    else
+                    {
+                        builder.Append(ch);
+
+                        lastWhitespace = false;
+                    }
+                }
+            }
+            else
+            {
+                builder.Append(text);
             }
 
-            return result;
+            return diff;
         }
 
         internal static T GetFirstAttributeOrDefault<T>(XmlNodeSyntax nodeSyntax)

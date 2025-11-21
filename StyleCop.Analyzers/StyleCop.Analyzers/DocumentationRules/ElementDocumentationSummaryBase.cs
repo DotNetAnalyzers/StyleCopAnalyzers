@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
@@ -47,15 +49,18 @@ namespace StyleCop.Analyzers.DocumentationRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxNodeAction(this.typeDeclarationAction, SyntaxKinds.BaseTypeDeclaration);
-            context.RegisterSyntaxNodeAction(this.methodDeclarationAction, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeAction(this.constructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
-            context.RegisterSyntaxNodeAction(this.destructorDeclarationAction, SyntaxKind.DestructorDeclaration);
-            context.RegisterSyntaxNodeAction(this.propertyDeclarationAction, SyntaxKind.PropertyDeclaration);
-            context.RegisterSyntaxNodeAction(this.indexerDeclarationAction, SyntaxKind.IndexerDeclaration);
-            context.RegisterSyntaxNodeAction(this.fieldDeclarationAction, SyntaxKinds.BaseFieldDeclaration);
-            context.RegisterSyntaxNodeAction(this.delegateDeclarationAction, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeAction(this.eventDeclarationAction, SyntaxKind.EventDeclaration);
+            context.RegisterCompilationStartAction(context =>
+            {
+                context.RegisterSyntaxNodeAction(this.typeDeclarationAction, SyntaxKinds.BaseTypeDeclaration);
+                context.RegisterSyntaxNodeAction(this.methodDeclarationAction, SyntaxKind.MethodDeclaration);
+                context.RegisterSyntaxNodeAction(this.constructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
+                context.RegisterSyntaxNodeAction(this.destructorDeclarationAction, SyntaxKind.DestructorDeclaration);
+                context.RegisterSyntaxNodeAction(this.propertyDeclarationAction, SyntaxKind.PropertyDeclaration);
+                context.RegisterSyntaxNodeAction(this.indexerDeclarationAction, SyntaxKind.IndexerDeclaration);
+                context.RegisterSyntaxNodeAction(this.fieldDeclarationAction, SyntaxKinds.BaseFieldDeclaration);
+                context.RegisterSyntaxNodeAction(this.delegateDeclarationAction, SyntaxKind.DelegateDeclaration);
+                context.RegisterSyntaxNodeAction(this.eventDeclarationAction, SyntaxKind.EventDeclaration);
+            });
         }
 
         /// <summary>

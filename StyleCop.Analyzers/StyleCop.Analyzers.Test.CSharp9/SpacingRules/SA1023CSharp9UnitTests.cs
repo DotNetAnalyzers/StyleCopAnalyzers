@@ -5,17 +5,15 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.SpacingRules;
-    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
     using static StyleCop.Analyzers.SpacingRules.SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1023CSharp9UnitTests : SA1023CSharp8UnitTests
+    public partial class SA1023CSharp9UnitTests : SA1023CSharp8UnitTests
     {
         [Fact]
         public async Task TestFunctionPointerParameterInvalidSpacingAsync()
@@ -40,7 +38,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
                 Diagnostic(DescriptorNotFollowed).WithLocation(1),
             };
 
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp9, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -68,21 +66,17 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
 }
 ";
 
-            await new CSharpTest(LanguageVersion.CSharp9)
+            DiagnosticResult[] expected =
             {
-                ReferenceAssemblies = GenericAnalyzerTest.ReferenceAssembliesNet50,
-                TestCode = testCode,
-                FixedCode = fixedCode,
-                ExpectedDiagnostics =
-                {
-                    Diagnostic(DescriptorNotPreceded).WithLocation(0),
-                    Diagnostic(DescriptorNotFollowed).WithLocation(1),
-                    Diagnostic(DescriptorNotPreceded).WithLocation(2),
-                    Diagnostic(DescriptorFollowed).WithLocation(3),
-                    Diagnostic(DescriptorNotPreceded).WithLocation(4),
-                    Diagnostic(DescriptorFollowed).WithLocation(5),
-                },
-            }.RunAsync().ConfigureAwait(false);
+                Diagnostic(DescriptorNotPreceded).WithLocation(0),
+                Diagnostic(DescriptorNotFollowed).WithLocation(1),
+                Diagnostic(DescriptorNotPreceded).WithLocation(2),
+                Diagnostic(DescriptorFollowed).WithLocation(3),
+                Diagnostic(DescriptorNotPreceded).WithLocation(4),
+                Diagnostic(DescriptorFollowed).WithLocation(5),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

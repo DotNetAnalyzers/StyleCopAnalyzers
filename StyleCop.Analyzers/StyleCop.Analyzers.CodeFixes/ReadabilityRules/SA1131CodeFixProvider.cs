@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Immutable;
@@ -64,33 +66,48 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static BinaryExpressionSyntax TransformExpression(BinaryExpressionSyntax binaryExpression)
         {
+            // NOTE: This code also changes the syntax node kind, besides the operator token. The modified source code would
+            // have been the same without this, but we do this to make tests pass with the default CodeActionValidationMode.
             var newLeft = binaryExpression.Right.WithTriviaFrom(binaryExpression.Left);
             var newRight = binaryExpression.Left.WithTriviaFrom(binaryExpression.Right);
-            return binaryExpression.WithLeft(newLeft).WithRight(newRight).WithOperatorToken(GetCorrectOperatorToken(binaryExpression.OperatorToken));
+            GetReplacementInfo(binaryExpression.OperatorToken, out var newOperatorToken, out var newNodeKind);
+            return SyntaxFactory.BinaryExpression(newNodeKind, newLeft, newOperatorToken, newRight);
         }
 
-        private static SyntaxToken GetCorrectOperatorToken(SyntaxToken operatorToken)
+        private static void GetReplacementInfo(SyntaxToken operatorToken, out SyntaxToken newToken, out SyntaxKind newNodeKind)
         {
             switch (operatorToken.Kind())
             {
             case SyntaxKind.EqualsEqualsToken:
             case SyntaxKind.ExclamationEqualsToken:
-                return operatorToken;
+                newToken = operatorToken;
+                newNodeKind = operatorToken.Parent.Kind();
+                break;
 
             case SyntaxKind.GreaterThanToken:
-                return SyntaxFactory.Token(operatorToken.LeadingTrivia, SyntaxKind.LessThanToken, operatorToken.TrailingTrivia);
+                newToken = SyntaxFactory.Token(operatorToken.LeadingTrivia, SyntaxKind.LessThanToken, operatorToken.TrailingTrivia);
+                newNodeKind = SyntaxKind.LessThanExpression;
+                break;
 
             case SyntaxKind.GreaterThanEqualsToken:
-                return SyntaxFactory.Token(operatorToken.LeadingTrivia, SyntaxKind.LessThanEqualsToken, operatorToken.TrailingTrivia);
+                newToken = SyntaxFactory.Token(operatorToken.LeadingTrivia, SyntaxKind.LessThanEqualsToken, operatorToken.TrailingTrivia);
+                newNodeKind = SyntaxKind.LessThanOrEqualExpression;
+                break;
 
             case SyntaxKind.LessThanToken:
-                return SyntaxFactory.Token(operatorToken.LeadingTrivia, SyntaxKind.GreaterThanToken, operatorToken.TrailingTrivia);
+                newToken = SyntaxFactory.Token(operatorToken.LeadingTrivia, SyntaxKind.GreaterThanToken, operatorToken.TrailingTrivia);
+                newNodeKind = SyntaxKind.GreaterThanExpression;
+                break;
 
             case SyntaxKind.LessThanEqualsToken:
-                return SyntaxFactory.Token(operatorToken.LeadingTrivia, SyntaxKind.GreaterThanEqualsToken, operatorToken.TrailingTrivia);
+                newToken = SyntaxFactory.Token(operatorToken.LeadingTrivia, SyntaxKind.GreaterThanEqualsToken, operatorToken.TrailingTrivia);
+                newNodeKind = SyntaxKind.GreaterThanOrEqualExpression;
+                break;
 
             default:
-                return SyntaxFactory.Token(SyntaxKind.None);
+                newToken = SyntaxFactory.Token(SyntaxKind.None);
+                newNodeKind = (SyntaxKind)operatorToken.Parent.RawKind;
+                break;
             }
         }
 

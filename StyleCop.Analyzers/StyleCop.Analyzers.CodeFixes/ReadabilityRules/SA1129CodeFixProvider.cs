@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
@@ -212,6 +214,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <returns>A new member access expression.</returns>
         private static SyntaxNode ConstructMemberAccessSyntax(TypeSyntax typeSyntax, string memberName)
         {
+            // NOTE: This creates the correct source code when applied, but these are not necessarily the syntax
+            // nodes that the compiler would create from that source code. For example, the type syntax can
+            // contain QualifiedName nodes, whereas the compiler would have created SimpleMemberAccessExpression instead.
+            // This means that the validation that happens in the tests need to be turned off for some tests.
+            // We could have transformed the nodes to match, but we keep the code simple instead.
             return SyntaxFactory.MemberAccessExpression(
                 SyntaxKind.SimpleMemberAccessExpression,
                 typeSyntax,

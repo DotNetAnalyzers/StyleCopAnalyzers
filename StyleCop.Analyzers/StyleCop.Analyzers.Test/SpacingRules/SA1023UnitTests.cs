@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Threading;
@@ -43,6 +45,33 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         var d1 = default(char*);
         var d2 = default(char**);
         a = *x * *x;
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer will properly handle valid dereference.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3538, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3538")]
+        public async Task TestNotReportedWhenFirstInForeachWithoutBracesAsync()
+        {
+            var testCode = @"
+public unsafe class TestClass
+{
+    internal void TestMethod(Obj[] objs)
+    {
+        foreach (var o in objs)
+            *o.I = 1;
+    }
+
+    internal struct Obj
+    {
+        public int* I;
     }
 }
 ";

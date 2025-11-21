@@ -5,7 +5,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.OrderingRules
 {
     using StyleCop.Analyzers.Test.OrderingRules;
 
-    public class SA1205CSharp7UnitTests : SA1205UnitTests
+    public partial class SA1205CSharp7UnitTests : SA1205UnitTests
     {
     }
 }

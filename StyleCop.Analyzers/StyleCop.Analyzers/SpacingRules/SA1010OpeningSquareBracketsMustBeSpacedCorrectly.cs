@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
@@ -9,6 +11,7 @@ namespace StyleCop.Analyzers.SpacingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// An opening square bracket within a C# statement is not spaced correctly.
@@ -96,14 +99,15 @@ namespace StyleCop.Analyzers.SpacingRules
                 }
             }
 
-            bool followedBySpace = token.IsFollowedByWhitespace();
-            bool lastInLine = token.IsLastInLine();
-
-            if (!firstInLine && precededBySpace && !ignorePrecedingSpaceProblem && !IsPartOfIndexInitializer(token))
+            if (!firstInLine && precededBySpace && !ignorePrecedingSpaceProblem &&
+                !IsPartOfIndexInitializer(token) && !IsPartOfListPattern(token) && !IsPartOfCollectionExpression(token))
             {
                 // Opening square bracket should {not be preceded} by a space.
                 context.ReportDiagnostic(Diagnostic.Create(DescriptorNotPreceded, token.GetLocation(), TokenSpacingProperties.RemovePreceding));
             }
+
+            bool followedBySpace = token.IsFollowedByWhitespace();
+            bool lastInLine = token.IsLastInLine();
 
             if (!lastInLine && followedBySpace)
             {
@@ -118,6 +122,16 @@ namespace StyleCop.Analyzers.SpacingRules
         {
             return token.Parent.IsKind(SyntaxKind.BracketedArgumentList)
                 && token.Parent.Parent.IsKind(SyntaxKind.ImplicitElementAccess);
+        }
+
+        private static bool IsPartOfListPattern(SyntaxToken token)
+        {
+            return token.Parent.IsKind(SyntaxKindEx.ListPattern);
+        }
+
+        private static bool IsPartOfCollectionExpression(SyntaxToken token)
+        {
+            return token.Parent.IsKind(SyntaxKindEx.CollectionExpression);
         }
     }
 }

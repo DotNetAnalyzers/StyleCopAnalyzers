@@ -1,11 +1,12 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp9.MaintainabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.MaintainabilityRules;
     using Xunit;
@@ -13,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.MaintainabilityRules
         StyleCop.Analyzers.MaintainabilityRules.SA1119StatementMustNotUseUnnecessaryParenthesis,
         StyleCop.Analyzers.MaintainabilityRules.SA1119CodeFixProvider>;
 
-    public class SA1119CSharp9UnitTests : SA1119CSharp8UnitTests
+    public partial class SA1119CSharp9UnitTests : SA1119CSharp8UnitTests
     {
         /// <summary>
         /// Verifies that a type cast followed by a <c>with</c> expression is handled correctly.
@@ -33,7 +34,7 @@ record Foo(int Value)
 }
 ";
 
-            await new CSharpTest(LanguageVersion.CSharp9)
+            await new CSharpTest()
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestCode = testCode,
@@ -69,7 +70,7 @@ record Foo(int Value)
 }
 ";
 
-            await new CSharpTest(LanguageVersion.CSharp9)
+            await new CSharpTest()
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestCode = testCode,
@@ -111,7 +112,7 @@ record Foo(int Value)
 }
 ";
 
-            await new CSharpTest(LanguageVersion.CSharp9)
+            await new CSharpTest()
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestCode = testCode,
@@ -145,7 +146,7 @@ record Foo(int Value)
 }}
 ";
 
-            await new CSharpTest(LanguageVersion.CSharp9)
+            await new CSharpTest()
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestCode = testCode,

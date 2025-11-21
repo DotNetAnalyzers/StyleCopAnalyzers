@@ -3,9 +3,12 @@
 
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
 
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -14,6 +17,20 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 
     public class SA1201UnitTests
     {
+        public static IEnumerable<object[]> ValueTypesAndReferenceTypes
+        {
+            get
+            {
+                foreach (var valueTypeKeyword in CommonMemberData.ValueTypeDeclarationKeywords)
+                {
+                    foreach (var referenceTypeKeyword in CommonMemberData.ReferenceTypeDeclarationKeywords)
+                    {
+                        yield return new object[] { valueTypeKeyword.Single(), referenceTypeKeyword.Single() };
+                    }
+                }
+            }
+        }
+
         [Fact]
         public async Task TestOuterOrderCorrectOrderAsync()
         {
@@ -48,6 +65,35 @@ public struct FooStruct { }
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await VerifyCSharpDiagnosticAsync("namespace OuterNamespace { " + testCode + " }", expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(ValueTypesAndReferenceTypes))]
+        public async Task TestClassBeforeStructAsync(
+            string structKeyword,
+            string classKeyword)
+        {
+            string testCode = $@"
+public {classKeyword} FooClass {{ }}
+public {structKeyword} {{|#0:FooStruct|}} {{ }}
+";
+            string fixedCode = $@"public {structKeyword} FooStruct {{ }}
+
+public {classKeyword} FooClass {{ }}
+";
+
+            var reportedClassKind = classKeyword switch
+            {
+                "record class" => "record",
+                _ => classKeyword,
+            };
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(0).WithArguments(structKeyword, reportedClassKind),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
 {
     using System.Threading;
@@ -9,11 +11,12 @@ namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.MaintainabilityRules;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Helpers.LanguageVersionTestExtensions;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.MaintainabilityRules.SA1413UseTrailingCommasInMultiLineInitializers,
         StyleCop.Analyzers.MaintainabilityRules.SA1413CodeFixProvider>;
 
-    public class SA1413CSharp7UnitTests : SA1413UnitTests
+    public partial class SA1413CSharp7UnitTests : SA1413UnitTests
     {
         [Fact]
         public async Task TestStackAllocArrayCreationExpressionAsync()
@@ -59,7 +62,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
                 Diagnostic().WithLocation(12, 17),
             };
 
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3.OrLaterDefault(), testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -106,7 +109,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
                 Diagnostic().WithLocation(12, 17),
             };
 
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3.OrLaterDefault(), testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
