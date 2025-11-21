@@ -4,9 +4,11 @@
 #nullable disable
 
 // There are no start actions in this file. This warning should not be reported.
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable RS1012 // Start action has no registered actions.
 
 namespace StyleCop.Analyzers.Helpers
+#pragma warning restore IDE0079 // Remove unnecessary suppression
 {
     using System;
     using Microsoft.CodeAnalysis;

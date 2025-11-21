@@ -42,7 +42,9 @@ namespace StyleCop.Analyzers
         /// <param name="cancellationToken">The cancellation token that the operation will observe.</param>
         /// <returns>A <see cref="SettingsFile"/> instance which contains information about the the StyleCop settings file for the given context.
         /// Null if no settings file was found.</returns>
+#pragma warning disable IDE0079 // Remove unnecessary suppression
         [SuppressMessage("MicrosoftCodeAnalysisPerformance", "RS1012:Start action has no registered actions", Justification = "This is not a start action")]
+#pragma warning restore IDE0079 // Remove unnecessary suppression
         internal static SettingsFile GetStyleCopSettingsFile(this CompilationStartAnalysisContext context, CancellationToken cancellationToken)
         {
             return GetSettingsFile(context.Options, GetJsonValue, cancellationToken);
@@ -62,7 +64,9 @@ namespace StyleCop.Analyzers
             }
         }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
         [SuppressMessage("MicrosoftCodeAnalysisPerformance", "RS1012:Start action has no registered actions", Justification = "This is not a start action")]
+#pragma warning restore IDE0079 // Remove unnecessary suppression
         internal static StrongBox<StyleCopSettings> GetOrCreateSettingsStorage(this CompilationStartAnalysisContext context, SyntaxTree tree)
         {
             if (!context.TryGetValue(tree, SettingsStorageValueProvider, out var storage))

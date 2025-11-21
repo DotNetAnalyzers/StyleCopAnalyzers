@@ -27,9 +27,11 @@ namespace StyleCop.Analyzers.Test.Helpers
     {
         private readonly Lazy<CultureInfo> culture;
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable SA1305 // Field names should not use Hungarian notation
         private readonly Lazy<CultureInfo> uiCulture;
 #pragma warning restore SA1305 // Field names should not use Hungarian notation
+#pragma warning restore IDE0079 // Remove unnecessary suppression
 
         private CultureInfo originalCulture;
 
@@ -55,6 +57,7 @@ namespace StyleCop.Analyzers.Test.Helpers
         {
         }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable SA1305 // Field names should not use Hungarian notation
         /// <summary>
         /// Initializes a new instance of the <see cref="UseCultureAttribute"/>
@@ -64,6 +67,7 @@ namespace StyleCop.Analyzers.Test.Helpers
         /// <param name="uiCulture">The name of the UI culture.</param>
         public UseCultureAttribute(string culture, string uiCulture)
 #pragma warning restore SA1305 // Field names should not use Hungarian notation
+#pragma warning restore IDE0079 // Remove unnecessary suppression
         {
             this.culture = new Lazy<CultureInfo>(() => new CultureInfo(culture));
             this.uiCulture = new Lazy<CultureInfo>(() => new CultureInfo(uiCulture));
