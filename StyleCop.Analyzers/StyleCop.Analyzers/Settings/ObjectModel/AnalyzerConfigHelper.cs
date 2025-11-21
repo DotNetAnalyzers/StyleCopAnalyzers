@@ -71,6 +71,8 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                 {
                     return new KeyValuePair<string, string>(value.Substring(0, colonIndex), value.Substring(colonIndex + 1));
                 }
+
+                return new KeyValuePair<string, string>(value, string.Empty);
             }
 
             return null;

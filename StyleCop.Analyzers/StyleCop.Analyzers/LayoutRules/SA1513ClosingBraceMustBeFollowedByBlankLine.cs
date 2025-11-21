@@ -238,7 +238,8 @@ namespace StyleCop.Analyzers.LayoutRules
                     {
                         if (nextToken.Parent is QueryClauseSyntax
                             || nextToken.Parent is SelectOrGroupClauseSyntax
-                            || nextToken.Parent is QueryContinuationSyntax)
+                            || nextToken.Parent is QueryContinuationSyntax
+                            || nextToken.Parent is JoinIntoClauseSyntax)
                         {
                             // the close brace is part of a query expression
                             return;
@@ -269,6 +270,12 @@ namespace StyleCop.Analyzers.LayoutRules
                     if (nextToken.IsKind(SyntaxKind.ColonToken))
                     {
                         // the close brace is in the first part of a conditional expression.
+                        return;
+                    }
+
+                    if (nextToken.IsKind(SyntaxKind.CloseBracketToken))
+                    {
+                        // the close brace is for example in an object initializer at the end of a collection expression.
                         return;
                     }
 

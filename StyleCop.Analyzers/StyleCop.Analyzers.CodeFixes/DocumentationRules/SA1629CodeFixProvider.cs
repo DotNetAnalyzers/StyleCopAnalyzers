@@ -5,6 +5,7 @@
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading;
@@ -29,7 +30,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
@@ -54,10 +55,46 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
-            bool replaceChar = diagnostic.Properties.ContainsKey(SA1629DocumentationTextMustEndWithAPeriod.ReplaceCharKey);
-            var newText = text.WithChanges(new TextChange(new TextSpan(diagnostic.Location.SourceSpan.Start, replaceChar ? 1 : 0), "."));
+            var textChange = GetTextChange(diagnostic);
+            var newText = text.WithChanges(textChange);
 
             return document.WithText(newText);
+        }
+
+        private static TextChange GetTextChange(Diagnostic diagnostic)
+        {
+            var replaceChar = diagnostic.Properties.ContainsKey(SA1629DocumentationTextMustEndWithAPeriod.ReplaceCharKey);
+            var textChange = new TextChange(new TextSpan(diagnostic.Location.SourceSpan.Start, replaceChar ? 1 : 0), ".");
+            return textChange;
+        }
+
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; } =
+                new FixAll();
+
+            protected override string CodeActionTitle =>
+                DocumentationResources.SA1629CodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+            {
+                if (diagnostics.IsEmpty)
+                {
+                    return null;
+                }
+
+                var changes = new List<TextChange>();
+                foreach (var diagnostic in diagnostics)
+                {
+                    changes.Add(GetTextChange(diagnostic));
+                }
+
+                changes.Sort((left, right) => left.Span.Start.CompareTo(right.Span.Start));
+
+                var text = await document.GetTextAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var tree = await document.GetSyntaxTreeAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                return await tree.WithChangedText(text.WithChanges(changes)).GetRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+            }
         }
     }
 }

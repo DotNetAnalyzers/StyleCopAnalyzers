@@ -27,7 +27,9 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind IsPatternExpression = (SyntaxKind)8657;
         public const SyntaxKind RangeExpression = (SyntaxKind)8658;
         public const SyntaxKind ImplicitObjectCreationExpression = (SyntaxKind)8659;
+        public const SyntaxKind UnsignedRightShiftExpression = (SyntaxKind)8692;
         public const SyntaxKind CoalesceAssignmentExpression = (SyntaxKind)8725;
+        public const SyntaxKind UnsignedRightShiftAssignmentExpression = (SyntaxKind)8726;
         public const SyntaxKind IndexExpression = (SyntaxKind)8741;
         public const SyntaxKind DefaultLiteralExpression = (SyntaxKind)8755;
         public const SyntaxKind LocalFunctionStatement = (SyntaxKind)8830;
@@ -67,7 +69,9 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind WithExpression = (SyntaxKind)9061;
         public const SyntaxKind WithInitializerExpression = (SyntaxKind)9062;
         public const SyntaxKind RecordDeclaration = (SyntaxKind)9063;
+        public const SyntaxKind PrimaryConstructorBaseType = (SyntaxKind)9065;
         public const SyntaxKind FunctionPointerUnmanagedCallingConventionList = (SyntaxKind)9066;
         public const SyntaxKind RecordStructDeclaration = (SyntaxKind)9068;
+        public const SyntaxKind CollectionExpression = (SyntaxKind)9076;
     }
 }

@@ -16,7 +16,7 @@ namespace LightJson
     [DebuggerTypeProxy(typeof(JsonObjectDebugView))]
     internal sealed class JsonObject : IEnumerable<KeyValuePair<string, JsonValue>>, IEnumerable<JsonValue>
     {
-        private readonly IDictionary<string, JsonValue> properties;
+        private readonly Dictionary<string, JsonValue> properties;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="JsonObject"/> class.
@@ -158,14 +158,23 @@ namespace LightJson
         /// <returns>Returns true if the value is found; otherwise, false.</returns>
         public bool Contains(JsonValue value)
         {
-            return this.properties.Values.Contains(value);
+            return this.properties.ContainsValue(value);
         }
 
         /// <summary>
         /// Returns an enumerator that iterates through this collection.
         /// </summary>
         /// <returns>The enumerator that iterates through this collection.</returns>
-        public IEnumerator<KeyValuePair<string, JsonValue>> GetEnumerator()
+        public Dictionary<string, JsonValue>.Enumerator GetEnumerator()
+        {
+            return this.properties.GetEnumerator();
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates through this collection.
+        /// </summary>
+        /// <returns>The enumerator that iterates through this collection.</returns>
+        IEnumerator<KeyValuePair<string, JsonValue>> IEnumerable<KeyValuePair<string, JsonValue>>.GetEnumerator()
         {
             return this.properties.GetEnumerator();
         }
@@ -188,7 +197,6 @@ namespace LightJson
             return this.GetEnumerator();
         }
 
-        [ExcludeFromCodeCoverage]
         private class JsonObjectDebugView
         {
             private readonly JsonObject jsonObject;

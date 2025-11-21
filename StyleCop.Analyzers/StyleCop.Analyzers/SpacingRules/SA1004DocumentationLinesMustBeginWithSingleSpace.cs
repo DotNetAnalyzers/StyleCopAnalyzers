@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
@@ -112,6 +110,10 @@ namespace StyleCop.Analyzers.SpacingRules
             case SyntaxKind.XmlCommentEndToken:
             case SyntaxKind.XmlCDataStartToken:
             case SyntaxKind.XmlCDataEndToken:
+            case SyntaxKind.InKeyword:
+            case SyntaxKind.OutKeyword:
+            case SyntaxKind.RefKeyword:
+            case SyntaxKind.ReadOnlyKeyword:
                 if (!token.HasLeadingTrivia)
                 {
                     break;

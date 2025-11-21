@@ -414,7 +414,7 @@ public class ClassName
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        protected static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
             string contentWithoutElementDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <TestClass>
@@ -455,6 +455,32 @@ public class ClassName
     </TestMethod>
  </TestClass>
  ";
+            string classWithoutElementDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestType>
+    <summary>
+        Foo
+    </summary>
+</TestType>
+";
+            string classWithPartialElementDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestType>
+    <summary>
+        Foo
+    </summary>
+    <param name=""param2"">Param 2</param>
+    <param name=""param3"">Param 3</param>
+</TestType>
+";
+            string classWithElementDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestType>
+    <summary>
+        Foo
+    </summary>
+    <param name=""param1"">Param 1</param>
+    <param name=""param2"">Param 2</param>
+    <param name=""param3"">Param 3</param>
+</TestType>
+";
 
             var test = new StyleCopDiagnosticVerifier<SA1611ElementParametersMustBeDocumented>.CSharpTest
             {
@@ -465,6 +491,9 @@ public class ClassName
                     { "WithElementDocumentation.xml", contentWithElementDocumentation },
                     { "WithPartialElementDocumentation.xml", contentWithPartialElementDocumentation },
                     { "InheritedDocumentation.xml", contentWithInheritedDocumentation },
+                    { "MissingClassDocumentation.xml", classWithoutElementDocumentation },
+                    { "WithClassDocumentation.xml", classWithElementDocumentation },
+                    { "WithPartialClassDocumentation.xml", classWithPartialElementDocumentation },
                 },
             };
 

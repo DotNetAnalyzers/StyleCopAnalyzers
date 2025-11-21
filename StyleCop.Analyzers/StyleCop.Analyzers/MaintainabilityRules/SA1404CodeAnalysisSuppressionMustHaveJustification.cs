@@ -100,8 +100,15 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 {
                     if (!(attribute.Name is SimpleNameSyntax simpleNameSyntax))
                     {
-                        QualifiedNameSyntax qualifiedNameSyntax = attribute.Name as QualifiedNameSyntax;
-                        simpleNameSyntax = qualifiedNameSyntax.Right;
+                        if (attribute.Name is AliasQualifiedNameSyntax aliasQualifiedNameSyntax)
+                        {
+                            simpleNameSyntax = aliasQualifiedNameSyntax.Name;
+                        }
+                        else
+                        {
+                            QualifiedNameSyntax qualifiedNameSyntax = attribute.Name as QualifiedNameSyntax;
+                            simpleNameSyntax = qualifiedNameSyntax.Right;
+                        }
                     }
 
                     if (simpleNameSyntax.Identifier.ValueText != nameof(SuppressMessageAttribute)

@@ -6,6 +6,8 @@
 namespace StyleCop.Analyzers.Test.LightJson
 {
     using System;
+    using System.Diagnostics;
+    using System.Reflection;
     using global::LightJson;
     using Xunit;
     using IEnumerable = System.Collections.IEnumerable;
@@ -140,6 +142,23 @@ namespace StyleCop.Analyzers.Test.LightJson
                     Assert.Equal(genericEnumerator.Current, legacyEnumerator.Current);
                 }
             }
+        }
+
+        [Fact]
+        public void TestDebugView()
+        {
+            var obj = new JsonArray("a", "b", "c");
+            var proxyAttribute = obj.GetType().GetCustomAttribute<DebuggerTypeProxyAttribute>();
+            Assert.NotNull(proxyAttribute);
+
+            var proxyType = Type.GetType(proxyAttribute.ProxyTypeName);
+            Assert.NotNull(proxyType);
+
+            var proxy = Activator.CreateInstance(proxyType, obj);
+            Assert.NotNull(proxy);
+
+            var items = proxyType.GetTypeInfo().GetDeclaredProperty("Items").GetValue(proxy);
+            Assert.IsType<JsonValue[]>(items);
         }
     }
 }

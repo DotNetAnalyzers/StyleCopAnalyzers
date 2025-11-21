@@ -133,7 +133,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
                     .WithChangedOption(FormattingOptions.UseTabs, this.Language, this.UseTabs));
 
                 this.TestState.AdditionalFilesFactories.Add(GenerateSettingsFile);
-                this.CodeActionValidationMode = CodeActionValidationMode.None;
+                this.CodeActionValidationMode = CodeActionValidationMode.SemanticStructure;
 
                 this.SolutionTransforms.Add((solution, projectId) =>
                 {
