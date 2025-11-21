@@ -5,9 +5,11 @@
 
 // Several test methods in this file use the same member data, but in some cases the test does not use all of the
 // supported parameters. See https://github.com/xunit/xunit/issues/1556.
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable xUnit1026 // Theory methods should use all of their parameters
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
+#pragma warning restore IDE0079 // Remove unnecessary suppression
 {
     using System.Collections.Generic;
     using System.Threading;

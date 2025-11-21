@@ -112,6 +112,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                     if (parentParameters.Length <= index || parentParameters[index] != parentParameter)
                     {
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
                         context.ReportDiagnostic(
                             Diagnostic.Create(
@@ -120,6 +121,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                                 nameAttributeText,
                                 parentParameters.IndexOf(parentParameter) + 1));
 #pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
+#pragma warning restore IDE0079 // Remove unnecessary suppression
                     }
                 }
 
@@ -185,6 +187,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                     if (parentParameters.Length <= index || parentParameters[index] != parentParameter)
                     {
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
                         context.ReportDiagnostic(
                             Diagnostic.Create(
@@ -193,6 +196,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                                 nameAttributeText,
                                 parentParameters.IndexOf(parentParameter) + 1));
 #pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
+#pragma warning restore IDE0079 // Remove unnecessary suppression
                     }
                 }
 
