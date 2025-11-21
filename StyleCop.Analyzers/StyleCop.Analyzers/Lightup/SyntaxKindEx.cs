@@ -54,6 +54,11 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind SwitchExpressionArm = (SyntaxKind)9026;
         public const SyntaxKind VarPattern = (SyntaxKind)9027;
         public const SyntaxKind ParenthesizedPattern = (SyntaxKind)9028;
+        public const SyntaxKind RelationalPattern = (SyntaxKind)9029;
+        public const SyntaxKind TypePattern = (SyntaxKind)9030;
+        public const SyntaxKind OrPattern = (SyntaxKind)9031;
+        public const SyntaxKind AndPattern = (SyntaxKind)9032;
+        public const SyntaxKind NotPattern = (SyntaxKind)9033;
         public const SyntaxKind SlicePattern = (SyntaxKind)9034;
         public const SyntaxKind ListPattern = (SyntaxKind)9035;
         public const SyntaxKind DeclarationExpression = (SyntaxKind)9040;
