@@ -121,7 +121,7 @@
     <value>Finaliseert een instantie van de </value>
   </data>
   <data name="DestructorStandardTextSecondPart" xml:space="preserve">
-    <value> class.</value>
+    <value> klasse.</value>
   </data>
   <data name="NonPrivateConstructorStandardTextFirstPart" xml:space="preserve">
     <value>Initialiseert een nieuwe instantie van de </value>
@@ -163,7 +163,7 @@
     <value> {0}.</value>
   </data>
   <data name="TypeTextClass" xml:space="preserve">
-    <value>class</value>
+    <value>klasse</value>
   </data>
   <data name="TypeTextStruct" xml:space="preserve">
     <value>struct</value>
