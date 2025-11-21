@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
@@ -11,6 +13,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A parameter to a C# method or indexer, other than the first parameter, spans across multiple lines.
@@ -80,6 +83,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
             SyntaxKind.InvocationExpression,
             SyntaxKind.ObjectCreationExpression,
             SyntaxKind.AnonymousObjectCreationExpression,
+            SyntaxKind.ArrayCreationExpression,
+            SyntaxKind.ImplicitArrayCreationExpression,
+            SyntaxKindEx.WithExpression,
+            SyntaxKindEx.ImplicitObjectCreationExpression,
+            SyntaxKindEx.CollectionExpression,
         };
 
         /// <inheritdoc/>
@@ -131,10 +139,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
             return lineSpan.EndLinePosition.Line > lineSpan.StartLinePosition.Line;
         }
 
-        private static bool IsArgumentOnExceptionList(ExpressionSyntax argumentExpresson)
+        private static bool IsArgumentOnExceptionList(ExpressionSyntax argumentExpression)
         {
-            return argumentExpresson != null
-                && ArgumentExceptionSyntaxKinds.Any(argumentExpresson.IsKind);
+            return argumentExpression != null
+                && ArgumentExceptionSyntaxKinds.Any(argumentExpression.IsKind);
         }
     }
 }

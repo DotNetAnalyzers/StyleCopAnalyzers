@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
 {
     using System.Threading;
@@ -8,13 +10,12 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.Test.NamingRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.NamingRules.SA1312VariableNamesMustBeginWithLowerCaseLetter,
         StyleCop.Analyzers.NamingRules.RenameToLowerCaseCodeFixProvider>;
 
-    public class SA1312CSharp7UnitTests : SA1312UnitTests
+    public partial class SA1312CSharp7UnitTests : SA1312UnitTests
     {
         [Fact]
         public async Task TestThatDiagnosticIsReported_SingleVariableDesignatorAsync()

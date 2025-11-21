@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System;
@@ -64,7 +66,9 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly DiagnosticDescriptor ParenthesisDescriptor =
+#pragma warning disable RS2000 // Add analyzer diagnostic IDs to analyzer release.
             new DiagnosticDescriptor(ParenthesesDiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Hidden, AnalyzerConstants.EnabledByDefault, Description, HelpLink, customTags: new[] { WellKnownDiagnosticTags.Unnecessary, WellKnownDiagnosticTags.NotConfigurable });
+#pragma warning restore RS2000 // Add analyzer diagnostic IDs to analyzer release.
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> ParenthesizedExpressionAction = HandleParenthesizedExpression;
@@ -115,12 +119,25 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                     && !node.Expression.IsKind(SyntaxKind.CoalesceExpression)
                     && !node.Expression.IsKind(SyntaxKind.QueryExpression)
                     && !node.Expression.IsKind(SyntaxKind.AwaitExpression)
+                    && !node.Expression.IsKind(SyntaxKindEx.RangeExpression)
                     && !node.IsKind(SyntaxKind.ConstructorDeclaration))
                 {
                     if (node.Expression.IsKind(SyntaxKind.ConditionalAccessExpression)
                         && (node.Parent is ElementAccessExpressionSyntax
                         || node.Parent is MemberAccessExpressionSyntax
                         || node.Parent is ConditionalAccessExpressionSyntax))
+                    {
+                        return;
+                    }
+
+                    if (IsSwitchOrWithExpressionWithRequiredParentheses(node))
+                    {
+                        return;
+                    }
+
+                    if ((node.Expression.IsKind(SyntaxKind.StackAllocArrayCreationExpression)
+                        || node.Expression.IsKind(SyntaxKindEx.ImplicitStackAllocArrayCreationExpression))
+                        && node.Parent.IsKind(SyntaxKind.EqualsValueClause))
                     {
                         return;
                     }
@@ -132,6 +149,15 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                     if (node.Parent is InterpolationSyntax
                         && IsConditionalAccessInInterpolation(node.Expression))
                     {
+                        // Parenthesis can't be removed here
+                        return;
+                    }
+
+                    if (node.Parent is AssignmentExpressionSyntax assignmentExpression
+                        && node.Expression.IsKind(SyntaxKind.ConditionalExpression)
+                        && assignmentExpression.Left == node)
+                    {
+                        // NOTE: This is only valid syntax if the conditional expression is a ref expression
                         // Parenthesis can't be removed here
                         return;
                     }
@@ -195,6 +221,27 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             }
 
             return false;
+        }
+
+        private static bool IsSwitchOrWithExpressionWithRequiredParentheses(ParenthesizedExpressionSyntax node)
+        {
+            if (!node.Expression.IsKind(SyntaxKindEx.SwitchExpression)
+                && !node.Expression.IsKind(SyntaxKindEx.WithExpression))
+            {
+                return false;
+            }
+
+            var outerExpression = node.WalkUpParentheses();
+            return outerExpression.Parent switch
+            {
+                AwaitExpressionSyntax awaitExpression => awaitExpression.Expression == outerExpression,
+                CastExpressionSyntax castExpression => castExpression.Expression == outerExpression,
+                MemberAccessExpressionSyntax memberAccessExpression => memberAccessExpression.Expression == outerExpression,
+                ConditionalAccessExpressionSyntax conditionalAccessExpression => conditionalAccessExpression.Expression == outerExpression,
+                ElementAccessExpressionSyntax elementAccessExpression => elementAccessExpression.Expression == outerExpression,
+                InvocationExpressionSyntax invocationExpression => invocationExpression.Expression == outerExpression,
+                _ => false,
+            };
         }
 
         private static void ReportDiagnostic(SyntaxNodeAnalysisContext context, ParenthesizedExpressionSyntax node)

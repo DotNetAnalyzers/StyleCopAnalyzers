@@ -1,11 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.SpecialRules
 {
     using System;
     using System.Collections.Immutable;
-    using System.Globalization;
+    using System.Linq;
     using LightJson.Serialization;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -27,7 +29,9 @@ namespace StyleCop.Analyzers.SpecialRules
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpecialResources.SA0002Description), SpecialResources.ResourceManager, typeof(SpecialResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpecialRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+#pragma warning disable RS1033 // Define diagnostic description correctly (Description ends with formatted exception text)
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpecialRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink, customTags: new[] { "CompilationEnd" });
+#pragma warning restore RS1033 // Define diagnostic description correctly
 
         private static readonly Action<CompilationAnalysisContext> CompilationAction = HandleCompilation;
 
@@ -38,22 +42,27 @@ namespace StyleCop.Analyzers.SpecialRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+
             context.RegisterCompilationAction(CompilationAction);
         }
 
         private static void HandleCompilation(CompilationAnalysisContext context)
         {
+            var firstSyntaxTree = context.Compilation.SyntaxTrees.FirstOrDefault();
+            if (firstSyntaxTree is null)
+            {
+                return;
+            }
+
             try
             {
-                SettingsHelper.GetStyleCopSettings(context.Options, DeserializationFailureBehavior.ThrowException, context.CancellationToken);
+                context.GetStyleCopSettings(firstSyntaxTree, DeserializationFailureBehavior.ThrowException, context.CancellationToken);
             }
             catch (Exception ex) when (ex is JsonParseException || ex is InvalidSettingsException)
             {
-                string details = ex.Message;
-                string completeDescription = string.Format(Description.ToString(CultureInfo.CurrentCulture), details);
-
-                var completeDescriptor = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpecialRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, completeDescription, HelpLink);
-                context.ReportDiagnostic(Diagnostic.Create(completeDescriptor, Location.None));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.None, ex.Message));
             }
         }
     }

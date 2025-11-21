@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.Verifiers
 {
     using System;
@@ -104,7 +106,24 @@ class ClassName
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
-            Assert.StartsWith($"Context: Diagnostics of test state{Environment.NewLine}Expected:{Environment.NewLine}A project diagnostic with No location{Environment.NewLine}Actual:{Environment.NewLine}", ex.Message);
+
+            var expectedMessage = $"Context: Diagnostics of test state{Environment.NewLine}"
+                + $"Expected a project diagnostic with no location:{Environment.NewLine}"
+                + $"{Environment.NewLine}"
+                + $"Expected diagnostic:{Environment.NewLine}"
+                + $"    // warning SA1002: Semicolons should be followed by a space{Environment.NewLine}"
+                + $"new DiagnosticResult(SA1002SemicolonsMustBeSpacedCorrectly.SA1002).WithArguments(\"\", \"followed\"),{Environment.NewLine}"
+                + $"{Environment.NewLine}"
+                + $"Actual diagnostic:{Environment.NewLine}"
+                + $"    // /0/Test0.cs(7,33): warning SA1002: Semicolons should be followed by a space{Environment.NewLine}"
+                + $"VerifyCS.Diagnostic().WithSpan(7, 33, 7, 34).WithArguments(\"\", \"followed\"),{Environment.NewLine}"
+                + $"{Environment.NewLine}"
+                + $"{Environment.NewLine}"
+                + $"Assert.Equal() Failure{Environment.NewLine}"
+                + $"Expected: None{Environment.NewLine}"
+                + $"Actual:   SourceFile(/0/Test0.cs[102..103))";
+
+            new XUnitVerifier().EqualOrDiff(expectedMessage, ex.Message);
         }
 
         [Fact]
@@ -148,7 +167,7 @@ class ClassName
                 {
                     await CSharpCodeFixVerifier<ErrorThrowingAnalyzer, EmptyCodeFixProvider, XUnitVerifier>.VerifyAnalyzerAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
                 }).ConfigureAwait(false);
-            Assert.StartsWith($"Context: Diagnostics of test state{Environment.NewLine}Mismatch between number of diagnostics returned, expected \"0\" actual \"2\"", ex.Message);
+            Assert.StartsWith($"Context: Diagnostics of test state{Environment.NewLine}Mismatch between number of diagnostics returned, expected \"0\" actual \"1\"", ex.Message);
             Assert.Contains("error AD0001", ex.Message);
         }
 
@@ -408,6 +427,9 @@ class ClassName
             /// <inheritdoc/>
             public override void Initialize(AnalysisContext context)
             {
+                context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+                context.EnableConcurrentExecution();
+
                 context.RegisterSyntaxNodeAction(BlockAction, SyntaxKind.Block);
             }
 

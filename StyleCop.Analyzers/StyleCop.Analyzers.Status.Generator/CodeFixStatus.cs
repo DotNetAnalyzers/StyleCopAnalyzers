@@ -9,7 +9,7 @@ namespace StyleCop.Analyzers.Status.Generator
     public enum CodeFixStatus
     {
         /// <summary>
-        /// This value indicates, that a code fix is implemented
+        /// This value indicates, that a code fix is implemented.
         /// </summary>
         Implemented,
 

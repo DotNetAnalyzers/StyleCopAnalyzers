@@ -5,7 +5,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
 {
     using StyleCop.Analyzers.Test.NamingRules;
 
-    public class SA1314CSharp7UnitTests : SA1314UnitTests
+    public partial class SA1314CSharp7UnitTests : SA1314UnitTests
     {
     }
 }

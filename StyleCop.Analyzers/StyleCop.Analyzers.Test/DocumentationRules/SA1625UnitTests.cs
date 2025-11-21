@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Collections.Generic;
@@ -8,8 +10,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Test.Verifiers;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1625ElementDocumentationMustNotBeCopiedAndPasted>;
 
@@ -29,6 +31,16 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
                 yield return new[] { "public struct Test { }" };
                 yield return new[] { "public enum Test { }" };
                 yield return new[] { "public delegate void Test();" };
+                if (LightupHelpers.SupportsCSharp9)
+                {
+                    yield return new[] { "public record Test { }" };
+                }
+
+                if (LightupHelpers.SupportsCSharp10)
+                {
+                    yield return new[] { "public record class Test { }" };
+                    yield return new[] { "public record struct Test { }" };
+                }
             }
         }
 
@@ -274,6 +286,23 @@ public class TestClass
         }
 
         [Fact]
+        public async Task VerifyThatDuplicatedDocumentationForEnumMemberDoesReportADiagnosticAsync()
+        {
+            var testCode = @"
+public enum EnumName
+{
+    /// <summary>
+    /// Some documentation.
+    /// </summary>
+    /// <remark>Some documentation.</remark>
+    EnumMember = 0,
+}";
+            var expected = Diagnostic().WithLocation(7, 9);
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task VerifyThatCorrectIncludedDocumentationDoesNotReportADiagnosticAsync()
         {
             var testCode = $@"
@@ -293,6 +322,21 @@ public class TestClass
 public class TestClass
 {{
     /// <include file='CorrectWithEmptyElements.xml' path='/TestClass/Test/*' />
+    public void Test() {{ }}
+}}
+public class TestClass2 {{ }}
+";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3150, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3150")]
+        public async Task VerifyThatMissingIncludedDocumentationDoesNotReportADiagnosticAsync()
+        {
+            var testCode = $@"
+public class TestClass
+{{
+    /// <include file='MissingFile.xml' path='/TestClass/Test/*' />
     public void Test() {{ }}
 }}
 public class TestClass2 {{ }}

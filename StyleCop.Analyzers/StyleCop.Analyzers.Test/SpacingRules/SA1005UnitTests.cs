@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Threading;
@@ -271,14 +273,10 @@ public class Bar
             // Verify that this works if the project was configured to treat documentation comments as regular comments
             await new CSharpTest
             {
-                TestCode = testCode,
-                SolutionTransforms =
+                TestState =
                 {
-                    (solution, projectId) =>
-                    {
-                        var project = solution.GetProject(projectId);
-                        return solution.WithProjectParseOptions(projectId, project.ParseOptions.WithDocumentationMode(DocumentationMode.None));
-                    },
+                    DocumentationMode = DocumentationMode.None,
+                    Sources = { testCode },
                 },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }

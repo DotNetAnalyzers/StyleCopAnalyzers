@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     using System.Collections.Generic;
@@ -90,9 +92,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 },
                 ExpectedDiagnostics =
                 {
-                    Diagnostic().WithLocation("Test0.cs", 1, 1),
-                    Diagnostic().WithLocation("Test1.cs", 1, 1),
-                    Diagnostic().WithLocation("Test2.cs", 1, 1),
+                    Diagnostic().WithLocation("/0/Test0.cs", 1, 1),
+                    Diagnostic().WithLocation("/0/Test1.cs", 1, 1),
+                    Diagnostic().WithLocation("/0/Test2.cs", 1, 1),
                 },
                 FixedSources =
                 {
@@ -122,8 +124,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 },
                 ExpectedDiagnostics =
                 {
-                    Diagnostic().WithLocation("Test0.cs", 1, 1),
-                    Diagnostic().WithLocation("Test1.cs", 1, 1),
+                    Diagnostic().WithLocation("/0/Test0.cs", 1, 1),
+                    Diagnostic().WithLocation("/0/Test1.cs", 1, 1),
                 },
                 FixedSources =
                 {

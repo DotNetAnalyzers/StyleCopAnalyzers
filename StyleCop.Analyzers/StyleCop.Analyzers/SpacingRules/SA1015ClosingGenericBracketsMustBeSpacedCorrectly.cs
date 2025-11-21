@@ -32,17 +32,28 @@ namespace StyleCop.Analyzers.SpacingRules
         public const string DiagnosticId = "SA1015";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1015.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1015Title), SpacingResources.ResourceManager, typeof(SpacingResources));
-        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpacingResources.SA1015MessageFormat), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1015Description), SpacingResources.ResourceManager, typeof(SpacingResources));
 
-        private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+        private static readonly LocalizableString MessageNotPreceded = new LocalizableResourceString(nameof(SpacingResources.SA1015MessageNotPreceded), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString MessageNotFollowed = new LocalizableResourceString(nameof(SpacingResources.SA1015MessageNotFollowed), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString MessageFollowed = new LocalizableResourceString(nameof(SpacingResources.SA1015MessageFollowed), SpacingResources.ResourceManager, typeof(SpacingResources));
 
         private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
 
+#pragma warning disable SA1202 // Elements should be ordered by access
+        internal static readonly DiagnosticDescriptor DescriptorNotPreceded =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageNotPreceded, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
+        internal static readonly DiagnosticDescriptor DescriptorNotFollowed =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageNotFollowed, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
+        internal static readonly DiagnosticDescriptor DescriptorFollowed =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFollowed, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+#pragma warning restore SA1202 // Elements should be ordered by access
+
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-            ImmutableArray.Create(Descriptor);
+            ImmutableArray.Create(DescriptorNotPreceded);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -95,7 +106,6 @@ namespace StyleCop.Analyzers.SpacingRules
                 SyntaxToken nextToken = token.GetNextToken();
                 switch (nextToken.Kind())
                 {
-                case SyntaxKind.OpenParenToken:
                 // DotToken isn't listed above, but it's required for reasonable member access formatting
                 case SyntaxKind.DotToken:
                 // CommaToken isn't listed above, but it's required for reasonable nested generic type arguments formatting
@@ -109,15 +119,36 @@ namespace StyleCop.Analyzers.SpacingRules
                     allowTrailingSpace = false;
                     break;
 
+                case SyntaxKind.OpenParenToken:
+                    AnalyzeWithTrailingOpenParen(nextToken, out allowTrailingNoSpace, out allowTrailingSpace);
+                    break;
+
                 case SyntaxKind.CloseParenToken:
                 case SyntaxKind.GreaterThanToken:
+                case SyntaxKind.CloseBraceToken:
+                case SyntaxKind.CloseBracketToken when nextToken.Parent.IsKind(SyntaxKindEx.CollectionExpression):
                     allowTrailingNoSpace = true;
+                    allowTrailingSpace = true;
+                    break;
+
+                case SyntaxKind.AsteriskToken:
+                    allowTrailingNoSpace = nextToken.Parent.IsKind(SyntaxKind.PointerType);
                     allowTrailingSpace = true;
                     break;
 
                 case SyntaxKind.QuestionToken:
                     allowTrailingNoSpace = nextToken.Parent.IsKind(SyntaxKind.NullableType);
                     allowTrailingSpace = true;
+                    break;
+
+                // values[x as T<int>]
+                //                  ^^
+                case SyntaxKind.CloseBracketToken when nextToken.Parent.IsKind(SyntaxKind.BracketedArgumentList):
+                // [MyAttribute<T>]
+                //               ^^
+                case SyntaxKind.CloseBracketToken when nextToken.Parent.IsKind(SyntaxKind.AttributeList):
+                    allowTrailingNoSpace = true;
+                    allowTrailingSpace = false;
                     break;
 
                 default:
@@ -136,7 +167,7 @@ namespace StyleCop.Analyzers.SpacingRules
             {
                 // Closing generic bracket should{ not} be {preceded} by a space.
                 var properties = TokenSpacingProperties.RemovePreceding;
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, " not", "preceded"));
+                context.ReportDiagnostic(Diagnostic.Create(DescriptorNotPreceded, token.GetLocation(), properties));
             }
 
             if (!lastInLine)
@@ -145,14 +176,46 @@ namespace StyleCop.Analyzers.SpacingRules
                 {
                     // Closing generic bracket should{} be {followed} by a space.
                     var properties = TokenSpacingProperties.InsertFollowing;
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, string.Empty, "followed"));
+#pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
+                    context.ReportDiagnostic(Diagnostic.Create(DescriptorFollowed, token.GetLocation(), properties));
+#pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
                 }
                 else if (!allowTrailingSpace && followedBySpace)
                 {
                     // Closing generic bracket should{ not} be {followed} by a space.
                     var properties = TokenSpacingProperties.RemoveFollowing;
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, " not", "followed"));
+#pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
+                    context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowed, token.GetLocation(), properties));
+#pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
                 }
+            }
+        }
+
+        private static void AnalyzeWithTrailingOpenParen(
+            SyntaxToken nextToken,
+            out bool allowTrailingNoSpace,
+            out bool allowTrailingSpace)
+        {
+            switch (nextToken.Parent.Kind())
+            {
+            // List<int> (int x) => new List<int> { x }
+            //         ^ ^
+            case SyntaxKind.ParameterList when nextToken.Parent.Parent.IsKind(SyntaxKind.ParenthesizedLambdaExpression):
+                allowTrailingNoSpace = false;
+                allowTrailingSpace = true;
+                break;
+
+            // NOTE: Intentionally keeping redundant cases here as documentation of what is known to occur
+            // M<int>()
+            //      ^^
+            case SyntaxKind.ArgumentList:
+            // void M<T>(T x) { }
+            //         ^^
+            case SyntaxKind.ParameterList when nextToken.Parent.Parent.IsKind(SyntaxKind.MethodDeclaration):
+            default:
+                allowTrailingNoSpace = true;
+                allowTrailingSpace = false;
+                break;
             }
         }
     }

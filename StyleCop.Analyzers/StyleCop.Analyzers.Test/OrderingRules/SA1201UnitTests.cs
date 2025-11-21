@@ -3,14 +3,12 @@
 
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
-    using Microsoft.CodeAnalysis.Text;
-
-    using TestHelper;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
 
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -19,6 +17,20 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 
     public class SA1201UnitTests
     {
+        public static IEnumerable<object[]> ValueTypesAndReferenceTypes
+        {
+            get
+            {
+                foreach (var valueTypeKeyword in CommonMemberData.ValueTypeDeclarationKeywords)
+                {
+                    foreach (var referenceTypeKeyword in CommonMemberData.ReferenceTypeDeclarationKeywords)
+                    {
+                        yield return new object[] { valueTypeKeyword.Single(), referenceTypeKeyword.Single() };
+                    }
+                }
+            }
+        }
+
         [Fact]
         public async Task TestOuterOrderCorrectOrderAsync()
         {
@@ -53,6 +65,35 @@ public struct FooStruct { }
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await VerifyCSharpDiagnosticAsync("namespace OuterNamespace { " + testCode + " }", expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(ValueTypesAndReferenceTypes))]
+        public async Task TestClassBeforeStructAsync(
+            string structKeyword,
+            string classKeyword)
+        {
+            string testCode = $@"
+public {classKeyword} FooClass {{ }}
+public {structKeyword} {{|#0:FooStruct|}} {{ }}
+";
+            string fixedCode = $@"public {structKeyword} FooStruct {{ }}
+
+public {classKeyword} FooClass {{ }}
+";
+
+            var reportedClassKind = classKeyword switch
+            {
+                "record class" => "record",
+                _ => classKeyword,
+            };
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(0).WithArguments(structKeyword, reportedClassKind),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -285,8 +326,11 @@ public struct FooStruct { }
             // We don't care about the syntax errors.
             var expected = new[]
             {
-                DiagnosticResult.CompilerError("CS1585").WithLocation(5, 5).WithMessage("Member modifier 'public' must precede the member type and name"),
-                DiagnosticResult.CompilerError("CS1519").WithLocation(6, 1).WithMessage("Invalid token '}' in class, struct, or interface member declaration"),
+                // /0/Test0.cs(5,5): error CS1585: Member modifier 'public' must precede the member type and name
+                DiagnosticResult.CompilerError("CS1585").WithLocation(5, 5).WithArguments("public"),
+
+                // /0/Test0.cs(6,1): error CS1519: Invalid token '}' in class, record, struct, or interface member declaration
+                DiagnosticResult.CompilerError("CS1519").WithLocation(6, 1).WithArguments("}"),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

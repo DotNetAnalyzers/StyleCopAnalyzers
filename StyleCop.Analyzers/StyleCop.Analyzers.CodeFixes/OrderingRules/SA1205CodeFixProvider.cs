@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.OrderingRules
 {
     using System.Collections.Immutable;
@@ -13,6 +15,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// Implements code fixes for <see cref="SA1205PartialElementsMustDeclareAccess"/>.
@@ -25,6 +28,7 @@ namespace StyleCop.Analyzers.OrderingRules
         private static readonly ImmutableArray<SyntaxKind> InternalAccessibilityKeywords = ImmutableArray.Create(SyntaxKind.InternalKeyword);
         private static readonly ImmutableArray<SyntaxKind> ProtectedAccessibilityKeywords = ImmutableArray.Create(SyntaxKind.ProtectedKeyword);
         private static readonly ImmutableArray<SyntaxKind> ProtectedOrInternalAccessibilityKeywords = ImmutableArray.Create(SyntaxKind.ProtectedKeyword, SyntaxKind.InternalKeyword);
+        private static readonly ImmutableArray<SyntaxKind> ProtectedAndInternalAccessibilityKeywords = ImmutableArray.Create(SyntaxKind.PrivateKeyword, SyntaxKind.ProtectedKeyword);
         private static readonly ImmutableArray<SyntaxKind> PrivateAccessibilityKeywords = ImmutableArray.Create(SyntaxKind.PrivateKeyword);
         private static readonly ImmutableArray<SyntaxKind> UnexpectedAccessibilityKeywords = ImmutableArray.Create<SyntaxKind>();
 
@@ -88,6 +92,8 @@ namespace StyleCop.Analyzers.OrderingRules
                 return ProtectedAccessibilityKeywords;
             case Accessibility.ProtectedOrInternal:
                 return ProtectedOrInternalAccessibilityKeywords;
+            case Accessibility.ProtectedAndInternal:
+                return ProtectedAndInternalAccessibilityKeywords;
             case Accessibility.Private:
                 return PrivateAccessibilityKeywords;
             default:
@@ -108,6 +114,9 @@ namespace StyleCop.Analyzers.OrderingRules
                 return ((InterfaceDeclarationSyntax)node).WithModifiers(modifiers);
             case SyntaxKind.StructDeclaration:
                 return ((StructDeclarationSyntax)node).WithModifiers(modifiers);
+            case SyntaxKindEx.RecordDeclaration:
+            case SyntaxKindEx.RecordStructDeclaration:
+                return ((RecordDeclarationSyntaxWrapper)node).WithModifiers(modifiers);
             }
 
             return node;
@@ -125,6 +134,9 @@ namespace StyleCop.Analyzers.OrderingRules
                 return ((InterfaceDeclarationSyntax)node).WithKeyword(keyword);
             case SyntaxKind.StructDeclaration:
                 return ((StructDeclarationSyntax)node).WithKeyword(keyword);
+            case SyntaxKindEx.RecordDeclaration:
+            case SyntaxKindEx.RecordStructDeclaration:
+                return ((RecordDeclarationSyntaxWrapper)node).WithKeyword(keyword);
             }
 
             return node;

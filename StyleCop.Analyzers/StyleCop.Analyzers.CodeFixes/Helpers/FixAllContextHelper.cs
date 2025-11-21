@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Helpers
 {
     using System;
@@ -12,7 +14,6 @@ namespace StyleCop.Analyzers.Helpers
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
 
     internal static class FixAllContextHelper
     {
@@ -56,7 +57,8 @@ namespace StyleCop.Analyzers.Helpers
                         {
                             var projectDiagnostics = await GetAllDiagnosticsAsync(fixAllContext, projectToFix).ConfigureAwait(false);
                             diagnostics.TryAdd(projectToFix.Id, projectDiagnostics);
-                        }, fixAllContext.CancellationToken);
+                        },
+                        fixAllContext.CancellationToken);
                 }
 
                 await Task.WhenAll(tasks).ConfigureAwait(false);

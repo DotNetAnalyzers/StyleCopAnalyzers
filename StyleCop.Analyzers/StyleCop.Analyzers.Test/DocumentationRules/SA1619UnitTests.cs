@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Collections.Generic;
@@ -8,8 +10,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Test.Verifiers;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1619GenericTypeParametersMustBeDocumentedPartialClass>;
 
@@ -22,12 +24,23 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         {
             get
             {
-                yield return new object[] { "class     Foo<Ta, Tb> { }" };
-                yield return new object[] { "struct    Foo<Ta, Tb> { }" };
-                yield return new object[] { "interface Foo<Ta, Tb> { }" };
-                yield return new object[] { "class     Foo<Ta, T\\u0062> { }" };
-                yield return new object[] { "struct    Foo<Ta, T\\u0062> { }" };
-                yield return new object[] { "interface Foo<Ta, T\\u0062> { }" };
+                yield return new object[] { "class Foo<{|#0:Ta|}, {|#1:Tb|}> { }" };
+                yield return new object[] { "struct Foo<{|#0:Ta|}, {|#1:Tb|}> { }" };
+                yield return new object[] { "interface Foo<{|#0:Ta|}, {|#1:Tb|}> { }" };
+                yield return new object[] { "class Foo<{|#0:Ta|}, {|#1:T\\u0062|}> { }" };
+                yield return new object[] { "struct Foo<{|#0:Ta|}, {|#1:T\\u0062|}> { }" };
+                yield return new object[] { "interface Foo<{|#0:Ta|}, {|#1:T\\u0062|}> { }" };
+                if (LightupHelpers.SupportsCSharp9)
+                {
+                    yield return new object[] { "record Foo<{|#0:Ta|}, {|#1:Tb|}> { }" };
+                    yield return new object[] { "record Foo<{|#0:Ta|}, {|#1:T\\u0062|}> { }" };
+                }
+
+                if (LightupHelpers.SupportsCSharp10)
+                {
+                    yield return new object[] { "record class Foo<{|#0:Ta|}, {|#1:Tb|}> { }" };
+                    yield return new object[] { "record struct Foo<{|#0:Ta|}, {|#1:T\\u0062|}> { }" };
+                }
             }
         }
 
@@ -115,8 +128,8 @@ public partial ##";
 
             var expected = new[]
             {
-                Diagnostic().WithLocation(5, 30).WithArguments("Ta"),
-                Diagnostic().WithLocation(5, 34).WithArguments("Tb"),
+                Diagnostic().WithLocation(0).WithArguments("Ta"),
+                Diagnostic().WithLocation(1).WithArguments("Tb"),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);

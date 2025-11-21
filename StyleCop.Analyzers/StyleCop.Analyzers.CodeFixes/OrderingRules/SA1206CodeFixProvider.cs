@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.OrderingRules
 {
     using System.Collections.Generic;
@@ -95,7 +97,8 @@ namespace StyleCop.Analyzers.OrderingRules
             return AdjustTrivia(
                 accessModifiers
                     .Concat(staticModifiers)
-                    .Concat(otherModifiers), modifiers);
+                    .Concat(otherModifiers),
+                modifiers);
         }
 
         /// <summary>

@@ -1,17 +1,19 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
     using System.Collections.Immutable;
-    using System.IO;
     using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -53,7 +55,10 @@ namespace StyleCop.Analyzers.DocumentationRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
+            context.RegisterCompilationStartAction(context =>
+            {
+                context.RegisterSyntaxTreeAction(SyntaxTreeAction);
+            });
         }
 
         private static class Analyzer
@@ -68,7 +73,8 @@ namespace StyleCop.Analyzers.DocumentationRules
                     return;
                 }
 
-                if (firstTypeDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                var modifiers = (firstTypeDeclaration as BaseTypeDeclarationSyntax)?.Modifiers ?? SyntaxFactory.TokenList();
+                if (modifiers.Any(SyntaxKind.PartialKeyword))
                 {
                     return;
                 }
@@ -88,15 +94,31 @@ namespace StyleCop.Analyzers.DocumentationRules
                     var properties = ImmutableDictionary.Create<string, string>()
                         .Add(ExpectedFileNameKey, expectedFileName + suffix);
 
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstTypeDeclaration.Identifier.GetLocation(), properties));
+                    var identifier = (firstTypeDeclaration as BaseTypeDeclarationSyntax)?.Identifier
+                        ?? ((DelegateDeclarationSyntax)firstTypeDeclaration).Identifier;
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), properties));
                 }
             }
 
-            private static TypeDeclarationSyntax GetFirstTypeDeclaration(SyntaxNode root)
+            private static MemberDeclarationSyntax GetFirstTypeDeclaration(SyntaxNode root)
             {
-                return root.DescendantNodes(descendIntoChildren: node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration))
+                // Prefer to find the first type which is a true TypeDeclarationSyntax
+                MemberDeclarationSyntax firstTypeDeclaration = root.DescendantNodes(descendIntoChildren: node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration) || node.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration))
                     .OfType<TypeDeclarationSyntax>()
                     .FirstOrDefault();
+
+                // If no TypeDeclarationSyntax is found, expand the search to any type declaration as long as only one
+                // is present
+                var expandedTypeDeclarations = root.DescendantNodes(descendIntoChildren: node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration) || node.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration))
+                    .OfType<MemberDeclarationSyntax>()
+                    .Where(node => node is BaseTypeDeclarationSyntax || node.IsKind(SyntaxKind.DelegateDeclaration))
+                    .ToList();
+                if (expandedTypeDeclarations.Count == 1)
+                {
+                    firstTypeDeclaration = expandedTypeDeclarations[0];
+                }
+
+                return firstTypeDeclaration;
             }
         }
     }

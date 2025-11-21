@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System;
@@ -8,7 +10,6 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1129DoNotUseDefaultValueTypeConstructor,
@@ -91,9 +92,9 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     public void TestMethod()
     {
-        var v1 = new TestStruct();
+        var v1 = {|#0:new TestStruct()|};
 
-        System.Console.WriteLine(new TestStruct());
+        System.Console.WriteLine({|#1:new TestStruct()|});
     }
 
     private struct TestStruct
@@ -121,11 +122,66 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(5, 18),
-                Diagnostic().WithLocation(7, 34),
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task VerifyInvalidValueTypeCreationFromMetadataAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    public void TestMethod()
+    {
+        var v1 = [|new TestStruct()|];
+
+        System.Console.WriteLine([|new TestStruct()|]);
+    }
+}
+";
+
+            var fixedTestCode = @"public class TestClass
+{
+    public void TestMethod()
+    {
+        var v1 = default(TestStruct);
+
+        System.Console.WriteLine(default(TestStruct));
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+            };
+
+            await new CSharpTest
+            {
+                TestState =
+                {
+                    Sources = { testCode },
+                    AdditionalProjects =
+                    {
+                        ["Reference"] =
+                        {
+                            Sources =
+                            {
+                                @"public struct TestStruct { public int TestProperty { get; set; } }",
+                            },
+                        },
+                    },
+                    AdditionalProjectReferences = { "Reference" },
+                },
+                FixedState =
+                {
+                    Sources = { fixedTestCode },
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -139,11 +195,11 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     public void TestMethod()
     {
-        var v1 = /* c1 */ new TestStruct(); // c2
+        var v1 = /* c1 */ {|#0:new TestStruct()|}; // c2
 
         var v2 =
 #if true
-            new TestStruct();
+            {|#1:new TestStruct()|};
 #else
             new TestStruct() { TestProperty = 3 };
 #endif
@@ -179,8 +235,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(5, 27),
-                Diagnostic().WithLocation(9, 13),
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
@@ -198,7 +254,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     public T TestMethod1<T>()
         where T : struct
     {
-        return new T();
+        return {|#0:new T()|};
     }
 
     public T TestMethod2<T>()
@@ -227,7 +283,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(6, 16),
+                Diagnostic().WithLocation(0),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
@@ -350,7 +406,12 @@ public class TestClass
 }}
 ";
 
-            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedTestCode,
+                CodeActionValidationMode = CodeActionValidationMode.None, // Differences in syntax nodes (SimpleMemberAccessExpression vs QualifiedName)
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -451,7 +512,7 @@ public class TestClass
 {{
     public void TestMethod()
     {{
-        var v1 = new MyEnum();
+        var v1 = {{|#0:new MyEnum()|}};
     }}
 
     private enum MyEnum {{ {declarationBody} }}
@@ -469,7 +530,7 @@ public class TestClass
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(5, 18),
+                Diagnostic().WithLocation(0),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
@@ -492,7 +553,7 @@ public class TestClass
 {{
     public void TestMethod()
     {{
-        var v1 = new MyEnum();
+        var v1 = {{|#0:new MyEnum()|}};
     }}
 
     private enum MyEnum {{ {declarationBody} }}
@@ -510,7 +571,7 @@ public class TestClass
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(5, 18),
+                Diagnostic().WithLocation(0),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);

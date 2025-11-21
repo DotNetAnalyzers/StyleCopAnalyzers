@@ -1,12 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.OrderingRules.SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives,
@@ -78,9 +79,9 @@ class A
                 },
                 ExpectedDiagnostics =
                 {
-                    Diagnostic().WithLocation("Test2.cs", 2, 1).WithArguments("System", "Xyz"),
-                    Diagnostic().WithLocation("Test2.cs", 3, 1).WithArguments("System.IO", "Xyz"),
-                    Diagnostic().WithLocation("Test2.cs", 5, 1).WithArguments("System.Threading.Tasks", "Xyz"),
+                    Diagnostic().WithLocation("/0/Test2.cs", 2, 1).WithArguments("System", "Xyz"),
+                    Diagnostic().WithLocation("/0/Test2.cs", 3, 1).WithArguments("System.IO", "Xyz"),
+                    Diagnostic().WithLocation("/0/Test2.cs", 5, 1).WithArguments("System.Threading.Tasks", "Xyz"),
                 },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
@@ -108,8 +109,8 @@ class A
                 },
                 ExpectedDiagnostics =
                 {
-                    Diagnostic().WithLocation("Test2.cs", 4, 5).WithArguments("System.Threading", "Namespace"),
-                    Diagnostic().WithLocation("Test2.cs", 5, 5).WithArguments("System.IO", "Namespace"),
+                    Diagnostic().WithLocation("/0/Test2.cs", 4, 5).WithArguments("System.Threading", "Namespace"),
+                    Diagnostic().WithLocation("/0/Test2.cs", 5, 5).WithArguments("System.IO", "Namespace"),
                 },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
@@ -141,9 +142,9 @@ namespace Test
                 },
                 ExpectedDiagnostics =
                 {
-                    Diagnostic().WithLocation("Test3.cs", 2, 1).WithArguments("System.IO", "AnotherNamespace"),
-                    Diagnostic().WithLocation("Test3.cs", 8, 5).WithArguments("System.Threading", "Xyz"),
-                    Diagnostic().WithLocation("Test3.cs", 9, 5).WithArguments("System", "Xyz"),
+                    Diagnostic().WithLocation("/0/Test3.cs", 2, 1).WithArguments("System.IO", "AnotherNamespace"),
+                    Diagnostic().WithLocation("/0/Test3.cs", 8, 5).WithArguments("System.Threading", "Xyz"),
+                    Diagnostic().WithLocation("/0/Test3.cs", 9, 5).WithArguments("System", "Xyz"),
                 },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
@@ -175,7 +176,7 @@ namespace Test
                 },
                 ExpectedDiagnostics =
                 {
-                    Diagnostic().WithLocation("Test3.cs", 8, 5).WithArguments("System.Threading", "Xyz"),
+                    Diagnostic().WithLocation("/0/Test3.cs", 8, 5).WithArguments("System.Threading", "Xyz"),
                 },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
@@ -216,7 +217,7 @@ namespace Test
                 },
                 ExpectedDiagnostics =
                 {
-                    Diagnostic().WithLocation("Test2.cs", 6, 5).WithArguments("System.IO", "System.IO.Path"),
+                    Diagnostic().WithLocation("/0/Test2.cs", 6, 5).WithArguments("System.IO", "System.IO.Path"),
                 },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
@@ -271,7 +272,7 @@ namespace Test
                 },
                 ExpectedDiagnostics =
                 {
-                    Diagnostic().WithLocation("Test2.cs", 5, 5).WithArguments("System.Threading", "Namespace"),
+                    Diagnostic().WithLocation("/0/Test2.cs", 5, 5).WithArguments("System.Threading", "Namespace"),
                 },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
@@ -299,8 +300,8 @@ namespace Test
                 },
                 ExpectedDiagnostics =
                 {
-                    Diagnostic().WithLocation("Test2.cs", 4, 5).WithArguments("System.Threading", "Namespace"),
-                    Diagnostic().WithLocation("Test2.cs", 5, 5).WithArguments("System.IO", "Namespace"),
+                    Diagnostic().WithLocation("/0/Test2.cs", 4, 5).WithArguments("System.Threading", "Namespace"),
+                    Diagnostic().WithLocation("/0/Test2.cs", 5, 5).WithArguments("System.IO", "Namespace"),
                 },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }

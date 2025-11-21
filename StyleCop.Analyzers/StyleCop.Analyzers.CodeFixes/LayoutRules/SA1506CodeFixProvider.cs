@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.LayoutRules
 {
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -27,7 +30,7 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
@@ -48,53 +51,72 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
+            var newRoot = await GetTransformedDocumentAsync(document, ImmutableArray.Create(diagnostic), cancellationToken).ConfigureAwait(false);
+            return document.WithSyntaxRoot(newRoot);
+        }
+
+        private static async Task<SyntaxNode> GetTransformedDocumentAsync(Document document, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken)
+        {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-
-            var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-            var triviaList = token.LeadingTrivia;
-
-            var index = triviaList.IndexOf(SyntaxKind.SingleLineDocumentationCommentTrivia);
-
-            int currentLineStart = index + 1;
-            bool onBlankLine = true;
-            for (int currentIndex = currentLineStart; currentIndex < triviaList.Count; currentIndex++)
-            {
-                switch (triviaList[currentIndex].Kind())
+            return syntaxRoot.ReplaceTokens(
+                diagnostics.Select(diagnostic => syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start)),
+                (originalToken, rewrittenToken) =>
                 {
-                case SyntaxKind.EndOfLineTrivia:
-                    if (onBlankLine)
+                    var triviaList = rewrittenToken.LeadingTrivia;
+
+                    var index = triviaList.IndexOf(SyntaxKind.SingleLineDocumentationCommentTrivia);
+
+                    int currentLineStart = index + 1;
+                    bool onBlankLine = true;
+                    for (int currentIndex = currentLineStart; currentIndex < triviaList.Count; currentIndex++)
                     {
-                        triviaList = triviaList.RemoveRange(currentLineStart, currentIndex - currentLineStart + 1);
-                        currentIndex = currentLineStart - 1;
-                        continue;
-                    }
-                    else
-                    {
-                        currentLineStart = currentIndex + 1;
-                        onBlankLine = true;
-                        break;
+                        switch (triviaList[currentIndex].Kind())
+                        {
+                        case SyntaxKind.EndOfLineTrivia:
+                            if (onBlankLine)
+                            {
+                                triviaList = triviaList.RemoveRange(currentLineStart, currentIndex - currentLineStart + 1);
+                                currentIndex = currentLineStart - 1;
+                                continue;
+                            }
+                            else
+                            {
+                                currentLineStart = currentIndex + 1;
+                                onBlankLine = true;
+                                break;
+                            }
+
+                        case SyntaxKind.WhitespaceTrivia:
+                            break;
+
+                        default:
+                            if (triviaList[currentIndex].HasBuiltinEndLine())
+                            {
+                                currentLineStart = currentIndex + 1;
+                                onBlankLine = true;
+                                break;
+                            }
+                            else
+                            {
+                                onBlankLine = false;
+                                break;
+                            }
+                        }
                     }
 
-                case SyntaxKind.WhitespaceTrivia:
-                    break;
+                    return rewrittenToken.WithLeadingTrivia(triviaList);
+                });
+        }
 
-                default:
-                    if (triviaList[currentIndex].HasBuiltinEndLine())
-                    {
-                        currentLineStart = currentIndex + 1;
-                        onBlankLine = true;
-                        break;
-                    }
-                    else
-                    {
-                        onBlankLine = false;
-                        break;
-                    }
-                }
-            }
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; } =
+                new FixAll();
 
-            var newSyntaxRoot = syntaxRoot.ReplaceToken(token, token.WithLeadingTrivia(triviaList));
-            return document.WithSyntaxRoot(newSyntaxRoot);
+            protected override string CodeActionTitle => LayoutResources.SA1506CodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+                => await GetTransformedDocumentAsync(document, diagnostics, fixAllContext.CancellationToken).ConfigureAwait(false);
         }
     }
 }

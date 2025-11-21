@@ -1,14 +1,17 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.LayoutRules
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
-    using TestHelper;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.LayoutRules.SA1508ClosingBracesMustNotBePrecededByBlankLine,
@@ -23,9 +26,17 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         {
             get
             {
-                yield return new object[] { "class", "public " };
-                yield return new object[] { "struct", "public " };
-                yield return new object[] { "interface", string.Empty };
+                foreach (var data in CommonMemberData.TypeDeclarationKeywords)
+                {
+                    var keyword = (string)data.Single();
+                    var accessModifier = keyword switch
+                    {
+                        "interface" => string.Empty,
+                        _ => "public ",
+                    };
+
+                    yield return new[] { keyword, accessModifier };
+                }
             }
         }
 

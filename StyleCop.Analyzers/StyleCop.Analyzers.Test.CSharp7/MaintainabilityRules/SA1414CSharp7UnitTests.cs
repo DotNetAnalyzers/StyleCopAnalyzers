@@ -1,12 +1,11 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
@@ -118,6 +117,62 @@ public class TestClass
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task ValidateTuplesFromInterfaceAsync()
+        {
+            const string testCode = @"
+using System.Collections.Generic;
+
+namespace Test {
+    class StringTupleComparer : IEqualityComparer<(string, string)>
+    {
+	    public bool Equals((string, string) x, (string, string) y) => throw null;
+
+	    public int GetHashCode((string, string) obj) => throw null;
+    }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task ValidateTuplesFromExplicitInterfaceImplementationAsync()
+        {
+            const string testCode = @"
+using System.Collections.Generic;
+
+namespace Test {
+    class StringTupleComparer : IEqualityComparer<(string, string)>
+    {
+	    bool IEqualityComparer<(string, string)>.Equals((string, string) x, (string, string) y) => throw null;
+
+	    int IEqualityComparer<(string, string)>.GetHashCode((string, string) obj) => throw null;
+    }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task ValidateTuplesFromBaseClassAsync()
+        {
+            const string testCode = @"
+namespace Test {
+    class A : B
+	{
+		public override (string, string) Run((string, string) x) => throw null;
+
+		public override (int, int) Run((int, int) y) => throw null;
+	}
+
+	abstract class B
+	{
+		public abstract ([|string|], [|string|]) Run(([|string|], [|string|]) x);
+
+		public virtual ([|int|], [|int|]) Run(([|int|], [|int|]) y) => throw null;
+	}
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
@@ -15,7 +17,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Editing;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1129DoNotUseDefaultValueTypeConstructor"/>.
@@ -54,17 +58,19 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
             var newExpression = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
-            var newSyntaxRoot = syntaxRoot.ReplaceNode(newExpression, GetReplacementNode(newExpression, semanticModel, cancellationToken));
+            var newSyntaxRoot = syntaxRoot.ReplaceNode(newExpression, GetReplacementNode(document.Project, newExpression, semanticModel, cancellationToken));
 
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
 
-        private static SyntaxNode GetReplacementNode(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
+        private static SyntaxNode GetReplacementNode(Project project, SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            var newExpression = (ObjectCreationExpressionSyntax)node;
+            var newExpression = (BaseObjectCreationExpressionSyntaxWrapper)node;
 
-            var symbolInfo = semanticModel.GetSymbolInfo(newExpression.Type, cancellationToken);
-            var namedTypeSymbol = symbolInfo.Symbol as INamedTypeSymbol;
+            var symbolInfo = semanticModel.GetSymbolInfo(newExpression, cancellationToken);
+            var namedTypeSymbol = (symbolInfo.Symbol as IMethodSymbol)?.ContainingType;
+
+            var type = GetOrCreateTypeSyntax(project, newExpression, namedTypeSymbol);
 
             SyntaxNode replacement;
 
@@ -75,7 +81,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 if (IsDefaultParameterValue(newExpression))
                 {
-                    replacement = SyntaxFactory.DefaultExpression(newExpression.Type);
+                    replacement = SyntaxFactory.DefaultExpression(type);
                 }
                 else
                 {
@@ -98,21 +104,34 @@ namespace StyleCop.Analyzers.ReadabilityRules
                         fieldName = nameof(Guid.Empty);
                     }
 
-                    replacement = ConstructMemberAccessSyntax(newExpression.Type, fieldName);
+                    replacement = ConstructMemberAccessSyntax(type, fieldName);
                 }
             }
             else if (IsEnumWithDefaultMember(namedTypeSymbol, out string memberName))
             {
-                replacement = ConstructMemberAccessSyntax(newExpression.Type, memberName);
+                replacement = ConstructMemberAccessSyntax(type, memberName);
             }
             else
             {
-                replacement = SyntaxFactory.DefaultExpression(newExpression.Type);
+                replacement = SyntaxFactory.DefaultExpression(type);
             }
 
             return replacement
-                .WithLeadingTrivia(newExpression.GetLeadingTrivia())
-                .WithTrailingTrivia(newExpression.GetTrailingTrivia());
+                .WithLeadingTrivia(newExpression.SyntaxNode.GetLeadingTrivia())
+                .WithTrailingTrivia(newExpression.SyntaxNode.GetTrailingTrivia());
+        }
+
+        private static TypeSyntax GetOrCreateTypeSyntax(Project project, BaseObjectCreationExpressionSyntaxWrapper baseObjectCreationExpression, INamedTypeSymbol constructedType)
+        {
+            if (baseObjectCreationExpression.SyntaxNode is ObjectCreationExpressionSyntax objectCreationExpressionSyntax)
+            {
+                return objectCreationExpressionSyntax.Type;
+            }
+            else
+            {
+                SyntaxGenerator generator = SyntaxGenerator.GetGenerator(project);
+                return (TypeSyntax)generator.TypeExpression(constructedType);
+            }
         }
 
         /// <summary>
@@ -146,9 +165,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
             return true;
         }
 
-        private static bool IsDefaultParameterValue(ObjectCreationExpressionSyntax expression)
+        private static bool IsDefaultParameterValue(BaseObjectCreationExpressionSyntaxWrapper expression)
         {
-            if (expression.Parent.Parent is ParameterSyntax parameterSyntax)
+            if (expression.SyntaxNode.Parent.Parent is ParameterSyntax parameterSyntax)
             {
                 return parameterSyntax.Parent.Parent is BaseMethodDeclarationSyntax;
             }
@@ -195,6 +214,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <returns>A new member access expression.</returns>
         private static SyntaxNode ConstructMemberAccessSyntax(TypeSyntax typeSyntax, string memberName)
         {
+            // NOTE: This creates the correct source code when applied, but these are not necessarily the syntax
+            // nodes that the compiler would create from that source code. For example, the type syntax can
+            // contain QualifiedName nodes, whereas the compiler would have created SimpleMemberAccessExpression instead.
+            // This means that the validation that happens in the tests need to be turned off for some tests.
+            // We could have transformed the nodes to match, but we keep the code simple instead.
             return SyntaxFactory.MemberAccessExpression(
                 SyntaxKind.SimpleMemberAccessExpression,
                 typeSyntax,
@@ -221,7 +245,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 var nodes = diagnostics.Select(diagnostic => syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true));
 
-                return syntaxRoot.ReplaceNodes(nodes, (originalNode, rewrittenNode) => GetReplacementNode(rewrittenNode, semanticModel, fixAllContext.CancellationToken));
+                return syntaxRoot.ReplaceNodes(nodes, (originalNode, rewrittenNode) => GetReplacementNode(document.Project, rewrittenNode, semanticModel, fixAllContext.CancellationToken));
             }
         }
     }

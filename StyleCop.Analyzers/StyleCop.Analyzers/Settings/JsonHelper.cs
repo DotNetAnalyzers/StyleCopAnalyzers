@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using LightJson;
 
     /// <summary>
@@ -80,7 +83,7 @@ namespace StyleCop.Analyzers
         /// <param name="jsonValue">The key value pair identifying the JSON value.</param>
         /// <returns>The enum value contained within the JSON value.</returns>
         internal static TEnum ToEnumValue<TEnum>(this KeyValuePair<string, JsonValue> jsonValue)
-            where TEnum : struct
+            where TEnum : struct, Enum
         {
             if (!jsonValue.Value.IsString)
             {
@@ -88,7 +91,7 @@ namespace StyleCop.Analyzers
             }
 
             TEnum result;
-            if (!Enum.TryParse(jsonValue.Value.AsString, true, out result))
+            if (!EnumHelper<TEnum>.TryParse(jsonValue.Value.AsString, out result))
             {
                 throw new InvalidSettingsException($"{jsonValue.Key} cannot contain enum value '{jsonValue.Value.AsString}'");
             }
@@ -104,7 +107,7 @@ namespace StyleCop.Analyzers
         /// <param name="elementName">The element name to report in exceptions.</param>
         /// <returns>The enum value contained within the JSON value.</returns>
         internal static TEnum ToEnumValue<TEnum>(this JsonValue jsonValue, string elementName)
-            where TEnum : struct
+            where TEnum : struct, Enum
         {
             if (!jsonValue.IsString)
             {
@@ -112,7 +115,7 @@ namespace StyleCop.Analyzers
             }
 
             TEnum result;
-            if (!Enum.TryParse(jsonValue.AsString, true, out result))
+            if (!EnumHelper<TEnum>.TryParse(jsonValue.AsString, out result))
             {
                 throw new InvalidSettingsException($"{elementName} cannot contain enum value '{jsonValue.AsString}'");
             }
@@ -141,6 +144,26 @@ namespace StyleCop.Analyzers
             if (!jsonValue.Value.IsJsonObject)
             {
                 throw new InvalidSettingsException($"{jsonValue.Key} must contain an object");
+            }
+        }
+
+        private static class EnumHelper<TEnum>
+            where TEnum : struct, Enum
+        {
+            private static ImmutableDictionary<string, KeyValuePair<bool, TEnum>> values = ImmutableDictionary<string, KeyValuePair<bool, TEnum>>.Empty;
+
+            public static bool TryParse(string value, out TEnum result)
+            {
+                var successAndResult = ImmutableInterlocked.GetOrAdd(
+                    ref values,
+                    value,
+                    static value =>
+                    {
+                        bool success = Enum.TryParse(value, true, out TEnum result);
+                        return new KeyValuePair<bool, TEnum>(success, result);
+                    });
+                result = successAndResult.Value;
+                return successAndResult.Key;
             }
         }
     }

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.OrderingRules
 {
     using System;
@@ -10,6 +12,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// Implements a code fix for all misaligned using statements.
@@ -123,12 +126,12 @@ namespace StyleCop.Analyzers.OrderingRules
 
             private static void ProcessNodeMembers(TreeTextSpan.Builder builder, SyntaxList<MemberDeclarationSyntax> members)
             {
-                foreach (var namespaceDeclaration in members.OfType<NamespaceDeclarationSyntax>())
+                foreach (var namespaceDeclaration in members.Where(member => BaseNamespaceDeclarationSyntaxWrapper.IsInstance(member)))
                 {
                     var childBuilder = builder.AddChild(namespaceDeclaration.FullSpan.Start);
                     childBuilder.SetEnd(namespaceDeclaration.FullSpan.End);
 
-                    ProcessNodeMembers(childBuilder, namespaceDeclaration.Members);
+                    ProcessNodeMembers(childBuilder, ((BaseNamespaceDeclarationSyntaxWrapper)namespaceDeclaration).Members);
                 }
             }
 

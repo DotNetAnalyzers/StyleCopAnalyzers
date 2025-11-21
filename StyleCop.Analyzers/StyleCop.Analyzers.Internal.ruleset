@@ -10,7 +10,15 @@
     <Rule Id="xUnit1004" Action="Info" />
   </Rules>
   <Rules AnalyzerId="Microsoft.CodeAnalysis.Analyzers" RuleNamespace="Microsoft.CodeAnalysis.Analyzers">
-    <Rule Id="RS1001" Action="None" />
-    <Rule Id="RS1004" Action="None" />
+    <Rule Id="RS1001" Action="None" /> <!-- Missing diagnostic analyzer attribute -->
+    <Rule Id="RS1004" Action="None" /> <!-- Recommend adding language support to diagnostic analyzer -->
+    <Rule Id="RS1029" Action="None" /> <!-- Do not use reserved diagnostic IDs -->
+    <Rule Id="RS1038" Action="None" /> <!-- Compiler extensions should be implemented in assemblies with compiler-provided references -->
+    <Rule Id="RS2008" Action="None" /> <!-- Enable analyzer release tracking -->
+  </Rules>
+  <Rules AnalyzerId="Microsoft.CodeAnalysis.PublicApiAnalyzers" RuleNamespace="Microsoft.CodeAnalysis.PublicApiAnalyzers">
+    <Rule Id="RS0016" Action="None" /> <!-- Add public types and members to the declared API -->
+    <Rule Id="RS0026" Action="None" /> <!-- Do not add multiple public overloads with optional parameters -->
+    <Rule Id="RS0037" Action="None" /> <!-- Enable tracking of nullability of reference types in the declared API -->
   </Rules>
 </RuleSet>

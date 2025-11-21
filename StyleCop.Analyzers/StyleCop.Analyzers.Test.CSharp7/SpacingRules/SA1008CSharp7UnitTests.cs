@@ -1,14 +1,14 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.SpacingRules;
-    using TestHelper;
     using Xunit;
 
     using static StyleCop.Analyzers.SpacingRules.SA1008OpeningParenthesisMustBeSpacedCorrectly;
@@ -16,7 +16,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1008OpeningParenthesisMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1008CSharp7UnitTests : SA1008UnitTests
+    public partial class SA1008CSharp7UnitTests : SA1008UnitTests
     {
         /// <summary>
         /// Verifies that spacing around tuple type casts is handled properly.
@@ -977,6 +977,66 @@ namespace TestNamespace
 }";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3117, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3117")]
+        public async Task TestTupleParameterAttributesAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    class NotNullAttribute : System.Attribute { }
+    class CustomAttribute : System.Attribute { }
+
+    class TestClass
+    {
+        void TestMethod1([NotNull] (string, string) tuple) { }
+
+        void TestMethod2([NotNull, Custom] (string, string) tuple) { }
+
+        void TestMethod3([NotNull][Custom] (string, string) tuple) { }
+
+        void TestMethod4([NotNull]{|#0:(|}string, string) tuple) { }
+
+        void TestMethod5([NotNull, Custom]{|#1:(|}string, string) tuple) { }
+
+        void TestMethod6([NotNull][Custom]{|#2:(|}string, string) tuple) { }
+    }
+}
+";
+
+            var fixedCode = @"
+namespace TestNamespace
+{
+    class NotNullAttribute : System.Attribute { }
+    class CustomAttribute : System.Attribute { }
+
+    class TestClass
+    {
+        void TestMethod1([NotNull] (string, string) tuple) { }
+
+        void TestMethod2([NotNull, Custom] (string, string) tuple) { }
+
+        void TestMethod3([NotNull][Custom] (string, string) tuple) { }
+
+        void TestMethod4([NotNull] (string, string) tuple) { }
+
+        void TestMethod5([NotNull, Custom] (string, string) tuple) { }
+
+        void TestMethod6([NotNull][Custom] (string, string) tuple) { }
+    }
+}
+";
+
+            DiagnosticResult[] expectedDiagnostics =
+            {
+                Diagnostic(DescriptorPreceded).WithLocation(0),
+                Diagnostic(DescriptorPreceded).WithLocation(1),
+                Diagnostic(DescriptorPreceded).WithLocation(2),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -1,17 +1,20 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.Test.CSharp7.SpacingRules;
     using Xunit;
+    using static StyleCop.Analyzers.SpacingRules.SA1024ColonsMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1024ColonsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1024CSharp8UnitTests : SA1024CSharp7UnitTests
+    public partial class SA1024CSharp8UnitTests : SA1024CSharp7UnitTests
     {
         /// <summary>
         /// Verifies the behavior of colons in case patterns.
@@ -49,7 +52,7 @@ public class Foo
     }
 }";
 
-            var expected = Diagnostic().WithSpan(9, 49, 9, 50).WithArguments(" not", "preceded", string.Empty);
+            var expected = Diagnostic(DescriptorNotPreceded).WithSpan(9, 49, 9, 50);
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }

@@ -7,8 +7,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using StyleCop.Analyzers.Test.Verifiers;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1648InheritDocMustBeUsedWithInheritingClass>;
 
@@ -17,6 +17,131 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     /// </summary>
     public class SA1648UnitTests
     {
+        [Theory]
+        [MemberData(nameof(CommonMemberData.ReferenceTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestConstructorWithNoParametersInheritsFromParentAsync(string keyword)
+        {
+            var testCode = @"$KEYWORD$ Base
+{
+    /// <summary>Base constructor.</summary>
+    public Base() { }
+}
+
+$KEYWORD$ Test : Base
+{
+    /// <inheritdoc/>
+    public Test() { }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$KEYWORD$", keyword), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.ReferenceTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestConstructorWithParametersInheritsFromParentAsync(string keyword)
+        {
+            var testCode = @"$KEYWORD$ Base
+{
+    /// <summary>Base constructor.</summary>
+    public Base(string s, int a) { }
+}
+
+$KEYWORD$ Test : Base
+{
+    /// <inheritdoc/>
+    public Test(string s, int b)
+        : base(s, b) { }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$KEYWORD$", keyword), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.ReferenceTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestConstructorInheritsImplicitlyFromSystemObjectAsync(string keyword)
+        {
+            var testCode = @"$KEYWORD$ Test
+{
+    /// <inheritdoc/>
+    public Test() { }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$KEYWORD$", keyword), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.ReferenceTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestConstructorInheritsExplicitlyFromSystemObjectAsync(string keyword)
+        {
+            var testCode = @"$KEYWORD$ Test : System.Object
+{
+    /// <inheritdoc/>
+    public Test() { }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$KEYWORD$", keyword), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestConstructorInheritsExplicitlyFromTypeInDifferentAssemblyAsync()
+        {
+            var testCode = @"class MyArgumentException : System.ArgumentException
+{
+    /// <inheritdoc/>
+    public MyArgumentException() { }
+
+    /// <inheritdoc/>
+    public MyArgumentException(string message) : base(message) { }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.ReferenceTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestConstructorInheritsButBaseCtorHasTheSameNumberOfParametersButNotMatchingSignaturesAsync(string keyword)
+        {
+            var testCode = @"$KEYWORD$ Base
+{
+    /// <summary>Base constructor.</summary>
+    public Base(string s, string a) { }
+}
+
+$KEYWORD$ Test : Base
+{
+    /// <inheritdoc/>
+    public Test(string s, int b)
+        : base(s, b.ToString()) { }
+}
+";
+
+            var expected = Diagnostic().WithLocation(9, 9);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$KEYWORD$", keyword), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.ReferenceTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestConstructorInheritsButBaseCtorHasDifferentNumberOfParametersAsync(string keyword)
+        {
+            var testCode = @"$KEYWORD$ Base
+{
+    /// <summary>Base constructor.</summary>
+    public Base(string s) { }
+}
+
+$KEYWORD$ Test : Base
+{
+    /// <inheritdoc/>
+    public Test(string s, int b)
+        : base(s) { }
+}
+";
+
+            var expected = Diagnostic().WithLocation(9, 9);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$KEYWORD$", keyword), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestClassOverridesClassAsync()
         {
@@ -89,7 +214,7 @@ interface ITest : IBase { }";
         }
 
         [Theory]
-        [InlineData("Test() { }")]
+        [InlineData("Test(int ignored) { }")]
         [InlineData("void Foo() { }")]
         [InlineData("string foo;")]
         [InlineData("string Foo { get; set; }")]
@@ -306,10 +431,26 @@ public class TestClass : ITest
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
+        /// <summary>
+        /// Verifies that a delegate declaration that includes the inheritdoc will produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3291, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3291")]
+        public async Task TestIncorrectDelegateInheritDocAsync()
+        {
+            var testCode = @"
+/// [|<include file='DelegateInheritDoc.xml' path='/TestDelegate/*'/>|]
+public delegate bool TestDelegate(int value);
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
             => VerifyCSharpDiagnosticAsync(source, new[] { expected }, cancellationToken);
 
-        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        protected static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
             var test = CreateTest(expected);
             test.TestCode = source;
@@ -331,6 +472,11 @@ public class TestClass : ITest
   </TestMethod>
 </TestClass>
 ";
+            string contentDelegateInheritDoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestDelegate>
+    <inheritdoc/>
+</TestDelegate>
+";
 
             var test = new StyleCopDiagnosticVerifier<SA1648InheritDocMustBeUsedWithInheritingClass>.CSharpTest
             {
@@ -338,6 +484,7 @@ public class TestClass : ITest
                 {
                     { "ClassInheritDoc.xml", contentClassInheritDoc },
                     { "MethodInheritDoc.xml", contentMethodInheritDoc },
+                    { "DelegateInheritDoc.xml", contentDelegateInheritDoc },
                 },
             };
 

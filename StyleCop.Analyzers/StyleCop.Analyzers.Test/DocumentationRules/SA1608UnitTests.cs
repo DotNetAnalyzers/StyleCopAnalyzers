@@ -1,14 +1,16 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using StyleCop.Analyzers.Test.Verifiers;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1608ElementDocumentationMustNotHaveDefaultSummary>;
 
@@ -18,9 +20,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     public class SA1608UnitTests
     {
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
-        [InlineData("interface")]
+        [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeNoDocumentationAsync(string typeName)
         {
             var testCode = @"
@@ -31,9 +31,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
-        [InlineData("interface")]
+        [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeWithSummaryDocumentationAsync(string typeName)
         {
             var testCode = @"
@@ -47,9 +45,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
-        [InlineData("interface")]
+        [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeWithContentDocumentationAsync(string typeName)
         {
             var testCode = @"
@@ -63,9 +59,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
-        [InlineData("interface")]
+        [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeWithInheritedDocumentationAsync(string typeName)
         {
             var testCode = @"
@@ -77,9 +71,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
-        [InlineData("interface")]
+        [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeWithoutSummaryDocumentationAsync(string typeName)
         {
             var testCode = @"
@@ -94,9 +86,7 @@ TypeName
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
-        [InlineData("interface")]
+        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeWithoutContentDocumentationAsync(string typeName)
         {
             var testCode = @"
@@ -111,9 +101,7 @@ TypeName
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
-        [InlineData("interface")]
+        [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeWithDefaultDocumentationAsync(string typeName)
         {
             var testCode = $@"
@@ -147,10 +135,64 @@ public class ClassName
         }
 
         [Fact]
+        public async Task TestEnumMemberWithContentDocumentationAsync()
+        {
+            var testCode = @"
+public enum EnumName
+{
+    /// <summary>
+    /// Foo.
+    /// </summary>
+    EnumMember1 = 0,
+}
+";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestEnumMemberWithDefaultDocumentationAsync()
+        {
+            var testCode = @"
+public enum EnumName
+{
+    /// <summary>
+    /// Summary description for the EnumMember1 enum member.
+    /// </summary>
+    EnumMember1 = 0,
+
+    /// <summary>
+    /// Summary           description
+    /// for the      EnumMember2 enum member.
+    /// </summary>
+    EnumMember2 = 1,
+}
+";
+            DiagnosticResult[] expected = new[]
+            {
+                Diagnostic().WithLocation(4, 9),
+                Diagnostic().WithLocation(9, 9),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestClassWithIncludedEmptyDocumentationAsync()
         {
             var testCode = @"
 /// <include file='ClassWithoutSummary.xml' path='/ClassName/*' />
+public class ClassName
+{
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3150, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3150")]
+        public async Task TestClassWithIncludedMissingDocumentationAsync()
+        {
+            var testCode = @"
+/// <include file='MissingFile.xml' path='/ClassName/*' />
 public class ClassName
 {
 }";
@@ -182,6 +224,35 @@ public class ClassName
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(3150, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3150")]
+        public async Task TestFieldWithIncludedSummaryDocumentationAsync()
+        {
+            var testCode = @"
+public class ClassName
+{
+    /// <include file='FieldWithSummary.xml' path='/FieldName/*' />
+    public int FieldName;
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3150, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3150")]
+        public async Task TestFieldWithIncludedDefaultSummaryDocumentationAsync()
+        {
+            var testCode = @"
+public class ClassName
+{
+    /// <include file='FieldWithDefaultSummary.xml' path='/FieldName/*' />
+    public {|#0:int FieldName|};
+}";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
             => VerifyCSharpDiagnosticAsync(source, new[] { expected }, cancellationToken);
 
@@ -205,6 +276,20 @@ public class ClassName
   </summary>
 </ClassName>
 ";
+            string fieldContentWithSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<FieldName>
+  <summary>
+    Foo
+  </summary>
+</FieldName>
+";
+            string fieldContentWithDefaultSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<FieldName>
+  <summary>
+    Summary description for the ClassName class.
+  </summary>
+</FieldName>
+";
 
             var test = new StyleCopDiagnosticVerifier<SA1608ElementDocumentationMustNotHaveDefaultSummary>.CSharpTest
             {
@@ -214,6 +299,8 @@ public class ClassName
                     { "ClassWithoutSummary.xml", contentWithoutSummary },
                     { "ClassWithSummary.xml", contentWithSummary },
                     { "ClassWithDefaultSummary.xml", contentWithDefaultSummary },
+                    { "FieldWithSummary.xml", fieldContentWithSummary },
+                    { "FieldWithDefaultSummary.xml", fieldContentWithDefaultSummary },
                 },
             };
 

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Immutable;
@@ -67,15 +69,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void CheckUsingDeclaration(SyntaxNodeAnalysisContext context, UsingDirectiveSyntax usingDirective)
         {
-            if (!usingDirective.Parent.IsKind(SyntaxKind.NamespaceDeclaration))
+            if (!usingDirective.Parent.IsKind(SyntaxKind.NamespaceDeclaration)
+                && !usingDirective.Parent.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration))
             {
                 // Usings outside of a namespace are always qualified.
-                return;
-            }
-
-            if (!usingDirective.StaticKeyword.IsKind(SyntaxKind.None))
-            {
-                // using static types is not considered.
                 return;
             }
 
@@ -95,7 +92,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             if (symbol is INamedTypeSymbol typeSymbol
                 && typeSymbol.IsTupleType())
             {
-                symbol = typeSymbol.TupleUnderlyingType();
+                symbol = typeSymbol.TupleUnderlyingTypeOrSelf();
             }
 
             string symbolString = symbol.ToQualifiedString(usingDirective.Name);
@@ -110,7 +107,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     break;
 
                 case SymbolKind.NamedType:
-                    var containingNamespace = ((NamespaceDeclarationSyntax)usingDirective.Parent).Name.ToString();
+                    var containingNamespace = ((BaseNamespaceDeclarationSyntaxWrapper)usingDirective.Parent).Name.ToString();
                     if (containingNamespace != symbol.ContainingNamespace.ToString())
                     {
                         context.ReportDiagnostic(Diagnostic.Create(DescriptorType, usingDirective.GetLocation(), symbolString));

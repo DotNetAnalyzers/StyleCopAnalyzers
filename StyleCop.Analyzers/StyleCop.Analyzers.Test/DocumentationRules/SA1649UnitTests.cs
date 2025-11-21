@@ -1,15 +1,16 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using StyleCop.Analyzers.Test.Verifiers;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1649FileNameMustMatchTypeName>;
 
@@ -18,7 +19,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     /// </summary>
     public class SA1649UnitTests
     {
-        private const string MetadataSettings = @"
+        protected const string MetadataSettings = @"
 {
   ""settings"": {
     ""documentationRules"": {
@@ -28,7 +29,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 }
 ";
 
-        private const string StyleCopSettings = @"
+        protected const string StyleCopSettings = @"
 {
   ""settings"": {
     ""documentationRules"": {
@@ -38,14 +39,29 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 }
 ";
 
-        public static IEnumerable<object[]> TypeKeywords
+        /// <summary>
+        /// Verifies that a wrong file name is correctly reported.
+        /// </summary>
+        /// <param name="typeKeyword">The type keyword to use during the test.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [MemberData(nameof(CommonMemberData.AllTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task VerifyWrongFileNameAsync(string typeKeyword)
         {
-            get
-            {
-                yield return new object[] { "class" };
-                yield return new object[] { "struct" };
-                yield return new object[] { "interface" };
-            }
+            var testCode = $@"namespace TestNamespace
+{{
+    {GetTypeDeclaration(typeKeyword, "TestType", diagnosticKey: 0)}
+}}
+";
+
+            var fixedCode = $@"namespace TestNamespace
+{{
+    {GetTypeDeclaration(typeKeyword, "TestType")}
+}}
+";
+
+            var expectedDiagnostic = Diagnostic().WithLocation(0);
+            await VerifyCSharpFixAsync("WrongFileName.cs", testCode, StyleCopSettings, expectedDiagnostic, "TestType.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -54,27 +70,48 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         /// <param name="typeKeyword">The type keyword to use during the test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TypeKeywords))]
-        public async Task VerifyWrongFileNameAsync(string typeKeyword)
+        [MemberData(nameof(CommonMemberData.GenericTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task VerifyWrongFileNameGenericStyleCopAsync(string typeKeyword)
         {
             var testCode = $@"namespace TestNamespace
 {{
-    public {typeKeyword} TestType
-    {{
-    }}
+    {GetGenericTypeDeclaration(typeKeyword, "TestType", new[] { "T" }, diagnosticKey: 0)}
 }}
 ";
 
             var fixedCode = $@"namespace TestNamespace
 {{
-    public {typeKeyword} TestType
-    {{
-    }}
+    {GetGenericTypeDeclaration(typeKeyword, "TestType", new[] { "T" })}
 }}
 ";
 
-            var expectedDiagnostic = Diagnostic().WithLocation("WrongFileName.cs", 3, 13 + typeKeyword.Length);
-            await VerifyCSharpFixAsync("WrongFileName.cs", testCode, StyleCopSettings, expectedDiagnostic, "TestType.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic().WithLocation(0);
+            await VerifyCSharpFixAsync("WrongFileName.cs", testCode, StyleCopSettings, expectedDiagnostic, "TestType{T}.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a wrong file name is correctly reported.
+        /// </summary>
+        /// <param name="typeKeyword">The type keyword to use during the test.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [MemberData(nameof(CommonMemberData.GenericTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task VerifyWrongFileNameGenericMetadataAsync(string typeKeyword)
+        {
+            var testCode = $@"namespace TestNamespace
+{{
+    {GetGenericTypeDeclaration(typeKeyword, "TestType", new[] { "T" }, diagnosticKey: 0)}
+}}
+";
+
+            var fixedCode = $@"namespace TestNamespace
+{{
+    {GetGenericTypeDeclaration(typeKeyword, "TestType", new[] { "T" })}
+}}
+";
+
+            var expectedDiagnostic = Diagnostic().WithLocation(0);
+            await VerifyCSharpFixAsync("WrongFileName.cs", testCode, MetadataSettings, expectedDiagnostic, "TestType`1.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -84,26 +121,22 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         /// <param name="typeKeyword">The type keyword to use during the test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TypeKeywords))]
+        [MemberData(nameof(CommonMemberData.AllTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task VerifyWrongFileNameMultipleExtensionsAsync(string typeKeyword)
         {
             var testCode = $@"namespace TestNamespace
 {{
-    public {typeKeyword} TestType
-    {{
-    }}
+    {GetTypeDeclaration(typeKeyword, "TestType", diagnosticKey: 0)}
 }}
 ";
 
             var fixedCode = $@"namespace TestNamespace
 {{
-    public {typeKeyword} TestType
-    {{
-    }}
+    {GetTypeDeclaration(typeKeyword, "TestType")}
 }}
 ";
 
-            var expectedDiagnostic = Diagnostic().WithLocation("WrongFileName.svc.cs", 3, 13 + typeKeyword.Length);
+            var expectedDiagnostic = Diagnostic().WithLocation(0);
             await VerifyCSharpFixAsync("WrongFileName.svc.cs", testCode, StyleCopSettings, expectedDiagnostic, "TestType.svc.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -114,26 +147,22 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         /// <param name="typeKeyword">The type keyword to use during the test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TypeKeywords))]
+        [MemberData(nameof(CommonMemberData.AllTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task VerifyWrongFileNameNoExtensionAsync(string typeKeyword)
         {
             var testCode = $@"namespace TestNamespace
 {{
-    public {typeKeyword} TestType
-    {{
-    }}
+    {GetTypeDeclaration(typeKeyword, "TestType", diagnosticKey: 0)}
 }}
 ";
 
             var fixedCode = $@"namespace TestNamespace
 {{
-    public {typeKeyword} TestType
-    {{
-    }}
+    {GetTypeDeclaration(typeKeyword, "TestType")}
 }}
 ";
 
-            var expectedDiagnostic = Diagnostic().WithLocation("WrongFileName", 3, 13 + typeKeyword.Length);
+            var expectedDiagnostic = Diagnostic().WithLocation(0);
             await VerifyCSharpFixAsync("WrongFileName", testCode, StyleCopSettings, expectedDiagnostic, "TestType", fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -143,18 +172,52 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         /// <param name="typeKeyword">The type keyword to use during the test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TypeKeywords))]
+        [MemberData(nameof(CommonMemberData.AllTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task VerifyCaseInsensitivityAsync(string typeKeyword)
         {
             var testCode = $@"namespace TestNamespace
 {{
-    public {typeKeyword} TestType
-    {{
-    }}
+    {GetTypeDeclaration(typeKeyword, "TestType")}
 }}
 ";
 
-            await VerifyCSharpDiagnosticAsync("testtype.cs", testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync("testtype.cs", testCode, testSettings: null, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the file name is not case sensitive.
+        /// </summary>
+        /// <param name="typeKeyword">The type keyword to use during the test.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [MemberData(nameof(CommonMemberData.GenericTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task VerifyCaseInsensitivityGenericStyleCopAsync(string typeKeyword)
+        {
+            var testCode = $@"namespace TestNamespace
+{{
+    {GetGenericTypeDeclaration(typeKeyword, "TestType", new[] { "T" })}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync("testtype{t}.cs", testCode, StyleCopSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the file name is not case sensitive.
+        /// </summary>
+        /// <param name="typeKeyword">The type keyword to use during the test.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [MemberData(nameof(CommonMemberData.GenericTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task VerifyCaseInsensitivityGenericMetadataAsync(string typeKeyword)
+        {
+            var testCode = $@"namespace TestNamespace
+{{
+    {GetGenericTypeDeclaration(typeKeyword, "TestType", new[] { "T" })}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync("testtype`1.cs", testCode, MetadataSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -163,22 +226,135 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         /// <param name="typeKeyword">The type keyword to use during the test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TypeKeywords))]
+        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task VerifyFirstTypeIsUsedAsync(string typeKeyword)
         {
             var testCode = $@"namespace TestNamespace
 {{
-    public {typeKeyword} TestType
+    public enum IgnoredEnum {{ }}
+    public delegate void IgnoredDelegate();
+
+    {GetTypeDeclaration(typeKeyword, "TestType", diagnosticKey: 0)}
+
+    {GetTypeDeclaration(typeKeyword, "TestType2")}
+}}
+";
+            var fixedCode = $@"namespace TestNamespace
+{{
+    public enum IgnoredEnum {{ }}
+    public delegate void IgnoredDelegate();
+
+    {GetTypeDeclaration(typeKeyword, "TestType")}
+
+    {GetTypeDeclaration(typeKeyword, "TestType2")}
+}}
+";
+
+            var expectedDiagnostic = Diagnostic().WithLocation(0);
+            await VerifyCSharpFixAsync("TestType2.cs", testCode, StyleCopSettings, expectedDiagnostic, "TestType.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the file name is based on the first type.
+        /// </summary>
+        /// <param name="typeKeyword">The type keyword to use during the test.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task VerifyFirstTypeIsUsedGenericStyleCopAsync(string typeKeyword)
+        {
+            var testCode = $@"namespace TestNamespace
+{{
+    public enum IgnoredEnum {{ }}
+    public delegate void IgnoredDelegate();
+
+    {GetGenericTypeDeclaration(typeKeyword, "TestType", new[] { "T" }, diagnosticKey: 0)}
+
+    {GetGenericTypeDeclaration(typeKeyword, "TestType2", new[] { "T" })}
+}}
+";
+            var fixedCode = $@"namespace TestNamespace
+{{
+    public enum IgnoredEnum {{ }}
+    public delegate void IgnoredDelegate();
+
+    {GetGenericTypeDeclaration(typeKeyword, "TestType", new[] { "T" })}
+
+    {GetGenericTypeDeclaration(typeKeyword, "TestType2", new[] { "T" })}
+}}
+";
+
+            var expectedDiagnostic = Diagnostic().WithLocation(0);
+            await VerifyCSharpFixAsync("TestType2.cs", testCode, StyleCopSettings, expectedDiagnostic, "TestType{T}.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the file name is based on the first type.
+        /// </summary>
+        /// <param name="typeKeyword">The type keyword to use during the test.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task VerifyFirstTypeIsUsedGenericMetadataAsync(string typeKeyword)
+        {
+            var testCode = $@"namespace TestNamespace
+{{
+    public enum IgnoredEnum {{ }}
+    public delegate void IgnoredDelegate();
+
+    {GetGenericTypeDeclaration(typeKeyword, "TestType", new[] { "T" }, diagnosticKey: 0)}
+
+    {GetGenericTypeDeclaration(typeKeyword, "TestType2", new[] { "T" })}
+}}
+";
+            var fixedCode = $@"namespace TestNamespace
+{{
+    public enum IgnoredEnum {{ }}
+    public delegate void IgnoredDelegate();
+
+    {GetGenericTypeDeclaration(typeKeyword, "TestType", new[] { "T" })}
+
+    {GetGenericTypeDeclaration(typeKeyword, "TestType2", new[] { "T" })}
+}}
+";
+
+            var expectedDiagnostic = Diagnostic().WithLocation(0);
+            await VerifyCSharpFixAsync("TestType2.cs", testCode, MetadataSettings, expectedDiagnostic, "TestType`1.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3234, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3234")]
+        public async Task VerifyMultipleEnumTypesIgnoredAsync()
+        {
+            var testCode = $@"namespace TestNamespace
+{{
+    public enum TestType
     {{
     }}
 
-    public {typeKeyword} TestType2
+    public enum TestType2
     {{
     }}
 }}
 ";
 
-            await VerifyCSharpDiagnosticAsync("TestType.cs", testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            // File names are not checked for 'enum' if more than one is present
+            await VerifyCSharpDiagnosticAsync("TestType2.cs", testCode, testSettings: null, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3234, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3234")]
+        public async Task VerifyMultipleDelegateTypesIgnoredAsync()
+        {
+            var testCode = $@"namespace TestNamespace
+{{
+    public delegate void TestType();
+    public delegate void TestType2();
+}}
+";
+
+            // File names are not checked for 'delegate' if more than one is present
+            await VerifyCSharpDiagnosticAsync("TestType2.cs", testCode, testSettings: null, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -187,7 +363,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         /// <param name="typeKeyword">The type keyword to use during the test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TypeKeywords))]
+        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task VerifyThatPartialTypesAreIgnoredAsync(string typeKeyword)
         {
             var testCode = $@"namespace TestNamespace
@@ -198,7 +374,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 }}
 ";
 
-            await VerifyCSharpDiagnosticAsync("WrongFileName.cs", testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync("WrongFileName.cs", testCode, testSettings: null, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -207,19 +383,19 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         /// <param name="typeKeyword">The type keyword to use during the test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TypeKeywords))]
+        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task VerifyStyleCopNamingConventionForGenericTypeAsync(string typeKeyword)
         {
             var testCode = $@"namespace TestNamespace
 {{
-    public {typeKeyword} TestType<T1, T2, T3>
+    public {typeKeyword} {{|#0:TestType|}}<T1, T2, T3>
     {{
     }}
 }}
 ";
 
-            var expectedDiagnostic = Diagnostic().WithLocation("TestType`3.cs", 3, 13 + typeKeyword.Length);
-            await VerifyCSharpDiagnosticAsync("TestType.cs", testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic().WithLocation(0);
+            await VerifyCSharpDiagnosticAsync("TestType.cs", testCode, testSettings: null, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await VerifyCSharpFixAsync("TestType`3.cs", testCode, StyleCopSettings, expectedDiagnostic, "TestType{T1,T2,T3}.cs", testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -229,21 +405,21 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         /// <param name="typeKeyword">The type keyword to use during the test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TypeKeywords))]
+        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task VerifyMetadataNamingConventionForGenericTypeAsync(string typeKeyword)
         {
             var testCode = $@"namespace TestNamespace
 {{
-    public {typeKeyword} TestType<T1, T2, T3>
+    public {typeKeyword} {{|#0:TestType|}}<T1, T2, T3>
     {{
     }}
 }}
 ";
 
-            var expectedDiagnostic = Diagnostic().WithLocation("TestType{T1,T2,T3}.cs", 3, 13 + typeKeyword.Length);
+            var expectedDiagnostic = Diagnostic().WithLocation(0);
             await VerifyCSharpFixAsync("TestType{T1,T2,T3}.cs", testCode, MetadataSettings, expectedDiagnostic, "TestType`3.cs", testCode, CancellationToken.None).ConfigureAwait(false);
 
-            expectedDiagnostic = Diagnostic().WithLocation("TestType.cs", 3, 13 + typeKeyword.Length);
+            expectedDiagnostic = Diagnostic().WithLocation(0);
             await VerifyCSharpFixAsync("TestType.cs", testCode, MetadataSettings, expectedDiagnostic, "TestType`3.cs", testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -254,12 +430,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         /// <param name="typeKeyword">The type keyword to use during the test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(TypeKeywords))]
+        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task VerifyMetadataNamingConventionForGenericTypeMultipleExtensionsAsync(string typeKeyword)
         {
             var testCode = $@"namespace TestNamespace
 {{
-    public {typeKeyword} TestType<T>
+    public {typeKeyword} {{|#0:TestType|}}<T>
     {{
     }}
 }}
@@ -273,7 +449,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 }}
 ";
 
-            var expectedDiagnostic = Diagnostic().WithLocation("TestType.svc.cs", 3, 13 + typeKeyword.Length);
+            var expectedDiagnostic = Diagnostic().WithLocation(0);
             await VerifyCSharpFixAsync("TestType.svc.cs", testCode, MetadataSettings, expectedDiagnostic, "TestType`1.svc.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -289,26 +465,78 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync("Test0.cs", testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync("Test0.cs", testCode, testSettings: null, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        internal static Task VerifyCSharpDiagnosticAsync(string fileName, string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        /// <summary>
+        /// Verifies that no diagnostic is generated if an appropriate SuppressMessageAttribute is provided.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyWithSuppressMessageAttributeAsync()
         {
-            var test = new StyleCopCodeFixVerifier<SA1649FileNameMustMatchTypeName, SA1649CodeFixProvider>.CSharpTest
+            var testCode = @"
+                            using System.Diagnostics.CodeAnalysis;
+                            [SuppressMessage(""StyleCop.CSharp.DocumentationRules"", ""SA1649:FileNameMustMatchTypeName"", Justification = ""Reviewed."")]
+
+                            public class Class2
+                            {
+                            }
+                            ";
+
+            await VerifyCSharpDiagnosticAsync("Class1.cs", testCode, testSettings: null, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected static string GetTypeDeclaration(string typeKind, string typeName, int? diagnosticKey = null)
+        {
+            if (diagnosticKey is not null)
+            {
+                typeName = $"{{|#{diagnosticKey}:{typeName}|}}";
+            }
+
+            return typeKind switch
+            {
+                "delegate" => $"public delegate void {typeName}();",
+                _ => $"public {typeKind} {typeName} {{ }}",
+            };
+        }
+
+        protected static string GetGenericTypeDeclaration(string typeKind, string typeName, string[] parameters, int? diagnosticKey = null)
+        {
+            if (diagnosticKey is not null)
+            {
+                typeName = $"{{|#{diagnosticKey}:{typeName}|}}";
+            }
+
+            return typeKind switch
+            {
+                "delegate" => $"public delegate void {typeName}<{string.Join(", ", parameters)}>();",
+                _ => $"public {typeKind} {typeName}<{string.Join(", ", parameters)}> {{ }}",
+            };
+        }
+
+        protected static Task VerifyCSharpDiagnosticAsync(string fileName, string source, string testSettings, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        {
+            var test = new StyleCopCodeFixVerifier<SA1649FileNameMustMatchTypeName, SA1649CodeFixProvider>.CSharpTest()
             {
                 TestSources = { (fileName, source) },
             };
+
+            if (testSettings != null)
+            {
+                test.Settings = testSettings;
+            }
 
             test.ExpectedDiagnostics.AddRange(expected);
             return test.RunAsync(cancellationToken);
         }
 
-        internal static Task VerifyCSharpFixAsync(string oldFileName, string source, string testSettings, DiagnosticResult expected, string newFileName, string fixedSource, CancellationToken cancellationToken)
+        protected static Task VerifyCSharpFixAsync(string oldFileName, string source, string testSettings, DiagnosticResult expected, string newFileName, string fixedSource, CancellationToken cancellationToken)
             => VerifyCSharpFixAsync(oldFileName, source, testSettings, new[] { expected }, newFileName, fixedSource, cancellationToken);
 
-        internal static Task VerifyCSharpFixAsync(string oldFileName, string source, string testSettings, DiagnosticResult[] expected, string newFileName, string fixedSource, CancellationToken cancellationToken)
+        protected static Task VerifyCSharpFixAsync(string oldFileName, string source, string testSettings, DiagnosticResult[] expected, string newFileName, string fixedSource, CancellationToken cancellationToken)
         {
-            var test = new StyleCopCodeFixVerifier<SA1649FileNameMustMatchTypeName, SA1649CodeFixProvider>.CSharpTest
+            var test = new StyleCopCodeFixVerifier<SA1649FileNameMustMatchTypeName, SA1649CodeFixProvider>.CSharpTest()
             {
                 TestSources = { (oldFileName, source) },
                 FixedSources = { (newFileName, fixedSource) },

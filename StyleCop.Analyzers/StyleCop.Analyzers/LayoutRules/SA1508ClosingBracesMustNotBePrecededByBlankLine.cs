@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.LayoutRules
 {
     using System;
@@ -123,6 +125,11 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static void AnalyzeCloseBrace(SyntaxNodeAnalysisContext context, SyntaxToken closeBraceToken)
         {
+            if (closeBraceToken.IsKind(SyntaxKind.None))
+            {
+                return;
+            }
+
             var previousToken = closeBraceToken.GetPreviousToken();
             if ((closeBraceToken.GetLineSpan().StartLinePosition.Line - previousToken.GetLineSpan().EndLinePosition.Line) < 2)
             {

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
@@ -102,7 +104,9 @@ namespace StyleCop.Analyzers.SpacingRules
                     || nextToken.IsKind(SyntaxKind.DotToken)
                     || (nextToken.IsKind(SyntaxKind.QuestionToken) && nextToken.GetNextToken(includeZeroWidth: true).IsKind(SyntaxKind.DotToken))
                     || nextToken.IsKind(SyntaxKind.CloseBracketToken)
-                    || (nextToken.IsKind(SyntaxKind.ColonToken) && nextToken.Parent.IsKind(SyntaxKindEx.CasePatternSwitchLabel));
+                    || (nextToken.IsKind(SyntaxKind.ColonToken) && nextToken.Parent.IsKind(SyntaxKindEx.CasePatternSwitchLabel))
+                    || (nextToken.IsKind(SyntaxKind.ExclamationToken) && nextToken.Parent.IsKind(SyntaxKindEx.SuppressNullableWarningExpression))
+                    || (nextToken.IsKind(SyntaxKind.CloseBraceToken) && nextToken.Parent.IsKind(SyntaxKind.Interpolation));
             }
             else
             {

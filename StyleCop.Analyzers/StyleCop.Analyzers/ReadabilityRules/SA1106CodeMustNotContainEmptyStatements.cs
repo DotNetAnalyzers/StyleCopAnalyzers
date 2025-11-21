@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
@@ -56,7 +58,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var declaration = (BaseTypeDeclarationSyntax)context.Node;
 
-            if (declaration.SemicolonToken.IsKind(SyntaxKind.SemicolonToken))
+            if (declaration.SemicolonToken.IsKind(SyntaxKind.SemicolonToken)
+                && !declaration.OpenBraceToken.IsKind(SyntaxKind.None))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.SemicolonToken.GetLocation()));
             }

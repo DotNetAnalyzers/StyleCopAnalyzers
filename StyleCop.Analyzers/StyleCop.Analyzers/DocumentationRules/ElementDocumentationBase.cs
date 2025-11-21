@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
@@ -31,6 +33,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> baseTypeDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> fieldDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> propertyDeclarationAction;
+        private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> enumMemberDeclarationAction;
 
         protected ElementDocumentationBase(bool inheritDocSuppressesWarnings, string matchElementName = null)
         {
@@ -46,6 +49,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             this.baseTypeDeclarationAction = this.HandleBaseTypeDeclaration;
             this.fieldDeclarationAction = this.HandleFieldDeclaration;
             this.propertyDeclarationAction = this.HandlePropertyDeclaration;
+            this.enumMemberDeclarationAction = this.HandleEnumMemberDeclaration;
         }
 
         /// <inheritdoc/>
@@ -54,15 +58,19 @@ namespace StyleCop.Analyzers.DocumentationRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxNodeAction(this.methodDeclarationAction, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeAction(this.constructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
-            context.RegisterSyntaxNodeAction(this.delegateDeclarationAction, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeAction(this.indexerDeclarationAction, SyntaxKind.IndexerDeclaration);
-            context.RegisterSyntaxNodeAction(this.operatorDeclarationAction, SyntaxKind.OperatorDeclaration);
-            context.RegisterSyntaxNodeAction(this.conversionOperatorDeclarationAction, SyntaxKind.ConversionOperatorDeclaration);
-            context.RegisterSyntaxNodeAction(this.baseTypeDeclarationAction, SyntaxKinds.BaseTypeDeclaration);
-            context.RegisterSyntaxNodeAction(this.fieldDeclarationAction, SyntaxKind.FieldDeclaration);
-            context.RegisterSyntaxNodeAction(this.propertyDeclarationAction, SyntaxKind.PropertyDeclaration);
+            context.RegisterCompilationStartAction(context =>
+            {
+                context.RegisterSyntaxNodeAction(this.methodDeclarationAction, SyntaxKind.MethodDeclaration);
+                context.RegisterSyntaxNodeAction(this.constructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
+                context.RegisterSyntaxNodeAction(this.delegateDeclarationAction, SyntaxKind.DelegateDeclaration);
+                context.RegisterSyntaxNodeAction(this.indexerDeclarationAction, SyntaxKind.IndexerDeclaration);
+                context.RegisterSyntaxNodeAction(this.operatorDeclarationAction, SyntaxKind.OperatorDeclaration);
+                context.RegisterSyntaxNodeAction(this.conversionOperatorDeclarationAction, SyntaxKind.ConversionOperatorDeclaration);
+                context.RegisterSyntaxNodeAction(this.baseTypeDeclarationAction, SyntaxKinds.BaseTypeDeclaration);
+                context.RegisterSyntaxNodeAction(this.fieldDeclarationAction, SyntaxKind.FieldDeclaration);
+                context.RegisterSyntaxNodeAction(this.propertyDeclarationAction, SyntaxKind.PropertyDeclaration);
+                context.RegisterSyntaxNodeAction(this.enumMemberDeclarationAction, SyntaxKind.EnumMemberDeclaration);
+            });
         }
 
         /// <summary>
@@ -81,6 +89,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// Analyzes the XML elements of a documentation comment.
         /// </summary>
         /// <param name="context">The current analysis context.</param>
+        /// <param name="settings">The StyleCop settings to use.</param>
         /// <param name="needsComment"><see langword="true"/> if the current documentation settings indicate that the
         /// element should be documented; otherwise, <see langword="false"/>.</param>
         /// <param name="completeDocumentation">The complete documentation for the declared symbol, with any
@@ -88,7 +97,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// element, this value will be <see langword="null"/>, even if the XML documentation comment also included an
         /// <c>&lt;include&gt;</c> element.</param>
         /// <param name="diagnosticLocations">The location(s) where diagnostics, if any, should be reported.</param>
-        protected abstract void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, bool needsComment, XElement completeDocumentation, params Location[] diagnosticLocations);
+        protected abstract void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, XElement completeDocumentation, params Location[] diagnosticLocations);
 
         private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
@@ -200,6 +209,16 @@ namespace StyleCop.Analyzers.DocumentationRules
             this.HandleDeclaration(context, settings, needsComment, node, node.Identifier.GetLocation());
         }
 
+        private void HandleEnumMemberDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        {
+            var node = (EnumMemberDeclarationSyntax)context.Node;
+
+            Accessibility declaredAccessibility = node.GetDeclaredAccessibility();
+            Accessibility effectiveAccessibility = node.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+            bool needsComment = SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, node.Kind(), node.Parent.Kind(), declaredAccessibility, effectiveAccessibility);
+            this.HandleDeclaration(context, settings, needsComment, node, node.Identifier.GetLocation());
+        }
+
         private void HandleDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, SyntaxNode node, params Location[] locations)
         {
             var documentation = node.GetDocumentationCommentTriviaSyntax();
@@ -216,20 +235,22 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            IEnumerable<XmlNodeSyntax> matchingXmlElements = string.IsNullOrEmpty(this.matchElementName)
-                ? documentation.Content
-                    .Where(x => x is XmlElementSyntax || x is XmlEmptyElementSyntax)
-                    .Where(x => !string.Equals(x.GetName()?.ToString(), XmlCommentHelper.IncludeXmlTag, StringComparison.Ordinal))
-                : documentation.Content.GetXmlElements(this.matchElementName);
+            var hasIncludedDocumentation =
+                documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag) != null;
 
-            if (!matchingXmlElements.Any())
+            if (hasIncludedDocumentation)
             {
-                var includedDocumentation = documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag);
-                if (includedDocumentation != null)
+                var declaration = node switch
                 {
-                    var declaration = context.SemanticModel.GetDeclaredSymbol(node, context.CancellationToken);
-                    var rawDocumentation = declaration?.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
-                    var completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
+                    BaseFieldDeclarationSyntax baseFieldDeclaration => baseFieldDeclaration.Declaration.Variables.FirstOrDefault() ?? node,
+                    _ => node,
+                };
+
+                var declaredSymbol = context.SemanticModel.GetDeclaredSymbol(declaration, context.CancellationToken);
+                if (declaredSymbol is not null)
+                {
+                    var rawDocumentation = declaredSymbol?.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
+                    var completeDocumentation = XElement.Parse(rawDocumentation ?? "<doc></doc>", LoadOptions.None);
 
                     if (this.inheritDocSuppressesWarnings &&
                         completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.InheritdocXmlTag))
@@ -238,10 +259,16 @@ namespace StyleCop.Analyzers.DocumentationRules
                         return;
                     }
 
-                    this.HandleCompleteDocumentation(context, needsComment, completeDocumentation, locations);
-                    return; // done
+                    this.HandleCompleteDocumentation(context, settings, needsComment, completeDocumentation, locations);
+                    return;
                 }
             }
+
+            IEnumerable<XmlNodeSyntax> matchingXmlElements = string.IsNullOrEmpty(this.matchElementName)
+                ? documentation.Content
+                    .Where(x => x is XmlElementSyntax || x is XmlEmptyElementSyntax)
+                    .Where(x => !string.Equals(x.GetName()?.ToString(), XmlCommentHelper.IncludeXmlTag, StringComparison.Ordinal))
+                : documentation.Content.GetXmlElements(this.matchElementName);
 
             this.HandleXmlElement(context, settings, needsComment, matchingXmlElements, locations);
         }

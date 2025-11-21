@@ -3,8 +3,10 @@
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
     using Xunit;
@@ -20,7 +22,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     public class SA1141UnitTests
     {
         /// <summary>
-        /// Verifies that usage of the ValueTuple type will not produce a diagnostic.
+        /// Verifies that usage of <see cref="ValueTuple{T1, T2}"/> will not produce a diagnostic when the language
+        /// version is restricted to C# 6.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [Fact]
@@ -39,7 +42,7 @@ public class TestClass
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp6, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         //// TODO: Make sure that all paths are covered!

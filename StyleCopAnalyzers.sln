@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26711.1
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.31907.60
+MinimumVisualStudioVersion = 17.0.31903.59
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers", "StyleCop.Analyzers\StyleCop.Analyzers\StyleCop.Analyzers.csproj", "{3B052737-06CE-4182-AE0F-08EB82DFA73E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E359E48C-93DA-4C17-AA0E-94D4831BE5AB}"
@@ -11,8 +11,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E359E4
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.Test", "StyleCop.Analyzers\StyleCop.Analyzers.Test\StyleCop.Analyzers.Test.csproj", "{3EB54B68-A7AA-45E8-A97B-A0746712140B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.Vsix", "StyleCop.Analyzers\StyleCop.Analyzers.Vsix\StyleCop.Analyzers.Vsix.csproj", "{06BEBB30-AC91-4470-8930-22F7722A25E4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5F9532E9-B126-402A-B338-54431A4882B2}"
 	ProjectSection(SolutionItems) = preProject
@@ -27,10 +25,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{A0840AD0-B615-487C-AEFF-9DCB691D037B}"
 	ProjectSection(SolutionItems) = preProject
+		build\build-and-test.yml = build\build-and-test.yml
 		build\build.ps1 = build\build.ps1
 		StyleCop.Analyzers\Directory.Build.props = StyleCop.Analyzers\Directory.Build.props
 		StyleCop.Analyzers\Directory.Build.targets = StyleCop.Analyzers\Directory.Build.targets
 		build\opencover-report.ps1 = build\opencover-report.ps1
+		build\test.yml = build\test.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documentation", "documentation", "{19DD9E9D-877A-4492-9B7F-2E681DD58308}"
@@ -262,6 +262,22 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.Status.G
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.Test.CSharp8", "StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp8\StyleCop.Analyzers.Test.CSharp8.csproj", "{0F8D1A26-ACC2-42BA-9CEC-FFADBD6FB1E7}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.Test.CSharp9", "StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp9\StyleCop.Analyzers.Test.CSharp9.csproj", "{AE37F270-3E2E-429E-A758-09FEBF11D57C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.CodeGeneration", "StyleCop.Analyzers\StyleCop.Analyzers.CodeGeneration\StyleCop.Analyzers.CodeGeneration.csproj", "{3A5631C1-A338-412F-9F5B-ED55DE48853F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.Test.CSharp10", "StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp10\StyleCop.Analyzers.Test.CSharp10.csproj", "{1A654DFB-8C99-4604-A1C3-A0057D60380B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.Test.CSharp11", "StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp11\StyleCop.Analyzers.Test.CSharp11.csproj", "{F7D63A25-EBBC-40B5-AF7E-C49213AD33CE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.PrivateAnalyzers", "StyleCop.Analyzers\StyleCop.Analyzers.PrivateAnalyzers\StyleCop.Analyzers.PrivateAnalyzers.csproj", "{465F3586-165A-4454-8276-32FC93B509AA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.PrivateCodeFixes", "StyleCop.Analyzers\StyleCop.Analyzers.PrivateCodeFixes\StyleCop.Analyzers.PrivateCodeFixes.csproj", "{BEA9E1FE-E297-4EBD-BA00-B778DC99F37D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.Test.CSharp12", "StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp12\StyleCop.Analyzers.Test.CSharp12.csproj", "{A900C5D5-D324-4145-B795-A347A50919C7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.Test.CSharp13", "StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp13\StyleCop.Analyzers.Test.CSharp13.csproj", "{B5C55311-BC8D-43D7-A56F-17B4E2FE8D55}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -276,10 +292,6 @@ Global
 		{3EB54B68-A7AA-45E8-A97B-A0746712140B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3EB54B68-A7AA-45E8-A97B-A0746712140B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3EB54B68-A7AA-45E8-A97B-A0746712140B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{06BEBB30-AC91-4470-8930-22F7722A25E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{06BEBB30-AC91-4470-8930-22F7722A25E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{06BEBB30-AC91-4470-8930-22F7722A25E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{06BEBB30-AC91-4470-8930-22F7722A25E4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C4B7092C-E1A9-4CF7-AE4C-D6A146392BA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C4B7092C-E1A9-4CF7-AE4C-D6A146392BA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4B7092C-E1A9-4CF7-AE4C-D6A146392BA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -300,6 +312,38 @@ Global
 		{0F8D1A26-ACC2-42BA-9CEC-FFADBD6FB1E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F8D1A26-ACC2-42BA-9CEC-FFADBD6FB1E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F8D1A26-ACC2-42BA-9CEC-FFADBD6FB1E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE37F270-3E2E-429E-A758-09FEBF11D57C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE37F270-3E2E-429E-A758-09FEBF11D57C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE37F270-3E2E-429E-A758-09FEBF11D57C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE37F270-3E2E-429E-A758-09FEBF11D57C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A5631C1-A338-412F-9F5B-ED55DE48853F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A5631C1-A338-412F-9F5B-ED55DE48853F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A5631C1-A338-412F-9F5B-ED55DE48853F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A5631C1-A338-412F-9F5B-ED55DE48853F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A654DFB-8C99-4604-A1C3-A0057D60380B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A654DFB-8C99-4604-A1C3-A0057D60380B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A654DFB-8C99-4604-A1C3-A0057D60380B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A654DFB-8C99-4604-A1C3-A0057D60380B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7D63A25-EBBC-40B5-AF7E-C49213AD33CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7D63A25-EBBC-40B5-AF7E-C49213AD33CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7D63A25-EBBC-40B5-AF7E-C49213AD33CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7D63A25-EBBC-40B5-AF7E-C49213AD33CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{465F3586-165A-4454-8276-32FC93B509AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{465F3586-165A-4454-8276-32FC93B509AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{465F3586-165A-4454-8276-32FC93B509AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{465F3586-165A-4454-8276-32FC93B509AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEA9E1FE-E297-4EBD-BA00-B778DC99F37D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEA9E1FE-E297-4EBD-BA00-B778DC99F37D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEA9E1FE-E297-4EBD-BA00-B778DC99F37D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEA9E1FE-E297-4EBD-BA00-B778DC99F37D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A900C5D5-D324-4145-B795-A347A50919C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A900C5D5-D324-4145-B795-A347A50919C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A900C5D5-D324-4145-B795-A347A50919C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A900C5D5-D324-4145-B795-A347A50919C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5C55311-BC8D-43D7-A56F-17B4E2FE8D55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5C55311-BC8D-43D7-A56F-17B4E2FE8D55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5C55311-BC8D-43D7-A56F-17B4E2FE8D55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5C55311-BC8D-43D7-A56F-17B4E2FE8D55}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

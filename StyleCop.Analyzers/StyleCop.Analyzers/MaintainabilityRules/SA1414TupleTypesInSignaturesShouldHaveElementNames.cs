@@ -1,12 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System;
-    using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Text;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -62,6 +63,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             }
 
             var methodDeclaration = (MethodDeclarationSyntax)context.Node;
+            if (methodDeclaration.Modifiers.Any(SyntaxKind.OverrideKeyword))
+            {
+                return;
+            }
 
             CheckType(context, methodDeclaration.ReturnType);
             CheckParameterList(context, methodDeclaration.ParameterList);
@@ -161,7 +166,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             {
                 CheckType(context, tupleElementSyntax.Type);
 
-                if (tupleElementSyntax.Identifier.IsKind(SyntaxKind.None))
+                if (tupleElementSyntax.Identifier.IsKind(SyntaxKind.None) && !NamedTypeHelpers.IsImplementingAnInterfaceMember(context.SemanticModel.GetDeclaredSymbol(context.Node)))
                 {
                     var location = tupleElementSyntax.SyntaxNode.GetLocation();
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
@@ -119,6 +121,26 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 diagnosticLocation = summaryElement.GetLocation();
                 diagnosticProperties = ImmutableDictionary.Create<string, string>();
+
+                // Handle empty or whitespace-only summary content
+                var firstElementWithContent = XmlCommentHelper.TryGetFirstTextElementWithContent(summaryElement);
+                if (firstElementWithContent == null)
+                {
+                    // Report the diagnostic for empty or whitespace-only summaries
+                    if (diagnosticDescriptor != null)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(diagnosticDescriptor, diagnosticLocation, diagnosticProperties));
+                    }
+
+                    return MatchResult.None;
+                }
+
+                // Check if the summary content starts with a <para> tag
+                if (firstElementWithContent != null && firstElementWithContent.Parent is XmlElementSyntax firstElement && firstElement.StartTag.Name.ToString() == "para")
+                {
+                    // We found a correct standard text
+                    return MatchResult.FoundMatch;
+                }
 
                 // Check if the summary content could be a correct standard text
                 if (summaryElement.Content.Count >= 3)

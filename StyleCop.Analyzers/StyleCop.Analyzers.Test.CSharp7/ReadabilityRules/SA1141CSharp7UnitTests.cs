@@ -1,12 +1,15 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
+    using StyleCop.Analyzers.Test.ReadabilityRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1141UseTupleSyntax,
@@ -17,7 +20,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
     /// </summary>
     /// <seealso cref="SA1141UseTupleSyntax"/>
     /// <seealso cref="SA1141CodeFixProvider"/>
-    public class SA1141CSharp7UnitTests
+    public partial class SA1141CSharp7UnitTests : SA1141UnitTests
     {
         /// <summary>
         /// Verifies that member declarations containing ValueTuple will result in the proper diagnostics and fixes.
@@ -180,6 +183,49 @@ public class TestClass
             };
 
             await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Validates that the usage of <see cref="System.ValueTuple"/> within LINQ expression trees will produce no
+        /// diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3305, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3305")]
+        public async Task ValidateValueTupleUsageInExpressionTreeAsync()
+        {
+            var testCode = @"using System;
+using System.Linq.Expressions;
+
+public class TestClass
+{
+    Expression<Func<(int, int)>> expression1 = () => ValueTuple.Create(10, 20);
+    Expression<Func<(int, int)>> expression2 = () => new ValueTuple<int, int>(10, 20);
+    Expression<Func<((int, int), int)>> expression3 = () => new ValueTuple<ValueTuple<int, int>, int>(ValueTuple.Create(10, 10), 20);
+    Expression<Func<(int, int)>> expression4 = () => new System.ValueTuple<int, int>(10, 20);
+    Expression<Func<(int, int), (int, int)>> expression5 = arg => new System.ValueTuple<int, int>(arg.Item1, arg.Item2);
+    Expression<Func<(int, int), (int, int)>> expression6 = (arg) => new System.ValueTuple<int, int>(arg.Item1, arg.Item2);
+
+    Expression<Func<[|ValueTuple<int, int>|], [|ValueTuple<int, int>|]>> expression7 = ([|ValueTuple<int, int>|] arg) => ValueTuple.Create(arg.Item1, arg.Item2);
+}
+";
+            var fixedCode = @"using System;
+using System.Linq.Expressions;
+
+public class TestClass
+{
+    Expression<Func<(int, int)>> expression1 = () => ValueTuple.Create(10, 20);
+    Expression<Func<(int, int)>> expression2 = () => new ValueTuple<int, int>(10, 20);
+    Expression<Func<((int, int), int)>> expression3 = () => new ValueTuple<ValueTuple<int, int>, int>(ValueTuple.Create(10, 10), 20);
+    Expression<Func<(int, int)>> expression4 = () => new System.ValueTuple<int, int>(10, 20);
+    Expression<Func<(int, int), (int, int)>> expression5 = arg => new System.ValueTuple<int, int>(arg.Item1, arg.Item2);
+    Expression<Func<(int, int), (int, int)>> expression6 = (arg) => new System.ValueTuple<int, int>(arg.Item1, arg.Item2);
+
+    Expression<Func<(int, int), (int, int)>> expression7 = ((int, int) arg) => ValueTuple.Create(arg.Item1, arg.Item2);
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>

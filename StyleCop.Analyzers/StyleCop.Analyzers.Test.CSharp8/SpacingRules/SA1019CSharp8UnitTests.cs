@@ -1,19 +1,21 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp7.SpacingRules;
     using Xunit;
+    using static StyleCop.Analyzers.SpacingRules.SA1019MemberAccessSymbolsMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1019MemberAccessSymbolsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1019CSharp8UnitTests : SA1019CSharp7UnitTests
+    public partial class SA1019CSharp8UnitTests : SA1019CSharp7UnitTests
     {
         [Fact]
         [WorkItem(3052, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3052")]
@@ -55,13 +57,13 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithArguments(".", "preceded").WithLocation(8, 39),
-                Diagnostic().WithArguments(".", "preceded").WithLocation(9, 40),
-                Diagnostic().WithArguments("?", "preceded").WithLocation(11, 39),
-                Diagnostic().WithArguments("?", "preceded").WithLocation(12, 40),
+                Diagnostic(DescriptorNotPreceded).WithArguments(".").WithLocation(8, 39),
+                Diagnostic(DescriptorNotPreceded).WithArguments(".").WithLocation(9, 40),
+                Diagnostic(DescriptorNotPreceded).WithArguments("?").WithLocation(11, 39),
+                Diagnostic(DescriptorNotPreceded).WithArguments("?").WithLocation(12, 40),
             };
 
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp8, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

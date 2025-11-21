@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
@@ -26,6 +28,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1142MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1142Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
 
+        private static readonly Action<OperationAnalysisContext> FieldReferenceOperationAction = HandleFieldReferenceOperation;
         private static readonly Action<SyntaxNodeAnalysisContext> SimpleMemberAccessExpressionAction = HandleSimpleMemberAccessExpression;
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -39,7 +42,32 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxNodeAction(SimpleMemberAccessExpressionAction, SyntaxKind.SimpleMemberAccessExpression);
+            if (LightupHelpers.SupportsIOperation)
+            {
+                context.RegisterOperationAction(FieldReferenceOperationAction, OperationKindEx.FieldReference);
+            }
+            else
+            {
+                context.RegisterSyntaxNodeAction(SimpleMemberAccessExpressionAction, SyntaxKind.SimpleMemberAccessExpression);
+            }
+        }
+
+        private static void HandleFieldReferenceOperation(OperationAnalysisContext context)
+        {
+            if (!context.SupportsTuples())
+            {
+                return;
+            }
+
+            var fieldReference = IFieldReferenceOperationWrapper.FromOperation(context.Operation);
+
+            if (CheckFieldName(fieldReference.Field))
+            {
+                var location = fieldReference.WrappedOperation.Syntax is MemberAccessExpressionSyntax memberAccessExpression
+                    ? memberAccessExpression.Name.GetLocation()
+                    : fieldReference.WrappedOperation.Syntax.GetLocation();
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+            }
         }
 
         private static void HandleSimpleMemberAccessExpression(SyntaxNodeAnalysisContext context)
@@ -70,13 +98,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             // check if this already is a proper tuple field name
-            if (fieldSymbol.CorrespondingTupleField() != fieldSymbol)
+            if (!Equals(fieldSymbol.CorrespondingTupleField(), fieldSymbol))
             {
                 return false;
             }
 
             // check if there is a tuple field name declared.
-            return fieldSymbol.ContainingType.GetMembers().OfType<IFieldSymbol>().Count(fs => fs.CorrespondingTupleField() == fieldSymbol) > 1;
+            return fieldSymbol.ContainingType.GetMembers().OfType<IFieldSymbol>().Count(fs => Equals(fs.CorrespondingTupleField(), fieldSymbol)) > 1;
         }
     }
 }

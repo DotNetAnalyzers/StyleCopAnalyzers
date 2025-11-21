@@ -1,19 +1,21 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.SpacingRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.SpacingRules.SA1009ClosingParenthesisMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1009ClosingParenthesisMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1009CSharp7UnitTests : SA1009UnitTests
+    public partial class SA1009CSharp7UnitTests : SA1009UnitTests
     {
         /// <summary>
         /// Verifies spacing around a <c>]</c> character in tuple types and expressions.
@@ -47,10 +49,10 @@ public class Foo
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(5, 27).WithArguments(" not", "preceded"),
-                Diagnostic().WithLocation(5, 55).WithArguments(" not", "preceded"),
-                Diagnostic().WithLocation(7, 24).WithArguments(" not", "preceded"),
-                Diagnostic().WithLocation(7, 98).WithArguments(" not", "preceded"),
+                Diagnostic(DescriptorNotPreceded).WithLocation(5, 27),
+                Diagnostic(DescriptorNotPreceded).WithLocation(5, 55),
+                Diagnostic(DescriptorNotPreceded).WithLocation(7, 24),
+                Diagnostic(DescriptorNotPreceded).WithLocation(7, 98),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
@@ -84,7 +86,7 @@ public class Foo
     }
 }";
 
-            DiagnosticResult expected = Diagnostic().WithLocation(7, 47).WithArguments(" not", "preceded");
+            DiagnosticResult expected = Diagnostic(DescriptorNotPreceded).WithLocation(7, 47);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
@@ -117,7 +119,7 @@ public class Foo
     }
 }";
 
-            DiagnosticResult expected = Diagnostic().WithLocation(7, 34).WithArguments(" not", "preceded");
+            DiagnosticResult expected = Diagnostic(DescriptorNotPreceded).WithLocation(7, 34);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
@@ -164,16 +166,16 @@ public class Foo
             DiagnosticResult[] expectedDiagnostic =
             {
                 // test1
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(7, 36),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(7, 36),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(7, 38),
+                Diagnostic(DescriptorNotPreceded).WithLocation(7, 36),
+                Diagnostic(DescriptorNotFollowed).WithLocation(7, 36),
+                Diagnostic(DescriptorNotPreceded).WithLocation(7, 38),
 
                 // test2
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(8, 36),
+                Diagnostic(DescriptorNotPreceded).WithLocation(8, 36),
 
                 // test3
-                Diagnostic().WithArguments(" not", "followed").WithLocation(9, 35),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(9, 37),
+                Diagnostic(DescriptorNotFollowed).WithLocation(9, 35),
+                Diagnostic(DescriptorNotPreceded).WithLocation(9, 37),
             };
 
             await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
@@ -235,28 +237,28 @@ public class Foo
             DiagnosticResult[] expectedDiagnostic =
             {
                 // TestMethod1, TestMethod2, TestMethod3
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(5, 42),
-                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(5, 42),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(6, 42),
-                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 41),
+                Diagnostic(DescriptorNotPreceded).WithLocation(5, 42),
+                Diagnostic(DescriptorFollowed).WithLocation(5, 42),
+                Diagnostic(DescriptorNotPreceded).WithLocation(6, 42),
+                Diagnostic(DescriptorFollowed).WithLocation(7, 41),
 
                 // TestMethod4, TestMethod5, TestMethod6
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(9, 59),
-                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(9, 59),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(10, 59),
-                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(11, 58),
+                Diagnostic(DescriptorNotPreceded).WithLocation(9, 59),
+                Diagnostic(DescriptorFollowed).WithLocation(9, 59),
+                Diagnostic(DescriptorNotPreceded).WithLocation(10, 59),
+                Diagnostic(DescriptorFollowed).WithLocation(11, 58),
 
                 // TestMethod7, TestMethod8, TestMethod9
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(13, 44),
-                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(13, 44),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(14, 44),
-                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(15, 43),
+                Diagnostic(DescriptorNotPreceded).WithLocation(13, 44),
+                Diagnostic(DescriptorFollowed).WithLocation(13, 44),
+                Diagnostic(DescriptorNotPreceded).WithLocation(14, 44),
+                Diagnostic(DescriptorFollowed).WithLocation(15, 43),
 
                 // TestMethod10, TestMethod11, TestMethod12
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(17, 43),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(17, 43),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(18, 43),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(19, 42),
+                Diagnostic(DescriptorNotPreceded).WithLocation(17, 43),
+                Diagnostic(DescriptorNotFollowed).WithLocation(17, 43),
+                Diagnostic(DescriptorNotPreceded).WithLocation(18, 43),
+                Diagnostic(DescriptorNotFollowed).WithLocation(19, 42),
             };
 
             await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
@@ -350,96 +352,96 @@ public class Foo
             DiagnosticResult[] expectedDiagnostic =
             {
                 // TestMethod1, TestMethod2, TestMethod3
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(5, 26),
-                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(5, 26),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(5, 62),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(5, 62),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(5, 64),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(6, 26),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(6, 63),
-                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 25),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(7, 60),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(7, 62),
+                Diagnostic(DescriptorNotPreceded).WithLocation(5, 26),
+                Diagnostic(DescriptorFollowed).WithLocation(5, 26),
+                Diagnostic(DescriptorNotPreceded).WithLocation(5, 62),
+                Diagnostic(DescriptorNotFollowed).WithLocation(5, 62),
+                Diagnostic(DescriptorNotPreceded).WithLocation(5, 64),
+                Diagnostic(DescriptorNotPreceded).WithLocation(6, 26),
+                Diagnostic(DescriptorNotPreceded).WithLocation(6, 63),
+                Diagnostic(DescriptorFollowed).WithLocation(7, 25),
+                Diagnostic(DescriptorNotFollowed).WithLocation(7, 60),
+                Diagnostic(DescriptorNotPreceded).WithLocation(7, 62),
 
                 // TestMethod4, TestMethod5, TestMethod6
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(9, 27),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(9, 27),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(9, 72),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(9, 72),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(10, 27),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(10, 71),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(11, 26),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(11, 70),
+                Diagnostic(DescriptorNotPreceded).WithLocation(9, 27),
+                Diagnostic(DescriptorNotFollowed).WithLocation(9, 27),
+                Diagnostic(DescriptorNotPreceded).WithLocation(9, 72),
+                Diagnostic(DescriptorNotFollowed).WithLocation(9, 72),
+                Diagnostic(DescriptorNotPreceded).WithLocation(10, 27),
+                Diagnostic(DescriptorNotPreceded).WithLocation(10, 71),
+                Diagnostic(DescriptorNotFollowed).WithLocation(11, 26),
+                Diagnostic(DescriptorNotFollowed).WithLocation(11, 70),
 
                 // TestMethod7, TestMethod8, TestMethod9
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(13, 32),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(13, 32),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(13, 34),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(13, 77),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(13, 77),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(13, 79),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(14, 32),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(14, 76),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(15, 31),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(15, 33),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(15, 75),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(15, 77),
+                Diagnostic(DescriptorNotPreceded).WithLocation(13, 32),
+                Diagnostic(DescriptorNotFollowed).WithLocation(13, 32),
+                Diagnostic(DescriptorNotPreceded).WithLocation(13, 34),
+                Diagnostic(DescriptorNotPreceded).WithLocation(13, 77),
+                Diagnostic(DescriptorNotFollowed).WithLocation(13, 77),
+                Diagnostic(DescriptorNotPreceded).WithLocation(13, 79),
+                Diagnostic(DescriptorNotPreceded).WithLocation(14, 32),
+                Diagnostic(DescriptorNotPreceded).WithLocation(14, 76),
+                Diagnostic(DescriptorNotFollowed).WithLocation(15, 31),
+                Diagnostic(DescriptorNotPreceded).WithLocation(15, 33),
+                Diagnostic(DescriptorNotFollowed).WithLocation(15, 75),
+                Diagnostic(DescriptorNotPreceded).WithLocation(15, 77),
 
                 // TestMethod10, TestMethod11, TestMethod12
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(17, 30),
-                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(17, 30),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(17, 71),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(17, 71),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(17, 73),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(18, 30),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(18, 72),
-                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(19, 29),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(19, 69),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(19, 71),
+                Diagnostic(DescriptorNotPreceded).WithLocation(17, 30),
+                Diagnostic(DescriptorFollowed).WithLocation(17, 30),
+                Diagnostic(DescriptorNotPreceded).WithLocation(17, 71),
+                Diagnostic(DescriptorNotFollowed).WithLocation(17, 71),
+                Diagnostic(DescriptorNotPreceded).WithLocation(17, 73),
+                Diagnostic(DescriptorNotPreceded).WithLocation(18, 30),
+                Diagnostic(DescriptorNotPreceded).WithLocation(18, 72),
+                Diagnostic(DescriptorFollowed).WithLocation(19, 29),
+                Diagnostic(DescriptorNotFollowed).WithLocation(19, 69),
+                Diagnostic(DescriptorNotPreceded).WithLocation(19, 71),
 
                 // TestMethod13, TestMethod14, TestMethod15
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(21, 31),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(21, 31),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(21, 83),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(21, 83),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(22, 31),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(22, 82),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(23, 30),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(23, 81),
+                Diagnostic(DescriptorNotPreceded).WithLocation(21, 31),
+                Diagnostic(DescriptorNotFollowed).WithLocation(21, 31),
+                Diagnostic(DescriptorNotPreceded).WithLocation(21, 83),
+                Diagnostic(DescriptorNotFollowed).WithLocation(21, 83),
+                Diagnostic(DescriptorNotPreceded).WithLocation(22, 31),
+                Diagnostic(DescriptorNotPreceded).WithLocation(22, 82),
+                Diagnostic(DescriptorNotFollowed).WithLocation(23, 30),
+                Diagnostic(DescriptorNotFollowed).WithLocation(23, 81),
 
                 // TestMethod16, TestMethod17, TestMethod18
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(25, 38),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(25, 38),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(25, 40),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(25, 90),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(25, 90),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(25, 92),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(26, 38),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(26, 89),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(27, 37),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(27, 39),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(27, 88),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(27, 90),
+                Diagnostic(DescriptorNotPreceded).WithLocation(25, 38),
+                Diagnostic(DescriptorNotFollowed).WithLocation(25, 38),
+                Diagnostic(DescriptorNotPreceded).WithLocation(25, 40),
+                Diagnostic(DescriptorNotPreceded).WithLocation(25, 90),
+                Diagnostic(DescriptorNotFollowed).WithLocation(25, 90),
+                Diagnostic(DescriptorNotPreceded).WithLocation(25, 92),
+                Diagnostic(DescriptorNotPreceded).WithLocation(26, 38),
+                Diagnostic(DescriptorNotPreceded).WithLocation(26, 89),
+                Diagnostic(DescriptorNotFollowed).WithLocation(27, 37),
+                Diagnostic(DescriptorNotPreceded).WithLocation(27, 39),
+                Diagnostic(DescriptorNotFollowed).WithLocation(27, 88),
+                Diagnostic(DescriptorNotPreceded).WithLocation(27, 90),
 
                 // TestMethod19, TestMethod20, TestMethod21
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(29, 27),
-                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(29, 27),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(29, 75),
-                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(29, 75),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(30, 27),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(30, 76),
-                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(31, 26),
-                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(31, 73),
+                Diagnostic(DescriptorNotPreceded).WithLocation(29, 27),
+                Diagnostic(DescriptorFollowed).WithLocation(29, 27),
+                Diagnostic(DescriptorNotPreceded).WithLocation(29, 75),
+                Diagnostic(DescriptorFollowed).WithLocation(29, 75),
+                Diagnostic(DescriptorNotPreceded).WithLocation(30, 27),
+                Diagnostic(DescriptorNotPreceded).WithLocation(30, 76),
+                Diagnostic(DescriptorFollowed).WithLocation(31, 26),
+                Diagnostic(DescriptorFollowed).WithLocation(31, 73),
 
                 // TestMethod22, TestMethod23, TestMethod24
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(33, 34),
-                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(33, 34),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(33, 82),
-                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(33, 82),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(34, 34),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(34, 83),
-                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(35, 33),
-                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(35, 80),
+                Diagnostic(DescriptorNotPreceded).WithLocation(33, 34),
+                Diagnostic(DescriptorFollowed).WithLocation(33, 34),
+                Diagnostic(DescriptorNotPreceded).WithLocation(33, 82),
+                Diagnostic(DescriptorFollowed).WithLocation(33, 82),
+                Diagnostic(DescriptorNotPreceded).WithLocation(34, 34),
+                Diagnostic(DescriptorNotPreceded).WithLocation(34, 83),
+                Diagnostic(DescriptorFollowed).WithLocation(35, 33),
+                Diagnostic(DescriptorFollowed).WithLocation(35, 80),
             };
 
             await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
@@ -482,24 +484,24 @@ public class Foo
             DiagnosticResult[] expectedDiagnostic =
             {
                 // TestMethod1, TestMethod2, TestMethod3
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(5, 26),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(5, 26),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(5, 65),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(5, 65),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(6, 26),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(6, 64),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(7, 25),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(7, 63),
+                Diagnostic(DescriptorNotPreceded).WithLocation(5, 26),
+                Diagnostic(DescriptorNotFollowed).WithLocation(5, 26),
+                Diagnostic(DescriptorNotPreceded).WithLocation(5, 65),
+                Diagnostic(DescriptorNotFollowed).WithLocation(5, 65),
+                Diagnostic(DescriptorNotPreceded).WithLocation(6, 26),
+                Diagnostic(DescriptorNotPreceded).WithLocation(6, 64),
+                Diagnostic(DescriptorNotFollowed).WithLocation(7, 25),
+                Diagnostic(DescriptorNotFollowed).WithLocation(7, 63),
 
                 // TestMethod4, TestMethod5, TestMethod6
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(9, 26),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(9, 26),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(9, 66),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(9, 66),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(10, 26),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(10, 65),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(11, 25),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(11, 64),
+                Diagnostic(DescriptorNotPreceded).WithLocation(9, 26),
+                Diagnostic(DescriptorNotFollowed).WithLocation(9, 26),
+                Diagnostic(DescriptorNotPreceded).WithLocation(9, 66),
+                Diagnostic(DescriptorNotFollowed).WithLocation(9, 66),
+                Diagnostic(DescriptorNotPreceded).WithLocation(10, 26),
+                Diagnostic(DescriptorNotPreceded).WithLocation(10, 65),
+                Diagnostic(DescriptorNotFollowed).WithLocation(11, 25),
+                Diagnostic(DescriptorNotFollowed).WithLocation(11, 64),
             };
 
             await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
@@ -687,102 +689,102 @@ namespace TestNamespace
             DiagnosticResult[] expectedDiagnostics =
             {
                 // v1, v2, v3
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(12, 28),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(12, 28),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(13, 28),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(14, 27),
+                Diagnostic(DescriptorNotPreceded).WithLocation(12, 28),
+                Diagnostic(DescriptorNotFollowed).WithLocation(12, 28),
+                Diagnostic(DescriptorNotPreceded).WithLocation(13, 28),
+                Diagnostic(DescriptorNotFollowed).WithLocation(14, 27),
 
                 // v4, v5, v6
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(17, 29),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(17, 29),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(18, 29),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(19, 28),
+                Diagnostic(DescriptorNotPreceded).WithLocation(17, 29),
+                Diagnostic(DescriptorNotFollowed).WithLocation(17, 29),
+                Diagnostic(DescriptorNotPreceded).WithLocation(18, 29),
+                Diagnostic(DescriptorNotFollowed).WithLocation(19, 28),
 
                 // v7, v8, v9
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(22, 32),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(22, 32),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(22, 34),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(23, 32),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(24, 31),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(24, 33),
+                Diagnostic(DescriptorNotPreceded).WithLocation(22, 32),
+                Diagnostic(DescriptorNotFollowed).WithLocation(22, 32),
+                Diagnostic(DescriptorNotPreceded).WithLocation(22, 34),
+                Diagnostic(DescriptorNotPreceded).WithLocation(23, 32),
+                Diagnostic(DescriptorNotFollowed).WithLocation(24, 31),
+                Diagnostic(DescriptorNotPreceded).WithLocation(24, 33),
 
                 // v10, v11, v12
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(27, 32),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(27, 32),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(28, 32),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(29, 31),
+                Diagnostic(DescriptorNotPreceded).WithLocation(27, 32),
+                Diagnostic(DescriptorNotFollowed).WithLocation(27, 32),
+                Diagnostic(DescriptorNotPreceded).WithLocation(28, 32),
+                Diagnostic(DescriptorNotFollowed).WithLocation(29, 31),
 
                 // v13, v14, v15
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(32, 33),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(32, 33),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(33, 33),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(34, 32),
+                Diagnostic(DescriptorNotPreceded).WithLocation(32, 33),
+                Diagnostic(DescriptorNotFollowed).WithLocation(32, 33),
+                Diagnostic(DescriptorNotPreceded).WithLocation(33, 33),
+                Diagnostic(DescriptorNotFollowed).WithLocation(34, 32),
 
                 // v16, v17, v18
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(37, 36),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(37, 36),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(37, 38),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(38, 36),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(39, 35),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(39, 37),
+                Diagnostic(DescriptorNotPreceded).WithLocation(37, 36),
+                Diagnostic(DescriptorNotFollowed).WithLocation(37, 36),
+                Diagnostic(DescriptorNotPreceded).WithLocation(37, 38),
+                Diagnostic(DescriptorNotPreceded).WithLocation(38, 36),
+                Diagnostic(DescriptorNotFollowed).WithLocation(39, 35),
+                Diagnostic(DescriptorNotPreceded).WithLocation(39, 37),
 
                 // v19, v20, v21
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(42, 33),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(42, 33),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(43, 33),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(44, 32),
+                Diagnostic(DescriptorNotPreceded).WithLocation(42, 33),
+                Diagnostic(DescriptorNotFollowed).WithLocation(42, 33),
+                Diagnostic(DescriptorNotPreceded).WithLocation(43, 33),
+                Diagnostic(DescriptorNotFollowed).WithLocation(44, 32),
 
                 // v22, v23, v24
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(47, 36),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(47, 36),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(47, 38),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(48, 36),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(49, 35),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(49, 37),
+                Diagnostic(DescriptorNotPreceded).WithLocation(47, 36),
+                Diagnostic(DescriptorNotFollowed).WithLocation(47, 36),
+                Diagnostic(DescriptorNotPreceded).WithLocation(47, 38),
+                Diagnostic(DescriptorNotPreceded).WithLocation(48, 36),
+                Diagnostic(DescriptorNotFollowed).WithLocation(49, 35),
+                Diagnostic(DescriptorNotPreceded).WithLocation(49, 37),
 
                 // v25, v26, v27
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(52, 40),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(52, 40),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(53, 40),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(54, 39),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(55, 45),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(55, 45),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(56, 45),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(57, 44),
+                Diagnostic(DescriptorNotPreceded).WithLocation(52, 40),
+                Diagnostic(DescriptorNotFollowed).WithLocation(52, 40),
+                Diagnostic(DescriptorNotPreceded).WithLocation(53, 40),
+                Diagnostic(DescriptorNotFollowed).WithLocation(54, 39),
+                Diagnostic(DescriptorNotPreceded).WithLocation(55, 45),
+                Diagnostic(DescriptorNotFollowed).WithLocation(55, 45),
+                Diagnostic(DescriptorNotPreceded).WithLocation(56, 45),
+                Diagnostic(DescriptorNotFollowed).WithLocation(57, 44),
 
                 // First argument
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(60, 34),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(60, 34),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(61, 34),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(62, 33),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(63, 39),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(63, 39),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(64, 39),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(65, 38),
+                Diagnostic(DescriptorNotPreceded).WithLocation(60, 34),
+                Diagnostic(DescriptorNotFollowed).WithLocation(60, 34),
+                Diagnostic(DescriptorNotPreceded).WithLocation(61, 34),
+                Diagnostic(DescriptorNotFollowed).WithLocation(62, 33),
+                Diagnostic(DescriptorNotPreceded).WithLocation(63, 39),
+                Diagnostic(DescriptorNotFollowed).WithLocation(63, 39),
+                Diagnostic(DescriptorNotPreceded).WithLocation(64, 39),
+                Diagnostic(DescriptorNotFollowed).WithLocation(65, 38),
 
                 // Second argument
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(68, 42),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(68, 42),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(68, 44),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(69, 42),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(70, 41),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(70, 43),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(71, 54),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(71, 54),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(71, 56),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(72, 54),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(73, 53),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(73, 55),
+                Diagnostic(DescriptorNotPreceded).WithLocation(68, 42),
+                Diagnostic(DescriptorNotFollowed).WithLocation(68, 42),
+                Diagnostic(DescriptorNotPreceded).WithLocation(68, 44),
+                Diagnostic(DescriptorNotPreceded).WithLocation(69, 42),
+                Diagnostic(DescriptorNotFollowed).WithLocation(70, 41),
+                Diagnostic(DescriptorNotPreceded).WithLocation(70, 43),
+                Diagnostic(DescriptorNotPreceded).WithLocation(71, 54),
+                Diagnostic(DescriptorNotFollowed).WithLocation(71, 54),
+                Diagnostic(DescriptorNotPreceded).WithLocation(71, 56),
+                Diagnostic(DescriptorNotPreceded).WithLocation(72, 54),
+                Diagnostic(DescriptorNotFollowed).WithLocation(73, 53),
+                Diagnostic(DescriptorNotPreceded).WithLocation(73, 55),
 
                 // Returns
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(76, 56),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(76, 56),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(77, 56),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(78, 55),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(79, 50),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(79, 50),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(80, 50),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(81, 49),
+                Diagnostic(DescriptorNotPreceded).WithLocation(76, 56),
+                Diagnostic(DescriptorNotFollowed).WithLocation(76, 56),
+                Diagnostic(DescriptorNotPreceded).WithLocation(77, 56),
+                Diagnostic(DescriptorNotFollowed).WithLocation(78, 55),
+                Diagnostic(DescriptorNotPreceded).WithLocation(79, 50),
+                Diagnostic(DescriptorNotFollowed).WithLocation(79, 50),
+                Diagnostic(DescriptorNotPreceded).WithLocation(80, 50),
+                Diagnostic(DescriptorNotFollowed).WithLocation(81, 49),
             };
 
             await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode, CancellationToken.None).ConfigureAwait(false);
@@ -831,14 +833,14 @@ namespace TestNamespace
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(7, 31),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(7, 31),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(8, 31),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(9, 30),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(11, 43),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(11, 43),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(12, 43),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(13, 42),
+                Diagnostic(DescriptorNotPreceded).WithLocation(7, 31),
+                Diagnostic(DescriptorNotFollowed).WithLocation(7, 31),
+                Diagnostic(DescriptorNotPreceded).WithLocation(8, 31),
+                Diagnostic(DescriptorNotFollowed).WithLocation(9, 30),
+                Diagnostic(DescriptorNotPreceded).WithLocation(11, 43),
+                Diagnostic(DescriptorNotFollowed).WithLocation(11, 43),
+                Diagnostic(DescriptorNotPreceded).WithLocation(12, 43),
+                Diagnostic(DescriptorNotFollowed).WithLocation(13, 42),
             };
 
             await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode, CancellationToken.None).ConfigureAwait(false);
@@ -885,24 +887,24 @@ namespace TestNamespace
             DiagnosticResult[] expectedDiagnostics =
             {
                 // Function1, Function2, Function3
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(7, 31),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(7, 31),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(7, 46),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(7, 46),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(8, 31),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(8, 45),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(9, 30),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(9, 44),
+                Diagnostic(DescriptorNotPreceded).WithLocation(7, 31),
+                Diagnostic(DescriptorNotFollowed).WithLocation(7, 31),
+                Diagnostic(DescriptorNotPreceded).WithLocation(7, 46),
+                Diagnostic(DescriptorNotFollowed).WithLocation(7, 46),
+                Diagnostic(DescriptorNotPreceded).WithLocation(8, 31),
+                Diagnostic(DescriptorNotPreceded).WithLocation(8, 45),
+                Diagnostic(DescriptorNotFollowed).WithLocation(9, 30),
+                Diagnostic(DescriptorNotFollowed).WithLocation(9, 44),
 
                 // Function4, Function5, Function6
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(11, 31),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(11, 31),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(11, 47),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(11, 47),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(12, 31),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(12, 46),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(13, 30),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(13, 45),
+                Diagnostic(DescriptorNotPreceded).WithLocation(11, 31),
+                Diagnostic(DescriptorNotFollowed).WithLocation(11, 31),
+                Diagnostic(DescriptorNotPreceded).WithLocation(11, 47),
+                Diagnostic(DescriptorNotFollowed).WithLocation(11, 47),
+                Diagnostic(DescriptorNotPreceded).WithLocation(12, 31),
+                Diagnostic(DescriptorNotPreceded).WithLocation(12, 46),
+                Diagnostic(DescriptorNotFollowed).WithLocation(13, 30),
+                Diagnostic(DescriptorNotFollowed).WithLocation(13, 45),
             };
 
             await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode, CancellationToken.None).ConfigureAwait(false);
@@ -945,10 +947,10 @@ namespace TestNamespace
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(7, 25),
-                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 25),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(8, 25),
-                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(9, 24),
+                Diagnostic(DescriptorNotPreceded).WithLocation(7, 25),
+                Diagnostic(DescriptorFollowed).WithLocation(7, 25),
+                Diagnostic(DescriptorNotPreceded).WithLocation(8, 25),
+                Diagnostic(DescriptorFollowed).WithLocation(9, 24),
             };
 
             await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode, CancellationToken.None).ConfigureAwait(false);
@@ -997,10 +999,10 @@ namespace TestNamespace
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(10, 36),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(10, 36),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(11, 36),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(12, 35),
+                Diagnostic(DescriptorNotPreceded).WithLocation(10, 36),
+                Diagnostic(DescriptorNotFollowed).WithLocation(10, 36),
+                Diagnostic(DescriptorNotPreceded).WithLocation(11, 36),
+                Diagnostic(DescriptorNotFollowed).WithLocation(12, 35),
             };
 
             await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode, CancellationToken.None).ConfigureAwait(false);
@@ -1048,7 +1050,7 @@ namespace TestNamespace
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                Diagnostic().WithArguments(" not", "followed").WithLocation(6, 25),
+                Diagnostic(DescriptorNotFollowed).WithLocation(6, 25),
             };
 
             await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode, CancellationToken.None).ConfigureAwait(false);

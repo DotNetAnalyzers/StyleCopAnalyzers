@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
@@ -96,13 +98,23 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
 
             case SyntaxKind.SimpleAssignmentExpression:
-                if (((AssignmentExpressionSyntax)context.Node.Parent).Left == context.Node
-                    && (context.Node.Parent.Parent?.IsKind(SyntaxKind.ObjectInitializerExpression) ?? true))
+                if (((AssignmentExpressionSyntax)context.Node.Parent).Left == context.Node)
                 {
-                    /* Handle 'X' in:
-                     *   new TypeName() { X = 3 }
-                     */
-                    return;
+                    if (context.Node.Parent.Parent.IsKind(SyntaxKind.ObjectInitializerExpression))
+                    {
+                        /* Handle 'X' in:
+                         *   new TypeName() { X = 3 }
+                         */
+                        return;
+                    }
+
+                    if (context.Node.Parent.Parent.IsKind(SyntaxKindEx.WithInitializerExpression))
+                    {
+                        /* Handle 'X' in:
+                         *   value with { X = 3 }
+                         */
+                        return;
+                    }
                 }
 
                 break;
@@ -239,6 +251,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 case SyntaxKind.DelegateDeclaration:
                 case SyntaxKind.EnumDeclaration:
                 case SyntaxKind.NamespaceDeclaration:
+                case SyntaxKindEx.FileScopedNamespaceDeclaration:
                     return false;
 
                 case SyntaxKind.FieldDeclaration:
@@ -266,6 +279,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return !baseMethodSyntax.Modifiers.Any(SyntaxKind.StaticKeyword);
 
                 case SyntaxKind.Attribute:
+                    return false;
+
+                case SyntaxKindEx.RecursivePattern:
                     return false;
 
                 default:

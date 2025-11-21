@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
@@ -24,6 +26,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(SA1141UseTupleSyntax.DiagnosticId);
+
+        /// <inheritdoc/>
+        public override FixAllProvider GetFixAllProvider()
+        {
+            // Fix All is not yet supported
+            return null;
+        }
 
         /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -70,7 +79,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 break;
             }
 
-            var newSyntaxRoot = syntaxRoot.ReplaceNode(node, newNode).WithAdditionalAnnotations(Simplifier.Annotation);
+            var newSyntaxRoot = syntaxRoot.ReplaceNode(node, newNode.WithAdditionalAnnotations(Simplifier.Annotation));
             return document.WithSyntaxRoot(newSyntaxRoot.WithoutFormatting());
         }
 
@@ -97,7 +106,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static SyntaxNode TransformGenericNameToTuple(SemanticModel semanticModel, GenericNameSyntax genericName)
         {
-            var implementationType = typeof(SeparatedSyntaxListWrapper<>.AutoWrapSeparatedSyntaxList<>).MakeGenericType(typeof(TupleElementSyntaxWrapper), WrapperHelper.GetWrappedType(typeof(TupleElementSyntaxWrapper)));
+            var implementationType = typeof(SeparatedSyntaxListWrapper<>.AutoWrapSeparatedSyntaxList<>).MakeGenericType(typeof(TupleElementSyntaxWrapper), SyntaxWrapperHelper.GetWrappedType(typeof(TupleElementSyntaxWrapper)));
             var tupleElements = (SeparatedSyntaxListWrapper<TupleElementSyntaxWrapper>)Activator.CreateInstance(implementationType);
 
             foreach (var typeArgument in genericName.TypeArgumentList.Arguments)
@@ -125,7 +134,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 var argument = arguments[i];
 
                 var argumentTypeInfo = semanticModel.GetTypeInfo(argument.Expression);
-                if (argumentTypeInfo.Type != argumentTypeInfo.ConvertedType)
+                if (!Equals(argumentTypeInfo.Type, argumentTypeInfo.ConvertedType))
                 {
                     var expectedType = SyntaxFactory.ParseTypeName(argumentTypeInfo.ConvertedType.ToDisplayString());
                     argument = argument.WithExpression(SyntaxFactory.CastExpression(expectedType, argument.Expression));

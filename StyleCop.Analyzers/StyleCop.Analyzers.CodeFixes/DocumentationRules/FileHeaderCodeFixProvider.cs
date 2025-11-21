@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
@@ -66,6 +68,9 @@ namespace StyleCop.Analyzers.DocumentationRules
             return SpecializedTasks.CompletedTask;
         }
 
+        private static string GetFileName(Document document)
+            => Path.GetFileName(document.FilePath ?? document.Name);
+
         private static async Task<Document> GetTransformedDocumentAsync(Document document, CancellationToken cancellationToken)
         {
             return document.WithSyntaxRoot(await GetTransformedSyntaxRootAsync(document, cancellationToken).ConfigureAwait(false));
@@ -74,13 +79,13 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static async Task<SyntaxNode> GetTransformedSyntaxRootAsync(Document document, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var settings = document.Project.AnalyzerOptions.GetStyleCopSettings(cancellationToken);
+            var settings = document.Project.AnalyzerOptions.GetStyleCopSettingsInCodeFix(root.SyntaxTree, cancellationToken);
 
             var fileHeader = FileHeaderHelpers.ParseFileHeader(root);
             SyntaxNode newSyntaxRoot;
             if (fileHeader.IsMissing)
             {
-                newSyntaxRoot = AddHeader(document, root, document.Name, settings);
+                newSyntaxRoot = AddHeader(document, root, GetFileName(document), settings);
             }
             else
             {
@@ -144,9 +149,9 @@ namespace StyleCop.Analyzers.DocumentationRules
             // Pad line that used to be next to a /*
             triviaStringParts[0] = commentIndentation + interlinePadding + " " + triviaStringParts[0];
             StringBuilder sb = StringBuilderPool.Allocate();
-            string fileName = Path.GetFileName(document.FilePath);
+            string fileName = GetFileName(document);
             var copyrightText = GetCopyrightText(commentIndentation + interlinePadding, settings.DocumentationRules.GetCopyrightText(fileName), newLineText);
-            var newHeader = WrapInXmlComment(commentIndentation + interlinePadding, copyrightText, document.Name, settings, newLineText);
+            var newHeader = WrapInXmlComment(commentIndentation + interlinePadding, copyrightText, fileName, settings, newLineText);
 
             sb.Append(commentIndentation);
             sb.Append("/*");
@@ -310,7 +315,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             string newLineText = document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
             var newLineTrivia = SyntaxFactory.EndOfLine(newLineText);
 
-            var newHeaderTrivia = CreateNewHeader(leadingSpaces + "//", document.Name, settings, newLineText);
+            var newHeaderTrivia = CreateNewHeader(leadingSpaces + "//", GetFileName(document), settings, newLineText);
             if (!isMalformedHeader && copyrightTriviaIndex.HasValue)
             {
                 // Does the copyright element have leading whitespace? If so remove it.
@@ -444,12 +449,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 for (int i = 0; i < trivia.Count; i++)
                 {
                     var triviaLine = trivia[i];
-                    if (triviaLine.Kind() == SyntaxKind.SingleLineCommentTrivia && triviaLine.ToFullString().Contains(settings.DocumentationRules.HeaderDecoration))
+                    if (triviaLine.IsKind(SyntaxKind.SingleLineCommentTrivia) && triviaLine.ToFullString().Contains(settings.DocumentationRules.HeaderDecoration))
                     {
                         decorationRemovalList.Add(i);
 
                         // also remove the line break
-                        if (i + 1 < trivia.Count && trivia[i + 1].Kind() == SyntaxKind.EndOfLineTrivia)
+                        if (i + 1 < trivia.Count && trivia[i + 1].IsKind(SyntaxKind.EndOfLineTrivia))
                         {
                             decorationRemovalList.Add(i + 1);
                         }

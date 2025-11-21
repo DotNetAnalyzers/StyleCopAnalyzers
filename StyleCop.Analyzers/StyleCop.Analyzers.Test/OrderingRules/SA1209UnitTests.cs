@@ -1,12 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.OrderingRules.SA1209UsingAliasDirectivesMustBePlacedAfterOtherUsingDirectives,
@@ -136,7 +137,7 @@ namespace Test
     }
 }";
 
-            DiagnosticResult expected = Diagnostic().WithLocation("Test0.cs", 2, 1);
+            DiagnosticResult expected = Diagnostic().WithLocation("/0/Test0.cs", 2, 1);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
@@ -188,7 +189,7 @@ namespace Test
     }
 }";
 
-            DiagnosticResult expected = Diagnostic().WithLocation("Test0.cs", 4, 5);
+            DiagnosticResult expected = Diagnostic().WithLocation("/0/Test0.cs", 4, 5);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
@@ -222,7 +223,7 @@ namespace Test
     }
 }";
 
-            DiagnosticResult expected = Diagnostic().WithLocation("Test0.cs", 4, 5);
+            DiagnosticResult expected = Diagnostic().WithLocation("/0/Test0.cs", 4, 5);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }

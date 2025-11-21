@@ -1,13 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.NamingRules
 {
     using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
@@ -37,8 +37,8 @@ namespace StyleCop.Analyzers.NamingRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<SyntaxNodeAnalysisContext> TupleTypeAction = HandleTupleTypeAction;
-        private static readonly Action<SyntaxNodeAnalysisContext> TupleExpressionAction = HandleTupleExpressionAction;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> TupleTypeAction = HandleTupleTypeAction;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> TupleExpressionAction = HandleTupleExpressionAction;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -50,18 +50,20 @@ namespace StyleCop.Analyzers.NamingRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxNodeAction(TupleTypeAction, SyntaxKindEx.TupleType);
-            context.RegisterSyntaxNodeAction(TupleExpressionAction, SyntaxKindEx.TupleExpression);
+            context.RegisterCompilationStartAction(context =>
+            {
+                context.RegisterSyntaxNodeAction(TupleTypeAction, SyntaxKindEx.TupleType);
+                context.RegisterSyntaxNodeAction(TupleExpressionAction, SyntaxKindEx.TupleExpression);
+            });
         }
 
-        private static void HandleTupleTypeAction(SyntaxNodeAnalysisContext context)
+        private static void HandleTupleTypeAction(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             if (!context.SupportsTuples())
             {
                 return;
             }
 
-            var settings = context.Options.GetStyleCopSettings(context.CancellationToken);
             var tupleType = (TupleTypeSyntaxWrapper)context.Node;
 
             foreach (var tupleElement in tupleType.Elements)
@@ -70,14 +72,13 @@ namespace StyleCop.Analyzers.NamingRules
             }
         }
 
-        private static void HandleTupleExpressionAction(SyntaxNodeAnalysisContext context)
+        private static void HandleTupleExpressionAction(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             if (!context.SupportsInferredTupleElementNames())
             {
                 return;
             }
 
-            var settings = context.Options.GetStyleCopSettings(context.CancellationToken);
             if (!settings.NamingRules.IncludeInferredTupleElementNames)
             {
                 return;
@@ -86,7 +87,7 @@ namespace StyleCop.Analyzers.NamingRules
             var tupleExpression = (TupleExpressionSyntaxWrapper)context.Node;
             foreach (var argument in tupleExpression.Arguments)
             {
-                var inferredMemberName = SyntaxFactsEx.TryGetInferredMemberName(argument.Expression);
+                var inferredMemberName = SyntaxFactsEx.TryGetInferredMemberName(argument.NameColon?.Name ?? argument.Expression);
                 if (inferredMemberName != null)
                 {
                     CheckName(context, settings, inferredMemberName, argument.Expression.GetLocation(), false);
@@ -106,6 +107,11 @@ namespace StyleCop.Analyzers.NamingRules
 
         private static void CheckName(SyntaxNodeAnalysisContext context, StyleCopSettings settings, string tupleElementName, Location location, bool prepareCodeFix)
         {
+            if (tupleElementName == "_")
+            {
+                return;
+            }
+
             var firstCharacterIsLower = char.IsLower(tupleElementName[0]);
 
             bool reportDiagnostic;

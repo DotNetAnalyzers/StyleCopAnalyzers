@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.OrderingRules
 {
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using StyleCop.Analyzers.Lightup;
 
     internal static class ModifierOrderHelper
     {
@@ -14,22 +17,22 @@ namespace StyleCop.Analyzers.OrderingRules
         internal enum ModifierType
         {
             /// <summary>
-            /// Represents default value
+            /// Represents default value.
             /// </summary>
             None,
 
             /// <summary>
-            /// Represents any of access modifiers i.e public, protected, internal, private
+            /// Represents any of access modifiers, i.e <see langword="public"/>, <see langword="protected"/>, <see langword="internal"/>, <see langword="private"/>, <see langword="file"/>.
             /// </summary>
             Access,
 
             /// <summary>
-            /// Represents static modifier
+            /// Represents <see langword="static"/> modifier.
             /// </summary>
             Static,
 
             /// <summary>
-            /// Represents other modifiers i.e partial, virtual, abstract, override, extern, unsafe, new, async, const, sealed, readonly, volatile, fixed, ref
+            /// Represents other modifiers, i.e <see langword="partial"/>, <see langword="virtual"/>, <see langword="abstract"/>, <see langword="override"/>, <see langword="extern"/>, <see langword="unsafe"/>, <see langword="new"/>, <see langword="async"/>, <see langword="const"/>, <see langword="sealed"/>, <see langword="readonly"/>, <see langword="volatile"/>, <see langword="fixed"/>, <see langword="ref"/>.
             /// </summary>
             Other,
         }
@@ -44,6 +47,7 @@ namespace StyleCop.Analyzers.OrderingRules
             case SyntaxKind.ProtectedKeyword:
             case SyntaxKind.InternalKeyword:
             case SyntaxKind.PrivateKeyword:
+            case SyntaxKindEx.FileKeyword:
                 result = ModifierType.Access;
                 break;
 
@@ -65,6 +69,7 @@ namespace StyleCop.Analyzers.OrderingRules
             case SyntaxKind.AsyncKeyword:
             case SyntaxKind.PartialKeyword:
             case SyntaxKind.RefKeyword:
+            case SyntaxKindEx.RequiredKeyword:
                 result = ModifierType.Other;
                 break;
             }

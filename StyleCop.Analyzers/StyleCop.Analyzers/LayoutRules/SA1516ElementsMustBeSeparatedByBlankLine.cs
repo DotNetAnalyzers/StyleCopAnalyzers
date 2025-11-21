@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.LayoutRules
 {
     using System;
@@ -13,6 +15,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -85,6 +88,7 @@ namespace StyleCop.Analyzers.LayoutRules
         private static readonly Action<SyntaxNodeAnalysisContext> TypeDeclarationAction = HandleTypeDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CompilationUnitAction = HandleCompilationUnit;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> NamespaceDeclarationAction = HandleNamespaceDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> FileScopedNamespaceDeclarationAction = HandleFileScopedNamespaceDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> BasePropertyDeclarationAction = HandleBasePropertyDeclaration;
 
         private static readonly ImmutableDictionary<string, string> DiagnosticProperties = ImmutableDictionary<string, string>.Empty.Add(CodeFixActionKey, InsertBlankLineValue);
@@ -122,10 +126,14 @@ namespace StyleCop.Analyzers.LayoutRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
-            context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
-            context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
-            context.RegisterSyntaxNodeAction(BasePropertyDeclarationAction, SyntaxKinds.BasePropertyDeclaration);
+            context.RegisterCompilationStartAction(context =>
+            {
+                context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
+                context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
+                context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
+                context.RegisterSyntaxNodeAction(FileScopedNamespaceDeclarationAction, SyntaxKindEx.FileScopedNamespaceDeclaration);
+                context.RegisterSyntaxNodeAction(BasePropertyDeclarationAction, SyntaxKinds.BasePropertyDeclaration);
+            });
         }
 
         private static void HandleBasePropertyDeclaration(SyntaxNodeAnalysisContext context)
@@ -203,6 +211,42 @@ namespace StyleCop.Analyzers.LayoutRules
                 if (previousItem != null)
                 {
                     ReportIfThereIsNoBlankLine(context, previousItem, members[0]);
+                }
+            }
+        }
+
+        private static void HandleFileScopedNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        {
+            var namespaceDeclaration = (BaseNamespaceDeclarationSyntaxWrapper)context.Node;
+
+            var usings = namespaceDeclaration.Usings;
+            var members = namespaceDeclaration.Members;
+
+            HandleUsings(context, usings, settings);
+            HandleMemberList(context, members);
+
+            if (namespaceDeclaration.Externs.Count > 0)
+            {
+                ReportIfThereIsNoBlankLine(context, namespaceDeclaration.Name, namespaceDeclaration.Externs[0]);
+            }
+
+            if (namespaceDeclaration.Usings.Count > 0)
+            {
+                ReportIfThereIsNoBlankLine(context, namespaceDeclaration.Name, namespaceDeclaration.Usings[0]);
+
+                if (namespaceDeclaration.Externs.Count > 0)
+                {
+                    ReportIfThereIsNoBlankLine(context, namespaceDeclaration.Externs[namespaceDeclaration.Externs.Count - 1], namespaceDeclaration.Usings[0]);
+                }
+            }
+
+            if (members.Count > 0)
+            {
+                ReportIfThereIsNoBlankLine(context, namespaceDeclaration.Name, members[0]);
+
+                if (namespaceDeclaration.Usings.Count > 0)
+                {
+                    ReportIfThereIsNoBlankLine(context, usings[usings.Count - 1], members[0]);
                 }
             }
         }
@@ -293,6 +337,12 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             for (int i = 1; i < members.Count; i++)
             {
+                // Don't report between global statements
+                if (members[i - 1].IsKind(SyntaxKind.GlobalStatement) && members[i].IsKind(SyntaxKind.GlobalStatement))
+                {
+                    continue;
+                }
+
                 if (!members[i - 1].ContainsDiagnostics && !members[i].ContainsDiagnostics)
                 {
                     // Report if
@@ -366,10 +416,16 @@ namespace StyleCop.Analyzers.LayoutRules
                 return node.GetLeadingTrivia()[0].GetLocation();
             }
 
+            // Prefer the first token which is a direct child, but fall back to the first descendant token
             var firstToken = node.ChildTokens().FirstOrDefault();
+            if (firstToken.IsKind(SyntaxKind.None))
+            {
+                firstToken = node.GetFirstToken();
+            }
+
             if (firstToken != default)
             {
-                return node.ChildTokens().First().GetLocation();
+                return firstToken.GetLocation();
             }
 
             return Location.None;

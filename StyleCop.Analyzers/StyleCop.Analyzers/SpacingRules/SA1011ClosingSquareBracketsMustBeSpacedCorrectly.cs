@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
@@ -10,6 +12,7 @@ namespace StyleCop.Analyzers.SpacingRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A closing square bracket within a C# statement is not spaced correctly.
@@ -104,6 +107,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 case SyntaxKind.OpenBracketToken:
                 case SyntaxKind.CloseParenToken:
                 case SyntaxKind.MinusGreaterThanToken:
+                case SyntaxKindEx.DotDotToken:
                     precedesSpecialCharacter = true;
                     break;
 
@@ -111,6 +115,11 @@ namespace StyleCop.Analyzers.SpacingRules
                 case SyntaxKind.PlusPlusToken:
                 case SyntaxKind.MinusMinusToken:
                     precedesSpecialCharacter = true;
+                    suppressFollowingSpaceError = false;
+                    break;
+
+                case SyntaxKind.LessThanToken:
+                    precedesSpecialCharacter = token.Parent.IsKind(SyntaxKindEx.FunctionPointerUnmanagedCallingConventionList);
                     suppressFollowingSpaceError = false;
                     break;
 
@@ -127,7 +136,9 @@ namespace StyleCop.Analyzers.SpacingRules
                     break;
 
                 case SyntaxKind.ColonToken:
-                    precedesSpecialCharacter = nextToken.Parent.IsKind(SyntaxKind.InterpolationFormatClause);
+                    precedesSpecialCharacter =
+                        nextToken.Parent.IsKind(SyntaxKind.InterpolationFormatClause) ||
+                        nextToken.Parent.IsKind(SyntaxKindEx.CasePatternSwitchLabel);
                     suppressFollowingSpaceError = false;
                     break;
 
