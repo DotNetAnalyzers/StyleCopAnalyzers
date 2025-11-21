@@ -181,6 +181,13 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             Assert.False(ForEachVariableStatementSyntaxWrapper.IsInstance(null));
             Assert.False(ForEachVariableStatementSyntaxWrapper.IsInstance(SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)));
 
+            var forEachStatement = SyntaxFactory.ForEachStatement(
+                SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword)),
+                "item",
+                SyntaxFactory.IdentifierName("collection"),
+                SyntaxFactory.EmptyStatement());
+            Assert.False(ForEachVariableStatementSyntaxWrapper.IsInstance(forEachStatement));
+
             var syntaxNode = this.CreateForEachVariableStatement();
             Assert.True(ForEachVariableStatementSyntaxWrapper.IsInstance(syntaxNode));
         }
@@ -220,6 +227,16 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
         {
             var syntaxNode = SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression);
             Assert.Throws<InvalidCastException>(() => (ForEachVariableStatementSyntaxWrapper)syntaxNode);
+
+            var forEachStatement = SyntaxFactory.ForEachStatement(
+                SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword)),
+                "item",
+                SyntaxFactory.IdentifierName("collection"),
+                SyntaxFactory.EmptyStatement());
+            Assert.Throws<InvalidCastException>(() => (ForEachVariableStatementSyntaxWrapper)forEachStatement);
+
+            var commonWrapper = (CommonForEachStatementSyntaxWrapper)forEachStatement;
+            Assert.Throws<InvalidCastException>(() => (ForEachVariableStatementSyntaxWrapper)commonWrapper);
         }
 
         private ForEachVariableStatementSyntax CreateForEachVariableStatement()
