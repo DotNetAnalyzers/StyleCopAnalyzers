@@ -103,7 +103,7 @@ namespace StyleCop.Analyzers.SpacingRules
                     // value is ({ P: 0 })
                     expectPrecedingSpace = false;
                 }
-                else if (prevToken is { RawKind: (int)SyntaxKind.OpenBracketToken, Parent: { RawKind: (int)SyntaxKindEx.ListPattern } })
+                else if (prevToken is { RawKind: (int)SyntaxKind.OpenBracketToken, Parent.RawKind: (int)SyntaxKindEx.ListPattern })
                 {
                     // value is [{ P: 0 }, { P: 0 }]
                     expectPrecedingSpace = false;
