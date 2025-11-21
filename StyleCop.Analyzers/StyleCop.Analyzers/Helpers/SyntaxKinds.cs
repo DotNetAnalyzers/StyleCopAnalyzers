@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Helpers
 {
     using System.Collections.Immutable;
@@ -10,6 +12,19 @@ namespace StyleCop.Analyzers.Helpers
 
     internal static class SyntaxKinds
     {
+        /// <summary>
+        /// Gets a collection of <see cref="SyntaxKind"/> values which appear in the syntax tree as a
+        /// <see cref="BaseNamespaceDeclarationSyntaxWrapper"/>.
+        /// </summary>
+        /// <value>
+        /// A collection of <see cref="SyntaxKind"/> values which appear in the syntax tree as a
+        /// <see cref="BaseNamespaceDeclarationSyntaxWrapper"/>.
+        /// </value>
+        public static ImmutableArray<SyntaxKind> BaseNamespaceDeclaration { get; } =
+            ImmutableArray.Create(
+                SyntaxKind.NamespaceDeclaration,
+                SyntaxKindEx.FileScopedNamespaceDeclaration);
+
         /// <summary>
         /// Gets a collection of <see cref="SyntaxKind"/> values which appear in the syntax tree as a
         /// <see cref="BaseTypeDeclarationSyntax"/>.
@@ -24,7 +39,8 @@ namespace StyleCop.Analyzers.Helpers
                 SyntaxKind.StructDeclaration,
                 SyntaxKind.InterfaceDeclaration,
                 SyntaxKind.EnumDeclaration,
-                SyntaxKindEx.RecordDeclaration);
+                SyntaxKindEx.RecordDeclaration,
+                SyntaxKindEx.RecordStructDeclaration);
 
         /// <summary>
         /// Gets a collection of <see cref="SyntaxKind"/> values which appear in the syntax tree as a
@@ -39,7 +55,8 @@ namespace StyleCop.Analyzers.Helpers
                 SyntaxKind.ClassDeclaration,
                 SyntaxKind.StructDeclaration,
                 SyntaxKind.InterfaceDeclaration,
-                SyntaxKindEx.RecordDeclaration);
+                SyntaxKindEx.RecordDeclaration,
+                SyntaxKindEx.RecordStructDeclaration);
 
         /// <summary>
         /// Gets a collection of <see cref="SyntaxKind"/> values which appear in the syntax tree as a

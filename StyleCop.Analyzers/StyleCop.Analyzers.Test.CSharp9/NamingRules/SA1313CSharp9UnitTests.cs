@@ -5,15 +5,14 @@ namespace StyleCop.Analyzers.Test.CSharp9.NamingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.NamingRules;
-    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.NamingRules.SA1313ParameterNamesMustBeginWithLowerCaseLetter,
         StyleCop.Analyzers.NamingRules.RenameToLowerCaseCodeFixProvider>;
 
-    public class SA1313CSharp9UnitTests : SA1313CSharp8UnitTests
+    public partial class SA1313CSharp9UnitTests : SA1313CSharp8UnitTests
     {
         [Fact]
         [WorkItem(3168, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3168")]
@@ -40,12 +39,7 @@ public record R(int A)
 }
 ";
 
-            await new CSharpTest(LanguageVersion.CSharp9)
-            {
-                ReferenceAssemblies = GenericAnalyzerTest.ReferenceAssembliesNet50,
-                TestCode = testCode,
-                FixedCode = fixedCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

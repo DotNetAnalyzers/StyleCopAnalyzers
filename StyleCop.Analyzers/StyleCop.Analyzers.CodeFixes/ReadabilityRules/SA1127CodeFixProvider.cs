@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Generic;
@@ -60,7 +62,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var afterEndToken = endToken.GetNextToken();
 
             var parentIndentation = GetParentIndentation(whereToken);
-            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
+            var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
             var indentationTrivia = SyntaxFactory.Whitespace(parentIndentation + IndentationHelper.GenerateIndentationString(settings.Indentation, 1));
 
             var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>()

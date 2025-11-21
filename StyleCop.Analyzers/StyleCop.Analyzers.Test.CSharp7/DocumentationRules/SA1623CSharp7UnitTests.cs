@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp7.DocumentationRules
 {
     using System.Threading;
@@ -12,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.DocumentationRules
         StyleCop.Analyzers.DocumentationRules.PropertySummaryDocumentationAnalyzer,
         StyleCop.Analyzers.DocumentationRules.PropertySummaryDocumentationCodeFixProvider>;
 
-    public class SA1623CSharp7UnitTests : SA1623UnitTests
+    public partial class SA1623CSharp7UnitTests : SA1623UnitTests
     {
         /// <summary>
         /// Verifies that property documentation that does not start with the appropriate text will result in a

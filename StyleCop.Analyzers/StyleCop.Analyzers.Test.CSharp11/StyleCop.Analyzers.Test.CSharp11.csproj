@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <EnforceExtendedAnalyzerRules>false</EnforceExtendedAnalyzerRules>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <CodeAnalysisRuleSet>..\StyleCop.Analyzers.Internal.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\build\keys\TestingKey.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.4.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StyleCop.Analyzers\StyleCop.Analyzers.csproj" />
+    <ProjectReference Include="..\StyleCop.Analyzers.CodeFixes\StyleCop.Analyzers.CodeFixes.csproj" />
+    <ProjectReference Include="..\StyleCop.Analyzers.Test\StyleCop.Analyzers.Test.csproj" />
+    <ProjectReference Include="..\StyleCop.Analyzers.Test.CSharp7\StyleCop.Analyzers.Test.CSharp7.csproj" />
+    <ProjectReference Include="..\StyleCop.Analyzers.Test.CSharp8\StyleCop.Analyzers.Test.CSharp8.csproj" />
+    <ProjectReference Include="..\StyleCop.Analyzers.Test.CSharp9\StyleCop.Analyzers.Test.CSharp9.csproj" />
+    <ProjectReference Include="..\StyleCop.Analyzers.Test.CSharp10\StyleCop.Analyzers.Test.CSharp10.csproj" />
+    <ProjectReference Include="..\StyleCop.Analyzers.PrivateCodeFixes\StyleCop.Analyzers.PrivateCodeFixes.csproj" PrivateAssets="all" SetTargetFramework="TargetFramework=netstandard2.0" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+</Project>

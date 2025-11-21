@@ -6,13 +6,14 @@ namespace StyleCop.Analyzers.Test.CSharp7.OrderingRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CSharp;
+    using StyleCop.Analyzers.Test.Helpers;
     using StyleCop.Analyzers.Test.OrderingRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.OrderingRules.SA1207ProtectedMustComeBeforeInternal,
         StyleCop.Analyzers.OrderingRules.SA1207CodeFixProvider>;
 
-    public class SA1207CSharp7UnitTests : SA1207UnitTests
+    public partial class SA1207CSharp7UnitTests : SA1207UnitTests
     {
         [Fact]
         public async Task TestPrivateProtectedAsync()
@@ -36,7 +37,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.OrderingRules
 ";
 
             var expectedDiagnostic = Diagnostic().WithArguments("private", "protected").WithLocation(5, 19);
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_2, testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_2.OrLaterDefault(), testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

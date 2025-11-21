@@ -1,12 +1,14 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp8.NamingRules
 {
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp7.NamingRules;
 
-    public class SA1313CSharp8UnitTests : SA1313CSharp7UnitTests
+    public partial class SA1313CSharp8UnitTests : SA1313CSharp7UnitTests
     {
         protected override DiagnosticResult[] GetInvalidMethodOverrideShouldNotProduceDiagnosticAsyncDiagnostics()
         {

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.OrderingRules
 {
     using System.Collections.Immutable;
@@ -113,6 +115,7 @@ namespace StyleCop.Analyzers.OrderingRules
             case SyntaxKind.StructDeclaration:
                 return ((StructDeclarationSyntax)node).WithModifiers(modifiers);
             case SyntaxKindEx.RecordDeclaration:
+            case SyntaxKindEx.RecordStructDeclaration:
                 return ((RecordDeclarationSyntaxWrapper)node).WithModifiers(modifiers);
             }
 
@@ -132,6 +135,7 @@ namespace StyleCop.Analyzers.OrderingRules
             case SyntaxKind.StructDeclaration:
                 return ((StructDeclarationSyntax)node).WithKeyword(keyword);
             case SyntaxKindEx.RecordDeclaration:
+            case SyntaxKindEx.RecordStructDeclaration:
                 return ((RecordDeclarationSyntaxWrapper)node).WithKeyword(keyword);
             }
 

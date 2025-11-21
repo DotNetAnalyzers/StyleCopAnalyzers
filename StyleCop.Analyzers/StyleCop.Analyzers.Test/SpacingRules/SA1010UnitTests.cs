@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Threading;
@@ -213,6 +215,24 @@ public class TestClass
 ";
             var expected = Diagnostic(DescriptorNotPreceded).WithLocation(8, 62);
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        // NOTE: This case is handled by SA1026, so it's intentionally allowed here
+        [Fact]
+        public async Task TestImplicitlyTypedArrayCreationAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            var x = new [] { 0, 1 };
+        }
+    }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

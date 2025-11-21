@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.NamingRules
 {
     using System;
@@ -65,7 +67,8 @@ namespace StyleCop.Analyzers.NamingRules
                 return;
             }
 
-            if (syntax.Parent.Parent.IsKind(SyntaxKindEx.RecordDeclaration))
+            if (syntax.Parent.Parent.IsKind(SyntaxKindEx.RecordDeclaration)
+                || syntax.Parent.Parent.IsKind(SyntaxKindEx.RecordStructDeclaration))
             {
                 // Positional parameters of a record are treated as properties for naming conventions
                 return;
@@ -134,10 +137,21 @@ namespace StyleCop.Analyzers.NamingRules
 
             if (methodSymbol.IsOverride)
             {
-                // OverridenMethod can be null in case of an invalid method declaration -> exit because there is no meaningful analysis to be done.
+                // OverriddenMethod can be null in case of an invalid method declaration -> exit because there is no meaningful analysis to be done.
                 if ((methodSymbol.OverriddenMethod == null) || (methodSymbol.OverriddenMethod.Parameters[index].Name == syntax.Identifier.ValueText))
                 {
                     return true;
+                }
+            }
+            else if (methodSymbol.ExplicitInterfaceImplementations.Length > 0)
+            {
+                // Checking explicitly implemented interface members here because the code below will not handle them correctly
+                foreach (var interfaceMethod in methodSymbol.ExplicitInterfaceImplementations)
+                {
+                    if (interfaceMethod.Parameters[index].Name == syntax.Identifier.ValueText)
+                    {
+                        return true;
+                    }
                 }
             }
             else

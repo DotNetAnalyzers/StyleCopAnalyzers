@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct IWhileLoopOperationWrapper : IOperationWrapper
+    internal readonly struct IWhileLoopOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IWhileLoopOperation";
         private static readonly Type WrappedType;
@@ -36,6 +36,8 @@ namespace StyleCop.Analyzers.Lightup
         public bool ConditionIsTop => ConditionIsTopAccessor(this.WrappedOperation);
         public bool ConditionIsUntil => ConditionIsUntilAccessor(this.WrappedOperation);
         public IOperation IgnoredCondition => IgnoredConditionAccessor(this.WrappedOperation);
+        public static explicit operator IWhileLoopOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(IWhileLoopOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public object LoopKind => ((ILoopOperationWrapper)this).LoopKind;
         public IOperation Body => ((ILoopOperationWrapper)this).Body;
         public ImmutableArray<ILocalSymbol> Locals => ((ILoopOperationWrapper)this).Locals;

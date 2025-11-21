@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.LayoutRules
 {
     using System.Collections.Generic;
@@ -53,7 +55,7 @@ namespace StyleCop.Analyzers.LayoutRules
         private async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
+            var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
             var newDocument = this.CreateCodeFix(document, settings.Indentation, diagnostic, syntaxRoot);
 
             return newDocument;
@@ -70,6 +72,7 @@ namespace StyleCop.Analyzers.LayoutRules
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.StructDeclaration:
             case SyntaxKindEx.RecordDeclaration:
+            case SyntaxKindEx.RecordStructDeclaration:
             case SyntaxKind.EnumDeclaration:
                 newSyntaxRoot = this.RegisterBaseTypeDeclarationCodeFix(syntaxRoot, (BaseTypeDeclarationSyntax)node, indentationSettings);
                 break;

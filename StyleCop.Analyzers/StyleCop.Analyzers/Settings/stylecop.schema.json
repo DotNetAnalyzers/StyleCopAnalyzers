@@ -1,4 +1,4 @@
-﻿{
+{
   "$schema": "http://json-schema.org/draft-04/schema#",
   "id": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
   "title": "StyleCop Analyzers Configuration",
@@ -197,6 +197,11 @@
               "type": "boolean",
               "description": "Specifies if SA1519 will allow consecutive using statements without braces",
               "default": true
+            },
+            "allowDoWhileOnClosingBrace": {
+              "type": "boolean",
+              "description": "Specifies if SA1500 will allow the 'while' expression of a 'do'/'while' loop to be on the same line as the closing brace.",
+              "default": false
             }
           }
         },
@@ -258,7 +263,7 @@
             "headerDecoration": {
               "type": "string",
               "description": "The text used as decoration for the copyright header comment.",
-              "default": null
+              "default": ""
             },
             "fileNamingConvention": {
               "type": "string",

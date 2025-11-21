@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.NamingRules
 {
     using System.Collections.Generic;
@@ -56,6 +58,21 @@ namespace StyleCop.Analyzers.Test.NamingRules
     }
 }
 ";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestVariableNamesInNativeMethodsClassAsync()
+        {
+            var testCode = @"
+public class TypeNameNativeMethods
+{
+    public void MethodName()
+    {
+        bool abX;
+    }
+}";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }

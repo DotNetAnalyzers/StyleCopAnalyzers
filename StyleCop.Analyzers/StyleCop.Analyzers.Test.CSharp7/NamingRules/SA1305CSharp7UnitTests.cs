@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
 {
     using System.Threading;
@@ -10,7 +12,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.NamingRules.SA1305FieldNamesMustNotUseHungarianNotation>;
 
-    public class SA1305CSharp7UnitTests : SA1305UnitTests
+    public partial class SA1305CSharp7UnitTests : SA1305UnitTests
     {
         [Fact]
         public async Task TestInvalidVariableDesignatorNamesAreReportedAsync()

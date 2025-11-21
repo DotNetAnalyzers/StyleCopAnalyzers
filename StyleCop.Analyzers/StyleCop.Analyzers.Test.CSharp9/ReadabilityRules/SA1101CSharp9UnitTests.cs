@@ -5,15 +5,14 @@ namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.ReadabilityRules;
-    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1101PrefixLocalCallsWithThis,
         StyleCop.Analyzers.ReadabilityRules.SA1101CodeFixProvider>;
 
-    public class SA1101CSharp9UnitTests : SA1101CSharp8UnitTests
+    public partial class SA1101CSharp9UnitTests : SA1101CSharp8UnitTests
     {
         [Fact]
         [WorkItem(3201, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3201")]
@@ -32,11 +31,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
     }
 }";
 
-            await new CSharpTest(LanguageVersion.CSharp9)
-            {
-                ReferenceAssemblies = GenericAnalyzerTest.ReferenceAssembliesNet50,
-                TestCode = testCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

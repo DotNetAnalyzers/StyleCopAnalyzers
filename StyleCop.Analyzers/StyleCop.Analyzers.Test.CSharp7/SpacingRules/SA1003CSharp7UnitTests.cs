@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 {
     using System.Threading;
@@ -14,7 +16,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1003SymbolsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.SA1003CodeFixProvider>;
 
-    public class SA1003CSharp7UnitTests : SA1003UnitTests
+    public partial class SA1003CSharp7UnitTests : SA1003UnitTests
     {
         /// <summary>
         /// Verifies that the additional expression-bodied members supported in C# 7 trigger diagnostics as expected.

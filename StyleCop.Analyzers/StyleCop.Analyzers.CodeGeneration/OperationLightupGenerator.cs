@@ -16,18 +16,18 @@ namespace StyleCop.Analyzers.CodeGeneration
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Text;
 
     [Generator]
-    internal sealed class OperationLightupGenerator : ISourceGenerator
+    internal sealed class OperationLightupGenerator : IIncrementalGenerator
     {
-        public void Initialize(GeneratorInitializationContext context)
+        public void Initialize(IncrementalGeneratorInitializationContext context)
         {
+            var operationInterfacesFiles = context.AdditionalTextsProvider.Where(static x => Path.GetFileName(x.Path) == "OperationInterfaces.xml");
+            context.RegisterSourceOutput(operationInterfacesFiles, this.Execute);
         }
 
-        public void Execute(GeneratorExecutionContext context)
+        private void Execute(SourceProductionContext context, AdditionalText operationInterfacesFile)
         {
-            var operationInterfacesFile = context.AdditionalFiles.Single(x => Path.GetFileName(x.Path) == "OperationInterfaces.xml");
             var operationInterfacesText = operationInterfacesFile.GetText(context.CancellationToken);
             if (operationInterfacesText is null)
             {
@@ -38,7 +38,7 @@ namespace StyleCop.Analyzers.CodeGeneration
             this.GenerateOperationInterfaces(in context, operationInterfaces);
         }
 
-        private void GenerateOperationInterfaces(in GeneratorExecutionContext context, XDocument operationInterfaces)
+        private void GenerateOperationInterfaces(in SourceProductionContext context, XDocument operationInterfaces)
         {
             var tree = operationInterfaces.XPathSelectElement("/Tree");
             if (tree is null)
@@ -56,7 +56,7 @@ namespace StyleCop.Analyzers.CodeGeneration
             this.GenerateOperationKindEx(in context, documentData.Interfaces.Values.ToImmutableArray());
         }
 
-        private void GenerateOperationInterface(in GeneratorExecutionContext context, InterfaceData node)
+        private void GenerateOperationInterface(in SourceProductionContext context, InterfaceData node)
         {
             var members = SyntaxFactory.List<MemberDeclarationSyntax>();
 
@@ -69,19 +69,22 @@ namespace StyleCop.Analyzers.CodeGeneration
                     variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(
                         identifier: SyntaxFactory.Identifier("WrappedTypeName"),
                         argumentList: null,
-                        initializer: SyntaxFactory.EqualsValueClause(SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal("Microsoft.CodeAnalysis.Operations." + node.InterfaceName))))))));
+                        initializer: SyntaxFactory.EqualsValueClause(SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal($"{node.Namespace}.{node.InterfaceName}"))))))));
 
-            // private static readonly Type WrappedType;
-            members = members.Add(SyntaxFactory.FieldDeclaration(
-                attributeLists: default,
-                modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PrivateKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword), SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)),
-                declaration: SyntaxFactory.VariableDeclaration(
-                    type: SyntaxFactory.IdentifierName("Type"),
-                    variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator("WrappedType")))));
+            if (node.InterfaceName != "IOperation")
+            {
+                // private static readonly Type WrappedType;
+                members = members.Add(SyntaxFactory.FieldDeclaration(
+                    attributeLists: default,
+                    modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PrivateKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword), SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)),
+                    declaration: SyntaxFactory.VariableDeclaration(
+                        type: SyntaxFactory.IdentifierName("Type"),
+                        variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator("WrappedType")))));
+            }
 
             foreach (var property in node.Properties)
             {
-                if (property.IsSkipped)
+                if (property.IsSkipped || !property.NeedsAccessor)
                 {
                     continue;
                 }
@@ -110,21 +113,26 @@ namespace StyleCop.Analyzers.CodeGeneration
                     type: SyntaxFactory.IdentifierName("IOperation"),
                     variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator("operation")))));
 
-            var staticCtorStatements = SyntaxFactory.SingletonList<StatementSyntax>(
-                SyntaxFactory.ExpressionStatement(SyntaxFactory.AssignmentExpression(
-                    SyntaxKind.SimpleAssignmentExpression,
-                    left: SyntaxFactory.IdentifierName("WrappedType"),
-                    right: SyntaxFactory.InvocationExpression(
-                        expression: SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            expression: SyntaxFactory.IdentifierName("OperationWrapperHelper"),
-                            name: SyntaxFactory.IdentifierName("GetWrappedType")),
-                        argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(
-                            SyntaxFactory.TypeOfExpression(SyntaxFactory.IdentifierName(node.WrapperName)))))))));
+            var staticCtorStatements = SyntaxFactory.List<StatementSyntax>();
+
+            if (node.InterfaceName != "IOperation")
+            {
+                staticCtorStatements = staticCtorStatements.Add(
+                    SyntaxFactory.ExpressionStatement(SyntaxFactory.AssignmentExpression(
+                        SyntaxKind.SimpleAssignmentExpression,
+                        left: SyntaxFactory.IdentifierName("WrappedType"),
+                        right: SyntaxFactory.InvocationExpression(
+                            expression: SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                expression: SyntaxFactory.IdentifierName("OperationWrapperHelper"),
+                                name: SyntaxFactory.IdentifierName("GetWrappedType")),
+                            argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(
+                                SyntaxFactory.TypeOfExpression(SyntaxFactory.IdentifierName(node.WrapperName)))))))));
+            }
 
             foreach (var property in node.Properties)
             {
-                if (property.IsSkipped)
+                if (property.IsSkipped || !property.NeedsAccessor)
                 {
                     continue;
                 }
@@ -151,6 +159,9 @@ namespace StyleCop.Analyzers.CodeGeneration
                 }
 
                 // ConstructorAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IMethodSymbol>(WrappedType, nameof(Constructor));
+                ExpressionSyntax wrappedType = node.InterfaceName == "IOperation"
+                    ? SyntaxFactory.TypeOfExpression(SyntaxFactory.IdentifierName("IOperation"))
+                    : SyntaxFactory.IdentifierName("WrappedType");
                 staticCtorStatements = staticCtorStatements.Add(SyntaxFactory.ExpressionStatement(SyntaxFactory.AssignmentExpression(
                     SyntaxKind.SimpleAssignmentExpression,
                     left: SyntaxFactory.IdentifierName(property.AccessorName),
@@ -162,7 +173,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                         argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(
                             new[]
                             {
-                                SyntaxFactory.Argument(SyntaxFactory.IdentifierName("WrappedType")),
+                                SyntaxFactory.Argument(wrappedType),
                                 SyntaxFactory.Argument(SyntaxFactory.InvocationExpression(
                                     expression: SyntaxFactory.IdentifierName("nameof"),
                                     argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(SyntaxFactory.IdentifierName(property.Name)))))),
@@ -222,23 +233,26 @@ namespace StyleCop.Analyzers.CodeGeneration
                 initializer: null,
                 semicolonToken: SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
 
-            // public ITypeSymbol Type => this.WrappedOperation.Type;
-            members = members.Add(SyntaxFactory.PropertyDeclaration(
-                attributeLists: default,
-                modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)),
-                type: SyntaxFactory.IdentifierName("ITypeSymbol"),
-                explicitInterfaceSpecifier: null,
-                identifier: SyntaxFactory.Identifier("Type"),
-                accessorList: null,
-                expressionBody: SyntaxFactory.ArrowExpressionClause(SyntaxFactory.MemberAccessExpression(
-                    SyntaxKind.SimpleMemberAccessExpression,
-                    expression: SyntaxFactory.MemberAccessExpression(
+            if (node.InterfaceName != "IOperation")
+            {
+                // public ITypeSymbol Type => this.WrappedOperation.Type;
+                members = members.Add(SyntaxFactory.PropertyDeclaration(
+                    attributeLists: default,
+                    modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)),
+                    type: SyntaxFactory.IdentifierName("ITypeSymbol"),
+                    explicitInterfaceSpecifier: null,
+                    identifier: SyntaxFactory.Identifier("Type"),
+                    accessorList: null,
+                    expressionBody: SyntaxFactory.ArrowExpressionClause(SyntaxFactory.MemberAccessExpression(
                         SyntaxKind.SimpleMemberAccessExpression,
-                        expression: SyntaxFactory.ThisExpression(),
-                        name: SyntaxFactory.IdentifierName("WrappedOperation")),
-                    name: SyntaxFactory.IdentifierName("Type"))),
-                initializer: null,
-                semicolonToken: SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
+                        expression: SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            expression: SyntaxFactory.ThisExpression(),
+                            name: SyntaxFactory.IdentifierName("WrappedOperation")),
+                        name: SyntaxFactory.IdentifierName("Type"))),
+                    initializer: null,
+                    semicolonToken: SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
+            }
 
             foreach (var property in node.Properties)
             {
@@ -271,14 +285,30 @@ namespace StyleCop.Analyzers.CodeGeneration
 
                 var propertyType = property.NeedsWrapper ? SyntaxFactory.IdentifierName(property.Type + "Wrapper") : property.AccessorResultType;
 
-                // ConstructorAccessor(this.WrappedOperation)
-                var evaluatedAccessor = SyntaxFactory.InvocationExpression(
-                    expression: SyntaxFactory.IdentifierName(property.AccessorName),
-                    argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(
+                // The value is accessed in one of the following ways:
+                //   ConstructorAccessor(this.WrappedOperation)
+                //   this.WrappedOperation.Constructor
+                ExpressionSyntax evaluatedAccessor;
+                if (property.NeedsAccessor)
+                {
+                    evaluatedAccessor = SyntaxFactory.InvocationExpression(
+                        expression: SyntaxFactory.IdentifierName(property.AccessorName),
+                        argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(
+                            expression: SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                expression: SyntaxFactory.ThisExpression(),
+                                name: SyntaxFactory.IdentifierName("WrappedOperation"))))));
+                }
+                else
+                {
+                    evaluatedAccessor = SyntaxFactory.MemberAccessExpression(
+                        SyntaxKind.SimpleMemberAccessExpression,
                         expression: SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
                             expression: SyntaxFactory.ThisExpression(),
-                            name: SyntaxFactory.IdentifierName("WrappedOperation"))))));
+                            name: SyntaxFactory.IdentifierName("WrappedOperation")),
+                        name: SyntaxFactory.IdentifierName(property.Name));
+                }
 
                 ExpressionSyntax convertedResult;
                 if (property.NeedsWrapper)
@@ -309,9 +339,10 @@ namespace StyleCop.Analyzers.CodeGeneration
                     semicolonToken: SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
             }
 
-            if (node.BaseInterface is { } baseDefinition)
+            foreach (var baseDefinition in node.InheritedInterfaces)
             {
-                var inheritedProperties = baseDefinition.Properties;
+                // For now, don't inherit properties from IOperationWrapper
+                var inheritedProperties = baseDefinition.InterfaceName != "IOperation" ? baseDefinition.Properties : ImmutableArray<PropertyData>.Empty;
                 foreach (var property in inheritedProperties)
                 {
                     if (node.Properties.Any(derivedProperty => derivedProperty.Name == property.Name && derivedProperty.IsNew))
@@ -412,6 +443,68 @@ namespace StyleCop.Analyzers.CodeGeneration
             //
             //     return new IArgumentOperationWrapper(operation);
             // }
+            var fromOperationStatements = new List<StatementSyntax>();
+            fromOperationStatements.Add(SyntaxFactory.IfStatement(
+                condition: SyntaxFactory.BinaryExpression(
+                    SyntaxKind.EqualsExpression,
+                    left: SyntaxFactory.IdentifierName("operation"),
+                    right: SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)),
+                statement: SyntaxFactory.Block(
+                    SyntaxFactory.ReturnStatement(SyntaxFactory.LiteralExpression(SyntaxKind.DefaultLiteralExpression)))));
+
+            if (node.InterfaceName != "IOperation")
+            {
+                fromOperationStatements.Add(SyntaxFactory.IfStatement(
+                    condition: SyntaxFactory.PrefixUnaryExpression(
+                        SyntaxKind.LogicalNotExpression,
+                        operand: SyntaxFactory.InvocationExpression(
+                            expression: SyntaxFactory.IdentifierName("IsInstance"),
+                            argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(SyntaxFactory.IdentifierName("operation")))))),
+                    statement: SyntaxFactory.Block(
+                        SyntaxFactory.ThrowStatement(SyntaxFactory.ObjectCreationExpression(
+                            type: SyntaxFactory.IdentifierName("InvalidCastException"),
+                            argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(
+                                SyntaxFactory.InterpolatedStringExpression(
+                                    SyntaxFactory.Token(SyntaxKind.InterpolatedStringStartToken),
+                                    SyntaxFactory.List(new InterpolatedStringContentSyntax[]
+                                    {
+                                        SyntaxFactory.InterpolatedStringText(SyntaxFactory.Token(
+                                            leading: default,
+                                            SyntaxKind.InterpolatedStringTextToken,
+                                            "Cannot cast '",
+                                            "Cannot cast '",
+                                            trailing: default)),
+                                        SyntaxFactory.Interpolation(SyntaxFactory.MemberAccessExpression(
+                                            SyntaxKind.SimpleMemberAccessExpression,
+                                            expression: SyntaxFactory.InvocationExpression(
+                                                expression: SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    expression: SyntaxFactory.IdentifierName("operation"),
+                                                    name: SyntaxFactory.IdentifierName("GetType")),
+                                                argumentList: SyntaxFactory.ArgumentList()),
+                                            name: SyntaxFactory.IdentifierName("FullName"))),
+                                        SyntaxFactory.InterpolatedStringText(SyntaxFactory.Token(
+                                            leading: default,
+                                            SyntaxKind.InterpolatedStringTextToken,
+                                            "' to '",
+                                            "' to '",
+                                            trailing: default)),
+                                        SyntaxFactory.Interpolation(SyntaxFactory.IdentifierName("WrappedTypeName")),
+                                        SyntaxFactory.InterpolatedStringText(SyntaxFactory.Token(
+                                            leading: default,
+                                            SyntaxKind.InterpolatedStringTextToken,
+                                            "'",
+                                            "'",
+                                            trailing: default)),
+                                    }))))),
+                            initializer: null)))));
+            }
+
+            fromOperationStatements.Add(SyntaxFactory.ReturnStatement(SyntaxFactory.ObjectCreationExpression(
+                type: SyntaxFactory.IdentifierName(node.WrapperName),
+                argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(SyntaxFactory.IdentifierName("operation")))),
+                initializer: null)));
+
             members = members.Add(SyntaxFactory.MethodDeclaration(
                 attributeLists: default,
                 modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword)),
@@ -426,68 +519,35 @@ namespace StyleCop.Analyzers.CodeGeneration
                     identifier: SyntaxFactory.Identifier("operation"),
                     @default: null))),
                 constraintClauses: default,
-                body: SyntaxFactory.Block(
-                    SyntaxFactory.IfStatement(
-                        condition: SyntaxFactory.BinaryExpression(
-                            SyntaxKind.EqualsExpression,
-                            left: SyntaxFactory.IdentifierName("operation"),
-                            right: SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)),
-                        statement: SyntaxFactory.Block(
-                            SyntaxFactory.ReturnStatement(SyntaxFactory.LiteralExpression(SyntaxKind.DefaultLiteralExpression)))),
-                    SyntaxFactory.IfStatement(
-                        condition: SyntaxFactory.PrefixUnaryExpression(
-                            SyntaxKind.LogicalNotExpression,
-                            operand: SyntaxFactory.InvocationExpression(
-                                expression: SyntaxFactory.IdentifierName("IsInstance"),
-                                argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(SyntaxFactory.IdentifierName("operation")))))),
-                        statement: SyntaxFactory.Block(
-                            SyntaxFactory.ThrowStatement(SyntaxFactory.ObjectCreationExpression(
-                                type: SyntaxFactory.IdentifierName("InvalidCastException"),
-                                argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(
-                                    SyntaxFactory.InterpolatedStringExpression(
-                                        SyntaxFactory.Token(SyntaxKind.InterpolatedStringStartToken),
-                                        SyntaxFactory.List(new InterpolatedStringContentSyntax[]
-                                        {
-                                            SyntaxFactory.InterpolatedStringText(SyntaxFactory.Token(
-                                                leading: default,
-                                                SyntaxKind.InterpolatedStringTextToken,
-                                                "Cannot cast '",
-                                                "Cannot cast '",
-                                                trailing: default)),
-                                            SyntaxFactory.Interpolation(SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                expression: SyntaxFactory.InvocationExpression(
-                                                    expression: SyntaxFactory.MemberAccessExpression(
-                                                        SyntaxKind.SimpleMemberAccessExpression,
-                                                        expression: SyntaxFactory.IdentifierName("operation"),
-                                                        name: SyntaxFactory.IdentifierName("GetType")),
-                                                    argumentList: SyntaxFactory.ArgumentList()),
-                                                name: SyntaxFactory.IdentifierName("FullName"))),
-                                            SyntaxFactory.InterpolatedStringText(SyntaxFactory.Token(
-                                                leading: default,
-                                                SyntaxKind.InterpolatedStringTextToken,
-                                                "' to '",
-                                                "' to '",
-                                                trailing: default)),
-                                            SyntaxFactory.Interpolation(SyntaxFactory.IdentifierName("WrappedTypeName")),
-                                            SyntaxFactory.InterpolatedStringText(SyntaxFactory.Token(
-                                                leading: default,
-                                                SyntaxKind.InterpolatedStringTextToken,
-                                                "'",
-                                                "'",
-                                                trailing: default)),
-                                        }))))),
-                                initializer: null)))),
-                    SyntaxFactory.ReturnStatement(SyntaxFactory.ObjectCreationExpression(
-                        type: SyntaxFactory.IdentifierName(node.WrapperName),
-                        argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(SyntaxFactory.IdentifierName("operation")))),
-                        initializer: null))),
+                body: SyntaxFactory.Block(fromOperationStatements),
                 expressionBody: null));
 
             // public static bool IsInstance(IOperation operation)
             // {
             //     return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
             // }
+            ExpressionSyntax isInstanceExpression = SyntaxFactory.BinaryExpression(
+                SyntaxKind.NotEqualsExpression,
+                left: SyntaxFactory.IdentifierName("operation"),
+                right: SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression));
+            if (node.InterfaceName != "IOperation")
+            {
+                isInstanceExpression = SyntaxFactory.BinaryExpression(
+                    SyntaxKind.LogicalAndExpression,
+                    left: isInstanceExpression,
+                    right: SyntaxFactory.InvocationExpression(
+                        expression: SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            expression: SyntaxFactory.IdentifierName("LightupHelpers"),
+                            name: SyntaxFactory.IdentifierName("CanWrapOperation")),
+                        argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(
+                            new[]
+                            {
+                                SyntaxFactory.Argument(SyntaxFactory.IdentifierName("operation")),
+                                SyntaxFactory.Argument(SyntaxFactory.IdentifierName("WrappedType")),
+                            }))));
+            }
+
             members = members.Add(SyntaxFactory.MethodDeclaration(
                 attributeLists: default,
                 modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword)),
@@ -502,24 +562,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                     identifier: SyntaxFactory.Identifier("operation"),
                     @default: null))),
                 constraintClauses: default,
-                body: SyntaxFactory.Block(
-                    SyntaxFactory.ReturnStatement(SyntaxFactory.BinaryExpression(
-                        SyntaxKind.LogicalAndExpression,
-                        left: SyntaxFactory.BinaryExpression(
-                            SyntaxKind.NotEqualsExpression,
-                            left: SyntaxFactory.IdentifierName("operation"),
-                            right: SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)),
-                        right: SyntaxFactory.InvocationExpression(
-                            expression: SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                expression: SyntaxFactory.IdentifierName("LightupHelpers"),
-                                name: SyntaxFactory.IdentifierName("CanWrapOperation")),
-                            argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(
-                                new[]
-                                {
-                                    SyntaxFactory.Argument(SyntaxFactory.IdentifierName("operation")),
-                                    SyntaxFactory.Argument(SyntaxFactory.IdentifierName("WrappedType")),
-                                })))))),
+                body: SyntaxFactory.Block(SyntaxFactory.ReturnStatement(isInstanceExpression)),
                 expressionBody: null));
 
             if (node.IsAbstract)
@@ -555,16 +598,24 @@ namespace StyleCop.Analyzers.CodeGeneration
                 modifiers: SyntaxTokenList.Create(SyntaxFactory.Token(SyntaxKind.InternalKeyword)).Add(SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)),
                 identifier: SyntaxFactory.Identifier(node.WrapperName),
                 typeParameterList: null,
-                baseList: SyntaxFactory.BaseList(SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>(SyntaxFactory.SimpleBaseType(SyntaxFactory.IdentifierName("IOperationWrapper")))),
+                baseList: null,
                 constraintClauses: default,
                 members: members);
+
+            var usingDirectives = new List<UsingDirectiveSyntax>();
+            usingDirectives.Add(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System")));
+            if (node.InterfaceName == "IOperation")
+            {
+                usingDirectives.Add(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Collections.Generic")));
+            }
+
+            usingDirectives.Add(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Collections.Immutable")));
+            usingDirectives.Add(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("Microsoft.CodeAnalysis")));
+
             var wrapperNamespace = SyntaxFactory.NamespaceDeclaration(
                 name: SyntaxFactory.ParseName("StyleCop.Analyzers.Lightup"),
                 externs: default,
-                usings: SyntaxFactory.List<UsingDirectiveSyntax>()
-                    .Add(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System")))
-                    .Add(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Collections.Immutable")))
-                    .Add(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("Microsoft.CodeAnalysis"))),
+                usings: SyntaxFactory.List(usingDirectives),
                 members: SyntaxFactory.SingletonList<MemberDeclarationSyntax>(wrapperStruct));
 
             wrapperNamespace = wrapperNamespace
@@ -578,10 +629,10 @@ namespace StyleCop.Analyzers.CodeGeneration
                 .WithTrailingTrivia(
                     SyntaxFactory.CarriageReturnLineFeed);
 
-            context.AddSource(node.WrapperName + ".g.cs", SourceText.From(wrapperNamespace.ToFullString(), Encoding.UTF8));
+            context.AddSource(node.WrapperName + ".g.cs", wrapperNamespace.GetText(Encoding.UTF8));
         }
 
-        private void GenerateOperationWrapperHelper(in GeneratorExecutionContext context, ImmutableArray<InterfaceData> wrapperTypes)
+        private void GenerateOperationWrapperHelper(in SourceProductionContext context, ImmutableArray<InterfaceData> wrapperTypes)
         {
             // private static readonly ImmutableDictionary<Type, Type> WrappedTypes;
             var wrappedTypes = SyntaxFactory.FieldDeclaration(
@@ -638,7 +689,31 @@ namespace StyleCop.Analyzers.CodeGeneration
 
             foreach (var node in wrapperTypes)
             {
-                // builder.Add(typeof(IArgumentOperationWrapper), codeAnalysisAssembly.GetType(IArgumentOperationWrapper.WrappedTypeName));
+                // For the base IOperation node:
+                //   builder.Add(typeof(IArgumentOperationWrapper), typeof(IOperation));
+                //
+                // For all other nodes:
+                //   builder.Add(typeof(IArgumentOperationWrapper), codeAnalysisAssembly.GetType(IArgumentOperationWrapper.WrappedTypeName));
+                ArgumentSyntax typeArgument;
+                if (node.InterfaceName == "IOperation")
+                {
+                    typeArgument = SyntaxFactory.Argument(SyntaxFactory.TypeOfExpression(SyntaxFactory.IdentifierName("IOperation")));
+                }
+                else
+                {
+                    typeArgument = SyntaxFactory.Argument(
+                        SyntaxFactory.InvocationExpression(
+                            expression: SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                expression: SyntaxFactory.IdentifierName("codeAnalysisAssembly"),
+                                name: SyntaxFactory.IdentifierName("GetType")),
+                            argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(
+                                SyntaxFactory.MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    expression: SyntaxFactory.IdentifierName(node.WrapperName),
+                                    name: SyntaxFactory.IdentifierName("WrappedTypeName")))))));
+                }
+
                 staticCtorStatements = staticCtorStatements.Add(SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.InvocationExpression(
                         expression: SyntaxFactory.MemberAccessExpression(
@@ -650,17 +725,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                                 new[]
                                 {
                                     SyntaxFactory.Argument(SyntaxFactory.TypeOfExpression(SyntaxFactory.IdentifierName(node.WrapperName))),
-                                    SyntaxFactory.Argument(
-                                        SyntaxFactory.InvocationExpression(
-                                            expression: SyntaxFactory.MemberAccessExpression(
-                                                SyntaxKind.SimpleMemberAccessExpression,
-                                                expression: SyntaxFactory.IdentifierName("codeAnalysisAssembly"),
-                                                name: SyntaxFactory.IdentifierName("GetType")),
-                                            argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(
-                                                SyntaxFactory.MemberAccessExpression(
-                                                    SyntaxKind.SimpleMemberAccessExpression,
-                                                    expression: SyntaxFactory.IdentifierName(node.WrapperName),
-                                                    name: SyntaxFactory.IdentifierName("WrappedTypeName"))))))),
+                                    typeArgument,
                                 })))));
             }
 
@@ -739,20 +804,20 @@ namespace StyleCop.Analyzers.CodeGeneration
                 SyntaxFactory.Trivia(SyntaxFactory.DocumentationComment(
                     SyntaxFactory.XmlText(" "),
                     SyntaxFactory.XmlSummaryElement(
-                        SyntaxFactory.XmlNewLine(Environment.NewLine),
+                        SyntaxFactory.XmlText(XmlSyntaxFactory.XmlCarriageReturnLineFeedWithContinuation),
                         SyntaxFactory.XmlText(" Gets the type that is wrapped by the given wrapper."),
-                        SyntaxFactory.XmlNewLine(Environment.NewLine),
+                        SyntaxFactory.XmlText(XmlSyntaxFactory.XmlCarriageReturnLineFeedWithContinuation),
                         SyntaxFactory.XmlText(" ")),
-                    SyntaxFactory.XmlNewLine(Environment.NewLine),
+                    SyntaxFactory.XmlText(XmlSyntaxFactory.XmlCarriageReturnLineFeedWithContinuation),
                     SyntaxFactory.XmlText(" "),
                     SyntaxFactory.XmlParamElement(
                         "wrapperType",
                         SyntaxFactory.XmlText("Type of the wrapper for which the wrapped type should be retrieved.")),
-                    SyntaxFactory.XmlNewLine(Environment.NewLine),
+                    SyntaxFactory.XmlText(XmlSyntaxFactory.XmlCarriageReturnLineFeedWithContinuation),
                     SyntaxFactory.XmlText(" "),
                     SyntaxFactory.XmlReturnsElement(
                         SyntaxFactory.XmlText("The wrapped type, or null if there is no info.")),
-                    SyntaxFactory.XmlNewLine(Environment.NewLine).WithoutTrailingTrivia()))));
+                    SyntaxFactory.XmlText(XmlSyntaxFactory.XmlCarriageReturnLineFeedWithContinuation).WithoutTrailingTrivia()))));
 
             var wrapperHelperClass = SyntaxFactory.ClassDeclaration(
                 attributeLists: default,
@@ -786,10 +851,10 @@ namespace StyleCop.Analyzers.CodeGeneration
                 .WithTrailingTrivia(
                     SyntaxFactory.CarriageReturnLineFeed);
 
-            context.AddSource("OperationWrapperHelper.g.cs", SourceText.From(wrapperNamespace.ToFullString(), Encoding.UTF8));
+            context.AddSource("OperationWrapperHelper.g.cs", wrapperNamespace.GetText(Encoding.UTF8));
         }
 
-        private void GenerateOperationKindEx(in GeneratorExecutionContext context, ImmutableArray<InterfaceData> wrapperTypes)
+        private void GenerateOperationKindEx(in SourceProductionContext context, ImmutableArray<InterfaceData> wrapperTypes)
         {
             var operationKinds = wrapperTypes
                 .SelectMany(type => type.OperationKinds)
@@ -839,7 +904,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 .WithTrailingTrivia(
                     SyntaxFactory.CarriageReturnLineFeed);
 
-            context.AddSource("OperationKindEx.g.cs", SourceText.From(wrapperNamespace.ToFullString(), Encoding.UTF8));
+            context.AddSource("OperationKindEx.g.cs", wrapperNamespace.GetText(Encoding.UTF8));
         }
 
         private sealed class DocumentData
@@ -856,7 +921,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                         continue;
                     }
 
-                    if (!operationKinds.TryGetValue(node.Attribute("Name").Value, out var kinds))
+                    if (!operationKinds.TryGetValue(node.RequiredAttribute("Name").Value, out var kinds))
                     {
                         kinds = ImmutableArray<(string name, int value, string? extraDescription)>.Empty;
                     }
@@ -872,7 +937,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                         continue;
                     }
 
-                    if (!operationKinds.TryGetValue(node.Attribute("Name").Value, out var kinds))
+                    if (!operationKinds.TryGetValue(node.RequiredAttribute("Name").Value, out var kinds))
                     {
                         kinds = ImmutableArray<(string name, int value, string? extraDescription)>.Empty;
                     }
@@ -922,11 +987,11 @@ namespace StyleCop.Analyzers.CodeGeneration
                                     continue;
                                 }
 
-                                int parsedValue = ParsePrefixHexValue(entry.Attribute("Value").Value);
-                                nodeBuilder.Add((entry.Attribute("Name").Value, parsedValue, entry.Attribute("ExtraDescription")?.Value));
+                                int parsedValue = ParsePrefixHexValue(entry.RequiredAttribute("Value").Value);
+                                nodeBuilder.Add((entry.RequiredAttribute("Name").Value, parsedValue, entry.Attribute("ExtraDescription")?.Value));
                             }
 
-                            builder.Add(node.Attribute("Name").Value, nodeBuilder.ToImmutable());
+                            builder.Add(node.RequiredAttribute("Name").Value, nodeBuilder.ToImmutable());
                             continue;
                         }
                     }
@@ -943,7 +1008,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                         operationKind++;
                     }
 
-                    var nodeName = node.Attribute("Name").Value;
+                    var nodeName = node.RequiredAttribute("Name").Value;
                     var kindName = nodeName.Substring("I".Length, nodeName.Length - "I".Length - "Operation".Length);
                     builder.Add(nodeName, ImmutableArray.Create((kindName, operationKind, (string?)null)));
                 }
@@ -956,12 +1021,12 @@ namespace StyleCop.Analyzers.CodeGeneration
                 var builder = ImmutableHashSet.CreateBuilder<int>();
                 foreach (var skippedKind in document.XPathSelectElements("/Tree/UnusedOperationKinds/Entry"))
                 {
-                    builder.Add(ParsePrefixHexValue(skippedKind.Attribute("Value").Value));
+                    builder.Add(ParsePrefixHexValue(skippedKind.RequiredAttribute("Value").Value));
                 }
 
                 foreach (var explicitKind in document.XPathSelectElements("/Tree/*/OperationKind/Entry"))
                 {
-                    builder.Add(ParsePrefixHexValue(explicitKind.Attribute("Value").Value));
+                    builder.Add(ParsePrefixHexValue(explicitKind.RequiredAttribute("Value").Value));
                 }
 
                 return builder.ToImmutable();
@@ -987,10 +1052,27 @@ namespace StyleCop.Analyzers.CodeGeneration
                 this.documentData = documentData;
 
                 this.OperationKinds = operationKinds;
-                this.InterfaceName = node.Attribute("Name").Value;
+                this.InterfaceName = node.RequiredAttribute("Name").Value;
+
+                if (node.Attribute("Namespace") is { } namespaceNode)
+                {
+                    if (namespaceNode.Value == string.Empty)
+                    {
+                        this.Namespace = "Microsoft.CodeAnalysis";
+                    }
+                    else
+                    {
+                        this.Namespace = $"Microsoft.CodeAnalysis.{namespaceNode.Value}";
+                    }
+                }
+                else
+                {
+                    this.Namespace = "Microsoft.CodeAnalysis.Operations";
+                }
+
                 this.Name = this.InterfaceName.Substring("I".Length, this.InterfaceName.Length - "I".Length - "Operation".Length);
                 this.WrapperName = this.InterfaceName + "Wrapper";
-                this.BaseInterfaceName = node.Attribute("Base").Value;
+                this.BaseInterfaceName = node.Attribute("Base")?.Value;
                 this.IsAbstract = node.Name == "AbstractNode";
                 this.Properties = node.XPathSelectElements("Property").Select(property => new PropertyData(property)).ToImmutableArray();
             }
@@ -999,11 +1081,13 @@ namespace StyleCop.Analyzers.CodeGeneration
 
             public string InterfaceName { get; }
 
+            public string Namespace { get; }
+
             public string Name { get; }
 
             public string WrapperName { get; }
 
-            public string BaseInterfaceName { get; }
+            public string? BaseInterfaceName { get; }
 
             public bool IsAbstract { get; }
 
@@ -1013,12 +1097,28 @@ namespace StyleCop.Analyzers.CodeGeneration
             {
                 get
                 {
-                    if (this.documentData.Interfaces.TryGetValue(this.BaseInterfaceName, out var baseInterface))
+                    if (this.BaseInterfaceName is not null
+                        && this.documentData.Interfaces.TryGetValue(this.BaseInterfaceName, out var baseInterface))
                     {
                         return baseInterface;
                     }
 
                     return null;
+                }
+            }
+
+            public IEnumerable<InterfaceData> InheritedInterfaces
+            {
+                get
+                {
+                    var inheritedInterfaces = new List<InterfaceData>();
+                    for (var baseDefinition = this.BaseInterface; baseDefinition is not null; baseDefinition = baseDefinition.BaseInterface)
+                    {
+                        inheritedInterfaces.Add(baseDefinition);
+                    }
+
+                    inheritedInterfaces.Reverse();
+                    return inheritedInterfaces;
                 }
             }
         }
@@ -1027,9 +1127,9 @@ namespace StyleCop.Analyzers.CodeGeneration
         {
             public PropertyData(XElement node)
             {
-                this.Name = node.Attribute("Name").Value;
+                this.Name = node.RequiredAttribute("Name").Value;
                 this.AccessorName = this.Name + "Accessor";
-                this.Type = node.Attribute("Type").Value;
+                this.Type = node.RequiredAttribute("Type").Value;
 
                 this.IsNew = node.Attribute("New")?.Value == "true";
                 this.IsPublicProperty = node.Attribute("Internal")?.Value != "true";
@@ -1051,6 +1151,14 @@ namespace StyleCop.Analyzers.CodeGeneration
                     _ => !this.IsPublicProperty,
                 };
 
+                this.NeedsAccessor = this.Name switch
+                {
+                    nameof(IOperation.Kind) => false,
+                    nameof(IOperation.Syntax) => false,
+                    nameof(IOperation.Type) => false,
+                    nameof(IOperation.ConstantValue) => false,
+                    _ => true,
+                };
                 this.NeedsWrapper = IsAnyOperation(this.Type) && this.Type != "IOperation";
                 this.IsDerivedOperationArray = IsAnyOperationArray(this.Type) && this.Type != "ImmutableArray<IOperation>";
 
@@ -1081,6 +1189,8 @@ namespace StyleCop.Analyzers.CodeGeneration
             public string AccessorName { get; }
 
             public string Type { get; }
+
+            public bool NeedsAccessor { get; }
 
             public bool NeedsWrapper { get; }
 

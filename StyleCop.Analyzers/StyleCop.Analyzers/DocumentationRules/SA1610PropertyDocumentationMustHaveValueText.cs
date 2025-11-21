@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Immutable;
@@ -10,6 +12,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// The XML header documentation for a C# property contains an empty <c>&lt;value&gt;</c> tag.
@@ -46,7 +49,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         protected override string XmlTagToHandle => XmlCommentHelper.ValueXmlTag;
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, bool needsComment, XmlNodeSyntax syntax, XElement completeDocumentation, Location diagnosticLocation)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, XmlNodeSyntax syntax, XElement completeDocumentation, Location diagnosticLocation)
         {
             var properties = ImmutableDictionary.Create<string, string>();
 

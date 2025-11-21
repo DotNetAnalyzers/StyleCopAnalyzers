@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.OrderingRules
 {
     using System;
@@ -10,6 +12,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -38,7 +41,7 @@ namespace StyleCop.Analyzers.OrderingRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CompilationUnitAction = HandleCompilationUnit;
-        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> NamespaceDeclarationAction = HandleNamespaceDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> BaseNamespaceDeclarationAction = HandleBaseNamespaceDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -50,8 +53,11 @@ namespace StyleCop.Analyzers.OrderingRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
-            context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
+            context.RegisterCompilationStartAction(context =>
+            {
+                context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
+                context.RegisterSyntaxNodeAction(BaseNamespaceDeclarationAction, SyntaxKinds.BaseNamespaceDeclaration);
+            });
         }
 
         private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
@@ -60,9 +66,9 @@ namespace StyleCop.Analyzers.OrderingRules
             CheckUsingDeclarations(context, settings.OrderingRules, compilationUnit.Usings);
         }
 
-        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        private static void HandleBaseNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
-            var namespaceDirective = (NamespaceDeclarationSyntax)context.Node;
+            var namespaceDirective = (BaseNamespaceDeclarationSyntaxWrapper)context.Node;
             CheckUsingDeclarations(context, settings.OrderingRules, namespaceDirective.Usings);
         }
 

@@ -5,7 +5,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
 {
     using StyleCop.Analyzers.Test.ReadabilityRules;
 
-    public class SA1128CSharp7UnitTests : SA1128UnitTests
+    public partial class SA1128CSharp7UnitTests : SA1128UnitTests
     {
     }
 }

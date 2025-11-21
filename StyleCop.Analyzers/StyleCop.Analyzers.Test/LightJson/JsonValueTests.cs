@@ -1,9 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.LightJson
 {
     using System;
+    using System.Diagnostics;
+    using System.Reflection;
     using global::LightJson;
     using global::LightJson.Serialization;
     using StyleCop.Analyzers.Test.Helpers;
@@ -348,6 +352,87 @@ namespace StyleCop.Analyzers.Test.LightJson
 
             Assert.ThrowsAny<JsonParseException>(() => JsonValue.Parse(string.Empty));
             Assert.ThrowsAny<JsonParseException>(() => JsonValue.Parse("{"));
+        }
+
+        [Fact]
+        public void TestDebugViewOfObject()
+        {
+            var obj = JsonValue.Parse("{}");
+            var proxyAttribute = obj.GetType().GetCustomAttribute<DebuggerTypeProxyAttribute>();
+            Assert.NotNull(proxyAttribute);
+
+            var proxyType = Type.GetType(proxyAttribute.ProxyTypeName);
+            Assert.NotNull(proxyType);
+
+            var proxy = Activator.CreateInstance(proxyType, obj);
+            Assert.NotNull(proxy);
+
+            var objectView = proxyType.GetTypeInfo().GetDeclaredProperty("ObjectView").GetValue(proxy);
+            var arrayView = proxyType.GetTypeInfo().GetDeclaredProperty("ArrayView").GetValue(proxy);
+            var jsonValueType = proxyType.GetTypeInfo().GetDeclaredProperty("Type").GetValue(proxy);
+            var value = proxyType.GetTypeInfo().GetDeclaredProperty("Value").GetValue(proxy);
+
+            Assert.Same(obj.AsJsonObject, objectView);
+            Assert.Same(obj.AsJsonArray, arrayView);
+
+            Assert.IsType<JsonObject>(objectView);
+            Assert.Null(arrayView);
+            Assert.Equal(obj.Type, jsonValueType);
+            Assert.Same(obj.AsJsonObject, value);
+        }
+
+        [Fact]
+        public void TestDebugViewOfArray()
+        {
+            var obj = JsonValue.Parse("[]");
+            var proxyAttribute = obj.GetType().GetCustomAttribute<DebuggerTypeProxyAttribute>();
+            Assert.NotNull(proxyAttribute);
+
+            var proxyType = Type.GetType(proxyAttribute.ProxyTypeName);
+            Assert.NotNull(proxyType);
+
+            var proxy = Activator.CreateInstance(proxyType, obj);
+            Assert.NotNull(proxy);
+
+            var objectView = proxyType.GetTypeInfo().GetDeclaredProperty("ObjectView").GetValue(proxy);
+            var arrayView = proxyType.GetTypeInfo().GetDeclaredProperty("ArrayView").GetValue(proxy);
+            var jsonValueType = proxyType.GetTypeInfo().GetDeclaredProperty("Type").GetValue(proxy);
+            var value = proxyType.GetTypeInfo().GetDeclaredProperty("Value").GetValue(proxy);
+
+            Assert.Same(obj.AsJsonObject, objectView);
+            Assert.Same(obj.AsJsonArray, arrayView);
+
+            Assert.Null(objectView);
+            Assert.IsType<JsonArray>(arrayView);
+            Assert.Equal(obj.Type, jsonValueType);
+            Assert.Same(obj.AsJsonArray, value);
+        }
+
+        [Fact]
+        public void TestDebugViewOfBoolean()
+        {
+            var obj = JsonValue.Parse("true");
+            var proxyAttribute = obj.GetType().GetCustomAttribute<DebuggerTypeProxyAttribute>();
+            Assert.NotNull(proxyAttribute);
+
+            var proxyType = Type.GetType(proxyAttribute.ProxyTypeName);
+            Assert.NotNull(proxyType);
+
+            var proxy = Activator.CreateInstance(proxyType, obj);
+            Assert.NotNull(proxy);
+
+            var objectView = proxyType.GetTypeInfo().GetDeclaredProperty("ObjectView").GetValue(proxy);
+            var arrayView = proxyType.GetTypeInfo().GetDeclaredProperty("ArrayView").GetValue(proxy);
+            var jsonValueType = proxyType.GetTypeInfo().GetDeclaredProperty("Type").GetValue(proxy);
+            var value = proxyType.GetTypeInfo().GetDeclaredProperty("Value").GetValue(proxy);
+
+            Assert.Same(obj.AsJsonObject, objectView);
+            Assert.Same(obj.AsJsonArray, arrayView);
+
+            Assert.Null(objectView);
+            Assert.Null(arrayView);
+            Assert.Equal(obj.Type, jsonValueType);
+            Assert.Equal(obj, value);
         }
     }
 }

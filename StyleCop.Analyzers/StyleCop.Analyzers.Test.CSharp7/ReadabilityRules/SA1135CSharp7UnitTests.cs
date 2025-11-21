@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
 {
     using System.Threading;
@@ -12,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
         StyleCop.Analyzers.ReadabilityRules.SA1135UsingDirectivesMustBeQualified,
         StyleCop.Analyzers.ReadabilityRules.SA1135CodeFixProvider>;
 
-    public class SA1135CSharp7UnitTests : SA1135UnitTests
+    public partial class SA1135CSharp7UnitTests : SA1135UnitTests
     {
         [Fact]
         [WorkItem(2879, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2879")]

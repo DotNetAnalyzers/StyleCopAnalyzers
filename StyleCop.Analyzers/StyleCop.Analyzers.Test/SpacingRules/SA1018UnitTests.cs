@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Threading;
@@ -127,12 +129,17 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 ?
 ";
 
-            DiagnosticResult[] expected =
+            var expected = this.GetExpectedResultSyntaxErrorAtEndOfFile();
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultSyntaxErrorAtEndOfFile()
+        {
+            return new[]
             {
                 DiagnosticResult.CompilerError("CS1031").WithMessage("Type expected").WithLocation(10, 2),
             };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

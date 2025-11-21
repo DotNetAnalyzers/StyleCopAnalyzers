@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
@@ -85,6 +87,7 @@ namespace StyleCop.Analyzers.SpacingRules
             {
                 switch (token.Kind())
                 {
+                case SyntaxKindEx.AndKeyword:
                 case SyntaxKind.AwaitKeyword:
                 case SyntaxKind.CaseKeyword:
                 case SyntaxKind.CatchKeyword:
@@ -96,9 +99,12 @@ namespace StyleCop.Analyzers.SpacingRules
                 case SyntaxKind.IfKeyword:
                 case SyntaxKind.InKeyword:
                 case SyntaxKind.IntoKeyword:
+                case SyntaxKind.IsKeyword:
                 case SyntaxKind.JoinKeyword:
                 case SyntaxKind.LetKeyword:
                 case SyntaxKind.LockKeyword:
+                case SyntaxKindEx.NotKeyword:
+                case SyntaxKindEx.OrKeyword:
                 case SyntaxKind.OrderByKeyword:
                 case SyntaxKind.OutKeyword:
                 case SyntaxKind.RefKeyword:
@@ -113,13 +119,23 @@ namespace StyleCop.Analyzers.SpacingRules
 
                 case SyntaxKind.CheckedKeyword:
                 case SyntaxKind.UncheckedKeyword:
-                    if (token.GetNextToken().IsKind(SyntaxKind.OpenBraceToken))
+                    switch (token.Parent.Kind())
                     {
+                    case SyntaxKind.CheckedStatement:
+                    case SyntaxKind.UncheckedStatement:
+                    case SyntaxKind.OperatorDeclaration:
+                    case SyntaxKind.ConversionOperatorDeclaration:
                         HandleRequiredSpaceToken(ref context, token);
-                    }
-                    else
-                    {
+                        break;
+
+                    case SyntaxKind.CheckedExpression:
+                    case SyntaxKind.UncheckedExpression:
                         HandleDisallowedSpaceToken(ref context, token);
+                        break;
+
+                    default:
+                        // So far an unknown case, so we have no opinion yet
+                        break;
                     }
 
                     break;

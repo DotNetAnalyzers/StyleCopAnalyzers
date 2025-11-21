@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct IParameterInitializerOperationWrapper : IOperationWrapper
+    internal readonly struct IParameterInitializerOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IParameterInitializerOperation";
         private static readonly Type WrappedType;
@@ -27,6 +27,8 @@ namespace StyleCop.Analyzers.Lightup
         public IOperation WrappedOperation => this.operation;
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public IParameterSymbol Parameter => ParameterAccessor(this.WrappedOperation);
+        public static explicit operator IParameterInitializerOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(IParameterInitializerOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public ImmutableArray<ILocalSymbol> Locals => ((ISymbolInitializerOperationWrapper)this).Locals;
         public IOperation Value => ((ISymbolInitializerOperationWrapper)this).Value;
         public static explicit operator IParameterInitializerOperationWrapper(ISymbolInitializerOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);

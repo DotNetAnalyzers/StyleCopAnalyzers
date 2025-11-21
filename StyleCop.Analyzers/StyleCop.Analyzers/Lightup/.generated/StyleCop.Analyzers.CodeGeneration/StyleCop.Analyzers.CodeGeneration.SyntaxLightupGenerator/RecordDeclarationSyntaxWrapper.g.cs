@@ -14,10 +14,12 @@ namespace StyleCop.Analyzers.Lightup
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.RecordDeclarationSyntax";
         private static readonly Type WrappedType;
 
+        private static readonly Func<TypeDeclarationSyntax, SyntaxToken> ClassOrStructKeywordAccessor;
         private static readonly Func<TypeDeclarationSyntax, ParameterListSyntax> ParameterListAccessor;
         private static readonly Func<TypeDeclarationSyntax, SyntaxList<AttributeListSyntax>, TypeDeclarationSyntax> WithAttributeListsAccessor;
         private static readonly Func<TypeDeclarationSyntax, SyntaxTokenList, TypeDeclarationSyntax> WithModifiersAccessor;
         private static readonly Func<TypeDeclarationSyntax, SyntaxToken, TypeDeclarationSyntax> WithKeywordAccessor;
+        private static readonly Func<TypeDeclarationSyntax, SyntaxToken, TypeDeclarationSyntax> WithClassOrStructKeywordAccessor;
         private static readonly Func<TypeDeclarationSyntax, SyntaxToken, TypeDeclarationSyntax> WithIdentifierAccessor;
         private static readonly Func<TypeDeclarationSyntax, TypeParameterListSyntax, TypeDeclarationSyntax> WithTypeParameterListAccessor;
         private static readonly Func<TypeDeclarationSyntax, ParameterListSyntax, TypeDeclarationSyntax> WithParameterListAccessor;
@@ -33,10 +35,12 @@ namespace StyleCop.Analyzers.Lightup
         static RecordDeclarationSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(RecordDeclarationSyntaxWrapper));
+            ClassOrStructKeywordAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<TypeDeclarationSyntax, SyntaxToken>(WrappedType, nameof(ClassOrStructKeyword));
             ParameterListAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<TypeDeclarationSyntax, ParameterListSyntax>(WrappedType, nameof(ParameterList));
             WithAttributeListsAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, SyntaxList<AttributeListSyntax>>(WrappedType, nameof(AttributeLists));
             WithModifiersAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, SyntaxTokenList>(WrappedType, nameof(Modifiers));
             WithKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, SyntaxToken>(WrappedType, nameof(Keyword));
+            WithClassOrStructKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, SyntaxToken>(WrappedType, nameof(ClassOrStructKeyword));
             WithIdentifierAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, SyntaxToken>(WrappedType, nameof(Identifier));
             WithTypeParameterListAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, TypeParameterListSyntax>(WrappedType, nameof(TypeParameterList));
             WithParameterListAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, ParameterListSyntax>(WrappedType, nameof(ParameterList));
@@ -76,6 +80,14 @@ namespace StyleCop.Analyzers.Lightup
             get
             {
                 return this.SyntaxNode.Keyword;
+            }
+        }
+
+        public SyntaxToken ClassOrStructKeyword
+        {
+            get
+            {
+                return ClassOrStructKeywordAccessor(this.SyntaxNode);
             }
         }
 
@@ -189,6 +201,11 @@ namespace StyleCop.Analyzers.Lightup
         public RecordDeclarationSyntaxWrapper WithKeyword(SyntaxToken keyword)
         {
             return new RecordDeclarationSyntaxWrapper(WithKeywordAccessor(this.SyntaxNode, keyword));
+        }
+
+        public RecordDeclarationSyntaxWrapper WithClassOrStructKeyword(SyntaxToken classOrStructKeyword)
+        {
+            return new RecordDeclarationSyntaxWrapper(WithClassOrStructKeywordAccessor(this.SyntaxNode, classOrStructKeyword));
         }
 
         public RecordDeclarationSyntaxWrapper WithIdentifier(SyntaxToken identifier)

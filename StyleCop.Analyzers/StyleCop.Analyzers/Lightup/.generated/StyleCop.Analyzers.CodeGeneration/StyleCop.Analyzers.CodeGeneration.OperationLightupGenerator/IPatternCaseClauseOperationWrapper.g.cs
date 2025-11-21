@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct IPatternCaseClauseOperationWrapper : IOperationWrapper
+    internal readonly struct IPatternCaseClauseOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IPatternCaseClauseOperation";
         private static readonly Type WrappedType;
@@ -33,6 +33,8 @@ namespace StyleCop.Analyzers.Lightup
         public ILabelSymbol Label => LabelAccessor(this.WrappedOperation);
         public IPatternOperationWrapper Pattern => IPatternOperationWrapper.FromOperation(PatternAccessor(this.WrappedOperation));
         public IOperation Guard => GuardAccessor(this.WrappedOperation);
+        public static explicit operator IPatternCaseClauseOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(IPatternCaseClauseOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public object CaseKind => ((ICaseClauseOperationWrapper)this).CaseKind;
         public static explicit operator IPatternCaseClauseOperationWrapper(ICaseClauseOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator ICaseClauseOperationWrapper(IPatternCaseClauseOperationWrapper wrapper) => ICaseClauseOperationWrapper.FromUpcast(wrapper.WrappedOperation);

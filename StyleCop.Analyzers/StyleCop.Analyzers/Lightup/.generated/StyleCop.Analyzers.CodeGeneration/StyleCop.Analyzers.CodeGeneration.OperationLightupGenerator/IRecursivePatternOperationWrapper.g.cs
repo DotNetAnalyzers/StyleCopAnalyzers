@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct IRecursivePatternOperationWrapper : IOperationWrapper
+    internal readonly struct IRecursivePatternOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IRecursivePatternOperation";
         private static readonly Type WrappedType;
@@ -39,6 +39,8 @@ namespace StyleCop.Analyzers.Lightup
         public ImmutableArray<IOperation> DeconstructionSubpatterns => DeconstructionSubpatternsAccessor(this.WrappedOperation);
         public ImmutableArray<IOperation> PropertySubpatterns => PropertySubpatternsAccessor(this.WrappedOperation);
         public ISymbol DeclaredSymbol => DeclaredSymbolAccessor(this.WrappedOperation);
+        public static explicit operator IRecursivePatternOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(IRecursivePatternOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public ITypeSymbol InputType => ((IPatternOperationWrapper)this).InputType;
         public ITypeSymbol NarrowedType => ((IPatternOperationWrapper)this).NarrowedType;
         public static explicit operator IRecursivePatternOperationWrapper(IPatternOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);

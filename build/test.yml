@@ -1,0 +1,108 @@
+﻿parameters:
+- name: BuildConfiguration
+  displayName: Build Configuration
+  type: string
+  default: Debug
+  values: [ 'Debug', 'Release' ]
+- name: LangVersion
+  displayName: C# Language Version
+  type: string
+  default: '6'
+  values: [ '6', '7', '8', '9', '10', '11', '12', '13' ]
+- name: FrameworkVersion
+  displayName: .NET Framework Version
+  type: string
+  default: 'net472'
+  values: [ 'net452', 'net46', 'net472' ]
+- name: BuildSolution
+  displayName: Solution
+  type: string
+  default: StyleCopAnalyzers.sln
+- name: BuildPlatform
+  displayName: Platform
+  type: string
+  default: Any CPU
+
+jobs:
+- job: Test_CSharp_${{ parameters.LangVersion }}
+  displayName: Test C# ${{ parameters.LangVersion }}
+  steps:
+  - powershell: .\init.ps1 -NoRestore
+    displayName: Install .NET Core SDK
+
+  - task: NuGetToolInstaller@0
+    displayName: 'Use NuGet 5.3.1'
+    inputs:
+      versionSpec: 5.3.1
+
+  - task: DownloadPipelineArtifact@2
+    displayName: 🔻 Download solution packages
+    continueOnError: true
+    inputs:
+      buildType: current
+      artifactName: slnPackages-${{ parameters.BuildConfiguration }}
+      targetPath: $(Build.SourcesDirectory)/packages
+
+  - ${{ if eq(parameters.LangVersion, '6') }}:
+    - task: DownloadPipelineArtifact@2
+      displayName: 🔻 Download build output
+      continueOnError: true
+      inputs:
+        buildType: current
+        artifactName: buildTest-cs${{ parameters.LangVersion }}-${{ parameters.BuildConfiguration }}
+        targetPath: $(Build.SourcesDirectory)/StyleCop.Analyzers/StyleCop.Analyzers.Test/bin
+
+  - ${{ if ne(parameters.LangVersion, '6') }}:
+    - task: DownloadPipelineArtifact@2
+      displayName: 🔻 Download build output
+      continueOnError: true
+      inputs:
+        buildType: current
+        artifactName: buildTest-cs${{ parameters.LangVersion }}-${{ parameters.BuildConfiguration }}
+        targetPath: $(Build.SourcesDirectory)/StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp${{ parameters.LangVersion }}/bin
+
+  - task: PowerShell@2
+    displayName: 'Run tests'
+    timeoutInMinutes: 20
+    inputs:
+      workingDirectory: '$(Build.SourcesDirectory)/build'
+      targetType: inline
+      script: |
+        $packageConfig = [xml](Get-Content ..\.nuget\packages.config)
+        $opencover_version = $packageConfig.SelectSingleNode('/packages/package[@id="OpenCover"]').version
+        $xunitrunner_version = $packageConfig.SelectSingleNode('/packages/package[@id="xunit.runner.console"]').version
+
+        $packages_folder = '..\packages'
+        $opencover_console = "$packages_folder\OpenCover.$opencover_version\tools\OpenCover.Console.exe"
+        $xunit_runner_console_${{ parameters.FrameworkVersion }} = "$packages_folder\xunit.runner.console.$xunitrunner_version\tools\${{ parameters.FrameworkVersion }}\xunit.console.x86.exe"
+        $report_folder = '.\OpenCover.Reports'
+        mkdir $report_folder
+        $target_dll_name = If ('${{ parameters.LangVersion }}' -Eq '6') { "StyleCop.Analyzers.Test" } Else { "StyleCop.Analyzers.Test.CSharp${{ parameters.LangVersion }}" }
+        $target_dll_csharp${{ parameters.LangVersion }} = "..\StyleCop.Analyzers\$target_dll_name\bin\${{ parameters.BuildConfiguration }}\${{ parameters.FrameworkVersion }}\$target_dll_name.dll"
+        &$opencover_console `
+          -register:Path32 `
+          -threshold:1 -oldStyle `
+          -returntargetcode `
+          -hideskipped:All `
+          -filter:"+[StyleCop*]*" `
+          -excludebyattribute:*.ExcludeFromCodeCoverage* `
+          -excludebyfile:*\*Designer.cs `
+          -output:"$report_folder\OpenCover.StyleCopAnalyzers.CSharp${{ parameters.LangVersion }}.xml" `
+          -target:"$xunit_runner_console_${{ parameters.FrameworkVersion }}" `
+          -targetargs:"$target_dll_csharp${{ parameters.LangVersion }} -noshadow -xml StyleCopAnalyzers.CSharp${{ parameters.LangVersion }}.xunit.xml"
+
+  - task: PublishTestResults@2
+    displayName: 📢 Publish test results
+    condition: always()
+    inputs:
+      testResultsFormat: xUnit
+      testResultsFiles: 'build/*.xml'
+      mergeTestResults: true
+      testRunTitle: 'C# ${{ parameters.LangVersion }} ${{ parameters.BuildConfiguration }}'
+
+  - ${{ if eq(parameters.BuildConfiguration, 'Debug') }}:
+    - task: PublishPipelineArtifact@1
+      displayName: Publish code coverage
+      inputs:
+        targetPath: $(Build.SourcesDirectory)/build/OpenCover.Reports
+        artifact: coverageResults-cs${{ parameters.LangVersion }}

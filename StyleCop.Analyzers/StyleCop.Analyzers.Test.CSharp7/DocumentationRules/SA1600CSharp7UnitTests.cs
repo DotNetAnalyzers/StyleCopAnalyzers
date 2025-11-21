@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp7.DocumentationRules
 {
     using System.Threading.Tasks;
@@ -8,7 +10,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.DocumentationRules
     using StyleCop.Analyzers.Test.DocumentationRules;
     using Xunit;
 
-    public class SA1600CSharp7UnitTests : SA1600UnitTests
+    public partial class SA1600CSharp7UnitTests : SA1600UnitTests
     {
         protected override LanguageVersion LanguageVersion => LanguageVersion.CSharp7_2;
 

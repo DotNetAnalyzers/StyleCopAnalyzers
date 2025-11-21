@@ -1,8 +1,11 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
@@ -14,6 +17,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1402FileMayOnlyContainASingleType"/>.
@@ -64,7 +68,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             DocumentId extractedDocumentId = DocumentId.CreateNewId(document.Project.Id);
             string suffix;
             FileNameHelpers.GetFileNameAndSuffix(document.Name, out suffix);
-            var settings = document.Project.AnalyzerOptions.GetStyleCopSettings(cancellationToken);
+            var settings = document.Project.AnalyzerOptions.GetStyleCopSettingsInCodeFix(root.SyntaxTree, cancellationToken);
             string extractedDocumentName = FileNameHelpers.GetConventionalFileName(memberDeclarationSyntax, settings.DocumentationRules.FileNamingConvention) + suffix;
 
             List<SyntaxNode> nodesToRemoveFromExtracted = new List<SyntaxNode>();
@@ -86,8 +90,14 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                     case SyntaxKind.InterfaceDeclaration:
                     case SyntaxKind.EnumDeclaration:
                     case SyntaxKind.DelegateDeclaration:
+                    case SyntaxKindEx.RecordDeclaration:
+                    case SyntaxKindEx.RecordStructDeclaration:
                         nodesToRemoveFromExtracted.Add(child);
                         break;
+
+                    case SyntaxKindEx.FileScopedNamespaceDeclaration:
+                        // Only one file-scoped namespace is allowed per syntax tree
+                        throw new InvalidOperationException("This location is not reachable");
 
                     default:
                         break;

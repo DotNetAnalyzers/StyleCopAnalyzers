@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
 {
     using System.Threading;
@@ -12,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
         StyleCop.Analyzers.ReadabilityRules.SA1139UseLiteralSuffixNotationInsteadOfCasting,
         StyleCop.Analyzers.ReadabilityRules.SA1139CodeFixProvider>;
 
-    public class SA1139CSharp7UnitTests : SA1139UnitTests
+    public partial class SA1139CSharp7UnitTests : SA1139UnitTests
     {
         /// <summary>
         /// Verifies that using literals with digit separators does not produce diagnostic.

@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct IInterpolationOperationWrapper : IOperationWrapper
+    internal readonly struct IInterpolationOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IInterpolationOperation";
         private static readonly Type WrappedType;
@@ -33,6 +33,8 @@ namespace StyleCop.Analyzers.Lightup
         public IOperation Expression => ExpressionAccessor(this.WrappedOperation);
         public IOperation Alignment => AlignmentAccessor(this.WrappedOperation);
         public IOperation FormatString => FormatStringAccessor(this.WrappedOperation);
+        public static explicit operator IInterpolationOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(IInterpolationOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static explicit operator IInterpolationOperationWrapper(IInterpolatedStringContentOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IInterpolatedStringContentOperationWrapper(IInterpolationOperationWrapper wrapper) => IInterpolatedStringContentOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IInterpolationOperationWrapper FromOperation(IOperation operation)

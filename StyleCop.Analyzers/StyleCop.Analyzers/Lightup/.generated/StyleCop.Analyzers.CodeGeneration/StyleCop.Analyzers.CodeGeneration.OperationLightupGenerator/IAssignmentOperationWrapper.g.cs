@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct IAssignmentOperationWrapper : IOperationWrapper
+    internal readonly struct IAssignmentOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IAssignmentOperation";
         private static readonly Type WrappedType;
@@ -30,6 +30,8 @@ namespace StyleCop.Analyzers.Lightup
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public IOperation Target => TargetAccessor(this.WrappedOperation);
         public IOperation Value => ValueAccessor(this.WrappedOperation);
+        public static explicit operator IAssignmentOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(IAssignmentOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IAssignmentOperationWrapper FromOperation(IOperation operation)
         {
             if (operation == null)

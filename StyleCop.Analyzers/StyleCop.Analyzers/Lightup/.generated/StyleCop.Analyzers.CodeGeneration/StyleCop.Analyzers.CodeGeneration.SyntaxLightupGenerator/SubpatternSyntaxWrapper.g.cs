@@ -14,9 +14,9 @@ namespace StyleCop.Analyzers.Lightup
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.SubpatternSyntax";
         private static readonly Type WrappedType;
 
-        private static readonly Func<CSharpSyntaxNode, NameColonSyntax> NameColonAccessor;
+        private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode> ExpressionColonAccessor;
         private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode> PatternAccessor;
-        private static readonly Func<CSharpSyntaxNode, NameColonSyntax, CSharpSyntaxNode> WithNameColonAccessor;
+        private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode, CSharpSyntaxNode> WithExpressionColonAccessor;
         private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode, CSharpSyntaxNode> WithPatternAccessor;
 
         private readonly CSharpSyntaxNode node;
@@ -24,9 +24,9 @@ namespace StyleCop.Analyzers.Lightup
         static SubpatternSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(SubpatternSyntaxWrapper));
-            NameColonAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, NameColonSyntax>(WrappedType, nameof(NameColon));
+            ExpressionColonAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, CSharpSyntaxNode>(WrappedType, nameof(ExpressionColon));
             PatternAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, CSharpSyntaxNode>(WrappedType, nameof(Pattern));
-            WithNameColonAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, NameColonSyntax>(WrappedType, nameof(NameColon));
+            WithExpressionColonAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, CSharpSyntaxNode>(WrappedType, nameof(ExpressionColon));
             WithPatternAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, CSharpSyntaxNode>(WrappedType, nameof(Pattern));
         }
 
@@ -37,11 +37,11 @@ namespace StyleCop.Analyzers.Lightup
 
         public CSharpSyntaxNode SyntaxNode => this.node;
 
-        public NameColonSyntax NameColon
+        public BaseExpressionColonSyntaxWrapper ExpressionColon
         {
             get
             {
-                return NameColonAccessor(this.SyntaxNode);
+                return (BaseExpressionColonSyntaxWrapper)ExpressionColonAccessor(this.SyntaxNode);
             }
         }
 
@@ -78,9 +78,9 @@ namespace StyleCop.Analyzers.Lightup
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
-        public SubpatternSyntaxWrapper WithNameColon(NameColonSyntax nameColon)
+        public SubpatternSyntaxWrapper WithExpressionColon(BaseExpressionColonSyntaxWrapper expressionColon)
         {
-            return new SubpatternSyntaxWrapper(WithNameColonAccessor(this.SyntaxNode, nameColon));
+            return new SubpatternSyntaxWrapper(WithExpressionColonAccessor(this.SyntaxNode, expressionColon));
         }
 
         public SubpatternSyntaxWrapper WithPattern(PatternSyntaxWrapper pattern)

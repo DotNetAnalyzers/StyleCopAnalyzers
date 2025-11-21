@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 {
     using System.Threading;
@@ -9,11 +11,12 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.SpacingRules;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Helpers.LanguageVersionTestExtensions;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1000KeywordsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1000CSharp7UnitTests : SA1000UnitTests
+    public partial class SA1000CSharp7UnitTests : SA1000UnitTests
     {
         [Fact]
         public async Task TestOutVariableDeclarationAsync()
@@ -244,10 +247,10 @@ namespace TestNamespace
 
             string statementWithSpace = @"int* x = stackalloc [] { 3 };";
 
-            await this.TestKeywordStatementAsync(statementWithoutSpace, DiagnosticResult.EmptyDiagnosticResults, statementWithoutSpace, languageVersion: LanguageVersion.CSharp7_3).ConfigureAwait(false);
+            await this.TestKeywordStatementAsync(statementWithoutSpace, DiagnosticResult.EmptyDiagnosticResults, statementWithoutSpace, languageVersion: LanguageVersion.CSharp7_3.OrLaterDefault()).ConfigureAwait(false);
 
             // this case is handled by SA1026, so it shouldn't be reported here
-            await this.TestKeywordStatementAsync(statementWithSpace, DiagnosticResult.EmptyDiagnosticResults, statementWithSpace, languageVersion: LanguageVersion.CSharp7_3).ConfigureAwait(false);
+            await this.TestKeywordStatementAsync(statementWithSpace, DiagnosticResult.EmptyDiagnosticResults, statementWithSpace, languageVersion: LanguageVersion.CSharp7_3.OrLaterDefault()).ConfigureAwait(false);
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
@@ -140,7 +142,11 @@ namespace StyleCop.Analyzers.SpacingRules
             var leadingTriviaList = TriviaHelper.MergeTriviaLists(prevToken.TrailingTrivia, token.LeadingTrivia);
 
             var isFirstOnLine = false;
-            if (prevToken.GetLineSpan().EndLinePosition.Line < token.GetLineSpan().StartLinePosition.Line)
+            if (prevToken.IsKind(SyntaxKind.None))
+            {
+                isFirstOnLine = true; // This means that it doesn't matter if there are spaces before or not
+            }
+            else if (prevToken.GetLineSpan().EndLinePosition.Line < token.GetLineSpan().StartLinePosition.Line)
             {
                 var done = false;
                 for (var i = leadingTriviaList.Count - 1; !done && (i >= 0); i--)
@@ -186,7 +192,11 @@ namespace StyleCop.Analyzers.SpacingRules
 
             case SyntaxKindEx.PositionalPatternClause:
                 haveLeadingSpace = prevToken.IsKind(SyntaxKind.IsKeyword)
-                    || prevToken.IsKind(SyntaxKind.CommaToken);
+                    || prevToken.IsKind(SyntaxKindEx.OrKeyword)
+                    || prevToken.IsKind(SyntaxKindEx.AndKeyword)
+                    || prevToken.IsKind(SyntaxKindEx.NotKeyword)
+                    || prevToken.IsKind(SyntaxKind.CommaToken)
+                    || prevToken.IsKind(SyntaxKind.ColonToken);
                 break;
 
             case SyntaxKindEx.ParenthesizedPattern:
@@ -231,8 +241,9 @@ namespace StyleCop.Analyzers.SpacingRules
                 startOfIndexer = prevToken.IsKind(SyntaxKind.OpenBracketToken);
                 var consecutiveCast = prevToken.IsKind(SyntaxKind.CloseParenToken) && prevToken.Parent.IsKind(SyntaxKind.CastExpression);
                 var partOfInterpolation = prevToken.IsKind(SyntaxKind.OpenBraceToken) && prevToken.Parent.IsKind(SyntaxKind.Interpolation);
+                var partOfRange = prevToken.IsKind(SyntaxKindEx.DotDotToken);
 
-                haveLeadingSpace = !partOfUnaryExpression && !startOfIndexer && !consecutiveCast && !partOfInterpolation;
+                haveLeadingSpace = !partOfUnaryExpression && !startOfIndexer && !consecutiveCast && !partOfInterpolation && !partOfRange;
                 break;
 
             case SyntaxKind.ParameterList:
@@ -242,10 +253,12 @@ namespace StyleCop.Analyzers.SpacingRules
 
             case SyntaxKindEx.TupleType:
                 // Comma covers tuple types in parameters and nested within other tuple types.
+                // Equals covers definition of a tuple type alias.
                 // 'out', 'ref', 'in', 'params' parameters are covered by IsKeywordKind.
                 // Attributes of parameters are covered by checking the previous token's parent.
                 // Return types are handled by a helper.
                 haveLeadingSpace = prevToken.IsKind(SyntaxKind.CommaToken)
+                    || prevToken.IsKind(SyntaxKind.EqualsToken)
                     || SyntaxFacts.IsKeywordKind(prevToken.Kind())
                     || prevToken.Parent.IsKind(SyntaxKind.AttributeList)
                     || ((TypeSyntax)token.Parent).GetContainingNotEnclosingType().IsReturnType();

@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct IPropertyReferenceOperationWrapper : IOperationWrapper
+    internal readonly struct IPropertyReferenceOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IPropertyReferenceOperation";
         private static readonly Type WrappedType;
@@ -30,6 +30,8 @@ namespace StyleCop.Analyzers.Lightup
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public IPropertySymbol Property => PropertyAccessor(this.WrappedOperation);
         public ImmutableArray<IOperation> Arguments => ArgumentsAccessor(this.WrappedOperation);
+        public static explicit operator IPropertyReferenceOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(IPropertyReferenceOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public IOperation Instance => ((IMemberReferenceOperationWrapper)this).Instance;
         public ISymbol Member => ((IMemberReferenceOperationWrapper)this).Member;
         public static explicit operator IPropertyReferenceOperationWrapper(IMemberReferenceOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.LayoutRules
 {
     using System.Collections.Immutable;
@@ -63,7 +65,8 @@ namespace StyleCop.Analyzers.LayoutRules
                 diagnostics.Select(diagnostic => root.FindToken(diagnostic.Location.SourceSpan.End)),
                 (originalToken, rewrittenToken) =>
                 {
-                    var newTrivia = rewrittenToken.LeadingTrivia.Insert(0, SyntaxFactory.CarriageReturnLineFeed);
+                    var endOfLineTrivia = rewrittenToken.GetPrecedingEndOfLineTrivia();
+                    var newTrivia = rewrittenToken.LeadingTrivia.Insert(0, endOfLineTrivia);
                     return rewrittenToken.WithLeadingTrivia(newTrivia);
                 });
         }

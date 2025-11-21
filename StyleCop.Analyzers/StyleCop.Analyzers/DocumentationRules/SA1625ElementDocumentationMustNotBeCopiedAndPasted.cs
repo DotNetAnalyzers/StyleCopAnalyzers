@@ -1,12 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Globalization;
     using System.Linq;
     using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
@@ -88,7 +89,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var objectPool = SharedPools.Default<HashSet<string>>();
             HashSet<string> documentationTexts = objectPool.Allocate();
-            var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
+            var culture = settings.DocumentationRules.DocumentationCultureInfo;
             var resourceManager = DocumentationResources.ResourceManager;
 
             foreach (var documentationSyntax in syntaxList)
@@ -100,14 +101,10 @@ namespace StyleCop.Analyzers.DocumentationRules
                     continue;
                 }
 
-                if (documentationTexts.Contains(documentation))
+                if (!documentationTexts.Add(documentation))
                 {
                     // Add violation
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, documentationSyntax.GetLocation()));
-                }
-                else
-                {
-                    documentationTexts.Add(documentation);
                 }
             }
 
@@ -115,12 +112,11 @@ namespace StyleCop.Analyzers.DocumentationRules
         }
 
         /// <inheritdoc/>
-        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, bool needsComment, XElement completeDocumentation, params Location[] diagnosticLocations)
+        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, XElement completeDocumentation, params Location[] diagnosticLocations)
         {
             var objectPool = SharedPools.Default<HashSet<string>>();
             HashSet<string> documentationTexts = objectPool.Allocate();
-            var settings = context.Options.GetStyleCopSettings(context.CancellationToken);
-            var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
+            var culture = settings.DocumentationRules.DocumentationCultureInfo;
             var resourceManager = DocumentationResources.ResourceManager;
 
             // Concatenate all XML node values
@@ -148,14 +144,10 @@ namespace StyleCop.Analyzers.DocumentationRules
                     continue;
                 }
 
-                if (documentationTexts.Contains(documentation))
+                if (!documentationTexts.Add(documentation))
                 {
                     // Add violation
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, diagnosticLocations.First()));
-                }
-                else
-                {
-                    documentationTexts.Add(documentation);
                 }
             }
 

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable disable
+
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     using System.Linq;
@@ -21,6 +23,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         protected override CodeFixProvider CodeFix => new SA1402CodeFixProvider();
 
         protected SA1402SettingsConfiguration SettingsConfiguration { get; set; } = SA1402SettingsConfiguration.ConfigureAsTopLevelType;
+
+        protected virtual string SettingKeyword => this.Keyword;
 
         protected abstract bool IsConfiguredAsTopLevelTypeByDefault { get; }
 
@@ -188,7 +192,7 @@ public {this.Keyword} Test0
 
         protected override string GetSettings()
         {
-            return this.SettingsConfiguration.GetSettings(this.Keyword);
+            return this.SettingsConfiguration.GetSettings(this.SettingKeyword);
         }
     }
 }

@@ -13,13 +13,13 @@ namespace StyleCop.Analyzers.CodeGeneration
     using System.Text;
     using System.Xml.Linq;
     using System.Xml.XPath;
+    using Analyzer.Utilities;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Text;
 
     [Generator]
-    internal sealed class SyntaxLightupGenerator : ISourceGenerator
+    internal sealed class SyntaxLightupGenerator : IIncrementalGenerator
     {
         private enum NodeKind
         {
@@ -28,25 +28,79 @@ namespace StyleCop.Analyzers.CodeGeneration
             Concrete,
         }
 
-        public void Initialize(GeneratorInitializationContext context)
+        public void Initialize(IncrementalGeneratorInitializationContext context)
         {
+            var referencedAssemblies = context.CompilationProvider.SelectMany(
+                static (compilation, cancellationToken) =>
+                {
+                    return compilation.SourceModule.ReferencedAssemblySymbols
+                        .Where(reference => reference.Name is "Microsoft.CodeAnalysis" or "Microsoft.CodeAnalysis.CSharp");
+                });
+
+            var existingTypesInReferences = referencedAssemblies.SelectMany(
+                static (reference, cancellationToken) =>
+                {
+                    var microsoftNamespace = reference.GlobalNamespace.GetNamespaceMembers().SingleOrDefault(symbol => symbol.Name == nameof(Microsoft));
+                    var microsoftCodeAnalysisNamespace = microsoftNamespace?.GetNamespaceMembers().SingleOrDefault(symbol => symbol.Name == nameof(Microsoft.CodeAnalysis));
+                    var microsoftCodeAnalysisCSharpNamespace = microsoftCodeAnalysisNamespace?.GetNamespaceMembers().SingleOrDefault(symbol => symbol.Name == nameof(Microsoft.CodeAnalysis.CSharp));
+                    var microsoftCodeAnalysisCSharpSyntaxNamespace = microsoftCodeAnalysisCSharpNamespace?.GetNamespaceMembers().SingleOrDefault(symbol => symbol.Name == nameof(Microsoft.CodeAnalysis.CSharp.Syntax));
+
+                    var existingTypesBuilder = ImmutableArray.CreateBuilder<ExistingTypeData>();
+                    AddPublicTypesFromNamespace(microsoftNamespace, existingTypesBuilder);
+                    AddPublicTypesFromNamespace(microsoftCodeAnalysisNamespace, existingTypesBuilder);
+                    AddPublicTypesFromNamespace(microsoftCodeAnalysisCSharpNamespace, existingTypesBuilder);
+                    AddPublicTypesFromNamespace(microsoftCodeAnalysisCSharpSyntaxNamespace, existingTypesBuilder);
+
+                    return existingTypesBuilder.ToImmutable();
+
+                    static void AddPublicTypesFromNamespace(INamespaceSymbol? namespaceSymbol, ImmutableArray<ExistingTypeData>.Builder existingTypesBuilder)
+                    {
+                        if (namespaceSymbol is null)
+                        {
+                            return;
+                        }
+
+                        foreach (var type in namespaceSymbol.GetTypeMembers())
+                        {
+                            if (type is not { DeclaredAccessibility: Accessibility.Public })
+                            {
+                                continue;
+                            }
+
+                            existingTypesBuilder.Add(ExistingTypeData.FromNamedType(type, type.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat)));
+                        }
+                    }
+                });
+
+            var compilationData = existingTypesInReferences.Collect().Select(
+                static (existingTypes, cancellationToken) =>
+                {
+                    return new CompilationData(
+                        ExistingTypesWrapper: new EquatableValue<ImmutableDictionary<string, ExistingTypeData>>(
+                            existingTypes.ToImmutableDictionary(type => type.TypeName),
+                            ImmutableDictionaryEqualityComparer<string, ExistingTypeData>.Default));
+                });
+
+            var syntaxFiles = context.AdditionalTextsProvider.Where(static x => Path.GetFileName(x.Path) == "Syntax.xml");
+            context.RegisterSourceOutput(
+                syntaxFiles.Combine(compilationData),
+                (context, value) => this.Execute(in context, value.Right, value.Left));
         }
 
-        public void Execute(GeneratorExecutionContext context)
+        private void Execute(in SourceProductionContext context, CompilationData compilationData, AdditionalText syntaxFile)
         {
-            var syntaxFile = context.AdditionalFiles.Single(x => Path.GetFileName(x.Path) == "Syntax.xml");
             var syntaxText = syntaxFile.GetText(context.CancellationToken);
             if (syntaxText is null)
             {
                 throw new InvalidOperationException("Failed to read Syntax.xml");
             }
 
-            var syntaxData = new SyntaxData(in context, XDocument.Parse(syntaxText.ToString()));
+            var syntaxData = new SyntaxData(compilationData, XDocument.Parse(syntaxText.ToString()));
             this.GenerateSyntaxWrappers(in context, syntaxData);
             this.GenerateSyntaxWrapperHelper(in context, syntaxData.Nodes);
         }
 
-        private void GenerateSyntaxWrappers(in GeneratorExecutionContext context, SyntaxData syntaxData)
+        private void GenerateSyntaxWrappers(in SourceProductionContext context, SyntaxData syntaxData)
         {
             foreach (var node in syntaxData.Nodes)
             {
@@ -54,7 +108,7 @@ namespace StyleCop.Analyzers.CodeGeneration
             }
         }
 
-        private void GenerateSyntaxWrapper(in GeneratorExecutionContext context, SyntaxData syntaxData, NodeData nodeData)
+        private void GenerateSyntaxWrapper(in SourceProductionContext context, SyntaxData syntaxData, NodeData nodeData)
         {
             if (nodeData.WrapperName is null)
             {
@@ -803,10 +857,10 @@ namespace StyleCop.Analyzers.CodeGeneration
                 .WithTrailingTrivia(
                     SyntaxFactory.CarriageReturnLineFeed);
 
-            context.AddSource(nodeData.WrapperName + ".g.cs", SourceText.From(wrapperNamespace.ToFullString(), Encoding.UTF8));
+            context.AddSource(nodeData.WrapperName + ".g.cs", wrapperNamespace.GetText(Encoding.UTF8));
         }
 
-        private void GenerateSyntaxWrapperHelper(in GeneratorExecutionContext context, ImmutableArray<NodeData> wrapperTypes)
+        private void GenerateSyntaxWrapperHelper(in SourceProductionContext context, ImmutableArray<NodeData> wrapperTypes)
         {
             // private static readonly ImmutableDictionary<Type, Type> WrappedTypes;
             var wrappedTypes = SyntaxFactory.FieldDeclaration(
@@ -982,6 +1036,65 @@ namespace StyleCop.Analyzers.CodeGeneration
                     continue;
                 }
 
+                if (node.Name == nameof(BaseNamespaceDeclarationSyntax))
+                {
+                    // Prior to C# 10, NamespaceDeclarationSyntax was the base type for all namespace declarations.
+                    // If the BaseNamespaceDeclarationSyntax type isn't found at runtime, we fall back
+                    // to using this type instead.
+                    //
+                    // var baseNamespaceDeclarationSyntaxType = csharpCodeAnalysisAssembly.GetType(BaseNamespaceDeclarationSyntaxWrapper.WrappedTypeName)
+                    //     ?? csharpCodeAnalysisAssembly.GetType(BaseNamespaceDeclarationSyntaxWrapper.WrappedTypeName);
+                    LocalDeclarationStatementSyntax localStatement =
+                        SyntaxFactory.LocalDeclarationStatement(SyntaxFactory.VariableDeclaration(
+                            type: SyntaxFactory.IdentifierName("var"),
+                            variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(
+                                identifier: SyntaxFactory.Identifier("baseNamespaceDeclarationSyntaxType"),
+                                argumentList: null,
+                                initializer: SyntaxFactory.EqualsValueClause(
+                                    SyntaxFactory.BinaryExpression(
+                                        SyntaxKind.CoalesceExpression,
+                                        left: SyntaxFactory.InvocationExpression(
+                                            expression: SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                expression: SyntaxFactory.IdentifierName("csharpCodeAnalysisAssembly"),
+                                                name: SyntaxFactory.IdentifierName("GetType")),
+                                            argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    expression: SyntaxFactory.IdentifierName(node.WrapperName),
+                                                    name: SyntaxFactory.IdentifierName("WrappedTypeName")))))),
+                                        right: SyntaxFactory.InvocationExpression(
+                                            expression: SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                expression: SyntaxFactory.IdentifierName("csharpCodeAnalysisAssembly"),
+                                                name: SyntaxFactory.IdentifierName("GetType")),
+                                            argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(
+                                                SyntaxFactory.MemberAccessExpression(
+                                                    SyntaxKind.SimpleMemberAccessExpression,
+                                                    expression: SyntaxFactory.IdentifierName(node.WrapperName),
+                                                    name: SyntaxFactory.IdentifierName("FallbackWrappedTypeName"))))))))))));
+
+                    // This is the first line of the statements that initialize 'builder', so start it with a blank line
+                    staticCtorStatements = staticCtorStatements.Add(localStatement.WithLeadingBlankLine());
+
+                    // builder.Add(typeof(BaseNamespaceDeclarationSyntaxWrapper), baseNamespaceDeclarationSyntaxType);
+                    staticCtorStatements = staticCtorStatements.Add(SyntaxFactory.ExpressionStatement(
+                        SyntaxFactory.InvocationExpression(
+                            expression: SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                expression: SyntaxFactory.IdentifierName("builder"),
+                                name: SyntaxFactory.IdentifierName("Add")),
+                            argumentList: SyntaxFactory.ArgumentList(
+                                SyntaxFactory.SeparatedList(
+                                    new[]
+                                    {
+                                        SyntaxFactory.Argument(SyntaxFactory.TypeOfExpression(SyntaxFactory.IdentifierName(node.WrapperName))),
+                                        SyntaxFactory.Argument(SyntaxFactory.IdentifierName("baseNamespaceDeclarationSyntaxType")),
+                                    })))));
+
+                    continue;
+                }
+
                 // builder.Add(typeof(ConstantPatternSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ConstantPatternSyntaxWrapper.WrappedTypeName));
                 staticCtorStatements = staticCtorStatements.Add(SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.InvocationExpression(
@@ -1083,20 +1196,20 @@ namespace StyleCop.Analyzers.CodeGeneration
                 SyntaxFactory.Trivia(SyntaxFactory.DocumentationComment(
                     SyntaxFactory.XmlText(" "),
                     SyntaxFactory.XmlSummaryElement(
-                        SyntaxFactory.XmlNewLine(Environment.NewLine),
+                        SyntaxFactory.XmlText(XmlSyntaxFactory.XmlCarriageReturnLineFeedWithContinuation),
                         SyntaxFactory.XmlText(" Gets the type that is wrapped by the given wrapper."),
-                        SyntaxFactory.XmlNewLine(Environment.NewLine),
+                        SyntaxFactory.XmlText(XmlSyntaxFactory.XmlCarriageReturnLineFeedWithContinuation),
                         SyntaxFactory.XmlText(" ")),
-                    SyntaxFactory.XmlNewLine(Environment.NewLine),
+                    SyntaxFactory.XmlText(XmlSyntaxFactory.XmlCarriageReturnLineFeedWithContinuation),
                     SyntaxFactory.XmlText(" "),
                     SyntaxFactory.XmlParamElement(
                         "wrapperType",
                         SyntaxFactory.XmlText("Type of the wrapper for which the wrapped type should be retrieved.")),
-                    SyntaxFactory.XmlNewLine(Environment.NewLine),
+                    SyntaxFactory.XmlText(XmlSyntaxFactory.XmlCarriageReturnLineFeedWithContinuation),
                     SyntaxFactory.XmlText(" "),
                     SyntaxFactory.XmlReturnsElement(
                         SyntaxFactory.XmlText("The wrapped type, or null if there is no info.")),
-                    SyntaxFactory.XmlNewLine(Environment.NewLine).WithoutTrailingTrivia()))));
+                    SyntaxFactory.XmlText(XmlSyntaxFactory.XmlCarriageReturnLineFeedWithContinuation).WithoutTrailingTrivia()))));
 
             var wrapperHelperClass = SyntaxFactory.ClassDeclaration(
                 attributeLists: default,
@@ -1131,19 +1244,22 @@ namespace StyleCop.Analyzers.CodeGeneration
                 .WithTrailingTrivia(
                     SyntaxFactory.CarriageReturnLineFeed);
 
-            context.AddSource("SyntaxWrapperHelper.g.cs", SourceText.From(wrapperNamespace.ToFullString(), Encoding.UTF8));
+            context.AddSource("SyntaxWrapperHelper.g.cs", wrapperNamespace.GetText(Encoding.UTF8));
         }
 
         private sealed class SyntaxData
         {
             private readonly Dictionary<string, NodeData> nameToNode;
 
-            public SyntaxData(in GeneratorExecutionContext context, XDocument document)
+            public SyntaxData(CompilationData compilationData, XDocument document)
             {
                 var nodesBuilder = ImmutableArray.CreateBuilder<NodeData>();
-                foreach (var element in document.XPathSelectElement("/Tree[@Root='SyntaxNode']").XPathSelectElements("PredefinedNode|AbstractNode|Node"))
+                if (document.XPathSelectElement("/Tree[@Root='SyntaxNode']") is { } tree)
                 {
-                    nodesBuilder.Add(new NodeData(in context, element));
+                    foreach (var element in tree.XPathSelectElements("PredefinedNode|AbstractNode|Node"))
+                    {
+                        nodesBuilder.Add(new NodeData(compilationData, element));
+                    }
                 }
 
                 this.Nodes = nodesBuilder.ToImmutable();
@@ -1180,7 +1296,7 @@ namespace StyleCop.Analyzers.CodeGeneration
 
         private sealed class NodeData
         {
-            public NodeData(in GeneratorExecutionContext context, XElement element)
+            public NodeData(CompilationData compilationData, XElement element)
             {
                 this.Kind = element.Name.LocalName switch
                 {
@@ -1190,12 +1306,12 @@ namespace StyleCop.Analyzers.CodeGeneration
                     _ => throw new NotSupportedException($"Unknown element name '{element.Name}'"),
                 };
 
-                this.Name = element.Attribute("Name").Value;
+                this.Name = element.RequiredAttribute("Name").Value;
 
-                this.ExistingType = context.Compilation.GetTypeByMetadataName($"Microsoft.CodeAnalysis.CSharp.Syntax.{this.Name}")
-                    ?? context.Compilation.GetTypeByMetadataName($"Microsoft.CodeAnalysis.CSharp.{this.Name}")
-                    ?? context.Compilation.GetTypeByMetadataName($"Microsoft.CodeAnalysis.{this.Name}");
-                if (this.ExistingType?.DeclaredAccessibility == Accessibility.Public)
+                this.ExistingType = compilationData.ExistingTypes.GetValueOrDefault($"Microsoft.CodeAnalysis.CSharp.Syntax.{this.Name}")
+                    ?? compilationData.ExistingTypes.GetValueOrDefault($"Microsoft.CodeAnalysis.CSharp.{this.Name}")
+                    ?? compilationData.ExistingTypes.GetValueOrDefault($"Microsoft.CodeAnalysis.{this.Name}");
+                if (this.ExistingType is not null)
                 {
                     this.WrapperName = null;
                 }
@@ -1204,7 +1320,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                     this.WrapperName = this.Name + "Wrapper";
                 }
 
-                this.BaseName = element.Attribute("Base").Value;
+                this.BaseName = element.RequiredAttribute("Base").Value;
                 this.Fields = element.XPathSelectElements("descendant::Field").Select(field => new FieldData(this, field)).ToImmutableArray();
             }
 
@@ -1212,7 +1328,7 @@ namespace StyleCop.Analyzers.CodeGeneration
 
             public string Name { get; }
 
-            public INamedTypeSymbol? ExistingType { get; }
+            public ExistingTypeData? ExistingType { get; }
 
             public string? WrapperName { get; }
 
@@ -1234,9 +1350,9 @@ namespace StyleCop.Analyzers.CodeGeneration
             {
                 this.nodeData = nodeData;
 
-                this.Name = element.Attribute("Name").Value;
+                this.Name = element.RequiredAttribute("Name").Value;
 
-                var type = element.Attribute("Type").Value;
+                var type = element.RequiredAttribute("Type").Value;
                 this.Type = type switch
                 {
                     "SyntaxList<SyntaxToken>" => nameof(SyntaxTokenList),
@@ -1269,7 +1385,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 get
                 {
                     return this.nodeData.ExistingType is not null
-                        && this.nodeData.ExistingType.GetMembers(this.Name).IsEmpty;
+                        && !this.nodeData.ExistingType.MemberNames.Contains(this.Name);
                 }
             }
 
@@ -1328,6 +1444,155 @@ namespace StyleCop.Analyzers.CodeGeneration
                 }
 
                 return null;
+            }
+        }
+
+        private sealed record CompilationData(EquatableValue<ImmutableDictionary<string, ExistingTypeData>> ExistingTypesWrapper)
+        {
+            public ImmutableDictionary<string, ExistingTypeData> ExistingTypes => this.ExistingTypesWrapper.Value;
+        }
+
+        private sealed record ExistingTypeData(string TypeName, EquatableValue<ImmutableArray<string>> MemberNamesWrapper)
+        {
+            public ImmutableArray<string> MemberNames => this.MemberNamesWrapper.Value;
+
+            public static ExistingTypeData FromNamedType(INamedTypeSymbol namedType, string typeName)
+            {
+                var memberNames = ImmutableArray.CreateRange(namedType.GetMembers(), member => member.Name);
+                return new ExistingTypeData(
+                    TypeName: typeName,
+                    MemberNamesWrapper: new EquatableValue<ImmutableArray<string>>(memberNames, ImmutableArrayEqualityComparer<string>.Default));
+            }
+        }
+
+        private sealed class EquatableValue<T> : IEquatable<EquatableValue<T>?>
+        {
+            public EquatableValue(T value, IEqualityComparer<T> comparer)
+            {
+                this.Value = value;
+                this.Comparer = comparer;
+            }
+
+            public T Value { get; }
+
+            public IEqualityComparer<T> Comparer { get; }
+
+            public bool Equals(EquatableValue<T>? other)
+            {
+                if (other is null)
+                {
+                    return false;
+                }
+
+                return this.Comparer.Equals(this.Value, other.Value);
+            }
+        }
+
+        private sealed class ImmutableDictionaryEqualityComparer<TKey, TValue> : IEqualityComparer<ImmutableDictionary<TKey, TValue>?>
+            where TKey : notnull
+        {
+            public static ImmutableDictionaryEqualityComparer<TKey, TValue> Default { get; } = new ImmutableDictionaryEqualityComparer<TKey, TValue>();
+
+            public bool Equals(ImmutableDictionary<TKey, TValue>? x, ImmutableDictionary<TKey, TValue>? y)
+            {
+                if (x == y)
+                {
+                    return true;
+                }
+                else if (x is null || y is null)
+                {
+                    return false;
+                }
+                else if (x.Count != y.Count)
+                {
+                    return false;
+                }
+
+                var keyEqualityComparer = EqualityComparer<TKey>.Default;
+                var valueEqualityComparer = EqualityComparer<TValue>.Default;
+
+                using var first = x.GetEnumerator();
+                using var second = y.GetEnumerator();
+                while (first.MoveNext() && second.MoveNext())
+                {
+                    if (!keyEqualityComparer.Equals(first.Current.Key, second.Current.Key)
+                        || !valueEqualityComparer.Equals(first.Current.Value, second.Current.Value))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            public int GetHashCode(ImmutableDictionary<TKey, TValue>? obj)
+            {
+                if (obj is null)
+                {
+                    return 0;
+                }
+
+                var hashCode = default(RoslynHashCode);
+
+                var keyEqualityComparer = EqualityComparer<TKey>.Default;
+                var valueEqualityComparer = EqualityComparer<TValue>.Default;
+                foreach (var i in obj)
+                {
+                    hashCode.Add(keyEqualityComparer.GetHashCode(i.Key));
+                    hashCode.Add(valueEqualityComparer.GetHashCode(i.Value));
+                }
+
+                return hashCode.ToHashCode();
+            }
+        }
+
+        private sealed class ImmutableArrayEqualityComparer<T> : IEqualityComparer<ImmutableArray<T>>
+        {
+            public static ImmutableArrayEqualityComparer<T> Default { get; } = new ImmutableArrayEqualityComparer<T>();
+
+            public bool Equals(ImmutableArray<T> x, ImmutableArray<T> y)
+            {
+                if (x == y)
+                {
+                    return true;
+                }
+                else if (x == null || y == null)
+                {
+                    return false;
+                }
+                else if (x.Length != y.Length)
+                {
+                    return false;
+                }
+
+                var equalityComparer = EqualityComparer<T>.Default;
+                for (var i = 0; i < x.Length; i++)
+                {
+                    if (!equalityComparer.Equals(x[i], y[i]))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            public int GetHashCode(ImmutableArray<T> obj)
+            {
+                if (obj == null)
+                {
+                    return 0;
+                }
+
+                var hashCode = default(RoslynHashCode);
+
+                var equalityComparer = EqualityComparer<T>.Default;
+                foreach (var i in obj)
+                {
+                    hashCode.Add(equalityComparer.GetHashCode(i));
+                }
+
+                return hashCode.ToHashCode();
             }
         }
     }
