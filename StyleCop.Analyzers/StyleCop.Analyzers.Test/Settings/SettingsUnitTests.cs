@@ -5,6 +5,7 @@
 
 namespace StyleCop.Analyzers.Test.Settings
 {
+    using System;
     using System.Collections.Immutable;
     using System.Globalization;
     using System.Threading;
@@ -170,15 +171,14 @@ namespace StyleCop.Analyzers.Test.Settings
         /// Verifies that the settings are properly read.
         /// </summary>
         /// <param name="value">The value for testing the settings.</param>
-        /// <param name="expected">The expected interface documentation mode.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("true", InterfaceDocumentationMode.All)]
-        [InlineData("false", InterfaceDocumentationMode.None)]
-        [InlineData("\"all\"", InterfaceDocumentationMode.All)]
-        [InlineData("\"none\"", InterfaceDocumentationMode.None)]
-        [InlineData("\"exposed\"", InterfaceDocumentationMode.Exposed)]
-        public async Task VerifyInheritanceDocumentationSettingsAsync(string value, object expected)
+        [InlineData("true")]
+        [InlineData("false")]
+        [InlineData("\"all\"")]
+        [InlineData("\"none\"")]
+        [InlineData("\"exposed\"")]
+        public async Task VerifyInheritanceDocumentationSettingsAsync(string value)
         {
             var settings = $@"
 {{
@@ -193,7 +193,17 @@ namespace StyleCop.Analyzers.Test.Settings
 
             var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
 
-            Assert.Equal((InterfaceDocumentationMode)expected, styleCopSettings.DocumentationRules.DocumentInterfaces);
+            var expected = value switch
+            {
+                "true" => InterfaceDocumentationMode.All,
+                "false" => InterfaceDocumentationMode.None,
+                "\"all\"" => InterfaceDocumentationMode.All,
+                "\"none\"" => InterfaceDocumentationMode.None,
+                "\"exposed\"" => InterfaceDocumentationMode.Exposed,
+                _ => throw new InvalidOperationException($"Unexpected test value: {value}"),
+            };
+
+            Assert.Equal(expected, styleCopSettings.DocumentationRules.DocumentInterfaces);
         }
 
         /// <summary>
