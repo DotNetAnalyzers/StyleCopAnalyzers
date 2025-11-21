@@ -1,20 +1,18 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp10.NamingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp9.NamingRules;
-    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.NamingRules.SA1313ParameterNamesMustBeginWithLowerCaseLetter,
         StyleCop.Analyzers.NamingRules.RenameToLowerCaseCodeFixProvider>;
 
-    public class SA1313CSharp10UnitTests : SA1313CSharp9UnitTests
+    public partial class SA1313CSharp10UnitTests : SA1313CSharp9UnitTests
     {
         [Theory]
         [WorkItem(3384, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3384")]
@@ -42,12 +40,7 @@ public record {typeKind} R(int A)
 }}
 ";
 
-            await new CSharpTest()
-            {
-                ReferenceAssemblies = GenericAnalyzerTest.ReferenceAssembliesNet60,
-                TestCode = testCode,
-                FixedCode = fixedCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

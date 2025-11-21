@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.ReadabilityRules
         StyleCop.Analyzers.ReadabilityRules.SA1122UseStringEmptyForEmptyStrings,
         StyleCop.Analyzers.ReadabilityRules.SA1122CodeFixProvider>;
 
-    public class SA1122CSharp8UnitTests : SA1122CSharp7UnitTests
+    public partial class SA1122CSharp8UnitTests : SA1122CSharp7UnitTests
     {
         /// <summary>
         /// Verifies the analyzer will properly handle an empty string in a switch expression.

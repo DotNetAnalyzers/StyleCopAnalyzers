@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct IRangeOperationWrapper : IOperationWrapper
+    internal readonly struct IRangeOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IRangeOperation";
         private static readonly Type WrappedType;
@@ -36,6 +36,8 @@ namespace StyleCop.Analyzers.Lightup
         public IOperation RightOperand => RightOperandAccessor(this.WrappedOperation);
         public bool IsLifted => IsLiftedAccessor(this.WrappedOperation);
         public IMethodSymbol Method => MethodAccessor(this.WrappedOperation);
+        public static explicit operator IRangeOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(IRangeOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IRangeOperationWrapper FromOperation(IOperation operation)
         {
             if (operation == null)

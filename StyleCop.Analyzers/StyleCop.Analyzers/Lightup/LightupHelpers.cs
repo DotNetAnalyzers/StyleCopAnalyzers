@@ -49,6 +49,12 @@ namespace StyleCop.Analyzers.Lightup
         public static bool SupportsCSharp11 { get; }
             = Enum.GetNames(typeof(LanguageVersion)).Contains(nameof(LanguageVersionEx.CSharp11));
 
+        public static bool SupportsCSharp12 { get; }
+            = Enum.GetNames(typeof(LanguageVersion)).Contains(nameof(LanguageVersionEx.CSharp12));
+
+        public static bool SupportsCSharp13 { get; }
+            = Enum.GetNames(typeof(LanguageVersion)).Contains(nameof(LanguageVersionEx.CSharp13));
+
         public static bool SupportsIOperation => SupportsCSharp73;
 
         internal static bool CanWrapObject(object obj, Type underlyingType)
@@ -65,15 +71,13 @@ namespace StyleCop.Analyzers.Lightup
                 return false;
             }
 
-            ConcurrentDictionary<Type, bool> wrappedObject = SupportedObjectWrappers.GetOrAdd(underlyingType, _ => new ConcurrentDictionary<Type, bool>());
+            ConcurrentDictionary<Type, bool> wrappedObject = SupportedObjectWrappers.GetOrAdd(underlyingType, static _ => new ConcurrentDictionary<Type, bool>());
 
-            // Avoid creating the delegate if the value already exists
-            bool canCast;
-            if (!wrappedObject.TryGetValue(obj.GetType(), out canCast))
+            // Avoid creating a delegate and capture class
+            if (!wrappedObject.TryGetValue(obj.GetType(), out var canCast))
             {
-                canCast = wrappedObject.GetOrAdd(
-                    obj.GetType(),
-                    kind => underlyingType.GetTypeInfo().IsAssignableFrom(obj.GetType().GetTypeInfo()));
+                canCast = underlyingType.GetTypeInfo().IsAssignableFrom(obj.GetType().GetTypeInfo());
+                wrappedObject.TryAdd(obj.GetType(), canCast);
             }
 
             return canCast;
@@ -93,15 +97,13 @@ namespace StyleCop.Analyzers.Lightup
                 return false;
             }
 
-            ConcurrentDictionary<SyntaxKind, bool> wrappedSyntax = SupportedSyntaxWrappers.GetOrAdd(underlyingType, _ => new ConcurrentDictionary<SyntaxKind, bool>());
+            ConcurrentDictionary<SyntaxKind, bool> wrappedSyntax = SupportedSyntaxWrappers.GetOrAdd(underlyingType, static _ => new ConcurrentDictionary<SyntaxKind, bool>());
 
-            // Avoid creating the delegate if the value already exists
-            bool canCast;
-            if (!wrappedSyntax.TryGetValue(node.Kind(), out canCast))
+            // Avoid creating a delegate and capture class
+            if (!wrappedSyntax.TryGetValue(node.Kind(), out var canCast))
             {
-                canCast = wrappedSyntax.GetOrAdd(
-                    node.Kind(),
-                    kind => underlyingType.GetTypeInfo().IsAssignableFrom(node.GetType().GetTypeInfo()));
+                canCast = underlyingType.GetTypeInfo().IsAssignableFrom(node.GetType().GetTypeInfo());
+                wrappedSyntax.TryAdd(node.Kind(), canCast);
             }
 
             return canCast;
@@ -121,15 +123,13 @@ namespace StyleCop.Analyzers.Lightup
                 return false;
             }
 
-            ConcurrentDictionary<OperationKind, bool> wrappedSyntax = SupportedOperationWrappers.GetOrAdd(underlyingType, _ => new ConcurrentDictionary<OperationKind, bool>());
+            ConcurrentDictionary<OperationKind, bool> wrappedSyntax = SupportedOperationWrappers.GetOrAdd(underlyingType, static _ => new ConcurrentDictionary<OperationKind, bool>());
 
-            // Avoid creating the delegate if the value already exists
-            bool canCast;
-            if (!wrappedSyntax.TryGetValue(operation.Kind, out canCast))
+            // Avoid creating a delegate and capture class
+            if (!wrappedSyntax.TryGetValue(operation.Kind, out var canCast))
             {
-                canCast = wrappedSyntax.GetOrAdd(
-                    operation.Kind,
-                    kind => underlyingType.GetTypeInfo().IsAssignableFrom(operation.GetType().GetTypeInfo()));
+                canCast = underlyingType.GetTypeInfo().IsAssignableFrom(operation.GetType().GetTypeInfo());
+                wrappedSyntax.TryAdd(operation.Kind, canCast);
             }
 
             return canCast;

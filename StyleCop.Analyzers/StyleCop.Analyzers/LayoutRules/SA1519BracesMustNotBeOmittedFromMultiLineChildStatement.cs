@@ -68,14 +68,17 @@ namespace StyleCop.Analyzers.LayoutRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxNodeAction(IfStatementAction, SyntaxKind.IfStatement);
-            context.RegisterSyntaxNodeAction(DoStatementAction, SyntaxKind.DoStatement);
-            context.RegisterSyntaxNodeAction(WhileStatementAction, SyntaxKind.WhileStatement);
-            context.RegisterSyntaxNodeAction(ForStatementAction, SyntaxKind.ForStatement);
-            context.RegisterSyntaxNodeAction(ForEachStatementAction, SyntaxKind.ForEachStatement);
-            context.RegisterSyntaxNodeAction(LockStatementAction, SyntaxKind.LockStatement);
-            context.RegisterSyntaxNodeAction(FixedStatementAction, SyntaxKind.FixedStatement);
-            context.RegisterSyntaxNodeAction(UsingStatementAction, SyntaxKind.UsingStatement);
+            context.RegisterCompilationStartAction(context =>
+            {
+                context.RegisterSyntaxNodeAction(IfStatementAction, SyntaxKind.IfStatement);
+                context.RegisterSyntaxNodeAction(DoStatementAction, SyntaxKind.DoStatement);
+                context.RegisterSyntaxNodeAction(WhileStatementAction, SyntaxKind.WhileStatement);
+                context.RegisterSyntaxNodeAction(ForStatementAction, SyntaxKind.ForStatement);
+                context.RegisterSyntaxNodeAction(ForEachStatementAction, SyntaxKind.ForEachStatement);
+                context.RegisterSyntaxNodeAction(LockStatementAction, SyntaxKind.LockStatement);
+                context.RegisterSyntaxNodeAction(FixedStatementAction, SyntaxKind.FixedStatement);
+                context.RegisterSyntaxNodeAction(UsingStatementAction, SyntaxKind.UsingStatement);
+            });
         }
 
         private static void HandleIfStatement(SyntaxNodeAnalysisContext context)

@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.LayoutRules
         StyleCop.Analyzers.LayoutRules.SA1516ElementsMustBeSeparatedByBlankLine,
         StyleCop.Analyzers.LayoutRules.SA1516CodeFixProvider>;
 
-    public class SA1516CSharp9UnitTests : SA1516CSharp8UnitTests
+    public partial class SA1516CSharp9UnitTests : SA1516CSharp8UnitTests
     {
         /// <summary>
         /// Verifies that SA1516 is reported at the correct location in top-level programs.
@@ -102,6 +102,53 @@ record A();
             var expectedDiagnostics = this.GetExpectedResultTestGlobalStatementAndRecordSpacingInTopLevelProgram();
             test.TestState.ExpectedDiagnostics.AddRange(expectedDiagnostics);
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3658, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3658")]
+        public async Task TestInitAccessorAsync()
+        {
+            var testCode = @"using System;
+
+public class Foo
+{
+    public int X
+    {
+        get
+        {
+            return 0;
+        }
+[|        |]init
+        {
+        }
+    }
+}
+";
+
+            var fixedCode = @"using System;
+
+public class Foo
+{
+    public int X
+    {
+        get
+        {
+            return 0;
+        }
+
+        init
+        {
+        }
+    }
+}
+";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         protected virtual DiagnosticResult[] GetExpectedResultTestUsingAndGlobalStatementSpacingInTopLevelProgram()

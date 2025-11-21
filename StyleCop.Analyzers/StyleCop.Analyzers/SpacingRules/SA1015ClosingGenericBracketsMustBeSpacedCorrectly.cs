@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
@@ -108,7 +106,6 @@ namespace StyleCop.Analyzers.SpacingRules
                 SyntaxToken nextToken = token.GetNextToken();
                 switch (nextToken.Kind())
                 {
-                case SyntaxKind.OpenParenToken:
                 // DotToken isn't listed above, but it's required for reasonable member access formatting
                 case SyntaxKind.DotToken:
                 // CommaToken isn't listed above, but it's required for reasonable nested generic type arguments formatting
@@ -122,8 +119,14 @@ namespace StyleCop.Analyzers.SpacingRules
                     allowTrailingSpace = false;
                     break;
 
+                case SyntaxKind.OpenParenToken:
+                    AnalyzeWithTrailingOpenParen(nextToken, out allowTrailingNoSpace, out allowTrailingSpace);
+                    break;
+
                 case SyntaxKind.CloseParenToken:
                 case SyntaxKind.GreaterThanToken:
+                case SyntaxKind.CloseBraceToken:
+                case SyntaxKind.CloseBracketToken when nextToken.Parent.IsKind(SyntaxKindEx.CollectionExpression):
                     allowTrailingNoSpace = true;
                     allowTrailingSpace = true;
                     break;
@@ -185,6 +188,34 @@ namespace StyleCop.Analyzers.SpacingRules
                     context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowed, token.GetLocation(), properties));
 #pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
                 }
+            }
+        }
+
+        private static void AnalyzeWithTrailingOpenParen(
+            SyntaxToken nextToken,
+            out bool allowTrailingNoSpace,
+            out bool allowTrailingSpace)
+        {
+            switch (nextToken.Parent.Kind())
+            {
+            // List<int> (int x) => new List<int> { x }
+            //         ^ ^
+            case SyntaxKind.ParameterList when nextToken.Parent.Parent.IsKind(SyntaxKind.ParenthesizedLambdaExpression):
+                allowTrailingNoSpace = false;
+                allowTrailingSpace = true;
+                break;
+
+            // NOTE: Intentionally keeping redundant cases here as documentation of what is known to occur
+            // M<int>()
+            //      ^^
+            case SyntaxKind.ArgumentList:
+            // void M<T>(T x) { }
+            //         ^^
+            case SyntaxKind.ParameterList when nextToken.Parent.Parent.IsKind(SyntaxKind.MethodDeclaration):
+            default:
+                allowTrailingNoSpace = true;
+                allowTrailingSpace = false;
+                break;
             }
         }
     }

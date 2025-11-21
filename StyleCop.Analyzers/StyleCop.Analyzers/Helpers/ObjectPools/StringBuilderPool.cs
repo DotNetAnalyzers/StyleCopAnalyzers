@@ -22,8 +22,11 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
 
         public static string ReturnAndFree(StringBuilder builder)
         {
-            SharedPools.Default<StringBuilder>();
-            return builder.ToString();
+            string result = builder.ToString();
+
+            StringBuilderPool.Free(builder);
+
+            return result;
         }
     }
 }

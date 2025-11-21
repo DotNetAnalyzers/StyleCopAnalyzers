@@ -59,6 +59,12 @@ namespace StyleCop.Analyzers.NamingRules
             {
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 var tokenText = token.ValueText.TrimStart('_');
+                if (tokenText == string.Empty)
+                {
+                    // Skip this one, since we can't create a new identifier from this
+                    continue;
+                }
+
                 var baseName = char.ToUpper(tokenText[0]) + tokenText.Substring(1);
                 var newName = baseName;
                 var memberSyntax = RenameHelper.GetParentDeclaration(token);

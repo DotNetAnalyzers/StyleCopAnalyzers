@@ -7,10 +7,11 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
-    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.NamingRules;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Helpers.LanguageVersionTestExtensions;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.NamingRules.SA1316TupleElementNamesShouldUseCorrectCasing,
         StyleCop.Analyzers.NamingRules.SA1316CodeFixProvider>;
@@ -116,7 +117,7 @@ public class TestClass
 }}
 ";
 
-            await VerifyCSharpDiagnosticAsync(LanguageVersionEx.CSharp7, testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -136,7 +137,7 @@ public class TestClass
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(LanguageVersionEx.CSharp7, testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -168,7 +169,7 @@ public class TestClass
 }}
 ";
 
-            await VerifyCSharpDiagnosticAsync(LanguageVersionEx.CSharp7_1, testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp7_1.OrLaterDefault(), testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -204,7 +205,7 @@ public class TestClass
 }}
 ";
 
-            await VerifyCSharpDiagnosticAsync(LanguageVersionEx.CSharp7_1, testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp7_1.OrLaterDefault(), testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -257,7 +258,7 @@ public class TestClass
                 // diagnostics are specified inline
             };
 
-            await VerifyCSharpFixAsync(LanguageVersionEx.CSharp7, testCode, settings, expectedDiagnostics, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, settings, expectedDiagnostics, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -287,7 +288,7 @@ public class TestClass
 }}
 ";
 
-            await VerifyCSharpDiagnosticAsync(LanguageVersionEx.CSharp7_1, testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp7_1.OrLaterDefault(), testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -327,7 +328,7 @@ public class TestClass
                 // diagnostics are specified inline
             };
 
-            await VerifyCSharpDiagnosticAsync(LanguageVersionEx.CSharp7_1, testCode, settings, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp7_1.OrLaterDefault(), testCode, settings, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -398,7 +399,7 @@ public class TypeName
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(LanguageVersionEx.CSharp7, testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

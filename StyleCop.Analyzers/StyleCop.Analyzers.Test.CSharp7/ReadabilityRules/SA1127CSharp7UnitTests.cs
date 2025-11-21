@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
         StyleCop.Analyzers.ReadabilityRules.SA1127GenericTypeConstraintsMustBeOnOwnLine,
         StyleCop.Analyzers.ReadabilityRules.SA1127CodeFixProvider>;
 
-    public class SA1127CSharp7UnitTests : SA1127UnitTests
+    public partial class SA1127CSharp7UnitTests : SA1127UnitTests
     {
         [Fact]
         public async Task TestViolationWithLocalFunctionDeclarationAsync()

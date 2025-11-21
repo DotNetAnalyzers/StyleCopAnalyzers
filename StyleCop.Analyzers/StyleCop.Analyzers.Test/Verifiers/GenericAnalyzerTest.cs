@@ -1,27 +1,21 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.Verifiers
 {
     using System;
     using System.Collections.Immutable;
-    using System.IO;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Host.Mef;
     using Microsoft.CodeAnalysis.Testing;
     using Microsoft.VisualStudio.Composition;
+    using StyleCop.Analyzers.Lightup;
 
     internal static class GenericAnalyzerTest
     {
         internal static readonly ReferenceAssemblies ReferenceAssemblies;
-
-        internal static readonly ReferenceAssemblies ReferenceAssembliesNet50;
-
-        internal static readonly ReferenceAssemblies ReferenceAssembliesNet60;
 
         private static readonly Lazy<IExportProviderFactory> ExportProviderFactory;
 
@@ -37,22 +31,37 @@ namespace StyleCop.Analyzers.Test.Verifiers
                     _ => throw new InvalidOperationException("Unknown version."),
                 };
 
-            ReferenceAssemblies = ReferenceAssemblies.Default.AddPackages(ImmutableArray.Create(
+            // Use appropriate default reference assemblies per the support matrix:
+            // https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/configure-language-version
+            ReferenceAssemblies defaultReferenceAssemblies;
+            if (LightupHelpers.SupportsCSharp12)
+            {
+                defaultReferenceAssemblies = ReferenceAssemblies.Net.Net80;
+            }
+            else if (LightupHelpers.SupportsCSharp11)
+            {
+                defaultReferenceAssemblies = ReferenceAssemblies.Net.Net70;
+            }
+            else if (LightupHelpers.SupportsCSharp10)
+            {
+                defaultReferenceAssemblies = ReferenceAssemblies.Net.Net60;
+            }
+            else if (LightupHelpers.SupportsCSharp9)
+            {
+                defaultReferenceAssemblies = ReferenceAssemblies.Net.Net50;
+            }
+            else if (LightupHelpers.SupportsCSharp8)
+            {
+                defaultReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp30;
+            }
+            else
+            {
+                defaultReferenceAssemblies = ReferenceAssemblies.Default;
+            }
+
+            ReferenceAssemblies = defaultReferenceAssemblies.AddPackages(ImmutableArray.Create(
                 new PackageIdentity("Microsoft.CodeAnalysis.CSharp", codeAnalysisTestVersion),
                 new PackageIdentity("System.ValueTuple", "4.5.0")));
-
-            ReferenceAssembliesNet50 = ReferenceAssemblies.Net.Net50.AddPackages(ImmutableArray.Create(
-                new PackageIdentity("Microsoft.CodeAnalysis.CSharp", codeAnalysisTestVersion)));
-
-            ReferenceAssembliesNet60 =
-                new ReferenceAssemblies(
-                    "net6.0",
-                    new PackageIdentity(
-                        "Microsoft.NETCore.App.Ref",
-                        "6.0.0"),
-                    Path.Combine("ref", "net6.0"))
-                .AddPackages(ImmutableArray.Create(
-                    new PackageIdentity("Microsoft.CodeAnalysis.CSharp", codeAnalysisTestVersion)));
 
             ExportProviderFactory = new Lazy<IExportProviderFactory>(
                 () =>

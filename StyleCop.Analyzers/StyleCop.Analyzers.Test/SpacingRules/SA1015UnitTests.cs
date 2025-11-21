@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Threading;
@@ -376,10 +374,7 @@ class ClassName
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS1003").WithMessage("Syntax error, '>' expected").WithLocation(7, 35),
-            };
+            var expected = this.GetExpectedResultMissingToken();
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
@@ -431,6 +426,63 @@ public class TestClass
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData(" M<int> ")]
+        [InlineData("M<int>")]
+        [WorkItem(3856, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3856")]
+        public async Task TestSpacingAfterGenericMethodGroupInCollectionInitializerAsync(string item)
+        {
+            var testCode = $@"
+using System;
+using System.Collections.Generic;
+
+public class TestClass
+{{
+    private List<Action> values = new List<Action> {{{item}}};
+    
+    private static void M<T>()
+    {{
+    }}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData(" 1, M<int> ")]
+        [InlineData("1, M<int>")]
+        [WorkItem(3856, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3856")]
+        public async Task TestSpacingAfterGenericMethodGroupInDictionaryInitializerItemAsync(string item)
+        {
+            var testCode = $@"
+using System;
+using System.Collections.Generic;
+
+public class TestClass
+{{
+    private Dictionary<int, Action> values = new Dictionary<int, Action>
+    {{
+        {{{item}}}
+    }};
+    
+    private static void M<T>()
+    {{
+    }}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultMissingToken()
+        {
+            return new[]
+            {
+                DiagnosticResult.CompilerError("CS1003").WithMessage("Syntax error, '>' expected").WithLocation(7, 35),
+            };
         }
     }
 }

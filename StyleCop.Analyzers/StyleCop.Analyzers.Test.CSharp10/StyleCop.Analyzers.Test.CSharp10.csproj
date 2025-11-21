@@ -3,6 +3,7 @@
 
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
+    <EnforceExtendedAnalyzerRules>false</EnforceExtendedAnalyzerRules>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
@@ -29,6 +30,7 @@
     <ProjectReference Include="..\StyleCop.Analyzers.Test.CSharp7\StyleCop.Analyzers.Test.CSharp7.csproj" />
     <ProjectReference Include="..\StyleCop.Analyzers.Test.CSharp8\StyleCop.Analyzers.Test.CSharp8.csproj" />
     <ProjectReference Include="..\StyleCop.Analyzers.Test.CSharp9\StyleCop.Analyzers.Test.CSharp9.csproj" />
+    <ProjectReference Include="..\StyleCop.Analyzers.PrivateCodeFixes\StyleCop.Analyzers.PrivateCodeFixes.csproj" PrivateAssets="all" SetTargetFramework="TargetFramework=netstandard2.0" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
 </Project>

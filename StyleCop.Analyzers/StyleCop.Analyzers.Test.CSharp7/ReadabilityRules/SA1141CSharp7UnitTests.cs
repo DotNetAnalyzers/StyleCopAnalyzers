@@ -18,7 +18,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
     /// </summary>
     /// <seealso cref="SA1141UseTupleSyntax"/>
     /// <seealso cref="SA1141CodeFixProvider"/>
-    public class SA1141CSharp7UnitTests : SA1141UnitTests
+    public partial class SA1141CSharp7UnitTests : SA1141UnitTests
     {
         /// <summary>
         /// Verifies that member declarations containing ValueTuple will result in the proper diagnostics and fixes.

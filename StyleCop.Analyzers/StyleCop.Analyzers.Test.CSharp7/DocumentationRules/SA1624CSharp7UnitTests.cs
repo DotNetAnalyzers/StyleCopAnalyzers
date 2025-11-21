@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.DocumentationRules
         StyleCop.Analyzers.DocumentationRules.PropertySummaryDocumentationAnalyzer,
         StyleCop.Analyzers.DocumentationRules.PropertySummaryDocumentationCodeFixProvider>;
 
-    public class SA1624CSharp7UnitTests : SA1624UnitTests
+    public partial class SA1624CSharp7UnitTests : SA1624UnitTests
     {
         /// <summary>
         /// Verifies that documentation that starts with the proper text for multiple expression-bodied accessors will

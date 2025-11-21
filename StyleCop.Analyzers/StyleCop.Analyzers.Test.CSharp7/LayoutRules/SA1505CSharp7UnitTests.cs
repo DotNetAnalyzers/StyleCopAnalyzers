@@ -11,11 +11,12 @@ namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.LayoutRules;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Helpers.LanguageVersionTestExtensions;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.LayoutRules.SA1505OpeningBracesMustNotBeFollowedByBlankLine,
         StyleCop.Analyzers.LayoutRules.SA1505CodeFixProvider>;
 
-    public class SA1505CSharp7UnitTests : SA1505UnitTests
+    public partial class SA1505CSharp7UnitTests : SA1505UnitTests
     {
         /// <summary>
         /// Verifies that a valid local function will not produce any diagnostics.
@@ -129,7 +130,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
 ";
 
             var expectedDiagnostic = Diagnostic().WithLocation(8, 13);
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3.OrLaterDefault(), testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -171,7 +172,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
 ";
 
             var expectedDiagnostic = Diagnostic().WithLocation(8, 13);
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3.OrLaterDefault(), testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -79,7 +79,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static async Task<SyntaxNode> GetTransformedSyntaxRootAsync(Document document, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var settings = document.Project.AnalyzerOptions.GetStyleCopSettings(root.SyntaxTree, cancellationToken);
+            var settings = document.Project.AnalyzerOptions.GetStyleCopSettingsInCodeFix(root.SyntaxTree, cancellationToken);
 
             var fileHeader = FileHeaderHelpers.ParseFileHeader(root);
             SyntaxNode newSyntaxRoot;

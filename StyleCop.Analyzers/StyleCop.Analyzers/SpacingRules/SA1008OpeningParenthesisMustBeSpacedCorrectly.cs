@@ -142,7 +142,11 @@ namespace StyleCop.Analyzers.SpacingRules
             var leadingTriviaList = TriviaHelper.MergeTriviaLists(prevToken.TrailingTrivia, token.LeadingTrivia);
 
             var isFirstOnLine = false;
-            if (prevToken.GetLineSpan().EndLinePosition.Line < token.GetLineSpan().StartLinePosition.Line)
+            if (prevToken.IsKind(SyntaxKind.None))
+            {
+                isFirstOnLine = true; // This means that it doesn't matter if there are spaces before or not
+            }
+            else if (prevToken.GetLineSpan().EndLinePosition.Line < token.GetLineSpan().StartLinePosition.Line)
             {
                 var done = false;
                 for (var i = leadingTriviaList.Count - 1; !done && (i >= 0); i--)
@@ -249,10 +253,12 @@ namespace StyleCop.Analyzers.SpacingRules
 
             case SyntaxKindEx.TupleType:
                 // Comma covers tuple types in parameters and nested within other tuple types.
+                // Equals covers definition of a tuple type alias.
                 // 'out', 'ref', 'in', 'params' parameters are covered by IsKeywordKind.
                 // Attributes of parameters are covered by checking the previous token's parent.
                 // Return types are handled by a helper.
                 haveLeadingSpace = prevToken.IsKind(SyntaxKind.CommaToken)
+                    || prevToken.IsKind(SyntaxKind.EqualsToken)
                     || SyntaxFacts.IsKeywordKind(prevToken.Kind())
                     || prevToken.Parent.IsKind(SyntaxKind.AttributeList)
                     || ((TypeSyntax)token.Parent).GetContainingNotEnclosingType().IsReturnType();

@@ -16,7 +16,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1003SymbolsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.SA1003CodeFixProvider>;
 
-    public class SA1003CSharp8UnitTests : SA1003CSharp7UnitTests
+    public partial class SA1003CSharp8UnitTests : SA1003CSharp7UnitTests
     {
         /// <summary>
         /// Verifies that spacing around a range expression double dots isn't required.
@@ -65,6 +65,82 @@ namespace TestNamespace
                 ExpectedDiagnostics = { Diagnostic(DescriptorNotPrecededByWhitespace).WithLocation(0).WithArguments("(int)") },
                 FixedCode = fixedCode,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3822, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3822")]
+        public async Task TestNullCoalescingAssignmentOperatorAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod(int? x)
+        {
+            x{|#0:??=|}0;
+        }
+    }
+}
+";
+
+            var fixedCode = @"
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod(int? x)
+        {
+            x ??= 0;
+        }
+    }
+}
+";
+
+            var expected = new[]
+            {
+                    Diagnostic(DescriptorPrecededByWhitespace).WithLocation(0).WithArguments("??="),
+                    Diagnostic(DescriptorFollowedByWhitespace).WithLocation(0).WithArguments("??="),
+            };
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3822, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3822")]
+        public async Task TestNullForgivingOperatorAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public string TestMethod(string? x)
+        {
+            return x {|#0:!|} ;
+        }
+    }
+}
+";
+
+            var fixedCode = @"
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public string TestMethod(string? x)
+        {
+            return x!;
+        }
+    }
+}
+";
+
+            var expected = new[]
+            {
+                    Diagnostic(DescriptorNotPrecededByWhitespace).WithLocation(0).WithArguments("!"),
+                    Diagnostic(DescriptorNotFollowedByWhitespace).WithLocation(0).WithArguments("!"),
+            };
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

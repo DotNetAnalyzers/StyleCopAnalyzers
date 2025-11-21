@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp11.SpacingRules
 {
     using System.Threading;
@@ -15,7 +13,7 @@ namespace StyleCop.Analyzers.Test.CSharp11.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1015ClosingGenericBracketsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1015CSharp11UnitTests : SA1015CSharp10UnitTests
+    public partial class SA1015CSharp11UnitTests : SA1015CSharp10UnitTests
     {
         [Fact]
         [WorkItem(3487, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3487")]

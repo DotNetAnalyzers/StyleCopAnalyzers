@@ -71,7 +71,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [Fact]
-        public async Task TestLowerCaseComlicatedNamespaceAsync()
+        public async Task TestLowerCaseComplicatedNamespaceAsync()
         {
             var testCode = @"namespace test.foo.bar
 {
@@ -789,7 +789,7 @@ const string test = ""value"";
         {
             var testCode = @"public class TestNativeMethods
 {
-public string test;
+public string test { get; set; }
 }";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -981,6 +981,31 @@ public interface IInterface
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("_")]
+        [InlineData("__")]
+        [WorkItem(3636, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3636")]
+        public async Task TestUnderscoreMethodAsync(string name)
+        {
+            var testCode = $@"
+public class TestClass
+{{
+    public void [|{name}|]()
+    {{
+    }}
+}}";
+
+            var fixedCode = $@"
+public class TestClass
+{{
+    public void [|{name}|]()
+    {{
+    }}
+}}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

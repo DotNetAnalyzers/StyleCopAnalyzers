@@ -5,8 +5,10 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
 {
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.SpacingRules;
     using Xunit;
@@ -15,7 +17,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1008OpeningParenthesisMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1008CSharp9UnitTests : SA1008CSharp8UnitTests
+    public partial class SA1008CSharp9UnitTests : SA1008CSharp8UnitTests
     {
         [Fact]
         [WorkItem(3230, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3230")]
@@ -80,6 +82,33 @@ class C
 }";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData(" ")]
+        [InlineData("\n")]
+        [InlineData("\n ")]
+        [WorkItem(2354, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2354")]
+        public async Task TestDeconstructionInTopLevelProgramAsync(string prefix)
+        {
+            var testCode = $@"{prefix}{{|#0:(|}} var a, var b) = (1, 2);";
+            var fixedCode = $@"{prefix}(var a, var b) = (1, 2);";
+
+            await new CSharpTest()
+            {
+                TestState =
+                {
+                    OutputKind = OutputKind.ConsoleApplication,
+                    Sources = { testCode },
+                },
+                ExpectedDiagnostics =
+                {
+                    // /0/Test0.cs(1,1): warning SA1008: Opening parenthesis should not be followed by a space.
+                    Diagnostic(DescriptorNotFollowed).WithLocation(0),
+                },
+                FixedCode = fixedCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

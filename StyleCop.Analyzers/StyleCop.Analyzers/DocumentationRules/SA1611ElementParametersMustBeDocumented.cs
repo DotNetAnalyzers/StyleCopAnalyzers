@@ -10,9 +10,11 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System.Linq;
     using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -60,6 +62,12 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             var node = context.Node;
+            if (node.IsKind(SyntaxKindEx.RecordDeclaration) || node.IsKind(SyntaxKindEx.RecordStructDeclaration))
+            {
+                // Record parameters are covered by SA1600 instead.
+                return;
+            }
+
             var parameterList = GetParameters(node);
             if (parameterList == null)
             {
@@ -75,7 +83,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         }
 
         /// <inheritdoc/>
-        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, bool needsComment, XElement completeDocumentation, params Location[] diagnosticLocations)
+        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, XElement completeDocumentation, params Location[] diagnosticLocations)
         {
             if (!needsComment)
             {
@@ -84,6 +92,12 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             var node = context.Node;
+            if (node.IsKind(SyntaxKindEx.RecordDeclaration) || node.IsKind(SyntaxKindEx.RecordStructDeclaration))
+            {
+                // Record parameters are covered by SA1600 instead.
+                return;
+            }
+
             var parameterList = GetParameters(node);
             if (parameterList == null)
             {
@@ -106,7 +120,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             return (node as BaseMethodDeclarationSyntax)?.ParameterList?.Parameters
                 ?? (node as IndexerDeclarationSyntax)?.ParameterList?.Parameters
-                ?? (node as DelegateDeclarationSyntax)?.ParameterList?.Parameters;
+                ?? (node as DelegateDeclarationSyntax)?.ParameterList?.Parameters
+                ?? (node as TypeDeclarationSyntax)?.ParameterList()?.Parameters;
         }
 
         private static void ReportMissingParameters(SyntaxNodeAnalysisContext context, IEnumerable<ParameterSyntax> parameterList, IEnumerable<string> documentationParameterNames)

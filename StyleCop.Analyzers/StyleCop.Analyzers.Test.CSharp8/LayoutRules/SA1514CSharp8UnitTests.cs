@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.LayoutRules
         StyleCop.Analyzers.LayoutRules.SA1514ElementDocumentationHeaderMustBePrecededByBlankLine,
         StyleCop.Analyzers.LayoutRules.SA1514CodeFixProvider>;
 
-    public class SA1514CSharp8UnitTests : SA1514CSharp7UnitTests
+    public partial class SA1514CSharp8UnitTests : SA1514CSharp7UnitTests
     {
         [Fact]
         [WorkItem(3067, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3067")]

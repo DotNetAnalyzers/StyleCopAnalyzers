@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.LayoutRules
         StyleCop.Analyzers.LayoutRules.SA1500BracesForMultiLineStatementsMustNotShareLine,
         StyleCop.Analyzers.LayoutRules.SA1500CodeFixProvider>;
 
-    public class SA1500CSharp9UnitTests : SA1500CSharp8UnitTests
+    public partial class SA1500CSharp9UnitTests : SA1500CSharp8UnitTests
     {
         [Theory]
         [MemberData(nameof(CommonMemberData.RecordTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
@@ -91,6 +91,50 @@ namespace StyleCop.Analyzers.Test.CSharp9.LayoutRules
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestCode = testCode,
                 FixedCode = testCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3667, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3667")]
+        public async Task TestInitAccessorAsync()
+        {
+            var testCode = @"
+class TestClass
+{
+    int Property1
+    {
+        init
+        [|{|] }
+    }
+
+    int Property2
+    {
+        init [|{|]
+        }
+    }
+}";
+
+            var fixedCode = @"
+class TestClass
+{
+    int Property1
+    {
+        init { }
+    }
+
+    int Property2
+    {
+        init
+        {
+        }
+    }
+}";
+
+            await new CSharpTest
+            {
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                TestCode = testCode,
+                FixedCode = fixedCode,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }

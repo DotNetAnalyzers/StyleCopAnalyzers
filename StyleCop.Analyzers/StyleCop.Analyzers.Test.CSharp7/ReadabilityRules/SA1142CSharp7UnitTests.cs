@@ -18,7 +18,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
     /// </summary>
     /// <seealso cref="SA1142ReferToTupleElementsByName"/>
     /// <seealso cref="SA1142CodeFixProvider"/>
-    public class SA1142CSharp7UnitTests : SA1142UnitTests
+    public partial class SA1142CSharp7UnitTests : SA1142UnitTests
     {
         /// <summary>
         /// Validate that tuple fields that are referenced by their name will not produce any diagnostics.

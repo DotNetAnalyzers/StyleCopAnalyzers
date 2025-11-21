@@ -373,7 +373,7 @@ public class TypeName
     public void Test()
     {{
         int j = 6;
-        bool b = j {@operator} i;
+        bool b = i {@operator} j;
     }}
 }}";
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -396,7 +396,7 @@ public class TypeName
     public void Test()
     {{
         int j = 6;
-        bool b = j {@operator} i;
+        bool b = i {@operator} j;
     }}
 }}";
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -419,7 +419,7 @@ public class TypeName
     public void Test()
     {{
         int j = 6;
-        bool b = j {@operator} i;
+        bool b = i {@operator} j;
     }}
 }}";
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -507,6 +507,138 @@ public class TypeName
                 Diagnostic().WithLocation(9, 23),
             };
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("Method1", "arg", true)]
+        [InlineData("Method2", "arg", true)]
+        [InlineData("Method1", "field1", true)]
+        [InlineData("Method2", "field1", true)]
+        [InlineData("Method1", "field2", true)]
+        [InlineData("Method2", "field2", true)]
+        [InlineData("Const1", "Method1", false)]
+        [InlineData("Const1", "Method2", false)]
+        [InlineData("Method1", "Const1", false)]
+        [InlineData("Method2", "Const1", false)]
+        [WorkItem(3677, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3677")]
+        public async Task TestSimpleMethodsAsync(string expr1, string expr2, bool shouldTrigger)
+        {
+            await this.TestMethodAsync(expr1, expr2, shouldTrigger).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("TestClass.Method1", "arg", true)]
+        [InlineData("this.Method2", "arg", true)]
+        [InlineData("TestClass.Method1", "field1", true)]
+        [InlineData("this.Method2", "field1", true)]
+        [InlineData("TestClass.Method1", "field2", true)]
+        [InlineData("this.Method2", "field2", true)]
+        [InlineData("Const1", "TestClass.Method1", false)]
+        [InlineData("Const1", "this.Method2", false)]
+        [InlineData("TestClass.Method1", "Const1", false)]
+        [InlineData("this.Method2", "Const1", false)]
+        [InlineData("Method3<int>", "arg", true)]
+        [InlineData("TestClass.Method3<int>", "arg", true)]
+        [WorkItem(3759, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3759")]
+        public async Task TestComplexMethodsAsync(string expr1, string expr2, bool shouldTrigger)
+        {
+            await this.TestMethodAsync(expr1, expr2, shouldTrigger).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("==")]
+        [InlineData("!=")]
+        [InlineData(">=")]
+        [InlineData("<=")]
+        [InlineData(">")]
+        [InlineData("<")]
+        [WorkItem(3759, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3759")]
+        public async Task TestComplexLeftHandSideExpressionAsync(string @operator)
+        {
+            var testCode = $@"
+using System;
+public class TypeName
+{{
+    public void Test(int x, int y, Func<int> a)
+    {{
+        var r1 = x + 1 {@operator} y;
+        var r2 = -x {@operator} y;
+        var r3 = a() {@operator} y;
+    }}
+}}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        private async Task TestMethodAsync(string expr1, string expr2, bool shouldTrigger)
+        {
+            var testExpr = $"{expr1} == {expr2}";
+            var testCode = $@"
+using System;
+
+public class TestClass
+{{
+    private static readonly Action Const1 = Method1;
+
+    private Action field1 = Method1;
+    private readonly Action field2 = Method1;
+
+    public bool TestMethod(Action arg)
+    {{
+        return {(shouldTrigger ? $"[|{testExpr}|]" : testExpr)};
+    }}
+
+    private static void Method1()
+    {{
+    }}
+
+    private void Method2()
+    {{
+    }}
+
+    private static void Method3<T>()
+    {{
+    }}
+}}
+";
+
+            var fixedExpr = $"{expr2} == {expr1}";
+            var fixedCode = $@"
+using System;
+
+public class TestClass
+{{
+    private static readonly Action Const1 = Method1;
+
+    private Action field1 = Method1;
+    private readonly Action field2 = Method1;
+
+    public bool TestMethod(Action arg)
+    {{
+        return {fixedExpr};
+    }}
+
+    private static void Method1()
+    {{
+    }}
+
+    private void Method2()
+    {{
+    }}
+
+    private static void Method3<T>()
+    {{
+    }}
+}}
+";
+
+            if (shouldTrigger)
+            {
+                await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            }
+            else
+            {
+                await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            }
         }
     }
 }

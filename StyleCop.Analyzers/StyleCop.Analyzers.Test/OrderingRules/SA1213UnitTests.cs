@@ -242,5 +242,23 @@ public class Foo
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestOnlyAddAccessorAsync()
+        {
+            var testCode = @"
+using System;
+public class Foo
+{
+    private EventHandler nameChanged;
+
+    public event EventHandler {|CS0065:NameChanged|}
+    {
+        add { this.nameChanged += value; }
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

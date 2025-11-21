@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.LayoutRules.SA1513ClosingBraceMustBeFollowedByBlankLine,
@@ -1012,6 +1013,93 @@ public class TestClass
 ";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3360, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3360")]
+        public async Task TestLineFeedEndOfLinesAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+}[|
+|]// Hello".ReplaceLineEndings("\n");
+
+            var fixedCode = @"
+public class TestClass
+{
+}
+
+// Hello".ReplaceLineEndings("\n");
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestJoinIntoClauseSyntaxQueryExpressionAsync()
+        {
+            var testCode = @"
+using System.Collections.Generic;
+using System.Linq;
+
+public class JoinIntoClauseSyntaxQueryExpressionTest
+{
+    public JoinIntoClauseSyntaxQueryExpressionTest()
+    {
+        List<Foo> fooList = new List<Foo>();
+        List<Bar> barList = new List<Bar>();
+
+        var query =
+            from foo in fooList
+            join bar in barList
+                on new
+                {
+                    foo.Id,
+                    foo.Name
+                }
+                equals new
+                {
+                    bar.Id,
+                    bar.Name
+                }
+            into grouping
+            from joined in grouping.DefaultIfEmpty()
+            select new
+            {
+                joined.Id,
+                BarName = joined.Name,
+                FooName = foo.Name
+            };
+    }
+
+    private class Foo
+    {
+        public Foo(int id, string name)
+        {
+            this.Id = id;
+            this.Name = name;
+        }
+        
+        public int Id { get; }
+
+        public string Name { get; }
+    }
+
+    private class Bar
+    {
+        public Bar(int id, string name)
+        {
+            this.Id = id;
+            this.Name = name;
+        }
+
+        public int Id { get; }
+
+        public string Name { get; }
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

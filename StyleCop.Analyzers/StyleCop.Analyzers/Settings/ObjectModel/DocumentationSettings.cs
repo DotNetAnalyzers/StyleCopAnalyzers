@@ -116,7 +116,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         {
             this.companyName = DefaultCompanyName;
             this.copyrightText = DefaultCopyrightText;
-            this.headerDecoration = null;
+            this.headerDecoration = string.Empty;
             this.variables = ImmutableDictionary<string, string>.Empty;
             this.xmlHeader = true;
 
@@ -199,7 +199,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                     {
                         string name = child.Key;
 
-                        if (!Regex.IsMatch(name, "^[a-zA-Z0-9]+$"))
+                        if (!IsValidVariableName(name))
                         {
                             continue;
                         }
@@ -245,8 +245,8 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             documentPrivateFields ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.documentPrivateFields");
 
             companyName ??= AnalyzerConfigHelper.TryGetStringValue(analyzerConfigOptions, "stylecop.documentation.companyName");
-            copyrightText ??= AnalyzerConfigHelper.TryGetStringValue(analyzerConfigOptions, "stylecop.documentation.copyrightText")
-                ?? AnalyzerConfigHelper.TryGetStringValue(analyzerConfigOptions, "file_header_template");
+            copyrightText ??= AnalyzerConfigHelper.TryGetMultiLineStringValue(analyzerConfigOptions, "stylecop.documentation.copyrightText")
+                ?? AnalyzerConfigHelper.TryGetMultiLineStringValue(analyzerConfigOptions, "file_header_template");
             headerDecoration ??= AnalyzerConfigHelper.TryGetStringValue(analyzerConfigOptions, "stylecop.documentation.headerDecoration");
 
             xmlHeader ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.xmlHeader");
@@ -267,7 +267,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.documentPrivateFields = documentPrivateFields.GetValueOrDefault(false);
             this.companyName = companyName ?? DefaultCompanyName;
             this.copyrightText = copyrightText ?? DefaultCopyrightText;
-            this.headerDecoration = headerDecoration;
+            this.headerDecoration = headerDecoration ?? string.Empty;
             this.variables = variables?.ToImmutable() ?? ImmutableDictionary<string, string>.Empty;
             this.xmlHeader = xmlHeader.GetValueOrDefault(true);
             this.fileNamingConvention = fileNamingConvention.GetValueOrDefault(FileNamingConvention.StyleCop);
@@ -352,6 +352,20 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
             this.copyrightTextCache = expandedCopyrightText.Key;
             return this.copyrightTextCache;
+        }
+
+        private static bool IsValidVariableName(string name)
+        {
+            // Equivalent to Regex.IsMatch(prefix, "^[a-zA-Z0-9]+$")
+            for (var i = 0; i < name.Length; i++)
+            {
+                if (name[i] is not ((>= 'a' and <= 'z') or (>= 'A' and <= 'Z') or (>= '0' and <= '9')))
+                {
+                    return false;
+                }
+            }
+
+            return name.Length > 0;
         }
 
         private KeyValuePair<string, bool> BuildCopyrightText(string fileName)

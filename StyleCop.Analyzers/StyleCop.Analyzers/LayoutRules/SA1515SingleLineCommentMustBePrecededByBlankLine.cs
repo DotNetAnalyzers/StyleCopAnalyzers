@@ -164,8 +164,19 @@ namespace StyleCop.Analyzers.LayoutRules
         private static bool IsOnOwnLine<T>(T triviaList, int triviaIndex)
             where T : IReadOnlyList<SyntaxTrivia>
         {
+            if (triviaList[triviaIndex].Span.Start == 0)
+            {
+                return true;
+            }
+
             while (triviaIndex >= 0)
             {
+                if (triviaList[triviaIndex].IsDirective)
+                {
+                    // directive trivia are special, as they have a 'built-in' end-of-line.
+                    return true;
+                }
+
                 if (triviaList[triviaIndex].IsKind(SyntaxKind.EndOfLineTrivia))
                 {
                     return true;
@@ -255,9 +266,10 @@ namespace StyleCop.Analyzers.LayoutRules
 
             var prevToken = token.GetPreviousToken();
             return prevToken.IsKind(SyntaxKind.OpenBraceToken)
-                   || prevToken.Parent.IsKind(SyntaxKind.CaseSwitchLabel)
-                   || prevToken.Parent.IsKind(SyntaxKindEx.CasePatternSwitchLabel)
-                   || prevToken.Parent.IsKind(SyntaxKind.DefaultSwitchLabel);
+                || (prevToken.IsKind(SyntaxKind.OpenBracketToken) && prevToken.Parent.IsKind(SyntaxKindEx.CollectionExpression))
+                || prevToken.Parent.IsKind(SyntaxKind.CaseSwitchLabel)
+                || prevToken.Parent.IsKind(SyntaxKindEx.CasePatternSwitchLabel)
+                || prevToken.Parent.IsKind(SyntaxKind.DefaultSwitchLabel);
         }
 
         private static bool IsPrecededByDirectiveTrivia<T>(T triviaList, int triviaIndex)
@@ -275,6 +287,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 case SyntaxKind.IfDirectiveTrivia:
                 case SyntaxKind.ElifDirectiveTrivia:
                 case SyntaxKind.ElseDirectiveTrivia:
+                case SyntaxKind.PragmaWarningDirectiveTrivia:
                     return true;
 
                 default:

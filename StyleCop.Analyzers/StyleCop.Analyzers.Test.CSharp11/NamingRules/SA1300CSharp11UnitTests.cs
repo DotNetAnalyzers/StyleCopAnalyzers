@@ -11,7 +11,7 @@ namespace StyleCop.Analyzers.Test.CSharp11.NamingRules
         StyleCop.Analyzers.NamingRules.SA1300ElementMustBeginWithUpperCaseLetter,
         StyleCop.Analyzers.NamingRules.RenameToUpperCaseCodeFixProvider>;
 
-    public class SA1300CSharp11UnitTests : SA1300CSharp10UnitTests
+    public partial class SA1300CSharp11UnitTests : SA1300CSharp10UnitTests
     {
         protected override DiagnosticResult[] GetExpectedResultTestPositionalRecord1()
         {

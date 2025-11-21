@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct IVariableDeclarationGroupOperationWrapper : IOperationWrapper
+    internal readonly struct IVariableDeclarationGroupOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IVariableDeclarationGroupOperation";
         private static readonly Type WrappedType;
@@ -27,6 +27,8 @@ namespace StyleCop.Analyzers.Lightup
         public IOperation WrappedOperation => this.operation;
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public ImmutableArray<IOperation> Declarations => DeclarationsAccessor(this.WrappedOperation);
+        public static explicit operator IVariableDeclarationGroupOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(IVariableDeclarationGroupOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IVariableDeclarationGroupOperationWrapper FromOperation(IOperation operation)
         {
             if (operation == null)

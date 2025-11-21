@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct IForEachLoopOperationWrapper : IOperationWrapper
+    internal readonly struct IForEachLoopOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IForEachLoopOperation";
         private static readonly Type WrappedType;
@@ -36,6 +36,8 @@ namespace StyleCop.Analyzers.Lightup
         public IOperation Collection => CollectionAccessor(this.WrappedOperation);
         public ImmutableArray<IOperation> NextVariables => NextVariablesAccessor(this.WrappedOperation);
         public bool IsAsynchronous => IsAsynchronousAccessor(this.WrappedOperation);
+        public static explicit operator IForEachLoopOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
+        public static implicit operator IOperationWrapper(IForEachLoopOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public object LoopKind => ((ILoopOperationWrapper)this).LoopKind;
         public IOperation Body => ((ILoopOperationWrapper)this).Body;
         public ImmutableArray<ILocalSymbol> Locals => ((ILoopOperationWrapper)this).Locals;

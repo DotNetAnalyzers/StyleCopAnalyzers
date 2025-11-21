@@ -9,7 +9,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.ReadabilityRules
 
     using StyleCop.Analyzers.Test.CSharp7.ReadabilityRules;
 
-    public class SA1134CSharp8UnitTests : SA1134CSharp7UnitTests
+    public partial class SA1134CSharp8UnitTests : SA1134CSharp7UnitTests
     {
         /// <inheritdoc/>
         public override Task VerifyInvalidMemberSyntaxInCodeFixAsync()

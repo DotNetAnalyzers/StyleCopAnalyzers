@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.LayoutRules
         StyleCop.Analyzers.LayoutRules.SA1503BracesMustNotBeOmitted,
         StyleCop.Analyzers.LayoutRules.SA1503CodeFixProvider>;
 
-    public class SA1503CSharp8UnitTests : SA1503CSharp7UnitTests
+    public partial class SA1503CSharp8UnitTests : SA1503CSharp7UnitTests
     {
         [Fact]
         [WorkItem(3074, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3074")]

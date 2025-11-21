@@ -5,7 +5,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.LayoutRules
 {
     using StyleCop.Analyzers.Test.CSharp7.LayoutRules;
 
-    public class SA1513CSharp8UnitTests : SA1513CSharp7UnitTests
+    public partial class SA1513CSharp8UnitTests : SA1513CSharp7UnitTests
     {
     }
 }

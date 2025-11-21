@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1024ColonsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
-    public class SA1024CSharp7UnitTests : SA1024UnitTests
+    public partial class SA1024CSharp7UnitTests : SA1024UnitTests
     {
         /// <summary>
         /// Verifies spacing around a <c>:</c> character in tuple expressions.

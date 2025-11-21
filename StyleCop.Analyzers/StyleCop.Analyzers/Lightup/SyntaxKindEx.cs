@@ -12,8 +12,10 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind OrKeyword = (SyntaxKind)8438;
         public const SyntaxKind AndKeyword = (SyntaxKind)8439;
         public const SyntaxKind NotKeyword = (SyntaxKind)8440;
+        public const SyntaxKind InitKeyword = (SyntaxKind)8443;
         public const SyntaxKind ManagedKeyword = (SyntaxKind)8445;
         public const SyntaxKind UnmanagedKeyword = (SyntaxKind)8446;
+        public const SyntaxKind RequiredKeyword = (SyntaxKind)8447;
         public const SyntaxKind FileKeyword = (SyntaxKind)8449;
         public const SyntaxKind NullableKeyword = (SyntaxKind)8486;
         public const SyntaxKind EnableKeyword = (SyntaxKind)8487;
@@ -25,7 +27,9 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind IsPatternExpression = (SyntaxKind)8657;
         public const SyntaxKind RangeExpression = (SyntaxKind)8658;
         public const SyntaxKind ImplicitObjectCreationExpression = (SyntaxKind)8659;
+        public const SyntaxKind UnsignedRightShiftExpression = (SyntaxKind)8692;
         public const SyntaxKind CoalesceAssignmentExpression = (SyntaxKind)8725;
+        public const SyntaxKind UnsignedRightShiftAssignmentExpression = (SyntaxKind)8726;
         public const SyntaxKind IndexExpression = (SyntaxKind)8741;
         public const SyntaxKind DefaultLiteralExpression = (SyntaxKind)8755;
         public const SyntaxKind LocalFunctionStatement = (SyntaxKind)8830;
@@ -61,10 +65,13 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind NullableDirectiveTrivia = (SyntaxKind)9055;
         public const SyntaxKind FunctionPointerType = (SyntaxKind)9056;
         public const SyntaxKind FunctionPointerParameter = (SyntaxKind)9057;
+        public const SyntaxKind InitAccessorDeclaration = (SyntaxKind)9060;
         public const SyntaxKind WithExpression = (SyntaxKind)9061;
         public const SyntaxKind WithInitializerExpression = (SyntaxKind)9062;
         public const SyntaxKind RecordDeclaration = (SyntaxKind)9063;
+        public const SyntaxKind PrimaryConstructorBaseType = (SyntaxKind)9065;
         public const SyntaxKind FunctionPointerUnmanagedCallingConventionList = (SyntaxKind)9066;
         public const SyntaxKind RecordStructDeclaration = (SyntaxKind)9068;
+        public const SyntaxKind CollectionExpression = (SyntaxKind)9076;
     }
 }

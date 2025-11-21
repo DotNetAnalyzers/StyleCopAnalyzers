@@ -10,7 +10,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.DocumentationRules
     using StyleCop.Analyzers.Test.DocumentationRules;
     using Xunit;
 
-    public class SA1600CSharp7UnitTests : SA1600UnitTests
+    public partial class SA1600CSharp7UnitTests : SA1600UnitTests
     {
         protected override LanguageVersion LanguageVersion => LanguageVersion.CSharp7_2;
 

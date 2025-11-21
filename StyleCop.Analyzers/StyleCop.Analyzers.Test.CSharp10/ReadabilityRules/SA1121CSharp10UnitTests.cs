@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.ReadabilityRules
         StyleCop.Analyzers.ReadabilityRules.SA1121UseBuiltInTypeAlias,
         StyleCop.Analyzers.ReadabilityRules.SA1121CodeFixProvider>;
 
-    public class SA1121CSharp10UnitTests : SA1121CSharp9UnitTests
+    public partial class SA1121CSharp10UnitTests : SA1121CSharp9UnitTests
     {
         [Fact]
         public async Task TestUsingNameChangeInFileScopedNamespaceAsync()

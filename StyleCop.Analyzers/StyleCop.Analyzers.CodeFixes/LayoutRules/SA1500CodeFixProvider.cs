@@ -18,6 +18,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -57,7 +58,7 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
-            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
+            var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
             var braceToken = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
             var tokenReplacements = GenerateBraceFixes(settings, ImmutableArray.Create(braceToken));
 
@@ -165,6 +166,7 @@ namespace StyleCop.Analyzers.LayoutRules
             {
             case SyntaxKind.GetKeyword:
             case SyntaxKind.SetKeyword:
+            case SyntaxKindEx.InitKeyword:
             case SyntaxKind.AddKeyword:
             case SyntaxKind.RemoveKeyword:
                 break;
@@ -288,7 +290,7 @@ namespace StyleCop.Analyzers.LayoutRules
                     .OrderBy(token => token.SpanStart)
                     .ToImmutableArray();
 
-                var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, fixAllContext.CancellationToken);
+                var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, fixAllContext.CancellationToken);
 
                 var tokenReplacements = GenerateBraceFixes(settings, tokens);
 

@@ -107,6 +107,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 case SyntaxKind.OpenBracketToken:
                 case SyntaxKind.CloseParenToken:
                 case SyntaxKind.MinusGreaterThanToken:
+                case SyntaxKindEx.DotDotToken:
                     precedesSpecialCharacter = true;
                     break;
 
@@ -135,7 +136,9 @@ namespace StyleCop.Analyzers.SpacingRules
                     break;
 
                 case SyntaxKind.ColonToken:
-                    precedesSpecialCharacter = nextToken.Parent.IsKind(SyntaxKind.InterpolationFormatClause);
+                    precedesSpecialCharacter =
+                        nextToken.Parent.IsKind(SyntaxKind.InterpolationFormatClause) ||
+                        nextToken.Parent.IsKind(SyntaxKindEx.CasePatternSwitchLabel);
                     suppressFollowingSpaceError = false;
                     break;
 

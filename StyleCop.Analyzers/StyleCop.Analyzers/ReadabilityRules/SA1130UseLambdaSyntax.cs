@@ -168,7 +168,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 if (parameterList == null)
                 {
-                    // This might happen if the call was using params witha type unknown to the analyzer, e.g. params Span<T>.
+                    // This might happen if the call was using params with a type unknown to the analyzer, e.g. params Span<T>.
                     return false;
                 }
 

@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
         StyleCop.Analyzers.ReadabilityRules.SA1116SplitParametersMustStartOnLineAfterDeclaration,
         StyleCop.Analyzers.ReadabilityRules.SA1116CodeFixProvider>;
 
-    public class SA1116CSharp9UnitTests : SA1116CSharp8UnitTests
+    public partial class SA1116CSharp9UnitTests : SA1116CSharp8UnitTests
     {
         [Fact]
         public async Task TestTargetTypedNewExpressionnAsync()
