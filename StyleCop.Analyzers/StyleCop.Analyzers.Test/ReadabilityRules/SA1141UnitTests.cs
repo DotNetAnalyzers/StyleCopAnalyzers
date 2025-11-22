@@ -44,7 +44,5 @@ public class TestClass
 
             await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp6, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
-
-        //// TODO: Make sure that all paths are covered!
     }
 }
