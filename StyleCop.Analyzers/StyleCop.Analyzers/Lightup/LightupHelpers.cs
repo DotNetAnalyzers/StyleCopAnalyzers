@@ -470,6 +470,105 @@ namespace StyleCop.Analyzers.Lightup
             return expression.Compile();
         }
 
+        internal static Func<T, TArg1, TArg2, ImmutableArrayWrapper<TResult>> CreateImmutableArrayMethodAccessor<T, TArg1, TArg2, TResult>(Type type, Type argumentType1, Type argumentType2, string methodName)
+        {
+            ImmutableArrayWrapper<TResult> FallbackAccessor(T instance, TArg1 arg1, TArg2 arg2)
+            {
+                if (instance == null)
+                {
+                    // Unlike an extension method which would throw ArgumentNullException here, the light-up
+                    // behavior needs to match behavior of the underlying property.
+                    throw new NullReferenceException();
+                }
+
+                return ImmutableArrayWrapper<TResult>.UnsupportedDefault;
+            }
+
+            if (type == null)
+            {
+                return FallbackAccessor;
+            }
+
+            if (!typeof(T).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (!typeof(TArg1).GetTypeInfo().IsAssignableFrom(argumentType1.GetTypeInfo()))
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (!typeof(TArg2).GetTypeInfo().IsAssignableFrom(argumentType2.GetTypeInfo()))
+            {
+                throw new InvalidOperationException();
+            }
+
+            var methods = type.GetTypeInfo().GetDeclaredMethods(methodName);
+            MethodInfo method = null;
+            foreach (var candidate in methods)
+            {
+                var parameters = candidate.GetParameters();
+                if (parameters.Length != 2)
+                {
+                    continue;
+                }
+
+                if (Equals(argumentType1, parameters[0].ParameterType)
+                    && Equals(argumentType2, parameters[1].ParameterType))
+                {
+                    method = candidate;
+                    break;
+                }
+            }
+
+            if (method == null)
+            {
+                return FallbackAccessor;
+            }
+
+            if (method.ReturnType.GetGenericTypeDefinition() != typeof(ImmutableArray<>))
+            {
+                throw new InvalidOperationException();
+            }
+
+            var methodResultType = method.ReturnType.GenericTypeArguments[0];
+            if (!ValidatePropertyType(typeof(TResult), methodResultType))
+            {
+                throw new InvalidOperationException();
+            }
+
+            var instanceParameter = Expression.Parameter(typeof(T), "instance");
+            var arg1Parameter = Expression.Parameter(typeof(TArg1), "arg1");
+            var arg2Parameter = Expression.Parameter(typeof(TArg2), "arg2");
+            Expression instance =
+                type.GetTypeInfo().IsAssignableFrom(typeof(T).GetTypeInfo())
+                ? (Expression)instanceParameter
+                : Expression.Convert(instanceParameter, type);
+            Expression argument1 =
+                argumentType1.GetTypeInfo().IsAssignableFrom(typeof(TArg1).GetTypeInfo())
+                ? (Expression)arg1Parameter
+                : Expression.Convert(arg1Parameter, argumentType1);
+            Expression argument2 =
+                argumentType2.GetTypeInfo().IsAssignableFrom(typeof(TArg2).GetTypeInfo())
+                ? (Expression)arg2Parameter
+                : Expression.Convert(arg2Parameter, argumentType2);
+
+            Expression methodAccess = Expression.Call(instance, method, argument1, argument2);
+
+            var unboundWrapperType = typeof(ImmutableArrayWrapper<>.AutoWrapImmutableArray<>);
+            var boundWrapperType = unboundWrapperType.MakeGenericType(typeof(TResult), methodResultType);
+            var constructorInfo = boundWrapperType.GetTypeInfo().DeclaredConstructors.Single(constructor => constructor.GetParameters().Length == 1);
+
+            Expression<Func<T, TArg1, TArg2, ImmutableArrayWrapper<TResult>>> expression =
+                Expression.Lambda<Func<T, TArg1, TArg2, ImmutableArrayWrapper<TResult>>>(
+                    Expression.New(constructorInfo, methodAccess),
+                    instanceParameter,
+                    arg1Parameter,
+                    arg2Parameter);
+            return expression.Compile();
+        }
+
         internal static Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>> CreateSeparatedSyntaxListPropertyAccessor<TSyntax, TProperty>(Type type, string propertyName)
         {
             SeparatedSyntaxListWrapper<TProperty> FallbackAccessor(TSyntax syntax)
@@ -668,7 +767,10 @@ namespace StyleCop.Analyzers.Lightup
 
         private static bool ValidatePropertyType(Type returnType, Type actualType)
         {
-            var requiredType = SyntaxWrapperHelper.GetWrappedType(returnType) ?? returnType;
+            var requiredType = SyntaxWrapperHelper.GetWrappedType(returnType)
+                ?? OperationWrapperHelper.GetWrappedType(returnType)
+                ?? WrapperHelper.GetWrappedType(returnType)
+                ?? returnType;
             return requiredType == actualType;
         }
     }
