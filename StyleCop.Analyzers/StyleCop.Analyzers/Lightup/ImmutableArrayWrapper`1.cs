@@ -162,7 +162,7 @@ namespace StyleCop.Analyzers.Lightup
 
         private sealed class UnsupportedImmutableArray : ImmutableArrayWrapper<T>
         {
-            private static readonly ImmutableArray<T> SyntaxList = default;
+            private static readonly ImmutableArray<T> SyntaxList = ImmutableArray<T>.Empty;
 
             public UnsupportedImmutableArray()
             {
