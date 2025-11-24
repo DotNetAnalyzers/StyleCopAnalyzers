@@ -71,8 +71,10 @@ namespace StyleCop.Analyzers.Helpers
         {
             if (this.perCompilationCache == -1)
             {
-                // Check for global using aliases
-                var scopes = semanticModel.GetImportScopes(0, cancellationToken);
+                // Check for global using aliases. We check at the end of the file since GetImportScopes is observed to
+                // omit global using directives in the current file at position 0 for the specific case where there is
+                // no whitespace preceding the global using directives.
+                var scopes = semanticModel.GetImportScopes(semanticModel.SyntaxTree.Length, cancellationToken);
                 Interlocked.CompareExchange(ref this.perCompilationCache, scopes.Any(x => x.Aliases.Length > 0) ? 1 : 0, -1);
             }
 

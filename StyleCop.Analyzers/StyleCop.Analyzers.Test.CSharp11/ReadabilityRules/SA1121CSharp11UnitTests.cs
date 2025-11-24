@@ -41,5 +41,28 @@ class TestClass
                 FixedSources = { source1, newSource2 },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3594, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3594")]
+        public async Task TestUsingNameChangeInGlobalUsingInSameFileAsync()
+        {
+            var source = @"global using MyDouble = System.Double;
+class TestClass
+{
+    private [|MyDouble|] x;
+}";
+
+            var newSource = @"global using MyDouble = System.Double;
+class TestClass
+{
+    private double x;
+}";
+
+            await new CSharpTest()
+            {
+                TestSources = { source },
+                FixedSources = { newSource },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
