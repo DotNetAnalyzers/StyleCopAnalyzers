@@ -102,6 +102,7 @@ public class TestClass
         public async Task ValidateValueTupleObjectCreationAsync()
         {
             var testCode = @"using System;
+using VT = System.ValueTuple;
 
 public class TestClass
 {
@@ -114,7 +115,9 @@ public class TestClass
         var test5 = ([|new ValueTuple<int, int>(3, 4)|], 2);
         var test6 = [|new System.ValueTuple<int, System.ValueTuple<int, int>>(1, (2, 3))|];
         var test7 = [|ValueTuple.Create|](1, 2);
+        var test7B = [|VT.Create|](1, 2);
         var test8 = [|ValueTuple.Create<int, double>|](1, 2);
+        var test8B = [|VT.Create<int, double>|](1, 2);
         var test9 = [|System.ValueTuple.Create|](1, [|new ValueTuple<int, double>(2, 3)|]);
         var test10 = [|ValueTuple.Create|]([|ValueTuple.Create|](1, 2, 3), 4);
         var test11 = [|new ValueTuple<int, ValueTuple<int, int>>(1, [|ValueTuple.Create|](2, 3))|];
@@ -124,6 +127,7 @@ public class TestClass
 ";
 
             var fixedCode = @"using System;
+using VT = System.ValueTuple;
 
 public class TestClass
 {
@@ -136,7 +140,9 @@ public class TestClass
         var test5 = ((3, 4), 2);
         var test6 = (1, (2, 3));
         var test7 = (1, 2);
+        var test7B = (1, 2);
         var test8 = (1, (double)2);
+        var test8B = (1, (double)2);
         var test9 = (1, (2, (double)3));
         var test10 = ((1, 2, 3), 4);
         var test11 = (1, (2, 3));
