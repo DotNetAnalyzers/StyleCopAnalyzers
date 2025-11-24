@@ -371,6 +371,7 @@ partial struct Money : IFormattable
         }
 
         [Fact]
+        [WorkItem(3816, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3816")]
         public async Task TestCommaFollowingElifDirectiveAsync()
         {
             var testCode = @"
@@ -392,6 +393,7 @@ partial struct Money : IFormattable
         }
 
         [Fact]
+        [WorkItem(3816, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3816")]
         public async Task TestCommaFollowingElseDirectiveAsync()
         {
             var testCode = @"
@@ -413,6 +415,7 @@ partial struct Money : IFormattable
         }
 
         [Fact]
+        [WorkItem(3816, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3816")]
         public async Task TestCommaFollowingEndIfDirectiveAsync()
         {
             var testCode = @"
@@ -433,6 +436,7 @@ partial struct Money : IFormattable
         }
 
         [Fact]
+        [WorkItem(3816, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3816")]
         public async Task TestCommaNotFollowingDirectiveAsync()
         {
             var testCode = @"
