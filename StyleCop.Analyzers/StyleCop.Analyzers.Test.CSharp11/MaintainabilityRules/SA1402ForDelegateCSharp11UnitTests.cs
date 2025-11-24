@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp11.MaintainabilityRules
 {
-    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
@@ -20,20 +19,14 @@ namespace StyleCop.Analyzers.Test.CSharp11.MaintainabilityRules
         [WorkItem(3803, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3803")]
         public async Task VerifyFileLocalDelegateExemptionAsync()
         {
-            var testCode = $@"namespace TestNamespace;
+            var testCode = @"namespace TestNamespace;
 
-public class TestClass {{ }}
+public class TestClass { }
 
 file delegate void TestDelegate();
 ";
 
-            var expectedDiagnostic = Diagnostic().WithLocation(0);
-
-            await VerifyCSharpDiagnosticAsync(
-                testCode,
-                this.GetSettings(),
-                Array.Empty<DiagnosticResult>(),
-                CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -99,7 +99,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         private static IEnumerable<MemberDeclarationSyntax> GetTopLevelTypeDeclarations(SyntaxNode root, StyleCopSettings settings)
         {
             var allTypeDeclarations = root.DescendantNodes(descendIntoChildren: node => ContainsTopLevelTypeDeclarations(node)).OfType<MemberDeclarationSyntax>().ToList();
-            var relevantTypeDeclarations = allTypeDeclarations.Where(x => IsRelevantType(x, settings)).Where(x => !IsFileLocalType(x)).ToList();
+            var relevantTypeDeclarations = allTypeDeclarations.Where(x => IsRelevantType(x, settings)).ToList();
             return relevantTypeDeclarations;
         }
 
@@ -110,6 +110,11 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
         private static bool IsRelevantType(SyntaxNode node, StyleCopSettings settings)
         {
+            if (IsFileLocalType(node))
+            {
+                return false;
+            }
+
             var topLevelTypes = settings.MaintainabilityRules.TopLevelTypes;
             var isRelevant = false;
 

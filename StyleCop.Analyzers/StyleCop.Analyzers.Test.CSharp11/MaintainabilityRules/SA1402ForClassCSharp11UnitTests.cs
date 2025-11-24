@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp11.MaintainabilityRules
 {
-    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
@@ -20,20 +19,14 @@ namespace StyleCop.Analyzers.Test.CSharp11.MaintainabilityRules
         [WorkItem(3803, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3803")]
         public async Task VerifyFileLocalClassExemptionAsync()
         {
-            var testCode = $@"namespace TestNamespace;
+            var testCode = @"namespace TestNamespace;
 
-public class TestClass1 {{ }}
+public class TestClass1 { }
 
-file class TestClass2 {{ }}
+file class TestClass2 { }
 ";
 
-            var expectedDiagnostic = this.Diagnostic().WithLocation(0);
-
-            await this.VerifyCSharpDiagnosticAsync(
-                testCode,
-                this.GetSettings(),
-                Array.Empty<DiagnosticResult>(),
-                CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -44,20 +37,14 @@ file class TestClass2 {{ }}
         [WorkItem(3803, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3803")]
         public async Task VerifyFileLocalStaticClassExemptionAsync()
         {
-            var testCode = $@"namespace TestNamespace;
+            var testCode = @"namespace TestNamespace;
 
-public class TestClass1 {{ }}
+public class TestClass1 { }
 
-file static class TestClass2 {{ }}
+file static class TestClass2 { }
 ";
 
-            var expectedDiagnostic = this.Diagnostic().WithLocation(0);
-
-            await this.VerifyCSharpDiagnosticAsync(
-                testCode,
-                this.GetSettings(),
-                Array.Empty<DiagnosticResult>(),
-                CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
