@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.Helpers
 {
     using System;
     using System.Collections.Concurrent;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using Microsoft.CodeAnalysis;
@@ -70,6 +71,52 @@ namespace StyleCop.Analyzers.Helpers
 
             return firstToken.IsKind(SyntaxKind.EndOfFileToken)
                 && TriviaHelper.IndexOfFirstNonWhitespaceTrivia(firstToken.LeadingTrivia) == -1;
+        }
+
+        /// <summary>
+        /// Recursively descends through the tree structure, enumerating all Expression nodes encountered during the traversal.
+        /// </summary>
+        /// <param name="syntaxNode">The syntax node to recursively.</param>
+        /// <returns>Enumerated ExpressionSyntax.</returns>
+        public static IEnumerable<ExpressionSyntax> ExpressionDescendRecursively(this SyntaxNode syntaxNode)
+        {
+            foreach (var node in syntaxNode.ChildNodes())
+            {
+                if (node is StatementSyntax statementSyntax)
+                {
+                    foreach (var expression in ExpressionDescendRecursively(statementSyntax))
+                    {
+                        yield return expression;
+                    }
+                }
+                else if (node is ExpressionSyntax expressionSyntax)
+                {
+                    yield return expressionSyntax;
+
+                    foreach (var expression in ExpressionDescendRecursively(expressionSyntax))
+                    {
+                        yield return expression;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Recursively descends through the tree structure, enumerating all Expression nodes encountered during the traversal.
+        /// </summary>
+        /// <param name="expressionSyntax">The expression syntax to recursively.</param>
+        /// <returns>Enumerated ExpressionSyntax.</returns>
+        public static IEnumerable<ExpressionSyntax> ExpressionDescendRecursively(this ExpressionSyntax expressionSyntax)
+        {
+            foreach (var inner in expressionSyntax.ChildNodes().OfType<ExpressionSyntax>())
+            {
+                yield return inner;
+
+                foreach (var innerItem in ExpressionDescendRecursively(inner))
+                {
+                    yield return innerItem;
+                }
+            }
         }
 
         internal static bool ContainsUsingAlias(this SyntaxTree tree, ConcurrentDictionary<SyntaxTree, bool> cache)

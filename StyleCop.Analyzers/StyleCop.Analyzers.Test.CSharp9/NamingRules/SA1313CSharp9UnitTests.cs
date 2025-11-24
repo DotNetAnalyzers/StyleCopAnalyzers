@@ -41,5 +41,31 @@ public record R(int A)
 
             await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(2974, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2974")]
+        public async Task TestLambdaParameterWithAllUnderscoresAsync()
+        {
+            var testCode = @"public class TypeName
+{
+    public void MethodName()
+    {
+        System.Action<int> action1 = _ => { };
+        System.Action<int, int> action2 = (_, _) => { };
+        System.Action<int, int, int> action3 = (_, _, _) => { };
+        System.Action<int, int, int, int> action4 = (_, _, _, _) => { };
+        System.Action<int> action5 = delegate(int _) { };
+        System.Action<int, int> action6 = delegate(int _, int _) { };
+        System.Action<int, int, int> action7 = delegate(int _, int _, int _) { };
+        System.Action<int, int, int, int> action8 = delegate(int _, int _, int _, int _) { };
+
+        System.Action<int, int> action9 = (_, a) => { };
+        System.Action<int, int> action10 = (a, _) => { };
+        System.Action<int, int, int> action11 = (_, a, _) => { };
+        System.Action<int, int, int> action12 = (a, _, _) => { };
+    }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
