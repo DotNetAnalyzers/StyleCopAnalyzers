@@ -64,18 +64,28 @@ namespace StyleCop.Analyzers.Helpers
         {
             // Check for "local" using aliases
             var nodes = tree.GetRoot().DescendantNodes(node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration) || node.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration));
-            return nodes.OfType<UsingDirectiveSyntax>().Any(x => x.Alias != null);
+            return nodes.OfType<UsingDirectiveSyntax>().Any(x => x.GlobalKeyword().IsKind(SyntaxKind.None) && x.Alias != null);
+        }
+
+        private static bool ContainsGlobalUsingAliasInCurrentFileNoCache(SyntaxTree tree)
+        {
+            // Check for "global" using aliases in one specific syntax tree
+            var nodes = ((CompilationUnitSyntax)tree.GetRoot()).Usings;
+            return nodes.Any(x => x.GlobalKeyword().IsKind(SyntaxKindEx.GlobalKeyword) && x.Alias != null);
         }
 
         private bool ContainsGlobalUsingAlias(SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (this.perCompilationCache == -1)
             {
-                // Check for global using aliases. We check at the end of the file since GetImportScopes is observed to
-                // omit global using directives in the current file at position 0 for the specific case where there is
-                // no whitespace preceding the global using directives.
-                var scopes = semanticModel.GetImportScopes(semanticModel.SyntaxTree.Length, cancellationToken);
-                Interlocked.CompareExchange(ref this.perCompilationCache, scopes.Any(x => x.Aliases.Length > 0) ? 1 : 0, -1);
+                // Check for global using aliases. We check at the beginning of the file to ensure using directives in
+                // the current file are not picked up as a scope. Since global using directives in the current file may
+                // not be reported by this call, we include a second check specifically for global usings defined in the
+                // current file.
+                var scopes = semanticModel.GetImportScopes(0, cancellationToken);
+                bool hasGlobalUsingAlias = scopes.Any(x => x.Aliases.Length > 0)
+                    || ContainsGlobalUsingAliasInCurrentFileNoCache(semanticModel.SyntaxTree);
+                Interlocked.CompareExchange(ref this.perCompilationCache, hasGlobalUsingAlias ? 1 : 0, -1);
             }
 
             return this.perCompilationCache == 1;
