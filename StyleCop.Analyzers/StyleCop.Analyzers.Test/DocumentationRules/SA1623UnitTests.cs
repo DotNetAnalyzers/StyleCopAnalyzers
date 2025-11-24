@@ -348,7 +348,6 @@ public class TestClass
 
         [Theory]
         [InlineData("<inheritdoc/>")]
-        [InlineData("XYZ <inheritdoc/>")]
         [InlineData("<inheritdoc/> XYZ")]
         [WorkItem(3465, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3465")]
         public async Task VerifyInheritdocInSummaryTagIsAllowedAsync(string summary)
@@ -364,6 +363,24 @@ public class TestClass
 ";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3465, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3465")]
+        public async Task VerifyInheritdocAfterTextStillReportsWarningAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    /// <summary>
+    /// XYZ <inheritdoc/>
+    /// </summary>
+    public int {|#0:TestProperty|} { get; set; }
+}
+";
+
+            var expected = Diagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(0).WithArguments("Gets or sets");
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -67,9 +67,9 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            if (summaryElement.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag) != null)
+            if (SummaryStartsWithInheritdoc(summaryElement))
             {
-                // Ignore nodes with an <inheritdoc/> tag.
+                // Ignore nodes starting with an <inheritdoc/> tag.
                 return;
             }
 
@@ -287,6 +287,73 @@ namespace StyleCop.Analyzers.DocumentationRules
                         ReportSA1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextSets, unexpectedStartingText1: startingTextGetsOrSets, unexpectedStartingText2: startingTextGets, unexpectedStartingText3: startingTextReturns);
                     }
                 }
+            }
+        }
+
+        private static bool SummaryStartsWithInheritdoc(XmlElementSyntax summaryElement)
+        {
+            foreach (var child in summaryElement.Content)
+            {
+                var firstContent = GetFirstMeaningfulChild(child);
+                if (firstContent is null)
+                {
+                    continue;
+                }
+
+                return string.Equals(firstContent.GetName()?.ToString(), XmlCommentHelper.InheritdocXmlTag, StringComparison.Ordinal);
+            }
+
+            return false;
+        }
+
+        private static XmlNodeSyntax GetFirstMeaningfulChild(XmlNodeSyntax node)
+        {
+            switch (node)
+            {
+            case XmlTextSyntax textSyntax:
+                foreach (var token in textSyntax.TextTokens)
+                {
+                    if (!string.IsNullOrWhiteSpace(token.ValueText))
+                    {
+                        return textSyntax;
+                    }
+                }
+
+                return null;
+
+            case XmlEmptyElementSyntax emptyElement:
+                return emptyElement;
+
+            case XmlElementSyntax elementSyntax:
+                if (string.Equals(elementSyntax.StartTag?.Name?.ToString(), XmlCommentHelper.InheritdocXmlTag, StringComparison.Ordinal))
+                {
+                    return elementSyntax;
+                }
+
+                foreach (var child in elementSyntax.Content)
+                {
+                    var nested = GetFirstMeaningfulChild(child);
+                    if (nested != null)
+                    {
+                        return nested;
+                    }
+                }
+
+                return null;
+
+            case XmlCDataSectionSyntax cdataSyntax:
+                foreach (var token in cdataSyntax.TextTokens)
+                {
+                    if (!string.IsNullOrWhiteSpace(token.ValueText))
+                    {
+                        return cdataSyntax;
+                    }
+                }
+
+                return null;
+
+            default:
+                return null;
             }
         }
 
