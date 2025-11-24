@@ -1171,6 +1171,7 @@ public class TestClass
         }
 
         [Fact]
+        [WorkItem(3849, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3849")]
         public async Task TestClassInGlobalNamespaceWithoutNewlineAsync()
         {
             var testCode = @"/// <summary>
@@ -1187,6 +1188,7 @@ public class TestClass
         }
 
         [Fact]
+        [WorkItem(3849, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3849")]
         public async Task TestClassInNamespaceAsync()
         {
             var testCode = @"
@@ -1207,6 +1209,7 @@ namespace TestNamespace
         }
 
         [Fact]
+        [WorkItem(3849, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3849")]
         public async Task TestClassInNamespaceWithCommentAsync()
         {
             var testCode = @"
@@ -1245,6 +1248,7 @@ namespace TestNamespace
         }
 
         [Fact]
+        [WorkItem(3849, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3849")]
         public async Task TestClassInGlobalNamespaceWithCommentAsync()
         {
             var testCode = @"
@@ -1277,6 +1281,7 @@ public class TestClass
         }
 
         [Fact]
+        [WorkItem(3849, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3849")]
         public async Task TestClassInGlobalNamespaceWithPreprocessorDirectiveAsync()
         {
             var testCode = @"
@@ -1311,6 +1316,7 @@ public class TestClass
         }
 
         [Fact]
+        [WorkItem(3849, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3849")]
         public async Task TestClassInGlobalNamespaceWithMultilineCommentAsync()
         {
             var testCode = @"
