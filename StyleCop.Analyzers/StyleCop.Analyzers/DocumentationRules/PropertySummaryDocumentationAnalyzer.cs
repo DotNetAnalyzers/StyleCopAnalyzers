@@ -61,6 +61,18 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, XmlNodeSyntax syntax, XElement completeDocumentation, Location diagnosticLocation)
         {
+            if (!(syntax is XmlElementSyntax summaryElement))
+            {
+                // This is reported by SA1604 or SA1606.
+                return;
+            }
+
+            if (SummaryStartsWithInheritdoc(summaryElement))
+            {
+                // Ignore nodes starting with an <inheritdoc/> tag.
+                return;
+            }
+
             var propertyDeclaration = (PropertyDeclarationSyntax)context.Node;
             var propertyType = context.SemanticModel.GetTypeInfo(propertyDeclaration.Type.StripRefFromType());
             var culture = settings.DocumentationRules.DocumentationCultureInfo;
@@ -70,7 +82,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             {
                 AnalyzeSummaryElement(
                     context,
-                    syntax,
+                    summaryElement,
                     diagnosticLocation,
                     propertyDeclaration,
                     resourceManager.GetString(nameof(DocumentationResources.StartingTextGetsWhether), culture),
@@ -82,7 +94,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             {
                 AnalyzeSummaryElement(
                     context,
-                    syntax,
+                    summaryElement,
                     diagnosticLocation,
                     propertyDeclaration,
                     resourceManager.GetString(nameof(DocumentationResources.StartingTextGets), culture),
@@ -92,7 +104,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
         }
 
-        private static void AnalyzeSummaryElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location diagnosticLocation, PropertyDeclarationSyntax propertyDeclaration, string startingTextGets, string startingTextSets, string startingTextGetsOrSets, string startingTextReturns)
+        private static void AnalyzeSummaryElement(SyntaxNodeAnalysisContext context, XmlElementSyntax summaryElement, Location diagnosticLocation, PropertyDeclarationSyntax propertyDeclaration, string startingTextGets, string startingTextSets, string startingTextGetsOrSets, string startingTextReturns)
         {
             var diagnosticProperties = ImmutableDictionary.CreateBuilder<string, string>();
             ArrowExpressionClauseSyntax expressionBody = propertyDeclaration.ExpressionBody;
@@ -114,12 +126,6 @@ namespace StyleCop.Analyzers.DocumentationRules
                         break;
                     }
                 }
-            }
-
-            if (!(syntax is XmlElementSyntax summaryElement))
-            {
-                // This is reported by SA1604 or SA1606.
-                return;
             }
 
             // Add a no code fix tag when the summary element is empty.
@@ -281,6 +287,73 @@ namespace StyleCop.Analyzers.DocumentationRules
                         ReportSA1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextSets, unexpectedStartingText1: startingTextGetsOrSets, unexpectedStartingText2: startingTextGets, unexpectedStartingText3: startingTextReturns);
                     }
                 }
+            }
+        }
+
+        private static bool SummaryStartsWithInheritdoc(XmlElementSyntax summaryElement)
+        {
+            foreach (var child in summaryElement.Content)
+            {
+                var firstContent = GetFirstMeaningfulChild(child);
+                if (firstContent is null)
+                {
+                    continue;
+                }
+
+                return string.Equals(firstContent.GetName()?.ToString(), XmlCommentHelper.InheritdocXmlTag, StringComparison.Ordinal);
+            }
+
+            return false;
+        }
+
+        private static XmlNodeSyntax GetFirstMeaningfulChild(XmlNodeSyntax node)
+        {
+            switch (node)
+            {
+            case XmlTextSyntax textSyntax:
+                foreach (var token in textSyntax.TextTokens)
+                {
+                    if (!string.IsNullOrWhiteSpace(token.ValueText))
+                    {
+                        return textSyntax;
+                    }
+                }
+
+                return null;
+
+            case XmlEmptyElementSyntax emptyElement:
+                return emptyElement;
+
+            case XmlElementSyntax elementSyntax:
+                if (string.Equals(elementSyntax.StartTag?.Name?.ToString(), XmlCommentHelper.InheritdocXmlTag, StringComparison.Ordinal))
+                {
+                    return elementSyntax;
+                }
+
+                foreach (var child in elementSyntax.Content)
+                {
+                    var nested = GetFirstMeaningfulChild(child);
+                    if (nested != null)
+                    {
+                        return nested;
+                    }
+                }
+
+                return null;
+
+            case XmlCDataSectionSyntax cdataSyntax:
+                foreach (var token in cdataSyntax.TextTokens)
+                {
+                    if (!string.IsNullOrWhiteSpace(token.ValueText))
+                    {
+                        return cdataSyntax;
+                    }
+                }
+
+                return null;
+
+            default:
+                return null;
             }
         }
 
