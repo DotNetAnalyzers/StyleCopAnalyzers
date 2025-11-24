@@ -67,7 +67,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                 case "allowedNamespaceComponents":
                     kvp.AssertIsArray();
                     allowedNamespaceComponents = ImmutableArray.CreateBuilder<string>();
-                    allowedNamespaceComponents.AddRange(kvp.Value.AsJsonArray.Select(x => x.ToStringValue(kvp.Key)));
+                    allowedNamespaceComponents.AddRange(kvp.Value.AsJsonArray.Select(static x => x.ToStringValue("allowedNamespaceComponents")));
                     break;
 
                 case "includeInferredTupleElementNames":
@@ -85,7 +85,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
             allowCommonHungarianPrefixes ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.naming.allowCommonHungarianPrefixes");
             allowedHungarianPrefixes ??= AnalyzerConfigHelper.TryGetStringListValue(analyzerConfigOptions, "stylecop.naming.allowedHungarianPrefixes")
-                ?.Where(value => IsValidHungarianPrefix(value))
+                ?.Where(static value => IsValidHungarianPrefix(value))
                 .ToImmutableArray()
                 .ToBuilder();
             allowedNamespaceComponents ??= AnalyzerConfigHelper.TryGetStringListValue(analyzerConfigOptions, "stylecop.naming.allowedNamespaceComponents")?.ToBuilder();

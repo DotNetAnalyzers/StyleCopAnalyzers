@@ -626,6 +626,7 @@ The following values are currently supported. Unsupported values will automatica
 * `"en-US"`
 * `"es-MX"`
 * `"fr-FR"`
+* `"nl-NL"`
 * `"pl-PL"`
 * `"pt-BR"`
 * `"ru-RU"`

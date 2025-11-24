@@ -53,7 +53,7 @@ stylecop.unrecognizedValue = 3
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
 
             Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
             Assert.Equal("Custom copyright text.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
@@ -80,7 +80,7 @@ file_header_template = Line 1\nLine 2.
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
 
             Assert.Equal("Line 1\nLine 2.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
         }
@@ -95,7 +95,7 @@ stylecop.documentation.copyrightText = Line 1\nLine 2.
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
 
             Assert.Equal("Line 1\nLine 2.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
         }
@@ -116,12 +116,12 @@ stylecop.documentation.documentPrivateFields = {valueText}
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
 
             Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentExposedElements);
             Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentInternalElements);
             Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentPrivateElements);
-            Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentInterfaces);
+            Assert.Equal(value ? InterfaceDocumentationMode.All : InterfaceDocumentationMode.None, styleCopSettings.DocumentationRules.DocumentInterfaces);
             Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentPrivateFields);
         }
 
@@ -137,7 +137,7 @@ stylecop.documentation.companyName = {companyName}
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
 
             Assert.Equal(companyName, styleCopSettings.DocumentationRules.CompanyName);
             Assert.Equal($"Copyright (c) {companyName}. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
@@ -153,7 +153,7 @@ file_header_template = {copyrightText}
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
 
             Assert.Equal("[CircularReference]", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
         }
@@ -168,7 +168,7 @@ file_header_template = {variable}
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
 
             Assert.Equal("[InvalidReference]", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
         }
@@ -191,7 +191,7 @@ csharp_using_directive_placement = {placement}
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
 
             Assert.NotNull(styleCopSettings.OrderingRules);
             Assert.Equal(expected, styleCopSettings.OrderingRules.UsingDirectivesPlacement);

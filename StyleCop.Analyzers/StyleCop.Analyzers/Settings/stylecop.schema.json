@@ -226,9 +226,16 @@
               "default": false
             },
             "documentInterfaces": {
-              "type": "boolean",
+              "type": [ "string", "boolean" ],
               "description": "Specifies whether interface members need to be documented. When true, all interface members require documentation, regardless of accessibility.",
-              "default": true
+              "default": "all",
+              "enum": [
+                "all",
+                "exposed",
+                "none",
+                true,
+                false
+              ]
             },
             "documentPrivateFields": {
               "type": "boolean",
@@ -263,7 +270,7 @@
             "headerDecoration": {
               "type": "string",
               "description": "The text used as decoration for the copyright header comment.",
-              "default": null
+              "default": ""
             },
             "fileNamingConvention": {
               "type": "string",

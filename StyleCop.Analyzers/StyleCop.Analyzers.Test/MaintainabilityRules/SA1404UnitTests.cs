@@ -426,5 +426,23 @@ public class Foo
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Theory]
+        [InlineData("global::System.Obsolete")]
+        [InlineData("global::My")]
+        [WorkItem(3829, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3829")]
+        public async Task TestGlobalOtherAttributeAsync(string name)
+        {
+            var testCode = $@"public class MyAttribute : System.Attribute
+{{
+}}
+
+[{name}]
+public class Foo
+{{
+}}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
