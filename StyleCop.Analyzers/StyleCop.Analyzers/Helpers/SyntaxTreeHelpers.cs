@@ -6,13 +6,9 @@
 namespace StyleCop.Analyzers.Helpers
 {
     using System;
-    using System.Collections.Concurrent;
-    using System.Linq;
     using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using StyleCop.Analyzers.Lightup;
 
     internal static class SyntaxTreeHelpers
     {
@@ -23,17 +19,17 @@ namespace StyleCop.Analyzers.Helpers
         /// <para>This allows many analyzers that run on every token in the file to avoid checking
         /// the same state in the document repeatedly.</para>
         /// </remarks>
-        private static Tuple<WeakReference<Compilation>, ConcurrentDictionary<SyntaxTree, bool>> usingAliasCache
-            = Tuple.Create(new WeakReference<Compilation>(null), default(ConcurrentDictionary<SyntaxTree, bool>));
+        private static Tuple<WeakReference<Compilation>, UsingAliasCache> usingAliasCache
+            = Tuple.Create(new WeakReference<Compilation>(null), default(UsingAliasCache));
 
-        public static ConcurrentDictionary<SyntaxTree, bool> GetOrCreateUsingAliasCache(this Compilation compilation)
+        public static UsingAliasCache GetOrCreateUsingAliasCache(this Compilation compilation)
         {
             var cache = usingAliasCache;
 
             Compilation cachedCompilation;
             if (!cache.Item1.TryGetTarget(out cachedCompilation) || cachedCompilation != compilation)
             {
-                var replacementCache = Tuple.Create(new WeakReference<Compilation>(compilation), new ConcurrentDictionary<SyntaxTree, bool>());
+                var replacementCache = Tuple.Create(new WeakReference<Compilation>(compilation), new UsingAliasCache());
                 while (true)
                 {
                     var prior = Interlocked.CompareExchange(ref usingAliasCache, replacementCache, cache);
@@ -70,38 +66,6 @@ namespace StyleCop.Analyzers.Helpers
 
             return firstToken.IsKind(SyntaxKind.EndOfFileToken)
                 && TriviaHelper.IndexOfFirstNonWhitespaceTrivia(firstToken.LeadingTrivia) == -1;
-        }
-
-        internal static bool ContainsUsingAlias(this SyntaxTree tree, ConcurrentDictionary<SyntaxTree, bool> cache, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            if (tree == null)
-            {
-                return false;
-            }
-
-            bool result;
-            if (cache.TryGetValue(tree, out result))
-            {
-                return result;
-            }
-
-            bool generated = ContainsUsingAliasNoCache(tree, semanticModel, cancellationToken);
-            cache.TryAdd(tree, generated);
-            return generated;
-        }
-
-        private static bool ContainsUsingAliasNoCache(SyntaxTree tree, SemanticModel semanticModel, CancellationToken cancellationToken)
-        {
-            // Check for "local" using aliases
-            var nodes = tree.GetRoot().DescendantNodes(node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration) || node.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration));
-            if (nodes.OfType<UsingDirectiveSyntax>().Any(x => x.Alias != null))
-            {
-                return true;
-            }
-
-            // Check for global using aliases
-            var scopes = semanticModel.GetImportScopes(0, cancellationToken);
-            return scopes.Any(x => x.Aliases.Length > 0);
         }
     }
 }

@@ -6,7 +6,6 @@
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System;
-    using System.Collections.Concurrent;
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
@@ -78,7 +77,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// </summary>
         private sealed class AnalyzerInstance
         {
-            private readonly ConcurrentDictionary<SyntaxTree, bool> usingAliasCache;
+            private readonly UsingAliasCache usingAliasCache;
 
             /// <summary>
             /// A lazily-initialized reference to <see cref="SuppressMessageAttribute"/> within the context of a
@@ -86,7 +85,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             /// </summary>
             private INamedTypeSymbol suppressMessageAttribute;
 
-            public AnalyzerInstance(ConcurrentDictionary<SyntaxTree, bool> usingAliasCache)
+            public AnalyzerInstance(UsingAliasCache usingAliasCache)
             {
                 this.usingAliasCache = usingAliasCache;
             }
@@ -96,7 +95,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 var attribute = (AttributeSyntax)context.Node;
 
                 // Return fast if the name doesn't match and the file doesn't contain any using alias directives
-                if (!attribute.SyntaxTree.ContainsUsingAlias(this.usingAliasCache, context.SemanticModel, context.CancellationToken))
+                if (!this.usingAliasCache.ContainsUsingAlias(attribute.SyntaxTree, context.SemanticModel, context.CancellationToken))
                 {
                     if (!(attribute.Name is SimpleNameSyntax simpleNameSyntax))
                     {
