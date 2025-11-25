@@ -29,6 +29,8 @@ public class Foo
     }
 }";
 
+        private const string WhiteSpace = "\t  ";
+
         /// <summary>
         /// Verifies that blank lines at the end of the file will produce a warning.
         /// </summary>
@@ -47,6 +49,83 @@ public class Foo
 
             var expected = Diagnostic(this.GetDescriptor(newlineAtEndOfFile)).WithLocation(8, 2);
             await VerifyCSharpFixAsync(newlineAtEndOfFile, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies file with white space only and no cr/lf at end of file will produce a warning when setting requires.
+        /// </summary>
+        /// <param name="newlineAtEndOfFile">The effective <see cref="OptionSetting"/> setting.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData(null)]
+        [InlineData(OptionSetting.Allow)]
+        [InlineData(OptionSetting.Require)]
+        [InlineData(OptionSetting.Omit)]
+        internal async Task TestWithWhiteSpaceOnlyAsync(OptionSetting? newlineAtEndOfFile)
+        {
+            var testCode = WhiteSpace;
+
+            var fixedCode = newlineAtEndOfFile switch
+            {
+                OptionSetting.Require => "\r\n",
+                _ => null,
+            };
+
+            if (fixedCode == null)
+            {
+                await VerifyCSharpDiagnosticAsync(newlineAtEndOfFile, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            }
+            else
+            {
+                var expected = Diagnostic(this.GetDescriptor(newlineAtEndOfFile)).WithLocation(1, 1);
+                await VerifyCSharpFixAsync(newlineAtEndOfFile, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            }
+        }
+
+        /// <summary>
+        /// Verifies file with white space only and cr/lf at end of file will produce a warning when setting requires.
+        /// </summary>
+        /// <param name="newlineAtEndOfFile">The effective <see cref="OptionSetting"/> setting.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData(null)]
+        [InlineData(OptionSetting.Allow)]
+        [InlineData(OptionSetting.Require)]
+        [InlineData(OptionSetting.Omit)]
+        internal async Task TestWithWhiteSpaceAndNewlineOnlyAsync(OptionSetting? newlineAtEndOfFile)
+        {
+            var testCode = WhiteSpace + "\r\n";
+            var fixedCode = newlineAtEndOfFile switch
+            {
+                OptionSetting.Omit => string.Empty,
+                _ => null,
+            };
+
+            if (fixedCode == null)
+            {
+                await VerifyCSharpDiagnosticAsync(newlineAtEndOfFile, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            }
+            else
+            {
+                var expected = Diagnostic(this.GetDescriptor(newlineAtEndOfFile)).WithLocation(1, 1);
+                await VerifyCSharpFixAsync(newlineAtEndOfFile, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            }
+        }
+
+        /// <summary>
+        /// Verifies that empty files will not produce a warning.
+        /// </summary>
+        /// <param name="newlineAtEndOfFile">The effective <see cref="OptionSetting"/> setting.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData(null)]
+        [InlineData(OptionSetting.Allow)]
+        [InlineData(OptionSetting.Require)]
+        [InlineData(OptionSetting.Omit)]
+        internal async Task TestWithEmptyFileAsync(OptionSetting? newlineAtEndOfFile)
+        {
+            var testCode = string.Empty;
+            await VerifyCSharpDiagnosticAsync(newlineAtEndOfFile, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>

@@ -67,5 +67,10 @@ namespace StyleCop.Analyzers.Helpers
             return firstToken.IsKind(SyntaxKind.EndOfFileToken)
                 && TriviaHelper.IndexOfFirstNonWhitespaceTrivia(firstToken.LeadingTrivia) == -1;
         }
+
+        public static bool IsEmpty(this SyntaxTree tree)
+        {
+            return tree.Length == 0;
+        }
     }
 }
