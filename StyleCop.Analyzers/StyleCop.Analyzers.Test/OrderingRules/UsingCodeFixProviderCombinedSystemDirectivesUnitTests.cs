@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Threading;
@@ -20,7 +18,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     /// </summary>
     public class UsingCodeFixProviderCombinedSystemDirectivesUnitTests
     {
-        private UsingDirectivesPlacement usingDirectivesPlacement;
+        private protected UsingDirectivesPlacement UsingDirectivesPlacement { get; set; }
 
         /// <summary>
         /// Verifies that the code fix will properly reorder using statements.
@@ -168,7 +166,7 @@ namespace NamespaceName
 }
 ";
 
-            this.usingDirectivesPlacement = UsingDirectivesPlacement.OutsideNamespace;
+            this.UsingDirectivesPlacement = UsingDirectivesPlacement.OutsideNamespace;
             DiagnosticResult[] expected =
             {
                 StyleCopDiagnosticVerifier<SA1216UsingStaticDirectivesMustBePlacedAtTheCorrectLocation>.Diagnostic().WithLocation(3, 1),
@@ -213,7 +211,7 @@ namespace Foo
 }
 ";
 
-            this.usingDirectivesPlacement = UsingDirectivesPlacement.OutsideNamespace;
+            this.UsingDirectivesPlacement = UsingDirectivesPlacement.OutsideNamespace;
             var expected = StyleCopDiagnosticVerifier<SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace>.Diagnostic().WithLocation(3, 1);
             await this.VerifyCSharpFixAsync(testCode, new[] { expected }, fixedTestCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
@@ -256,7 +254,7 @@ namespace Foo
 }
 ";
 
-            this.usingDirectivesPlacement = UsingDirectivesPlacement.OutsideNamespace;
+            this.UsingDirectivesPlacement = UsingDirectivesPlacement.OutsideNamespace;
             var expected = StyleCopDiagnosticVerifier<SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace>.Diagnostic().WithLocation(5, 1);
             await this.VerifyCSharpFixAsync(testCode, new[] { expected }, fixedTestCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
@@ -299,7 +297,7 @@ namespace Foo
 }
 ";
 
-            this.usingDirectivesPlacement = UsingDirectivesPlacement.OutsideNamespace;
+            this.UsingDirectivesPlacement = UsingDirectivesPlacement.OutsideNamespace;
             var expected = StyleCopDiagnosticVerifier<SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace>.Diagnostic().WithLocation(5, 1);
             await this.VerifyCSharpFixAsync(testCode, new[] { expected }, fixedTestCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
@@ -445,14 +443,14 @@ namespace NamespaceName
             await this.VerifyCSharpFixAsync(testCode, expected, fixedTestCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, DiagnosticResult[] remainingDiagnostics, CancellationToken cancellationToken)
+        protected Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, DiagnosticResult[] remainingDiagnostics, CancellationToken cancellationToken)
         {
             string testSettings = $@"
 {{
   ""settings"": {{
     ""orderingRules"": {{
       ""systemUsingDirectivesFirst"": false,
-      ""usingDirectivesPlacement"": ""{this.usingDirectivesPlacement}""
+      ""usingDirectivesPlacement"": ""{this.UsingDirectivesPlacement}""
     }}
   }}
 }}
