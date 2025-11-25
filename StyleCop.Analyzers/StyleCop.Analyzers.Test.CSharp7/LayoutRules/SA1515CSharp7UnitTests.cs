@@ -36,5 +36,83 @@ public class ClassName
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that the analyzer does not fire in expression bodied property accessors.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3550, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3550")]
+        public async Task TestExpressionBodiedPropertyAccessorsAsync()
+        {
+            var testCode = @"
+class TestClass
+{
+    public int TestProperty
+    {
+        get =>
+            // A comment line
+            42;
+
+        set =>
+            // A comment line
+            _ = value;
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer does not fire in expression bodied indexer accessors.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3550, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3550")]
+        public async Task TestExpressionBodiedIndexerAccessorsAsync()
+        {
+            var testCode = @"
+class TestClass
+{
+    public int this[int i]
+    {
+        get =>
+            // A comment line
+            42;
+
+        set =>
+            // A comment line
+            _ = value;
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer does not fire in expression bodied event accessors.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3550, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3550")]
+        public async Task TestExpressionBodiedEventAccessorsAsync()
+        {
+            var testCode = @"
+class TestClass
+{
+    public event System.Action TestEvent
+    {
+        add =>
+            // A comment line
+            _ = value;
+
+        remove =>
+            // A comment line
+            _ = value;
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
