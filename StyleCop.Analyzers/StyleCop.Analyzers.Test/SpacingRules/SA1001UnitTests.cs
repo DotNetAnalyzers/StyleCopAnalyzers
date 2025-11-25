@@ -349,6 +349,124 @@ public class TestClass
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(3816, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3816")]
+        public async Task TestCommaFollowingPreprocessorDirectiveAsync()
+        {
+            var testCode = @"
+interface IFormattable {}
+interface ISpanFormattable {}
+
+partial struct Money : IFormattable
+#if true
+    , ISpanFormattable
+#endif
+{
+}
+";
+
+            var expected = DiagnosticResult.EmptyDiagnosticResults;
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3816, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3816")]
+        public async Task TestCommaFollowingElifDirectiveAsync()
+        {
+            var testCode = @"
+interface IFormattable {}
+interface ISpanFormattable {}
+
+partial struct Money : IFormattable
+#if false
+#elif true
+    , ISpanFormattable
+#endif
+{
+}
+";
+
+            var expected = DiagnosticResult.EmptyDiagnosticResults;
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3816, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3816")]
+        public async Task TestCommaFollowingElseDirectiveAsync()
+        {
+            var testCode = @"
+interface IFormattable {}
+interface ISpanFormattable {}
+
+partial struct Money : IFormattable
+#if false
+#else
+    , ISpanFormattable
+#endif
+{
+}
+";
+
+            var expected = DiagnosticResult.EmptyDiagnosticResults;
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3816, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3816")]
+        public async Task TestCommaFollowingEndIfDirectiveAsync()
+        {
+            var testCode = @"
+interface IFormattable {}
+interface ISpanFormattable {}
+
+partial struct Money : IFormattable
+#if false
+#endif
+    , ISpanFormattable
+{
+}
+";
+
+            var expected = DiagnosticResult.EmptyDiagnosticResults;
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3816, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3816")]
+        public async Task TestCommaNotFollowingDirectiveAsync()
+        {
+            var testCode = @"
+interface IFormattable {}
+interface ISpanFormattable {}
+
+partial struct Money : IFormattable
+    {|#0:,|} ISpanFormattable
+{
+}
+";
+
+            var fixedCode = @"
+interface IFormattable {}
+interface ISpanFormattable {}
+
+partial struct Money : IFormattable,
+    ISpanFormattable
+{
+}
+";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(0).WithArguments(" not", "preceded"),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         private Task TestCommaInStatementOrDeclAsync(string originalStatement, DiagnosticResult expected, string fixedStatement)
         {
             return this.TestCommaInStatementOrDeclAsync(originalStatement, new[] { expected }, fixedStatement);

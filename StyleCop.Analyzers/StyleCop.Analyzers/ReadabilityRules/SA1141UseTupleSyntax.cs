@@ -50,6 +50,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.EnableConcurrentExecution();
 
             context.RegisterCompilationStartAction(CompilationStartAction);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            if (!context.SupportsTuples())
+            {
+                return;
+            }
 
             context.RegisterSyntaxNodeAction(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
             context.RegisterSyntaxNodeAction(ConversionOperatorAction, SyntaxKind.ConversionOperatorDeclaration);
@@ -59,10 +67,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             context.RegisterSyntaxNodeAction(DelegateDeclarationAction, SyntaxKind.DelegateDeclaration);
             context.RegisterSyntaxNodeAction(LambdaExpressionAction, SyntaxKinds.LambdaExpression);
-        }
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
             var expressionType = context.Compilation.GetTypeByMetadataName("System.Linq.Expressions.Expression`1");
 
             context.RegisterSyntaxNodeAction(context => HandleObjectCreationExpression(context, expressionType), SyntaxKind.ObjectCreationExpression);
@@ -75,11 +80,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
-            if (!context.SupportsTuples())
-            {
-                return;
-            }
-
             var methodDeclaration = (MethodDeclarationSyntax)context.Node;
 
             CheckType(context, expressionType: null, methodDeclaration.ReturnType);
@@ -88,11 +88,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleConversionOperator(SyntaxNodeAnalysisContext context)
         {
-            if (!context.SupportsTuples())
-            {
-                return;
-            }
-
             var conversionOperatorDeclaration = (ConversionOperatorDeclarationSyntax)context.Node;
 
             CheckType(context, expressionType: null, conversionOperatorDeclaration.Type);
@@ -101,33 +96,18 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleBasePropertyDeclaration(SyntaxNodeAnalysisContext context)
         {
-            if (!context.SupportsTuples())
-            {
-                return;
-            }
-
             var propertyDeclaration = (BasePropertyDeclarationSyntax)context.Node;
             CheckType(context, expressionType: null, propertyDeclaration.Type);
         }
 
         private static void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
-            if (!context.SupportsTuples())
-            {
-                return;
-            }
-
             var fieldDeclaration = (BaseFieldDeclarationSyntax)context.Node;
             CheckType(context, expressionType: null, fieldDeclaration.Declaration.Type);
         }
 
         private static void HandleLambdaExpression(SyntaxNodeAnalysisContext context)
         {
-            if (!context.SupportsTuples())
-            {
-                return;
-            }
-
             var lambdaExpression = (LambdaExpressionSyntax)context.Node;
             if (lambdaExpression is ParenthesizedLambdaExpressionSyntax parenthesizedLambdaExpression)
             {
@@ -137,22 +117,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleObjectCreationExpression(SyntaxNodeAnalysisContext context, INamedTypeSymbol expressionType)
         {
-            if (!context.SupportsTuples())
-            {
-                return;
-            }
-
             var objectCreationExpression = (ObjectCreationExpressionSyntax)context.Node;
             CheckType(context, expressionType, objectCreationExpression.Type, objectCreationExpression.GetLocation());
         }
 
         private static void HandleInvocationExpression(SyntaxNodeAnalysisContext context, INamedTypeSymbol expressionType)
         {
-            if (!context.SupportsTuples())
-            {
-                return;
-            }
-
             var invocationExpression = (InvocationExpressionSyntax)context.Node;
             if (invocationExpression.ArgumentList.Arguments.Count < 2)
             {
@@ -166,13 +136,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             var memberAccessExpression = (MemberAccessExpressionSyntax)invocationExpression.Expression;
-
-            var symbolInfo = context.SemanticModel.GetSymbolInfo(memberAccessExpression.Expression);
-            if (symbolInfo.Symbol is INamedTypeSymbol namedTypeSymbol
-                && namedTypeSymbol.ToDisplayString(DisplayFormat) == "System.ValueTuple"
-                && !context.Node.IsInExpressionTree(context.SemanticModel, expressionType, context.CancellationToken))
+            if (memberAccessExpression.Name.Identifier.ValueText == "Create")
             {
-                if (memberAccessExpression.Name.Identifier.ValueText == "Create")
+                var symbolInfo = context.SemanticModel.GetSymbolInfo(memberAccessExpression.Expression);
+                if (symbolInfo.Symbol is INamedTypeSymbol namedTypeSymbol
+                    && namedTypeSymbol.ToDisplayString(DisplayFormat) == "System.ValueTuple"
+                    && !context.Node.IsInExpressionTree(context.SemanticModel, expressionType, context.CancellationToken))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, memberAccessExpression.GetLocation()));
                 }
@@ -181,22 +150,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleDefaultExpression(SyntaxNodeAnalysisContext context, INamedTypeSymbol expressionType)
         {
-            if (!context.SupportsTuples())
-            {
-                return;
-            }
-
             var defaultExpression = (DefaultExpressionSyntax)context.Node;
             CheckType(context, expressionType, defaultExpression.Type);
         }
 
         private static void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
         {
-            if (!context.SupportsTuples())
-            {
-                return;
-            }
-
             var delegateDeclaration = (DelegateDeclarationSyntax)context.Node;
             CheckType(context, expressionType: null, delegateDeclaration.ReturnType);
             CheckParameterList(context, delegateDeclaration.ParameterList);
@@ -204,11 +163,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleCastExpression(SyntaxNodeAnalysisContext context, INamedTypeSymbol expressionType)
         {
-            if (!context.SupportsTuples())
-            {
-                return;
-            }
-
             var castExpression = (CastExpressionSyntax)context.Node;
             CheckType(context, expressionType, castExpression.Type);
         }
@@ -254,7 +208,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void CheckGenericName(SyntaxNodeAnalysisContext context, INamedTypeSymbol expressionType, GenericNameSyntax genericNameSyntax, Location reportLocation)
         {
-            if (IsValueTupleWithLanguageRepresentation(context, expressionType, genericNameSyntax))
+            if (genericNameSyntax.Identifier.ValueText == "ValueTuple"
+                && IsValueTupleWithLanguageRepresentation(context, expressionType, genericNameSyntax))
             {
                 var location = reportLocation ?? genericNameSyntax.GetLocation();
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
