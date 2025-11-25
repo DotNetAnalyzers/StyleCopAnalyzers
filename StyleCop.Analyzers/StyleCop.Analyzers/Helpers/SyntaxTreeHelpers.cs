@@ -68,12 +68,9 @@ namespace StyleCop.Analyzers.Helpers
                 && TriviaHelper.IndexOfFirstNonWhitespaceTrivia(firstToken.LeadingTrivia) == -1;
         }
 
-        public static bool IsEmpty(this SyntaxTree tree, CancellationToken cancellationToken)
+        public static bool IsEmpty(this SyntaxTree tree)
         {
-            var root = tree.GetRoot(cancellationToken);
-            var firstToken = root.GetFirstToken(includeZeroWidth: true);
-
-            return firstToken.IsKind(SyntaxKind.EndOfFileToken) && firstToken.FullSpan.IsEmpty;
+            return tree.Length == 0;
         }
     }
 }
