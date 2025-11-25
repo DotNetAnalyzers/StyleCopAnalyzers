@@ -156,5 +156,42 @@ public class TestClass
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Theory]
+        [InlineData("<inheritdoc/>")]
+        [InlineData("<inheritdoc/> XYZ")]
+        [WorkItem(3465, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3465")]
+        public async Task VerifyInheritdocInSummaryTagIsAllowedAsync(string summary)
+        {
+            var testCode = $@"
+public class TestClass
+{{
+    /// <summary>
+    /// {summary}
+    /// </summary>
+    public int TestProperty {{ get; private set; }}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3465, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3465")]
+        public async Task VerifyInheritdocAfterTextStillReportsWarningAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    /// <summary>
+    /// XYZ <inheritdoc/>
+    /// </summary>
+    public int {|#0:TestProperty|} { get; private set; }
+}
+";
+
+            var expected = Diagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(0).WithArguments("Gets");
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

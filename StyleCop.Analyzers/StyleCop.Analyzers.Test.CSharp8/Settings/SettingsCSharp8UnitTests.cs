@@ -121,7 +121,7 @@ stylecop.documentation.documentPrivateFields = {valueText}
             Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentExposedElements);
             Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentInternalElements);
             Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentPrivateElements);
-            Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentInterfaces);
+            Assert.Equal(value ? InterfaceDocumentationMode.All : InterfaceDocumentationMode.None, styleCopSettings.DocumentationRules.DocumentInterfaces);
             Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentPrivateFields);
         }
 

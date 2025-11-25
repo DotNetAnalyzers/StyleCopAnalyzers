@@ -59,11 +59,20 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         public static bool NeedsComment(DocumentationSettings documentationSettings, SyntaxKind syntaxKind, SyntaxKind parentSyntaxKind, Accessibility declaredAccessibility, Accessibility effectiveAccessibility)
         {
-            if (documentationSettings.DocumentInterfaces
-                && (syntaxKind == SyntaxKind.InterfaceDeclaration || parentSyntaxKind == SyntaxKind.InterfaceDeclaration))
+            if (syntaxKind == SyntaxKind.InterfaceDeclaration || parentSyntaxKind == SyntaxKind.InterfaceDeclaration)
             {
-                // DocumentInterfaces => all interfaces should be documented
-                return true;
+                switch (documentationSettings.DocumentInterfaces)
+                {
+                case InterfaceDocumentationMode.All:
+                    // DocumentInterfaces => all interfaces should be documented
+                    return true;
+                case InterfaceDocumentationMode.Exposed:
+                    // DocumentInterfaces => only externally visible (exposed) interfaces should be documented
+                    return declaredAccessibility != Accessibility.Internal;
+                default:
+                    // DocumentInterfaces => no interfaces should be exposed
+                    return false;
+                }
             }
 
             if (syntaxKind == SyntaxKind.FieldDeclaration && documentationSettings.DocumentPrivateFields)
