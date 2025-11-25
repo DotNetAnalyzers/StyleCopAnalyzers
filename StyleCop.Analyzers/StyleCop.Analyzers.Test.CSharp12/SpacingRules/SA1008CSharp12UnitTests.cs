@@ -50,5 +50,67 @@ class TestClass
 
             await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3931, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3931")]
+        public async Task TestLambdaAfterCommaInCollectionExpressionAsync()
+        {
+            var testCode = @"
+class TestClass
+{
+    private System.Func<int, int, int>[] functions = [(x, y) => x + y,{|#0:(|}x, y) => x - y];
+}
+";
+
+            var fixedCode = @"
+class TestClass
+{
+    private System.Func<int, int, int>[] functions = [(x, y) => x + y, (x, y) => x - y];
+}
+";
+
+            var expected = Diagnostic(DescriptorPreceded).WithLocation(0);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3931, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3931")]
+        public async Task TestLambdaAfterSpreadInCollectionExpressionAsync()
+        {
+            var testCode = @"
+class TestClass
+{
+    private static System.Func<int, int, int>[] existing = [(x, y) => x + y];
+    private System.Func<int, int, int>[] functions = [..existing,{|#0:(|}x, y) => x - y];
+}
+";
+
+            var fixedCode = @"
+class TestClass
+{
+    private static System.Func<int, int, int>[] existing = [(x, y) => x + y];
+    private System.Func<int, int, int>[] functions = [..existing, (x, y) => x - y];
+}
+";
+
+            var expected = Diagnostic(DescriptorPreceded).WithLocation(0);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3931, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3931")]
+        public async Task TestLambdaWithBracketOnPreviousLineAsync()
+        {
+            var testCode = @"
+class TestClass
+{
+    private System.Func<int, int, int>[] functions = [
+        (x, y) => x + y
+    ];
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
