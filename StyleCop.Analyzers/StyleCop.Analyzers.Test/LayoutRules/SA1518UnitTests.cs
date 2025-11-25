@@ -55,19 +55,23 @@ public class Foo
         /// Verifies file with white space only and no cr/lf at end of file will produce a warning when setting requires.
         /// </summary>
         /// <param name="newlineAtEndOfFile">The effective <see cref="OptionSetting"/> setting.</param>
-        /// <param name="expectedText">The expected text to appear at the end of the file.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData(null, null)]
-        [InlineData(OptionSetting.Allow, null)]
-        [InlineData(OptionSetting.Require, "\r\n")]
-        [InlineData(OptionSetting.Omit, null)]
-        internal async Task TestWithWhiteSpaceOnlyAsync(OptionSetting? newlineAtEndOfFile, string expectedText)
+        [InlineData(null)]
+        [InlineData(OptionSetting.Allow)]
+        [InlineData(OptionSetting.Require)]
+        [InlineData(OptionSetting.Omit)]
+        internal async Task TestWithWhiteSpaceOnlyAsync(OptionSetting? newlineAtEndOfFile)
         {
             var testCode = WhiteSpace;
-            var fixedCode = expectedText;
 
-            if (expectedText == null)
+            var fixedCode = newlineAtEndOfFile switch
+            {
+                OptionSetting.Require => "\r\n",
+                _ => null,
+            };
+
+            if (fixedCode == null)
             {
                 await VerifyCSharpDiagnosticAsync(newlineAtEndOfFile, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             }
@@ -82,19 +86,22 @@ public class Foo
         /// Verifies file with white space only and cr/lf at end of file will produce a warning when setting requires.
         /// </summary>
         /// <param name="newlineAtEndOfFile">The effective <see cref="OptionSetting"/> setting.</param>
-        /// <param name="expectedText">The expected text to appear at the end of the file.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData(null, null)]
-        [InlineData(OptionSetting.Allow, null)]
-        [InlineData(OptionSetting.Require, null)]
-        [InlineData(OptionSetting.Omit, "")]
-        internal async Task TestWithWhiteSpaceAndNewlineOnlyAsync(OptionSetting? newlineAtEndOfFile, string expectedText)
+        [InlineData(null)]
+        [InlineData(OptionSetting.Allow)]
+        [InlineData(OptionSetting.Require)]
+        [InlineData(OptionSetting.Omit)]
+        internal async Task TestWithWhiteSpaceAndNewlineOnlyAsync(OptionSetting? newlineAtEndOfFile)
         {
             var testCode = WhiteSpace + "\r\n";
-            var fixedCode = expectedText;
+            var fixedCode = newlineAtEndOfFile switch
+            {
+                OptionSetting.Omit => string.Empty,
+                _ => null,
+            };
 
-            if (expectedText == null)
+            if (fixedCode == null)
             {
                 await VerifyCSharpDiagnosticAsync(newlineAtEndOfFile, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             }
