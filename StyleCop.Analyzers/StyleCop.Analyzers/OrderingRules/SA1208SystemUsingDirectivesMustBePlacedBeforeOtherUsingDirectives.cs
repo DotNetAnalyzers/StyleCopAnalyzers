@@ -108,6 +108,11 @@ namespace StyleCop.Analyzers.OrderingRules
                     }
 
                     var previousUsing = usings[i - 1];
+                    if (previousUsing.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword) != usingDirective.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword))
+                    {
+                        // Only compare usings with the same 'global' modifier
+                        continue;
+                    }
 
                     if (!previousUsing.IsSystemUsingDirective()
                         || previousUsing.HasNamespaceAliasQualifier()

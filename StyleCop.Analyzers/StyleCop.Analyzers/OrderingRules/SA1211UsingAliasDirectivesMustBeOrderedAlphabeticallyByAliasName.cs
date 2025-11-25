@@ -86,6 +86,14 @@ namespace StyleCop.Analyzers.OrderingRules
                     prevAliasUsingDirective = null;
                 }
 
+                if (prevAliasUsingDirective is not null
+                    && prevAliasUsingDirective.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword) != usingDirective.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword))
+                {
+                    // Only compare usings with the same 'global' modifier
+                    usingAliasNames.Clear();
+                    prevAliasUsingDirective = null;
+                }
+
                 // only interested in using alias directives
                 if (usingDirective.Alias?.Name?.IsMissing != false)
                 {

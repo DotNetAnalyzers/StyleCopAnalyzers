@@ -120,6 +120,12 @@ namespace StyleCop.Analyzers.OrderingRules
             {
                 if (previousUsingDirective != null)
                 {
+                    if (previousUsingDirective.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword) != directive.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword))
+                    {
+                        // Only compare usings with the same 'global' modifier
+                        continue;
+                    }
+
                     if (NameSyntaxHelpers.Compare(previousUsingDirective.Name, directive.Name) > 0)
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, previousUsingDirective.GetLocation()));

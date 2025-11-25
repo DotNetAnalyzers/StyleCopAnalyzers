@@ -79,6 +79,12 @@ namespace StyleCop.Analyzers.OrderingRules
                 if (usingDirective.Alias != null && notLastUsingDirective)
                 {
                     var nextUsingDirective = usings[i + 1];
+                    if (nextUsingDirective.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword) != usingDirective.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword))
+                    {
+                        // Only compare usings with the same 'global' modifier
+                        continue;
+                    }
+
                     if (nextUsingDirective.Alias == null && nextUsingDirective.StaticKeyword.IsKind(SyntaxKind.None) && !nextUsingDirective.IsPrecededByPreprocessorDirective())
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation()));
