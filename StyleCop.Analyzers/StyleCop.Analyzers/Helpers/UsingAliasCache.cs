@@ -71,7 +71,7 @@ namespace StyleCop.Analyzers.Helpers
         {
             // Check for "global" using aliases in one specific syntax tree
             var nodes = ((CompilationUnitSyntax)tree.GetRoot()).Usings;
-            return nodes.Any(x => x.GlobalKeyword().IsKind(SyntaxKindEx.GlobalKeyword) && x.Alias != null);
+            return nodes.Any(x => x.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword) && x.Alias != null);
         }
 
         private bool ContainsGlobalUsingAlias(SemanticModel semanticModel, CancellationToken cancellationToken)
