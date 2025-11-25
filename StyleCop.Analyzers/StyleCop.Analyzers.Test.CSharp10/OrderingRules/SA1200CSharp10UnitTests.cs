@@ -69,22 +69,20 @@ namespace TestNamespace
         public async Task TestGlobalUsingStatementInFileWithOtherUsingDirectivesAsync()
         {
             var testCode = @"global using System;
+
 [|using System.Linq;|]
 
 namespace TestNamespace
 {
 }";
+            var fixedTestCode = @"global using System;
 
-            await new CSharpTest
-            {
-                TestCode = testCode,
+namespace TestNamespace
+{
+    using System.Linq;
+}";
 
-                // UsingCodeFixProvider currently leaves all using directives in the same location (either inside or
-                // outside the namespace) when the file contains any global using directives.
-                FixedCode = testCode,
-                NumberOfIncrementalIterations = 1,
-                NumberOfFixAllIterations = 1,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

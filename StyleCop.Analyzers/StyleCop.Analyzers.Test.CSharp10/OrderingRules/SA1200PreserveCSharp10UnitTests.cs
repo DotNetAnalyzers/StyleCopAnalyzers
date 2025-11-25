@@ -51,5 +51,21 @@ namespace TestNamespace;
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3875, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3875")]
+        public async Task TestGlobalUsingStatementInFileWithOtherUsingDirectivesAsync()
+        {
+            var testCode = @"global using System;
+
+using System.Collections.Generic;
+
+namespace TestNamespace
+{
+    using System.Linq;
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

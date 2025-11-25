@@ -70,9 +70,8 @@ namespace StyleCop.Analyzers.OrderingRules
                 }
 
                 // Force preserving the placement of using directives when we are fixing a diagnostic not directly
-                // related to placement of using directives inside/outside namespaces, and also when there are global
-                // usings present.
-                bool forcePreservePlacement = !isSA1200 || compilationUnit.Usings.Any(static syntax => syntax.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword));
+                // related to placement of using directives inside/outside namespaces.
+                bool forcePreservePlacement = !isSA1200;
 
                 context.RegisterCodeFix(
                     CodeAction.Create(
@@ -122,9 +121,11 @@ namespace StyleCop.Analyzers.OrderingRules
             {
                 newSyntaxRoot = AddUsingsToNamespace(newSyntaxRoot, usingsHelper, usingsIndentation, replaceMap.Any());
             }
-            else if (usingDirectivesPlacement == UsingDirectivesPlacement.OutsideNamespace)
+
+            if (usingDirectivesPlacement != UsingDirectivesPlacement.Preserve)
             {
-                newSyntaxRoot = AddUsingsToCompilationRoot(newSyntaxRoot, usingsHelper, usingsIndentation, replaceMap.Any());
+                bool onlyGlobal = usingDirectivesPlacement == UsingDirectivesPlacement.InsideNamespace;
+                newSyntaxRoot = AddUsingsToCompilationRoot(newSyntaxRoot, usingsHelper, replaceMap.Any(), onlyGlobal);
             }
 
             // Final cleanup
@@ -262,7 +263,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
                     var indentation = IndentationHelper.GenerateIndentationString(indentationSettings, indentationSteps);
 
-                    var modifiedUsings = usingsHelper.GenerateGroupedUsings(childSpan, indentation, false, false, qualifyNames: false);
+                    var modifiedUsings = usingsHelper.GenerateGroupedUsings(childSpan, indentation, false, false, qualifyNames: false, includeGlobal: true, includeLocal: true);
 
                     for (var i = 0; i < originalUsings.Count; i++)
                     {
@@ -285,7 +286,7 @@ namespace StyleCop.Analyzers.OrderingRules
             var withLeadingBlankLine = rootNamespace.SyntaxNode.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration);
             var withTrailingBlankLine = hasConditionalDirectives || rootNamespace.Members.Any() || rootNamespace.Externs.Any();
 
-            var groupedUsings = usingsHelper.GenerateGroupedUsings(TreeTextSpan.Empty, usingsIndentation, withLeadingBlankLine, withTrailingBlankLine, qualifyNames: false);
+            var groupedUsings = usingsHelper.GenerateGroupedUsings(TreeTextSpan.Empty, usingsIndentation, withLeadingBlankLine, withTrailingBlankLine, qualifyNames: false, includeGlobal: false, includeLocal: true);
             groupedUsings = groupedUsings.AddRange(rootNamespace.Usings);
 
             var newRootNamespace = rootNamespace.WithUsings(groupedUsings);
@@ -294,12 +295,12 @@ namespace StyleCop.Analyzers.OrderingRules
             return newSyntaxRoot;
         }
 
-        private static SyntaxNode AddUsingsToCompilationRoot(SyntaxNode newSyntaxRoot, UsingsSorter usingsHelper, string usingsIndentation, bool hasConditionalDirectives)
+        private static SyntaxNode AddUsingsToCompilationRoot(SyntaxNode newSyntaxRoot, UsingsSorter usingsHelper, bool hasConditionalDirectives, bool onlyGlobal)
         {
             var newCompilationUnit = (CompilationUnitSyntax)newSyntaxRoot;
             var withTrailingBlankLine = hasConditionalDirectives || newCompilationUnit.AttributeLists.Any() || newCompilationUnit.Members.Any() || newCompilationUnit.Externs.Any();
 
-            var groupedUsings = usingsHelper.GenerateGroupedUsings(TreeTextSpan.Empty, usingsIndentation, withLeadingBlankLine: false, withTrailingBlankLine, qualifyNames: true);
+            var groupedUsings = usingsHelper.GenerateGroupedUsings(TreeTextSpan.Empty, indentation: string.Empty, withLeadingBlankLine: false, withTrailingBlankLine, qualifyNames: true, includeGlobal: true, includeLocal: !onlyGlobal);
             groupedUsings = groupedUsings.AddRange(newCompilationUnit.Usings);
             newSyntaxRoot = newCompilationUnit.WithUsings(groupedUsings);
 
@@ -521,10 +522,8 @@ namespace StyleCop.Analyzers.OrderingRules
                 var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
 
                 // Force preserving the placement of using directives when we are fixing any diagnostic not directly
-                // related to placement of using directives inside/outside namespaces, and also when there are global
-                // usings present.
-                var forcePreserve = diagnostics.All(d => d.Id != SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId)
-                     || ((CompilationUnitSyntax)syntaxRoot).Usings.Any(static syntax => syntax.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword));
+                // related to placement of using directives inside/outside namespaces.
+                var forcePreserve = diagnostics.All(d => d.Id != SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId);
 
                 Document newDocument = await GetTransformedDocumentAsync(document, syntaxRoot, forcePreserve, fixAllContext.CancellationToken).ConfigureAwait(false);
                 return await newDocument.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
