@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Linq.Expressions;
     using System.Reflection;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -14,6 +15,7 @@ namespace StyleCop.Analyzers.Lightup
     internal static class WrapperHelper
     {
         private static readonly ImmutableDictionary<Type, Type> WrappedTypes;
+        private static ImmutableDictionary<Type, Func<object, object>> wrapInstance = ImmutableDictionary<Type, Func<object, object>>.Empty;
 
         static WrapperHelper()
         {
@@ -22,6 +24,7 @@ namespace StyleCop.Analyzers.Lightup
 
             builder.Add(typeof(AnalyzerConfigOptionsProviderWrapper), codeAnalysisAssembly.GetType(AnalyzerConfigOptionsProviderWrapper.WrappedTypeName));
             builder.Add(typeof(AnalyzerConfigOptionsWrapper), codeAnalysisAssembly.GetType(AnalyzerConfigOptionsWrapper.WrappedTypeName));
+            builder.Add(typeof(IImportScopeWrapper), codeAnalysisAssembly.GetType(IImportScopeWrapper.WrappedTypeName));
 
             WrappedTypes = builder.ToImmutable();
         }
@@ -39,6 +42,43 @@ namespace StyleCop.Analyzers.Lightup
             }
 
             return null;
+        }
+
+        internal static object Wrap(object value)
+        {
+            if (value is null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
+            var wrapperMethod = ImmutableInterlocked.GetOrAdd(
+                ref wrapInstance,
+                value.GetType(),
+                static type =>
+                {
+                    foreach (var pair in WrappedTypes)
+                    {
+                        if (pair.Value.GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
+                        {
+                            var fromObjectMethod = pair.Key.GetTypeInfo().GetDeclaredMethod("FromObject");
+                            var parameterType = fromObjectMethod.GetParameters()[0].ParameterType;
+                            var instanceParameter = Expression.Parameter(fromObjectMethod.GetParameters()[0].ParameterType, "instance");
+                            Expression value =
+                                fromObjectMethod.GetParameters()[0].ParameterType.GetTypeInfo().IsAssignableFrom(typeof(object).GetTypeInfo())
+                                ? (Expression)instanceParameter
+                                : Expression.Convert(instanceParameter, parameterType);
+                            Expression<Func<object, object>> expression =
+                                Expression.Lambda<Func<object, object>>(
+                                    Expression.Convert(Expression.Call(null, fromObjectMethod, instanceParameter), typeof(object)),
+                                    instanceParameter);
+                            return expression.Compile();
+                        }
+                    }
+
+                    return _ => throw new NotSupportedException();
+                });
+
+            return wrapperMethod(value);
         }
     }
 }
