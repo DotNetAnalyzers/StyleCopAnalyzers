@@ -55,13 +55,36 @@ using System.Threading;
         [WorkItem(3875, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3875")]
         public async Task TestGlobalUsingStatementInFileWithNamespaceAsync()
         {
-            var testCode = @"[|global using System;|]
+            var testCode = @"global using System;
 
 namespace TestNamespace
 {
 }";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3875, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3875")]
+        public async Task TestGlobalUsingStatementInFileWithOtherUsingDirectivesAsync()
+        {
+            var testCode = @"global using System;
+[|using System.Linq;|]
+
+namespace TestNamespace
+{
+}";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+
+                // UsingCodeFixProvider currently leaves all using directives in the same location (either inside or
+                // outside the namespace) when the file contains any global using directives.
+                FixedCode = testCode,
+                NumberOfIncrementalIterations = 1,
+                NumberOfFixAllIterations = 1,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

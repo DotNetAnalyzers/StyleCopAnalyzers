@@ -69,10 +69,15 @@ namespace StyleCop.Analyzers.OrderingRules
                     continue;
                 }
 
+                // Force preserving the placement of using directives when we are fixing a diagnostic not directly
+                // related to placement of using directives inside/outside namespaces, and also when there are global
+                // usings present.
+                bool forcePreservePlacement = !isSA1200 || compilationUnit.Usings.Any(static syntax => syntax.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword));
+
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         OrderingResources.UsingCodeFix,
-                        cancellationToken => GetTransformedDocumentAsync(context.Document, syntaxRoot, !isSA1200, cancellationToken),
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, syntaxRoot, forcePreservePlacement, cancellationToken),
                         nameof(UsingCodeFixProvider)),
                     diagnostic);
             }
@@ -513,9 +518,14 @@ namespace StyleCop.Analyzers.OrderingRules
                     return null;
                 }
 
-                var forcePreserve = diagnostics.All(d => d.Id != SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId);
-
                 var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+
+                // Force preserving the placement of using directives when we are fixing any diagnostic not directly
+                // related to placement of using directives inside/outside namespaces, and also when there are global
+                // usings present.
+                var forcePreserve = diagnostics.All(d => d.Id != SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId)
+                     || ((CompilationUnitSyntax)syntaxRoot).Usings.Any(static syntax => syntax.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword));
+
                 Document newDocument = await GetTransformedDocumentAsync(document, syntaxRoot, forcePreserve, fixAllContext.CancellationToken).ConfigureAwait(false);
                 return await newDocument.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
             }
