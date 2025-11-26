@@ -1895,6 +1895,34 @@ namespace TestNamespace
             await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(3931, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3931")]
+        public async Task TestLambdaInCollectionInitializerAsync()
+        {
+            var testCode = @"
+using System;
+using System.Collections.Generic;
+
+class TestClass
+{
+    private List<Action<int, int>> actions = new List<Action<int, int>>() {{|#0:(|}x, y) => { } };
+}
+";
+
+            var fixedCode = @"
+using System;
+using System.Collections.Generic;
+
+class TestClass
+{
+    private List<Action<int, int>> actions = new List<Action<int, int>>() { (x, y) => { } };
+}
+";
+
+            var expected = Diagnostic(DescriptorPreceded).WithLocation(0);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Verifies that multi-line comments are handled properly.
         /// </summary>
