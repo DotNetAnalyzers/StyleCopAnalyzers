@@ -106,6 +106,103 @@ namespace TestNamespace
         }
 
         [Fact]
+        [WorkItem(3003, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3003")]
+        public async Task TestSwitchExpressionArrowsAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public string TestMethod(object value)
+        {
+            return value switch
+            {
+                0{|#0:=>|}""zero"",
+                { }{|#1:=>|}""object"",
+            };
+        }
+    }
+}
+";
+
+            var fixedCode = @"
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public string TestMethod(object value)
+        {
+            return value switch
+            {
+                0 => ""zero"",
+                { } => ""object"",
+            };
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DescriptorPrecededByWhitespace).WithLocation(0).WithArguments("=>"),
+                Diagnostic(DescriptorFollowedByWhitespace).WithLocation(0).WithArguments("=>"),
+                Diagnostic(DescriptorPrecededByWhitespace).WithLocation(1).WithArguments("=>"),
+                Diagnostic(DescriptorFollowedByWhitespace).WithLocation(1).WithArguments("=>"),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3003, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3003")]
+        public async Task TestSwitchExpressionArrowWithWrappedArmAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public string TestMethod(int[] values)
+        {
+            return values switch
+            {
+                { Length: 1 }{|#0:=>|}
+                    ""single"",
+                _ => ""other"",
+            };
+        }
+    }
+}
+";
+
+            var fixedCode = @"
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public string TestMethod(int[] values)
+        {
+            return values switch
+            {
+                { Length: 1 } =>
+                    ""single"",
+                _ => ""other"",
+            };
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DescriptorPrecededByWhitespace).WithLocation(0).WithArguments("=>"),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(3822, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3822")]
         public async Task TestNullForgivingOperatorAsync()
         {
