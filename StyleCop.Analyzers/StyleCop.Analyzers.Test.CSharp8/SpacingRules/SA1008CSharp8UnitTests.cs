@@ -194,5 +194,48 @@ internal class TestClass
                 fixedCode,
                 CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3894, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3894")]
+        public async Task TestLeftOperandInRangeExpressionAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            var x ={|#0:(|} 0 + 0)..1;
+        }
+    }
+}
+";
+
+            var fixedCode = @"
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            var x = (0 + 0)..1;
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(DescriptorPreceded).WithLocation(0),
+                Diagnostic(DescriptorNotFollowed).WithLocation(0),
+            };
+
+            await VerifyCSharpFixAsync(
+                testCode,
+                expectedResults,
+                fixedCode,
+                CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

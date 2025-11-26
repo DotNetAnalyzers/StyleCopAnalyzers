@@ -159,9 +159,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private sealed class Analyzer
         {
-            private readonly ConcurrentDictionary<SyntaxTree, bool> usingAliasCache;
+            private readonly UsingAliasCache usingAliasCache;
 
-            public Analyzer(ConcurrentDictionary<SyntaxTree, bool> usingAliasCache)
+            public Analyzer(UsingAliasCache usingAliasCache)
             {
                 this.usingAliasCache = usingAliasCache;
             }
@@ -211,7 +211,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 // Most source files will not have any using alias directives. Then we don't have to use semantics
                 // if the identifier name doesn't match the name of a special type
                 if (settings.ReadabilityRules.AllowBuiltInTypeAliases
-                    || !identifierNameSyntax.SyntaxTree.ContainsUsingAlias(this.usingAliasCache))
+                    || !this.usingAliasCache.ContainsUsingAlias(identifierNameSyntax.SyntaxTree, context.SemanticModel, context.CancellationToken))
                 {
                     switch (identifierNameSyntax.Identifier.ValueText)
                     {
