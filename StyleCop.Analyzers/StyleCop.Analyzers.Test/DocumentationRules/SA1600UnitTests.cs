@@ -99,7 +99,7 @@ using System;
         public async Task TestMethodWithoutDocumentationAsync()
         {
             await this.TestMethodDeclarationDocumentationAsync(string.Empty, false, false, false).ConfigureAwait(false);
-            await this.TestMethodDeclarationDocumentationAsync(string.Empty, true, true, false).ConfigureAwait(false);
+            await this.TestMethodDeclarationDocumentationAsync(string.Empty, true, false, false).ConfigureAwait(false);
             await this.TestMethodDeclarationDocumentationAsync("private", false, false, false).ConfigureAwait(false);
             await this.TestMethodDeclarationDocumentationAsync("protected", false, true, false).ConfigureAwait(false);
             await this.TestMethodDeclarationDocumentationAsync("internal", false, true, false).ConfigureAwait(false);
@@ -291,7 +291,7 @@ using System;
         public async Task TestPropertyWithoutDocumentationAsync()
         {
             await this.TestPropertyDeclarationDocumentationAsync(string.Empty, false, false, false).ConfigureAwait(false);
-            await this.TestPropertyDeclarationDocumentationAsync(string.Empty, true, true, false).ConfigureAwait(false);
+            await this.TestPropertyDeclarationDocumentationAsync(string.Empty, true, false, false).ConfigureAwait(false);
             await this.TestPropertyDeclarationDocumentationAsync("private", false, false, false).ConfigureAwait(false);
             await this.TestPropertyDeclarationDocumentationAsync("protected", false, true, false).ConfigureAwait(false);
             await this.TestPropertyDeclarationDocumentationAsync("internal", false, true, false).ConfigureAwait(false);
@@ -319,7 +319,7 @@ using System;
         public async Task TestIndexerWithoutDocumentationAsync()
         {
             await this.TestIndexerDeclarationDocumentationAsync(string.Empty, false, false, false).ConfigureAwait(false);
-            await this.TestIndexerDeclarationDocumentationAsync(string.Empty, true, true, false).ConfigureAwait(false);
+            await this.TestIndexerDeclarationDocumentationAsync(string.Empty, true, false, false).ConfigureAwait(false);
             await this.TestIndexerDeclarationDocumentationAsync("private", false, false, false).ConfigureAwait(false);
             await this.TestIndexerDeclarationDocumentationAsync("protected", false, true, false).ConfigureAwait(false);
             await this.TestIndexerDeclarationDocumentationAsync("internal", false, true, false).ConfigureAwait(false);
@@ -347,7 +347,7 @@ using System;
         public async Task TestEventWithoutDocumentationAsync()
         {
             await this.TestEventDeclarationDocumentationAsync(string.Empty, false, false, false).ConfigureAwait(false);
-            await this.TestEventDeclarationDocumentationAsync(string.Empty, true, true, false).ConfigureAwait(false);
+            await this.TestEventDeclarationDocumentationAsync(string.Empty, true, false, false).ConfigureAwait(false);
             await this.TestEventDeclarationDocumentationAsync("private", false, false, false).ConfigureAwait(false);
             await this.TestEventDeclarationDocumentationAsync("protected", false, true, false).ConfigureAwait(false);
             await this.TestEventDeclarationDocumentationAsync("internal", false, true, false).ConfigureAwait(false);

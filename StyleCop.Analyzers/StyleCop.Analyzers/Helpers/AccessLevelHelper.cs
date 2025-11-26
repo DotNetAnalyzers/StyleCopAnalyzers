@@ -158,6 +158,11 @@ namespace StyleCop.Analyzers.Helpers
 
             if (!syntax.Modifiers.Any(SyntaxKind.PartialKeyword))
             {
+                if (syntax.Parent.IsKind(SyntaxKind.InterfaceDeclaration))
+                {
+                    return Accessibility.Public;
+                }
+
                 return !(syntax.Parent is BaseTypeDeclarationSyntax) ? Accessibility.Internal : Accessibility.Private;
             }
 
@@ -179,6 +184,11 @@ namespace StyleCop.Analyzers.Helpers
             if (syntax.Modifiers.Any(SyntaxKind.PartialKeyword))
             {
                 return Accessibility.Private;
+            }
+
+            if (syntax.Parent.IsKind(SyntaxKind.InterfaceDeclaration))
+            {
+                return Accessibility.Public;
             }
 
             if (syntax is MethodDeclarationSyntax methodDeclarationSyntax)
@@ -217,7 +227,7 @@ namespace StyleCop.Analyzers.Helpers
             {
                 if (propertyDeclarationSyntax.ExplicitInterfaceSpecifier == null)
                 {
-                    return Accessibility.Private;
+                    return syntax.Parent.IsKind(SyntaxKind.InterfaceDeclaration) ? Accessibility.Public : Accessibility.Private;
                 }
                 else
                 {
@@ -229,7 +239,7 @@ namespace StyleCop.Analyzers.Helpers
             {
                 if (indexerDeclarationSyntax.ExplicitInterfaceSpecifier == null)
                 {
-                    return Accessibility.Private;
+                    return syntax.Parent.IsKind(SyntaxKind.InterfaceDeclaration) ? Accessibility.Public : Accessibility.Private;
                 }
                 else
                 {
@@ -241,7 +251,7 @@ namespace StyleCop.Analyzers.Helpers
             {
                 if (eventDeclarationSyntax.ExplicitInterfaceSpecifier == null)
                 {
-                    return Accessibility.Private;
+                    return syntax.Parent.IsKind(SyntaxKind.InterfaceDeclaration) ? Accessibility.Public : Accessibility.Private;
                 }
                 else
                 {
@@ -281,6 +291,11 @@ namespace StyleCop.Analyzers.Helpers
 
             if (syntax.IsKind(SyntaxKind.FieldDeclaration) || syntax.IsKind(SyntaxKind.EventFieldDeclaration))
             {
+                if (syntax.Parent.IsKind(SyntaxKind.InterfaceDeclaration))
+                {
+                    return Accessibility.Public;
+                }
+
                 return Accessibility.Private;
             }
 
@@ -314,6 +329,11 @@ namespace StyleCop.Analyzers.Helpers
             if (accessLevel != AccessLevel.NotSpecified)
             {
                 return accessLevel.ToAccessibility();
+            }
+
+            if (syntax.Parent.IsKind(SyntaxKind.InterfaceDeclaration))
+            {
+                return Accessibility.Public;
             }
 
             return !(syntax.Parent is BaseTypeDeclarationSyntax) ? Accessibility.Internal : Accessibility.Private;
