@@ -172,11 +172,11 @@ namespace StyleCop.Analyzers.Lightup
                 this.current = default;
             }
 
-            public TNode Current => this.current;
+            public readonly TNode Current => this.current;
 
-            object IEnumerator.Current => this.Current;
+            readonly object IEnumerator.Current => this.Current;
 
-            public override bool Equals(object obj)
+            public override readonly bool Equals(object obj)
             {
                 Enumerator? otherOpt = obj as Enumerator?;
                 if (!otherOpt.HasValue)
@@ -189,7 +189,7 @@ namespace StyleCop.Analyzers.Lightup
                     && other.index == this.index;
             }
 
-            public override int GetHashCode()
+            public override readonly int GetHashCode()
             {
                 if (this.wrapper == null)
                 {
@@ -199,7 +199,7 @@ namespace StyleCop.Analyzers.Lightup
                 return this.wrapper.GetHashCode() ^ this.index;
             }
 
-            public void Dispose()
+            public readonly void Dispose()
             {
             }
 
