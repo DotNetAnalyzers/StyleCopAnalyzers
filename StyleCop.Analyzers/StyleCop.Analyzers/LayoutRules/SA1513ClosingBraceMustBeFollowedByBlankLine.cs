@@ -165,6 +165,12 @@ namespace StyleCop.Analyzers.LayoutRules
                 return false;
             }
 
+            private static RecursivePatternSyntaxWrapper FindRecursivePattern(SyntaxToken token)
+            {
+                var recursivePatternSyntax = token.Parent.FirstAncestorOrSelf<SyntaxNode>(static node => RecursivePatternSyntaxWrapper.IsInstance(node));
+                return (RecursivePatternSyntaxWrapper)recursivePatternSyntax;
+            }
+
             private static bool IsPartOf<T>(SyntaxToken token)
             {
                 var result = false;
@@ -270,6 +276,29 @@ namespace StyleCop.Analyzers.LayoutRules
                     if (nextToken.IsKind(SyntaxKind.ColonToken))
                     {
                         // the close brace is in the first part of a conditional expression.
+                        return;
+                    }
+
+                    if (nextToken.IsKind(SyntaxKind.EqualsGreaterThanToken))
+                    {
+                        // the close brace is followed by a switch expression arm arrow
+                        return;
+                    }
+
+                    if (nextToken.IsKind(SyntaxKind.AmpersandAmpersandToken)
+                        || nextToken.IsKind(SyntaxKind.BarBarToken))
+                    {
+                        // the close brace is followed by a logical operator continuing the same expression
+                        return;
+                    }
+
+                    var recursivePattern = FindRecursivePattern(token);
+                    var nextRecursivePattern = FindRecursivePattern(nextToken);
+                    if (recursivePattern.SyntaxNode != null
+                        && nextRecursivePattern.SyntaxNode == recursivePattern.SyntaxNode
+                        && nextToken.IsKind(SyntaxKind.IdentifierToken))
+                    {
+                        // the close brace is part of a recursive pattern that continues with a designation
                         return;
                     }
 

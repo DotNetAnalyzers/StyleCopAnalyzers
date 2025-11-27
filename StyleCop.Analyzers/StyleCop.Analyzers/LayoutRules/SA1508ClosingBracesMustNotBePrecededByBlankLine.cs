@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A closing brace within a C# element, statement, or expression is preceded by a blank line.
@@ -61,6 +62,8 @@ namespace StyleCop.Analyzers.LayoutRules
         private static readonly Action<SyntaxNodeAnalysisContext> NamespaceDeclarationAction = HandleNamespaceDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> BaseTypeDeclarationAction = HandleBaseTypeDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> AccessorListAction = HandleAccessorList;
+        private static readonly Action<SyntaxNodeAnalysisContext> SwitchExpressionAction = HandleSwitchExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> PropertyPatternClauseAction = HandlePropertyPatternClause;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -79,6 +82,8 @@ namespace StyleCop.Analyzers.LayoutRules
             context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
             context.RegisterSyntaxNodeAction(BaseTypeDeclarationAction, SyntaxKinds.BaseTypeDeclaration);
             context.RegisterSyntaxNodeAction(AccessorListAction, SyntaxKind.AccessorList);
+            context.RegisterSyntaxNodeAction(SwitchExpressionAction, SyntaxKindEx.SwitchExpression);
+            context.RegisterSyntaxNodeAction(PropertyPatternClauseAction, SyntaxKindEx.PropertyPatternClause);
         }
 
         private static void HandleBlock(SyntaxNodeAnalysisContext context)
@@ -121,6 +126,18 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             var accessorList = (AccessorListSyntax)context.Node;
             AnalyzeCloseBrace(context, accessorList.CloseBraceToken);
+        }
+
+        private static void HandleSwitchExpression(SyntaxNodeAnalysisContext context)
+        {
+            var switchExpression = (SwitchExpressionSyntaxWrapper)context.Node;
+            AnalyzeCloseBrace(context, switchExpression.CloseBraceToken);
+        }
+
+        private static void HandlePropertyPatternClause(SyntaxNodeAnalysisContext context)
+        {
+            var propertyPatternClause = (PropertyPatternClauseSyntaxWrapper)context.Node;
+            AnalyzeCloseBrace(context, propertyPatternClause.CloseBraceToken);
         }
 
         private static void AnalyzeCloseBrace(SyntaxNodeAnalysisContext context, SyntaxToken closeBraceToken)

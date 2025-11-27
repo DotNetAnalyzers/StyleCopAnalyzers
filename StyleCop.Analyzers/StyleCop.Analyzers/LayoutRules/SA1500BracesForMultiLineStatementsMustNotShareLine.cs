@@ -79,6 +79,8 @@ namespace StyleCop.Analyzers.LayoutRules
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> SwitchStatementAction = HandleSwitchStatement;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> InitializerExpressionAction = HandleInitializerExpression;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> AnonymousObjectCreationExpressionAction = HandleAnonymousObjectCreationExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> SwitchExpressionAction = HandleSwitchExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> PropertyPatternClauseAction = HandlePropertyPatternClause;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -99,6 +101,8 @@ namespace StyleCop.Analyzers.LayoutRules
                 context.RegisterSyntaxNodeAction(SwitchStatementAction, SyntaxKind.SwitchStatement);
                 context.RegisterSyntaxNodeAction(InitializerExpressionAction, SyntaxKinds.InitializerExpression);
                 context.RegisterSyntaxNodeAction(AnonymousObjectCreationExpressionAction, SyntaxKind.AnonymousObjectCreationExpression);
+                context.RegisterSyntaxNodeAction(SwitchExpressionAction, SyntaxKindEx.SwitchExpression);
+                context.RegisterSyntaxNodeAction(PropertyPatternClauseAction, SyntaxKindEx.PropertyPatternClause);
             });
         }
 
@@ -141,6 +145,18 @@ namespace StyleCop.Analyzers.LayoutRules
         private static void HandleAnonymousObjectCreationExpression(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             var syntax = (AnonymousObjectCreationExpressionSyntax)context.Node;
+            CheckBraces(context, settings, syntax.OpenBraceToken, syntax.CloseBraceToken);
+        }
+
+        private static void HandleSwitchExpression(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        {
+            var syntax = (SwitchExpressionSyntaxWrapper)context.Node;
+            CheckBraces(context, settings, syntax.OpenBraceToken, syntax.CloseBraceToken);
+        }
+
+        private static void HandlePropertyPatternClause(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        {
+            var syntax = (PropertyPatternClauseSyntaxWrapper)context.Node;
             CheckBraces(context, settings, syntax.OpenBraceToken, syntax.CloseBraceToken);
         }
 
