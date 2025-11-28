@@ -14,8 +14,10 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using static StyleCop.Analyzers.OrderingRules.ModifierOrderHelper;
 
     /// <summary>
@@ -55,29 +57,43 @@ namespace StyleCop.Analyzers.OrderingRules
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
-            var memberDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<MemberDeclarationSyntax>();
-            if (memberDeclaration == null)
+            var memberOrLocalFunction = syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<CSharpSyntaxNode>(static node => node is MemberDeclarationSyntax || LocalFunctionStatementSyntaxWrapper.IsInstance(node));
+            if (memberOrLocalFunction == null)
             {
                 return document;
             }
 
-            var modifierTokenToFix = memberDeclaration.FindToken(diagnostic.Location.SourceSpan.Start);
+            var modifierTokenToFix = memberOrLocalFunction.FindToken(diagnostic.Location.SourceSpan.Start);
             if (GetModifierType(modifierTokenToFix) == ModifierType.None)
             {
                 return document;
             }
 
-            var newModifierList = PartiallySortModifiers(memberDeclaration.GetModifiers(), modifierTokenToFix);
-            syntaxRoot = UpdateSyntaxRoot(memberDeclaration, newModifierList, syntaxRoot);
+            if (memberOrLocalFunction is MemberDeclarationSyntax memberDeclaration)
+            {
+                var newModifierList = PartiallySortModifiers(memberDeclaration.GetModifiers(), modifierTokenToFix);
+                syntaxRoot = UpdateSyntaxRoot(memberDeclaration, newModifierList, syntaxRoot);
+            }
+            else
+            {
+                var localFunctionStatement = (LocalFunctionStatementSyntaxWrapper)memberOrLocalFunction;
+                var newModifierList = PartiallySortModifiers(localFunctionStatement.Modifiers, modifierTokenToFix);
+                syntaxRoot = UpdateSyntaxRoot(localFunctionStatement, newModifierList, syntaxRoot);
+            }
 
             return document.WithSyntaxRoot(syntaxRoot);
         }
 
         private static SyntaxNode UpdateSyntaxRoot(MemberDeclarationSyntax memberDeclaration, SyntaxTokenList newModifiers, SyntaxNode syntaxRoot)
         {
-            var newDeclaration = memberDeclaration.WithModifiers(newModifiers);
-
+            var newDeclaration = DeclarationModifiersHelper.WithModifiers(memberDeclaration, newModifiers);
             return syntaxRoot.ReplaceNode(memberDeclaration, newDeclaration);
+        }
+
+        private static SyntaxNode UpdateSyntaxRoot(LocalFunctionStatementSyntaxWrapper localFunctionStatement, SyntaxTokenList newModifiers, SyntaxNode syntaxRoot)
+        {
+            var newDeclaration = localFunctionStatement.WithModifiers(newModifiers);
+            return syntaxRoot.ReplaceNode(localFunctionStatement, newDeclaration);
         }
 
         /// <summary>
@@ -175,31 +191,40 @@ namespace StyleCop.Analyzers.OrderingRules
 
                 // because all modifiers can be fixed in one run, we
                 // only need to store each declaration once
-                var trackedDiagnosticMembers = new HashSet<MemberDeclarationSyntax>();
+                var trackedDiagnosticMembers = new HashSet<CSharpSyntaxNode>();
                 foreach (var diagnostic in diagnostics)
                 {
-                    var memberDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<MemberDeclarationSyntax>();
-                    if (memberDeclaration == null)
+                    var memberOrLocalFunction = syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<CSharpSyntaxNode>(static node => node is MemberDeclarationSyntax || LocalFunctionStatementSyntaxWrapper.IsInstance(node));
+                    if (memberOrLocalFunction == null)
                     {
                         continue;
                     }
 
-                    var modifierToken = memberDeclaration.FindToken(diagnostic.Location.SourceSpan.Start);
+                    var modifierToken = memberOrLocalFunction.FindToken(diagnostic.Location.SourceSpan.Start);
                     if (GetModifierType(modifierToken) == ModifierType.None)
                     {
                         continue;
                     }
 
-                    trackedDiagnosticMembers.Add(memberDeclaration);
+                    trackedDiagnosticMembers.Add(memberOrLocalFunction);
                 }
 
                 syntaxRoot = syntaxRoot.TrackNodes(trackedDiagnosticMembers);
 
                 foreach (var member in trackedDiagnosticMembers)
                 {
-                    var memberDeclaration = syntaxRoot.GetCurrentNode(member);
-                    var newModifierList = FullySortModifiers(memberDeclaration.GetModifiers());
-                    syntaxRoot = UpdateSyntaxRoot(memberDeclaration, newModifierList, syntaxRoot);
+                    var currentMember = syntaxRoot.GetCurrentNode(member);
+                    if (currentMember is MemberDeclarationSyntax memberDeclaration)
+                    {
+                        var newModifierList = FullySortModifiers(memberDeclaration.GetModifiers());
+                        syntaxRoot = UpdateSyntaxRoot(memberDeclaration, newModifierList, syntaxRoot);
+                    }
+                    else
+                    {
+                        var localFunctionStatement = (LocalFunctionStatementSyntaxWrapper)currentMember;
+                        var newModifierList = FullySortModifiers(localFunctionStatement.Modifiers);
+                        syntaxRoot = UpdateSyntaxRoot(localFunctionStatement, newModifierList, syntaxRoot);
+                    }
                 }
 
                 return syntaxRoot;
