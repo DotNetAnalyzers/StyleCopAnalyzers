@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp7.SpacingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1011ClosingSquareBracketsMustBeSpacedCorrectly,
@@ -125,6 +124,58 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 ";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3008, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3008")]
+        public async Task TestIndexAndRangeClosingBracketSpacingAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    using System;
+
+    public class TestClass
+    {
+        public void TestMethod(int[] values)
+        {
+            _ = values[^1 {|#0:]|};
+            _ = values[1..^2 {|#1:]|};
+            _ = values[.. {|#2:]|};
+            _ = values[^1{|#3:]|}^1;
+            _ = values[^1] ^1;
+        }
+    }
+}
+";
+            var fixedCode = @"
+namespace TestNamespace
+{
+    using System;
+
+    public class TestClass
+    {
+        public void TestMethod(int[] values)
+        {
+            _ = values[^1];
+            _ = values[1..^2];
+            _ = values[..];
+            _ = values[^1] ^1;
+            _ = values[^1] ^1;
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithArguments(" not", "preceded").WithLocation(0),
+                Diagnostic().WithArguments(" not", "preceded").WithLocation(1),
+                Diagnostic().WithArguments(" not", "preceded").WithLocation(2),
+                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(3),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

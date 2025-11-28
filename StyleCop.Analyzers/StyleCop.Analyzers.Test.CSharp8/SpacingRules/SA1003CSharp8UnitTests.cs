@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 {
     using System.Threading;
@@ -38,12 +36,11 @@ namespace TestNamespace
     {
         public void TestMethod()
         {
-            var test1 = .. {|#0:(|}int)1;
+            var test1 = {|#0:..|} {|#1:(|}int)1;
         }
     }
 }
 ";
-
             var fixedCode = @"
 namespace TestNamespace
 {
@@ -62,7 +59,11 @@ namespace TestNamespace
             {
                 ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp31,
                 TestCode = testCode,
-                ExpectedDiagnostics = { Diagnostic(DescriptorNotPrecededByWhitespace).WithLocation(0).WithArguments("(int)") },
+                ExpectedDiagnostics =
+                {
+                    Diagnostic(DescriptorNotFollowedByWhitespace).WithLocation(0).WithArguments(".."),
+                    Diagnostic(DescriptorNotPrecededByWhitespace).WithLocation(1).WithArguments("(int)"),
+                },
                 FixedCode = fixedCode,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
@@ -140,6 +141,95 @@ namespace TestNamespace
                     Diagnostic(DescriptorNotPrecededByWhitespace).WithLocation(0).WithArguments("!"),
                     Diagnostic(DescriptorNotFollowedByWhitespace).WithLocation(0).WithArguments("!"),
             };
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3008, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3008")]
+        public async Task TestIndexAndRangeExpressionsAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    using System;
+
+    public class TestClass
+    {
+        public void TestMethod(int[] values)
+        {
+            var last = values[^1];
+            var slice = values[2..^5];
+            var slice2 = values[..];
+            Index start = ^5;
+            Range middle = 1..4;
+        }
+    }
+}
+";
+
+            await new CSharpTest()
+            {
+                ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp31,
+                TestCode = testCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3008, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3008")]
+        public async Task TestIndexAndRangeExpressionsSpacingViolationsAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    using System;
+
+    public class TestClass
+    {
+        public void TestMethod(int[] values)
+        {
+            var last = values[ {|#0:^|}1];
+            var compactSlice = values[1 {|#1:..|} ^2];
+            var prefixRangeSpaceAfter = values[{|#2:..|} ^2];
+            var suffixRangeSpaceBefore = values[1 {|#3:..|}];
+            Range missingLeadingSpace = 1 {|#4:..|} 4;
+            var missingTrailingSpace = 1{|#5:..|} ^2;
+        }
+    }
+}
+";
+
+            var fixedCode = @"
+namespace TestNamespace
+{
+    using System;
+
+    public class TestClass
+    {
+        public void TestMethod(int[] values)
+        {
+            var last = values[^1];
+            var compactSlice = values[1..^2];
+            var prefixRangeSpaceAfter = values[..^2];
+            var suffixRangeSpaceBefore = values[1..];
+            Range missingLeadingSpace = 1..4;
+            var missingTrailingSpace = 1..^2;
+        }
+    }
+}
+";
+
+            var expected = new[]
+            {
+                Diagnostic(DescriptorNotPrecededByWhitespace).WithLocation(0).WithArguments("^"),
+                Diagnostic(DescriptorNotPrecededByWhitespace).WithLocation(1).WithArguments(".."),
+                Diagnostic(DescriptorNotFollowedByWhitespace).WithLocation(1).WithArguments(".."),
+                Diagnostic(DescriptorNotFollowedByWhitespace).WithLocation(2).WithArguments(".."),
+                Diagnostic(DescriptorNotPrecededByWhitespace).WithLocation(3).WithArguments(".."),
+                Diagnostic(DescriptorNotPrecededByWhitespace).WithLocation(4).WithArguments(".."),
+                Diagnostic(DescriptorNotFollowedByWhitespace).WithLocation(4).WithArguments(".."),
+                Diagnostic(DescriptorNotFollowedByWhitespace).WithLocation(5).WithArguments(".."),
+            };
+
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
