@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp8.LayoutRules
 {
     using System.Threading;
@@ -31,6 +29,42 @@ public class Foo
 }";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3007, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3007")]
+        public async Task TestAwaitForEachMustUseBracesAsync()
+        {
+            var testCode = @"
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+public class TestClass
+{
+    public async Task TestAsync(IAsyncEnumerable<int> values)
+    {
+        await foreach (var value in values)
+            {|#0:_ = value;|}
+    }
+}
+";
+            var fixedCode = @"
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+public class TestClass
+{
+    public async Task TestAsync(IAsyncEnumerable<int> values)
+    {
+        await foreach (var value in values)
+        {
+            _ = value;
+        }
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
