@@ -328,5 +328,82 @@ public class TestClass
 
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3008, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3008")]
+        public async Task TestParenthesizedRangeExpressionsAreAcceptedAsync()
+        {
+            const string testCode = @"using System;
+
+public class TestClass
+{
+    public Range TestMethod(int length)
+    {
+        Range local = {|#0:{|#1:(|}1..^3{|#2:)|}|};
+        return {|#3:{|#4:(|}1..^length{|#5:)|}|};
+    }
+}
+";
+            const string fixedCode = @"using System;
+
+public class TestClass
+{
+    public Range TestMethod(int length)
+    {
+        Range local = 1..^3;
+        return 1..^length;
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DiagnosticId).WithLocation(0),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(1),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(2),
+                Diagnostic(DiagnosticId).WithLocation(3),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(4),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(5),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3008, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3008")]
+        public async Task TestParenthesizedIndexExpressionsAreAcceptedAsync()
+        {
+            const string testCode = @"using System;
+
+public class TestClass
+{
+    public int TestMethod(int length)
+    {
+        Index index = {|#0:{|#1:(|}^5{|#2:)|}|};
+        return (^2).GetOffset(length);
+    }
+}
+";
+            const string fixedCode = @"using System;
+
+public class TestClass
+{
+    public int TestMethod(int length)
+    {
+        Index index = ^5;
+        return (^2).GetOffset(length);
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DiagnosticId).WithLocation(0),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(1),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(2),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
