@@ -117,7 +117,8 @@ uint value = (uint)3;
 
 ### SA1025
 
-StyleCop Classic allowed multiple spaces to precede a comment placed at the end of a line, such as the following:
+:warning: StyleCop Classic allowed multiple spaces to precede a comment placed at the end of a line, such as the
+following:
 
 ```csharp
 int x;    // comment
@@ -130,7 +131,8 @@ int xyz = 1;
 int w   = 1;
 ```
 
-StyleCop Analyzers does not currently make an exception to the SA1025 rule for these cases.
+StyleCop Analyzers does not currently make an exception to the SA1025 rule for these cases, including aligned operators
+like the `=` values in flag enums ([#3684](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3684)).
 
 ## Readability Rules
 
