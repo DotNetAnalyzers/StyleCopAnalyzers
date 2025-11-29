@@ -233,6 +233,13 @@ There are no known changes at this time.
 
 ## Layout Rules
 
+### SA1514
+
+:warning: While StyleCop Classic generally did not allow `#region` directives to appear in code (SA1124), it may have
+indirectly allowed an element documentation header to immediately follow a `#region` directive without a blank line
+(i.e. did not report SA1514). StyleCop Analyzers treats the `#region` as preceding content, so SA1514 is reported unless
+you add a blank line after the directive ([#1280](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1280)).
+
 ### SA1515
 
 :warning: The following code does not report a warning in StyleCop Classic:
