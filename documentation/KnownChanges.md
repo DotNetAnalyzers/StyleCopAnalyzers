@@ -199,6 +199,19 @@ StyleCop Analyzers adds enum members to the list of elements which should start 
 SA1300 for violations. StyleCop Classic did not report any messages for enum members that did not start with an
 upper-case letter.
 
+### SA1303
+
+:warning: StyleCop Classic reports SA1303 for local constants that start with a lower-case letter, even though they are
+not fields. StyleCop Analyzers limits SA1303 to fields, so local constants follow the local-variable naming rules and
+do not produce a warning for this code ([#2082](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2082)):
+
+```csharp
+public void SomeMethod()
+{
+    const string url = "some constant value";
+}
+```
+
 ### SA1305
 
 This rule is disabled by default in StyleCop Analyzers, but can be enabled by users via a rule set file.
