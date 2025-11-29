@@ -8,7 +8,7 @@
   displayName: C# Language Version
   type: string
   default: '6'
-  values: [ '6', '7', '8', '9', '10', '11', '12', '13' ]
+  values: [ '6', '7', '8', '9', '10', '11', '12', '13', '14' ]
 - name: FrameworkVersion
   displayName: .NET Framework Version
   type: string
