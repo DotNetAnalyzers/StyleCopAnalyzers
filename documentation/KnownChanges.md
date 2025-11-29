@@ -221,7 +221,9 @@ interface. StyleCop Classic reported SA1305 for all methods.
 
 ### SA1313
 
-StyleCop Analyzers allows the single and double underscore (`_` and `__`) as lambda parameter names.
+:warning: StyleCop Classic allows lambda parameters consisting solely of underscores (e.g. `_`, `__`, `___`, …) without
+reporting SA1313. StyleCop Analyzers only special-case `_` and `__`; longer underscore-only names still report SA1313
+([#2759](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2759)).
 
 ## Maintainability Rules
 
