@@ -117,7 +117,8 @@ uint value = (uint)3;
 
 ### SA1025
 
-StyleCop Classic allowed multiple spaces to precede a comment placed at the end of a line, such as the following:
+:warning: StyleCop Classic allowed multiple spaces to precede a comment placed at the end of a line, such as the
+following:
 
 ```csharp
 int x;    // comment
@@ -130,7 +131,8 @@ int xyz = 1;
 int w   = 1;
 ```
 
-StyleCop Analyzers does not currently make an exception to the SA1025 rule for these cases.
+StyleCop Analyzers does not currently make an exception to the SA1025 rule for these cases, including aligned operators
+like the `=` values in flag enums ([#3684](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3684)).
 
 ## Readability Rules
 
@@ -199,6 +201,19 @@ StyleCop Analyzers adds enum members to the list of elements which should start 
 SA1300 for violations. StyleCop Classic did not report any messages for enum members that did not start with an
 upper-case letter.
 
+### SA1303
+
+:warning: StyleCop Classic reports SA1303 for local constants that start with a lower-case letter, even though they are
+not fields. StyleCop Analyzers limits SA1303 to fields, so local constants follow the local-variable naming rules and
+do not produce a warning for this code ([#2082](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2082)):
+
+```csharp
+public void SomeMethod()
+{
+    const string url = "some constant value";
+}
+```
+
 ### SA1305
 
 This rule is disabled by default in StyleCop Analyzers, but can be enabled by users via a rule set file.
@@ -208,13 +223,22 @@ interface. StyleCop Classic reported SA1305 for all methods.
 
 ### SA1313
 
-StyleCop Analyzers allows the single and double underscore (`_` and `__`) as lambda parameter names.
+:warning: StyleCop Classic allows lambda parameters consisting solely of underscores (e.g. `_`, `__`, `___`, …) without
+reporting SA1313. StyleCop Analyzers only special-case `_` and `__`; longer underscore-only names still report SA1313
+([#2759](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2759)).
 
 ## Maintainability Rules
 
 There are no known changes at this time.
 
 ## Layout Rules
+
+### SA1514
+
+:warning: While StyleCop Classic generally did not allow `#region` directives to appear in code (SA1124), it may have
+indirectly allowed an element documentation header to immediately follow a `#region` directive without a blank line
+(i.e. did not report SA1514). StyleCop Analyzers treats the `#region` as preceding content, so SA1514 is reported unless
+you add a blank line after the directive ([#1280](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1280)).
 
 ### SA1515
 
