@@ -72,12 +72,22 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         private static void HandleBaseTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
             var syntax = (BaseTypeDeclarationSyntax)context.Node;
+            if (syntax.Parent.IsKind(SyntaxKind.InterfaceDeclaration))
+            {
+                return;
+            }
+
             CheckAccessModifiers(context, syntax.Identifier, syntax.Modifiers);
         }
 
         private static void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
         {
             var syntax = (DelegateDeclarationSyntax)context.Node;
+            if (syntax.Parent.IsKind(SyntaxKind.InterfaceDeclaration))
+            {
+                return;
+            }
+
             CheckAccessModifiers(context, syntax.Identifier, syntax.Modifiers);
         }
 
