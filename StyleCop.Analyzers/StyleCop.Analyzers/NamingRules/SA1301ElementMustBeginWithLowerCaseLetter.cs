@@ -27,9 +27,11 @@ namespace StyleCop.Analyzers.NamingRules
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(NamingResources.SA1301Description), NamingResources.ResourceManager, typeof(NamingResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable RS2000 // Add analyzer diagnostic IDs to analyzer release.
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.NotConfigurable);
 #pragma warning restore RS2000 // Add analyzer diagnostic IDs to analyzer release.
+#pragma warning restore IDE0079 // Remove unnecessary suppression
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =

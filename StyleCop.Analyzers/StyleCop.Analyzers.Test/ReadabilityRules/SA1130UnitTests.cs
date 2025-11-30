@@ -18,11 +18,15 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
     public class SA1130UnitTests
     {
+#pragma warning disable IDE0079 // Remove unnecessary suppression
         [SuppressMessage("MicrosoftCodeAnalysisDesign", "RS1032:Define diagnostic message correctly", Justification = "The message here matches the compiler.")]
+#pragma warning restore IDE0079 // Remove unnecessary suppression
         private static readonly DiagnosticDescriptor CS1065 =
                    new DiagnosticDescriptor(nameof(CS1065), "Title", "Default values are not valid in this context.", "Category", DiagnosticSeverity.Error, AnalyzerConstants.EnabledByDefault);
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
         [SuppressMessage("MicrosoftCodeAnalysisDesign", "RS1032:Define diagnostic message correctly", Justification = "The message here matches the compiler.")]
+#pragma warning restore IDE0079 // Remove unnecessary suppression
         private static readonly DiagnosticDescriptor CS7014 =
                    new DiagnosticDescriptor(nameof(CS7014), "Title", "Attributes are not valid in this context.", "Category", DiagnosticSeverity.Error, AnalyzerConstants.EnabledByDefault);
 
