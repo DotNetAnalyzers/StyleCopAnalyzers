@@ -206,7 +206,7 @@ csharp_using_directive_placement = {placement}
             var documentId = DocumentId.CreateNewId(projectId);
             var analyzerConfigDocumentId = DocumentId.CreateNewId(projectId);
 
-            var solution = GenericAnalyzerTest.CreateWorkspace()
+            var solution = (await GenericAnalyzerTest.CreateWorkspaceAsync().ConfigureAwait(false))
                 .CurrentSolution
                 .AddProject(projectId, TestProjectName, TestProjectName, LanguageNames.CSharp)
                 .AddDocument(documentId, "/0/Test0.cs", SourceText.From(string.Empty))

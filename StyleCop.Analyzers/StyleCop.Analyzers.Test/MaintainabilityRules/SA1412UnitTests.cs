@@ -19,16 +19,29 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
     public class SA1412UnitTests
     {
+#if NET
+        static SA1412UnitTests()
+        {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        }
+#endif
+
         public static IEnumerable<object[]> NonUtf8Encodings
         {
             get
             {
                 yield return new object[] { Encoding.ASCII.CodePage };
                 yield return new object[] { Encoding.BigEndianUnicode.CodePage };
+#if NETFRAMEWORK
                 yield return new object[] { Encoding.Default.CodePage };
+#else
+                yield return new object[] { 1252 };
+#endif
                 yield return new object[] { Encoding.Unicode.CodePage };
                 yield return new object[] { Encoding.UTF32.CodePage };
+#pragma warning disable SYSLIB0001 // Type or member is obsolete
                 yield return new object[] { Encoding.UTF7.CodePage };
+#pragma warning restore SYSLIB0001 // Type or member is obsolete
             }
         }
 
@@ -36,7 +49,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         [MemberData(nameof(NonUtf8Encodings))]
         public async Task TestFileWithWrongEncodingAsync(int codepage)
         {
-            var testCode = SourceText.From("class TypeName { }", Encoding.GetEncoding(codepage));
+            var testCode = SourceText.From("class TypeName { }", GetEncoding(codepage));
             var fixedCode = SourceText.From(testCode.ToString(), Encoding.UTF8);
 
             var expected = Diagnostic().WithLocation(1, 1);
@@ -88,7 +101,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 {
                     SourceText.From("class Foo { }", Encoding.Unicode),
                     SourceText.From("class Bar { }", Encoding.Unicode),
+#pragma warning disable SYSLIB0001 // Type or member is obsolete
                     SourceText.From("class FooBar { }", Encoding.UTF7),
+#pragma warning restore SYSLIB0001 // Type or member is obsolete
                 },
                 ExpectedDiagnostics =
                 {
@@ -110,6 +125,18 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
+        private static Encoding GetEncoding(int codepage)
+        {
+#pragma warning disable SYSLIB0001 // Type or member is obsolete
+            if (codepage == Encoding.UTF7.CodePage)
+            {
+                return Encoding.UTF7;
+            }
+#pragma warning restore SYSLIB0001 // Type or member is obsolete
+
+            return Encoding.GetEncoding(codepage);
+        }
+
         private async Task TestFixAllExecuterAsync(int codepage, FixAllScope scope)
         {
             // Currently unused
@@ -119,8 +146,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             {
                 TestSources =
                 {
-                    SourceText.From("class Foo { }", Encoding.GetEncoding(codepage)),
-                    SourceText.From("class Bar { }", Encoding.GetEncoding(codepage)),
+                    SourceText.From("class Foo { }", GetEncoding(codepage)),
+                    SourceText.From("class Bar { }", GetEncoding(codepage)),
                 },
                 ExpectedDiagnostics =
                 {
