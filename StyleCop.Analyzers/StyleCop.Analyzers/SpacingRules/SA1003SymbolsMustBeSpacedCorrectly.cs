@@ -103,7 +103,8 @@ namespace StyleCop.Analyzers.SpacingRules
                 SyntaxKind.LogicalNotExpression,
                 SyntaxKind.PreIncrementExpression,
                 SyntaxKind.PreDecrementExpression,
-                SyntaxKind.AddressOfExpression);
+                SyntaxKind.AddressOfExpression,
+                SyntaxKindEx.IndexExpression);
 
         private static readonly ImmutableArray<SyntaxKind> PostfixUnaryExpressionKinds =
             ImmutableArray.Create(
@@ -138,6 +139,7 @@ namespace StyleCop.Analyzers.SpacingRules
         private static readonly Action<SyntaxNodeAnalysisContext> EqualsValueClauseAction = HandleEqualsValueClause;
         private static readonly Action<SyntaxNodeAnalysisContext> LambdaExpressionAction = HandleLambdaExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> ArrowExpressionClauseAction = HandleArrowExpressionClause;
+        private static readonly Action<SyntaxNodeAnalysisContext> RangeExpressionAction = HandleRangeExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> SwitchExpressionArmAction = HandleSwitchExpressionArm;
 
         /// <summary>
@@ -215,6 +217,7 @@ namespace StyleCop.Analyzers.SpacingRules
             context.RegisterSyntaxNodeAction(EqualsValueClauseAction, SyntaxKind.EqualsValueClause);
             context.RegisterSyntaxNodeAction(LambdaExpressionAction, SyntaxKinds.LambdaExpression);
             context.RegisterSyntaxNodeAction(ArrowExpressionClauseAction, SyntaxKind.ArrowExpressionClause);
+            context.RegisterSyntaxNodeAction(RangeExpressionAction, SyntaxKindEx.RangeExpression);
             context.RegisterSyntaxNodeAction(SwitchExpressionArmAction, SyntaxKindEx.SwitchExpressionArm);
         }
 
@@ -251,6 +254,41 @@ namespace StyleCop.Analyzers.SpacingRules
             CheckToken(context, binaryExpression.OperatorToken, true, true, true);
         }
 
+        private static void HandleRangeExpression(SyntaxNodeAnalysisContext context)
+        {
+            if (!RangeExpressionSyntaxWrapper.IsInstance(context.Node))
+            {
+                return;
+            }
+
+            var rangeExpression = (RangeExpressionSyntaxWrapper)context.Node;
+            var hasLeftOperand = rangeExpression.LeftOperand != null;
+            var hasRightOperand = rangeExpression.RightOperand != null;
+
+            if (hasLeftOperand && hasRightOperand)
+            {
+                // Both operands present: no whitespace around the operator.
+                CheckToken(context, rangeExpression.OperatorToken, withLeadingWhitespace: false, allowAtEndOfLine: true, withTrailingWhitespace: false);
+                return;
+            }
+
+            if (!hasLeftOperand && hasRightOperand)
+            {
+                // Left operand omitted: preceding spacing is governed by surrounding context; operator must be adjacent to right operand.
+                CheckTokenTrailingWhitespace(context, rangeExpression.OperatorToken, allowAtEndOfLine: false, withTrailingWhitespace: false);
+                return;
+            }
+
+            if (hasLeftOperand && !hasRightOperand)
+            {
+                // Right operand omitted: operator must be adjacent to left operand; trailing spacing is governed by surrounding context.
+                CheckTokenLeadingWhitespace(context, rangeExpression.OperatorToken, withLeadingWhitespace: false);
+                return;
+            }
+
+            // Both operands omitted: spacing governed by surrounding context.
+        }
+
         private static void HandlePrefixUnaryExpression(SyntaxNodeAnalysisContext context)
         {
             var unaryExpression = (PrefixUnaryExpressionSyntax)context.Node;
@@ -267,6 +305,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 && !(unaryExpression.Parent is CastExpressionSyntax)
                 && !precedingToken.IsKind(SyntaxKind.OpenParenToken)
                 && !precedingToken.IsKind(SyntaxKind.OpenBracketToken)
+                && !precedingToken.IsKind(SyntaxKindEx.DotDotToken)
                 && !(precedingToken.IsKind(SyntaxKind.OpenBraceToken) && (precedingToken.Parent is InterpolationSyntax));
 
             bool analyze;
@@ -293,7 +332,16 @@ namespace StyleCop.Analyzers.SpacingRules
                 }
                 else
                 {
-                    CheckToken(context, unaryExpression.OperatorToken, mustHaveLeadingWhitespace, false, false);
+                    if (precedingToken.IsKind(SyntaxKindEx.DotDotToken))
+                    {
+                        // The preceding whitespace will be checked as part of the range operator '..' so only check
+                        // trailing whitespace for the current unary prefix operator.
+                        CheckTokenTrailingWhitespace(context, unaryExpression.OperatorToken, allowAtEndOfLine: false, false);
+                    }
+                    else
+                    {
+                        CheckToken(context, unaryExpression.OperatorToken, mustHaveLeadingWhitespace, allowAtEndOfLine: false, withTrailingWhitespace: false);
+                    }
                 }
             }
         }
@@ -393,11 +441,16 @@ namespace StyleCop.Analyzers.SpacingRules
         {
             tokenText = tokenText ?? token.Text;
 
+            CheckTokenLeadingWhitespace(context, token, withLeadingWhitespace, tokenText);
+            CheckTokenTrailingWhitespace(context, token, allowAtEndOfLine, withTrailingWhitespace, tokenText);
+        }
+
+        private static void CheckTokenLeadingWhitespace(SyntaxNodeAnalysisContext context, SyntaxToken token, bool withLeadingWhitespace, string tokenText = null)
+        {
+            tokenText = tokenText ?? token.Text;
+
             var precedingToken = token.GetPreviousToken();
             var precedingTriviaList = TriviaHelper.MergeTriviaLists(precedingToken.TrailingTrivia, token.LeadingTrivia);
-
-            var followingToken = token.GetNextToken();
-            var followingTriviaList = TriviaHelper.MergeTriviaLists(token.TrailingTrivia, followingToken.LeadingTrivia);
 
             if (withLeadingWhitespace)
             {
@@ -421,6 +474,14 @@ namespace StyleCop.Analyzers.SpacingRules
                     context.ReportDiagnostic(Diagnostic.Create(DescriptorNotPrecededByWhitespace, token.GetLocation(), properties, tokenText));
                 }
             }
+        }
+
+        private static void CheckTokenTrailingWhitespace(SyntaxNodeAnalysisContext context, SyntaxToken token, bool allowAtEndOfLine, bool withTrailingWhitespace, string tokenText = null)
+        {
+            tokenText = tokenText ?? token.Text;
+
+            var followingToken = token.GetNextToken();
+            var followingTriviaList = TriviaHelper.MergeTriviaLists(token.TrailingTrivia, followingToken.LeadingTrivia);
 
             if (!allowAtEndOfLine && token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia))
             {
@@ -445,14 +506,11 @@ namespace StyleCop.Analyzers.SpacingRules
                     context.ReportDiagnostic(Diagnostic.Create(DescriptorFollowedByWhitespace, token.GetLocation(), properties, tokenText));
                 }
             }
-            else
+            else if ((followingTriviaList.Count > 0) && followingTriviaList.First().IsKind(SyntaxKind.WhitespaceTrivia))
             {
-                if ((followingTriviaList.Count > 0) && followingTriviaList.First().IsKind(SyntaxKind.WhitespaceTrivia))
-                {
-                    var properties = ImmutableDictionary.Create<string, string>()
-                        .Add(CodeFixAction, RemoveAfterTag);
-                    context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowedByWhitespace, token.GetLocation(), properties, tokenText));
-                }
+                var properties = ImmutableDictionary.Create<string, string>()
+                    .Add(CodeFixAction, RemoveAfterTag);
+                context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowedByWhitespace, token.GetLocation(), properties, tokenText));
             }
         }
     }

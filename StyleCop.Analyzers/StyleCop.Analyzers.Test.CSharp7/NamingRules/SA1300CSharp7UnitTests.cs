@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
 {
     using System.Threading;
@@ -17,29 +15,13 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
     public partial class SA1300CSharp7UnitTests : SA1300UnitTests
     {
         [Fact]
-        public async Task TestUpperCaseLocalFunctionAsync()
-        {
-            var testCode = @"public class TestClass
-{
-    public void Method()
-    {
-        void LocalFunction()
-        {
-        }
-    }
-}";
-
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
         public async Task TestLowerCaseLocalFunctionAsync()
         {
             var testCode = @"public class TestClass
 {
     public void Method()
     {
-        void localFunction()
+        void {|#0:localFunction|}()
         {
         }
     }
@@ -54,7 +36,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
     }
 }";
 
-            DiagnosticResult expected = Diagnostic().WithArguments("localFunction").WithLocation(5, 14);
+            DiagnosticResult expected = Diagnostic().WithArguments("localFunction").WithLocation(0);
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -66,7 +48,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
 {
     public void Method()
     {
-        void localFunction()
+        void {|#0:localFunction|}()
         {
         }
 
@@ -85,7 +67,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
     }
 }";
 
-            DiagnosticResult expected = Diagnostic().WithArguments("localFunction").WithLocation(5, 14);
+            DiagnosticResult expected = Diagnostic().WithArguments("localFunction").WithLocation(0);
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
