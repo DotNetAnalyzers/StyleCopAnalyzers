@@ -133,5 +133,61 @@ class TestClass
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3008, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3008")]
+        public async Task TestMemberAccessAfterIndexAndRangeExpressionsAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod(string[] values)
+        {
+            var value1 = values[^1] {|#0:.|}ToString();
+            var value2 = values[^1]{|#1:.|} ToString();
+            var value3 = values[1..^1] {|#2:.|}ToString();
+            var value4 = values[1..^1]{|#3:.|} ToString();
+            var value5 = values[^1] {|#4:?|}.ToString();
+            var value6 = values[^1]?{|#5:.|} ToString();
+            var value7 = values[1..^1] {|#6:?|}.ToString();
+            var value8 = values[1..^1]?{|#7:.|} ToString();
+        }
+    }
+}
+";
+            var fixedCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod(string[] values)
+        {
+            var value1 = values[^1].ToString();
+            var value2 = values[^1].ToString();
+            var value3 = values[1..^1].ToString();
+            var value4 = values[1..^1].ToString();
+            var value5 = values[^1]?.ToString();
+            var value6 = values[^1]?.ToString();
+            var value7 = values[1..^1]?.ToString();
+            var value8 = values[1..^1]?.ToString();
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DescriptorNotPreceded).WithArguments('.').WithLocation(0),
+                Diagnostic(DescriptorNotFollowed).WithArguments('.').WithLocation(1),
+                Diagnostic(DescriptorNotPreceded).WithArguments('.').WithLocation(2),
+                Diagnostic(DescriptorNotFollowed).WithArguments('.').WithLocation(3),
+                Diagnostic(DescriptorNotPreceded).WithArguments('?').WithLocation(4),
+                Diagnostic(DescriptorNotFollowed).WithArguments('.').WithLocation(5),
+                Diagnostic(DescriptorNotPreceded).WithArguments('?').WithLocation(6),
+                Diagnostic(DescriptorNotFollowed).WithArguments('.').WithLocation(7),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
