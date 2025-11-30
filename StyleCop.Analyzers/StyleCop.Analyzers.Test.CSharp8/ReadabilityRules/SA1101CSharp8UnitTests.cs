@@ -15,6 +15,25 @@ namespace StyleCop.Analyzers.Test.CSharp8.ReadabilityRules
     public partial class SA1101CSharp8UnitTests : SA1101CSharp7UnitTests
     {
         [Fact]
+        [WorkItem(3005, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3005")]
+        public async Task TestStaticLocalFunctionCallAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    public void Method()
+    {
+        static void LocalFunction()
+        {
+        }
+
+        LocalFunction();
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(3472, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3472")]
         public async Task TestPropertyPatternAsync()
         {

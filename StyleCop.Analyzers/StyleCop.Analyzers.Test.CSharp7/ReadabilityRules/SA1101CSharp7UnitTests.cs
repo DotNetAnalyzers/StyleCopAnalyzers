@@ -123,13 +123,64 @@ public class TestClass
 
     public int Foo()
     {
+        int Quux<T>() => {|#0:foobar|};
+        return Quux<int>();
+    }
+}
+";
+            var fixedCode = @"
+public class TestClass
+{
+    private int foobar = 1;
+
+    public int Foo()
+    {
         int Quux<T>() => this.foobar;
         return Quux<int>();
     }
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3005, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3005")]
+        public async Task TestLocalFunctionRequiresThisAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    private int field;
+
+    public int Method()
+    {
+        int Local() => {|#0:field|};
+        return Local();
+    }
+}";
+
+            var fixedCode = @"public class TestClass
+{
+    private int field;
+
+    public int Method()
+    {
+        int Local() => this.field;
+        return Local();
+    }
+}";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
