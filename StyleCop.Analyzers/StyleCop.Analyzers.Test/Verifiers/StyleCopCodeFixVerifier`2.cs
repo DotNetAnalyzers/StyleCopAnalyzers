@@ -110,7 +110,9 @@ namespace StyleCop.Analyzers.Test.Verifiers
             {
                 // If we have outdated defaults from the host unit test application targeting an older .NET Framework,
                 // use more reasonable TLS protocol version for outgoing connections.
+#pragma warning disable CS0618 // Type or member is obsolete
                 if (ServicePointManager.SecurityProtocol == (SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls))
+#pragma warning restore CS0618 // Type or member is obsolete
                 {
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                 }
