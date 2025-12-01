@@ -20,6 +20,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         [InlineData("if (true)")]
         [InlineData("if (true) { } else")]
         [InlineData("for (int i = 0; i < 10; i++)")]
+        [InlineData("foreach (int i in new int[] { 0 })")]
         [InlineData("while (true)")]
         public async Task TestEmptyStatementAsBlockAsync(string controlFlowConstruct)
         {

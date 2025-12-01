@@ -94,5 +94,39 @@ public class Foo
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3007, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3007")]
+        public async Task TestAwaitForEachEmptyStatementAsync()
+        {
+            var testCode = @"
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+public class TestClass
+{
+    public async Task TestAsync(IAsyncEnumerable<int> values)
+    {
+        await foreach (var value in values){|#0:;|}
+    }
+}
+";
+            var fixedCode = @"
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+public class TestClass
+{
+    public async Task TestAsync(IAsyncEnumerable<int> values)
+    {
+        await foreach (var value in values)
+        {
+        }
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

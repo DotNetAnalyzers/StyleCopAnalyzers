@@ -77,6 +77,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             case SyntaxKind.IfStatement:
             case SyntaxKind.ElseClause:
             case SyntaxKind.ForStatement:
+            case SyntaxKind.ForEachStatement:
             case SyntaxKind.WhileStatement:
             case SyntaxKind.DoStatement:
                 // these cases are always replaced with an empty block
