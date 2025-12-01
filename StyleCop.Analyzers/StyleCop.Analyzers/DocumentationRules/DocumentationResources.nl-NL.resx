@@ -174,4 +174,16 @@
   <data name="TypeTextStruct" xml:space="preserve">
     <value>struct</value>
   </data>
+  <data name="StartingTextGetsOrInitializes" xml:space="preserve">
+    <value>Leest of initialiseert</value>
+  </data>
+  <data name="StartingTextGetsOrInitializesWhether" xml:space="preserve">
+    <value>Leest of initialiseert een waarde welke aangeeft</value>
+  </data>
+  <data name="StartingTextInitializes" xml:space="preserve">
+    <value>Initialiseert</value>
+  </data>
+  <data name="StartingTextInitializesWhether" xml:space="preserve">
+    <value>Initialiseert een waarde welke aangeeft</value>
+  </data>
 </root>

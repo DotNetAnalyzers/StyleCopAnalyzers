@@ -65,5 +65,60 @@ public class Foo
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3966, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3966")]
+        public async Task TestBlankLineAfterInitAccessorAsync()
+        {
+            var testCode = @"using System;
+
+public class Foo
+{
+    public int X
+    {
+        get
+        {
+            return 0;
+        }
+
+        init
+        {
+        }
+    }{|#0:
+|}    public void Bar()
+    {
+    }
+}
+";
+
+            var fixedCode = @"using System;
+
+public class Foo
+{
+    public int X
+    {
+        get
+        {
+            return 0;
+        }
+
+        init
+        {
+        }
+    }
+
+    public void Bar()
+    {
+    }
+}
+";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                ExpectedDiagnostics = { Diagnostic().WithLocation(0) },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
