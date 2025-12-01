@@ -20,6 +20,10 @@ Param (
     [string]$InstallLocality='user'
 )
 
+# Compatibility: define platform helper variables if not available (Windows PowerShell 5)
+if (-not (Get-Variable -Name IsMacOS -Scope Global -ErrorAction SilentlyContinue)) { $script:IsMacOS = $false }
+if (-not (Get-Variable -Name IsLinux -Scope Global -ErrorAction SilentlyContinue)) { $script:IsLinux = $false }
+
 $DotNetInstallScriptRoot = "$PSScriptRoot/../obj/tools"
 if (!(Test-Path $DotNetInstallScriptRoot)) { New-Item -ItemType Directory -Path $DotNetInstallScriptRoot | Out-Null }
 $DotNetInstallScriptRoot = Resolve-Path $DotNetInstallScriptRoot
@@ -31,14 +35,27 @@ $sdkVersion = $globalJson.sdk.version
 # Search for all .NET Core runtime versions referenced from MSBuild projects and arrange to install them.
 $runtimeVersions = @()
 Get-ChildItem "$PSScriptRoot\..\*.*proj" -Recurse |% {
-    $projXml = [xml](Get-Content -Path $_)
-    $targetFrameworks = $projXml.Project.PropertyGroup.TargetFramework
-    if (!$targetFrameworks) {
-        $targetFrameworks = $projXml.Project.PropertyGroup.TargetFrameworks
-        if ($targetFrameworks) {
-            $targetFrameworks = $targetFrameworks -Split ';'
-        }
+    try {
+        $projXml = [xml](Get-Content -Path $_)
+    } catch {
+        return
     }
+
+    if (-not $projXml.Project) {
+        return
+    }
+
+    $tfNodes = $projXml.SelectNodes('//Project/PropertyGroup/TargetFramework')
+    $tfmsNodes = $projXml.SelectNodes('//Project/PropertyGroup/TargetFrameworks')
+
+    $targetFrameworks = @()
+    if ($tfNodes) {
+        $targetFrameworks += ($tfNodes | ForEach-Object { $_.InnerText })
+    }
+    if ($tfmsNodes) {
+        $targetFrameworks += ($tfmsNodes | ForEach-Object { $_.InnerText -split ';' })
+    }
+
     $targetFrameworks |? { $_ -match 'netcoreapp(\d+\.\d+)' } |% {
         $runtimeVersions += $Matches[1]
     }

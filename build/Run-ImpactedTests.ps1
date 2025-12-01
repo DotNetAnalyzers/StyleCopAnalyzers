@@ -30,7 +30,8 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-$repoRoot = Split-Path -Parent (Join-Path $PSScriptRoot '..')
+# Resolve repository root (parent of /build)
+$repoRoot = Split-Path -Parent $PSScriptRoot
 $planPath = Join-Path $repoRoot 'artifacts\test-plan.json'
 $resultsRoot = Join-Path $repoRoot 'artifacts\test-results'
 
@@ -39,8 +40,12 @@ function Write-DebugInfo($message) { if ($VerboseLogging) { Write-Host "[local-t
 
 Push-Location $repoRoot
 try {
-    Write-Info "Restoring tools (init.ps1)"
-    & "$repoRoot\init.ps1"
+    if (-not $NoBuild) {
+        Write-Info "Restoring tools (init.ps1)"
+        & "$repoRoot\init.ps1"
+    } else {
+        Write-Info "Skipping init.ps1 because -NoBuild was specified"
+    }
 
     if (-not $NoBuild) {
         Write-Info "Building solution (Configuration=$Configuration)"
