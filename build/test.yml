@@ -139,7 +139,6 @@ jobs:
 
             Set-Content -Path $responseFile -Value $responseLines -Encoding UTF8
             $targetArgsArray = @("@`"$responseFile`"")
-            $runCoverage = 'false'
         }
 
         Write-Host "Test selection: $selectionReason"
@@ -180,7 +179,7 @@ jobs:
   - ${{ if eq(parameters.BuildConfiguration, 'Debug') }}:
     - task: PublishPipelineArtifact@1
       displayName: Publish code coverage
-      condition: and(succeeded(), eq(variables['RunCoverage'], 'true'))
+      condition: succeeded()
       inputs:
         targetPath: $(Build.SourcesDirectory)/build/OpenCover.Reports
         artifact: coverageResults-cs${{ parameters.LangVersion }}

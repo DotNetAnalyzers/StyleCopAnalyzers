@@ -227,7 +227,7 @@ stages:
 
 - stage: Publish_Code_Coverage_${{ parameters.BuildConfiguration }}
   displayName: Publish Code Coverage
-  condition: and(eq('${{ parameters.BuildConfiguration }}', 'Debug'), eq(stageDependencies.Build_${{ parameters.BuildConfiguration }}.PlanTests.outputs['setPlanOutputs.AllTestsFull'], 'true'))
+  condition: eq('${{ parameters.BuildConfiguration }}', 'Debug')
   dependsOn:
   - Test_CSharp_6_${{ parameters.BuildConfiguration }}
   - Test_CSharp_7_${{ parameters.BuildConfiguration }}
