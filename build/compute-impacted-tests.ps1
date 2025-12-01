@@ -153,13 +153,25 @@ function Get-TestMap([string]$testsRoot, [int[]]$languageVersions) {
 
 function Try-GetChangedFiles([string]$targetRef) {
     if (-not $targetRef) {
+        Write-Info "Target branch not provided; unable to compute diff."
         return @()
     }
 
     $shortTarget = $targetRef -replace '^refs/heads/', ''
-    git fetch origin $shortTarget --quiet | Out-Null
 
-    return @(git diff --name-only "origin/$shortTarget...HEAD")
+    try {
+        git fetch origin $shortTarget --quiet 2>$null | Out-Null
+    } catch {
+        Write-Info "Git fetch failed for origin/${shortTarget}: $_"
+        return @()
+    }
+
+    try {
+        return @(git diff --name-only "origin/${shortTarget}...HEAD" 2>$null)
+    } catch {
+        Write-Info "Git diff failed for origin/${shortTarget}: $_"
+        return @()
+    }
 }
 
 function Build-Plan {
@@ -193,7 +205,8 @@ function Build-Plan {
     if (-not $isPullRequest) {
         Write-Info "Build reason is '$($env:BUILD_REASON)'; default to full test matrix."
         foreach ($v in $allVersions) {
-            $plan.plans[$v] = @{
+            $key = "$v"
+            $plan.plans[$key] = @{
                 fullRun = $true
                 classes = @()
                 reason  = 'Non-PR build'
@@ -203,8 +216,9 @@ function Build-Plan {
         return $plan
     }
 
-    $changedFiles = Try-GetChangedFiles $targetBranch
-    if (-not $changedFiles -or $changedFiles.Count -eq 0) {
+    $changedFiles = @(Try-GetChangedFiles $targetBranch)
+    $changedFilesCount = ($changedFiles | Measure-Object).Count
+    if ($changedFilesCount -eq 0) {
         Write-Info "No changed files detected (target branch: $targetBranch); default to full test matrix."
         foreach ($v in $allVersions) {
             $plan.plans[$v] = @{
@@ -218,7 +232,7 @@ function Build-Plan {
     }
 
     $plan.changedFiles = $changedFiles
-    Write-Info ("Changed files ({0})" -f $changedFiles.Count)
+    Write-Info ("Changed files ({0})" -f $changedFilesCount)
 
     $dependencyChange = $false
     $dependencyMarkers = @(
@@ -335,6 +349,7 @@ function Build-Plan {
     }
 
     foreach ($v in $allVersions) {
+        $key = "$v"
         $entry = @{
             fullRun = $true
             classes = @()
@@ -367,7 +382,7 @@ function Build-Plan {
             $entry.reason = if ($impacted.Count -eq 0) { 'No impacted tests' } else { 'Selected impacted test classes' }
         }
 
-        $plan.plans[$v] = $entry
+        $plan.plans[$key] = $entry
     }
 
     return $plan
@@ -376,7 +391,7 @@ function Build-Plan {
 try {
     $plan = Build-Plan
 
-    $allFull = ($plan.plans.GetEnumerator() | Where-Object { -not $_.Value.fullRun }).Count -eq 0
+    $allFull = (($plan.plans.GetEnumerator() | Where-Object { -not $_.Value.fullRun }) | Measure-Object).Count -eq 0
     $json = $plan | ConvertTo-Json -Depth 6
 
     $outFile = Normalize-Path $OutputPath
@@ -406,7 +421,8 @@ catch {
     }
 
     foreach ($v in $fallbackVersions) {
-        $fallback.plans[$v] = @{
+        $key = "$v"
+        $fallback.plans[$key] = @{
             fullRun = $true
             classes = @()
             reason  = 'Planner failure fallback'
