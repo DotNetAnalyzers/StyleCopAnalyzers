@@ -53,5 +53,47 @@ public record MyQuery3() : BaseQuery<object>;";
                 FixedCode = fixedCode,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3965, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3965")]
+        public async Task TestRecordBaseArgumentsWithMultilineSpacingAsync()
+        {
+            const string testCode = @"
+public abstract record BaseRecord(string Text);
+
+public record Derived1(string Text)
+    : BaseRecord(
+        Text {|#0:)|}
+{
+}
+
+public record Derived2(string Text)
+    : BaseRecord(
+        Text {|#1:)|} ;
+";
+
+            const string fixedCode = @"
+public abstract record BaseRecord(string Text);
+
+public record Derived1(string Text)
+    : BaseRecord(
+        Text)
+{
+}
+
+public record Derived2(string Text)
+    : BaseRecord(
+        Text);
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DescriptorNotPreceded).WithLocation(0),
+                Diagnostic(DescriptorNotPreceded).WithLocation(1),
+                Diagnostic(DescriptorNotFollowed).WithLocation(1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
