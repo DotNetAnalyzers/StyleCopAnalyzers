@@ -12,6 +12,10 @@
   displayName: Platform
   type: string
   default: Any CPU
+- name: LatestLangVersion
+  displayName: Latest C# test project version
+  type: string
+  default: '13'
 
 stages:
 - stage: Build_${{ parameters.BuildConfiguration }}
@@ -43,18 +47,6 @@ stages:
         configuration: '${{ parameters.BuildConfiguration }}'
         maximumCpuCount: false # AnnotatorBuildTask doesn't support parallel builds yet
         msbuildArgs: '/v:minimal /bl:$(Build.SourcesDirectory)/msbuild.binlog'
-
-#    - task: PowerShell@2
-#      displayName: Upload coverage reports to codecov.io
-#      condition: eq(variables['BuildConfiguration'], 'Debug')
-#      inputs:
-#        workingDirectory: '$(Build.SourcesDirectory)/build'
-#        targetType: inline
-#        script: |
-#          $packageConfig = [xml](Get-Content ..\.nuget\packages.config)
-#          $codecov_version = $packageConfig.SelectSingleNode('/packages/package[@id="Codecov"]').version
-#          $codecov = "..\packages\Codecov.$codecov_version\tools\codecov.exe"
-#          &$codecov -f '..\build\OpenCover.Reports\OpenCover.StyleCopAnalyzers.xml' --required
 
     - task: PublishPipelineArtifact@1
       displayName: Publish build logs
@@ -117,6 +109,24 @@ stages:
         targetPath: $(Build.SourcesDirectory)/StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp13/bin
         artifact: buildTest-cs13-${{ parameters.BuildConfiguration }}
 
+  - job: PlanTests
+    displayName: Plan impacted tests
+    steps:
+    - checkout: self
+      fetchDepth: 0
+    - task: PowerShell@2
+      name: setPlanOutputs
+      displayName: Compute impacted tests
+      inputs:
+        targetType: filePath
+        filePath: '$(Build.SourcesDirectory)/build/compute-impacted-tests.ps1'
+        arguments: "-OutputPath $(Pipeline.Workspace)/test-plan/test-plan.json -LatestLangVersion ${{ parameters.LatestLangVersion }}"
+    - task: PublishPipelineArtifact@1
+      displayName: Publish test plan
+      inputs:
+        targetPath: $(Pipeline.Workspace)/test-plan
+        artifact: test-plan-${{ parameters.BuildConfiguration }}
+
 - stage: Test_CSharp_6_${{ parameters.BuildConfiguration }}
   displayName: Test C# 6 ${{ parameters.BuildConfiguration }}
   dependsOn: [ 'Build_${{ parameters.BuildConfiguration }}' ]
@@ -128,6 +138,7 @@ stages:
       BuildPlatform: ${{ parameters.BuildPlatform }}
       LangVersion: '6'
       FrameworkVersion: 'net452'
+      ForceFull: true
 
 - stage: Test_CSharp_7_${{ parameters.BuildConfiguration }}
   displayName: Test C# 7 ${{ parameters.BuildConfiguration }}
@@ -212,10 +223,11 @@ stages:
       BuildPlatform: ${{ parameters.BuildPlatform }}
       LangVersion: '13'
       FrameworkVersion: 'net472'
+      ForceFull: ${{ eq(parameters.LatestLangVersion, '13') }}
 
 - stage: Publish_Code_Coverage_${{ parameters.BuildConfiguration }}
   displayName: Publish Code Coverage
-  condition: eq('${{ parameters.BuildConfiguration }}', 'Debug')
+  condition: and(eq('${{ parameters.BuildConfiguration }}', 'Debug'), eq(stageDependencies.Build_${{ parameters.BuildConfiguration }}.PlanTests.outputs['setPlanOutputs.AllTestsFull'], 'true'))
   dependsOn:
   - Test_CSharp_6_${{ parameters.BuildConfiguration }}
   - Test_CSharp_7_${{ parameters.BuildConfiguration }}
@@ -225,6 +237,7 @@ stages:
   - Test_CSharp_11_${{ parameters.BuildConfiguration }}
   - Test_CSharp_12_${{ parameters.BuildConfiguration }}
   - Test_CSharp_13_${{ parameters.BuildConfiguration }}
+  - Build_${{ parameters.BuildConfiguration }}
   jobs:
   - job: WrapUp
     steps:
