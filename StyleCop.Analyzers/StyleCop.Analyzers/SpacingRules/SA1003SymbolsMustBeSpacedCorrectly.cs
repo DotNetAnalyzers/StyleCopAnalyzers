@@ -140,6 +140,7 @@ namespace StyleCop.Analyzers.SpacingRules
         private static readonly Action<SyntaxNodeAnalysisContext> LambdaExpressionAction = HandleLambdaExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> ArrowExpressionClauseAction = HandleArrowExpressionClause;
         private static readonly Action<SyntaxNodeAnalysisContext> RangeExpressionAction = HandleRangeExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> SwitchExpressionArmAction = HandleSwitchExpressionArm;
 
         /// <summary>
         /// Gets the descriptor for prefix unary expression that may not be followed by a comment.
@@ -217,6 +218,7 @@ namespace StyleCop.Analyzers.SpacingRules
             context.RegisterSyntaxNodeAction(LambdaExpressionAction, SyntaxKinds.LambdaExpression);
             context.RegisterSyntaxNodeAction(ArrowExpressionClauseAction, SyntaxKind.ArrowExpressionClause);
             context.RegisterSyntaxNodeAction(RangeExpressionAction, SyntaxKindEx.RangeExpression);
+            context.RegisterSyntaxNodeAction(SwitchExpressionArmAction, SyntaxKindEx.SwitchExpressionArm);
         }
 
         private static void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
@@ -427,6 +429,12 @@ namespace StyleCop.Analyzers.SpacingRules
         {
             ArrowExpressionClauseSyntax arrowExpressionClause = (ArrowExpressionClauseSyntax)context.Node;
             CheckToken(context, arrowExpressionClause.ArrowToken, true, true, true);
+        }
+
+        private static void HandleSwitchExpressionArm(SyntaxNodeAnalysisContext context)
+        {
+            var switchExpressionArm = (SwitchExpressionArmSyntaxWrapper)context.Node;
+            CheckToken(context, switchExpressionArm.EqualsGreaterThanToken, true, true, true);
         }
 
         private static void CheckToken(SyntaxNodeAnalysisContext context, SyntaxToken token, bool withLeadingWhitespace, bool allowAtEndOfLine, bool withTrailingWhitespace, string tokenText = null)
