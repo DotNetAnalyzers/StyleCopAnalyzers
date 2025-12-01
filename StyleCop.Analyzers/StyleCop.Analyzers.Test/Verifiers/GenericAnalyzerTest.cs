@@ -5,24 +5,41 @@ namespace StyleCop.Analyzers.Test.Verifiers
 {
     using System;
     using System.Collections.Immutable;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Host.Mef;
+    using Microsoft.CodeAnalysis.CSharp.Testing;
     using Microsoft.CodeAnalysis.Testing;
-    using Microsoft.VisualStudio.Composition;
     using StyleCop.Analyzers.Lightup;
 
     internal static class GenericAnalyzerTest
     {
-        internal static readonly ReferenceAssemblies ReferenceAssemblies;
+        private static readonly Lazy<ReferenceAssemblies> LazyReferenceAssemblies;
 
-        private static readonly Lazy<IExportProviderFactory> ExportProviderFactory;
+        private static readonly AnalyzerTest<DefaultVerifier> WorkspaceHelper =
+            new CSharpCodeFixTest<EmptyDiagnosticAnalyzer, EmptyCodeFixProvider, DefaultVerifier>();
 
         static GenericAnalyzerTest()
         {
+            LazyReferenceAssemblies = new Lazy<ReferenceAssemblies>(CreateDefaultReferenceAssemblies);
+        }
+
+        internal static ReferenceAssemblies ReferenceAssemblies
+        {
+            get
+            {
+                return LazyReferenceAssemblies.Value;
+            }
+        }
+
+        internal static async Task<Workspace> CreateWorkspaceAsync()
+        {
+            return await WorkspaceHelper.CreateWorkspaceAsync().ConfigureAwait(false);
+        }
+
+        private static ReferenceAssemblies CreateDefaultReferenceAssemblies()
+        {
             string codeAnalysisTestVersion =
-                typeof(Compilation).Assembly.GetName().Version.Major switch
+                typeof(Compilation).Assembly.GetName().Version!.Major switch
                 {
                     1 => "1.2.1",
                     2 => "2.8.2",
@@ -54,34 +71,18 @@ namespace StyleCop.Analyzers.Test.Verifiers
             {
                 defaultReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp30;
             }
+            else if (LightupHelpers.SupportsCSharp7)
+            {
+                defaultReferenceAssemblies = ReferenceAssemblies.NetFramework.Net46.Default;
+            }
             else
             {
-                defaultReferenceAssemblies = ReferenceAssemblies.Default;
+                defaultReferenceAssemblies = ReferenceAssemblies.NetFramework.Net452.Default;
             }
 
-            ReferenceAssemblies = defaultReferenceAssemblies.AddPackages(ImmutableArray.Create(
+            return defaultReferenceAssemblies.AddPackages(ImmutableArray.Create(
                 new PackageIdentity("Microsoft.CodeAnalysis.CSharp", codeAnalysisTestVersion),
                 new PackageIdentity("System.ValueTuple", "4.5.0")));
-
-            ExportProviderFactory = new Lazy<IExportProviderFactory>(
-                () =>
-                {
-                    var discovery = new AttributedPartDiscovery(Resolver.DefaultInstance, isNonPublicSupported: true);
-                    var parts = Task.Run(() => discovery.CreatePartsAsync(MefHostServices.DefaultAssemblies)).GetAwaiter().GetResult();
-                    var catalog = ComposableCatalog.Create(Resolver.DefaultInstance).AddParts(parts);
-
-                    var configuration = CompositionConfiguration.Create(catalog);
-                    var runtimeComposition = RuntimeComposition.CreateRuntimeComposition(configuration);
-                    return runtimeComposition.CreateExportProviderFactory();
-                },
-                LazyThreadSafetyMode.ExecutionAndPublication);
-        }
-
-        internal static AdhocWorkspace CreateWorkspace()
-        {
-            var exportProvider = ExportProviderFactory.Value.CreateExportProvider();
-            var host = MefV1HostServices.Create(exportProvider.AsExportProvider());
-            return new AdhocWorkspace(host);
         }
     }
 }

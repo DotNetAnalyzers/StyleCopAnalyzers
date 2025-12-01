@@ -52,7 +52,7 @@ namespace TestNamespace
 }
 ";
 
-            var workspace = GenericAnalyzerTest.CreateWorkspace();
+            var workspace = await GenericAnalyzerTest.CreateWorkspaceAsync().ConfigureAwait(false);
             var projectId = ProjectId.CreateNewId();
 
             var references = await GenericAnalyzerTest.ReferenceAssemblies

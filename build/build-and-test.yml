@@ -24,9 +24,9 @@ stages:
       displayName: Install .NET Core SDK
 
     - task: NuGetToolInstaller@0
-      displayName: 'Use NuGet 5.3.1'
+      displayName: 'Use NuGet 6.0.6'
       inputs:
-        versionSpec: 5.3.1
+        versionSpec: 6.0.6
 
     - task: NuGetCommand@2
       displayName: 'NuGet restore'
