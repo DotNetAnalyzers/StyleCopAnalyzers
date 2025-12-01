@@ -176,20 +176,57 @@ function Try-GetChangedFiles([string]$targetRef) {
     }
 
     $shortTarget = $targetRef -replace '^refs/heads/', ''
+    $candidates = New-Object System.Collections.Generic.List[hashtable]
+    $candidates.Add(@{ Fetch = 'origin'; Ref = $shortTarget; DiffRef = "origin/$shortTarget" })
 
-    try {
-        git fetch origin $shortTarget --quiet 2>$null | Out-Null
-    } catch {
-        Write-Info "Git fetch failed for origin/${shortTarget}: $_"
-        return @()
+    if ($targetRef -notmatch '^origin/' -and $shortTarget -ne $targetRef) {
+        $candidates.Add(@{ Fetch = 'origin'; Ref = $targetRef; DiffRef = "origin/$targetRef" })
     }
 
+    $remotes = @()
     try {
-        return @(git diff --name-only "origin/${shortTarget}...HEAD" 2>$null)
+        $remotes = @(git remote)
     } catch {
-        Write-Info "Git diff failed for origin/${shortTarget}: $_"
-        return @()
+        $remotes = @()
     }
+
+    $parts = $targetRef.Split('/', 2)
+    if ($parts.Length -eq 2 -and $remotes -contains $parts[0]) {
+        $candidates.Add(@{ Fetch = $parts[0]; Ref = $parts[1]; DiffRef = "$($parts[0])/$($parts[1])" })
+    }
+
+    $candidates.Add(@{ Fetch = $null; Ref = $null; DiffRef = $targetRef })
+
+    $failureMessages = New-Object System.Collections.Generic.List[string]
+
+    foreach ($candidate in $candidates) {
+        $diffRef = $candidate.DiffRef
+
+        if ($candidate.Fetch) {
+            try {
+                git fetch $candidate.Fetch $candidate.Ref --quiet 2>$null | Out-Null
+            } catch {
+                $failureMessages.Add("Git fetch failed for $($candidate.Fetch)/$($candidate.Ref): $_")
+                continue
+            }
+        }
+
+        try {
+            $changes = @(git diff --name-only "$diffRef...HEAD" 2>$null)
+            Write-Info "Using diff base $diffRef"
+            return $changes
+        } catch {
+            $failureMessages.Add(("Git diff failed for {0}: {1}" -f $diffRef, $_))
+            continue
+        }
+    }
+
+    foreach ($msg in $failureMessages) {
+        Write-Info $msg
+    }
+
+    Write-Info "Unable to compute diff for $targetRef; defaulting to full run."
+    return @()
 }
 
 function Build-Plan {
