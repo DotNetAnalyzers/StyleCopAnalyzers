@@ -13,6 +13,23 @@ You can also help by filing issues, participating in discussions and doing code 
 * The version of the [.NET Core SDK](https://dotnet.microsoft.com/download/dotnet-core) as specified in the global.json file at the root of this repo.
   Use the init script at the root of the repo to conveniently acquire and install the right version.
 
+## Running tests locally
+
+To run only the tests impacted by changes in your local branch, use the helper script:
+
+```powershell
+pwsh -File build/Run-ImpactedTests.ps1 -TargetBranch upstream/master -Configuration Debug
+```
+
+What it does:
+
+* Builds the solution (skip with `-NoBuild` if you already built).
+* Computes impacted test classes by diffing your branch against the specified target branch (default `upstream/master`).
+* Always runs full suites for the C# 6 and latest test projects; runs class-filtered suites for other language versions when possible.
+* Outputs xUnit results under `artifacts/test-results`.
+
+You can limit languages with `-LangVersions 6,7,13`, or enable verbose logging with `-VerboseLogging`. The planner logic lives in `build/compute-impacted-tests.ps1` if you need to inspect or tweak its behavior.
+
 ## Implementing a diagnostic
 
 1. To start working on a diagnostic, add a comment to the issue indicating you are working on implementing it.

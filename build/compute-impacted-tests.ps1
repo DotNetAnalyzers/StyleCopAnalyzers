@@ -1,8 +1,26 @@
-# Requires: PowerShell 5+
+﻿# Requires: PowerShell 5+
+# .SYNOPSIS
+#   Computes an impacted-test plan from git diff and writes test-plan.json for the pipeline.
+# .DESCRIPTION
+#   Identifies changed analyzers/code fixes/tests/dependencies relative to a target branch, selects
+#   full vs filtered test execution per language version, and emits an Azure Pipelines variable
+#   `AllTestsFull` indicating whether every language should run a full suite.
+# .PARAMETER OutputPath
+#   Path to write the generated JSON plan (default: artifacts\test-plan.json).
+# .PARAMETER LatestLangVersion
+#   Highest C# test project version; newest test project is always run in full.
+# .PARAMETER TargetBranch
+#   Branch or ref to diff against (e.g., upstream/master). Required when using -AssumePullRequest.
+# .PARAMETER AssumePullRequest
+#   Forces PR-mode selection when running locally (otherwise uses BUILD_REASON).
+# .PARAMETER VerboseLogging
+#   Emit additional diagnostic output while computing the plan.
 [CmdletBinding()]
 param(
     [string]$OutputPath = "$PSScriptRoot\..\artifacts\test-plan.json",
     [string]$LatestLangVersion,
+    [string]$TargetBranch,
+    [switch]$AssumePullRequest,
     [switch]$VerboseLogging
 )
 
@@ -178,8 +196,11 @@ function Build-Plan {
     $repoRoot = Normalize-Path (Join-Path $PSScriptRoot '..')
     $testsRoot = Join-Path $repoRoot 'StyleCop.Analyzers'
 
-    $isPullRequest = ($env:BUILD_REASON -eq 'PullRequest')
-    $targetBranch = $env:SYSTEM_PULLREQUEST_TARGETBRANCH
+    $isPullRequest = ($env:BUILD_REASON -eq 'PullRequest') -or $AssumePullRequest.IsPresent
+    $targetBranch = if ($TargetBranch) { $TargetBranch } else { $env:SYSTEM_PULLREQUEST_TARGETBRANCH }
+    if (-not $targetBranch -and $AssumePullRequest) {
+        $targetBranch = 'upstream/master'
+    }
 
     $testProjects = Get-ChildItem -Path $testsRoot -Directory -Filter 'StyleCop.Analyzers.Test.CSharp*'
     $versionNumbers = @($testProjects | ForEach-Object {

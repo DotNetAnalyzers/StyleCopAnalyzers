@@ -1,0 +1,158 @@
+﻿# Runs only impacted test classes locally based on git diff with a target branch.
+# .SYNOPSIS
+#   Runs locally impacted StyleCop analyzer tests based on git diff against a target branch.
+# .DESCRIPTION
+#   Builds (optional) and executes xUnit tests using the impacted-test planner. Always runs full
+#   suites for C# 6 and the latest test project; other language versions run class-filtered tests
+#   when possible. Writes xUnit XML results to artifacts\test-results.
+# .PARAMETER Configuration
+#   Build configuration to use (Debug/Release). Defaults to Debug.
+# .PARAMETER TargetBranch
+#   Branch or ref to diff against when computing impacted tests (default: upstream/master).
+# .PARAMETER LatestLangVersion
+#   Highest C# test project version; treated as "latest" for always-full runs. Default: 13.
+# .PARAMETER LangVersions
+#   Optional list of C# language versions to run (e.g., 6,7,13). Defaults to all known versions in plan.
+# .PARAMETER NoBuild
+#   Skip building the solution before running tests.
+# .PARAMETER VerboseLogging
+#   Emit additional diagnostic output from the planner and runner.
+[CmdletBinding()]
+param(
+    [string]$Configuration = 'Debug',
+    [string]$TargetBranch = 'upstream/master',
+    [string]$LatestLangVersion = '13',
+    [string[]]$LangVersions,
+    [switch]$NoBuild,
+    [switch]$VerboseLogging
+)
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+
+$repoRoot = Split-Path -Parent (Join-Path $PSScriptRoot '..')
+$planPath = Join-Path $repoRoot 'artifacts\test-plan.json'
+$resultsRoot = Join-Path $repoRoot 'artifacts\test-results'
+
+function Write-Info($message) { Write-Host "[local-tests] $message" }
+function Write-DebugInfo($message) { if ($VerboseLogging) { Write-Host "[local-tests:debug] $message" } }
+
+Push-Location $repoRoot
+try {
+    Write-Info "Restoring tools (init.ps1)"
+    & "$repoRoot\init.ps1"
+
+    if (-not $NoBuild) {
+        Write-Info "Building solution (Configuration=$Configuration)"
+        & dotnet build "$repoRoot\StyleCopAnalyzers.sln" -c $Configuration
+    } else {
+        Write-Info "Skipping build because -NoBuild was specified"
+    }
+
+    Write-Info "Computing impacted tests relative to $TargetBranch"
+    & "$PSScriptRoot\compute-impacted-tests.ps1" `
+        -OutputPath $planPath `
+        -LatestLangVersion $LatestLangVersion `
+        -TargetBranch $TargetBranch `
+        -AssumePullRequest `
+        -VerboseLogging:$VerboseLogging
+
+    if (-not (Test-Path $planPath)) {
+        throw "Test plan not found at $planPath"
+    }
+
+    $plan = Get-Content -Path $planPath -Raw | ConvertFrom-Json
+
+    $planLangs = @($plan.plans.PSObject.Properties.Name)
+    if (-not $LangVersions -or $LangVersions.Count -eq 0) {
+        $LangVersions = $planLangs | Sort-Object {[int]$_}
+    }
+
+    Write-Info ("Target languages: {0}" -f ($LangVersions -join ', '))
+
+    $packageConfig = [xml](Get-Content "$repoRoot\.nuget\packages.config")
+    $xunitrunner_version = $packageConfig.SelectSingleNode('/packages/package[@id="xunit.runner.console"]').version
+
+    $frameworkMap = @{
+        '6'  = 'net452'
+        '7'  = 'net46'
+        '8'  = 'net472'
+        '9'  = 'net472'
+        '10' = 'net472'
+        '11' = 'net472'
+        '12' = 'net472'
+        '13' = 'net472'
+    }
+
+    New-Item -ItemType Directory -Force -Path $resultsRoot | Out-Null
+
+    $failures = 0
+
+    foreach ($lang in $LangVersions) {
+        if (-not $plan.plans.$lang) {
+            Write-Info "No plan entry for C# $lang. Skipping."
+            continue
+        }
+
+        $entry = $plan.plans.$lang
+        $fullRun = [bool]$entry.fullRun
+        $classes = @($entry.classes)
+        $reason = $entry.reason
+        $frameworkVersion = $frameworkMap[$lang]
+
+        if (-not $frameworkVersion) {
+            Write-Info "Unknown framework mapping for C# $lang. Skipping."
+            continue
+        }
+
+        $projectName = if ($lang -eq '6') { 'StyleCop.Analyzers.Test' } else { "StyleCop.Analyzers.Test.CSharp$lang" }
+        $dllPath = Join-Path $repoRoot "StyleCop.Analyzers\$projectName\bin\$Configuration\$frameworkVersion\$projectName.dll"
+
+        if (-not (Test-Path $dllPath)) {
+            Write-Info "Test assembly not found for C# $lang at $dllPath. Re-run without -NoBuild."
+            $failures++
+            continue
+        }
+
+        $runner = Join-Path $repoRoot "packages\xunit.runner.console.$xunitrunner_version\tools\$frameworkVersion\xunit.console.x86.exe"
+        if (-not (Test-Path $runner)) {
+            Write-Info "xUnit runner not found at $runner. Ensure packages are restored."
+            $failures++
+            continue
+        }
+
+        $xmlPath = Join-Path $resultsRoot "StyleCopAnalyzers.CSharp$lang.xunit.xml"
+        $args = @($dllPath, '-noshadow', '-xml', $xmlPath)
+
+        if (-not $fullRun) {
+            if ($classes.Count -eq 0) {
+                Write-Info "No impacted tests for C# $lang ($reason). Skipping."
+                continue
+            }
+
+            Write-Info ("Running {0} selected test classes for C# {1} ({2})" -f $classes.Count, $lang, $reason)
+            foreach ($c in $classes) {
+                $args += '-class'
+                $args += $c
+            }
+        } else {
+            Write-Info "Running full suite for C# $lang ($reason)"
+        }
+
+        Write-DebugInfo ("Runner: {0}" -f $runner)
+        Write-DebugInfo ("Args: {0}" -f ($args -join ' '))
+
+        & $runner @args
+        if ($LASTEXITCODE -ne 0) {
+            Write-Info "Tests failed for C# $lang (exit $LASTEXITCODE)"
+            $failures++
+        }
+    }
+
+    if ($failures -ne 0) {
+        throw "$failures test invocation(s) failed."
+    }
+}
+finally {
+    Pop-Location
+}
