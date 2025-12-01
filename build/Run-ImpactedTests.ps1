@@ -17,6 +17,8 @@
 #   Skip building the solution before running tests.
 # .PARAMETER VerboseLogging
 #   Emit additional diagnostic output from the planner and runner.
+# .PARAMETER DryRun
+#   Compute and report the impacted test plan without executing any tests.
 [CmdletBinding()]
 param(
     [string]$Configuration = 'Debug',
@@ -24,7 +26,8 @@ param(
     [string]$LatestLangVersion = '13',
     [string[]]$LangVersions,
     [switch]$NoBuild,
-    [switch]$VerboseLogging
+    [switch]$VerboseLogging,
+    [switch]$DryRun
 )
 
 Set-StrictMode -Version Latest
@@ -40,6 +43,10 @@ function Write-DebugInfo($message) { if ($VerboseLogging) { Write-Host "[local-t
 
 Push-Location $repoRoot
 try {
+    if ($DryRun) {
+        $NoBuild = $true
+    }
+
     if (-not $NoBuild) {
         Write-Info "Restoring tools (init.ps1)"
         & "$repoRoot\init.ps1"
@@ -74,6 +81,22 @@ try {
     }
 
     Write-Info ("Target languages: {0}" -f ($LangVersions -join ', '))
+
+    if ($DryRun) {
+        Write-Info "Dry run: computed plan only (no tests will be executed)."
+        Write-Info "Plan file: $planPath"
+        foreach ($lang in $LangVersions) {
+            if (-not $plan.plans.$lang) {
+                Write-Info ("C# {0}: no entry in plan." -f $lang)
+                continue
+            }
+
+            $entry = $plan.plans.$lang
+            $summary = if ($entry.fullRun) { 'full run' } else { "filtered ($($entry.classes.Count) classes)" }
+            Write-Info ("C# {0}: {1} ({2})" -f $lang, $summary, $entry.reason)
+        }
+        return
+    }
 
     $packageConfig = [xml](Get-Content "$repoRoot\.nuget\packages.config")
     $xunitrunner_version = $packageConfig.SelectSingleNode('/packages/package[@id="xunit.runner.console"]').version
