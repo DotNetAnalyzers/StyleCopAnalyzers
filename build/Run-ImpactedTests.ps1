@@ -8,7 +8,8 @@
 # .PARAMETER Configuration
 #   Build configuration to use (Debug/Release). Defaults to Debug.
 # .PARAMETER TargetBranch
-#   Branch or ref to diff against when computing impacted tests (default: upstream/master).
+#   Branch or ref to diff against when computing impacted tests. If omitted, attempts to locate a
+#   remote pointing at DotNetAnalyzers/StyleCopAnalyzers and uses its master branch.
 # .PARAMETER LatestLangVersion
 #   Highest C# test project version; treated as "latest" for always-full runs. Default: 13.
 # .PARAMETER LangVersions
@@ -22,7 +23,7 @@
 [CmdletBinding()]
 param(
     [string]$Configuration = 'Debug',
-    [string]$TargetBranch = 'upstream/master',
+    [string]$TargetBranch = '',
     [string]$LatestLangVersion = '13',
     [string[]]$LangVersions,
     [switch]$NoBuild,
@@ -61,11 +62,38 @@ try {
         Write-Info "Skipping build because -NoBuild was specified"
     }
 
-    Write-Info "Computing impacted tests relative to $TargetBranch"
+    $resolvedTargetBranch = $TargetBranch
+    if ([string]::IsNullOrWhiteSpace($resolvedTargetBranch)) {
+        $resolvedTargetBranch = 'origin/master'
+        try {
+            $remoteLines = @(git remote -v 2>$null)
+            $targetRemote = $remoteLines |
+                Where-Object { $_ -match '^(?<name>[^\s]+)\s+(?<url>\S+)' } |
+                ForEach-Object {
+                    $m = [regex]::Match($_, '^(?<name>[^\s]+)\s+(?<url>\S+)')
+                    if ($m.Success) {
+                        [pscustomobject]@{ Name = $m.Groups['name'].Value; Url = $m.Groups['url'].Value }
+                    }
+                } |
+                Where-Object { $_.Url -match 'github\.com[:/]+DotNetAnalyzers/StyleCopAnalyzers(\.git)?' } |
+                Select-Object -First 1
+
+            if ($targetRemote) {
+                $resolvedTargetBranch = "$($targetRemote.Name)/master"
+                Write-Info "Detected target branch '$resolvedTargetBranch' from remote '$($targetRemote.Url)'"
+            } else {
+                Write-Info "No matching remote found; defaulting target branch to '$resolvedTargetBranch'"
+            }
+        } catch {
+            Write-Info "Remote detection failed; defaulting target branch to '$resolvedTargetBranch'"
+        }
+    }
+
+    Write-Info "Computing impacted tests relative to $resolvedTargetBranch"
     & "$PSScriptRoot\compute-impacted-tests.ps1" `
         -OutputPath $planPath `
         -LatestLangVersion $LatestLangVersion `
-        -TargetBranch $TargetBranch `
+        -TargetBranch $resolvedTargetBranch `
         -AssumePullRequest `
         -VerboseLogging:$VerboseLogging
 
