@@ -154,6 +154,17 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var variableDeclaration = (VariableDeclarationSyntax)context.Node;
             CheckElements(context, variableDeclaration.Variables);
+
+            var collectionsExpressions = variableDeclaration.Variables
+                .Where(variable => IsCollectionExpression(variable))
+                .Select(filtered => filtered.Initializer.Value)
+                .ToList();
+
+            foreach (var expression in collectionsExpressions)
+            {
+                var childNodes = expression.ChildNodes().ToImmutableList();
+                CheckElements(context, childNodes);
+            }
         }
 
         private static void HandleTypeParameterList(SyntaxNodeAnalysisContext context)
@@ -538,6 +549,18 @@ namespace StyleCop.Analyzers.ReadabilityRules
             Location location = (indentation.Length == 0) ? token.GetLocation() : tokenLeadingTrivia.GetLocation();
             ImmutableDictionary<string, string> properties = ImmutableDictionary.Create<string, string>().SetItem(ExpectedIndentationKey, expectedIndentation);
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, location, properties));
+        }
+
+        private static bool IsCollectionExpression(VariableDeclaratorSyntax declarationSyntax)
+        {
+            if (declarationSyntax.Initializer?.Value == null)
+            {
+                return false;
+            }
+
+            // directly check for rawkind, to avoid double casting when using IsKind(SyntaxKind)
+            // ID is taken from https://source.dot.net/#Microsoft.CodeAnalysis.CSharp/Syntax/SyntaxKind.cs,925
+            return declarationSyntax.Initializer.Value.RawKind == 9076;
         }
     }
 }
