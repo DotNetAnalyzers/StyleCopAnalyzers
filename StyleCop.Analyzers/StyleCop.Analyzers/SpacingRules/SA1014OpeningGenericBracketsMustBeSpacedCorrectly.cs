@@ -11,6 +11,7 @@ namespace StyleCop.Analyzers.SpacingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// An opening generic bracket within a C# element is not spaced correctly.
@@ -75,6 +76,7 @@ namespace StyleCop.Analyzers.SpacingRules
             {
             case SyntaxKind.TypeArgumentList:
             case SyntaxKind.TypeParameterList:
+            case SyntaxKindEx.FunctionPointerParameterList:
                 break;
 
             default:
