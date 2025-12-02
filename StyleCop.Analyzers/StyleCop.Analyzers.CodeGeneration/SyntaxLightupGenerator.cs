@@ -89,12 +89,7 @@ namespace StyleCop.Analyzers.CodeGeneration
 
         private void Execute(in SourceProductionContext context, CompilationData compilationData, AdditionalText syntaxFile)
         {
-            var syntaxText = syntaxFile.GetText(context.CancellationToken);
-            if (syntaxText is null)
-            {
-                throw new InvalidOperationException("Failed to read Syntax.xml");
-            }
-
+            var syntaxText = syntaxFile.GetText(context.CancellationToken) ?? throw new InvalidOperationException("Failed to read Syntax.xml");
             var syntaxData = new SyntaxData(compilationData, XDocument.Parse(syntaxText.ToString()));
             this.GenerateSyntaxWrappers(in context, syntaxData);
             this.GenerateSyntaxWrapperHelper(in context, syntaxData.Nodes);

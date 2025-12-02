@@ -130,12 +130,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             XElement completeDocumentation = null;
-            var relevantXmlElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.SummaryXmlTag);
-            if (relevantXmlElement == null)
-            {
-                relevantXmlElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.ContentXmlTag);
-            }
-
+            var relevantXmlElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.SummaryXmlTag) ?? documentation.Content.GetFirstXmlElement(XmlCommentHelper.ContentXmlTag);
             if (relevantXmlElement == null)
             {
                 relevantXmlElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag);
