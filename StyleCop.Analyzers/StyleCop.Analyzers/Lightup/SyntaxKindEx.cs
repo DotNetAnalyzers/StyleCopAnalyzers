@@ -71,6 +71,7 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind FunctionPointerType = (SyntaxKind)9056;
         public const SyntaxKind FunctionPointerParameter = (SyntaxKind)9057;
         public const SyntaxKind FunctionPointerParameterList = (SyntaxKind)9058;
+        public const SyntaxKind FunctionPointerCallingConvention = (SyntaxKind)9059;
         public const SyntaxKind InitAccessorDeclaration = (SyntaxKind)9060;
         public const SyntaxKind WithExpression = (SyntaxKind)9061;
         public const SyntaxKind WithInitializerExpression = (SyntaxKind)9062;
