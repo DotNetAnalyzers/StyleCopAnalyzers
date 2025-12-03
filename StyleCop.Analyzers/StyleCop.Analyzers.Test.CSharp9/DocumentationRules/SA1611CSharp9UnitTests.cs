@@ -9,9 +9,33 @@ namespace StyleCop.Analyzers.Test.CSharp9.DocumentationRules
     using StyleCop.Analyzers.Test.CSharp8.DocumentationRules;
     using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1611ElementParametersMustBeDocumented>;
 
     public partial class SA1611CSharp9UnitTests : SA1611CSharp8UnitTests
     {
+        [Fact]
+        [WorkItem(3971, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3971")]
+        public async Task TestPartialMethodDeclarationMissingParameterDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Tests a partial method.
+/// </summary>
+public partial class TestClass
+{
+    /// <summary>Declaration.</summary>
+    public partial void TestMethod(int {|#0:value|});
+
+    public partial void TestMethod(int value)
+    {
+    }
+}";
+
+            var expected = Diagnostic().WithLocation(0).WithArguments("value");
+
+            await VerifyCSharpDiagnosticAsync(testCode, new[] { expected }, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Theory]
         [MemberData(nameof(CommonMemberData.RecordTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         [WorkItem(3770, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3770")]
