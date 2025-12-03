@@ -130,6 +130,48 @@ namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(3972, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3972")]
+        public async Task TestTargetTypedNewOpeningParenthesisOnNextLineAsync()
+        {
+            var testCode = @"
+class TestClass
+{
+    public TestClass(int value)
+    {
+    }
+}
+
+class Test
+{
+    void M()
+    {
+        TestClass value = new
+            {|#0:(|}1);
+    }
+}";
+
+            var fixedCode = @"
+class TestClass
+{
+    public TestClass(int value)
+    {
+    }
+}
+
+class Test
+{
+    void M()
+    {
+        TestClass value = new(
+            1);
+    }
+}";
+
+            var expected = Diagnostic().WithLocation(0);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected virtual DiagnosticResult[] GetExpectedResultTestPrimaryConstructor()
         {
             return new[]
