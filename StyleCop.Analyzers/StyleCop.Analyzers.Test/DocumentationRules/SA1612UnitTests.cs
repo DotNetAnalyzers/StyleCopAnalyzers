@@ -562,8 +562,6 @@ public class ClassName
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        // Syntax node actions for type declarations with a primary constructor were called twice
-        // before support for c# 11 was added.
         protected static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
             => VerifyCSharpDiagnosticAsync(source, testSettings: null, expected, ignoreCompilerDiagnostics: false, cancellationToken);
 
@@ -682,6 +680,8 @@ public class ClassName
             return GetExpectedDiagnostics(new[] { normallyExpected }, declaration);
         }
 
+        // Syntax node actions for type declarations with a primary constructor were called twice
+        // before support for c# 11 was added.
         private static DiagnosticResult[] GetExpectedDiagnostics(DiagnosticResult[] normallyExpected, string declaration)
         {
             var isPrimaryConstructor = declaration.Contains("record") || declaration.Contains("class") || declaration.Contains("struct");
