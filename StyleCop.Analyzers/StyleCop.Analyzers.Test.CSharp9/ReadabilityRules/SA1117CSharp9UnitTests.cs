@@ -56,5 +56,26 @@ class Foo
             DiagnosticResult expected = Diagnostic().WithLocation(11, 16);
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3973, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3973")]
+        public async Task TestStaticAnonymousFunctionWithMixedParameterPlacementAsync()
+        {
+            var testCode = @"
+using System;
+
+class TestClass
+{
+    void TestMethod()
+    {
+        Func<int, int, int, int> func = static (
+            int first, int second,
+            {|#0:int third|}) => first + second + third;
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, Diagnostic().WithLocation(0), CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
