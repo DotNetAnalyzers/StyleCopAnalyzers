@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp9.MaintainabilityRules
 {
     using System.Threading;
@@ -150,6 +148,39 @@ record Foo(int Value)
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestCode = testCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3974, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3974")]
+        public async Task TestConditionalExpressionWithTargetTypedNewAsync()
+        {
+            const string testCode = @"public class TestClass
+{
+    public object GetValue(bool flag)
+    {
+        return {|#0:{|#1:(|}flag ? null : new(){|#2:)|}|};
+    }
+}";
+
+            const string fixedCode = @"public class TestClass
+{
+    public object GetValue(bool flag)
+    {
+        return flag ? null : new();
+    }
+}";
+
+            await new CSharpTest()
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic(DiagnosticId).WithLocation(0),
+                    Diagnostic(ParenthesesDiagnosticId).WithLocation(1),
+                    Diagnostic(ParenthesesDiagnosticId).WithLocation(2),
+                },
+                FixedCode = fixedCode,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
