@@ -110,5 +110,34 @@ class C
                 FixedCode = fixedCode,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3973, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3973")]
+        public async Task TestStaticLambdaSpacingAsync()
+        {
+            var testCode = @"using System;
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        Func<int, int> identity = static{|#0:(|}int value) => value;
+    }
+}
+";
+
+            var fixedCode = @"using System;
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        Func<int, int> identity = static (int value) => value;
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic(DescriptorPreceded).WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
