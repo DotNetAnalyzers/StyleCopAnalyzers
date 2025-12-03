@@ -33,5 +33,26 @@ namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3973, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3973")]
+        public async Task TestStaticLambdaAccessingStaticMemberAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    private static int value;
+
+    public void TestMethod()
+    {
+        System.Action action = static () =>
+        {
+            value++;
+        };
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
