@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
 {
     using System.Threading.Tasks;
@@ -22,6 +20,15 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
             string statementWithoutSpace = "int a = new();";
 
             await this.TestKeywordStatementAsync(statementWithoutSpace, DiagnosticResult.EmptyDiagnosticResults, statementWithoutSpace).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3974, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3974")]
+        public async Task TestTargetTypedNewInConditionalExpressionAsync()
+        {
+            string statement = "bool flag = true; object value = flag ? null : new();";
+
+            await this.TestKeywordStatementAsync(statement, DiagnosticResult.EmptyDiagnosticResults, statement).ConfigureAwait(false);
         }
 
         [Fact]
