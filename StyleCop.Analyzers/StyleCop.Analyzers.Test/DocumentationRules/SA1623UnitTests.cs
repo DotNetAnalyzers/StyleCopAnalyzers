@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Threading;
@@ -62,7 +60,7 @@ public class TestClass
     /// <summary>
     /// The first test value.
     /// </summary>
-    {accessibility} {type} TestProperty {accessors}
+    {accessibility} {type} {{|#0:TestProperty|}} {accessors}
 }}
 ";
 
@@ -76,7 +74,7 @@ public class TestClass
 }}
 ";
 
-            var expected = Diagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(7, 7 + accessibility.Length + type.Length).WithArguments(expectedArgument);
+            var expected = Diagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(0).WithArguments(expectedArgument);
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -126,7 +124,7 @@ public class TestClass
         /// <summary>
         /// The first test value.
         /// </summary>
-        {accessibility} {type} TestProperty {accessors}
+        {accessibility} {type} {{|#0:TestProperty|}} {accessors}
     }}
 }}
 ";
@@ -144,7 +142,7 @@ public class TestClass
 }}
 ";
 
-            var expected = Diagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(9, 11 + accessibility.Length + type.Length).WithArguments(expectedArgument);
+            var expected = Diagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(0).WithArguments(expectedArgument);
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -281,8 +279,10 @@ public class TestClass
         [Theory]
         [InlineData("public", "int", "{ get; set; }", "Gets", "Gets or sets")] // Regression test for #2098
         [InlineData("public", "int", "{ get; set; }", "Sets", "Gets or sets")] // Regression test for #2098
+        [InlineData("public", "int", "{ get; set; }", "Initializes", "Gets or sets")] // Regression test for #3966
         [InlineData("public", "int", "{ get; }", "Sets", "Gets")] // Regression test for #2253
         [InlineData("public", "int", "{ get; }", "Gets or sets", "Gets")] // Regression test for #2253
+        [InlineData("public", "int", "{ get; }", "Gets or initializes", "Gets")] // Regression test for #3966
         [InlineData("public", "int", "=> 0;", "Sets", "Gets")] // Regression test for #2253
         [InlineData("public", "int", "=> 0;", "Gets or sets", "Gets")] // Regression test for #2253
         [InlineData("public", "bool", "=> false;", "Gets or sets a value indicating whether", "Gets a value indicating whether")] // Regression test for #2253
@@ -291,8 +291,12 @@ public class TestClass
         [InlineData("internal", "int", "=> 0;", "Gets or sets", "Gets")] // Regression test for #2253
         [InlineData("public", "int", "{ set {} }", "Gets", "Sets")] // Regression test for #2253
         [InlineData("public", "int", "{ set {} }", "Gets or sets", "Sets")] // Regression test for #2253
+        [InlineData("public", "int", "{ set {} }", "Initializes", "Sets")] // Regression test for #3966
+        [InlineData("public", "int", "{ set {} }", "Gets or initializes", "Sets")] // Regression test for #3966
         [InlineData("public", "int", "{ get; private set; }", "Sets", "Gets")] // Regression test for #2253
+        [InlineData("public", "int", "{ get; private set; }", "Initializes", "Gets")] // Regression test for #3966
         [InlineData("public", "int", "{ private get; set; }", "Gets", "Sets")] // Regression test for #2253
+        [InlineData("public", "int", "{ private get; set; }", "Initializes", "Sets")] // Regression test for #3966
         [InlineData("public", "int", "{ get; }", "Returns", "Gets")]
         [InlineData("public", "int", "{ get; set; }", "Returns", "Gets or sets")]
         [InlineData("public", "bool", "{ get; }", "Returns a value indicating whether", "Gets a value indicating whether")]
@@ -305,7 +309,7 @@ public class TestClass
     /// <summary>
     /// {summaryPrefix} the value.
     /// </summary>
-    {accessibility} {type} TestProperty {accessors}
+    {accessibility} {type} {{|#0:TestProperty|}} {accessors}
 }}
 ";
 
@@ -321,7 +325,7 @@ public class TestClass
 
             DiagnosticResult[] expected =
             {
-                Diagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(7, 7 + accessibility.Length + type.Length).WithArguments(expectedArgument),
+                Diagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(0).WithArguments(expectedArgument),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
