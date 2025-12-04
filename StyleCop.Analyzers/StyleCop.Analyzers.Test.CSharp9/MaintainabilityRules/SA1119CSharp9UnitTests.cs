@@ -183,5 +183,68 @@ record Foo(int Value)
                 FixedCode = fixedCode,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3968, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3968")]
+        public async Task TestOuterParenthesesAroundParenthesizedPatternAreRemovedAsync()
+        {
+            const string testCode = @"
+class C
+{
+    void M(int value)
+    {
+        if ({|#0:{|#1:(|}(value is (> 0 and < 5)){|#2:)|}|})
+        {
+        }
+    }
+}";
+
+            const string fixedCode = @"
+class C
+{
+    void M(int value)
+    {
+        if (value is (> 0 and < 5))
+        {
+        }
+    }
+}";
+
+            await new CSharpTest()
+            {
+                NumberOfIncrementalIterations = 2,
+                NumberOfFixAllIterations = 2,
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic(DiagnosticId).WithLocation(0),
+                    Diagnostic(ParenthesesDiagnosticId).WithLocation(1),
+                    Diagnostic(ParenthesesDiagnosticId).WithLocation(2),
+                },
+                FixedCode = fixedCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that parentheses required to clarify precedence within patterns are not removed.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3968, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3968")]
+        public async Task TestClarifyingPatternParenthesesAreNotRemovedAsync()
+        {
+            const string testCode = @"
+class C
+{
+    void M(int value)
+    {
+        if (value is (> 0 and < 5) or 10)
+        {
+        }
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
