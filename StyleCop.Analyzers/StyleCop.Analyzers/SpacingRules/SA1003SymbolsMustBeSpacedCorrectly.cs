@@ -140,6 +140,7 @@ namespace StyleCop.Analyzers.SpacingRules
         private static readonly Action<SyntaxNodeAnalysisContext> LambdaExpressionAction = HandleLambdaExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> ArrowExpressionClauseAction = HandleArrowExpressionClause;
         private static readonly Action<SyntaxNodeAnalysisContext> RangeExpressionAction = HandleRangeExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> RelationalPatternAction = HandleRelationalPattern;
         private static readonly Action<SyntaxNodeAnalysisContext> SwitchExpressionArmAction = HandleSwitchExpressionArm;
 
         /// <summary>
@@ -218,6 +219,7 @@ namespace StyleCop.Analyzers.SpacingRules
             context.RegisterSyntaxNodeAction(LambdaExpressionAction, SyntaxKinds.LambdaExpression);
             context.RegisterSyntaxNodeAction(ArrowExpressionClauseAction, SyntaxKind.ArrowExpressionClause);
             context.RegisterSyntaxNodeAction(RangeExpressionAction, SyntaxKindEx.RangeExpression);
+            context.RegisterSyntaxNodeAction(RelationalPatternAction, SyntaxKindEx.RelationalPattern);
             context.RegisterSyntaxNodeAction(SwitchExpressionArmAction, SyntaxKindEx.SwitchExpressionArm);
         }
 
@@ -256,11 +258,6 @@ namespace StyleCop.Analyzers.SpacingRules
 
         private static void HandleRangeExpression(SyntaxNodeAnalysisContext context)
         {
-            if (!RangeExpressionSyntaxWrapper.IsInstance(context.Node))
-            {
-                return;
-            }
-
             var rangeExpression = (RangeExpressionSyntaxWrapper)context.Node;
             var hasLeftOperand = rangeExpression.LeftOperand != null;
             var hasRightOperand = rangeExpression.RightOperand != null;
@@ -344,6 +341,22 @@ namespace StyleCop.Analyzers.SpacingRules
                     }
                 }
             }
+        }
+
+        private static void HandleRelationalPattern(SyntaxNodeAnalysisContext context)
+        {
+            var relationalPattern = (RelationalPatternSyntaxWrapper)context.Node;
+            var operatorToken = relationalPattern.OperatorToken;
+            var precedingToken = operatorToken.GetPreviousToken();
+
+            if (precedingToken.IsKind(SyntaxKind.OpenParenToken))
+            {
+                // Spacing next to the opening parenthesis is handled by SA1008; only enforce trailing whitespace here.
+                CheckTokenTrailingWhitespace(context, operatorToken, allowAtEndOfLine: false, withTrailingWhitespace: true);
+                return;
+            }
+
+            CheckToken(context, operatorToken, withLeadingWhitespace: true, allowAtEndOfLine: false, withTrailingWhitespace: true);
         }
 
         private static void HandlePostfixUnaryExpression(SyntaxNodeAnalysisContext context)

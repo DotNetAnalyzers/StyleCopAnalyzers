@@ -15,6 +15,40 @@ namespace StyleCop.Analyzers.Test.CSharp9.LayoutRules
     public partial class SA1501CSharp9UnitTests : SA1501CSharp8UnitTests
     {
         [Fact]
+        [WorkItem(3978, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3978")]
+        public async Task TestLocalFunctionWithAttributeOnSingleLineAsync()
+        {
+            var testCode = @"using System;
+
+class TestClass
+{
+    void Outer()
+    {
+        [Obsolete]
+        void Local(){|#0:{|} int value = 0; }
+    }
+}
+";
+
+            var fixedCode = @"using System;
+
+class TestClass
+{
+    void Outer()
+    {
+        [Obsolete]
+        void Local()
+        {
+            int value = 0;
+        }
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(3976, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3976")]
         public async Task TestSingleLineForeachWithExtensionEnumeratorAsync()
         {

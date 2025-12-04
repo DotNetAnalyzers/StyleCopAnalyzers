@@ -11,6 +11,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A C# statement contains a complex conditional expression which omits parenthesis around operators.
@@ -71,7 +72,11 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         private static readonly ImmutableArray<SyntaxKind> HandledBinaryExpressionKinds =
             ImmutableArray.Create(SyntaxKind.LogicalAndExpression, SyntaxKind.LogicalOrExpression);
 
+        private static readonly ImmutableArray<SyntaxKind> HandledBinaryPatternKinds =
+            ImmutableArray.Create(SyntaxKindEx.AndPattern, SyntaxKindEx.OrPattern);
+
         private static readonly Action<SyntaxNodeAnalysisContext> BinaryExpressionAction = HandleBinaryExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> BinaryPatternAction = HandleBinaryPattern;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -84,6 +89,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             context.EnableConcurrentExecution();
 
             context.RegisterSyntaxNodeAction(BinaryExpressionAction, HandledBinaryExpressionKinds);
+            context.RegisterSyntaxNodeAction(BinaryPatternAction, HandledBinaryPatternKinds);
         }
 
         private static void HandleBinaryExpression(SyntaxNodeAnalysisContext context)
@@ -93,7 +99,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             if (binSyntax.Left is BinaryExpressionSyntax left)
             {
                 // Check if the operations are of the same kind
-                if (left.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || left.OperatorToken.IsKind(SyntaxKind.BarBarToken))
+                if (IsLogicalOperator(left.OperatorToken))
                 {
                     if (!IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
                     {
@@ -105,7 +111,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             if (binSyntax.Right is BinaryExpressionSyntax right)
             {
                 // Check if the operations are of the same kind
-                if (right.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || right.OperatorToken.IsKind(SyntaxKind.BarBarToken))
+                if (IsLogicalOperator(right.OperatorToken))
                 {
                     if (!IsSameFamily(binSyntax.OperatorToken, right.OperatorToken))
                     {
@@ -115,10 +121,50 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             }
         }
 
+        private static void HandleBinaryPattern(SyntaxNodeAnalysisContext context)
+        {
+            var binaryPattern = (BinaryPatternSyntaxWrapper)context.Node;
+
+            if (BinaryPatternSyntaxWrapper.IsInstance(binaryPattern.Left.SyntaxNode))
+            {
+                var left = (BinaryPatternSyntaxWrapper)binaryPattern.Left;
+                if (IsLogicalOperator(left.OperatorToken) && !IsSameFamily(binaryPattern.OperatorToken, left.OperatorToken))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, left.SyntaxNode.GetLocation()));
+                }
+            }
+
+            if (BinaryPatternSyntaxWrapper.IsInstance(binaryPattern.Right.SyntaxNode))
+            {
+                var right = (BinaryPatternSyntaxWrapper)binaryPattern.Right;
+                if (IsLogicalOperator(right.OperatorToken) && !IsSameFamily(binaryPattern.OperatorToken, right.OperatorToken))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, right.SyntaxNode.GetLocation()));
+                }
+            }
+        }
+
+        private static bool IsLogicalOperator(SyntaxToken operatorToken)
+        {
+            return IsAndOperator(operatorToken) || IsOrOperator(operatorToken);
+        }
+
         private static bool IsSameFamily(SyntaxToken operatorToken1, SyntaxToken operatorToken2)
         {
-            return (operatorToken1.IsKind(SyntaxKind.AmpersandAmpersandToken) && operatorToken2.IsKind(SyntaxKind.AmpersandAmpersandToken))
-             || (operatorToken1.IsKind(SyntaxKind.BarBarToken) && operatorToken2.IsKind(SyntaxKind.BarBarToken));
+            return (IsAndOperator(operatorToken1) && IsAndOperator(operatorToken2))
+             || (IsOrOperator(operatorToken1) && IsOrOperator(operatorToken2));
+        }
+
+        private static bool IsAndOperator(SyntaxToken operatorToken)
+        {
+            return operatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken)
+                || operatorToken.IsKind(SyntaxKindEx.AndKeyword);
+        }
+
+        private static bool IsOrOperator(SyntaxToken operatorToken)
+        {
+            return operatorToken.IsKind(SyntaxKind.BarBarToken)
+                || operatorToken.IsKind(SyntaxKindEx.OrKeyword);
         }
     }
 }

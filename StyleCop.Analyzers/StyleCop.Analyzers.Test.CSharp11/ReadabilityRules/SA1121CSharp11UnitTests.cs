@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.Test.CSharp11.ReadabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp10.ReadabilityRules;
     using Xunit;
 
@@ -62,6 +63,55 @@ class TestClass
             {
                 TestSources = { source },
                 FixedSources = { newSource },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3969, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3969")]
+        public async Task TestNativeSizedIntegersReportWithNet70Async()
+        {
+            var testCode = @"
+using System;
+
+class TestClass
+{
+    [|IntPtr|] field1;
+    [|System.UIntPtr|] field2;
+}";
+
+            var fixedCode = @"
+using System;
+
+class TestClass
+{
+    nint field1;
+    nuint field2;
+}";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3969, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3969")]
+        public async Task TestNativeSizedIntegersDoNotReportWithNet60Async()
+        {
+            var testCode = @"
+using System;
+
+class TestClass
+{
+    IntPtr field1;
+    System.UIntPtr field2;
+}";
+
+            await new CSharpTest
+            {
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net60,
+                TestCode = testCode,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
