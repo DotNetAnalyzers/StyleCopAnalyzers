@@ -58,39 +58,6 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         }
 
         /// <summary>
-        /// Verifies that a property with its block on the same line will trigger a diagnostic.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestPropertyOnSingleLineAsync()
-        {
-            var testCode = @"public class Foo
-{
-    public bool Bar { get { return true; } }
-}";
-
-            var expected = Diagnostic().WithLocation(3, 21);
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Verifies that a property with its block on a single line will trigger a diagnostic.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestPropertyWithBlockOnSingleLineAsync()
-        {
-            var testCode = @"public class Foo
-{
-    public bool Bar
-    { get { return true; } }
-}";
-
-            var expected = Diagnostic().WithLocation(4, 5);
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <summary>
         /// Verifies that a property with its block on multiple lines will pass without diagnostic.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
@@ -134,7 +101,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         {
             var testCode = @"public class Foo
 {
-    public bool Bar { get { return true; } }
+    public bool Bar [|{|] get { return true; } }
 }";
             var fixedTestCode = @"public class Foo
 {
@@ -144,8 +111,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     }
 }";
 
-            var expected = Diagnostic().WithLocation(3, 21);
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -158,7 +124,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
             var testCode = @"public class Foo
 {
     public bool Bar
-    { get { return true; } }
+    [|{|] get { return true; } }
 }";
             var fixedTestCode = @"public class Foo
 {
@@ -168,8 +134,52 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     }
 }";
 
-            var expected = Diagnostic().WithLocation(4, 5);
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix for a property with its block on the same line will work properly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestPropertySetOnSingleLineCodeFixAsync()
+        {
+            var testCode = @"public class Foo
+{
+    public bool Bar [|{|] set { return; } }
+}";
+            var fixedTestCode = @"public class Foo
+{
+    public bool Bar
+    {
+        set { return; }
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix for a property with its block on a single line will work properly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestPropertySetWithBlockOnSingleLineCodeFixAsync()
+        {
+            var testCode = @"public class Foo
+{
+    public bool Bar
+    [|{|] set { return; } }
+}";
+            var fixedTestCode = @"public class Foo
+{
+    public bool Bar
+    {
+        set { return; }
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -181,7 +191,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         {
             var testCode = @"public class Foo
 {
-    public bool Bar /* TR1 */ { /* TR2 */ get /* TR3 */ { /* TR4 */ return true; /* TR5 */ } /* TR6 */ set /* TR7 */ { /* TR8 */ throw new System.InvalidOperationException(); /* TR9 */ } /* TR10 */ } /* TR11 */
+    public bool Bar /* TR1 */ [|{|] /* TR2 */ get /* TR3 */ { /* TR4 */ return true; /* TR5 */ } /* TR6 */ set /* TR7 */ { /* TR8 */ throw new System.InvalidOperationException(); /* TR9 */ } /* TR10 */ } /* TR11 */
 }";
             var fixedTestCode = @"public class Foo
 {
@@ -191,8 +201,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     } /* TR11 */
 }";
 
-            var expected = Diagnostic().WithLocation(3, 31);
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

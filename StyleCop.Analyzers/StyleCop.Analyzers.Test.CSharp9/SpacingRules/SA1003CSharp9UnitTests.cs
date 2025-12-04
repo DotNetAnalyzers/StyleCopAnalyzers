@@ -16,6 +16,38 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
     public partial class SA1003CSharp9UnitTests : SA1003CSharp8UnitTests
     {
         [Fact]
+        [WorkItem(3974, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3974")]
+        public async Task TestTargetTypedConditionalExpressionSpacingAsync()
+        {
+            var testCode = @"
+class TestClass
+{
+    void M(bool flag)
+    {
+        object value = flag{|#0:?|} null{|#1::|}new();
+    }
+}";
+
+            var fixedCode = @"
+class TestClass
+{
+    void M(bool flag)
+    {
+        object value = flag ? null : new();
+    }
+}";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DescriptorPrecededByWhitespace).WithArguments("?").WithLocation(0),
+                Diagnostic(DescriptorPrecededByWhitespace).WithArguments(":").WithLocation(1),
+                Diagnostic(DescriptorFollowedByWhitespace).WithArguments(":").WithLocation(1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(3968, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3968")]
         public async Task TestRelationalPatternsAreValidatedAsync()
         {

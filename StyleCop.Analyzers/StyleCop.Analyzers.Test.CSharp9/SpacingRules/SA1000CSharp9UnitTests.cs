@@ -21,6 +21,15 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
             await this.TestKeywordStatementAsync(statementWithoutSpace, DiagnosticResult.EmptyDiagnosticResults, statementWithoutSpace).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(3974, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3974")]
+        public async Task TestTargetTypedNewInConditionalExpressionAsync()
+        {
+            string statement = "bool flag = true; object value = flag ? null : new();";
+
+            await this.TestKeywordStatementAsync(statement, DiagnosticResult.EmptyDiagnosticResults, statement).ConfigureAwait(false);
+        }
+
         [Theory]
         [WorkItem(3508, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3508")]
         [InlineData("<")]
