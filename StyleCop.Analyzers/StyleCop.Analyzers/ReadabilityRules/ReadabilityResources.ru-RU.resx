@@ -1,0 +1,570 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="IndentationCodeFix" xml:space="preserve">
+    <value>Исправить отступы</value>
+  </data>
+  <data name="RemoveRegionCodeFix" xml:space="preserve">
+    <value>Удалить регион</value>
+  </data>
+  <data name="SA1100CodeFix" xml:space="preserve">
+    <value>Заменить 'base.' на 'this.'</value>
+  </data>
+  <data name="SA1100Description" xml:space="preserve">
+    <value>Вызов члена из наследуемого класса начинается с `base.`, а локальный класс не содержит переопределения или реализации этого члена.</value>
+  </data>
+  <data name="SA1100MessageFormat" xml:space="preserve">
+    <value>Не добавляйте к вызовам префикс base, если не существует локальной реализации</value>
+  </data>
+  <data name="SA1100Title" xml:space="preserve">
+    <value>Не добавляйте к вызовам префикс base, если не существует локальной реализации</value>
+  </data>
+  <data name="SA1101CodeFix" xml:space="preserve">
+    <value>Добавить к ссылке префикс 'this.'</value>
+  </data>
+  <data name="SA1101Description" xml:space="preserve">
+    <value>Вызов экземпляра-члена локального класса или базового класса не имеет префикса 'this.' в файле кода C#.</value>
+  </data>
+  <data name="SA1101MessageFormat" xml:space="preserve">
+    <value>Префикс локального вызова с this</value>
+  </data>
+  <data name="SA1101Title" xml:space="preserve">
+    <value>Префикс локального вызова с this</value>
+  </data>
+  <data name="SA1102CodeFix" xml:space="preserve">
+    <value>Удаление разделяющих строк</value>
+  </data>
+  <data name="SA1102Description" xml:space="preserve">
+    <value>Конструкция запроса C# не начинается с той же строки, что и предыдущая, или со следующей строки.</value>
+  </data>
+  <data name="SA1102MessageFormat" xml:space="preserve">
+    <value>Конструкция запроса должна следовать за предыдущей конструкцией.</value>
+  </data>
+  <data name="SA1102Title" xml:space="preserve">
+    <value>Конструкция запроса должна следовать за предыдущей конструкцией</value>
+  </data>
+  <data name="SA1103CodeFixMultipleLines" xml:space="preserve">
+    <value>Разместить на нескольких строках</value>
+  </data>
+  <data name="SA1103CodeFixSingleLine" xml:space="preserve">
+    <value>Разместить в одной строке</value>
+  </data>
+  <data name="SA1103Description" xml:space="preserve">
+    <value>Конструкции в выражении запроса C# не размещаются на одной строке, и каждая конструкция не размещается на своей строке.</value>
+  </data>
+  <data name="SA1103MessageFormat" xml:space="preserve">
+    <value>Конструкции запроса должны быть в отдельных строках или все в одной строке</value>
+  </data>
+  <data name="SA1103Title" xml:space="preserve">
+    <value>Конструкции запроса должны быть в отдельных строках или все в одной строке</value>
+  </data>
+  <data name="SA1104Description" xml:space="preserve">
+    <value>Конструкция в выражении запроса C# начинается с той же строки, что и предыдущая конструкция, если предыдущая конструкция занимает несколько строк.</value>
+  </data>
+  <data name="SA1104MessageFormat" xml:space="preserve">
+    <value>Конструкция запроса должна начинаться с новой строки, если предыдущая конструкция охватывает несколько строк</value>
+  </data>
+  <data name="SA1104SA1105CodeFix" xml:space="preserve">
+    <value>Вставить новую строку</value>
+  </data>
+  <data name="SA1104Title" xml:space="preserve">
+    <value>Конструкция запроса должна начинаться с новой строки, если предыдущая конструкция охватывает несколько строк</value>
+  </data>
+  <data name="SA1105Description" xml:space="preserve">
+    <value>Конструкция в выражении запроса C# охватывает несколько строк и начинается не со своей строки.</value>
+  </data>
+  <data name="SA1105MessageFormat" xml:space="preserve">
+    <value>Конструкции запроса, охватывающие несколько строк, должны начинаться в собственной строке</value>
+  </data>
+  <data name="SA1105Title" xml:space="preserve">
+    <value>Конструкции запроса, охватывающие несколько строк, должны начинаться в собственной строке</value>
+  </data>
+  <data name="SA1106CodeFix" xml:space="preserve">
+    <value>Удаление пустого оператора</value>
+  </data>
+  <data name="SA1106Description" xml:space="preserve">
+    <value>Код на C# содержит лишнюю точку с запятой.</value>
+  </data>
+  <data name="SA1106MessageFormat" xml:space="preserve">
+    <value>Код не должен содержать пустых операторов</value>
+  </data>
+  <data name="SA1106Title" xml:space="preserve">
+    <value>Код не должен содержать пустых операторов</value>
+  </data>
+  <data name="SA1107CodeFix" xml:space="preserve">
+    <value>Вставить новую строку</value>
+  </data>
+  <data name="SA1107Description" xml:space="preserve">
+    <value>Код C# содержит более одного оператора в одной строке.</value>
+  </data>
+  <data name="SA1107MessageFormat" xml:space="preserve">
+    <value>Код не должен содержать несколько операторов в одной строке</value>
+  </data>
+  <data name="SA1107Title" xml:space="preserve">
+    <value>Код не должен содержать несколько операторов в одной строке</value>
+  </data>
+  <data name="SA1108Description" xml:space="preserve">
+    <value>Оператор C# содержит комментарий между объявлением оператора и открывающей скобкой оператора.</value>
+  </data>
+  <data name="SA1108MessageFormat" xml:space="preserve">
+    <value>Блоковые операторы не должны содержать встроенных комментариев</value>
+  </data>
+  <data name="SA1108Title" xml:space="preserve">
+    <value>Блоковые операторы не должны содержать встроенных комментариев</value>
+  </data>
+  <data name="SA1109Description" xml:space="preserve">
+    <value>Оператор C# содержит тег #region между объявлением оператора и открывающей скобкой оператора.</value>
+  </data>
+  <data name="SA1109Title" xml:space="preserve">
+    <value>Блочные операторы не должны содержать встроенных областей #region</value>
+  </data>
+  <data name="SA1110Description" xml:space="preserve">
+    <value>Открывающая круглая скобка или квадратная скобка не размещена в той же строке, что и имя метода/индексатора/атрибута/массива.</value>
+  </data>
+  <data name="SA1110MessageFormat" xml:space="preserve">
+    <value>Открывающая круглая скобка или квадратная скобка должна находиться в строке объявления</value>
+  </data>
+  <data name="SA1110Title" xml:space="preserve">
+    <value>Открывающая круглая скобка или квадратная скобка должна находиться в строке объявления</value>
+  </data>
+  <data name="SA1111Description" xml:space="preserve">
+    <value>Закрывающая круглая скобка или квадратная скобка в вызове или объявлении метода/индексатора/атрибута/массива/конструктора/делегата в C# расположена не на той же строке, что и последний параметр.</value>
+  </data>
+  <data name="SA1111MessageFormat" xml:space="preserve">
+    <value>Закрывающая скобка должна находиться на строке последнего параметра</value>
+  </data>
+  <data name="SA1111Title" xml:space="preserve">
+    <value>Закрывающая скобка должна находиться на строке последнего параметра</value>
+  </data>
+  <data name="SA1112Description" xml:space="preserve">
+    <value>Закрывающая круглая скобка или квадратная скобка в вызове метода или индексатора C#, или в объявлении метода или индексатора не размещается на той же строке, что и открывающая скобка, если элемент не принимает никаких параметров.</value>
+  </data>
+  <data name="SA1112MessageFormat" xml:space="preserve">
+    <value>Закрывающая скобка должна находиться на одной строке с открывающей скобкой</value>
+  </data>
+  <data name="SA1112Title" xml:space="preserve">
+    <value>Закрывающая скобка должна находиться на одной строке с открывающей скобкой</value>
+  </data>
+  <data name="SA1113Description" xml:space="preserve">
+    <value>Запятая между двумя параметрами в вызове метода или индексатора C#, или в объявлении метода или индексатора не размещается на той же строке, что и предыдущий параметр.</value>
+  </data>
+  <data name="SA1113MessageFormat" xml:space="preserve">
+    <value>Запятая должна стоять в той же строке, что и предыдущий параметр</value>
+  </data>
+  <data name="SA1113Title" xml:space="preserve">
+    <value>Запятая должна стоять в той же строке, что и предыдущий параметр</value>
+  </data>
+  <data name="SA1114Description" xml:space="preserve">
+    <value>Начало списка параметров для вызова метода/конструктора/индексатора/массива/оператора или объявления не начинается в той же строке, что и открывающая скобка, или в строке после открывающей скобки.</value>
+  </data>
+  <data name="SA1114MessageFormat" xml:space="preserve">
+    <value>Список параметров должен следовать за объявлением</value>
+  </data>
+  <data name="SA1114Title" xml:space="preserve">
+    <value>Список параметров должен следовать за объявлением</value>
+  </data>
+  <data name="SA1115Description" xml:space="preserve">
+    <value>Параметр в вызове или объявлении метода или индексатора C# не начинается в той же строке, что и предыдущий параметр, или в следующей строке.</value>
+  </data>
+  <data name="SA1115MessageFormat" xml:space="preserve">
+    <value>Параметр должен начинаться в строке, следующей за предыдущим параметром</value>
+  </data>
+  <data name="SA1115Title" xml:space="preserve">
+    <value>Параметр должен следовать за запятой</value>
+  </data>
+  <data name="SA1116CodeFix" xml:space="preserve">
+    <value>Перенести первый аргумент на следующую строку</value>
+  </data>
+  <data name="SA1116Description" xml:space="preserve">
+    <value>Параметры вызова или объявления метода или индексатора C# занимают несколько строк, но первый параметр не начинается на строке после открывающей скобки.</value>
+  </data>
+  <data name="SA1116MessageFormat" xml:space="preserve">
+    <value>Параметры должны начинаться в строке следующей сразу после объявления, если параметр занимает несколько строк</value>
+  </data>
+  <data name="SA1116Title" xml:space="preserve">
+    <value>Разделённые параметры должны начинаться в строке следующей сразу после объявления</value>
+  </data>
+  <data name="SA1117Description" xml:space="preserve">
+    <value>Параметры вызова или объявления метода или индексатора C# не находятся в одной строке или каждый в отдельной строке.</value>
+  </data>
+  <data name="SA1117MessageFormat" xml:space="preserve">
+    <value>Все параметры должны быть расположены в одной строке или каждый параметр должен быть расположен в отдельной строке</value>
+  </data>
+  <data name="SA1117Title" xml:space="preserve">
+    <value>Параметры должны находиться в одной строке или в отдельных строках</value>
+  </data>
+  <data name="SA1118Description" xml:space="preserve">
+    <value>Параметр метода/индексатора/атрибута/массива C#, кроме первого параметра, занимает несколько строк. Если параметр короткий, поместите весь параметр в одну строку. В противном случае сохраните содержимое параметра во временной переменной и передайте временную переменную в качестве параметра.</value>
+  </data>
+  <data name="SA1118MessageFormat" xml:space="preserve">
+    <value>Параметр занимает несколько строк</value>
+  </data>
+  <data name="SA1118Title" xml:space="preserve">
+    <value>Параметр не должен занимать несколько строк</value>
+  </data>
+  <data name="SA1120CodeFix" xml:space="preserve">
+    <value>Удалить пустой комментарий</value>
+  </data>
+  <data name="SA1120Description" xml:space="preserve">
+    <value>Комментарий C# не содержит никакого текста комментария.</value>
+  </data>
+  <data name="SA1120MessageFormat" xml:space="preserve">
+    <value>Комментарии должны содержать текст</value>
+  </data>
+  <data name="SA1120Title" xml:space="preserve">
+    <value>Комментарии должны содержать текст</value>
+  </data>
+  <data name="SA1121CodeFix" xml:space="preserve">
+    <value>Заменить на встроенный тип</value>
+  </data>
+  <data name="SA1121Description" xml:space="preserve">
+    <value>В коде используется один из основных типов C#, но не используется встроенный псевдоним для этого типа.</value>
+  </data>
+  <data name="SA1121MessageFormat" xml:space="preserve">
+    <value>Использовать встроенный псевдоним типа</value>
+  </data>
+  <data name="SA1121Title" xml:space="preserve">
+    <value>Использовать встроенный псевдоним типа</value>
+  </data>
+  <data name="SA1122CodeFix" xml:space="preserve">
+    <value>Заменить на string.Empty</value>
+  </data>
+  <data name="SA1122Description" xml:space="preserve">
+    <value>В коде C# присутствует пустая строка, записанная как "".</value>
+  </data>
+  <data name="SA1122MessageFormat" xml:space="preserve">
+    <value>Используйте string.Empty для пустых строк</value>
+  </data>
+  <data name="SA1122Title" xml:space="preserve">
+    <value>Используйте string.Empty для пустых строк</value>
+  </data>
+  <data name="SA1123Description" xml:space="preserve">
+    <value>Код на языке C# содержит область #region в теле элемента кода.</value>
+  </data>
+  <data name="SA1123MessageFormat" xml:space="preserve">
+    <value>Область #region не должна находиться внутри элемента кода</value>
+  </data>
+  <data name="SA1123Title" xml:space="preserve">
+    <value>Не размещайте области #region внутри элементов</value>
+  </data>
+  <data name="SA1124Description" xml:space="preserve">
+    <value>Код на языке C# содержит область #region.</value>
+  </data>
+  <data name="SA1124MessageFormat" xml:space="preserve">
+    <value>Не используйте области #region</value>
+  </data>
+  <data name="SA1124Title" xml:space="preserve">
+    <value>Не используйте области #region</value>
+  </data>
+  <data name="SA1125Description" xml:space="preserve">
+    <value>Тип Nullable&lt;T&gt; был определен без использования сокращения C#. Например, Nullable&lt;DateTime&gt; был использован вместо предпочтительного DateTime?</value>
+  </data>
+  <data name="SA1125MessageFormat" xml:space="preserve">
+    <value>Использовать сокращение для типов nullable</value>
+  </data>
+  <data name="SA1125Title" xml:space="preserve">
+    <value>Использовать сокращение для типов nullable</value>
+  </data>
+  <data name="SA1126Description" xml:space="preserve">
+    <value>Вызов члена не имеет префикса 'this.', 'base.', 'object.' или 'typename.' для указания предполагаемого вызова метода в файле кода C#.</value>
+  </data>
+  <data name="SA1126Title" xml:space="preserve">
+    <value>Правильно указывайте префиксы вызовов</value>
+  </data>
+  <data name="SA1127CodeFix" xml:space="preserve">
+    <value>Поместить каждое ограничение типа в новую строку</value>
+  </data>
+  <data name="SA1127Description" xml:space="preserve">
+    <value>Каждая конструкция ограничения типа для параметра универсального типа должна быть указана в отдельной строке кода.</value>
+  </data>
+  <data name="SA1127MessageFormat" xml:space="preserve">
+    <value>Ограничения обобщенных типов должны располагаться на своей собственной строке</value>
+  </data>
+  <data name="SA1127Title" xml:space="preserve">
+    <value>Ограничения обобщенных типов должны располагаться на своей собственной строке</value>
+  </data>
+  <data name="SA1128CodeFix" xml:space="preserve">
+    <value>Разместить инициализатор конструктора в своей собственной строке</value>
+  </data>
+  <data name="SA1128Description" xml:space="preserve">
+    <value>Инициализатор конструктора, включая символ двоеточия, должен располагаться в отдельной строке.</value>
+  </data>
+  <data name="SA1128MessageFormat" xml:space="preserve">
+    <value>Помещать инициализаторы конструкторов в своей собственной строке</value>
+  </data>
+  <data name="SA1128Title" xml:space="preserve">
+    <value>Помещать инициализаторы конструкторов в своей собственной строке</value>
+  </data>
+  <data name="SA1129CodeFix" xml:space="preserve">
+    <value>Заменить на default(T)</value>
+  </data>
+  <data name="SA1129Description" xml:space="preserve">
+    <value>При создании нового экземпляра типа значений T синтаксис 'default(T)' функционально эквивалентен синтаксису 'new T()'. Чтобы избежать путаницы в поведении результирующего экземпляра, предпочтительнее использовать первую форму.</value>
+  </data>
+  <data name="SA1129MessageFormat" xml:space="preserve">
+    <value>Не использовать конструктор по умолчанию для типов значений</value>
+  </data>
+  <data name="SA1129Title" xml:space="preserve">
+    <value>Не использовать конструктор по умолчанию для типов значений</value>
+  </data>
+  <data name="SA1130CodeFix" xml:space="preserve">
+    <value>Заменить на лямбда.</value>
+  </data>
+  <data name="SA1130Description" xml:space="preserve">
+    <value>Лямбда-выражения более лаконичны и легче читаются, чем анонимные методы, поэтому им следует отдавать предпочтение во всех случаях, когда эти два выражения функционально эквивалентны.</value>
+  </data>
+  <data name="SA1130MessageFormat" xml:space="preserve">
+    <value>Использовать лямбда-синтаксис</value>
+  </data>
+  <data name="SA1130Title" xml:space="preserve">
+    <value>Использовать лямбда-синтаксис</value>
+  </data>
+  <data name="SA1131CodeFix" xml:space="preserve">
+    <value>Поменять местами операнды</value>
+  </data>
+  <data name="SA1131Description" xml:space="preserve">
+    <value>При сравнении переменной и литерала, переменная должна располагаться с левой стороны чтобы обеспечить максимальную читабельность.</value>
+  </data>
+  <data name="SA1131MessageFormat" xml:space="preserve">
+    <value>Значения констант должны располагаться в правой части сравнений</value>
+  </data>
+  <data name="SA1131Title" xml:space="preserve">
+    <value>Используйте удобочитаемые условия</value>
+  </data>
+  <data name="SA1132CodeFix" xml:space="preserve">
+    <value>Перенесити каждое поле в новую строку</value>
+  </data>
+  <data name="SA1132Description" xml:space="preserve">
+    <value>Каждое поле должно быть объявлено в своей собственной строке, чтобы четко видеть каждое поле типа и позволить правильно документировать поведение каждого поля.</value>
+  </data>
+  <data name="SA1132MessageFormat" xml:space="preserve">
+    <value>Каждое поле должно быть объявлено в своей собственной строке</value>
+  </data>
+  <data name="SA1132Title" xml:space="preserve">
+    <value>Не объединяйте поля</value>
+  </data>
+  <data name="SA1133CodeFix" xml:space="preserve">
+    <value>Поместить каждый атрибут в свои собственные квадратные скобки</value>
+  </data>
+  <data name="SA1133Description" xml:space="preserve">
+    <value>Для максимальной читабельности каждое использование атрибута должно быть заключено в собственные квадратные скобки.</value>
+  </data>
+  <data name="SA1133MessageFormat" xml:space="preserve">
+    <value>Каждый атрибут должен быть заключен в свои собственные квадратные скобки</value>
+  </data>
+  <data name="SA1133Title" xml:space="preserve">
+    <value>Не объединяйте атрибуты</value>
+  </data>
+  <data name="SA1134CodeFix" xml:space="preserve">
+    <value>Разместить атрибут в отдельной строке.</value>
+  </data>
+  <data name="SA1134Description" xml:space="preserve">
+    <value>Каждый атрибут должен располагаться в своей собственной строке кода.</value>
+  </data>
+  <data name="SA1134MessageFormat" xml:space="preserve">
+    <value>Каждый атрибут должен располагаться в своей собственной строке кода</value>
+  </data>
+  <data name="SA1134Title" xml:space="preserve">
+    <value>Атрибуты не должны совместно использовать одну строку</value>
+  </data>
+  <data name="SA1135CodeFix" xml:space="preserve">
+    <value>Указать полную квалификацию директивы using</value>
+  </data>
+  <data name="SA1135Description" xml:space="preserve">
+    <value>Все директивы using должны быть квалифицироваными.</value>
+  </data>
+  <data name="SA1135MessageFormatNamespace" xml:space="preserve">
+    <value>Директива using для пространства имен '{0}' должна иметь полную квалификацию</value>
+  </data>
+  <data name="SA1135MessageFormatType" xml:space="preserve">
+    <value>Директива using для типа '{0}' должна быть квалифицированной</value>
+  </data>
+  <data name="SA1135Title" xml:space="preserve">
+    <value>Директивы using должны быть квалифицированными</value>
+  </data>
+  <data name="SA1136CodeFix" xml:space="preserve">
+    <value>Размещайте значения перечислений в своих собственных строках</value>
+  </data>
+  <data name="SA1136Description" xml:space="preserve">
+    <value>Значения перечислений следует размещать в отдельных строках для максимальной читабельности.</value>
+  </data>
+  <data name="SA1136MessageFormat" xml:space="preserve">
+    <value>Значения перечислений должны располагаться в отдельных строках</value>
+  </data>
+  <data name="SA1136Title" xml:space="preserve">
+    <value>Значения перечислений должны располагаться в отдельных строках</value>
+  </data>
+  <data name="SA1137Description" xml:space="preserve">
+    <value>Элементы одного уровня в синтаксическом дереве должны иметь одинаковый отступ.</value>
+  </data>
+  <data name="SA1137MessageFormat" xml:space="preserve">
+    <value>Элементы должны иметь одинаковый отступ</value>
+  </data>
+  <data name="SA1137Title" xml:space="preserve">
+    <value>Элементы должны иметь одинаковый отступ</value>
+  </data>
+  <data name="SA1139CodeFix" xml:space="preserve">
+    <value>Использовать суффиксную нотацию для литералов вместо приведения</value>
+  </data>
+  <data name="SA1139Description" xml:space="preserve">
+    <value>Используйте суффиксную нотацию для литералов вместо приведения, чтобы улучшить читабельность, избежать ошибок, связанных с неверными приведениями, и гарантировать, что будет получен оптимальный IL.</value>
+  </data>
+  <data name="SA1139MessageFormat" xml:space="preserve">
+    <value>Используйте суффиксную нотацию для литералов вместо приведения</value>
+  </data>
+  <data name="SA1139Title" xml:space="preserve">
+    <value>Используйте суффиксную нотацию для литералов вместо приведения</value>
+  </data>
+  <data name="SA1141CodeFix" xml:space="preserve">
+    <value>Заменить на синтаксис кортежа</value>
+  </data>
+  <data name="SA1141Description" xml:space="preserve">
+    <value>Используйте синтаксис кортежа вместо его реализующего основного типа ValueTuple.</value>
+  </data>
+  <data name="SA1141MessageFormat" xml:space="preserve">
+    <value>Используйте синтаксис кортежа</value>
+  </data>
+  <data name="SA1141Title" xml:space="preserve">
+    <value>Используйте синтаксис кортежа</value>
+  </data>
+  <data name="SA1142CodeFix" xml:space="preserve">
+    <value>Использовать имя элемента кортежа</value>
+  </data>
+  <data name="SA1142Description" xml:space="preserve">
+    <value>На элемент кортежа была сделана ссылка по имени его метаданных, когда доступно имя элемента.</value>
+  </data>
+  <data name="SA1142MessageFormat" xml:space="preserve">
+    <value>Обращайтесь к элементам кортежа по имени</value>
+  </data>
+  <data name="SA1142Title" xml:space="preserve">
+    <value>Обращайтесь к элементам кортежа по имени</value>
+  </data>
+  <data name="SX1101CodeFix" xml:space="preserve">
+    <value>Удалить префикс 'this.'</value>
+  </data>
+  <data name="SX1101Description" xml:space="preserve">
+    <value>Локальный вызов члена экземпляра класса или базового класса имеет префикс `this.`.</value>
+  </data>
+  <data name="SX1101MessageFormat" xml:space="preserve">
+    <value>Не добавляйте к локальным вызовам префикс 'this.'</value>
+  </data>
+  <data name="SX1101Title" xml:space="preserve">
+    <value>Не добавляйте к локальным вызовам префикс 'this.'</value>
+  </data>
+</root>
