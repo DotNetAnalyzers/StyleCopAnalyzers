@@ -1,6 +1,7 @@
 # Build output
 bin/
 obj/
+artifacts/
 
 # Artifacts of the IDE and build
 *.sln.ide/

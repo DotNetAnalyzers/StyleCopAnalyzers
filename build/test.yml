@@ -22,6 +22,10 @@
   displayName: Platform
   type: string
   default: Any CPU
+- name: ForceFull
+  displayName: Force full test run
+  type: boolean
+  default: false
 
 jobs:
 - job: Test_CSharp_${{ parameters.LangVersion }}
@@ -34,6 +38,14 @@ jobs:
     displayName: 'Use NuGet 6.0.6'
     inputs:
       versionSpec: 6.0.6
+
+  - task: DownloadPipelineArtifact@2
+    displayName: Download test plan
+    continueOnError: true
+    inputs:
+      buildType: current
+      artifactName: test-plan-${{ parameters.BuildConfiguration }}
+      targetPath: $(Pipeline.Workspace)/test-plan
 
   - task: DownloadPipelineArtifact@2
     displayName: 🔻 Download solution packages
@@ -68,6 +80,43 @@ jobs:
       workingDirectory: '$(Build.SourcesDirectory)/build'
       targetType: inline
       script: |
+        $runCoverage = 'true'
+        $forceFull = '${{ parameters.ForceFull }}' -eq 'true'
+        $planPath = "$(Pipeline.Workspace)\test-plan\test-plan.json"
+        $langVersion = '${{ parameters.LangVersion }}'
+        $selectionReason = 'Default full run'
+        $fullRun = $forceFull
+        $selectedClasses = @()
+
+        if (-not $fullRun -and (Test-Path $planPath)) {
+            try {
+                $plan = Get-Content -Path $planPath -Raw | ConvertFrom-Json -ErrorAction Stop
+                $planEntry = $plan.plans.$langVersion
+                if ($planEntry) {
+                    $fullRun = [bool]$planEntry.fullRun
+                    $selectedClasses = @($planEntry.classes)
+                    $selectionReason = $planEntry.reason
+                } else {
+                    $selectionReason = "Missing plan entry for C# $langVersion"
+                    $fullRun = $true
+                }
+            } catch {
+                Write-Host "Failed to parse test plan: $_"
+                $fullRun = $true
+                $selectionReason = 'Plan parse failure'
+            }
+        } elseif (-not $fullRun) {
+            $selectionReason = 'Plan not available'
+            $fullRun = $true
+        }
+
+        if (-not $fullRun -and $selectedClasses.Count -eq 0) {
+            Write-Host "No impacted tests selected for C# $langVersion. Skipping execution."
+            $runCoverage = 'false'
+            Write-Host "##vso[task.setvariable variable=RunCoverage]$runCoverage"
+            exit 0
+        }
+
         $packageConfig = [xml](Get-Content ..\.nuget\packages.config)
         $opencover_version = $packageConfig.SelectSingleNode('/packages/package[@id="OpenCover"]').version
         $xunitrunner_version = $packageConfig.SelectSingleNode('/packages/package[@id="xunit.runner.console"]').version
@@ -76,20 +125,46 @@ jobs:
         $opencover_console = "$packages_folder\OpenCover.$opencover_version\tools\OpenCover.Console.exe"
         $xunit_runner_console_${{ parameters.FrameworkVersion }} = "$packages_folder\xunit.runner.console.$xunitrunner_version\tools\${{ parameters.FrameworkVersion }}\xunit.console.x86.exe"
         $report_folder = '.\OpenCover.Reports'
-        mkdir $report_folder
+        New-Item -ItemType Directory -Path $report_folder -Force | Out-Null
         $target_dll_name = If ('${{ parameters.LangVersion }}' -Eq '6') { "StyleCop.Analyzers.Test" } Else { "StyleCop.Analyzers.Test.CSharp${{ parameters.LangVersion }}" }
         $target_dll_csharp${{ parameters.LangVersion }} = "..\StyleCop.Analyzers\$target_dll_name\bin\${{ parameters.BuildConfiguration }}\${{ parameters.FrameworkVersion }}\$target_dll_name.dll"
-        &$opencover_console `
-          -register:Path32 `
-          -threshold:1 -oldStyle `
-          -returntargetcode `
-          -hideskipped:All `
-          -filter:"+[StyleCop*]*" `
-          -excludebyattribute:*.ExcludeFromCodeCoverage* `
-          -excludebyfile:*\*Designer.cs `
-          -output:"$report_folder\OpenCover.StyleCopAnalyzers.CSharp${{ parameters.LangVersion }}.xml" `
-          -target:"$xunit_runner_console_${{ parameters.FrameworkVersion }}" `
-          -targetargs:"$target_dll_csharp${{ parameters.LangVersion }} -noshadow -xml StyleCopAnalyzers.CSharp${{ parameters.LangVersion }}.xunit.xml"
+        $targetArgsArray = @("$target_dll_csharp${{ parameters.LangVersion }}", "-noshadow", "-xml", "StyleCopAnalyzers.CSharp${{ parameters.LangVersion }}.xunit.xml")
+        if (-not $fullRun) {
+            $responseFile = Join-Path (Get-Location) "xunit-classes-$langVersion.rsp"
+            $responseLines = @("`"$target_dll_csharp${{ parameters.LangVersion }}`"", "-noshadow", "-xml", "StyleCopAnalyzers.CSharp${{ parameters.LangVersion }}.xunit.xml")
+            foreach ($class in $selectedClasses) {
+                $responseLines += "-class"
+                $responseLines += "`"$class`""
+            }
+
+            Set-Content -Path $responseFile -Value $responseLines -Encoding UTF8
+            $targetArgsArray = @("@`"$responseFile`"")
+        }
+
+        Write-Host "Test selection: $selectionReason"
+        if (-not $fullRun) {
+            Write-Host ("Selected {0} test classes" -f $selectedClasses.Count)
+        }
+
+        Write-Host "##vso[task.setvariable variable=RunCoverage]$runCoverage"
+
+        $targetArgs = ($targetArgsArray -join ' ')
+
+        if ($runCoverage -eq 'true') {
+            &$opencover_console `
+              -register:Path32 `
+              -threshold:1 -oldStyle `
+              -returntargetcode `
+              -hideskipped:All `
+              -filter:"+[StyleCop*]*" `
+              -excludebyattribute:*.ExcludeFromCodeCoverage* `
+              -excludebyfile:*\*Designer.cs `
+              -output:"$report_folder\OpenCover.StyleCopAnalyzers.CSharp${{ parameters.LangVersion }}.xml" `
+              -target:"$xunit_runner_console_${{ parameters.FrameworkVersion }}" `
+              -targetargs:"$targetArgs"
+        } else {
+            &$xunit_runner_console_${{ parameters.FrameworkVersion }} @targetArgsArray
+        }
 
   - task: PublishTestResults@2
     displayName: 📢 Publish test results
@@ -98,11 +173,13 @@ jobs:
       testResultsFormat: xUnit
       testResultsFiles: 'build/*.xml'
       mergeTestResults: true
+      failTaskOnMissingResults: false
       testRunTitle: 'C# ${{ parameters.LangVersion }} ${{ parameters.BuildConfiguration }}'
 
   - ${{ if eq(parameters.BuildConfiguration, 'Debug') }}:
     - task: PublishPipelineArtifact@1
       displayName: Publish code coverage
+      condition: succeeded()
       inputs:
         targetPath: $(Build.SourcesDirectory)/build/OpenCover.Reports
         artifact: coverageResults-cs${{ parameters.LangVersion }}

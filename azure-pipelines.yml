@@ -10,7 +10,9 @@ stages:
 - template: build/build-and-test.yml
   parameters:
     BuildConfiguration: Debug
+    LatestLangVersion: '13'
 
 - template: build/build-and-test.yml
   parameters:
     BuildConfiguration: Release
+    LatestLangVersion: '13'
