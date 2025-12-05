@@ -25,7 +25,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.DocumentationRules
                 TestState =
                 {
                     OutputKind = OutputKind.ConsoleApplication,
-                    Sources = { ("Program.cs", testCode) },
+                    Sources = { ("NameNotBasedOnTheCode.cs", testCode) },
                 },
             };
 
