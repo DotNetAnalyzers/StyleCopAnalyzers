@@ -110,5 +110,124 @@ class C
                 FixedCode = fixedCode,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3968, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3968")]
+        public async Task TestLogicalPatternsWithParenthesesAsync()
+        {
+            const string testCode = @"
+class C
+{
+    void M(int value)
+    {
+        _ = value is not{|#0:(|}> 0);
+        _ = value is > 0 and{|#1:(|}< 5);
+        _ = value is > 0 and {|#2:(|} < 5);
+        _ = value is > 10 or{|#3:(|}< 5);
+        _ = value is > 10 or {|#4:(|} < 5);
+    }
+}";
+
+            const string fixedCode = @"
+class C
+{
+    void M(int value)
+    {
+        _ = value is not (> 0);
+        _ = value is > 0 and (< 5);
+        _ = value is > 0 and (< 5);
+        _ = value is > 10 or (< 5);
+        _ = value is > 10 or (< 5);
+    }
+}";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DescriptorPreceded).WithLocation(0),
+                Diagnostic(DescriptorPreceded).WithLocation(1),
+                Diagnostic(DescriptorNotFollowed).WithLocation(2),
+                Diagnostic(DescriptorPreceded).WithLocation(3),
+                Diagnostic(DescriptorNotFollowed).WithLocation(4),
+            };
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3965, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3965")]
+        public async Task TestRecordInheritanceAsync()
+        {
+            const string testCode = @"
+public abstract record BaseQuery<T>;
+public record MyQuery1 {|#0:(|} ) : BaseQuery<object>;
+public record MyQuery2{|#1:(|} ) : BaseQuery<object>;
+public record MyQuery3 {|#2:(|}) : BaseQuery<object>;";
+            const string fixedCode = @"
+public abstract record BaseQuery<T>;
+public record MyQuery1() : BaseQuery<object>;
+public record MyQuery2() : BaseQuery<object>;
+public record MyQuery3() : BaseQuery<object>;";
+
+            await new CSharpTest()
+            {
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                ExpectedDiagnostics =
+                {
+                    // /0/Test0.cs(3,24): warning SA1008: Opening parenthesis should not be preceded by a space.
+                    Diagnostic(DescriptorNotPreceded).WithLocation(0),
+
+                    // /0/Test0.cs(3,24): warning SA1008: Opening parenthesis should not be followed by a space.
+                    Diagnostic(DescriptorNotFollowed).WithLocation(0),
+
+                    // /0/Test0.cs(4,23): warning SA1008: Opening parenthesis should not be followed by a space.
+                    Diagnostic(DescriptorNotFollowed).WithLocation(1),
+
+                    // /0/Test0.cs(5,24): warning SA1008: Opening parenthesis should not be preceded by a space.
+                    Diagnostic(DescriptorNotPreceded).WithLocation(2),
+                },
+                TestCode = testCode,
+                FixedCode = fixedCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3965, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3965")]
+        public async Task TestRecordBaseArgumentsWithMultilineSpacingAsync()
+        {
+            const string testCode = @"
+public abstract record BaseRecord(string Text);
+
+public record Derived1(string Text)
+    : BaseRecord {|#0:(|}
+        Text)
+{
+}
+
+public record Derived2(string Text)
+    : BaseRecord {|#1:(|}
+        Text);
+";
+
+            const string fixedCode = @"
+public abstract record BaseRecord(string Text);
+
+public record Derived1(string Text)
+    : BaseRecord(
+        Text)
+{
+}
+
+public record Derived2(string Text)
+    : BaseRecord(
+        Text);
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DescriptorNotPreceded).WithLocation(0),
+                Diagnostic(DescriptorNotPreceded).WithLocation(1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

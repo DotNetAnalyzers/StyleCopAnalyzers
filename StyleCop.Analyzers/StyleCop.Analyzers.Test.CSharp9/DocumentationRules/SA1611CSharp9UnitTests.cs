@@ -37,5 +37,24 @@ public {keyword} R(int Param1, string Param2);";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3977, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3977")]
+        public async Task TestLambdaDiscardParametersAsync()
+        {
+            var testCode = @"
+/// <summary>Test class.</summary>
+public class TestClass
+{
+    /// <summary>Test method.</summary>
+    public void TestMethod()
+    {
+        System.Func<int, int, int> handler = (_, _) => 0;
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
