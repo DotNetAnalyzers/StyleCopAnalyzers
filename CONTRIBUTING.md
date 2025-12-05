@@ -13,6 +13,41 @@ You can also help by filing issues, participating in discussions and doing code 
 * The version of the [.NET Core SDK](https://dotnet.microsoft.com/download/dotnet-core) as specified in the global.json file at the root of this repo.
   Use the init script at the root of the repo to conveniently acquire and install the right version.
 
+## Code coverage
+
+You can generate local coverage using the built-in scripts after running `init.ps1` and a build.
+
+- Full coverage (Release):
+
+  ```powershell
+  .\build\coverage-report.ps1
+  ```
+
+- Full coverage (Debug):
+
+  ```powershell
+  .\build\coverage-report.ps1 -Debug
+  ```
+
+- Diff-focused coverage (changed files vs origin/master):
+
+  ```powershell
+  .\build\coverage-report.ps1 -DiffOnly
+  ```
+
+- Diff-focused coverage against a specific base:
+
+  ```powershell
+  .\build\coverage-report.ps1 -DiffBase origin/main -DiffOnly
+  ```
+
+Outputs:
+- Cobertura XML: `build\coverage\OpenCover.StyleCopAnalyzers.CSharp*.xml`
+- HTML report: `build\coverage\index.htm`
+- Diff HTML (when requested): `build\coverage\diff\index.htm`
+
+CI uses `dotnet test` with `coverlet.collector` and merges Cobertura reports with ReportGenerator before uploading to Codecov. The same filters are applied locally and in CI to keep results consistent. Test failures or missing coverage files will cause the coverage script to fail with a non-zero exit code.
+
 ## Implementing a diagnostic
 
 1. To start working on a diagnostic, add a comment to the issue indicating you are working on implementing it.

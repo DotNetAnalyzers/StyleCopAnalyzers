@@ -281,7 +281,7 @@ stages:
           $packages_folder = '.\packages'
           $reportgenerator_version = $packageConfig.SelectSingleNode('/packages/package[@id="ReportGenerator"]').version
           $report_generator = "$packages_folder\ReportGenerator.$reportgenerator_version\tools\net47\ReportGenerator.exe"
-          &$report_generator -targetdir:$(Pipeline.Workspace)/coverageResults-final -reporttypes:Cobertura "-reports:$(Pipeline.Workspace)/coverageResults-*/OpenCover.*.xml"
+          &$report_generator -targetdir:$(Pipeline.Workspace)/coverageResults-final -reporttypes:Cobertura "-reports:$(Pipeline.Workspace)/coverageResults-*/coverage/OpenCover.*.xml"
 
     - task: PowerShell@2
       displayName: Public code coverage to codecov.io
