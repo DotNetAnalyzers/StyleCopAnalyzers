@@ -112,6 +112,47 @@ class C
         }
 
         [Fact]
+        [WorkItem(3968, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3968")]
+        public async Task TestLogicalPatternsWithParenthesesAsync()
+        {
+            const string testCode = @"
+class C
+{
+    void M(int value)
+    {
+        _ = value is not{|#0:(|}> 0);
+        _ = value is > 0 and{|#1:(|}< 5);
+        _ = value is > 0 and {|#2:(|} < 5);
+        _ = value is > 10 or{|#3:(|}< 5);
+        _ = value is > 10 or {|#4:(|} < 5);
+    }
+}";
+
+            const string fixedCode = @"
+class C
+{
+    void M(int value)
+    {
+        _ = value is not (> 0);
+        _ = value is > 0 and (< 5);
+        _ = value is > 0 and (< 5);
+        _ = value is > 10 or (< 5);
+        _ = value is > 10 or (< 5);
+    }
+}";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DescriptorPreceded).WithLocation(0),
+                Diagnostic(DescriptorPreceded).WithLocation(1),
+                Diagnostic(DescriptorNotFollowed).WithLocation(2),
+                Diagnostic(DescriptorPreceded).WithLocation(3),
+                Diagnostic(DescriptorNotFollowed).WithLocation(4),
+            };
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(3965, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3965")]
         public async Task TestRecordInheritanceAsync()
         {
