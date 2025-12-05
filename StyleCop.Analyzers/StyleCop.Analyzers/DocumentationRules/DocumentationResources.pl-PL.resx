@@ -168,4 +168,16 @@
   <data name="TypeTextStruct" xml:space="preserve">
     <value>struktury</value>
   </data>
+  <data name="StartingTextGetsOrInitializes" xml:space="preserve">
+    <value>Pobiera lub inicjalizuje</value>
+  </data>
+  <data name="StartingTextGetsOrInitializesWhether" xml:space="preserve">
+    <value>Pobiera lub inicjalizuje wartość wskazującą czy</value>
+  </data>
+  <data name="StartingTextInitializes" xml:space="preserve">
+    <value>Inicjalizuje</value>
+  </data>
+  <data name="StartingTextInitializesWhether" xml:space="preserve">
+    <value>Inicjalizuje wartość wskazującą czy</value>
+  </data>
 </root>

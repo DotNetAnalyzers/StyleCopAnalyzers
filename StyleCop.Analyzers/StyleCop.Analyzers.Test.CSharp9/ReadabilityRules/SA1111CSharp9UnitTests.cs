@@ -96,6 +96,47 @@ namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
         }
 
         [Fact]
+        [WorkItem(3972, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3972")]
+        public async Task TestTargetTypedNewClosingParenthesisOnNextLineAsync()
+        {
+            var testCode = @"
+class TestClass
+{
+    public TestClass(int value)
+    {
+    }
+}
+
+class Test
+{
+    void M()
+    {
+        TestClass value = new(1
+            {|#0:)|};
+    }
+}";
+
+            var fixedCode = @"
+class TestClass
+{
+    public TestClass(int value)
+    {
+    }
+}
+
+class Test
+{
+    void M()
+    {
+        TestClass value = new(1);
+    }
+}";
+
+            var expected = Diagnostic().WithLocation(0);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(3973, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3973")]
         public async Task TestStaticAnonymousMethodClosingParenthesisOnOwnLineAsync()
         {
