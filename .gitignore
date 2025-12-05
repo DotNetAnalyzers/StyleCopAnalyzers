@@ -11,6 +11,9 @@ packages/
 TestResults/
 OpenCover.Reports/
 OpenCover.Symbols/
+.coverage/
+coverage/
+coverage-*/
 .nuget/NuGet.exe
 build/nuget/
 *.log
