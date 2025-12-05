@@ -989,5 +989,23 @@ public class TestClass : TestInterface
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3971, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3971")]
+        public async Task TestPartialMethodImplicitPrivateOrderingAsync()
+        {
+            var testCode = @"
+public partial class TestClass
+{
+    partial void TestMethod();
+
+    public void {|#0:PublicMethod|}() { }
+}
+";
+
+            var expected = Diagnostic().WithLocation(0).WithArguments("public", "private");
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
