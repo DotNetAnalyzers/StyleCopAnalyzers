@@ -137,5 +137,42 @@ class TestClass
                 FixedCode = fixedCode,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3966, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3966")]
+        public async Task TestGetBlockClosingBraceSharingLineWithInitAsync()
+        {
+            var testCode = @"
+class TestClass
+{
+    int Property
+    {
+        get
+        {
+            return 0; [|}|] init
+        {
+        }
+    }
+}
+";
+
+            var fixedCode = @"
+class TestClass
+{
+    int Property
+    {
+        get
+        {
+            return 0;
+        }
+        init
+        {
+        }
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

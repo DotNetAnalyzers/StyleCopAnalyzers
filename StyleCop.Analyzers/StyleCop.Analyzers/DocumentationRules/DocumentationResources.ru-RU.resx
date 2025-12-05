@@ -168,4 +168,16 @@
   <data name="TypeTextStruct" xml:space="preserve">
     <value>структуры</value>
   </data>
+  <data name="StartingTextGetsOrInitializes" xml:space="preserve">
+    <value>Возвращает или инициализирует</value>
+  </data>
+  <data name="StartingTextGetsOrInitializesWhether" xml:space="preserve">
+    <value>Возвращает или инициализирует значение, показывающее,</value>
+  </data>
+  <data name="StartingTextInitializes" xml:space="preserve">
+    <value>Инициализирует</value>
+  </data>
+  <data name="StartingTextInitializesWhether" xml:space="preserve">
+    <value>Инициализирует значение, показывающее,</value>
+  </data>
 </root>
