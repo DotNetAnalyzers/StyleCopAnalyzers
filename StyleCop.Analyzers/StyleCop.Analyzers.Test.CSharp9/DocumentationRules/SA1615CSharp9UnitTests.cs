@@ -3,9 +3,73 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.DocumentationRules
 {
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.DocumentationRules;
+    using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1615ElementReturnValueMustBeDocumented>;
 
     public partial class SA1615CSharp9UnitTests : SA1615CSharp8UnitTests
     {
+        [Fact]
+        [WorkItem(3975, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3975")]
+        public async Task TestCovariantOverrideMissingReturnsDocumentationAsync()
+        {
+            var testCode = @"
+public class BaseType
+{
+}
+
+public class DerivedType : BaseType
+{
+}
+
+public class BaseClass
+{
+    /// <summary>Creates a base instance.</summary>
+    /// <returns>A <see cref=""BaseType""/> instance.</returns>
+    public virtual BaseType Create() => new BaseType();
+}
+
+public class DerivedClass : BaseClass
+{
+    /// <summary>Creates a derived instance.</summary>
+    public override [|DerivedType|] Create() => new DerivedType();
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3975, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3975")]
+        public async Task TestCovariantOverrideInheritsReturnsDocumentationAsync()
+        {
+            var testCode = @"
+public class BaseType
+{
+}
+
+public class DerivedType : BaseType
+{
+}
+
+public class BaseClass
+{
+    /// <summary>Creates a base instance.</summary>
+    /// <returns>A <see cref=""BaseType""/> instance.</returns>
+    public virtual BaseType Create() => new BaseType();
+}
+
+public class DerivedClass : BaseClass
+{
+    /// <inheritdoc/>
+    public override DerivedType Create() => new DerivedType();
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
