@@ -3,7 +3,9 @@ param (
     [switch]$NoBuild,
     [switch]$NoReport,
     [switch]$AppVeyor,
-    [switch]$Azure
+    [switch]$Azure,
+    [string]$DiffBase,
+    [switch]$DiffOnly
 )
 
 $ErrorActionPreference = 'Stop'
@@ -78,6 +80,41 @@ try {
 
         &$reportGenerator -targetdir:$coverageRoot -reporttypes:Html;Cobertura "-reports:$coverageRoot\OpenCover.*.xml"
         Write-Host "Open $coverageRoot\index.htm to see code coverage results."
+
+        $shouldGenerateDiff = $DiffOnly -or -not [string]::IsNullOrWhiteSpace($DiffBase)
+        if ($shouldGenerateDiff) {
+            $baseRef = if ([string]::IsNullOrWhiteSpace($DiffBase)) { 'origin/master' } else { $DiffBase }
+            $repoRoot = Resolve-Path (Join-Path $scriptDir '..')
+
+            try {
+                $diffFiles = & git -C $repoRoot diff --name-only --diff-filter=AM "$baseRef...HEAD" 2>$null | Where-Object { $_ -like '*.cs' }
+                if (-not $diffFiles) {
+                    Write-Warning "No changed .cs files found relative to '$baseRef'; skipping diff coverage output."
+                }
+                else {
+                    $diffFilters = $diffFiles | ForEach-Object {
+                        $normalized = ($_ -replace '\\', '/')
+                        "+**/$normalized"
+                    }
+
+                    $diffTarget = Join-Path $coverageRoot 'diff'
+                    New-Item -ItemType Directory -Force -Path $diffTarget | Out-Null
+
+                    &$reportGenerator -targetdir:$diffTarget -reporttypes:Html;TextSummary "-reports:$coverageRoot\OpenCover.*.xml" "-filefilters:$($diffFilters -join ';')"
+
+                    $summaryPath = Get-ChildItem $diffTarget -Filter '*Summary.txt' -ErrorAction SilentlyContinue | Select-Object -First 1
+                    if ($summaryPath) {
+                        Write-Host "Diff coverage summary (relative to $baseRef):"
+                        Get-Content $summaryPath.FullName
+                    }
+
+                    Write-Host "Diff coverage HTML: $diffTarget\index.htm"
+                }
+            }
+            catch {
+                Write-Warning "Failed to compute diff coverage relative to '$baseRef': $($_.Exception.Message)"
+            }
+        }
     }
 }
 finally {
