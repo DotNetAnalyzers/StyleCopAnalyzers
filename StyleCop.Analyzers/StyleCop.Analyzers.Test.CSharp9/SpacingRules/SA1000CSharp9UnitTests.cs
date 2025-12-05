@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
 {
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.SpacingRules;
@@ -83,6 +84,43 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
 
             var expected = Diagnostic().WithArguments("not", string.Empty, "followed").WithLocation(0);
             await this.TestKeywordStatementAsync(statementWithoutSpace, expected, statementWithSpace).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3976, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3976")]
+        public async Task TestForeachWithExtensionEnumeratorAsync()
+        {
+            var testCode = @"
+using System.Collections.Generic;
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        foreach (var value in new ExtensionEnumerable())
+        {
+        }
+    }
+}
+
+public class ExtensionEnumerable
+{
+}
+
+public static class ExtensionEnumerableExtensions
+{
+    public static ExtensionEnumerator GetEnumerator(this ExtensionEnumerable value) => new();
+}
+
+public struct ExtensionEnumerator
+{
+    public int Current => 0;
+
+    public bool MoveNext() => false;
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
