@@ -68,33 +68,38 @@ jobs:
       workingDirectory: '$(Build.SourcesDirectory)/build'
       targetType: inline
       script: |
-        $packageConfig = [xml](Get-Content ..\.nuget\packages.config)
-        $coverlet_version = $packageConfig.SelectSingleNode('/packages/package[@id="coverlet.console"]').version
-        $xunitrunner_version = $packageConfig.SelectSingleNode('/packages/package[@id="xunit.runner.console"]').version
+        $results_dir = "TestResults"
+        $coverage_dir = "coverage"
+        New-Item -ItemType Directory -Force -Path $results_dir | Out-Null
+        New-Item -ItemType Directory -Force -Path $coverage_dir | Out-Null
 
-        $packages_folder = '..\packages'
-        $coverlet_console = "$packages_folder\coverlet.console.$coverlet_version\tools\net6.0\any\coverlet.console.dll"
-        $xunit_runner_console_${{ parameters.FrameworkVersion }} = "$packages_folder\xunit.runner.console.$xunitrunner_version\tools\${{ parameters.FrameworkVersion }}\xunit.console.x86.exe"
-        $report_folder = '.\OpenCover.Reports'
-        New-Item -ItemType Directory -Force -Path $report_folder | Out-Null
-        $target_dll_name = If ('${{ parameters.LangVersion }}' -Eq '6') { "StyleCop.Analyzers.Test" } Else { "StyleCop.Analyzers.Test.CSharp${{ parameters.LangVersion }}" }
-        $target_dll_csharp${{ parameters.LangVersion }} = "..\StyleCop.Analyzers\$target_dll_name\bin\${{ parameters.BuildConfiguration }}\${{ parameters.FrameworkVersion }}\$target_dll_name.dll"
-        dotnet $coverlet_console `
-          $target_dll_csharp${{ parameters.LangVersion }} `
-          --target "$xunit_runner_console_${{ parameters.FrameworkVersion }}" `
-          --targetargs "`"$target_dll_csharp${{ parameters.LangVersion }}`" -noshadow -xml StyleCopAnalyzers.CSharp${{ parameters.LangVersion }}.xunit.xml" `
-          --format "cobertura" `
-          --output "$report_folder\OpenCover.StyleCopAnalyzers.CSharp${{ parameters.LangVersion }}.xml" `
-          --include "[StyleCop*]*" `
-          --exclude-by-attribute "System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" `
-          --exclude-by-file "*\*Designer.cs"
+        $project_name = If ('${{ parameters.LangVersion }}' -Eq '6') { "StyleCop.Analyzers.Test" } Else { "StyleCop.Analyzers.Test.CSharp${{ parameters.LangVersion }}" }
+        $project_path = "..\StyleCop.Analyzers\$project_name\$project_name.csproj"
+        $trx_name = "StyleCopAnalyzers.CSharp${{ parameters.LangVersion }}.trx"
+
+        dotnet test $project_path `
+          --framework "${{ parameters.FrameworkVersion }}" `
+          --configuration "${{ parameters.BuildConfiguration }}" `
+          --no-build `
+          --settings ".\coverlet.runsettings" `
+          --results-directory $results_dir `
+          --logger "trx;LogFileName=$trx_name" `
+          --collect:"XPlat Code Coverage"
+
+        $coverage_file = Get-ChildItem -Path $results_dir -Recurse -Filter "coverage.cobertura.xml" -ErrorAction SilentlyContinue | Select-Object -First 1
+        if (-not $coverage_file) {
+          Write-Error "Coverage file not found in $results_dir"
+          exit 1
+        }
+
+        Copy-Item $coverage_file.FullName "$coverage_dir\OpenCover.StyleCopAnalyzers.CSharp${{ parameters.LangVersion }}.xml" -Force
 
   - task: PublishTestResults@2
     displayName: 📢 Publish test results
     condition: always()
     inputs:
-      testResultsFormat: xUnit
-      testResultsFiles: 'build/*.xml'
+      testResultsFormat: VSTest
+      testResultsFiles: 'build/TestResults/**/*.trx'
       mergeTestResults: true
       testRunTitle: 'C# ${{ parameters.LangVersion }} ${{ parameters.BuildConfiguration }}'
 
@@ -102,5 +107,5 @@ jobs:
     - task: PublishPipelineArtifact@1
       displayName: Publish code coverage
       inputs:
-        targetPath: $(Build.SourcesDirectory)/build/OpenCover.Reports
+        targetPath: $(Build.SourcesDirectory)/build/coverage
         artifact: coverageResults-cs${{ parameters.LangVersion }}
