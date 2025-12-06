@@ -95,5 +95,38 @@ namespace StyleCop.Analyzers.Test.CSharp10.NamingRules
                 Settings = customTestSettings,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3979, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3979")]
+        public async Task TestRecordStructNameMustStartWithUpperCaseLetterAsync()
+        {
+            var testCode = @"
+public record struct {|#0:r|}(int A)
+{
+    public {|#1:r|}(int a, int b)
+        : this(A: a)
+    {
+    }
+}
+";
+
+            var fixedCode = @"
+public record struct R(int A)
+{
+    public R(int a, int b)
+        : this(A: a)
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0).WithArguments("r"),
+                Diagnostic().WithLocation(1).WithArguments("r"),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
