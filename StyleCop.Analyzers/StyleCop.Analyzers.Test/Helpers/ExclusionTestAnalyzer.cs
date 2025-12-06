@@ -1,12 +1,11 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace TestHelper
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
@@ -16,6 +15,7 @@ namespace TestHelper
     /// A analyzer that will report a diagnostic at the start of the code file if the
     /// file is not excluded from code analysis.
     /// </summary>
+    [SuppressMessage("MicrosoftCodeAnalysisCorrectness", "RS1041:Compiler extensions should be implemented in assemblies targeting netstandard2.0", Justification = "OK in tests")]
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class ExclusionTestAnalyzer : DiagnosticAnalyzer
     {

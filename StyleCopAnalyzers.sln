@@ -278,6 +278,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.Test.CSh
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.Test.CSharp13", "StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp13\StyleCop.Analyzers.Test.CSharp13.csproj", "{B5C55311-BC8D-43D7-A56F-17B4E2FE8D55}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.Test.CSharp14", "StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp14\StyleCop.Analyzers.Test.CSharp14.csproj", "{2DBCAA9D-7302-D41B-67F7-3005BCC1281C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -344,6 +346,10 @@ Global
 		{B5C55311-BC8D-43D7-A56F-17B4E2FE8D55}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B5C55311-BC8D-43D7-A56F-17B4E2FE8D55}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B5C55311-BC8D-43D7-A56F-17B4E2FE8D55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DBCAA9D-7302-D41B-67F7-3005BCC1281C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DBCAA9D-7302-D41B-67F7-3005BCC1281C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DBCAA9D-7302-D41B-67F7-3005BCC1281C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DBCAA9D-7302-D41B-67F7-3005BCC1281C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

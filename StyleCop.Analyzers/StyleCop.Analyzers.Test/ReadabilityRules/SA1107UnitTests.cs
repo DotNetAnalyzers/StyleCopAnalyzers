@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System.Threading;
@@ -158,15 +156,22 @@ class Program
 }
 ";
 
+            var fixedCode = this.GetFixedCodeTestEmptyStatementAfterBlock() ?? testCode;
+
             await new CSharpTest
             {
                 TestCode = testCode,
-                FixedCode = testCode,
+                FixedCode = fixedCode,
 
-                // A code fix is offered even though no changes are applied by it
                 NumberOfIncrementalIterations = 1,
                 NumberOfFixAllIterations = 1,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual string? GetFixedCodeTestEmptyStatementAfterBlock()
+        {
+            // A code fix is offered even though no changes are applied by it
+            return null;
         }
     }
 }
