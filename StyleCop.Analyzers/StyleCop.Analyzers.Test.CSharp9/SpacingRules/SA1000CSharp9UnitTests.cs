@@ -15,6 +15,33 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
     public partial class SA1000CSharp9UnitTests : SA1000CSharp8UnitTests
     {
         [Fact]
+        [WorkItem(3970, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3970")]
+        public async Task TestFunctionPointerKeywordSpacingAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    private unsafe {|#0:delegate|} *<int, void> pointer1;
+    private unsafe delegate* {|#1:unmanaged|} [Cdecl]<int, void> pointer2;
+}
+";
+
+            var fixedCode = @"public class TestClass
+{
+    private unsafe delegate*<int, void> pointer1;
+    private unsafe delegate* unmanaged[Cdecl]<int, void> pointer2;
+}
+";
+
+            var expected = new[]
+            {
+                Diagnostic().WithArguments("delegate", " not").WithLocation(0),
+                Diagnostic().WithArguments("unmanaged", " not").WithLocation(1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestTargetTypedNewAsync()
         {
             string statementWithoutSpace = "int a = new();";

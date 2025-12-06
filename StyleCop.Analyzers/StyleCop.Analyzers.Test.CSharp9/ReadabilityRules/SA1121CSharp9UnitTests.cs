@@ -45,5 +45,36 @@ class TestClass
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3970, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3970")]
+        public async Task TestFunctionPointerParametersAsync()
+        {
+            var testCode = @"using System;
+public class TestClass
+{
+    private unsafe delegate*<{|#0:System.Int64|}, {|#1:System.Int32|}> field1;
+    private unsafe delegate*<{|#2:Int64|}, {|#3:Int32|}> field2;
+}
+";
+
+            var fixedCode = @"using System;
+public class TestClass
+{
+    private unsafe delegate*<long, int> field1;
+    private unsafe delegate*<long, int> field2;
+}
+";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+                Diagnostic().WithLocation(2),
+                Diagnostic().WithLocation(3),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

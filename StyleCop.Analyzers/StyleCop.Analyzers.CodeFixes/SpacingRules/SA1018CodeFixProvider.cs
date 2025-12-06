@@ -88,8 +88,7 @@ namespace StyleCop.Analyzers.SpacingRules
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
-            var nullableType = (NullableTypeSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
-            var questionToken = nullableType.QuestionToken;
+            var questionToken = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
             var precedingToken = questionToken.GetPreviousToken();
 
             var triviaList = precedingToken.TrailingTrivia.AddRange(questionToken.LeadingTrivia);

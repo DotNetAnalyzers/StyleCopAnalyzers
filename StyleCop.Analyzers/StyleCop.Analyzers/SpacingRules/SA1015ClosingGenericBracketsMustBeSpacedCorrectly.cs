@@ -87,6 +87,7 @@ namespace StyleCop.Analyzers.SpacingRules
             {
             case SyntaxKind.TypeArgumentList:
             case SyntaxKind.TypeParameterList:
+            case SyntaxKindEx.FunctionPointerParameterList:
                 break;
 
             default:
