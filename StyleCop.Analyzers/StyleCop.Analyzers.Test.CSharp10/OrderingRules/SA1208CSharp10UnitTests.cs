@@ -129,5 +129,45 @@ class TestClass
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3982, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3982")]
+        public async Task TestGlobalAndLocalUsingDirectivesMaintainIndependentSystemOrderingAsync()
+        {
+            await new CSharpTest
+            {
+                TestSources =
+                {
+                    "namespace NameSpaceA { }",
+                    "namespace OtherNamespace { }",
+                    @"
+global using NameSpaceA;
+{|#0:global using System.Text;|}
+global using System;
+
+using OtherNamespace;
+{|#1:using System.IO;|}
+using System;
+",
+                },
+                FixedSources =
+                {
+                    @"
+global using System;
+global using System.Text;
+global using NameSpaceA;
+
+using System;
+using System.IO;
+using OtherNamespace;
+",
+                },
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(0).WithArguments("System.Text", "NameSpaceA"),
+                    Diagnostic().WithLocation(1).WithArguments("System.IO", "OtherNamespace"),
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
