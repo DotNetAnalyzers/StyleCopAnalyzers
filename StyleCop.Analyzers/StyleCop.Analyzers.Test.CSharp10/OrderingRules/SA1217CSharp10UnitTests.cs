@@ -110,5 +110,39 @@ class TestClass
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3982, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3982")]
+        public async Task TestAlphabeticalOrderingEnforcedSeparatelyForGlobalAndLocalStaticUsingDirectivesAsync()
+        {
+            await new CSharpTest
+            {
+                TestSources =
+                {
+                    @"
+global using static System.Math;
+{|#0:global using static System.Array;|}
+
+using static System.Console;
+{|#1:using static System.Array;|}
+",
+                },
+                FixedSources =
+                {
+                    @"
+global using static System.Array;
+global using static System.Math;
+
+using static System.Array;
+using static System.Console;
+",
+                },
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(0).WithArguments("System.Array", "System.Math"),
+                    Diagnostic().WithLocation(1).WithArguments("System.Array", "System.Console"),
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
