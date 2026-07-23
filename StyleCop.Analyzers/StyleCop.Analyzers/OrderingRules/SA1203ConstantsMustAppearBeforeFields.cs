@@ -37,9 +37,6 @@ namespace StyleCop.Analyzers.OrderingRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly ImmutableArray<SyntaxKind> TypeDeclarationKinds =
-            ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration);
-
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> TypeDeclarationAction = HandleTypeDeclaration;
 
         /// <inheritdoc/>
@@ -54,7 +51,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
             context.RegisterCompilationStartAction(context =>
             {
-                context.RegisterSyntaxNodeAction(TypeDeclarationAction, TypeDeclarationKinds);
+                context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
             });
         }
 
