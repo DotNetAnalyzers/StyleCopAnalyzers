@@ -120,5 +120,23 @@ public static class TestExtensions
 
             await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(4028, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4028")]
+        public async Task TestFieldKeywordDoesNotRequireThisPrefixAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public int Prop
+    {
+        get => field;
+        set => field = value;
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
