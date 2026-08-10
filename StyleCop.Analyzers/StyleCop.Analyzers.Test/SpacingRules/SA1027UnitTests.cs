@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.SpacingRules;
     using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
@@ -18,6 +19,37 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     /// </summary>
     public class SA1027UnitTests
     {
+        public static TheoryData<string> EscapeSequences
+        {
+            get
+            {
+                var data = new TheoryData<string>()
+                {
+                    "\\'",
+                    "\\\"",
+                    "\\\\",
+                    "\\0",
+                    "\\a",
+                    "\\b",
+                    "\\f",
+                    "\\n",
+                    "\\r",
+                    "\\t",
+                    "\\v",
+                    "\\u0041",
+                    "\\x41",
+                    "\\U00000041",
+                };
+
+                if (LightupHelpers.SupportsCSharp13)
+                {
+                    data.Add("\\e");
+                }
+
+                return data;
+            }
+        }
+
         /// <summary>
         /// Verifies that tabs used inside string and char literals are not producing diagnostics.
         /// </summary>
@@ -227,6 +259,20 @@ public  class   Foo
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(EscapeSequences))]
+        [WorkItem(4015, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4015")]
+        public async Task TestValidEscapeSequenceAsync(string escapeSequence)
+        {
+            var testCode =
+                "public class Foo\r\n" +
+                "{\r\n" +
+                $"    public const string ValidTestString = \"{escapeSequence}Text\";\r\n" +
+                "}\r\n";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
