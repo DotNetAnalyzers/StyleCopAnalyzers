@@ -11,6 +11,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -32,6 +33,32 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
         private static readonly DiagnosticDescriptor CS1669 =
                           new DiagnosticDescriptor(nameof(CS1669), "Title", "__arglist is not valid in this context", "Category", DiagnosticSeverity.Error, AnalyzerConstants.EnabledByDefault);
+
+        public static TheoryData<string> ParamsTypes
+        {
+            get
+            {
+                var data = new TheoryData<string>()
+                {
+                    "Action[]",
+                };
+
+                if (LightupHelpers.SupportsCSharp13)
+                {
+                    // params collections: params is no longer limited to array types as of C# 13.
+                    data.Add("IEnumerable<Action>");
+                    data.Add("IReadOnlyCollection<Action>");
+                    data.Add("IReadOnlyList<Action>");
+                    data.Add("ICollection<Action>");
+                    data.Add("IList<Action>");
+                    data.Add("List<Action>");
+                    data.Add("ReadOnlySpan<Action>");
+                    data.Add("Span<Action>");
+                }
+
+                return data;
+            }
+        }
 
         [Theory]
         [InlineData("\n")]
@@ -397,43 +424,49 @@ public class TypeName
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestParamsAsync()
+        [Theory]
+        [MemberData(nameof(ParamsTypes))]
+        [WorkItem(4013, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4013")]
+        public async Task TestParamsAsync(string paramsType)
         {
-            var testCode = @"
+            var testCode = $@"
 using System;
-public class TypeName
-{
-    public void Test(params Action[] argument)
-    {
+using System.Collections.Generic;
 
-    }
+public class TypeName
+{{
+    public void Test(params {paramsType} argument)
+    {{
+
+    }}
 
     public void Test()
-    {
-        Test(delegate { }, delegate { });
-    }
-}";
+    {{
+        Test(delegate {{ }}, delegate {{ }});
+    }}
+}}";
 
-            string fixedCode = @"
+            string fixedCode = $@"
 using System;
-public class TypeName
-{
-    public void Test(params Action[] argument)
-    {
+using System.Collections.Generic;
 
-    }
+public class TypeName
+{{
+    public void Test(params {paramsType} argument)
+    {{
+
+    }}
 
     public void Test()
-    {
-        Test(() => { }, () => { });
-    }
-}";
+    {{
+        Test(() => {{ }}, () => {{ }});
+    }}
+}}";
 
             var expected = new[]
             {
-                Diagnostic().WithLocation(12, 14),
-                Diagnostic().WithLocation(12, 28),
+                Diagnostic().WithLocation(14, 14),
+                Diagnostic().WithLocation(14, 28),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
