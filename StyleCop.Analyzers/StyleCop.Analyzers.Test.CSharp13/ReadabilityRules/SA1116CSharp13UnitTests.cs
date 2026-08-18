@@ -3,9 +3,41 @@
 
 namespace StyleCop.Analyzers.Test.CSharp13.ReadabilityRules
 {
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp12.ReadabilityRules;
+    using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.ReadabilityRules.SA1116SplitParametersMustStartOnLineAfterDeclaration,
+        StyleCop.Analyzers.ReadabilityRules.SA1116CodeFixProvider>;
 
     public partial class SA1116CSharp13UnitTests : SA1116CSharp12UnitTests
     {
+        [Fact]
+        [WorkItem(4013, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4013")]
+        public async Task TestSplitParamsCollectionParameterNotStartingOnNextLineAsync()
+        {
+            var testCode = @"
+using System;
+
+class Foo
+{
+    public Foo([|int a|],
+        params ReadOnlySpan<int> s) { }
+}";
+
+            var fixedCode = @"
+using System;
+
+class Foo
+{
+    public Foo(
+        int a,
+        params ReadOnlySpan<int> s) { }
+}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
