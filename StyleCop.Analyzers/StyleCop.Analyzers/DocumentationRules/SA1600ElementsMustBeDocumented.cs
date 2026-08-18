@@ -184,6 +184,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             public static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
             {
+                // TODO: This analyzer does not skip partial methods etc, only types. Is this correct?
                 if (context.GetDocumentationMode() == DocumentationMode.None)
                 {
                     return;

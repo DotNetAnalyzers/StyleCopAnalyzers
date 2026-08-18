@@ -14,6 +14,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -24,11 +25,15 @@ namespace StyleCop.Analyzers.DocumentationRules
     {
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> typeDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> methodDeclarationAction;
+        private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> propertyDeclarationAction;
+        private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> indexerDeclarationAction;
 
         protected PartialElementDocumentationSummaryBase()
         {
             this.typeDeclarationAction = this.HandleTypeDeclaration;
             this.methodDeclarationAction = this.HandleMethodDeclaration;
+            this.propertyDeclarationAction = this.HandlePropertyDeclaration;
+            this.indexerDeclarationAction = this.HandleIndexerDeclaration;
         }
 
         /// <inheritdoc/>
@@ -41,6 +46,8 @@ namespace StyleCop.Analyzers.DocumentationRules
             {
                 context.RegisterSyntaxNodeAction(this.typeDeclarationAction, SyntaxKinds.TypeDeclaration);
                 context.RegisterSyntaxNodeAction(this.methodDeclarationAction, SyntaxKind.MethodDeclaration);
+                context.RegisterSyntaxNodeAction(this.propertyDeclarationAction, SyntaxKind.PropertyDeclaration);
+                context.RegisterSyntaxNodeAction(this.indexerDeclarationAction, SyntaxKind.IndexerDeclaration);
             });
         }
 
@@ -68,8 +75,62 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             var methodDeclaration = (MethodDeclarationSyntax)node;
 
+            // TODO: Should this check for Body == null or ExpressionBody == null?
             return methodDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword)
                 && (methodDeclaration.Body == null);
+        }
+
+        private static bool IsPartialPropertyOrIndexerDefinition(SyntaxNode node)
+        {
+            BasePropertyDeclarationSyntax propertyDeclaration;
+            switch (node)
+            {
+            case PropertyDeclarationSyntax propertyDeclarationSyntax:
+                if (propertyDeclarationSyntax.ExpressionBody != null)
+                {
+                    return false;
+                }
+
+                propertyDeclaration = propertyDeclarationSyntax;
+                break;
+
+            case IndexerDeclarationSyntax indexerDeclarationSyntax:
+                if (indexerDeclarationSyntax.ExpressionBody != null)
+                {
+                    return false;
+                }
+
+                propertyDeclaration = indexerDeclarationSyntax;
+                break;
+
+            default:
+                return false;
+            }
+
+            if (!propertyDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+            {
+                // Should be redundant, but leaving it
+                return false;
+            }
+
+            AccessorListSyntax accessorList = propertyDeclaration.AccessorList;
+            if (accessorList == null)
+            {
+                // Shouldn't happen without a syntax error
+                return false;
+            }
+
+            // The declaring part of a partial property/indexer has no accessor bodies (e.g. 'get; set;'). An
+            // implementing part is required to provide a body (or expression body) for at least one accessor.
+            foreach (AccessorDeclarationSyntax accessor in accessorList.Accessors)
+            {
+                if (accessor.Body != null || accessor.ExpressionBody() != null)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
@@ -114,6 +175,46 @@ namespace StyleCop.Analyzers.DocumentationRules
             this.HandleDeclaration(context, needsComment, node, node.Identifier.GetLocation());
         }
 
+        private void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        {
+            var node = (PropertyDeclarationSyntax)context.Node;
+            if (node.Identifier.IsMissing)
+            {
+                return;
+            }
+
+            if (!node.Modifiers.Any(SyntaxKind.PartialKeyword))
+            {
+                // non-partial elements are handled by ElementDocumentationSummaryBase
+                return;
+            }
+
+            Accessibility declaredAccessibility = node.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+            Accessibility effectiveAccessibility = node.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+            bool needsComment = SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, node.Kind(), node.Parent.Kind(), declaredAccessibility, effectiveAccessibility);
+            this.HandleDeclaration(context, needsComment, node, node.Identifier.GetLocation());
+        }
+
+        private void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        {
+            var node = (IndexerDeclarationSyntax)context.Node;
+            if (node.ThisKeyword.IsMissing)
+            {
+                return;
+            }
+
+            if (!node.Modifiers.Any(SyntaxKind.PartialKeyword))
+            {
+                // non-partial elements are handled by ElementDocumentationSummaryBase
+                return;
+            }
+
+            Accessibility declaredAccessibility = node.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+            Accessibility effectiveAccessibility = node.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+            bool needsComment = SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, node.Kind(), node.Parent.Kind(), declaredAccessibility, effectiveAccessibility);
+            this.HandleDeclaration(context, needsComment, node, node.ThisKeyword.GetLocation());
+        }
+
         private void HandleDeclaration(SyntaxNodeAnalysisContext context, bool needsComment, SyntaxNode node, params Location[] locations)
         {
             var documentation = node.GetDocumentationCommentTriviaSyntax();
@@ -146,8 +247,9 @@ namespace StyleCop.Analyzers.DocumentationRules
                 if (relevantXmlElement != null)
                 {
                     string rawDocumentation;
-                    if (IsPartialMethodDefinition(node))
+                    if (IsPartialMethodDefinition(node) || IsPartialPropertyOrIndexerDefinition(node))
                     {
+                        // TODO: Investigate this further. Possibly add a test with an actual partial implemented method.
                         // Workaround: Roslyn does not support expanding include directives for partial method definitions.
                         //             (see src/Compilers/CSharp/Portable/Compiler/DocumentationCommentCompiler.cs#L315)
                         rawDocumentation = this.ExpandDocumentation(context.Compilation, documentation, relevantXmlElement);
