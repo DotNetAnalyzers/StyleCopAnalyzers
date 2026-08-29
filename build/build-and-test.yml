@@ -117,6 +117,12 @@ stages:
         targetPath: $(Build.SourcesDirectory)/StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp13/bin
         artifact: buildTest-cs13-${{ parameters.BuildConfiguration }}
 
+    - task: PublishPipelineArtifact@1
+      displayName: Publish build output (Test C# 15)
+      inputs:
+        targetPath: $(Build.SourcesDirectory)/StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp15/bin
+        artifact: buildTest-cs15-${{ parameters.BuildConfiguration }}
+
 - stage: Test_CSharp_6_${{ parameters.BuildConfiguration }}
   displayName: Test C# 6 ${{ parameters.BuildConfiguration }}
   dependsOn: [ 'Build_${{ parameters.BuildConfiguration }}' ]
@@ -213,6 +219,18 @@ stages:
       LangVersion: '13'
       FrameworkVersion: 'net472'
 
+- stage: Test_CSharp_15_${{ parameters.BuildConfiguration }}
+  displayName: Test C# 15 ${{ parameters.BuildConfiguration }}
+  dependsOn: [ 'Build_${{ parameters.BuildConfiguration }}' ]
+  jobs:
+  - template: test.yml
+    parameters:
+      BuildConfiguration: ${{ parameters.BuildConfiguration }}
+      BuildSolution: ${{ parameters.BuildSolution }}
+      BuildPlatform: ${{ parameters.BuildPlatform }}
+      LangVersion: '15'
+      FrameworkVersion: 'net472'
+
 - stage: Publish_Code_Coverage_${{ parameters.BuildConfiguration }}
   displayName: Publish Code Coverage
   condition: eq('${{ parameters.BuildConfiguration }}', 'Debug')
@@ -225,6 +243,7 @@ stages:
   - Test_CSharp_11_${{ parameters.BuildConfiguration }}
   - Test_CSharp_12_${{ parameters.BuildConfiguration }}
   - Test_CSharp_13_${{ parameters.BuildConfiguration }}
+  - Test_CSharp_15_${{ parameters.BuildConfiguration }}
   jobs:
   - job: WrapUp
     steps:
@@ -269,6 +288,10 @@ stages:
     - download: current
       artifact: coverageResults-cs13
       displayName: 🔻 Download C# 13 code coverage results
+      continueOnError: true
+    - download: current
+      artifact: coverageResults-cs15
+      displayName: Download C# 15 code coverage results
       continueOnError: true
     - task: PowerShell@2
       displayName: ⚙ Merge coverage
