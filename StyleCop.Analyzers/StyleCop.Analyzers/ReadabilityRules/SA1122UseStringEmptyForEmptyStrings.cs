@@ -46,6 +46,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<SyntaxNodeAnalysisContext> StringLiteralExpressionAction = HandleStringLiteralExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> InterpolatedStringExpressionAction = HandleInterpolatedStringExpression;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -58,20 +59,23 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.EnableConcurrentExecution();
 
             context.RegisterSyntaxNodeAction(StringLiteralExpressionAction, SyntaxKind.StringLiteralExpression);
+            context.RegisterSyntaxNodeAction(InterpolatedStringExpressionAction, SyntaxKind.InterpolatedStringExpression);
         }
 
         private static void HandleStringLiteralExpression(SyntaxNodeAnalysisContext context)
         {
             LiteralExpressionSyntax literalExpression = (LiteralExpressionSyntax)context.Node;
-
             var token = literalExpression.Token;
-            if (token.IsKind(SyntaxKind.StringLiteralToken))
+
+            // TODO: Skip check of syntax kind? Might not be necessary.
+            if (token.IsKind(SyntaxKind.StringLiteralToken) || token.IsKind(SyntaxKindEx.MultiLineRawStringLiteralToken))
             {
                 if (HasToBeConstant(literalExpression))
                 {
                     return;
                 }
 
+                // TODO: Check this first instead? Should be faster.
                 if (token.ValueText == string.Empty)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, literalExpression.GetLocation()));
@@ -79,9 +83,27 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private static bool HasToBeConstant(LiteralExpressionSyntax literalExpression)
+        private static void HandleInterpolatedStringExpression(SyntaxNodeAnalysisContext context)
         {
-            ExpressionSyntax outermostExpression = FindOutermostExpression(literalExpression);
+            var interpolatedStringExpression = (InterpolatedStringExpressionSyntax)context.Node;
+
+            // Only an interpolated string without any content at all is considered empty
+            if (interpolatedStringExpression.Contents.Count > 0)
+            {
+                return;
+            }
+
+            if (HasToBeConstant(interpolatedStringExpression))
+            {
+                return;
+            }
+
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, interpolatedStringExpression.GetLocation()));
+        }
+
+        private static bool HasToBeConstant(ExpressionSyntax expression)
+        {
+            ExpressionSyntax outermostExpression = FindOutermostExpression(expression);
 
             if (outermostExpression.Parent.IsKind(SyntaxKind.AttributeArgument)
                 || outermostExpression.Parent.IsKind(SyntaxKind.CaseSwitchLabel)

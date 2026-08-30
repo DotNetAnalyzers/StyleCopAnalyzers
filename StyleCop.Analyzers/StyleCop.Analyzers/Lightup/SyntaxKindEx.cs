@@ -24,6 +24,7 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind AnnotationsKeyword = (SyntaxKind)8489;
         public const SyntaxKind VarKeyword = (SyntaxKind)8490;
         public const SyntaxKind UnderscoreToken = (SyntaxKind)8491;
+        public const SyntaxKind MultiLineRawStringLiteralToken = (SyntaxKind)8519;
         public const SyntaxKind ConflictMarkerTrivia = (SyntaxKind)8564;
         public const SyntaxKind IsPatternExpression = (SyntaxKind)8657;
         public const SyntaxKind RangeExpression = (SyntaxKind)8658;

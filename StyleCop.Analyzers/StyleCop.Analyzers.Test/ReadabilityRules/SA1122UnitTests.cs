@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.ReadabilityRules;
     using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
@@ -19,8 +20,99 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     /// This class contains unit tests for <see cref="SA1122UseStringEmptyForEmptyStrings"/> and
     /// <see cref="SA1122CodeFixProvider"/>.
     /// </summary>
+    // TODO: Check if this can be simplified, using the theory tests
     public class SA1122UnitTests
     {
+        public static TheoryData<string> EmptyStringLiterals
+        {
+            get
+            {
+                var data = new TheoryData<string>()
+                {
+                    "\"\"",
+                    "@\"\"",
+                    "$\"\"",
+                    "$@\"\"",
+                };
+
+                if (LightupHelpers.SupportsCSharp8)
+                {
+                    data.Add("@$\"\"");
+                }
+
+                if (LightupHelpers.SupportsCSharp11)
+                {
+                    // Only the multi-line form of a raw string literal can be empty, written as a single blank line
+                    // between the delimiters.
+                    data.Add("\"\"\"\r\n\r\n            \"\"\"");
+                }
+
+                return data;
+            }
+        }
+
+        public static TheoryData<string> NotReportedStringLiterals
+        {
+            get
+            {
+                var data = new TheoryData<string>()
+                {
+                    "\"text\"",
+                    "@\"text\"",
+                    "$\"text\"",
+                    "$@\"text\"",
+                    "$\"{value}\"",
+                };
+
+                if (LightupHelpers.SupportsCSharp8)
+                {
+                    data.Add("@$\"text\"");
+                }
+
+                if (LightupHelpers.SupportsCSharp11)
+                {
+                    data.Add("\"\"\"text\"\"\"");
+
+                    // Two blank lines is the boundary of the empty case above: the newline ending the last content
+                    // line belongs to the closing delimiter, so this value is a single line break, not empty.
+                    data.Add("\"\"\"\r\n\r\n\r\n            \"\"\"");
+
+                    // A UTF-8 string literal is a ReadOnlySpan<byte> rather than a string, so string.Empty can never replace it.
+                    data.Add("\"\"u8");
+                    data.Add("\"text\"u8");
+                }
+
+                return data;
+            }
+        }
+
+        public static TheoryData<string> EmptyStringLiteralsAllowedAsConstant
+        {
+            get
+            {
+                var data = new TheoryData<string>()
+                {
+                    "\"\"",
+                    "@\"\"",
+                };
+
+                // An interpolated string is only a constant expression from C# 10 onwards.
+                if (LightupHelpers.SupportsCSharp10)
+                {
+                    data.Add("$\"\"");
+                    data.Add("$@\"\"");
+                    data.Add("@$\"\"");
+                }
+
+                if (LightupHelpers.SupportsCSharp11)
+                {
+                    data.Add("\"\"\"\r\n\r\n            \"\"\"");
+                }
+
+                return data;
+            }
+        }
+
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
@@ -73,6 +165,60 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             var expected = Diagnostic().WithLocation(0);
             await VerifyCSharpFixAsync(oldSource, expected, newSource, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(EmptyStringLiterals))]
+        public async Task TestEmptyStringLiteralIsReportedAsync(string literal)
+        {
+            var testCode = $@"public class Foo
+{{
+    public void Bar(string value)
+    {{
+        var test = [|{literal}|];
+    }}
+}}";
+            var fixedCode = @"public class Foo
+{
+    public void Bar(string value)
+    {
+        var test = string.Empty;
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(NotReportedStringLiterals))]
+        public async Task TestStringLiteralIsNotReportedAsync(string literal)
+        {
+            var testCode = $@"public class Foo
+{{
+    public void Bar(string value)
+    {{
+        var test = {literal};
+    }}
+}}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(EmptyStringLiteralsAllowedAsConstant))]
+        public async Task TestEmptyStringLiteralAsConstantIsNotReportedAsync(string literal)
+        {
+            var testCode = $@"public class Foo
+{{
+    private const string TestField = {literal};
+
+    public void Bar()
+    {{
+        const string test = {literal};
+    }}
+}}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
