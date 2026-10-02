@@ -114,11 +114,64 @@ class TestClass
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory]
+        [MemberData(nameof(CommonMemberData.ReferenceTypeKeywordsWhichSupportPrimaryConstructors), MemberType = typeof(CommonMemberData))]
+        [WorkItem(4006, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4006")]
+        public async Task TestValidPrimaryConstructorBaseListAsync(string typeKeyword)
+        {
+            var testCode = $@"
+{typeKeyword} Foo(int a, int b, int c)
+{{
+}}
+
+{typeKeyword} Bar(int a, int b, int c) : Foo(
+    a,
+    b,
+    c)
+{{
+}}
+
+{typeKeyword} Baz(int a, int b, int c) : Foo(a, b, c)
+{{
+}}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.ReferenceTypeKeywordsWhichSupportPrimaryConstructors), MemberType = typeof(CommonMemberData))]
+        [WorkItem(4006, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4006")]
+        public async Task TestInvalidPrimaryConstructorBaseListAsync(string typeKeyword)
+        {
+            var testCode = $@"
+{typeKeyword} Foo(int a, int b, int c)
+{{
+}}
+
+{typeKeyword} Bar(int a, int b, int c) : Foo(a, b,
+    {{|#0:c|}})
+{{
+}}";
+
+            var expected = this.GetExpectedResultTestInvalidPrimaryConstructorBaseList();
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected virtual DiagnosticResult[] GetExpectedResultTestInvalidPrimaryConstructor()
         {
             return new[]
             {
                 // Diagnostic issued twice because of https://github.com/dotnet/roslyn/issues/53136
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(0),
+            };
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestInvalidPrimaryConstructorBaseList()
+        {
+            return new[]
+            {
+                // Diagnostic issued twice because of https://github.com/dotnet/roslyn/issues/70488
                 Diagnostic().WithLocation(0),
                 Diagnostic().WithLocation(0),
             };

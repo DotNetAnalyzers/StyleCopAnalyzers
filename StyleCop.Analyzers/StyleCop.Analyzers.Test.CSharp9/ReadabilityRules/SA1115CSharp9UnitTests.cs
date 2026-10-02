@@ -66,11 +66,61 @@ public class TestClass
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory]
+        [MemberData(nameof(CommonMemberData.ReferenceTypeKeywordsWhichSupportPrimaryConstructors), MemberType = typeof(CommonMemberData))]
+        [WorkItem(4006, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4006")]
+        public async Task TestPrimaryConstructorBaseListEmptyLineBetweenArgumentsAsync(string typeKeyword)
+        {
+            var testCode = $@"
+{typeKeyword} Foo(int a, int b)
+{{
+}}
+
+{typeKeyword} Bar(int a, int b) : Foo(
+    a,
+
+    {{|#0:b|}})
+{{
+}}";
+
+            var expected = this.GetExpectedResultTestPrimaryConstructorBaseListEmptyLineBetweenArguments();
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.ReferenceTypeKeywordsWhichSupportPrimaryConstructors), MemberType = typeof(CommonMemberData))]
+        [WorkItem(4006, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4006")]
+        public async Task TestPrimaryConstructorBaseListSecondArgumentOnTheNextLineAsync(string typeKeyword)
+        {
+            var testCode = $@"
+{typeKeyword} Foo(int a, int b)
+{{
+}}
+
+{typeKeyword} Bar(int a, int b) : Foo(
+    a,
+    b)
+{{
+}}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected virtual DiagnosticResult[] GetExpectedResultTestPrimaryConstructorEmptyLineBetweenParameters()
         {
             return new[]
             {
                 // Diagnostic issued twice because of https://github.com/dotnet/roslyn/issues/53136
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(0),
+            };
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestPrimaryConstructorBaseListEmptyLineBetweenArguments()
+        {
+            return new[]
+            {
+                // Diagnostic issued twice because of https://github.com/dotnet/roslyn/issues/70488
                 Diagnostic().WithLocation(0),
                 Diagnostic().WithLocation(0),
             };

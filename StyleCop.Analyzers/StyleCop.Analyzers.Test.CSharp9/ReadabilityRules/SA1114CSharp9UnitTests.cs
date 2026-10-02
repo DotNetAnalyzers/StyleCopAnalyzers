@@ -64,11 +64,59 @@ public class TestClass
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory]
+        [MemberData(nameof(CommonMemberData.ReferenceTypeKeywordsWhichSupportPrimaryConstructors), MemberType = typeof(CommonMemberData))]
+        [WorkItem(4006, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4006")]
+        public async Task TestPrimaryConstructorBaseListArgumentsList2LinesAfterOpeningParenthesisAsync(string typeKeyword)
+        {
+            var testCode = $@"
+{typeKeyword} Foo(int a)
+{{
+}}
+
+{typeKeyword} Bar(int a) : Foo(
+
+    {{|#0:a|}})
+{{
+}}";
+
+            var expected = this.GetExpectedResultTestPrimaryConstructorBaseListArgumentsList2LinesAfterOpeningParenthesis();
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.ReferenceTypeKeywordsWhichSupportPrimaryConstructors), MemberType = typeof(CommonMemberData))]
+        [WorkItem(4006, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4006")]
+        public async Task TestPrimaryConstructorBaseListArgumentsListOnNextLineAsOpeningParenthesisAsync(string typeKeyword)
+        {
+            var testCode = $@"
+{typeKeyword} Foo(int a)
+{{
+}}
+
+{typeKeyword} Bar(int a) : Foo(
+    a)
+{{
+}}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected virtual DiagnosticResult[] GetExpectedResultTestPrimaryConstructorParametersList2LinesAfterOpeningParenthesis()
         {
             return new[]
             {
                 // Diagnostic issued twice because of https://github.com/dotnet/roslyn/issues/53136
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(0),
+            };
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestPrimaryConstructorBaseListArgumentsList2LinesAfterOpeningParenthesis()
+        {
+            return new[]
+            {
+                // Diagnostic issued twice because of https://github.com/dotnet/roslyn/issues/70488
                 Diagnostic().WithLocation(0),
                 Diagnostic().WithLocation(0),
             };
