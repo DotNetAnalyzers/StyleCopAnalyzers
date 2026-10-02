@@ -70,5 +70,35 @@ public class TestClass
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.TypeKeywordsWhichSupportPrimaryConstructors), MemberType = typeof(CommonMemberData))]
+        [WorkItem(4006, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4006")]
+        public async Task TestPrimaryConstructorWithNoParametersClosingParenthesisOnTheNextLineAsync(string typeKeyword)
+        {
+            var testCode = $@"
+{typeKeyword} Foo(
+{{|#0:)|}}
+{{
+}}";
+
+            var fixedCode = $@"
+{typeKeyword} Foo()
+{{
+}}";
+
+            var expected = this.GetExpectedResultTestPrimaryConstructorWithNoParametersClosingParenthesisOnTheNextLine();
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestPrimaryConstructorWithNoParametersClosingParenthesisOnTheNextLine()
+        {
+            return new[]
+            {
+                // Diagnostic issued twice because of https://github.com/dotnet/roslyn/issues/53136
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(0),
+            };
+        }
     }
 }

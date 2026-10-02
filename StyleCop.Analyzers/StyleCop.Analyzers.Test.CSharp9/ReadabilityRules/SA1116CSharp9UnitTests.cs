@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.ReadabilityRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1116SplitParametersMustStartOnLineAfterDeclaration,
@@ -84,6 +85,38 @@ public class TestClass
 ";
 
             await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.TypeKeywordsWhichSupportPrimaryConstructors), MemberType = typeof(CommonMemberData))]
+        [WorkItem(4006, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4006")]
+        public async Task TestPrimaryConstructorSplitParametersNotStartingOnNextLineAsync(string typeKeyword)
+        {
+            var testCode = $@"
+{typeKeyword} Foo({{|#0:int a|}},
+    int b)
+{{
+}}";
+
+            var fixedCode = $@"
+{typeKeyword} Foo(
+    int a,
+    int b)
+{{
+}}";
+
+            var expected = this.GetExpectedResultTestPrimaryConstructorSplitParametersNotStartingOnNextLine();
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestPrimaryConstructorSplitParametersNotStartingOnNextLine()
+        {
+            return new[]
+            {
+                // Diagnostic issued twice because of https://github.com/dotnet/roslyn/issues/53136
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(0),
+            };
         }
     }
 }

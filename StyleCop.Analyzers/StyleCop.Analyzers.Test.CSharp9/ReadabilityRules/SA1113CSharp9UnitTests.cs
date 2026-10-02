@@ -88,5 +88,36 @@ public class TestClass
             DiagnosticResult expected = Diagnostic().WithLocation(0);
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.TypeKeywordsWhichSupportPrimaryConstructors), MemberType = typeof(CommonMemberData))]
+        [WorkItem(4006, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4006")]
+        public async Task TestPrimaryConstructorCommaPlacedAtTheSameLineAsTheSecondParameterAsync(string typeKeyword)
+        {
+            var testCode = $@"
+{typeKeyword} Foo(int a
+    {{|#0:,|}} int b)
+{{
+}}";
+
+            var fixedCode = $@"
+{typeKeyword} Foo(int a,
+    int b)
+{{
+}}";
+
+            var expected = this.GetExpectedResultTestPrimaryConstructorCommaPlacedAtTheSameLineAsTheSecondParameter();
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestPrimaryConstructorCommaPlacedAtTheSameLineAsTheSecondParameter()
+        {
+            return new[]
+            {
+                // Diagnostic issued twice because of https://github.com/dotnet/roslyn/issues/53136
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(0),
+            };
+        }
     }
 }
