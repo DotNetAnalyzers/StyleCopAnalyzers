@@ -44,5 +44,27 @@ public record DerivedRecord : BaseRecord
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.TypeKeywordsWhichSupportPrimaryConstructors), MemberType = typeof(CommonMemberData))]
+        [WorkItem(4006, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4006")]
+        public async Task TestTypeWithPrimaryConstructorWithInvalidInheritDocAsync(string typeKeyword)
+        {
+            var testCode = $@"/// {{|#0:<inheritdoc/>|}}
+public {typeKeyword} TestType(int X);";
+
+            var expected = this.GetExpectedResultTestTypeWithPrimaryConstructorWithInvalidInheritDoc();
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestTypeWithPrimaryConstructorWithInvalidInheritDoc()
+        {
+            return new[]
+            {
+                // Diagnostic issued twice because of https://github.com/dotnet/roslyn/issues/53136
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(0),
+            };
+        }
     }
 }

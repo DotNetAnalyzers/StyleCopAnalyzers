@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.ReadabilityRules;
     using Xunit;
@@ -277,6 +278,40 @@ class TestClass
 ";
 
             await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(4006, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4006")]
+        public async Task TestMemberIndentationInPositionalRecordAsync()
+        {
+            var testCode = @"public record TestRecord(int X)
+{
+    public int A { get; }
+
+{|#0:  |}public int B { get; }
+}
+";
+
+            var fixedCode = @"public record TestRecord(int X)
+{
+    public int A { get; }
+
+    public int B { get; }
+}
+";
+
+            var expected = this.GetExpectedResultTestMemberIndentationInPositionalRecord();
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestMemberIndentationInPositionalRecord()
+        {
+            return new[]
+            {
+                // Diagnostic issued twice because of https://github.com/dotnet/roslyn/issues/53136
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(0),
+            };
         }
     }
 }
