@@ -45,8 +45,8 @@ public struct {|#1:FooStruct|} { }
 ";
             var expected = new[]
             {
-                Diagnostic().WithLocation(0).WithArguments("delegate", "enum"),
-                Diagnostic().WithLocation(1).WithArguments("struct", "class"),
+                Diagnostic().WithLocation(0).WithArguments("A delegate", "an enum"),
+                Diagnostic().WithLocation(1).WithArguments("A struct", "a class"),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -81,8 +81,8 @@ public record struct {|#1:FooStruct|} { }
 
             var expected = new[]
             {
-                Diagnostic().WithLocation(0).WithArguments("delegate", "enum"),
-                Diagnostic().WithLocation(1).WithArguments("record struct", "class"),
+                Diagnostic().WithLocation(0).WithArguments("A delegate", "an enum"),
+                Diagnostic().WithLocation(1).WithArguments("A record struct", "a class"),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
