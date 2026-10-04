@@ -200,5 +200,29 @@ class TestClass
             };
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3979, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3979")]
+        public async Task TestRecordStructPrimaryConstructorAsync()
+        {
+            var testCode = @"
+public record struct Foo {|#0:(|}int X);
+
+public record struct Bar{|#1:(|} int X);
+";
+
+            var fixedCode = @"
+public record struct Foo(int X);
+
+public record struct Bar(int X);
+";
+
+            var expected = new[]
+            {
+                Diagnostic(DescriptorNotPreceded).WithLocation(0),
+                Diagnostic(DescriptorNotFollowed).WithLocation(1),
+            };
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
