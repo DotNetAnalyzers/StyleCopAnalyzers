@@ -143,5 +143,36 @@ namespace StyleCop.Analyzers.Test.CSharp10.ReadabilityRules
 
             await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3983, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3983")]
+        public async Task TestFileScopedNamespaceAsync()
+        {
+            var testCode = @"namespace Foo.Bar;
+
+public class Test
+{
+    public int Bar;
+
+    public void Method()
+    {
+        [|Bar|] = 1;
+    }
+}";
+
+            var fixedCode = @"namespace Foo.Bar;
+
+public class Test
+{
+    public int Bar;
+
+    public void Method()
+    {
+        this.Bar = 1;
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
