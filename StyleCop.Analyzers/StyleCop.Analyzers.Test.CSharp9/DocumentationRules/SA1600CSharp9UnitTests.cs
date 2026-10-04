@@ -17,6 +17,35 @@ namespace StyleCop.Analyzers.Test.CSharp9.DocumentationRules
 
     public partial class SA1600CSharp9UnitTests : SA1600CSharp8UnitTests
     {
+        /// <summary>
+        /// Verifies that a partial method with an access modifier is not reported, since partial elements are reported
+        /// by SA1601 instead.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestPartialMethodWithAccessModifierAsync()
+        {
+            var testCode = @"/// <summary>
+/// Summary.
+/// </summary>
+public partial class TestClass
+{
+    public partial int TestMethod(out int x);
+}
+
+public partial class TestClass
+{
+    public partial int TestMethod(out int x)
+    {
+        x = 0;
+        return 0;
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Theory]
         [MemberData(nameof(CommonMemberData.TypeKeywordsWhichSupportPrimaryConstructors), MemberType = typeof(CommonMemberData))]
         [WorkItem(4006, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4006")]

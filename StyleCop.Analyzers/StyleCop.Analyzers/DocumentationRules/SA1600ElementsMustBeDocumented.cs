@@ -184,13 +184,18 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             public static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
             {
-                // TODO: This analyzer does not skip partial methods etc, only types. Is this correct?
                 if (context.GetDocumentationMode() == DocumentationMode.None)
                 {
                     return;
                 }
 
                 MethodDeclarationSyntax declaration = (MethodDeclarationSyntax)context.Node;
+                if (declaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                {
+                    // Handled by SA1601
+                    return;
+                }
+
                 if (declaration.ExplicitInterfaceSpecifier != null)
                 {
                     return;
@@ -255,6 +260,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
 
                 PropertyDeclarationSyntax declaration = (PropertyDeclarationSyntax)context.Node;
+                if (declaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                {
+                    // Handled by SA1601
+                    return;
+                }
+
                 if (declaration.ExplicitInterfaceSpecifier != null)
                 {
                     return;
@@ -279,6 +290,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
 
                 IndexerDeclarationSyntax declaration = (IndexerDeclarationSyntax)context.Node;
+                if (declaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                {
+                    // Handled by SA1601
+                    return;
+                }
+
                 if (declaration.ExplicitInterfaceSpecifier != null)
                 {
                     return;
