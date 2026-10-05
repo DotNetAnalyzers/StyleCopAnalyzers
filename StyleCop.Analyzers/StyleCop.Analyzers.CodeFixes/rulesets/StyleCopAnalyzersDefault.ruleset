@@ -75,6 +75,8 @@
         <Rule Id="SA1136"  Action="Warning" />          <!-- Enum values should be on separate lines -->
         <Rule Id="SA1137"  Action="Warning" />          <!-- Elements should have the same indentation -->
         <Rule Id="SA1139"  Action="Warning" />          <!-- Use literal suffix notation instead of casting -->
+        <Rule Id="SA1141"  Action="Warning" />          <!-- Use tuple syntax -->
+        <Rule Id="SA1142"  Action="Warning" />          <!-- Refer to tuple fields by name -->
         <Rule Id="SX1101"  Action="None" />             <!-- Do not prefix local calls with 'this.' -->
     </Rules>
 	
@@ -114,6 +116,7 @@
         <Rule Id="SA1312"  Action="Warning" />          <!-- Variable names should begin with lower-case letter -->
         <Rule Id="SA1313"  Action="Warning" />          <!-- Parameter names should begin with lower-case letter -->
         <Rule Id="SA1314"  Action="Warning" />          <!-- Type parameter names should begin with T -->
+        <Rule Id="SA1316"  Action="Warning" />          <!-- Tuple element names should use correct casing -->
         <Rule Id="SX1309"  Action="None" />             <!-- Field names should begin with underscore -->
         <Rule Id="SX1309S" Action="None" />             <!-- Static field names should begin with underscore -->
     </Rules>
@@ -134,6 +137,7 @@
         <Rule Id="SA1411"  Action="Warning" />          <!-- Attribute constructor should not use unnecessary parenthesis -->
         <Rule Id="SA1412"  Action="None"    />          <!-- Store files as UTF-8 with byte order mark -->
         <Rule Id="SA1413"  Action="Warning" />          <!-- Use trailing comma in multi-line initializers -->
+        <Rule Id="SA1414"  Action="Warning" />          <!-- Tuple types in signatures should have element names -->
     </Rules>
 	
     <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers.LayoutRules">
@@ -200,7 +204,7 @@
         <Rule Id="SA1636"  Action="Warning" />          <!-- File header copyright text should match -->
         <Rule Id="SA1637"  Action="Warning" />          <!-- File header should contain file name -->
         <Rule Id="SA1638"  Action="Warning" />          <!-- File header file name documentation should match file name -->
-        <Rule Id="SA1639"  Action="Warning" />          <!-- File header should have summary -->
+        <Rule Id="SA1639"  Action="None" />             <!-- File header should have summary -->
         <Rule Id="SA1640"  Action="Warning" />          <!-- File header should have valid company text -->
         <Rule Id="SA1641"  Action="Warning" />          <!-- File header company name text should match -->
         <Rule Id="SA1642"  Action="Warning" />          <!-- Constructor summary documentation should begin with standard text -->
