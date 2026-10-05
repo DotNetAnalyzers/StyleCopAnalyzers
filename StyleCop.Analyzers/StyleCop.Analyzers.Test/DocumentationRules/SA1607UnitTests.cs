@@ -373,6 +373,117 @@ public partial class ClassName
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestPartialTypeWithEmptySummaryAndInheritdocWithoutSourceAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// </summary>
+/// <inheritdoc/>
+public partial class ClassName
+{
+}";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(5, 22);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPartialTypeWithEmptySummaryAndInheritdocWithBaseClassAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// </summary>
+/// <inheritdoc/>
+public partial class ClassName : BaseClass
+{
+}
+
+/// <summary>
+/// Foo
+/// </summary>
+public class BaseClass
+{
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPartialTypeWithEmptySummaryAndInheritdocWithInterfaceAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// </summary>
+/// <inheritdoc/>
+public partial class ClassName : IInterface
+{
+}
+
+/// <summary>
+/// Foo
+/// </summary>
+public interface IInterface
+{
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPartialTypeWithBaseListOnOtherPartAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// </summary>
+/// <inheritdoc/>
+public partial class ClassName
+{
+}
+
+public partial class ClassName : IInterface
+{
+}
+
+/// <summary>
+/// Foo
+/// </summary>
+public interface IInterface
+{
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPartialTypeWithEmptySummaryAndInheritdocWithCrefAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// </summary>
+/// <inheritdoc cref=""string""/>
+public partial class ClassName
+{
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPartialMethodWithEmptySummaryAndInheritdocWithoutSourceAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public partial class ClassName
+{
+    /// <summary>
+    /// </summary>
+    /// <inheritdoc/>
+    partial void Test();
+}";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(10, 18);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
             => VerifyCSharpDiagnosticAsync(source, new[] { expected }, cancellationToken);
 

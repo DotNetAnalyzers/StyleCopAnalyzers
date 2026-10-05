@@ -363,6 +363,125 @@ public class ClassName : ITestInterface
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestPropertyWithEmptyValueAndInheritdocWithoutSourceAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <value>
+    ///
+    /// </value>
+    /// <inheritdoc/>
+    public string Property => ""P"";
+}";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(11, 19);
+            await VerifyCSharpFixAsync(testCode, expected, testCode, offerEmptyFixer: true, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestOverrideWithEmptyValueAndInheritdocAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName : BaseClass
+{
+    /// <value>
+    ///
+    /// </value>
+    /// <inheritdoc/>
+    public override string Property => ""P"";
+}
+
+/// <summary>
+/// Bar
+/// </summary>
+public class BaseClass
+{
+    /// <value>Value.</value>
+    public virtual string Property => ""B"";
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestImplicitInterfaceImplementationWithEmptyValueAndInheritdocAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName : IInterface
+{
+    /// <value>
+    ///
+    /// </value>
+    /// <inheritdoc/>
+    public string Property => ""P"";
+}
+
+/// <summary>
+/// Bar
+/// </summary>
+public interface IInterface
+{
+    /// <value>Value.</value>
+    string Property { get; }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestExplicitInterfaceImplementationWithEmptyValueAndInheritdocAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName : IInterface
+{
+    /// <value>
+    ///
+    /// </value>
+    /// <inheritdoc/>
+    string IInterface.Property => ""P"";
+}
+
+/// <summary>
+/// Bar
+/// </summary>
+public interface IInterface
+{
+    /// <value>Value.</value>
+    string Property { get; }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPropertyWithEmptyValueAndInheritdocWithCrefAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <value>
+    ///
+    /// </value>
+    /// <inheritdoc cref=""string.Length""/>
+    public string Property => ""P"";
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
             => VerifyCSharpFixAsync(source, expected, fixedSource: null, offerEmptyFixer: false, cancellationToken);
 

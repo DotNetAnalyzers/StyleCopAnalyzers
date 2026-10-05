@@ -548,6 +548,53 @@ public class ClassName
             await VerifyCSharpFixAsync(testCode, expected, testCode, offerEmptyFixer: true, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestMethodWithEmptyReturnsAndInheritdocWithoutSourceAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <inheritdoc/>
+    /// <returns></returns>
+    public ClassName Method() { return null; }
+}";
+
+            var expected = Diagnostic().WithLocation(8, 9);
+            await VerifyCSharpFixAsync(testCode, expected, testCode, offerEmptyFixer: true, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestOverrideWithEmptyReturnsAndInheritdocAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName : BaseClass
+{
+    /// <inheritdoc/>
+    /// <returns></returns>
+    public override ClassName Method() { return null; }
+}
+
+/// <summary>
+/// Foo
+/// </summary>
+public class BaseClass
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <returns>Foo.</returns>
+    public virtual ClassName Method() { return null; }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
             => VerifyCSharpFixAsync(source, expected, fixedSource: null, offerEmptyFixer: false, cancellationToken);
 
