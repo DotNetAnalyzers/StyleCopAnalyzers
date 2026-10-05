@@ -353,5 +353,109 @@ namespace TestNamespace
 
             await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that an alias referring to an alias of the compilation unit is expanded when the aliases end up
+        /// in the same namespace block, because the target of an alias is resolved without the other using
+        /// directives of its block.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestAliasReferringToAliasIsExpandedWhenMovedInsideNamespaceAsync()
+        {
+            var testCode = @"{|#0:using MyAction = System.Action;|}
+
+namespace NamespaceName
+{
+    using MyOtherAction = MyAction;
+}
+";
+
+            var fixedTestCode = @"namespace NamespaceName
+{
+    using MyAction = System.Action;
+    using MyOtherAction = System.Action;
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(0),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an alias referring to an alias in a type argument is expanded when the aliases end up in
+        /// the same namespace block.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestAliasReferringToAliasInTypeArgumentIsExpandedWhenMovedInsideNamespaceAsync()
+        {
+            var testCode = @"{|#0:using MyAction = System.Action;|}
+
+namespace NamespaceName
+{
+    using MyList = System.Collections.Generic.List<MyAction>;
+}
+";
+
+            var fixedTestCode = @"namespace NamespaceName
+{
+    using MyAction = System.Action;
+    using MyList = System.Collections.Generic.List<System.Action>;
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(0),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an alias target imported by a using directive of the compilation unit is fully qualified
+        /// when that directive is moved into the namespace, while names declared in the namespace are preserved.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestAliasTargetImportedByNamespaceUsingIsQualifiedWhenMovedInsideNamespaceAsync()
+        {
+            var testCode = @"{|#0:using System;|}
+
+namespace NamespaceName
+{
+    using MyAction = Action;
+    using MyLocal = Local;
+
+    public class Local
+    {
+    }
+}
+";
+
+            var fixedTestCode = @"namespace NamespaceName
+{
+    using System;
+    using MyAction = System.Action;
+    using MyLocal = Local;
+
+    public class Local
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(0),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
