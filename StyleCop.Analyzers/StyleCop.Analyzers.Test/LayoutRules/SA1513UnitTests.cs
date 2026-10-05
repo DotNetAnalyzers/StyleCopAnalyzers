@@ -790,6 +790,264 @@ public class TestClass
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task VerifyThatMissingBlankLineInsideLambdaInsideArgumentListWillProduceDiagnosticAsync()
+        {
+            var testCode = @"
+using System;
+public class TestClass
+{
+    private int x;
+
+    public void Test(bool b)
+    {
+        var a = new Action(() =>
+        {
+            if (b)
+            {
+            }
+            x = 1;
+            if (b)
+            {
+            }
+            ;
+        });
+    }
+}
+";
+
+            var fixedCode = @"
+using System;
+public class TestClass
+{
+    private int x;
+
+    public void Test(bool b)
+    {
+        var a = new Action(() =>
+        {
+            if (b)
+            {
+            }
+
+            x = 1;
+            if (b)
+            {
+            }
+
+            ;
+        });
+    }
+}
+";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(13, 14),
+                Diagnostic().WithLocation(17, 14),
+            };
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task VerifyThatMissingBlankLineInsideAnonymousMethodInsideArgumentListWillProduceDiagnosticAsync()
+        {
+            var testCode = @"
+using System;
+public class TestClass
+{
+    private int x;
+
+    public void Test(bool b)
+    {
+        var a = new Action(delegate
+        {
+            if (b)
+            {
+            }
+            x = 1;
+            if (b)
+            {
+            }
+            ;
+        });
+    }
+}
+";
+
+            var fixedCode = @"
+using System;
+public class TestClass
+{
+    private int x;
+
+    public void Test(bool b)
+    {
+        var a = new Action(delegate
+        {
+            if (b)
+            {
+            }
+
+            x = 1;
+            if (b)
+            {
+            }
+
+            ;
+        });
+    }
+}
+";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(13, 14),
+                Diagnostic().WithLocation(17, 14),
+            };
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task VerifyThatMissingBlankLineInsideNestedLambdaWillProduceDiagnosticAsync()
+        {
+            var testCode = @"
+using System;
+public class TestClass
+{
+    private int x;
+
+    public void Test(bool b)
+    {
+        var a = new Action(() =>
+        {
+            var c = new Action(() =>
+            {
+                if (b)
+                {
+                }
+                x = 1;
+                if (b)
+                {
+                }
+                ;
+            });
+        });
+    }
+}
+";
+
+            var fixedCode = @"
+using System;
+public class TestClass
+{
+    private int x;
+
+    public void Test(bool b)
+    {
+        var a = new Action(() =>
+        {
+            var c = new Action(() =>
+            {
+                if (b)
+                {
+                }
+
+                x = 1;
+                if (b)
+                {
+                }
+
+                ;
+            });
+        });
+    }
+}
+";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(15, 18),
+                Diagnostic().WithLocation(19, 18),
+            };
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task VerifyThatClosingBraceOfLambdaOrInitializerInArgumentListWillNotProduceDiagnosticAsync()
+        {
+            var testCode = @"
+using System;
+using System.Collections.Generic;
+public class TestClass
+{
+    private int x;
+
+    public void Test(bool b)
+    {
+        Run(() =>
+        {
+            if (b)
+            {
+                x = 2;
+            }
+
+            x = 1;
+        });
+
+        Run2(
+            () =>
+            {
+                x = 1;
+            },
+            () =>
+            {
+                x = 2;
+            });
+
+        Run(delegate
+        {
+            x = 1;
+        });
+
+        Run3(new List<int>
+        {
+            1,
+            2
+        });
+
+        Run3(
+            new List<int>
+            {
+                1
+            },
+            new List<int>
+            {
+                2
+            });
+    }
+
+    private void Run(Action action)
+    {
+    }
+
+    private void Run2(Action action, Action other)
+    {
+    }
+
+    private void Run3(List<int> list)
+    {
+    }
+
+    private void Run3(List<int> list, List<int> other)
+    {
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Verifies the analyzer will properly handle an object initializer without assignment.
         /// This is a regression test for <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1301">DotNetAnalyzers/StyleCopAnalyzers#1301</see>.
