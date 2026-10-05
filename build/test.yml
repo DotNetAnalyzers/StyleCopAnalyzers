@@ -69,27 +69,36 @@ jobs:
       targetType: inline
       script: |
         $packageConfig = [xml](Get-Content ..\.nuget\packages.config)
-        $opencover_version = $packageConfig.SelectSingleNode('/packages/package[@id="OpenCover"]').version
+        $coverlet_version = $packageConfig.SelectSingleNode('/packages/package[@id="coverlet.console"]').version
         $xunitrunner_version = $packageConfig.SelectSingleNode('/packages/package[@id="xunit.runner.console"]').version
 
         $packages_folder = '..\packages'
-        $opencover_console = "$packages_folder\OpenCover.$opencover_version\tools\OpenCover.Console.exe"
+        $coverlet_console = "$packages_folder\coverlet.console.$coverlet_version\tools\net6.0\any\coverlet.console.dll"
         $xunit_runner_console_${{ parameters.FrameworkVersion }} = "$packages_folder\xunit.runner.console.$xunitrunner_version\tools\${{ parameters.FrameworkVersion }}\xunit.console.x86.exe"
+        # Keep legacy OpenCover.Reports / OpenCover.*.xml names so the merge stage in
+        # build/build-and-test.yml stays unchanged (ReportGenerator accepts Cobertura content).
         $report_folder = '.\OpenCover.Reports'
-        mkdir $report_folder
+        New-Item -ItemType Directory -Force -Path $report_folder | Out-Null
         $target_dll_name = If ('${{ parameters.LangVersion }}' -Eq '6') { "StyleCop.Analyzers.Test" } Else { "StyleCop.Analyzers.Test.CSharp${{ parameters.LangVersion }}" }
         $target_dll_csharp${{ parameters.LangVersion }} = "..\StyleCop.Analyzers\$target_dll_name\bin\${{ parameters.BuildConfiguration }}\${{ parameters.FrameworkVersion }}\$target_dll_name.dll"
-        &$opencover_console `
-          -register:Path32 `
-          -threshold:1 -oldStyle `
-          -returntargetcode `
-          -hideskipped:All `
-          -filter:"+[StyleCop*]*" `
-          -excludebyattribute:*.ExcludeFromCodeCoverage* `
-          -excludebyfile:*\*Designer.cs `
-          -output:"$report_folder\OpenCover.StyleCopAnalyzers.CSharp${{ parameters.LangVersion }}.xml" `
-          -target:"$xunit_runner_console_${{ parameters.FrameworkVersion }}" `
-          -targetargs:"$target_dll_csharp${{ parameters.LangVersion }} -noshadow -xml StyleCopAnalyzers.CSharp${{ parameters.LangVersion }}.xunit.xml"
+        if (-not (Test-Path $coverlet_console)) { throw "coverlet.console not found at $coverlet_console" }
+        if (-not (Test-Path $xunit_runner_console_${{ parameters.FrameworkVersion }})) { throw "xunit console not found at $xunit_runner_console_${{ parameters.FrameworkVersion }}" }
+        if (-not (Test-Path $target_dll_csharp${{ parameters.LangVersion }})) { throw "Test assembly not found at $target_dll_csharp${{ parameters.LangVersion }}" }
+        $coverage_output = "$report_folder\OpenCover.StyleCopAnalyzers.CSharp${{ parameters.LangVersion }}.xml"
+        # Trailing separator makes coverlet write coverage.cobertura.xml into the folder.
+        dotnet $coverlet_console `
+          $target_dll_csharp${{ parameters.LangVersion }} `
+          --target "$xunit_runner_console_${{ parameters.FrameworkVersion }}" `
+          --targetargs "`"$target_dll_csharp${{ parameters.LangVersion }}`" -noshadow -xml StyleCopAnalyzers.CSharp${{ parameters.LangVersion }}.xunit.xml" `
+          --format "cobertura" `
+          --output "$report_folder/" `
+          --include "[StyleCop*]*" `
+          --exclude-by-attribute "System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" `
+          --exclude-by-file "*\*Designer.cs"
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        $generated = Get-ChildItem -Path $report_folder -Filter "*.cobertura.xml" -File | Select-Object -First 1
+        if (-not $generated) { throw "coverlet did not produce a Cobertura report in $report_folder" }
+        Move-Item -Force $generated.FullName $coverage_output
 
   - task: PublishTestResults@2
     displayName: 📢 Publish test results
