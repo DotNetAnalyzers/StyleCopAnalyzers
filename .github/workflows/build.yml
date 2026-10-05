@@ -245,7 +245,7 @@ jobs:
         if-no-files-found: warn
 
     - name: Upload code coverage
-      if: always() && matrix.configuration == 'Debug'
+      if: success() && matrix.configuration == 'Debug' # same as Azure: only publish coverage from passing runs
       uses: actions/upload-artifact@v4
       with:
         name: coverage-cs${{ matrix.langVersion }}
