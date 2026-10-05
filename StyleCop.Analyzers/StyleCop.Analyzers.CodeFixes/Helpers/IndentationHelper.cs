@@ -5,6 +5,7 @@
 
 namespace StyleCop.Analyzers.Helpers
 {
+    using System.Collections.Generic;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using StyleCop.Analyzers.Helpers.ObjectPools;
@@ -98,6 +99,58 @@ namespace StyleCop.Analyzers.Helpers
         public static SyntaxTrivia GenerateWhitespaceTrivia(IndentationSettings indentationSettings, int indentationSteps)
         {
             return SyntaxFactory.Whitespace(GenerateIndentationString(indentationSettings, indentationSteps));
+        }
+
+        /// <summary>
+        /// Indents every line that starts in the leading trivia of a token by one indentation step.
+        /// </summary>
+        /// <param name="original">The original token, used to determine whether the trivia starts a line.</param>
+        /// <param name="leadingTrivia">The leading trivia to indent.</param>
+        /// <param name="indentationStep">The whitespace of one indentation step.</param>
+        /// <param name="prefix">The trivia to place before the indented trivia.</param>
+        /// <returns>The indented leading trivia.</returns>
+        public static SyntaxTriviaList IndentLeadingTrivia(SyntaxToken original, SyntaxTriviaList leadingTrivia, string indentationStep, SyntaxTriviaList prefix)
+        {
+            SyntaxTriviaList previousTrailingTrivia = original.GetPreviousToken(includeZeroWidth: true).TrailingTrivia;
+            bool atLineStart = previousTrailingTrivia.Count > 0 && previousTrailingTrivia.Last().IsKind(SyntaxKind.EndOfLineTrivia);
+            var result = new List<SyntaxTrivia>(prefix);
+            for (int i = 0; i < leadingTrivia.Count; i++)
+            {
+                SyntaxTrivia trivia = leadingTrivia[i];
+                if (trivia.IsKind(SyntaxKind.EndOfLineTrivia))
+                {
+                    result.Add(trivia);
+                    atLineStart = true;
+                }
+                else if (trivia.IsKind(SyntaxKind.WhitespaceTrivia))
+                {
+                    bool isBlankLine = i + 1 < leadingTrivia.Count && leadingTrivia[i + 1].IsKind(SyntaxKind.EndOfLineTrivia);
+                    result.Add(atLineStart && !isBlankLine ? SyntaxFactory.Whitespace(indentationStep + trivia.ToString()) : trivia);
+                    atLineStart = false;
+                }
+                else if (trivia.IsDirective)
+                {
+                    result.Add(trivia);
+                    atLineStart = true;
+                }
+                else
+                {
+                    if (atLineStart)
+                    {
+                        result.Add(SyntaxFactory.Whitespace(indentationStep));
+                    }
+
+                    result.Add(trivia);
+                    atLineStart = false;
+                }
+            }
+
+            if (atLineStart && prefix.Count == 0)
+            {
+                result.Add(SyntaxFactory.Whitespace(indentationStep));
+            }
+
+            return SyntaxFactory.TriviaList(result);
         }
 
         private static int GetIndentationSteps(IndentationSettings indentationSettings, SyntaxTree syntaxTree, SyntaxTriviaList leadingTrivia)
