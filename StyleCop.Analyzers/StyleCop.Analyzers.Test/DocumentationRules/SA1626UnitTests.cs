@@ -128,5 +128,158 @@ public class TypeName
 ";
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestStrayCommentInsideDocumentationAsync()
+        {
+            var testCode = @"public class Calculator
+{
+    /// <summary>
+    // Adds the specified x.
+    /// </summary>
+    /// <param name=""x"">The x.</param>
+    /// <param name=""y"">The y.</param>
+    /// <returns>Return addition</returns>
+    public int Add(int x, int y)
+    {
+        return x + y;
+    }
+}
+";
+            var fixedCode = @"public class Calculator
+{
+    /// <summary>
+    /// Adds the specified x.
+    /// </summary>
+    /// <param name=""x"">The x.</param>
+    /// <param name=""y"">The y.</param>
+    /// <returns>Return addition</returns>
+    public int Add(int x, int y)
+    {
+        return x + y;
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(5, 5),
+                Diagnostic().WithLocation(6, 5),
+                Diagnostic().WithLocation(7, 5),
+                Diagnostic().WithLocation(8, 5),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMultipleStrayCommentsInsideDocumentationAsync()
+        {
+            var testCode = @"public class Calculator
+{
+    /// <summary>
+    // Adds the specified x
+    // and the specified y.
+    /// </summary>
+    /// <returns>Return addition</returns>
+    public int Add(int x, int y)
+    {
+        return x + y;
+    }
+}
+";
+            var fixedCode = @"public class Calculator
+{
+    /// <summary>
+    /// Adds the specified x
+    /// and the specified y.
+    /// </summary>
+    /// <returns>Return addition</returns>
+    public int Add(int x, int y)
+    {
+        return x + y;
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(6, 5),
+                Diagnostic().WithLocation(7, 5),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestStrayCommentSeparatedByBlankLineFromDocumentationAsync()
+        {
+            var testCode = @"public class Calculator
+{
+    /// <summary>
+    // Adds the specified x.
+
+    /// </summary>
+    public int Add(int x, int y)
+    {
+        return x + y;
+    }
+}
+";
+            var fixedCode = @"public class Calculator
+{
+    /// <summary>
+    // Adds the specified x.
+
+    // </summary>
+    public int Add(int x, int y)
+    {
+        return x + y;
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(6, 5),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestStrayCommentBetweenReportedLinesIsLeftAloneAsync()
+        {
+            var testCode = @"public class Calculator
+{
+    /// Adds the specified x.
+    // and the specified y.
+    /// Returns the sum.
+    public int Add(int x, int y)
+    {
+        return x + y;
+    }
+}
+";
+            var fixedCode = @"public class Calculator
+{
+    // Adds the specified x.
+    // and the specified y.
+    // Returns the sum.
+    public int Add(int x, int y)
+    {
+        return x + y;
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(3, 5),
+                Diagnostic().WithLocation(5, 5),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
