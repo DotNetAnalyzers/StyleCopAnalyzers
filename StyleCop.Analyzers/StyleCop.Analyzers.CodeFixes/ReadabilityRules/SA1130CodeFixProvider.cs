@@ -154,7 +154,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
             }
 
-            if (parameterList.Parameters.Count == 1)
+            bool keepParameterTypes = anonymousMethod.ParameterList != null && !HasTargetDelegateType(semanticModel, anonymousMethod);
+
+            if (parameterList.Parameters.Count == 1 && !keepParameterTypes)
             {
                 var parameterSyntax = RemoveType(parameterList.Parameters[0]);
 
@@ -174,7 +176,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
             else
             {
-                var parameterListSyntax = RemoveType(parameterList)
+                var parameterListSyntax = (keepParameterTypes ? parameterList : RemoveType(parameterList))
                     .WithTrailingTrivia(parameterList.GetTrailingTrivia().WithoutTrailingWhitespace().Add(SyntaxFactory.ElasticSpace));
                 lambdaExpression = SyntaxFactory.ParenthesizedLambdaExpression(anonymousMethod.AsyncKeyword, parameterListSyntax, arrowToken, anonymousMethod.Body);
             }
@@ -195,6 +197,29 @@ namespace StyleCop.Analyzers.ReadabilityRules
             // TODO: No tests require this annotation. Can it be removed?
             return resultExpression
                 .WithAdditionalAnnotations(Formatter.Annotation);
+        }
+
+        /// <summary>
+        /// Determines whether the anonymous method is converted to a delegate type, which the parameter types of the
+        /// lambda can be inferred from. Otherwise, e.g. when assigned to <see langword="var"/>, <see cref="object"/> or
+        /// <see cref="System.Delegate"/>, the anonymous method has a natural type (C# 10), and the lambda needs explicit
+        /// parameter types to keep it.
+        /// </summary>
+        /// <param name="semanticModel">The semantic model.</param>
+        /// <param name="anonymousMethod">The anonymous method.</param>
+        /// <returns><see langword="true"/> if the anonymous method is converted to a delegate type; otherwise,
+        /// <see langword="false"/>.</returns>
+        private static bool HasTargetDelegateType(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod)
+        {
+            if (anonymousMethod.Parent.IsKind(SyntaxKind.EqualsValueClause)
+                && anonymousMethod.Parent.Parent?.Parent is VariableDeclarationSyntax variableDeclaration
+                && variableDeclaration.Type is IdentifierNameSyntax { IsVar: true })
+            {
+                return false;
+            }
+
+            var convertedType = semanticModel.GetTypeInfo(anonymousMethod).ConvertedType;
+            return convertedType?.TypeKind == TypeKind.Delegate;
         }
 
         private static ImmutableArray<string> GetMethodInvocationArgumentList(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod)
