@@ -21,7 +21,6 @@ env:
   # Workaround for unreliable NuGet credential provider handshakes (mirrors init.ps1)
   NUGET_PLUGIN_HANDSHAKE_TIMEOUT_IN_SECONDS: 20
   NUGET_PLUGIN_REQUEST_TIMEOUT_IN_SECONDS: 20
-  COVERLET_VERSION: 6.0.4 # keep in sync with .nuget/packages.config (#4104)
 
 jobs:
   build:
@@ -207,12 +206,9 @@ jobs:
       with:
         global-json-file: global.json
 
-    # coverlet.console is installed explicitly (same version as #4104's .nuget/packages.config) so this
-    # workflow works whether or not that change has merged.
+    # .nuget/packages.config provides xunit.runner.console and coverlet.console (same change as #4104).
     - name: Restore test tools (xunit.runner.console, coverlet.console)
-      run: |
-        nuget restore .nuget/packages.config -PackagesDirectory packages -ConfigFile NuGet.config
-        nuget install coverlet.console -Version ${{ env.COVERLET_VERSION }} -OutputDirectory packages -ConfigFile NuGet.config -NonInteractive
+      run: nuget restore .nuget/packages.config -PackagesDirectory packages -ConfigFile NuGet.config
 
     - name: Download test binaries
       uses: actions/download-artifact@v4
@@ -228,10 +224,11 @@ jobs:
       shell: pwsh
       run: |
         $packageConfig = [xml](Get-Content ..\.nuget\packages.config)
+        $coverlet_version = $packageConfig.SelectSingleNode('/packages/package[@id="coverlet.console"]').version
         $xunitrunner_version = $packageConfig.SelectSingleNode('/packages/package[@id="xunit.runner.console"]').version
 
         $packages_folder = '..\packages'
-        $coverlet_console = "$packages_folder\coverlet.console.$env:COVERLET_VERSION\tools\net6.0\any\coverlet.console.dll"
+        $coverlet_console = "$packages_folder\coverlet.console.$coverlet_version\tools\net6.0\any\coverlet.console.dll"
         $xunit_runner_console = "$packages_folder\xunit.runner.console.$xunitrunner_version\tools\${{ matrix.framework }}\xunit.console.x86.exe"
         # Same legacy OpenCover.Reports / OpenCover.*.xml names as build/test.yml (content is Cobertura).
         $report_folder = '.\OpenCover.Reports'
