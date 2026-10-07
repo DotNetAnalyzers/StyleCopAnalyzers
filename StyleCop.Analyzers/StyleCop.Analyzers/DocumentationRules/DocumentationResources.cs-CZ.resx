@@ -142,19 +142,19 @@
     <value>Získá</value>
   </data>
   <data name="StartingTextGetsOrSets" xml:space="preserve">
-    <value>Získá nebo nastavuje</value>
+    <value>Získá nebo nastaví</value>
   </data>
   <data name="StartingTextGetsOrSetsWhether" xml:space="preserve">
-    <value>Získá nebo nastavuje hodnotu udávající, zda</value>
+    <value>Získá nebo nastaví hodnotu udávající, zda</value>
   </data>
   <data name="StartingTextGetsWhether" xml:space="preserve">
     <value>Získá hodnotu udávající, zda</value>
   </data>
   <data name="StartingTextSets" xml:space="preserve">
-    <value>Nastavuje</value>
+    <value>Nastaví</value>
   </data>
   <data name="StartingTextSetsWhether" xml:space="preserve">
-    <value>Nastavuje hodnotu udávající, zda</value>
+    <value>Nastaví hodnotu udávající, zda</value>
   </data>
   <data name="StaticConstructorStandardTextFirstPart" xml:space="preserve">
     <value>Inicializuje statické členy {0} </value>
@@ -167,5 +167,17 @@
   </data>
   <data name="TypeTextStruct" xml:space="preserve">
     <value>struktury</value>
+  </data>
+  <data name="StartingTextGetsOrInitializes" xml:space="preserve">
+    <value>Získá nebo inicializuje</value>
+  </data>
+  <data name="StartingTextGetsOrInitializesWhether" xml:space="preserve">
+    <value>Získá nebo inicializuje hodnotu udávající, zda</value>
+  </data>
+  <data name="StartingTextInitializes" xml:space="preserve">
+    <value>Inicializuje</value>
+  </data>
+  <data name="StartingTextInitializesWhether" xml:space="preserve">
+    <value>Inicializuje hodnotu udávající, zda</value>
   </data>
 </root>
