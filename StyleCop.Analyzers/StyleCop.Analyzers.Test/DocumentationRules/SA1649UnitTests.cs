@@ -5,7 +5,6 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
-    using System.IO;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
@@ -493,7 +492,6 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [WorkItem(3866, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3866")]
         public async Task VerifyWithLinkedFileAsync()
         {
-            var dirName = "0";
             var testCode = "public class [|Type1|] { }";
 
             await new StyleCopCodeFixVerifier<SA1649FileNameMustMatchTypeName, SA1649CodeFixProvider>.CSharpTest()
@@ -502,7 +500,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
                 {
                     Sources =
                     {
-                        (BuildPath(dirName, "TestFile.cs"), testCode),
+                        ("0/TestFile.cs", testCode),
                     },
                     AdditionalProjects =
                     {
@@ -510,7 +508,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
                         {
                             Sources =
                             {
-                                (BuildPath(dirName, "TestFile.cs"), testCode),
+                                ("0/TestFile.cs", testCode),
                             },
                         },
                     },
@@ -519,7 +517,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
                 {
                     Sources =
                     {
-                        (BuildPath(dirName, "Type1.cs"), testCode),
+                        ("0/Type1.cs", testCode),
                     },
                     AdditionalProjects =
                     {
@@ -527,7 +525,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
                         {
                             Sources =
                             {
-                                (BuildPath(dirName, "Type1.cs"), testCode),
+                                ("0/Type1.cs", testCode),
                             },
                         },
                     },
@@ -606,15 +604,6 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 
             test.ExpectedDiagnostics.AddRange(expected);
             return test.RunAsync(cancellationToken);
-        }
-
-        // NOTE: Added to simplify the tests. After the fix has executed,
-        // the file paths will contain backslashes when running tests on Windows.
-        // Not really needed when setting up the test state, but handy in the fixed state.
-        // Might make tests pass on Linux if anyone is developing there.
-        private static string BuildPath(string part1, string part2)
-        {
-            return Path.Combine(part1, part2);
         }
     }
 }
