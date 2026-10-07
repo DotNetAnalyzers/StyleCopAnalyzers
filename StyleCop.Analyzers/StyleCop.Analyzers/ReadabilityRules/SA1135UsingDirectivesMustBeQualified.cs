@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Immutable;
@@ -79,6 +77,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
             if (usingDirective.HasNamespaceAliasQualifier())
             {
                 // global qualified namespaces are OK.
+                return;
+            }
+
+            if (usingDirective.Name == null)
+            {
+                // This happens for e.g. "using X = string;" or "using T = (X, Y);"
                 return;
             }
 
