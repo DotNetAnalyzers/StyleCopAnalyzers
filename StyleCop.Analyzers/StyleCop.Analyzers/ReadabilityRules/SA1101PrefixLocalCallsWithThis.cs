@@ -261,12 +261,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 case SyntaxKind.EventDeclaration:
                 case SyntaxKind.IndexerDeclaration:
                     var basePropertySyntax = (BasePropertyDeclarationSyntax)node;
-                    return !basePropertySyntax.Modifiers.Any(SyntaxKind.StaticKeyword);
+                    return !basePropertySyntax.Modifiers.Any(SyntaxKind.StaticKeyword)
+                        && !IsExtensionBlockMember(basePropertySyntax);
 
                 case SyntaxKind.PropertyDeclaration:
                     var propertySyntax = (PropertyDeclarationSyntax)node;
                     return !propertySyntax.Modifiers.Any(SyntaxKind.StaticKeyword)
-                        && propertySyntax.Initializer == null;
+                        && propertySyntax.Initializer == null
+                        && !IsExtensionBlockMember(propertySyntax);
 
                 case SyntaxKind.MultiLineDocumentationCommentTrivia:
                 case SyntaxKind.SingleLineDocumentationCommentTrivia:
@@ -276,7 +278,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 case SyntaxKind.DestructorDeclaration:
                 case SyntaxKind.MethodDeclaration:
                     var baseMethodSyntax = (BaseMethodDeclarationSyntax)node;
-                    return !baseMethodSyntax.Modifiers.Any(SyntaxKind.StaticKeyword);
+                    return !baseMethodSyntax.Modifiers.Any(SyntaxKind.StaticKeyword)
+                        && !IsExtensionBlockMember(baseMethodSyntax);
 
                 case SyntaxKind.Attribute:
                     return false;
@@ -290,6 +293,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             return false;
+        }
+
+        private static bool IsExtensionBlockMember(MemberDeclarationSyntax member)
+        {
+            // Members of a C# 14 extension block access the receiver through the extension parameter, never through 'this'
+            return member.Parent.IsKind(SyntaxKindEx.ExtensionBlockDeclaration);
         }
 
         private static bool IsPartOfConstructorInitializer(SyntaxNode node)
