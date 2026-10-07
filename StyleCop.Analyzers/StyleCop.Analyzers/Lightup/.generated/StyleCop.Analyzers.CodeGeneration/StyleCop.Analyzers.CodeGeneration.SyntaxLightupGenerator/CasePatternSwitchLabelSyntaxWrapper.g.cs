@@ -14,10 +14,8 @@ namespace StyleCop.Analyzers.Lightup
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax";
         private static readonly Type WrappedType;
 
-        private static readonly Func<SwitchLabelSyntax, SyntaxToken> KeywordAccessor;
         private static readonly Func<SwitchLabelSyntax, CSharpSyntaxNode> PatternAccessor;
         private static readonly Func<SwitchLabelSyntax, CSharpSyntaxNode> WhenClauseAccessor;
-        private static readonly Func<SwitchLabelSyntax, SyntaxToken> ColonTokenAccessor;
         private static readonly Func<SwitchLabelSyntax, SyntaxToken, SwitchLabelSyntax> WithKeywordAccessor;
         private static readonly Func<SwitchLabelSyntax, CSharpSyntaxNode, SwitchLabelSyntax> WithPatternAccessor;
         private static readonly Func<SwitchLabelSyntax, CSharpSyntaxNode, SwitchLabelSyntax> WithWhenClauseAccessor;
@@ -28,10 +26,8 @@ namespace StyleCop.Analyzers.Lightup
         static CasePatternSwitchLabelSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(CasePatternSwitchLabelSyntaxWrapper));
-            KeywordAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<SwitchLabelSyntax, SyntaxToken>(WrappedType, nameof(Keyword));
             PatternAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<SwitchLabelSyntax, CSharpSyntaxNode>(WrappedType, nameof(Pattern));
             WhenClauseAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<SwitchLabelSyntax, CSharpSyntaxNode>(WrappedType, nameof(WhenClause));
-            ColonTokenAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<SwitchLabelSyntax, SyntaxToken>(WrappedType, nameof(ColonToken));
             WithKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<SwitchLabelSyntax, SyntaxToken>(WrappedType, nameof(Keyword));
             WithPatternAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<SwitchLabelSyntax, CSharpSyntaxNode>(WrappedType, nameof(Pattern));
             WithWhenClauseAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<SwitchLabelSyntax, CSharpSyntaxNode>(WrappedType, nameof(WhenClause));
@@ -49,7 +45,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return KeywordAccessor(this.SyntaxNode);
+                return this.SyntaxNode.Keyword;
             }
         }
 
@@ -73,7 +69,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ColonTokenAccessor(this.SyntaxNode);
+                return this.SyntaxNode.ColonToken;
             }
         }
 
