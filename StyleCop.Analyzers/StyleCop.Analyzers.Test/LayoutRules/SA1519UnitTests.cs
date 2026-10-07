@@ -210,6 +210,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(2183, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2183")]
         public async Task TestCodeFixIndentsThreeNestedUsingStatementsAsync()
         {
             var testCode = @"using System;
@@ -259,6 +260,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(2183, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2183")]
         public async Task TestCodeFixIndentsMultiLineBodyOfIfStatementAsync()
         {
             var testCode = @"public class Foo
@@ -294,6 +296,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(2183, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2183")]
         public async Task TestCodeFixKeepsVerbatimStringContentsAsync()
         {
             var testCode = @"using System;
@@ -341,6 +344,7 @@ third"";
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(2183, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2183")]
         public async Task TestCodeFixIndentsWithTabsAsync()
         {
             var testCode = "using System;\r\npublic class Foo\r\n{\r\n\tpublic void Bar(int i)\r\n\t{\r\n\t\tusing (default(IDisposable))\r\n\t\tusing (default(IDisposable))\r\n\t\t{\r\n\t\t}\r\n\t}\r\n}";
