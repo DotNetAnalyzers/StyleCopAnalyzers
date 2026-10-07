@@ -7,8 +7,10 @@ namespace StyleCop.Analyzers.Helpers
 {
     using System.Linq;
     using System.Text;
+    using System.Threading;
     using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers.ObjectPools;
 
@@ -436,6 +438,55 @@ namespace StyleCop.Analyzers.Helpers
             return false;
         }
 
+        /// <summary>
+        /// Gets a value indicating whether a <c>&lt;inheritdoc/&gt;</c> element on the specified declaration is able to
+        /// inherit documentation from somewhere. An element without a <c>cref</c> attribute can only inherit when the
+        /// member overrides a base member, implements an interface member, or (for a constructor) has a matching base
+        /// constructor, and when a type has a base list.
+        /// </summary>
+        /// <param name="node">The documented declaration.</param>
+        /// <param name="inheritdocElement">The <c>&lt;inheritdoc/&gt;</c> element.</param>
+        /// <param name="semanticModel">The semantic model for the declaration.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns><see langword="true"/> if the element has a source to inherit documentation from; otherwise,
+        /// <see langword="false"/>.</returns>
+        internal static bool CanInheritDocumentation(SyntaxNode node, XmlNodeSyntax inheritdocElement, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            if (HasCrefAttribute(inheritdocElement))
+            {
+                return true;
+            }
+
+            switch (node)
+            {
+            case BaseTypeDeclarationSyntax:
+                return HasBaseList(semanticModel.GetDeclaredSymbol(node, cancellationToken) as INamedTypeSymbol, node);
+
+            case MemberDeclarationSyntax memberSyntax:
+                if (memberSyntax.GetModifiers().Any(SyntaxKind.OverrideKeyword))
+                {
+                    return true;
+                }
+
+                ISymbol declaredSymbol = semanticModel.GetDeclaredSymbol(memberSyntax, cancellationToken);
+                if (declaredSymbol == null)
+                {
+                    return false;
+                }
+
+                if (declaredSymbol is IMethodSymbol { MethodKind: MethodKind.Constructor, ContainingType.BaseType: { } baseType } constructorSymbol)
+                {
+                    return DocumentationRules.SA1648InheritDocMustBeUsedWithInheritingClass.HasMatchingSignature(baseType.Constructors, constructorSymbol);
+                }
+
+                return NamedTypeHelpers.IsImplementingAnInterfaceMember(declaredSymbol);
+
+            default:
+                // Fields, enum members, delegates and other declarations cannot inherit.
+                return false;
+            }
+        }
+
         private static bool IsInlineElement(string localName)
         {
             switch (localName)
@@ -464,6 +515,35 @@ namespace StyleCop.Analyzers.Helpers
             default:
                 return false;
             }
+        }
+
+        private static bool HasBaseList(INamedTypeSymbol typeSymbol, SyntaxNode node)
+        {
+            // The base list may be declared on any part of a partial type.
+            if (typeSymbol != null)
+            {
+                foreach (SyntaxReference reference in typeSymbol.DeclaringSyntaxReferences)
+                {
+                    if (reference.GetSyntax() is BaseTypeDeclarationSyntax { BaseList: { Types: { Count: > 0 } } })
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            return node is BaseTypeDeclarationSyntax { BaseList: { Types: { Count: > 0 } } };
+        }
+
+        private static bool HasCrefAttribute(XmlNodeSyntax element)
+        {
+            return element switch
+            {
+                XmlElementSyntax xmlElement => xmlElement.StartTag?.Attributes.Any(SyntaxKind.XmlCrefAttribute) ?? false,
+                XmlEmptyElementSyntax emptyElement => emptyElement.Attributes.Any(SyntaxKind.XmlCrefAttribute),
+                _ => false,
+            };
         }
     }
 }
