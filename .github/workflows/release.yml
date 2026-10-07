@@ -1,0 +1,214 @@
+# Publishes a release to nuget.org with nuget.org Trusted Publishing (GitHub OIDC, no stored API key).
+#
+# Flow: tag a master commit (`nbgv tag`), create a draft GitHub release for that tag, and publish it once the
+# Build workflow has passed for that exact commit. This workflow then:
+#   1. finds the successful Build run (push to master) for the tagged commit and takes its nuget-packages artifact.
+#      Rebuilding from the tag would not work: Nerdbank.GitVersioning only produces public (no -g<sha>) versions on
+#      refs/heads/master (version.json publicReleaseRefSpec), and reusing the CI output ships exactly what was tested;
+#   2. after approval in the 'release' environment, exchanges a GitHub OIDC token for a short-lived nuget.org API key
+#      (NuGet/login) and pushes the packages;
+#   3. attaches the packages (and the legacy .symbols.nupkg) to the GitHub release.
+#
+# One-time setup (see the PR that added this file): a nuget.org trusted publishing policy for this repository,
+# workflow file 'release.yml' and environment 'release'; a 'release' GitHub environment with required reviewers; and
+# the NUGET_USER repository variable (the nuget.org account that owns the policy).
+name: Release
+
+on:
+  release:
+    types: [ published ]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to publish, e.g. 1.2.0-beta.770
+        required: true
+        type: string
+
+permissions: {}
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  prepare:
+    name: Collect packages from CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      actions: read # find the Build run and download its artifact
+      contents: read # resolve the tag
+    outputs:
+      tag: ${{ steps.find.outputs.tag }}
+      version: ${{ steps.validate.outputs.version }}
+      push-order: ${{ steps.validate.outputs.push-order }}
+    steps:
+    - name: Find the CI build of the tagged commit
+      id: find
+      env:
+        GH_TOKEN: ${{ github.token }}
+        TAG: ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.tag }}
+      run: |
+        set -euo pipefail
+        if [[ ! "$TAG" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+          echo "::error::'$TAG' does not look like a release tag (expected e.g. 1.2.0-beta.770)."
+          exit 1
+        fi
+
+        # Resolve the tag to a commit, peeling annotated tags.
+        ref=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" --jq '.object.type + " " + .object.sha')
+        read -r type sha <<< "$ref"
+        if [[ "$type" == "tag" ]]; then
+          sha=$(gh api "repos/$GITHUB_REPOSITORY/git/tags/$sha" --jq '.object.sha')
+        fi
+        echo "Tag $TAG is commit $sha"
+
+        # Only a push to master produces public release versions (version.json publicReleaseRefSpec).
+        run_id=$(gh run list -R "$GITHUB_REPOSITORY" --workflow build.yml --commit "$sha" --branch master --event push \
+          --status success --limit 1 --json databaseId --jq '.[0].databaseId // empty')
+        if [[ -z "$run_id" ]]; then
+          echo "::error::No successful Build run (push to master) found for $sha. Wait for CI on master to pass for this commit, then re-run this workflow."
+          exit 1
+        fi
+        echo "Using Build run $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$run_id"
+
+        gh run download "$run_id" -R "$GITHUB_REPOSITORY" --name nuget-packages --dir packages
+        ls -l packages
+
+        {
+          echo "tag=$TAG"
+          echo "sha=$sha"
+          echo "run-id=$run_id"
+        } >> "$GITHUB_OUTPUT"
+
+    - name: Validate packages
+      id: validate
+      env:
+        TAG: ${{ steps.find.outputs.tag }}
+      shell: python
+      run: |
+        import glob, os, re, sys, zipfile
+        import xml.etree.ElementTree as ET
+
+        def fail(message):
+            print(f"::error::{message}")
+            sys.exit(1)
+
+        def local_name(element):
+            return element.tag.rsplit("}", 1)[-1]
+
+        version = os.environ["TAG"].removeprefix("v")
+        packages = {}
+        for path in sorted(glob.glob("packages/*.nupkg")):
+            if path.endswith(".symbols.nupkg"):
+                continue
+            with zipfile.ZipFile(path) as archive:
+                nuspec = next(name for name in archive.namelist() if name.endswith(".nuspec") and "/" not in name)
+                root = ET.fromstring(archive.read(nuspec))
+            elements = list(root.iter())
+            package_id = next(e.text for e in elements if local_name(e) == "id")
+            package_version = next(e.text for e in elements if local_name(e) == "version")
+            dependencies = [(e.get("id"), e.get("version")) for e in elements if local_name(e) == "dependency"]
+            print(f"{os.path.basename(path)}: {package_id} {package_version}, dependencies: {dependencies or 'none'}")
+            if re.search(r"-g[0-9a-f]+$", package_version):
+                fail(f"{package_id} {package_version} is not a public release version.")
+            packages[package_id] = (os.path.basename(path), package_version, dependencies)
+
+        if sorted(packages) != ["StyleCop.Analyzers", "StyleCop.Analyzers.Unstable"]:
+            fail(f"Expected StyleCop.Analyzers and StyleCop.Analyzers.Unstable, found {sorted(packages)}.")
+        if packages["StyleCop.Analyzers"][1] != version:
+            fail(f"StyleCop.Analyzers is {packages['StyleCop.Analyzers'][1]}, but the tag says {version}.")
+        # StyleCop.Analyzers.Unstable is always major.minor.patch.height (e.g. 1.2.0.556); 1.2.0 would collide on
+        # every release.
+        if not re.fullmatch(r"\d+\.\d+\.\d+\.[1-9]\d*", packages["StyleCop.Analyzers.Unstable"][1]):
+            fail(f"StyleCop.Analyzers.Unstable has version {packages['StyleCop.Analyzers.Unstable'][1]}, expected a four-part version.")
+
+        # One package is the implementation; the other is a metadata package that depends on exactly that version.
+        impl = [(i, p) for i, p in packages.items() if not p[2]]
+        meta = [(i, p) for i, p in packages.items() if p[2]]
+        if len(impl) != 1 or len(meta) != 1 or meta[0][1][2] != [(impl[0][0], impl[0][1][1])]:
+            fail("Expected one package to depend on exactly the version of the other.")
+
+        with open(os.environ["GITHUB_OUTPUT"], "a") as output:
+            output.write(f"version={version}\n")
+            # Push the implementation package before the package that depends on it.
+            output.write(f"push-order={impl[0][1][0]} {meta[0][1][0]}\n")
+
+    - name: Upload release packages
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+      with:
+        name: release-packages
+        path: packages/*.nupkg
+        if-no-files-found: error
+
+  publish:
+    name: Push to nuget.org
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: release
+      url: https://www.nuget.org/packages/StyleCop.Analyzers/${{ needs.prepare.outputs.version }}
+    permissions:
+      id-token: write # nuget.org trusted publishing (OIDC)
+    steps:
+    - name: Download release packages
+      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+      with:
+        name: release-packages
+        path: packages
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+      with:
+        dotnet-version: 10.0.x
+
+    # Request the key right before pushing: it is valid for one hour.
+    - name: NuGet login (OIDC to short-lived API key)
+      id: login
+      uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
+      with:
+        user: ${{ vars.NUGET_USER }}
+
+    # nuget.org does not accept the legacy .symbols.nupkg format, so only the packages themselves are pushed.
+    # --skip-duplicate makes re-running this workflow safe.
+    - name: Push packages
+      working-directory: packages
+      env:
+        NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
+        PUSH_ORDER: ${{ needs.prepare.outputs.push-order }}
+      run: |
+        set -euo pipefail
+        for package in $PUSH_ORDER; do
+          dotnet nuget push "$package" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate --no-symbols
+        done
+
+  attach:
+    name: Attach packages to the GitHub release
+    needs: [ prepare, publish ]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write # upload release assets
+    steps:
+    - name: Download release packages
+      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+      with:
+        name: release-packages
+        path: packages
+
+    - name: Upload release assets
+      env:
+        GH_TOKEN: ${{ github.token }}
+        TAG: ${{ needs.prepare.outputs.tag }}
+      run: |
+        set -euo pipefail
+        if ! gh release view "$TAG" -R "$GITHUB_REPOSITORY" > /dev/null; then
+          echo "::warning::No GitHub release exists for $TAG, so no assets were attached."
+          exit 0
+        fi
+        gh release upload "$TAG" packages/*.nupkg -R "$GITHUB_REPOSITORY" --clobber
