@@ -183,6 +183,13 @@ namespace StyleCop.Analyzers.LayoutRules
                 return result;
             }
 
+            private static bool IsPartOfSameNode(SyntaxToken token, SyntaxToken nextToken)
+            {
+                // The semicolon must terminate a construct that contains the close brace. A semicolon that forms a
+                // separate (empty) statement does not.
+                return nextToken.Parent != null && token.Parent.AncestorsAndSelf().Contains(nextToken.Parent);
+            }
+
             private void AnalyzeCloseBrace(SyntaxToken token)
             {
                 if (token.Parent.IsKind(SyntaxKind.Interpolation))
@@ -253,6 +260,7 @@ namespace StyleCop.Analyzers.LayoutRules
                     }
 
                     if (nextToken.IsKind(SyntaxKind.SemicolonToken) &&
+                        IsPartOfSameNode(token, nextToken) &&
                         (IsPartOf<VariableDeclaratorSyntax>(token) ||
                          IsPartOf<YieldStatementSyntax>(token) ||
                          IsPartOf<ArrowExpressionClauseSyntax>(token) ||
@@ -315,6 +323,12 @@ namespace StyleCop.Analyzers.LayoutRules
                         || nextToken.IsKind(SyntaxKindEx.InitKeyword))
                     {
                         // the close brace is followed by an accessor (SA1516 will handle that)
+                        return;
+                    }
+
+                    if (token.Parent is AccessorListSyntax && nextToken.IsKind(SyntaxKind.EqualsToken))
+                    {
+                        // the close brace is followed by a property initializer
                         return;
                     }
 

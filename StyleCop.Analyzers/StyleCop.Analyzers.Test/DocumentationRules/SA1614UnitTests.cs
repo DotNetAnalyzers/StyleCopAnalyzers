@@ -246,6 +246,80 @@ public class ClassName
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(1945, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1945")]
+        [WorkItem(1946, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1946")]
+        public async Task TestMethodWithEmptyParamAndInheritdocWithoutSourceAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <inheritdoc/>
+    /// <param name=""foo""></param>
+    public ClassName Method(string foo) { return null; }
+}";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(8, 9),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1945, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1945")]
+        [WorkItem(1946, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1946")]
+        public async Task TestOverrideWithEmptyParamAndInheritdocAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName : BaseClass
+{
+    /// <inheritdoc/>
+    /// <param name=""foo""></param>
+    public override ClassName Method(string foo) { return null; }
+}
+
+/// <summary>
+/// Foo
+/// </summary>
+public class BaseClass
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <param name=""foo"">Foo.</param>
+    public virtual ClassName Method(string foo) { return null; }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1945, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1945")]
+        [WorkItem(1946, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1946")]
+        public async Task TestMethodWithEmptyParamAndInheritdocWithCrefAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <inheritdoc cref=""string.Equals(string)""/>
+    /// <param name=""foo""></param>
+    public ClassName Method(string foo) { return null; }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
             string contentWithoutDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>

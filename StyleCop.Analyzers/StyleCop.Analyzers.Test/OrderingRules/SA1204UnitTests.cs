@@ -132,22 +132,23 @@ public class TestClass1 { }
         }
 
         /// <summary>
-        /// Verifies that the analyzer will properly handle non-static elements before static in a class.
+        /// Verifies that the analyzer will properly handle non-static elements before static in a type.
         /// </summary>
+        /// <param name="keyword">The keyword used to declare the type.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestOrderingInClassAsync()
+        [Theory]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestOrderingInClassAsync(string keyword)
         {
-            var testCode = @"public class TestClass
-{
+            var testCode = $@"public {keyword} TestClass
+{{
     public int TestField1;
     public static int TestField2;
-    public int TestProperty1 { get; set; }
-    public static int TestProperty2 { get; set; }
-    public void TestMethod1() { }
-    public static void TestMethod2() { }
-    
-}
+    public int TestProperty1 {{ get; set; }}
+    public static int TestProperty2 {{ get; set; }}
+    public void TestMethod1() {{ }}
+    public static void TestMethod2() {{ }}
+}}
 ";
 
             DiagnosticResult[] expected =
@@ -157,57 +158,15 @@ public class TestClass1 { }
                 Diagnostic().WithLocation(8, 24),
             };
 
-            var fixedCode = @"public class TestClass
-{
+            var fixedCode = $@"public {keyword} TestClass
+{{
     public static int TestField2;
     public int TestField1;
-    public static int TestProperty2 { get; set; }
-    public int TestProperty1 { get; set; }
-    public static void TestMethod2() { }
-    public void TestMethod1() { }
-    
-}
-";
-
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Verifies that the analyzer will properly handle non-static elements before static in a struct.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestOrderingInStructAsync()
-        {
-            var testCode = @"public struct TestStruct
-{
-    public int TestField1;
-    public static int TestField2;
-    public int TestProperty1 { get; set; }
-    public static int TestProperty2 { get; set; }
-    public void TestMethod1() { }
-    public static void TestMethod2() { }
-    
-}
-";
-
-            DiagnosticResult[] expected =
-            {
-                Diagnostic().WithLocation(4, 23),
-                Diagnostic().WithLocation(6, 23),
-                Diagnostic().WithLocation(8, 24),
-            };
-
-            var fixedCode = @"public struct TestStruct
-{
-    public static int TestField2;
-    public int TestField1;
-    public static int TestProperty2 { get; set; }
-    public int TestProperty1 { get; set; }
-    public static void TestMethod2() { }
-    public void TestMethod1() { }
-    
-}
+    public static int TestProperty2 {{ get; set; }}
+    public int TestProperty1 {{ get; set; }}
+    public static void TestMethod2() {{ }}
+    public void TestMethod1() {{ }}
+}}
 ";
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);

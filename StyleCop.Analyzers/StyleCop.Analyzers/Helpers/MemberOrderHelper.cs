@@ -24,6 +24,7 @@ namespace StyleCop.Analyzers.Helpers
             SyntaxKind.ConversionOperatorDeclaration,
             SyntaxKind.IndexerDeclaration,
             SyntaxKind.PropertyDeclaration,
+            SyntaxKindEx.ExtensionBlockDeclaration,
             SyntaxKind.InterfaceDeclaration,
             SyntaxKind.EnumDeclaration,
             SyntaxKind.EventDeclaration,
