@@ -130,6 +130,7 @@ public class TypeName
         }
 
         [Fact]
+        [WorkItem(2081, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2081")]
         public async Task TestStrayCommentInsideDocumentationAsync()
         {
             var testCode = @"public class Calculator
@@ -173,6 +174,7 @@ public class TypeName
         }
 
         [Fact]
+        [WorkItem(2081, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2081")]
         public async Task TestMultipleStrayCommentsInsideDocumentationAsync()
         {
             var testCode = @"public class Calculator
@@ -212,6 +214,7 @@ public class TypeName
         }
 
         [Fact]
+        [WorkItem(2081, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2081")]
         public async Task TestStrayCommentSeparatedByBlankLineFromDocumentationAsync()
         {
             var testCode = @"public class Calculator
@@ -248,6 +251,7 @@ public class TypeName
         }
 
         [Fact]
+        [WorkItem(2081, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2081")]
         public async Task TestStrayCommentBetweenReportedLinesIsLeftAloneAsync()
         {
             var testCode = @"public class Calculator
