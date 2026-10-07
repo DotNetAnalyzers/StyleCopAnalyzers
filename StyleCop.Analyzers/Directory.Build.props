@@ -22,8 +22,12 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <DebugType Condition="'$(Configuration)' == 'Debug'">full</DebugType>
-    <DebugType Condition="'$(Configuration)' != 'Debug'">portable</DebugType>
+    <!--
+      Debug builds used Windows PDBs for OpenCover, which is no longer used. Coverlet rewrites Windows PDBs through the
+      native diasymreader COM writer, which crashes on modern .NET (AccessViolationException in
+      ISymUnmanagedWriter2.Close), but handles portable PDBs in managed code.
+    -->
+    <DebugType>portable</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
