@@ -120,11 +120,11 @@ class TestClass
                 TestSources =
                 {
                     @"
-global using static System.Math;
-{|#0:global using static System.Array;|}
+{|#0:global using static System.Math;|}
+global using static System.Array;
 
-using static System.Console;
-{|#1:using static System.Array;|}
+{|#1:using static System.Console;|}
+using static System.Array;
 ",
                 },
                 FixedSources =
@@ -139,8 +139,8 @@ using static System.Console;
                 },
                 ExpectedDiagnostics =
                 {
-                    Diagnostic().WithLocation(0).WithArguments("System.Array", "System.Math"),
-                    Diagnostic().WithLocation(1).WithArguments("System.Array", "System.Console"),
+                    Diagnostic().WithLocation(0).WithArguments("System.Math", "System.Array"),
+                    Diagnostic().WithLocation(1).WithArguments("System.Console", "System.Array"),
                 },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
