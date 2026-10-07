@@ -361,6 +361,7 @@ namespace TestNamespace
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1771, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1771")]
         public async Task TestAliasReferringToAliasIsExpandedWhenMovedInsideNamespaceAsync()
         {
             var testCode = @"{|#0:using MyAction = System.Action;|}
@@ -392,6 +393,7 @@ namespace NamespaceName
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1771, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1771")]
         public async Task TestAliasReferringToAliasInTypeArgumentIsExpandedWhenMovedInsideNamespaceAsync()
         {
             var testCode = @"{|#0:using MyAction = System.Action;|}
@@ -423,6 +425,7 @@ namespace NamespaceName
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1771, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1771")]
         public async Task TestAliasTargetImportedByNamespaceUsingIsQualifiedWhenMovedInsideNamespaceAsync()
         {
             var testCode = @"{|#0:using System;|}
