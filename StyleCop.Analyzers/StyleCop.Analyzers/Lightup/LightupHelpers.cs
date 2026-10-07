@@ -58,6 +58,9 @@ namespace StyleCop.Analyzers.Lightup
         public static bool SupportsCSharp14 { get; }
             = Enum.GetNames(typeof(LanguageVersion)).Contains(nameof(LanguageVersionEx.CSharp14));
 
+        public static bool SupportsCSharp15 { get; }
+            = Enum.GetNames(typeof(LanguageVersion)).Contains(nameof(LanguageVersionEx.CSharp15));
+
         public static bool SupportsIOperation => SupportsCSharp73;
 
         internal static bool CanWrapObject(object obj, Type underlyingType)
