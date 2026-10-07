@@ -22,5 +22,15 @@ namespace StyleCop.Analyzers.Test.CSharp11.NamingRules
                 Diagnostic().WithLocation(0).WithArguments("r"),
             };
         }
+
+        protected override DiagnosticResult[] GetExpectedResultTestRecordStructNameMustStartWithUpperCaseLetter()
+        {
+            // NOTE: Roslyn bug fix. Earlier versions made diagnostics be reported twice.
+            return new[]
+            {
+                // /0/Test0.cs(2,22): warning SA1300: Element 'r' should begin with an uppercase letter
+                Diagnostic().WithLocation(0).WithArguments("r"),
+            };
+        }
     }
 }

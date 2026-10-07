@@ -103,7 +103,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.NamingRules
             var testCode = @"
 public record struct {|#0:r|}(int A)
 {
-    public {|#1:r|}(int a, int b)
+    public r(int a, int b)
         : this(A: a)
     {
     }
@@ -120,13 +120,21 @@ public record struct R(int A)
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                Diagnostic().WithLocation(0).WithArguments("r"),
-                Diagnostic().WithLocation(1).WithArguments("r"),
-            };
-
+            var expected = this.GetExpectedResultTestRecordStructNameMustStartWithUpperCaseLetter();
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestRecordStructNameMustStartWithUpperCaseLetter()
+        {
+            // NOTE: Seems like a Roslyn bug made diagnostics be reported twice. Fixed in a later version.
+            return new[]
+            {
+                // /0/Test0.cs(2,22): warning SA1300: Element 'r' should begin with an uppercase letter
+                Diagnostic().WithLocation(0).WithArguments("r"),
+
+                // /0/Test0.cs(2,22): warning SA1300: Element 'r' should begin with an uppercase letter
+                Diagnostic().WithLocation(0).WithArguments("r"),
+            };
         }
     }
 }
