@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Collections.Generic;
@@ -12,6 +10,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
 
@@ -32,35 +31,37 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             get;
         }
 
-        [Fact]
-        public async Task TestPrefixUnaryOperatorAtEndOfLineAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestPrefixUnaryOperatorAtEndOfLineAsync(string lineEnding)
         {
-            string testCode = @"namespace Namespace
-{
+            string testCode = $@"namespace Namespace
+{{
     class Type
-    {
+    {{
         void Foo()
-        {
-            int x = " + this.Sign + @"
+        {{
+            int x = {{|#0:{this.Sign}|}}
 3;
-        }
-    }
-}
-";
+        }}
+    }}
+}}
+".ReplaceLineEndings(lineEnding);
 
-            string fixedTest = @"namespace Namespace
-{
+            string fixedTest = $@"namespace Namespace
+{{
     class Type
-    {
+    {{
         void Foo()
-        {
-            int x = " + this.Sign + @"3;
-        }
-    }
-}
-";
+        {{
+            int x = {this.Sign}3;
+        }}
+    }}
+}}
+".ReplaceLineEndings(lineEnding);
 
-            DiagnosticResult expected = this.Diagnostic().WithArguments(" not", "followed").WithLocation(7, 21);
+            DiagnosticResult expected = this.Diagnostic().WithArguments(" not", "followed").WithLocation(0);
 
             await this.VerifyCSharpFixAsync(testCode, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
         }

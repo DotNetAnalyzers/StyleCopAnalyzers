@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1131UseReadableConditions,
@@ -50,6 +51,43 @@ public class TypeName
             DiagnosticResult[] expected =
             {
                 Diagnostic().WithLocation(9, 13),
+            };
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestYodaComparismWithLineEndingsAsync(string lineEnding)
+        {
+            var testCode = @"
+using System;
+public class TypeName
+{
+    public void Test()
+    {
+        int i = 5;
+        const int j = 6;
+        if ({|#0:j == i|}) { }
+    }
+}
+".ReplaceLineEndings(lineEnding);
+            var fixedCode = @"
+using System;
+public class TypeName
+{
+    public void Test()
+    {
+        int i = 5;
+        const int j = 6;
+        if (i == j) { }
+    }
+}
+".ReplaceLineEndings(lineEnding);
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0),
             };
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }

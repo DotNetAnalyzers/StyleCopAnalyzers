@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using StyleCop.Analyzers.Test.ReadabilityRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -43,9 +44,12 @@ public class TestClass
         /// <summary>
         /// Verify that tuple names referenced by their metadata name will produce the expected diagnostics.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use for the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task ValidateMetadataNameReferencesAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task ValidateMetadataNameReferencesAsync(string lineEnding)
         {
             var testCode = @"
 public class TestClass
@@ -60,7 +64,7 @@ public class TestClass
         return p1.[|Item1|] + p1.nameB.[|Item1|] + p1.[|Item2|].[|Item2|];
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             var fixedCode = @"
 public class TestClass
@@ -75,7 +79,7 @@ public class TestClass
         return p1.nameA + p1.nameB.subNameA + p1.nameB.subNameB;
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }

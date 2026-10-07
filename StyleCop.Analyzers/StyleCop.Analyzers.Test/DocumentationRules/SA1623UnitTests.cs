@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.DocumentationRules.PropertySummaryDocumentationAnalyzer,
@@ -201,14 +202,16 @@ public class TestClass
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
         [WorkItem(1934, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1934")]
-        public async Task SummaryInParagraphCanBeFixedAsync()
+        public async Task SummaryInParagraphCanBeFixedAsync(string lineEnding)
         {
             var testCode = @"public class ClassName
 {
     /// <summary><para>Gets the first test value.</para></summary>
-    public int Property1
+    public int {|#0:Property1|}
     {
         set { }
     }
@@ -216,7 +219,7 @@ public class TestClass
     /// <summary>
     /// <para>Gets the second test value.</para>
     /// </summary>
-    public int Property2
+    public int {|#1:Property2|}
     {
         set { }
     }
@@ -226,11 +229,11 @@ public class TestClass
     /// Gets the third test value.
     /// </para>
     /// </summary>
-    public int Property3
+    public int {|#2:Property3|}
     {
         set { }
     }
-}";
+}".ReplaceLineEndings(lineEnding);
             var fixedTestCode = @"public class ClassName
 {
     /// <summary><para>Sets the first test value.</para></summary>
@@ -256,13 +259,13 @@ public class TestClass
     {
         set { }
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {
-                Diagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(4, 16).WithArguments("Sets"),
-                Diagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(12, 16).WithArguments("Sets"),
-                Diagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(22, 16).WithArguments("Sets"),
+                Diagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(0).WithArguments("Sets"),
+                Diagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(1).WithArguments("Sets"),
+                Diagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(2).WithArguments("Sets"),
             };
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }

@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1013ClosingBracesMustBeSpacedCorrectly,
@@ -102,9 +103,12 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         /// <summary>
         /// Verifies that the analyzer will properly handle closing braces in property declaration.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestPropertyDeclarationAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestPropertyDeclarationAsync(string lineEnding)
         {
             var testCode = @"namespace TestNamespace
 {
@@ -114,7 +118,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         public int TestProperty2 { get; set;{|#0:}|}
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             var fixedCode = @"namespace TestNamespace
 {
@@ -124,7 +128,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         public int TestProperty2 { get; set; }
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {

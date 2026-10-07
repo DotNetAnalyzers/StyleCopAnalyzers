@@ -46,8 +46,8 @@ public struct {|#1:FooStruct|} { }
 ";
             var expected = new[]
             {
-                Diagnostic().WithLocation(0).WithArguments("delegate", "enum"),
-                Diagnostic().WithLocation(1).WithArguments("struct", "record"),
+                Diagnostic().WithLocation(0).WithArguments("A delegate", "an enum"),
+                Diagnostic().WithLocation(1).WithArguments("A struct", "a record"),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -103,11 +103,11 @@ public struct {|#1:FooStruct|} { }
 ";
             var expected = new[]
             {
-                Diagnostic().WithLocation(6, 26).WithArguments("delegate", "interface"),
-                Diagnostic().WithLocation(10, 5).WithArguments("conversion", "operator"),
-                Diagnostic().WithLocation(11, 19).WithArguments("property", "conversion"),
-                Diagnostic().WithLocation(13, 17).WithArguments("method", "struct"),
-                Diagnostic().WithLocation(15, 19).WithArguments("indexer", "class"),
+                Diagnostic().WithLocation(6, 26).WithArguments("A delegate", "an interface"),
+                Diagnostic().WithLocation(10, 5).WithArguments("A conversion", "an operator"),
+                Diagnostic().WithLocation(11, 19).WithArguments("A property", "a conversion"),
+                Diagnostic().WithLocation(13, 17).WithArguments("A method", "a struct"),
+                Diagnostic().WithLocation(15, 19).WithArguments("An indexer", "a class"),
             };
 
             string fixedCode = @"public record OuterType

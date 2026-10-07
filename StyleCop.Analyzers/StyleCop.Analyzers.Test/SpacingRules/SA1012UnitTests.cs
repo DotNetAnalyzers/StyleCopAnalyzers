@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1012OpeningBracesMustBeSpacedCorrectly,
@@ -59,9 +58,12 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         /// <summary>
         /// Verifies that the analyzer will properly handle opening braces in string interpolation.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestStringInterpolationAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestStringInterpolationAsync(string lineEnding)
         {
             var testCode = @"namespace TestNamespace
 {
@@ -74,12 +76,12 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             x = $"" {test}"";
             x = $""({test})"";
             x = $""( {test})"";
-            x = $""{ test}"";
-            x = $"" { test}"";
+            x = $""{|#0:{|} test}"";
+            x = $"" {|#1:{|} test}"";
         }
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             var fixedCode = @"namespace TestNamespace
 {
@@ -97,12 +99,12 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(12, 19).WithArguments(" not", "followed"),
-                Diagnostic().WithLocation(13, 20).WithArguments(" not", "followed"),
+                Diagnostic().WithLocation(0).WithArguments(" not", "followed"),
+                Diagnostic().WithLocation(1).WithArguments(" not", "followed"),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);

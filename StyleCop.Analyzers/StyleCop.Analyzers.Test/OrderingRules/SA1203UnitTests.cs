@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.OrderingRules.SA1203ConstantsMustAppearBeforeFields,
@@ -91,23 +92,25 @@ public class TestClass2
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestClassViolationAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestClassViolationAsync(string lineEnding)
         {
             var testCode = @"
 public class Foo
 {
     private int Baz = 1;
-    private const int Bar = 2;
-}";
-            var firstDiagnostic = Diagnostic().WithLocation(5, 23);
+    private const int {|#0:Bar|} = 2;
+}".ReplaceLineEndings(lineEnding);
+            var firstDiagnostic = Diagnostic().WithLocation(0);
 
             var fixedTestCode = @"
 public class Foo
 {
     private const int Bar = 2;
     private int Baz = 1;
-}";
+}".ReplaceLineEndings(lineEnding);
             await VerifyCSharpFixAsync(testCode, firstDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 

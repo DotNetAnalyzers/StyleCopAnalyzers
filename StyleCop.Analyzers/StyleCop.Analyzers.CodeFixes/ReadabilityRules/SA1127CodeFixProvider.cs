@@ -56,6 +56,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+            var options = document.Project.Solution.Workspace.Options;
             var whereToken = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
             var precedingToken = whereToken.GetPreviousToken();
             var endToken = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.End);
@@ -65,11 +67,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
             var indentationTrivia = SyntaxFactory.Whitespace(parentIndentation + IndentationHelper.GenerateIndentationString(settings.Indentation, 1));
 
+            var precedingTokenEndOfLine = FormattingHelper.GetEndOfLineForCodeFix(precedingToken, sourceText, options);
+            var endTokenEndOfLine = FormattingHelper.GetEndOfLineForCodeFix(endToken, sourceText, options);
+
             var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>()
             {
-                [precedingToken] = precedingToken.WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed),
+                [precedingToken] = precedingToken.WithTrailingTrivia(precedingTokenEndOfLine),
                 [whereToken] = whereToken.WithLeadingTrivia(indentationTrivia),
-                [endToken] = endToken.WithTrailingTrivia(RemoveUnnecessaryWhitespaceTrivia(endToken).Add(SyntaxFactory.CarriageReturnLineFeed)),
+                [endToken] = endToken.WithTrailingTrivia(RemoveUnnecessaryWhitespaceTrivia(endToken).Add(endTokenEndOfLine)),
             };
 
             if (afterEndToken.IsKind(SyntaxKind.EqualsGreaterThanToken))

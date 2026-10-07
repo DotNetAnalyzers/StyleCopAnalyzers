@@ -15,6 +15,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Options;
+    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
@@ -58,10 +60,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+            var options = document.Project.Solution.Workspace.Options;
             var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
             var tokensToReplace = new Dictionary<SyntaxToken, SyntaxToken>();
 
-            AddTokensToReplaceToMap(tokensToReplace, syntaxRoot, diagnostic, settings);
+            AddTokensToReplaceToMap(tokensToReplace, syntaxRoot, sourceText, options, diagnostic, settings);
 
             var newSyntaxRoot = syntaxRoot.ReplaceTokens(tokensToReplace.Keys, (original, rewritten) => tokensToReplace[original]);
             var newDocument = document.WithSyntaxRoot(newSyntaxRoot.WithoutFormatting());
@@ -69,7 +73,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             return newDocument;
         }
 
-        private static void AddTokensToReplaceToMap(Dictionary<SyntaxToken, SyntaxToken> tokensToReplace, SyntaxNode syntaxRoot, Diagnostic diagnostic, StyleCopSettings settings)
+        private static void AddTokensToReplaceToMap(Dictionary<SyntaxToken, SyntaxToken> tokensToReplace, SyntaxNode syntaxRoot, SourceText sourceText, OptionSet options, Diagnostic diagnostic, StyleCopSettings settings)
         {
             var attributeListSyntax = (AttributeListSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
 
@@ -81,9 +85,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
             if (diagnostic.Properties.ContainsKey(SA1134AttributesMustNotShareLine.FixWithNewLineBeforeKey))
             {
                 var token = attributeListSyntax.OpenBracketToken;
+                var endOfLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(token, sourceText, options);
                 var prevToken = token.GetPreviousToken();
 
-                tokensToReplace[prevToken] = prevToken.WithTrailingTrivia(prevToken.TrailingTrivia.WithoutTrailingWhitespace().Add(SyntaxFactory.CarriageReturnLineFeed));
+                tokensToReplace[prevToken] = prevToken.WithTrailingTrivia(prevToken.TrailingTrivia.WithoutTrailingWhitespace().Add(endOfLineTrivia));
 
                 var newLeadingTrivia = token.LeadingTrivia.Insert(0, indentationTrivia);
                 tokensToReplace[token] = token.WithLeadingTrivia(newLeadingTrivia);
@@ -92,9 +97,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
             if (diagnostic.Properties.ContainsKey(SA1134AttributesMustNotShareLine.FixWithNewLineAfterKey))
             {
                 var token = attributeListSyntax.CloseBracketToken;
+                var endOfLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(token, sourceText, options);
                 var nextToken = token.GetNextToken();
 
-                tokensToReplace[token] = token.WithTrailingTrivia(token.TrailingTrivia.WithoutTrailingWhitespace().Add(SyntaxFactory.CarriageReturnLineFeed));
+                tokensToReplace[token] = token.WithTrailingTrivia(token.TrailingTrivia.WithoutTrailingWhitespace().Add(endOfLineTrivia));
 
                 var newLeadingTrivia = nextToken.LeadingTrivia.Insert(0, indentationTrivia);
                 tokensToReplace[nextToken] = nextToken.WithLeadingTrivia(newLeadingTrivia);
@@ -115,12 +121,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
 
                 var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var sourceText = await document.GetTextAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var options = document.Project.Solution.Workspace.Options;
                 var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, fixAllContext.CancellationToken);
                 var tokensToReplace = new Dictionary<SyntaxToken, SyntaxToken>();
 
                 foreach (var diagnostic in diagnostics)
                 {
-                    AddTokensToReplaceToMap(tokensToReplace, syntaxRoot, diagnostic, settings);
+                    AddTokensToReplaceToMap(tokensToReplace, syntaxRoot, sourceText, options, diagnostic, settings);
                 }
 
                 var newSyntaxRoot = syntaxRoot.ReplaceTokens(tokensToReplace.Keys, (original, rewritten) => tokensToReplace[original]);

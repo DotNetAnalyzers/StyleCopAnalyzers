@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Testing;
     using Microsoft.CodeAnalysis.Text;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.MaintainabilityRules.SA1412StoreFilesAsUtf8,
@@ -65,11 +66,14 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestFileWithUtf8EncodingWithoutBOMAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestFileWithUtf8EncodingWithoutBOMAsync(string lineEnding)
         {
-            var testCode = SourceText.From("class TypeName { }", new UTF8Encoding(false));
-            var fixedCode = SourceText.From(testCode.ToString(), Encoding.UTF8);
+            var source = "class TypeName\n{\n}\n".ReplaceLineEndings(lineEnding);
+            var testCode = SourceText.From(source, new UTF8Encoding(false));
+            var fixedCode = SourceText.From(source, Encoding.UTF8);
 
             var expected = Diagnostic().WithLocation(1, 1);
 

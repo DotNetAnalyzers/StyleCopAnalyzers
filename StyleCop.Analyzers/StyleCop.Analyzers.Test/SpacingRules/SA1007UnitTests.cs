@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1007OperatorKeywordMustBeFollowedBySpace,
@@ -20,8 +19,10 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     /// </summary>
     public class SA1007UnitTests
     {
-        [Fact]
-        public async Task TestOperatorKeywordCasesAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestOperatorKeywordCasesAsync(string lineEnding)
         {
             string testCode = @"
 using System;
@@ -34,7 +35,7 @@ class ClassName
         int(ClassName x) { return 0; }
     public static explicit operator/*comment*/long(ClassName x) { return 0; }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             string fixedCode = @"
 using System;
@@ -47,7 +48,7 @@ class ClassName
         int(ClassName x) { return 0; }
     public static explicit operator /*comment*/long(ClassName x) { return 0; }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {

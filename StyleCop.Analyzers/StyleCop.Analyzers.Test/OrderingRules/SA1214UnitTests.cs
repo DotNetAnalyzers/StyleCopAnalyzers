@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.OrderingRules.SA1214ReadonlyElementsMustAppearBeforeNonReadonlyElements,
@@ -84,19 +85,21 @@ public class TestClass2
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestTwoFieldsInClassStaticReadonlyFieldPlacedAfterStaticNonReadonlyAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestTwoFieldsInClassStaticReadonlyFieldPlacedAfterStaticNonReadonlyAsync(string lineEnding)
         {
             var testCode = @"
 public class Foo
 {
     private static int i = 0;
-    private static readonly int j = 0;
-}";
+    private static readonly int {|#0:j|} = 0;
+}".ReplaceLineEndings(lineEnding);
 
             var expected = new[]
             {
-                Diagnostic().WithLocation(5, 33),
+                Diagnostic().WithLocation(0),
             };
 
             var fixTestCode = @"
@@ -104,7 +107,7 @@ public class Foo
 {
     private static readonly int j = 0;
     private static int i = 0;
-}";
+}".ReplaceLineEndings(lineEnding);
             await VerifyCSharpFixAsync(testCode, expected, fixTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 

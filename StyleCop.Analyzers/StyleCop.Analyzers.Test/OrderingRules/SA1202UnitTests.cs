@@ -125,6 +125,24 @@ internal {keyword} TestClass1 {{ }}
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestTypeOrderingWithLineEndingsAsync(string lineEnding)
+        {
+            var testCode = @"internal class TestClass1 { }
+public class {|#0:TestClass2|} { }
+".ReplaceLineEndings(lineEnding);
+
+            var expected = Diagnostic().WithLocation(0).WithArguments("public", "internal");
+
+            var fixedCode = @"public class TestClass2 { }
+internal class TestClass1 { }
+".ReplaceLineEndings(lineEnding);
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Verifies that the analyzer will properly handle interfaces before classes.
         /// </summary>

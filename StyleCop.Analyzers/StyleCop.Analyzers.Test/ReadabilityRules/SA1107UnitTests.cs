@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1107CodeMustNotContainMultipleStatementsOnOneLine,
@@ -49,8 +48,10 @@ class ClassName
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestWrongCodeAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestWrongCodeAsync(string lineEnding)
         {
             string testCode = @"
 using System;
@@ -58,25 +59,25 @@ class ClassName
 {
     public static void Foo(string a, string b)
     {
-        int i = 5; int j = 6, k = 3; if(true)
+        int i = 5; {|#0:int j = 6, k = 3;|} {|#1:if(true)
         {
             i++;
         }
         else
         {
             j++;
-        } Foo(""a"", ""b"");
+        }|} {|#2:Foo(""a"", ""b"");|}
 
-        Func<int, int, int> g = (c, d) => { c++; return c + d; };
+        Func<int, int, int> g = (c, d) => { c++; {|#3:return c + d;|} };
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
             var expected = new[]
             {
-                Diagnostic().WithLocation(7, 20),
-                Diagnostic().WithLocation(7, 38),
-                Diagnostic().WithLocation(14, 11),
-                Diagnostic().WithLocation(16, 50),
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+                Diagnostic().WithLocation(2),
+                Diagnostic().WithLocation(3),
             };
 
             string fixedCode = @"
@@ -87,7 +88,7 @@ class ClassName
     {
         int i = 5;
         int j = 6, k = 3;
-        if (true)
+        if(true)
         {
             i++;
         }
@@ -95,14 +96,13 @@ class ClassName
         {
             j++;
         }
-
         Foo(""a"", ""b"");
 
         Func<int, int, int> g = (c, d) => { c++;
-            return c + d; };
+        return c + d; };
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
@@ -157,16 +157,19 @@ class Program
     }
 }
 ";
+            string fixedCode = @"
+class Program
+{
+    static void Main(string[] args)
+    {
+        {
+        }
+        ;
+    }
+}
+";
 
-            await new CSharpTest
-            {
-                TestCode = testCode,
-                FixedCode = testCode,
-
-                // A code fix is offered even though no changes are applied by it
-                NumberOfIncrementalIterations = 1,
-                NumberOfFixAllIterations = 1,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

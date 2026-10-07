@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Threading;
@@ -11,6 +9,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
     using StyleCop.Analyzers.Settings.ObjectModel;
+    using StyleCop.Analyzers.Test.Helpers;
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
 
@@ -55,28 +54,31 @@ namespace StyleCop.Analyzers.Test.OrderingRules
         /// <summary>
         /// Verifies that using statements in a namespace produces the expected diagnostics.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestInvalidUsingStatementsInNamespaceAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestInvalidUsingStatementsInNamespaceAsync(string lineEnding)
         {
             var testCode = @"namespace TestNamespace
 {
-    using System;
-    using System.Threading;
+    {|#0:using System;|}
+    {|#1:using System.Threading;|}
 }
-";
+".ReplaceLineEndings(lineEnding);
             var fixedTestCode = @"using System;
 using System.Threading;
 
 namespace TestNamespace
 {
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expectedResults =
             {
-                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(3, 5),
-                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(4, 5),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(0),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(1),
             };
 
             await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);

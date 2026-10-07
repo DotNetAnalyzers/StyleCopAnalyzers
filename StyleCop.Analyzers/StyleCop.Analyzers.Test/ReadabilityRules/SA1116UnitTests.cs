@@ -13,6 +13,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1116SplitParametersMustStartOnLineAfterDeclaration,
@@ -273,8 +274,10 @@ class ObsoleteType
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestInvalidAttributeAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestInvalidAttributeAsync(string lineEnding)
         {
             var testCode = @"
 [System.AttributeUsage(System.AttributeTargets.Class)]
@@ -285,11 +288,11 @@ public class MyAttribute : System.Attribute
     }
 }
 
-[MyAttribute(1,
+[MyAttribute({|#0:1|},
       2)]
 class Foo
 {
-}";
+}".ReplaceLineEndings(lineEnding);
             var fixedCode = @"
 [System.AttributeUsage(System.AttributeTargets.Class)]
 public class MyAttribute : System.Attribute
@@ -304,10 +307,151 @@ public class MyAttribute : System.Attribute
       2)]
 class Foo
 {
+}".ReplaceLineEndings(lineEnding);
+
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1620, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1620")]
+        public async Task TestMultiLineLambdaFirstArgumentIsIndentedAsAWholeAsync()
+        {
+            var testCode = @"
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
+class Foo
+{
+    void Bar(CancellationTokenSource cts)
+    {
+        bool executed = false;
+        Func<Task<List<object>>, Task<string>> continuationFunction = task =>
+            Task.Factory.StartNew<string>({|#0:() =>
+            {
+                executed = true;
+                cts.Cancel();
+
+                throw new InvalidOperationException(""Unreachable"");
+            }|}, cts.Token);
+    }
+}";
+            var fixedCode = @"
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
+class Foo
+{
+    void Bar(CancellationTokenSource cts)
+    {
+        bool executed = false;
+        Func<Task<List<object>>, Task<string>> continuationFunction = task =>
+            Task.Factory.StartNew<string>(
+                () =>
+                {
+                    executed = true;
+                    cts.Cancel();
+
+                    throw new InvalidOperationException(""Unreachable"");
+                }, cts.Token);
+    }
 }";
 
-            DiagnosticResult expected = Diagnostic().WithLocation(10, 14);
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1620, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1620")]
+        public async Task TestMultiLineObjectCreationFirstArgumentIsIndentedAsAWholeAsync()
+        {
+            var testCode = @"
+using System.Collections.Generic;
+
+class Foo
+{
+    void Bar(List<int> a, int b)
+    {
+        Bar(new List<int>
+        {
+            1,
+            2,
+        },
+            3);
+    }
+}";
+            var fixedCode = @"
+using System.Collections.Generic;
+
+class Foo
+{
+    void Bar(List<int> a, int b)
+    {
+        Bar(
+            new List<int>
+            {
+                1,
+                2,
+            },
+            3);
+    }
+}";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(8, 13);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1620, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1620")]
+        public async Task TestMultiLineVerbatimStringContentIsNotChangedAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    void Bar(string a, int b)
+    {
+        Bar(@""line one
+  line two
+line three"",
+            3);
+    }
+}";
+            var fixedCode = @"
+class Foo
+{
+    void Bar(string a, int b)
+    {
+        Bar(
+            @""line one
+  line two
+line three"",
+            3);
+    }
+}";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(6, 13);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1620, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1620")]
+        public async Task TestMultiLineLambdaFirstArgumentWithTabsAsync()
+        {
+            var testCode = "class Foo\r\n{\r\n\tvoid Bar(System.Action a, int b)\r\n\t{\r\n\t\tBar({|#0:() =>\r\n\t\t{\r\n\t\t\tBar(null, 1);\r\n\t\t}|}, 1);\r\n\t}\r\n}\r\n";
+            var fixedCode = "class Foo\r\n{\r\n\tvoid Bar(System.Action a, int b)\r\n\t{\r\n\t\tBar(\r\n\t\t\t() =>\r\n\t\t\t{\r\n\t\t\t\tBar(null, 1);\r\n\t\t\t}, 1);\r\n\t}\r\n}\r\n";
+
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                UseTabs = true,
+            };
+            test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
