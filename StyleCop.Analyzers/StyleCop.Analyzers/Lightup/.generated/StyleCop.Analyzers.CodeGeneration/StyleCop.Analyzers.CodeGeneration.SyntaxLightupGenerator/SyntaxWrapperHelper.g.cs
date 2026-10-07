@@ -42,7 +42,8 @@ namespace StyleCop.Analyzers.Lightup
             builder.Add(typeof(ExpressionColonSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ExpressionColonSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(ExpressionElementSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ExpressionElementSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(ExpressionOrPatternSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ExpressionOrPatternSyntaxWrapper.WrappedTypeName));
-            builder.Add(typeof(ExtensionDeclarationSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ExtensionDeclarationSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(ExtensionBlockDeclarationSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ExtensionBlockDeclarationSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(ExtensionMemberCrefSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ExtensionMemberCrefSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(FieldExpressionSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(FieldExpressionSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(FileScopedNamespaceDeclarationSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(FileScopedNamespaceDeclarationSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(ForEachVariableStatementSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ForEachVariableStatementSyntaxWrapper.WrappedTypeName));
@@ -88,9 +89,12 @@ namespace StyleCop.Analyzers.Lightup
             builder.Add(typeof(TupleTypeSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(TupleTypeSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(TypePatternSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(TypePatternSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(UnaryPatternSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(UnaryPatternSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(UnionDeclarationSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(UnionDeclarationSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(UnsafeExpressionSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(UnsafeExpressionSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(VariableDesignationSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(VariableDesignationSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(VarPatternSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(VarPatternSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(WhenClauseSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(WhenClauseSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(WithElementSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(WithElementSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(WithExpressionSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(WithExpressionSyntaxWrapper.WrappedTypeName));
 
             WrappedTypes = builder.ToImmutable();
