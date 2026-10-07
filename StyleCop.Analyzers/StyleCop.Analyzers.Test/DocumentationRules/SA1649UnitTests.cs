@@ -5,9 +5,16 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
+    using System.Collections.Immutable;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CodeActions;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Host.Mef;
     using Microsoft.CodeAnalysis.Testing;
+    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Test.Helpers;
     using StyleCop.Analyzers.Test.Verifiers;
@@ -19,6 +26,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     /// </summary>
     public class SA1649UnitTests
     {
+        protected const string MisnamedDocumentSource = "namespace TestNamespace\r\n{\r\n    public class TestType\r\n    {\r\n    }\r\n}\r\n";
+
         protected const string MetadataSettings = @"
 {
   ""settings"": {
@@ -542,6 +551,50 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             }.RunAsync().ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(2277, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2277")]
+        public async Task VerifyCodeFixWhenHostCannotRenameDocumentAsync()
+        {
+            // When the host cannot apply document info changes, the code fix must not rename the document in place, and
+            // instead falls back to removing it and adding a new document with the expected name.
+            using (var workspace = new NoDocumentInfoChangesWorkspace())
+            {
+                var (originalId, fixedSolution) = await ApplyCodeFixToMisnamedDocumentAsync(workspace).ConfigureAwait(false);
+
+                var fixedDocument = Assert.Single(Assert.Single(fixedSolution.Projects).Documents);
+                Assert.NotEqual(originalId, fixedDocument.Id);
+                Assert.Equal("TestType.cs", fixedDocument.Name);
+                Assert.Equal(MisnamedDocumentSource, (await fixedDocument.GetTextAsync(CancellationToken.None).ConfigureAwait(false)).ToString());
+            }
+        }
+
+        protected static async Task<(DocumentId originalId, Solution fixedSolution)> ApplyCodeFixToMisnamedDocumentAsync(Workspace workspace)
+        {
+            // The code fix asks the workspace of the solution whether it can apply document info changes, so the
+            // solution does not need to be applied to the workspace.
+            var projectId = ProjectId.CreateNewId();
+            var documentId = DocumentId.CreateNewId(projectId);
+            var solution = workspace.CurrentSolution
+                .AddProject(projectId, "TestProject", "TestProject", LanguageNames.CSharp)
+                .AddDocument(documentId, "WrongFileName.cs", SourceText.From(MisnamedDocumentSource), filePath: "0/WrongFileName.cs");
+            var document = solution.GetDocument(documentId);
+
+            var compilation = await document.Project.GetCompilationAsync(CancellationToken.None).ConfigureAwait(false);
+            var diagnostics = await compilation
+                .WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new SA1649FileNameMustMatchTypeName()))
+                .GetAnalyzerDiagnosticsAsync(CancellationToken.None)
+                .ConfigureAwait(false);
+            var diagnostic = Assert.Single(diagnostics, d => d.Id == SA1649FileNameMustMatchTypeName.DiagnosticId);
+
+            var actions = ImmutableArray.CreateBuilder<CodeAction>();
+            var context = new CodeFixContext(document, diagnostic, (action, ignored) => actions.Add(action), CancellationToken.None);
+            await new SA1649CodeFixProvider().RegisterCodeFixesAsync(context).ConfigureAwait(false);
+
+            var operations = await Assert.Single(actions).GetOperationsAsync(CancellationToken.None).ConfigureAwait(false);
+            var applyChangesOperation = Assert.IsType<ApplyChangesOperation>(Assert.Single(operations));
+            return (document.Id, applyChangesOperation.ChangedSolution);
+        }
+
         protected static string GetTypeDeclaration(string typeKind, string typeName, int? diagnosticKey = null)
         {
             if (diagnosticKey is not null)
@@ -604,6 +657,23 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 
             test.ExpectedDiagnostics.AddRange(expected);
             return test.RunAsync(cancellationToken);
+        }
+
+        /// <summary>
+        /// A workspace which, like some hosts, cannot apply document info changes such as renaming a document in place.
+        /// </summary>
+        private sealed class NoDocumentInfoChangesWorkspace : Workspace
+        {
+            public NoDocumentInfoChangesWorkspace()
+                : base(MefHostServices.DefaultHost, "Test")
+            {
+            }
+
+            public override bool CanApplyChange(ApplyChangesKind feature)
+            {
+                // ApplyChangesKind.ChangeDocumentInfo is not available in every Roslyn version this test runs with
+                return feature.ToString() != "ChangeDocumentInfo";
+            }
         }
     }
 }

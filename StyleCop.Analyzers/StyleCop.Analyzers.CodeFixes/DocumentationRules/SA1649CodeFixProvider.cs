@@ -67,11 +67,16 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static Solution RenameDocument(Solution solution, Document? document, DocumentId documentId, SyntaxNode syntaxRoot, string expectedFileName)
         {
-            // First try to use the "new" WithDocumentName method. This will return null if it is not available in the current Roslyn version.
-            var newSolution = solution.WithDocumentName(documentId, expectedFileName);
-            if (newSolution != null)
+            // First try to rename the document in place. This requires both Solution.WithDocumentName (which returns
+            // null if it is not available in the current Roslyn version) and a host workspace that can apply document
+            // info changes such as a new name. Otherwise the change could not be applied by the host.
+            if (solution.Workspace.CanApplyChangeDocumentInfo())
             {
-                return newSolution;
+                var renamedSolution = solution.WithDocumentName(documentId, expectedFileName);
+                if (renamedSolution != null)
+                {
+                    return renamedSolution;
+                }
             }
 
             // Continue by instead removing and re-adding the file again
@@ -79,10 +84,9 @@ namespace StyleCop.Analyzers.DocumentationRules
             var newDocumentFilePath = document.FilePath != null ? Path.Combine(Path.GetDirectoryName(document.FilePath), expectedFileName) : null;
             var newDocumentId = DocumentId.CreateNewId(documentId.ProjectId);
 
-            newSolution = solution
+            return solution
                 .RemoveDocument(documentId)
                 .AddDocument(newDocumentId, expectedFileName, syntaxRoot, document.Folders, newDocumentFilePath);
-            return newSolution;
         }
     }
 }
