@@ -169,13 +169,7 @@ class Program
 }
 ";
 
-            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, this.GetFixedCodeTestEmptyStatementAfterBlock() ?? fixedCode, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected virtual string? GetFixedCodeTestEmptyStatementAfterBlock()
-        {
-            // Use the default fixed code
-            return null;
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
