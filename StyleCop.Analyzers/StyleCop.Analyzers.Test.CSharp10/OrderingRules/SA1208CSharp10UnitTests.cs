@@ -143,15 +143,17 @@ class TestClass
                     @"
 global using NameSpaceA;
 {|#0:global using System.Text;|}
-global using System;
+{|#1:global using System;|}
 
 using OtherNamespace;
-{|#1:using System.IO;|}
-using System;
+{|#2:using System.IO;|}
+{|#3:using System;|}
 ",
                 },
                 FixedSources =
                 {
+                    "namespace NameSpaceA { }",
+                    "namespace OtherNamespace { }",
                     @"
 global using System;
 global using System.Text;
@@ -165,7 +167,9 @@ using OtherNamespace;
                 ExpectedDiagnostics =
                 {
                     Diagnostic().WithLocation(0).WithArguments("System.Text", "NameSpaceA"),
-                    Diagnostic().WithLocation(1).WithArguments("System.IO", "OtherNamespace"),
+                    Diagnostic().WithLocation(1).WithArguments("System", "NameSpaceA"),
+                    Diagnostic().WithLocation(2).WithArguments("System.IO", "OtherNamespace"),
+                    Diagnostic().WithLocation(3).WithArguments("System", "OtherNamespace"),
                 },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
