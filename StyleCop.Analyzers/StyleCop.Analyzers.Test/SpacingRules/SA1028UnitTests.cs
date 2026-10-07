@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Text;
@@ -10,6 +8,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1028CodeMustNotContainTrailingWhitespace,
@@ -21,8 +20,10 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     /// </summary>
     public class SA1028UnitTests
     {
-        [Fact]
-        public async Task TrailingWhitespaceAfterStatementAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TrailingWhitespaceAfterStatementAsync(string lineEnding)
         {
             string testCode = new StringBuilder()
                 .AppendLine("class ClassName")
@@ -32,7 +33,8 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 .AppendLine("        System.Console.WriteLine(); ")
                 .AppendLine("    }")
                 .AppendLine("}")
-                .ToString();
+                .ToString()
+                .ReplaceLineEndings(lineEnding);
 
             string fixedCode = new StringBuilder()
                 .AppendLine("class ClassName")
@@ -42,7 +44,8 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 .AppendLine("        System.Console.WriteLine();")
                 .AppendLine("    }")
                 .AppendLine("}")
-                .ToString();
+                .ToString()
+                .ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {

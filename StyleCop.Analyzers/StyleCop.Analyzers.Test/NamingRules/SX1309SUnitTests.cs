@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.NamingRules.SX1309SStaticFieldNamesMustBeginWithUnderscore,
@@ -75,6 +76,26 @@ namespace StyleCop.Analyzers.Test.NamingRules
 {{
     {modifiers} string _bar = ""bar"";
 }}";
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestCheckedFieldNotStartingWithAnUnderscoreWithLineEndingsAsync(string lineEnding)
+        {
+            var testCode = @"public class ClassName
+{
+    private static string {|#0:bar|} = ""bar"";
+}".ReplaceLineEndings(lineEnding);
+
+            DiagnosticResult expected = Diagnostic().WithArguments("bar").WithLocation(0);
+
+            var fixedCode = @"public class ClassName
+{
+    private static string _bar = ""bar"";
+}".ReplaceLineEndings(lineEnding);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }

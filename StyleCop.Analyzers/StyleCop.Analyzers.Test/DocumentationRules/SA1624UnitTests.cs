@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Threading;
@@ -44,6 +42,10 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("protected internal", "int", "private get; set;", "Gets or sets", "set", "Sets")]
         [InlineData("internal", "int", "get; private set;", "Gets or sets", "get", "Gets")]
         [InlineData("internal", "int", "private get; set;", "Gets or sets", "set", "Sets")]
+        [InlineData("public", "bool", "get; private set;", "Gets or initializes a value indicating whether", "get", "Gets a value indicating whether")]
+        [InlineData("public", "bool", "private get; set;", "Gets or initializes a value indicating whether", "set", "Sets a value indicating whether")]
+        [InlineData("internal", "int", "get; private set;", "Gets or initializes", "get", "Gets")]
+        [InlineData("internal", "int", "private get; set;", "Gets or initializes", "set", "Sets")]
         public async Task VerifyThatInvalidDocumentationWillReportDiagnosticAsync(string accessibility, string type, string accessors, string summaryPrefix, string expectedArgument1, string expectedArgument2)
         {
             var testCode = $@"
@@ -52,7 +54,7 @@ public class TestClass
     /// <summary>
     /// {summaryPrefix} the test property.
     /// </summary>
-    {accessibility} {type} TestProperty
+    {accessibility} {type} {{|#0:TestProperty|}}
     {{
         {accessors}
     }}
@@ -72,7 +74,7 @@ public class TestClass
 }}
 ";
 
-            var expected = Diagnostic(PropertySummaryDocumentationAnalyzer.SA1624Descriptor).WithLocation(7, 7 + accessibility.Length + type.Length).WithArguments(expectedArgument1, expectedArgument2);
+            var expected = Diagnostic(PropertySummaryDocumentationAnalyzer.SA1624Descriptor).WithLocation(0).WithArguments(expectedArgument1, expectedArgument2);
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 

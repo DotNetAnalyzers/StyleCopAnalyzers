@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1129DoNotUseDefaultValueTypeConstructor,
@@ -84,9 +85,12 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         /// <summary>
         /// Verifies that new expressions for value types without parameters will generate diagnostics.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task VerifyInvalidValueTypeCreationAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task VerifyInvalidValueTypeCreationAsync(string lineEnding)
         {
             var testCode = @"public class TestClass
 {
@@ -102,7 +106,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         public int TestProperty { get; set; }
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             var fixedTestCode = @"public class TestClass
 {
@@ -118,7 +122,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         public int TestProperty { get; set; }
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {

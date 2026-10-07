@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.NamingRules
 {
     using System.Threading;
@@ -28,20 +26,22 @@ namespace StyleCop.Analyzers.Test.NamingRules
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestLowerCaseNamespaceAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestLowerCaseNamespaceAsync(string lineEnding)
         {
-            var testCode = @"namespace test
+            var testCode = @"namespace {|#0:test|}
 { 
 
-}";
+}".ReplaceLineEndings(lineEnding);
 
             var fixedCode = @"namespace Test
 { 
 
-}";
+}".ReplaceLineEndings(lineEnding);
 
-            DiagnosticResult expected = Diagnostic().WithArguments("test").WithLocation(1, 11);
+            DiagnosticResult expected = Diagnostic().WithArguments("test").WithLocation(0);
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 

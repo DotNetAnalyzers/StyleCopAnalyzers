@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Threading;
@@ -10,6 +8,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1000KeywordsMustBeSpacedCorrectly,
@@ -903,8 +902,10 @@ class ClassName
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestTrailingCommentAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestTrailingCommentAsync(string lineEnding)
         {
             string testCode = @"
 class ClassName
@@ -916,7 +917,7 @@ class ClassName
         }
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
             string fixedCode = @"
 class ClassName
 {
@@ -927,7 +928,7 @@ class ClassName
         }
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             var expected = Diagnostic().WithArguments("if", string.Empty, "followed").WithLocation(6, 9);
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);

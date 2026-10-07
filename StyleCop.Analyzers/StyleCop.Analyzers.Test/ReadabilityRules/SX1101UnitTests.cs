@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SX1101DoNotPrefixLocalMembersWithThis,
@@ -18,9 +19,12 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         /// <summary>
         /// Verifies that this prefixes are detected and removed.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task VerifyThisPrefixesAreDetectedAndRemovedAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task VerifyThisPrefixesAreDetectedAndRemovedAsync(string lineEnding)
         {
             var testCode = @"using System;
 
@@ -73,7 +77,7 @@ public class TestClass : BaseTestClass
 
     public int listeners;
 }
-";
+".ReplaceLineEndings(lineEnding);
             var fixedTestCode = @"using System;
 
 public class BaseTestClass
@@ -125,7 +129,7 @@ public class TestClass : BaseTestClass
 
     public int listeners;
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {

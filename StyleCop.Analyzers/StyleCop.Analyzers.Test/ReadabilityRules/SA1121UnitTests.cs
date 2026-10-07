@@ -16,6 +16,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1121UseBuiltInTypeAlias,
@@ -511,18 +512,21 @@ public class Foo
             await VerifyCSharpFixAsync(string.Format(testSource, fullName), expected, string.Format(testSource, predefined), CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestMissleadingUsingAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestMissleadingUsingAsync(string lineEnding)
         {
             string oldSource = @"namespace Foo
 {
   using Int32 = System.UInt32;
   class Bar
   {
-    Int32 value = 3;
+    {|#0:Int32|} value = 3;
   }
 }
-";
+".ReplaceLineEndings(lineEnding);
+
             string newSource = @"namespace Foo
 {
   using Int32 = System.UInt32;
@@ -531,12 +535,12 @@ public class Foo
     uint value = 3;
   }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             await new CSharpTest
             {
                 TestCode = oldSource,
-                ExpectedDiagnostics = { Diagnostic().WithLocation(6, 5) },
+                ExpectedDiagnostics = { Diagnostic().WithLocation(0) },
                 FixedCode = newSource,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }

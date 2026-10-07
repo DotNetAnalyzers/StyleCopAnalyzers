@@ -85,6 +85,15 @@ namespace StyleCop.Analyzers.SpacingRules
             {
                 switch (token.Kind())
                 {
+                case SyntaxKind.DelegateKeyword:
+                    if (token.Parent.IsKind(SyntaxKindEx.FunctionPointerType))
+                    {
+                        HandleDisallowedSpaceToken(ref context, token);
+                        break;
+                    }
+
+                    goto default;
+
                 case SyntaxKindEx.AndKeyword:
                 case SyntaxKind.AwaitKeyword:
                 case SyntaxKind.CaseKeyword:
@@ -165,6 +174,14 @@ namespace StyleCop.Analyzers.SpacingRules
 
                 case SyntaxKind.ThrowKeyword:
                     HandleThrowKeywordToken(ref context, token);
+                    break;
+
+                case SyntaxKindEx.UnmanagedKeyword:
+                    if (token.Parent.IsKind(SyntaxKindEx.FunctionPointerCallingConvention))
+                    {
+                        HandleDisallowedSpaceToken(ref context, token);
+                    }
+
                     break;
 
                 default:

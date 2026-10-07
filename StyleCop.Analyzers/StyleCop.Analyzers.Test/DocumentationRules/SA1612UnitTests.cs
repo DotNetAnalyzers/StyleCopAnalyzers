@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Collections.Generic;
@@ -562,35 +560,13 @@ public class ClassName
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private static DiagnosticResult[] GetExpectedDiagnostics(DiagnosticResult normallyExpected, string declaration)
-        {
-            return GetExpectedDiagnostics(new[] { normallyExpected }, declaration);
-        }
-
-        // Syntax node actions for type declarations with a primary constructor were called twice
-        // before support for c# 11 was added.
-        private static DiagnosticResult[] GetExpectedDiagnostics(DiagnosticResult[] normallyExpected, string declaration)
-        {
-            var isPrimaryConstructor = declaration.Contains("record") || declaration.Contains("class") || declaration.Contains("struct");
-
-            if (isPrimaryConstructor && !LightupHelpers.SupportsCSharp11)
-            {
-                // Diagnostic issued twice because of https://github.com/dotnet/roslyn/issues/53136 and https://github.com/dotnet/roslyn/issues/70488
-                return normallyExpected.Concat(normallyExpected).ToArray();
-            }
-            else
-            {
-                return normallyExpected;
-            }
-        }
-
-        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        protected static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
             => VerifyCSharpDiagnosticAsync(source, testSettings: null, expected, ignoreCompilerDiagnostics: false, cancellationToken);
 
-        private static Task VerifyCSharpDiagnosticAsync(string source, string testSettings, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        protected static Task VerifyCSharpDiagnosticAsync(string source, string? testSettings, DiagnosticResult[] expected, CancellationToken cancellationToken)
             => VerifyCSharpDiagnosticAsync(source, testSettings, expected, ignoreCompilerDiagnostics: false, cancellationToken);
 
-        private static Task VerifyCSharpDiagnosticAsync(string source, string testSettings, DiagnosticResult[] expected, bool ignoreCompilerDiagnostics, CancellationToken cancellationToken)
+        protected static Task VerifyCSharpDiagnosticAsync(string source, string? testSettings, DiagnosticResult[] expected, bool ignoreCompilerDiagnostics, CancellationToken cancellationToken)
         {
             string contentWithoutParamDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <ClassName>
@@ -695,6 +671,28 @@ public class ClassName
 
             test.ExpectedDiagnostics.AddRange(expected);
             return test.RunAsync(cancellationToken);
+        }
+
+        private static DiagnosticResult[] GetExpectedDiagnostics(DiagnosticResult normallyExpected, string declaration)
+        {
+            return GetExpectedDiagnostics(new[] { normallyExpected }, declaration);
+        }
+
+        // Syntax node actions for type declarations with a primary constructor were called twice
+        // before support for c# 11 was added.
+        private static DiagnosticResult[] GetExpectedDiagnostics(DiagnosticResult[] normallyExpected, string declaration)
+        {
+            var isPrimaryConstructor = declaration.Contains("record") || declaration.Contains("class") || declaration.Contains("struct");
+
+            if (isPrimaryConstructor && !LightupHelpers.SupportsCSharp11)
+            {
+                // Diagnostic issued twice because of https://github.com/dotnet/roslyn/issues/53136 and https://github.com/dotnet/roslyn/issues/70488
+                return normallyExpected.Concat(normallyExpected).ToArray();
+            }
+            else
+            {
+                return normallyExpected;
+            }
         }
     }
 }

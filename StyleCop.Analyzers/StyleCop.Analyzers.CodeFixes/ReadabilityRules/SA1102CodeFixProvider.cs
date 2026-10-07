@@ -13,7 +13,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp;
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
@@ -52,16 +51,19 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
             var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
 
             var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
             var indentationTrivia = QueryIndentationHelpers.GetQueryIndentationTrivia(settings.Indentation, token);
 
             var precedingToken = token.GetPreviousToken();
+            var options = document.Project.Solution.Workspace.Options;
+            var endOfLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(token, text, options);
 
             var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>()
             {
-                [precedingToken] = precedingToken.WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed),
+                [precedingToken] = precedingToken.WithTrailingTrivia(endOfLineTrivia),
                 [token] = token.WithLeadingTrivia(indentationTrivia),
             };
 

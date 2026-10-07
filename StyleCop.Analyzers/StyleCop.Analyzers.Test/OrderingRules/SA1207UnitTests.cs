@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.OrderingRules.SA1207ProtectedMustComeBeforeInternal,
@@ -132,6 +133,29 @@ public class Foo
             var fixedTestCode = TestCodeTemplate.Replace("$$", fixedDeclaration);
 
             DiagnosticResult expected = Diagnostic().WithArguments("protected", "internal").WithLocation(4, 4 + diagnosticColumn);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestInvalidDeclarationWithLineEndingsAsync(string lineEnding)
+        {
+            var invalidDeclaration = @"internal
+static
+{|#0:protected|}
+int
+Bar;";
+            var fixedDeclaration = @"protected
+static
+internal
+int
+Bar;";
+
+            var testCode = TestCodeTemplate.Replace("$$", invalidDeclaration).ReplaceLineEndings(lineEnding);
+            var fixedTestCode = TestCodeTemplate.Replace("$$", fixedDeclaration).ReplaceLineEndings(lineEnding);
+
+            DiagnosticResult expected = Diagnostic().WithArguments("protected", "internal").WithLocation(0);
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }

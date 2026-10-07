@@ -9,7 +9,7 @@ namespace StyleCop.Analyzers.Test
     /// Defines a collection for tests which cannot run in parallel with other tests.
     /// </summary>
     [CollectionDefinition(nameof(SequentialTestCollection), DisableParallelization = true)]
-    internal sealed class SequentialTestCollection
+    public sealed class SequentialTestCollection
     {
     }
 }

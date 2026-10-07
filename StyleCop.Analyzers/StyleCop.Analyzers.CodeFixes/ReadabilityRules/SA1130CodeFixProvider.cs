@@ -18,6 +18,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Formatting;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1130UseLambdaSyntax"/>.
@@ -72,7 +73,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static SyntaxNode ReplaceWithLambda(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod)
         {
             var parameterList = anonymousMethod.ParameterList;
-            ExpressionSyntax lambdaExpression;
+            AnonymousFunctionExpressionSyntax lambdaExpression;
             SyntaxToken arrowToken;
 
             if (parameterList == null)
@@ -178,14 +179,21 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 lambdaExpression = SyntaxFactory.ParenthesizedLambdaExpression(anonymousMethod.AsyncKeyword, parameterListSyntax, arrowToken, anonymousMethod.Body);
             }
 
+            var modifiers = anonymousMethod.Modifiers();
+            if (modifiers.Count > 0)
+            {
+                lambdaExpression = lambdaExpression.WithModifiers(modifiers);
+            }
+
+            ExpressionSyntax resultExpression = lambdaExpression;
             if (anonymousMethod.Parent.IsKind(SyntaxKind.CastExpression))
             {
                 // In this case, the lambda needs enclosing parenthesis to be syntactically correct
-                lambdaExpression = SyntaxFactory.ParenthesizedExpression(lambdaExpression);
+                resultExpression = SyntaxFactory.ParenthesizedExpression(resultExpression);
             }
 
             // TODO: No tests require this annotation. Can it be removed?
-            return lambdaExpression
+            return resultExpression
                 .WithAdditionalAnnotations(Formatter.Annotation);
         }
 

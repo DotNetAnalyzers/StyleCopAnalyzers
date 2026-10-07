@@ -76,7 +76,7 @@ namespace StyleCop.Analyzers.NamingRules
                     {
                         IdentifierNameSyntax identifierSyntax = (IdentifierNameSyntax)token.Parent;
 
-                        var newIdentifierSyntax = identifierSyntax.WithIdentifier(SyntaxFactory.Identifier(newName));
+                        var newIdentifierSyntax = identifierSyntax.WithIdentifier(SyntaxFactory.Identifier(newName)).WithTriviaFrom(identifierSyntax);
 
                         var newRoot = root.ReplaceNode(identifierSyntax, newIdentifierSyntax);
                         return Task.FromResult(context.Document.WithSyntaxRoot(newRoot));

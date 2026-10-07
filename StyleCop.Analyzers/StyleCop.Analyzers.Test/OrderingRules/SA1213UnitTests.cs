@@ -1,13 +1,12 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.OrderingRules.SA1213EventAccessorsMustFollowOrder,
@@ -15,8 +14,10 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 
     public class SA1213UnitTests
     {
-        [Fact]
-        public async Task TestAddAccessorAfterRemoveAccessorAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestAddAccessorAfterRemoveAccessorAsync(string lineEnding)
         {
             var testCode = @"
 using System;
@@ -26,7 +27,7 @@ public class Foo
 
     public event EventHandler NameChanged
     {
-        remove
+        {|#0:remove|}
         {
             this.nameChanged -= value;
         }
@@ -35,9 +36,9 @@ public class Foo
             this.nameChanged += value;
         }
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
-            DiagnosticResult expected = Diagnostic().WithLocation(9, 9);
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
 
             var fixedCode = @"
 using System;
@@ -56,7 +57,7 @@ public class Foo
             this.nameChanged -= value;
         }
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }

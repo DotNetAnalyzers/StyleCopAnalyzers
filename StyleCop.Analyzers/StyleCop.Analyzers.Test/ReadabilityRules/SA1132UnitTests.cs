@@ -1,13 +1,12 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1132DoNotCombineFields,
@@ -29,16 +28,18 @@ class Foo
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestInvalidDeclarationAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestInvalidDeclarationAsync(string lineEnding)
         {
-            const string testCode = @"
+            string testCode = @"
 class Foo
 {
-    private int a, b,/*foo*/c,d;
-    public event System.Action aa, bb;
-}";
-            const string fixedCode = @"
+    {|#0:private int a, b,/*foo*/c,d;|}
+    {|#1:public event System.Action aa, bb;|}
+}".ReplaceLineEndings(lineEnding);
+            string fixedCode = @"
 class Foo
 {
     private int a;
@@ -47,12 +48,12 @@ class Foo
     private int d;
     public event System.Action aa;
     public event System.Action bb;
-}";
+}".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(4, 5),
-                Diagnostic().WithLocation(5, 5),
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);

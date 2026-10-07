@@ -431,7 +431,7 @@ namespace StyleCop.Analyzers.Test.Settings
             var projectId = ProjectId.CreateNewId();
             var documentId = DocumentId.CreateNewId(projectId);
 
-            var solution = GenericAnalyzerTest.CreateWorkspace()
+            var solution = (await GenericAnalyzerTest.CreateWorkspaceAsync().ConfigureAwait(false))
                 .CurrentSolution
                 .AddProject(projectId, TestProjectName, TestProjectName, LanguageNames.CSharp)
                 .AddDocument(documentId, "Test0.cs", SourceText.From(string.Empty));
