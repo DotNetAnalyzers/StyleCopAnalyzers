@@ -37,5 +37,30 @@ public class Foo
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(4028, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4028")]
+        public async Task TestFieldBackedPropertyWithMultiLineAccessorAndInitializerAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public object TestProperty
+    {
+        get
+        {
+            if (field == null)
+            {
+                field = new object();
+            }
+
+            return field;
+        }
+    } = null;
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
