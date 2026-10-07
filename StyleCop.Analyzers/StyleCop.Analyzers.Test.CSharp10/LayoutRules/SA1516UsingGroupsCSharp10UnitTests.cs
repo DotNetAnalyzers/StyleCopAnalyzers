@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.LayoutRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
     using StyleCop.Analyzers.Settings.ObjectModel;
@@ -23,7 +24,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.LayoutRules
             var testCode = @"
 global using System;
 global using System.Threading;
-{|#0:using System.IO;|}
+{|#0:using|} System.IO;
 
 Console.WriteLine();
 ";
@@ -37,16 +38,31 @@ using System.IO;
 Console.WriteLine();
 ";
 
-            await new CSharpTest
+            var test = new CSharpTest
             {
-                TestCode = testCode,
+                TestState =
+                {
+                    OutputKind = OutputKind.ConsoleApplication,
+                    Sources = { testCode },
+                },
                 FixedCode = fixedCode,
                 Settings = GetBlankLinesBetweenUsingGroupsSettings(OptionSetting.Require),
-                ExpectedDiagnostics =
-                {
-                    Diagnostic(SA1516ElementsMustBeSeparatedByBlankLine.DescriptorRequire).WithLocation(0),
-                },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            };
+            test.TestState.ExpectedDiagnostics.AddRange(this.GetExpectedResultTestBlankLineRequiredBetweenGlobalAndLocalUsingGroups());
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestBlankLineRequiredBetweenGlobalAndLocalUsingGroups()
+        {
+            // NOTE: Seems like a Roslyn bug made diagnostics be reported twice. Fixed in a later version.
+            return new[]
+            {
+                // /0/Test0.cs(4,1): warning SA1516: Using directives should be separated by blank line
+                Diagnostic(SA1516ElementsMustBeSeparatedByBlankLine.DescriptorRequire).WithLocation(0),
+
+                // /0/Test0.cs(4,1): warning SA1516: Using directives should be separated by blank line
+                Diagnostic(SA1516ElementsMustBeSeparatedByBlankLine.DescriptorRequire).WithLocation(0),
+            };
         }
 
         private static string GetBlankLinesBetweenUsingGroupsSettings(OptionSetting optionSetting)
