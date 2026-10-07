@@ -136,7 +136,7 @@
         <Rule Id="SA1410"  Action="Warning" />          <!-- Remove delegate parenthesis when possible -->
         <Rule Id="SA1411"  Action="Warning" />          <!-- Attribute constructor should not use unnecessary parenthesis -->
         <Rule Id="SA1412"  Action="None"    />          <!-- Store files as UTF-8 with byte order mark -->
-        <Rule Id="SA1413"  Action="Warning" />          <!-- Use trailing comma in multi-line initializers -->
+        <Rule Id="SA1413"  Action="Warning" />          <!-- Use trailing comma in multi-line initializers and lists -->
         <Rule Id="SA1414"  Action="Warning" />          <!-- Tuple types in signatures should have element names -->
     </Rules>
 	
