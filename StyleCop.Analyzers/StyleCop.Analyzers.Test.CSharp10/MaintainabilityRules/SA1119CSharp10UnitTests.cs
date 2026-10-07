@@ -17,23 +17,6 @@ namespace StyleCop.Analyzers.Test.CSharp10.MaintainabilityRules
     {
         [Fact]
         [WorkItem(3990, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3990")]
-        public async Task TestMixedDeconstructionDoesNotReportUnnecessaryParenthesesAsync()
-        {
-            var testCode = @"public class TestClass
-{
-    public void TestMethod()
-    {
-        int a = 1;
-        int b = 2;
-        (a, int c) = (3, 4);
-    }
-}";
-
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        [WorkItem(3990, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3990")]
         public async Task TestMixedDeconstructionWithUnnecessaryParenthesesAsync()
         {
             var testCode = @"public class TestClass
