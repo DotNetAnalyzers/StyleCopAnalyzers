@@ -1,0 +1,311 @@
+name: Build
+
+on:
+  push:
+    branches: [ master ]
+    tags-ignore: [ '**' ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  # Workaround for unreliable NuGet credential provider handshakes (mirrors init.ps1)
+  NUGET_PLUGIN_HANDSHAKE_TIMEOUT_IN_SECONDS: 20
+  NUGET_PLUGIN_REQUEST_TIMEOUT_IN_SECONDS: 20
+
+jobs:
+  build:
+    name: Build ${{ matrix.configuration }}
+    runs-on: windows-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [ Debug, Release ]
+
+    steps:
+    # Must run before checkout so the working tree gets the same line endings as AppVeyor.
+    - name: Configure git line endings
+      run: git config --global core.autocrlf true
+
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # Nerdbank.GitVersioning needs full history
+
+    - name: Setup .NET SDK (from global.json)
+      uses: actions/setup-dotnet@v4
+      with:
+        global-json-file: global.json
+
+    - name: Setup NuGet
+      uses: nuget/setup-nuget@v2
+      with:
+        nuget-version: '6.0.6' # matches Azure Pipelines
+
+    - name: Restore NuGet packages
+      run: nuget restore StyleCopAnalyzers.sln -ConfigFile NuGet.config
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    # No /m: AnnotatorBuildTask doesn't support parallel builds (same as Azure Pipelines).
+    - name: Build solution
+      run: msbuild StyleCopAnalyzers.sln /p:Configuration=${{ matrix.configuration }} /p:Platform="Any CPU" /v:minimal /bl:msbuild.binlog
+
+    - name: Upload build log
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-logs-${{ matrix.configuration }}
+        path: msbuild.binlog
+
+    - name: Upload NuGet packages
+      if: matrix.configuration == 'Release'
+      uses: actions/upload-artifact@v4
+      with:
+        name: nuget-packages
+        path: StyleCop.Analyzers/StyleCop.Analyzers.CodeFixes/bin/Release/*.nupkg
+        if-no-files-found: error
+
+    # Test binaries for each language version, consumed by the test jobs below.
+    - name: Upload test binaries (C# 6)
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-bin-cs6-${{ matrix.configuration }}
+        path: StyleCop.Analyzers/StyleCop.Analyzers.Test/bin/${{ matrix.configuration }}/net452
+        if-no-files-found: error
+        retention-days: 3
+    - name: Upload test binaries (C# 7)
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-bin-cs7-${{ matrix.configuration }}
+        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp7/bin/${{ matrix.configuration }}/net46
+        if-no-files-found: error
+        retention-days: 3
+    - name: Upload test binaries (C# 8)
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-bin-cs8-${{ matrix.configuration }}
+        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp8/bin/${{ matrix.configuration }}/net472
+        if-no-files-found: error
+        retention-days: 3
+    - name: Upload test binaries (C# 9)
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-bin-cs9-${{ matrix.configuration }}
+        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp9/bin/${{ matrix.configuration }}/net472
+        if-no-files-found: error
+        retention-days: 3
+    - name: Upload test binaries (C# 10)
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-bin-cs10-${{ matrix.configuration }}
+        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp10/bin/${{ matrix.configuration }}/net472
+        if-no-files-found: error
+        retention-days: 3
+    - name: Upload test binaries (C# 11)
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-bin-cs11-${{ matrix.configuration }}
+        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp11/bin/${{ matrix.configuration }}/net472
+        if-no-files-found: error
+        retention-days: 3
+    - name: Upload test binaries (C# 12)
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-bin-cs12-${{ matrix.configuration }}
+        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp12/bin/${{ matrix.configuration }}/net472
+        if-no-files-found: error
+        retention-days: 3
+    - name: Upload test binaries (C# 13)
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-bin-cs13-${{ matrix.configuration }}
+        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp13/bin/${{ matrix.configuration }}/net472
+        if-no-files-found: error
+        retention-days: 3
+
+    # Equivalent of AppVeyor's test_script. Best effort: on windows-latest (VS 2022) the generator's old
+    # MSBuildWorkspace currently fails with ReflectionTypeLoadException during MEF composition, which is a
+    # tooling problem in StyleCop.Analyzers.Status.Generator and not a build or test failure.
+    - name: Generate rule status report
+      id: status
+      continue-on-error: true
+      shell: pwsh
+      run: |
+        .\StyleCop.Analyzers\StyleCop.Analyzers.Status.Generator\bin\${{ matrix.configuration }}\net472\StyleCop.Analyzers.Status.Generator.exe .\StyleCopAnalyzers.sln > StyleCop.Analyzers.Status.json
+        if ($LASTEXITCODE -ne 0) { Remove-Item StyleCop.Analyzers.Status.json -ErrorAction SilentlyContinue; exit $LASTEXITCODE }
+
+    - name: Upload rule status report
+      if: matrix.configuration == 'Release' && steps.status.outcome == 'success'
+      uses: actions/upload-artifact@v4
+      with:
+        name: status-json
+        path: StyleCop.Analyzers.Status.json
+        if-no-files-found: error
+
+  # Mirrors build/test.yml: each language version runs its test assembly under xunit.console.x86 + coverlet.
+  test:
+    name: Test C# ${{ matrix.langVersion }} ${{ matrix.configuration }}
+    needs: build
+    runs-on: windows-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [ Debug, Release ]
+        langVersion: [ '6', '7', '8', '9', '10', '11', '12', '13' ]
+        include:
+        - langVersion: '6'
+          framework: net452
+          project: StyleCop.Analyzers.Test
+        - langVersion: '7'
+          framework: net46
+          project: StyleCop.Analyzers.Test.CSharp7
+        - langVersion: '8'
+          framework: net472
+          project: StyleCop.Analyzers.Test.CSharp8
+        - langVersion: '9'
+          framework: net472
+          project: StyleCop.Analyzers.Test.CSharp9
+        - langVersion: '10'
+          framework: net472
+          project: StyleCop.Analyzers.Test.CSharp10
+        - langVersion: '11'
+          framework: net472
+          project: StyleCop.Analyzers.Test.CSharp11
+        - langVersion: '12'
+          framework: net472
+          project: StyleCop.Analyzers.Test.CSharp12
+        - langVersion: '13'
+          framework: net472
+          project: StyleCop.Analyzers.Test.CSharp13
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup NuGet
+      uses: nuget/setup-nuget@v2
+      with:
+        nuget-version: '6.0.6'
+
+    # coverlet.console (net6.0 tool) needs a .NET 6 runtime; global.json's SDK provides it.
+    - name: Setup .NET SDK (from global.json)
+      uses: actions/setup-dotnet@v4
+      with:
+        global-json-file: global.json
+
+    # .nuget/packages.config provides xunit.runner.console and coverlet.console (same change as #4104).
+    - name: Restore test tools (xunit.runner.console, coverlet.console)
+      run: nuget restore .nuget/packages.config -PackagesDirectory packages -ConfigFile NuGet.config
+
+    - name: Download test binaries
+      uses: actions/download-artifact@v4
+      with:
+        name: test-bin-cs${{ matrix.langVersion }}-${{ matrix.configuration }}
+        path: StyleCop.Analyzers/${{ matrix.project }}/bin/${{ matrix.configuration }}/${{ matrix.framework }}
+
+    # Mirrors build/test.yml after #4104: xunit.console.x86 wrapped by coverlet.console (Cobertura output).
+    # OpenCover 4.6.519 intermittently crashed the test process in Debug jobs (AccessViolationException in
+    # analyzer static constructors), so it is no longer used.
+    - name: Run tests
+      working-directory: build
+      shell: pwsh
+      run: |
+        $packageConfig = [xml](Get-Content ..\.nuget\packages.config)
+        $coverlet_version = $packageConfig.SelectSingleNode('/packages/package[@id="coverlet.console"]').version
+        $xunitrunner_version = $packageConfig.SelectSingleNode('/packages/package[@id="xunit.runner.console"]').version
+
+        $packages_folder = '..\packages'
+        $coverlet_console = "$packages_folder\coverlet.console.$coverlet_version\tools\net6.0\any\coverlet.console.dll"
+        $xunit_runner_console = "$packages_folder\xunit.runner.console.$xunitrunner_version\tools\${{ matrix.framework }}\xunit.console.x86.exe"
+        # Same legacy OpenCover.Reports / OpenCover.*.xml names as build/test.yml (content is Cobertura).
+        $report_folder = '.\OpenCover.Reports'
+        New-Item -ItemType Directory -Force -Path $report_folder | Out-Null
+        $target_dll = "..\StyleCop.Analyzers\${{ matrix.project }}\bin\${{ matrix.configuration }}\${{ matrix.framework }}\${{ matrix.project }}.dll"
+        if (-not (Test-Path $coverlet_console)) { throw "coverlet.console not found at $coverlet_console" }
+        if (-not (Test-Path $xunit_runner_console)) { throw "xunit console not found at $xunit_runner_console" }
+        if (-not (Test-Path $target_dll)) { throw "Test assembly not found at $target_dll" }
+        $coverage_output = "$report_folder\OpenCover.StyleCopAnalyzers.CSharp${{ matrix.langVersion }}.xml"
+        # Trailing separator makes coverlet write coverage.cobertura.xml into the folder.
+        dotnet $coverlet_console `
+          $target_dll `
+          --target "$xunit_runner_console" `
+          --targetargs "`"$target_dll`" -noshadow -xml StyleCopAnalyzers.CSharp${{ matrix.langVersion }}.xunit.xml" `
+          --format "cobertura" `
+          --output "$report_folder/" `
+          --include "[StyleCop*]*" `
+          --exclude-by-attribute "System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" `
+          --exclude-by-file "*\*Designer.cs"
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        $generated = Get-ChildItem -Path $report_folder -Filter "*.cobertura.xml" -File | Select-Object -First 1
+        if (-not $generated) { throw "coverlet did not produce a Cobertura report in $report_folder" }
+        Move-Item -Force $generated.FullName $coverage_output
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results-cs${{ matrix.langVersion }}-${{ matrix.configuration }}
+        path: build/*.xunit.xml
+        if-no-files-found: warn
+
+    - name: Upload code coverage
+      if: success() && matrix.configuration == 'Debug' # same as Azure: only publish coverage from passing runs
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-cs${{ matrix.langVersion }}
+        path: build/OpenCover.Reports
+        if-no-files-found: warn
+
+  # Mirrors the "Publish Code Coverage" stage in build/build-and-test.yml (minus the codecov.io upload).
+  coverage:
+    name: Merge code coverage
+    needs: test
+    if: ${{ !cancelled() }}
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup NuGet
+      uses: nuget/setup-nuget@v2
+      with:
+        nuget-version: '6.0.6'
+
+    - name: Restore ReportGenerator
+      run: nuget restore .nuget/packages.config -PackagesDirectory packages -ConfigFile NuGet.config
+
+    - name: Download coverage results
+      uses: actions/download-artifact@v4
+      with:
+        pattern: coverage-cs*
+        path: coverage
+
+    - name: Merge coverage
+      shell: pwsh
+      run: |
+        $packageConfig = [xml](Get-Content .\.nuget\packages.config)
+        $reportgenerator_version = $packageConfig.SelectSingleNode('/packages/package[@id="ReportGenerator"]').version
+        $report_generator = ".\packages\ReportGenerator.$reportgenerator_version\tools\net47\ReportGenerator.exe"
+        # Inputs are Cobertura files from coverlet, kept under the legacy OpenCover.*.xml names.
+        &$report_generator -targetdir:coverage-final -reporttypes:"Cobertura;HtmlSummary" "-reports:coverage/*/OpenCover.*.xml"
+        exit $LASTEXITCODE
+
+    - name: Upload merged coverage
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-merged
+        path: coverage-final
