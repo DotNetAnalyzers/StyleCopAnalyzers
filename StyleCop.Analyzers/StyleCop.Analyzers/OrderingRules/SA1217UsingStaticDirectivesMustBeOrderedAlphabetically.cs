@@ -77,9 +77,17 @@ namespace StyleCop.Analyzers.OrderingRules
             UsingDirectiveSyntax lastStaticUsingDirective = null;
             UsingDirectiveSyntax lastSystemStaticUsingDirective = null;
             UsingDirectiveSyntax firstNonSystemUsing = null;
+            bool? reportedForGlobal = null;
 
             foreach (var usingDirective in usingDirectives)
             {
+                var isGlobal = usingDirective.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword);
+                if (reportedForGlobal == isGlobal)
+                {
+                    // Only a single diagnostic is reported for each set (global or local) of using directives
+                    continue;
+                }
+
                 if (usingDirective.IsPrecededByPreprocessorDirective())
                 {
                     lastStaticUsingDirective = null;
@@ -118,7 +126,8 @@ namespace StyleCop.Analyzers.OrderingRules
                                 Descriptor,
                                 firstNonSystemUsing.GetLocation(),
                                 new[] { firstNonSystemUsing.Name.ToNormalizedString(), usingDirective.Name.ToNormalizedString() }));
-                            return;
+                            reportedForGlobal = isGlobal;
+                            continue;
                         }
 
                         if (lastSystemStaticUsingDirective != null)
@@ -132,7 +141,8 @@ namespace StyleCop.Analyzers.OrderingRules
                                     Descriptor,
                                     lastSystemStaticUsingDirective.GetLocation(),
                                     new[] { firstName.ToNormalizedString(), secondName.ToNormalizedString() }));
-                                return;
+                                reportedForGlobal = isGlobal;
+                                continue;
                             }
                         }
 
@@ -151,7 +161,8 @@ namespace StyleCop.Analyzers.OrderingRules
                                     Descriptor,
                                     lastStaticUsingDirective.GetLocation(),
                                     new[] { firstName.ToNormalizedString(), secondName.ToNormalizedString() }));
-                                return;
+                                reportedForGlobal = isGlobal;
+                                continue;
                             }
                         }
 

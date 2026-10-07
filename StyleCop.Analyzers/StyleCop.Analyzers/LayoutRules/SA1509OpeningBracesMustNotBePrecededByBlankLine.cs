@@ -53,7 +53,7 @@ namespace StyleCop.Analyzers.LayoutRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
+        private static readonly Action<SyntaxTreeAnalysisContext, SyntaxTreeTokens> SyntaxTreeAction = HandleSyntaxTree;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -65,15 +65,13 @@ namespace StyleCop.Analyzers.LayoutRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
+            context.RegisterSyntaxTreeTokensAction(SyntaxTreeAction);
         }
 
-        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context, SyntaxTreeTokens tokens)
         {
-            var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
-
             SyntaxToken previousToken = default;
-            foreach (var token in syntaxRoot.DescendantTokens())
+            foreach (var token in tokens.GetTokens(context.CancellationToken))
             {
                 if (token.IsKind(SyntaxKind.OpenBraceToken) && !previousToken.IsKind(SyntaxKind.CloseBraceToken))
                 {

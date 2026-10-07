@@ -11,6 +11,7 @@ namespace StyleCop.Analyzers.SpacingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
+    using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -36,8 +37,6 @@ namespace StyleCop.Analyzers.SpacingRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<SyntaxTreeAnalysisContext, StyleCopSettings> SyntaxTreeAction = HandleSyntaxTree;
-
         private static readonly ImmutableDictionary<string, string> ConvertToTabsProperties =
             ImmutableDictionary.Create<string, string>().SetItem(BehaviorKey, ConvertToTabsBehavior);
 
@@ -56,15 +55,16 @@ namespace StyleCop.Analyzers.SpacingRules
 
             context.RegisterCompilationStartAction(context =>
             {
-                context.RegisterSyntaxTreeAction(SyntaxTreeAction);
+                context.RegisterSyntaxTreeAction(
+                    (treeContext, settings) => HandleSyntaxTree(treeContext, settings, SyntaxTreeTokens.GetOrCreate(context, treeContext.Tree)));
             });
         }
 
-        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context, StyleCopSettings settings)
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context, StyleCopSettings settings, SyntaxTreeTokens tokens)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             ImmutableArray<TextSpan> excludedSpans;
-            if (!LocateExcludedSpans(root, out excludedSpans))
+            if (!LocateExcludedSpans(root, tokens.GetTokensIncludingStructuredTrivia(context.CancellationToken), out excludedSpans))
             {
                 return;
             }
@@ -176,7 +176,7 @@ namespace StyleCop.Analyzers.SpacingRules
             }
         }
 
-        private static bool LocateExcludedSpans(SyntaxNode root, out ImmutableArray<TextSpan> excludedSpans)
+        private static bool LocateExcludedSpans(SyntaxNode root, ImmutableArray<SyntaxToken> tokens, out ImmutableArray<TextSpan> excludedSpans)
         {
             ImmutableArray<TextSpan>.Builder builder = ImmutableArray.CreateBuilder<TextSpan>();
 
@@ -199,7 +199,7 @@ namespace StyleCop.Analyzers.SpacingRules
             }
 
             // Locate string literals
-            foreach (var token in root.DescendantTokens(descendIntoTrivia: true))
+            foreach (var token in tokens)
             {
                 switch (token.Kind())
                 {
