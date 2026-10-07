@@ -685,6 +685,7 @@ This property affects the behavior of the following rules which report incorrect
 
 The following values are currently supported. Unsupported values will automatically fall back to the default value.
 
+* `"cs-CZ"`
 * `"de-DE"`
 * `"en-GB"`
 * `"en-US"`
