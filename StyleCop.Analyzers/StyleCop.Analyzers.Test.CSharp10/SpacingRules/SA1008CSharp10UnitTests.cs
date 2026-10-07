@@ -5,7 +5,6 @@ namespace StyleCop.Analyzers.Test.CSharp10.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp9.SpacingRules;
     using Xunit;
     using static StyleCop.Analyzers.SpacingRules.SA1008OpeningParenthesisMustBeSpacedCorrectly;
@@ -132,15 +131,7 @@ class TestClass
     }
 }";
 
-            await new CSharpTest()
-            {
-                ExpectedDiagnostics =
-                {
-                    Diagnostic(DescriptorNotFollowed).WithLocation(0),
-                },
-                TestCode = testCode,
-                FixedCode = fixedCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic(DescriptorNotFollowed).WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
