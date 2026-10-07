@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
     using StyleCop.Analyzers.Test.CSharp9.OrderingRules;
@@ -83,6 +84,26 @@ namespace TestNamespace
 }";
 
             await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3982, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3982")]
+        public async Task TestGlobalUsingStatementWithTopLevelStatementsAsync()
+        {
+            var testCode = @"global using System;
+using System.Threading;
+
+Console.WriteLine();
+";
+
+            await new CSharpTest
+            {
+                TestState =
+                {
+                    Sources = { testCode },
+                    OutputKind = OutputKind.ConsoleApplication,
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

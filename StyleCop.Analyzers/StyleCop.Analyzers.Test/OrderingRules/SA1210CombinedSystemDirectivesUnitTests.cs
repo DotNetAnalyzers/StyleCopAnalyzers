@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
     using StyleCop.Analyzers.Settings.ObjectModel;
+    using StyleCop.Analyzers.Test.Helpers;
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.OrderingRules.SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace>;
@@ -49,22 +50,24 @@ namespace Bar
             await VerifyCSharpDiagnosticAsync(namespaceDeclaration, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestInvalidOrderedUsingDirectivesInNamespaceDeclarationAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestInvalidOrderedUsingDirectivesInNamespaceDeclarationAsync(string lineEnding)
         {
             var testCode = @"namespace Food
 {
-    using System.Threading;
+    {|#0:using System.Threading;|}
     using System;
 }
 
 namespace Bar
 {
-    using Food;
+    {|#1:using Food;|}
     using Bar;
-    using System.Threading;
+    {|#2:using System.Threading;|}
     using System;
-}";
+}".ReplaceLineEndings(lineEnding);
 
             var fixedTestCode = @"namespace Food
 {
@@ -78,13 +81,13 @@ namespace Bar
     using Food;
     using System;
     using System.Threading;
-}";
+}".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(3, 5),
-                Diagnostic().WithLocation(9, 5),
-                Diagnostic().WithLocation(11, 5),
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+                Diagnostic().WithLocation(2),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);

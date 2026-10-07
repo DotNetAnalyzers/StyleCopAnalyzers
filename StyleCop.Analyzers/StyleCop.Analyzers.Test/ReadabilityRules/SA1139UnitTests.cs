@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1139UseLiteralSuffixNotationInsteadOfCasting,
@@ -271,10 +272,13 @@ class ClassName
         /// <summary>
         /// Verifies that the codefix will not insert extraneous spaces.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
         [WorkItem(2901, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2901")]
-        public async Task TestCodeFixDoesNotAddExtraneousSpacesAsync()
+        public async Task TestCodeFixDoesNotAddExtraneousSpacesAsync(string lineEnding)
         {
             var testCode = @"
 public class TestClass
@@ -288,7 +292,7 @@ public class TestClass
             / (double)4; // divisor
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             var fixedCode = @"
 public class TestClass
@@ -302,7 +306,7 @@ public class TestClass
             / 4D; // divisor
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expectedDiagnosticResult =
             {

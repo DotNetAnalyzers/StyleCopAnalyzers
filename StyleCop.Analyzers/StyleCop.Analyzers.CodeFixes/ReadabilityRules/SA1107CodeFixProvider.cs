@@ -5,15 +5,17 @@
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Diagnostics;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1107CodeMustNotContainMultipleStatementsOnOneLine"/>.
@@ -51,22 +53,40 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     context.RegisterCodeFix(
                         CodeAction.Create(
                             ReadabilityResources.SA1107CodeFix,
-                            cancellationToken => GetTransformedDocumentAsync(context.Document, root, node),
+                            cancellationToken => GetTransformedDocumentAsync(context.Document, root, node, cancellationToken),
                             nameof(SA1107CodeFixProvider)),
                         diagnostic);
                 }
             }
         }
 
-        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxNode node)
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxNode node, CancellationToken cancellationToken)
         {
             SyntaxNode newSyntaxRoot = root;
             Debug.Assert(!node.HasLeadingTrivia, "The trivia should be trailing trivia of the previous node");
 
-            SyntaxNode newNode = node.WithLeadingTrivia(SyntaxFactory.ElasticCarriageReturnLineFeed);
-            newSyntaxRoot = newSyntaxRoot.ReplaceNode(node, newNode);
+            var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+            var options = document.Project.Solution.Workspace.Options;
+            var firstToken = node.GetFirstToken();
+            var endOfLine = FormattingHelper.GetEndOfLineForCodeFix(firstToken, text, options);
+            var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, root.SyntaxTree, cancellationToken);
 
-            return Task.FromResult(document.WithSyntaxRoot(newSyntaxRoot));
+            var firstTokenOnLine = IndentationHelper.GetFirstTokenOnTextLine(firstToken);
+            var previousToken = firstToken.GetPreviousToken(includeZeroWidth: true);
+            var replacementPreviousToken = previousToken.WithTrailingTrivia(previousToken.TrailingTrivia.WithoutTrailingWhitespace().Add(endOfLine));
+            var indentSteps = IndentationHelper.GetIndentationSteps(settings.Indentation, firstTokenOnLine);
+            var indentTrivia = IndentationHelper.GenerateWhitespaceTrivia(settings.Indentation, indentSteps);
+
+            var replacementTokens = new Dictionary<SyntaxToken, SyntaxToken>()
+            {
+                [previousToken] = replacementPreviousToken,
+                [firstToken] = firstToken.WithLeadingTrivia(indentTrivia),
+            };
+
+            var newRoot = root.ReplaceTokens(
+                new[] { previousToken, firstToken },
+                (originalToken, rewrittenToken) => replacementTokens[originalToken]);
+            return document.WithSyntaxRoot(newRoot);
         }
     }
 }

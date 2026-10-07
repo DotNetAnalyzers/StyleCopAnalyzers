@@ -18,7 +18,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.Formatting;
+    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Helpers.ObjectPools;
     using StyleCop.Analyzers.Settings.ObjectModel;
@@ -79,13 +79,14 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static async Task<SyntaxNode> GetTransformedSyntaxRootAsync(Document document, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
             var settings = document.Project.AnalyzerOptions.GetStyleCopSettingsInCodeFix(root.SyntaxTree, cancellationToken);
 
             var fileHeader = FileHeaderHelpers.ParseFileHeader(root);
             SyntaxNode newSyntaxRoot;
             if (fileHeader.IsMissing)
             {
-                newSyntaxRoot = AddHeader(document, root, GetFileName(document), settings);
+                newSyntaxRoot = AddHeader(document, sourceText, root, GetFileName(document), settings);
             }
             else
             {
@@ -98,18 +99,18 @@ namespace StyleCop.Analyzers.DocumentationRules
                 var xmlFileHeader = FileHeaderHelpers.ParseXmlFileHeader(root);
                 if (isMultiLineComment && !xmlFileHeader.IsMalformed)
                 {
-                    newSyntaxRoot = ReplaceWellFormedMultiLineCommentHeader(document, root, settings, commentIndex, xmlFileHeader);
+                    newSyntaxRoot = ReplaceWellFormedMultiLineCommentHeader(document, sourceText, root, settings, commentIndex, xmlFileHeader);
                 }
                 else
                 {
-                    newSyntaxRoot = ReplaceHeader(document, root, settings, xmlFileHeader.IsMalformed);
+                    newSyntaxRoot = ReplaceHeader(document, sourceText, root, settings, xmlFileHeader.IsMalformed);
                 }
             }
 
             return newSyntaxRoot;
         }
 
-        private static SyntaxNode ReplaceWellFormedMultiLineCommentHeader(Document document, SyntaxNode root, StyleCopSettings settings, int commentIndex, XmlFileHeader header)
+        private static SyntaxNode ReplaceWellFormedMultiLineCommentHeader(Document document, SourceText sourceText, SyntaxNode root, StyleCopSettings settings, int commentIndex, XmlFileHeader header)
         {
             SyntaxTriviaList trivia = root.GetLeadingTrivia();
             var commentTrivia = trivia[commentIndex];
@@ -135,7 +136,10 @@ namespace StyleCop.Analyzers.DocumentationRules
             string interlinePadding = " *";
 
             int minExpectedLength = (commentIndentation + interlinePadding).Length;
-            string newLineText = document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
+            var options = document.Project.Solution.Workspace.Options;
+            var firstToken = root.GetFirstToken(includeZeroWidth: true);
+            SyntaxTrivia newLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(firstToken, sourceText, options);
+            string newLineText = newLineTrivia.ToFullString();
 
             // Examine second line to see if we should have stars or not if it's blank
             // set the interline padding to be blank also.
@@ -213,7 +217,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             return root.WithLeadingTrivia(trivia.Replace(commentTrivia, newTrivia));
         }
 
-        private static SyntaxNode ReplaceHeader(Document document, SyntaxNode root, StyleCopSettings settings, bool isMalformedHeader)
+        private static SyntaxNode ReplaceHeader(Document document, SourceText sourceText, SyntaxNode root, StyleCopSettings settings, bool isMalformedHeader)
         {
             // If the header is well formed Xml then we parse out the copyright otherwise
             // Skip single line comments, whitespace, and end of line trivia until a blank line is encountered.
@@ -312,8 +316,10 @@ namespace StyleCop.Analyzers.DocumentationRules
                 trivia = trivia.RemoveAt(removalList[i]);
             }
 
-            string newLineText = document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
-            var newLineTrivia = SyntaxFactory.EndOfLine(newLineText);
+            var options = document.Project.Solution.Workspace.Options;
+            var firstToken = root.GetFirstToken(includeZeroWidth: true);
+            SyntaxTrivia newLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(firstToken, sourceText, options);
+            string newLineText = newLineTrivia.ToFullString();
 
             var newHeaderTrivia = CreateNewHeader(leadingSpaces + "//", GetFileName(document), settings, newLineText);
             if (!isMalformedHeader && copyrightTriviaIndex.HasValue)
@@ -356,10 +362,12 @@ namespace StyleCop.Analyzers.DocumentationRules
             return false;
         }
 
-        private static SyntaxNode AddHeader(Document document, SyntaxNode root, string name, StyleCopSettings settings)
+        private static SyntaxNode AddHeader(Document document, SourceText sourceText, SyntaxNode root, string name, StyleCopSettings settings)
         {
-            string newLineText = document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
-            var newLineTrivia = SyntaxFactory.EndOfLine(newLineText);
+            var options = document.Project.Solution.Workspace.Options;
+            var firstToken = root.GetFirstToken(includeZeroWidth: true);
+            SyntaxTrivia newLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(firstToken, sourceText, options);
+            string newLineText = newLineTrivia.ToFullString();
             var newTrivia = CreateNewHeader("//", name, settings, newLineText).Add(newLineTrivia).Add(newLineTrivia);
 
             // Skip blank lines already at the beginning of the document, since we add our own

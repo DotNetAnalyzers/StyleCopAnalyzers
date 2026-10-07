@@ -6,6 +6,7 @@
 namespace StyleCop.Analyzers.Helpers
 {
     using System.Diagnostics.CodeAnalysis;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Lightup;
@@ -57,6 +58,30 @@ namespace StyleCop.Analyzers.Helpers
         {
             var csharpParseOptions = context.Node.SyntaxTree.Options as CSharpParseOptions;
             return (csharpParseOptions != null) && (csharpParseOptions.LanguageVersion >= LanguageVersionEx.CSharp7_1);
+        }
+
+        internal static bool SupportsNativeSizedIntegers(this Compilation compilation)
+        {
+            if (compilation is not CSharpCompilation { LanguageVersion: >= LanguageVersionEx.CSharp11 } csharpCompilation)
+            {
+                return false;
+            }
+
+            var runtimeFeatureType = csharpCompilation.GetTypeByMetadataName("System.Runtime.CompilerServices.RuntimeFeature");
+            if (runtimeFeatureType is null)
+            {
+                return false;
+            }
+
+            foreach (var member in runtimeFeatureType.GetMembers("NumericIntPtr"))
+            {
+                if (member is IFieldSymbol { IsConst: true, Type.SpecialType: SpecialType.System_String })
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

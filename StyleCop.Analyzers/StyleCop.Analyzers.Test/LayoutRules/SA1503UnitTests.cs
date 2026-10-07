@@ -493,8 +493,8 @@ public class Foo
         using (default(IDisposable))
         {
             using (default(IDisposable))
-        {
-        }
+            {
+            }
         }
     }
 }";

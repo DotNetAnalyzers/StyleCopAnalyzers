@@ -108,7 +108,7 @@ namespace StyleCop.Analyzers.Test.HelperTests
 
         private static async Task<Solution> CreateTestSolutionAsync(CSharpCompilationOptions compilationOptions)
         {
-            var workspace = GenericAnalyzerTest.CreateWorkspace();
+            var workspace = await GenericAnalyzerTest.CreateWorkspaceAsync().ConfigureAwait(false);
             var projectId = ProjectId.CreateNewId();
 
             var references = await GenericAnalyzerTest.ReferenceAssemblies

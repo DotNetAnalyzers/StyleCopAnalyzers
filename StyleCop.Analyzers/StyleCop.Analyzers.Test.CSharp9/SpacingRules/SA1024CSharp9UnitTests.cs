@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
 {
     using System.Threading;
@@ -48,6 +46,40 @@ public record MyQuery3() : BaseQuery<object>;";
 
                     // /0/Test0.cs(5,26): warning SA1024: Colon should be followed by a space
                     Diagnostic(DescriptorFollowed).WithLocation(2),
+                },
+                TestCode = testCode,
+                FixedCode = fixedCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3974, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3974")]
+        public async Task TestConditionalExpressionWithTargetTypedNewAsync()
+        {
+            const string testCode = @"
+class TestClass
+{
+    void M(bool flag)
+    {
+        object value = flag ? null{|#0::|}new();
+    }
+}";
+
+            const string fixedCode = @"
+class TestClass
+{
+    void M(bool flag)
+    {
+        object value = flag ? null : new();
+    }
+}";
+
+            await new CSharpTest()
+            {
+                ExpectedDiagnostics =
+                {
+                    Diagnostic(DescriptorPreceded).WithLocation(0),
+                    Diagnostic(DescriptorFollowed).WithLocation(0),
                 },
                 TestCode = testCode,
                 FixedCode = fixedCode,

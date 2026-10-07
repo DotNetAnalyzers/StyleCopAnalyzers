@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.SpacingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1004DocumentationLinesMustBeginWithSingleSpace,
@@ -54,8 +55,10 @@ public class TypeName
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestRuleExampleAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestRuleExampleAsync(string lineEnding)
         {
             string testCode = @"
 public class TypeName
@@ -69,7 +72,7 @@ public class TypeName
     {
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             string fixedCode = @"
 public class TypeName
@@ -83,7 +86,7 @@ public class TypeName
     {
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {

@@ -57,12 +57,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+            var options = document.Project.Solution.Workspace.Options;
             var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
-            var newLine = FormattingHelper.GetNewLineTrivia(document);
 
             var constructorInitializer = (ConstructorInitializerSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
             var constructorDeclaration = (ConstructorDeclarationSyntax)constructorInitializer.Parent;
 
+            var newLine = FormattingHelper.GetEndOfLineForCodeFix(constructorDeclaration.GetFirstToken(), text, options);
             var newConstructorDeclaration = ReformatConstructorDeclaration(constructorDeclaration, settings.Indentation, newLine);
 
             var newSyntaxRoot = syntaxRoot.ReplaceNode(constructorDeclaration, newConstructorDeclaration);
@@ -110,12 +112,19 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
 
                 var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var sourceText = await document.GetTextAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var options = document.Project.Solution.Workspace.Options;
                 var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, fixAllContext.CancellationToken);
-                var newLine = FormattingHelper.GetNewLineTrivia(document);
 
                 var nodes = diagnostics.Select(diagnostic => syntaxRoot.FindNode(diagnostic.Location.SourceSpan).Parent);
 
-                return syntaxRoot.ReplaceNodes(nodes, (originalNode, rewrittenNode) => ReformatConstructorDeclaration((ConstructorDeclarationSyntax)rewrittenNode, settings.Indentation, newLine));
+                return syntaxRoot.ReplaceNodes(
+                    nodes,
+                    (originalNode, rewrittenNode) =>
+                    {
+                        var endOfLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(originalNode.GetFirstToken(), sourceText, options);
+                        return ReformatConstructorDeclaration((ConstructorDeclarationSyntax)rewrittenNode, settings.Indentation, endOfLineTrivia);
+                    });
             }
         }
     }

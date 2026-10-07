@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.MaintainabilityRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.MaintainabilityRules.SA1413UseTrailingCommasInMultiLineInitializers,
@@ -79,9 +80,12 @@ namespace TestNamespace
         /// <summary>
         /// Verifies that an object initializer without a trailing comma produces a diagnostic.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task VerifyObjectInitializerAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task VerifyObjectInitializerAsync(string lineEnding)
         {
             var testCode = @"
 namespace TestNamespace
@@ -101,12 +105,12 @@ namespace TestNamespace
             {
                 Age = 100,
                 Height = 0.2M,
-                Weight = 0.88M
+                {|#0:Weight = 0.88M|}
             };
         }
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             var fixedTestCode = @"
 namespace TestNamespace
@@ -131,11 +135,11 @@ namespace TestNamespace
         }
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(19, 17),
+                Diagnostic().WithLocation(0),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);

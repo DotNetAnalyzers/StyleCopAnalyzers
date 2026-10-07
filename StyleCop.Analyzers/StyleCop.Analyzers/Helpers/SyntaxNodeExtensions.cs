@@ -86,5 +86,26 @@ namespace StyleCop.Analyzers.Helpers
             return node.IsKind(SyntaxKind.ParenthesizedLambdaExpression)
                 || node.IsKind(SyntaxKind.SimpleLambdaExpression);
         }
+
+        /// <summary>
+        /// Finds the nearest ancestor of the specified syntax node that is the first token on its line.
+        /// </summary>
+        /// <remarks><para>This method is useful for scenarios such as handling 'else if' statements, where the
+        /// initial node may not be the first on its line. The search ascends the syntax tree until a suitable ancestor
+        /// is found.</para></remarks>
+        /// <param name="parent">The syntax node from which to begin searching for an ancestor that starts a line.</param>
+        /// <returns>A syntax node that is the first token on its line. If the specified node is already the first on its line,
+        /// returns the node itself.</returns>
+        public static SyntaxNode GetFirstOnLineAncestorOrSelf(this SyntaxNode parent)
+        {
+            // if the parent is not the first on a line, find the parent that is.
+            // This mainly happens for 'else if' statements.
+            while (!parent.GetFirstToken().IsFirstInLine())
+            {
+                parent = parent.Parent;
+            }
+
+            return parent;
+        }
     }
 }

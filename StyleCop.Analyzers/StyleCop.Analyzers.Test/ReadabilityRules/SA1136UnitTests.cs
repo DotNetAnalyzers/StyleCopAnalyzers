@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1136EnumValuesShouldBeOnSeparateLines,
@@ -23,16 +22,19 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         /// Verifies that an enum declaration with all values on the same line will return the expected diagnostics.
         /// This also verifies that an enum declaration with all values on separate lines will not produce diagnostics.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestSingleLineEnumDeclarationAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestSingleLineEnumDeclarationAsync(string lineEnding)
         {
             var testCode = @"
 public enum TestEnum
 {
-    FirstValue, SecondValue, ThirdValue
+    FirstValue, {|#0:SecondValue|}, {|#1:ThirdValue|}
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             var fixedTestCode = @"
 public enum TestEnum
@@ -41,12 +43,12 @@ public enum TestEnum
     SecondValue,
     ThirdValue
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(4, 17),
-                Diagnostic().WithLocation(4, 30),
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);

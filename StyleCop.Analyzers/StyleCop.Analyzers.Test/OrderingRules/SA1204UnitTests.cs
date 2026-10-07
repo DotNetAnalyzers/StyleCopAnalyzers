@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.OrderingRules.SA1204StaticElementsMustAppearBeforeInstanceElements,
@@ -107,43 +108,47 @@ public class TestClass2
         /// <summary>
         /// Verifies that the analyzer will properly handle non-static classes before static.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestNonStaticClassBeforeStaticAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestNonStaticClassBeforeStaticAsync(string lineEnding)
         {
             var testCode = @"public class TestClass1 { }
-public static class TestClass2 { }
-";
+public static class {|#0:TestClass2|} { }
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(2, 21),
+                Diagnostic().WithLocation(0),
             };
 
             var fixedCode = @"public static class TestClass2 { }
 public class TestClass1 { }
-";
+".ReplaceLineEndings(lineEnding);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// Verifies that the analyzer will properly handle non-static elements before static in a class.
+        /// Verifies that the analyzer will properly handle non-static elements before static in a type.
         /// </summary>
+        /// <param name="keyword">The keyword used to declare the type.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestOrderingInClassAsync()
+        [Theory]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestOrderingInClassAsync(string keyword)
         {
-            var testCode = @"public class TestClass
-{
+            var testCode = $@"public {keyword} TestClass
+{{
     public int TestField1;
     public static int TestField2;
-    public int TestProperty1 { get; set; }
-    public static int TestProperty2 { get; set; }
-    public void TestMethod1() { }
-    public static void TestMethod2() { }
-    
-}
+    public int TestProperty1 {{ get; set; }}
+    public static int TestProperty2 {{ get; set; }}
+    public void TestMethod1() {{ }}
+    public static void TestMethod2() {{ }}
+}}
 ";
 
             DiagnosticResult[] expected =
@@ -153,57 +158,15 @@ public class TestClass1 { }
                 Diagnostic().WithLocation(8, 24),
             };
 
-            var fixedCode = @"public class TestClass
-{
+            var fixedCode = $@"public {keyword} TestClass
+{{
     public static int TestField2;
     public int TestField1;
-    public static int TestProperty2 { get; set; }
-    public int TestProperty1 { get; set; }
-    public static void TestMethod2() { }
-    public void TestMethod1() { }
-    
-}
-";
-
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Verifies that the analyzer will properly handle non-static elements before static in a struct.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestOrderingInStructAsync()
-        {
-            var testCode = @"public struct TestStruct
-{
-    public int TestField1;
-    public static int TestField2;
-    public int TestProperty1 { get; set; }
-    public static int TestProperty2 { get; set; }
-    public void TestMethod1() { }
-    public static void TestMethod2() { }
-    
-}
-";
-
-            DiagnosticResult[] expected =
-            {
-                Diagnostic().WithLocation(4, 23),
-                Diagnostic().WithLocation(6, 23),
-                Diagnostic().WithLocation(8, 24),
-            };
-
-            var fixedCode = @"public struct TestStruct
-{
-    public static int TestField2;
-    public int TestField1;
-    public static int TestProperty2 { get; set; }
-    public int TestProperty1 { get; set; }
-    public static void TestMethod2() { }
-    public void TestMethod1() { }
-    
-}
+    public static int TestProperty2 {{ get; set; }}
+    public int TestProperty1 {{ get; set; }}
+    public static void TestMethod2() {{ }}
+    public void TestMethod1() {{ }}
+}}
 ";
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);

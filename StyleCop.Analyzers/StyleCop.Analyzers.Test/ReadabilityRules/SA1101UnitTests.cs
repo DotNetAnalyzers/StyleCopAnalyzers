@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1101PrefixLocalCallsWithThis,
@@ -262,20 +263,22 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestPrefixLocalCallsWithThisWithGenericArgumentsAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestPrefixLocalCallsWithThisWithGenericArgumentsAsync(string lineEnding)
         {
             string testCode = @"public class Test_SA1101
 {
     public void Foo()
     {
-        ConvertAll(42); // SA1101
+        {|#0:ConvertAll|}(42); // SA1101
         this.ConvertAll(42); // no SA1101
-        ConvertAll<int>(42); // SA1101
+        {|#1:ConvertAll<int>|}(42); // SA1101
         this.ConvertAll<int>(42); // no SA1101
     }
     public void ConvertAll<T>(T value) { }
-}";
+}".ReplaceLineEndings(lineEnding);
             string fixedCode = @"public class Test_SA1101
 {
     public void Foo()
@@ -286,12 +289,12 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         this.ConvertAll<int>(42); // no SA1101
     }
     public void ConvertAll<T>(T value) { }
-}";
+}".ReplaceLineEndings(lineEnding);
 
             var expected = new[]
             {
-                Diagnostic().WithLocation(5, 9),
-                Diagnostic().WithLocation(7, 9),
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);

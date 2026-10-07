@@ -7,7 +7,6 @@ namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
     using System.Collections.Immutable;
-    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -42,7 +41,7 @@ namespace StyleCop.Analyzers.SpacingRules
         private static readonly LocalizableString MessagePreceded = new LocalizableResourceString(nameof(SpacingResources.SA1008MessagePreceded), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString MessageNotFollowed = new LocalizableResourceString(nameof(SpacingResources.SA1008MessageNotFollowed), SpacingResources.ResourceManager, typeof(SpacingResources));
 
-        private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
+        private static readonly Action<SyntaxTreeAnalysisContext, SyntaxTreeTokens> SyntaxTreeAction = HandleSyntaxTree;
 
         /// <summary>
         /// Gets the diagnostic descriptor for an opening parenthesis that should not be preceded by whitespace.
@@ -75,14 +74,18 @@ namespace StyleCop.Analyzers.SpacingRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
+            context.RegisterSyntaxTreeTokensAction(SyntaxTreeAction);
         }
 
-        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context, SyntaxTreeTokens tokens)
         {
-            SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
-            foreach (var token in root.DescendantTokens(descendIntoTrivia: true).Where(t => t.IsKind(SyntaxKind.OpenParenToken)))
+            foreach (var token in tokens.GetTokensIncludingStructuredTrivia(context.CancellationToken))
             {
+                if (!token.IsKind(SyntaxKind.OpenParenToken))
+                {
+                    continue;
+                }
+
                 HandleOpenParenToken(context, token);
             }
         }

@@ -77,11 +77,58 @@ namespace StyleCop.Analyzers.ReadabilityRules
             case SyntaxKind.IfStatement:
             case SyntaxKind.ElseClause:
             case SyntaxKind.ForStatement:
+            case SyntaxKind.ForEachStatement:
             case SyntaxKind.WhileStatement:
             case SyntaxKind.DoStatement:
                 // these cases are always replaced with an empty block
-                newRoot = root.ReplaceNode(node, SyntaxFactory.Block().WithTriviaFrom(node));
-                return document.WithSyntaxRoot(newRoot);
+                var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+                var options = document.Project.Solution.Workspace.Options;
+                var endOfLine = FormattingHelper.GetEndOfLineForCodeFix(node.SemicolonToken, text, options);
+                var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, root.SyntaxTree, cancellationToken);
+
+                if (node.SemicolonToken.IsFirstInLine())
+                {
+                    var indentSteps = IndentationHelper.GetIndentationSteps(settings.Indentation, node.Parent.GetFirstOnLineAncestorOrSelf());
+                    var indentTrivia = IndentationHelper.GenerateWhitespaceTrivia(settings.Indentation, indentSteps);
+                    var block = SyntaxFactory.Block(
+                        SyntaxFactory.Token(
+                            node.GetLeadingTrivia().WithoutTrailingWhitespace().Add(indentTrivia),
+                            SyntaxKind.OpenBraceToken,
+                            SyntaxFactory.TriviaList(endOfLine)),
+                        SyntaxFactory.List<StatementSyntax>(),
+                        SyntaxFactory.Token(
+                            SyntaxFactory.TriviaList(indentTrivia),
+                            SyntaxKind.CloseBraceToken,
+                            node.GetTrailingTrivia()));
+                    newRoot = root.ReplaceNode(node, block);
+                    return document.WithSyntaxRoot(newRoot);
+                }
+                else
+                {
+                    var firstTokenOnLine = IndentationHelper.GetFirstTokenOnTextLine(node.SemicolonToken);
+                    var previousToken = node.SemicolonToken.GetPreviousToken(includeZeroWidth: true);
+                    var replacementPreviousToken = previousToken.WithTrailingTrivia(previousToken.TrailingTrivia.WithoutTrailingWhitespace().Add(endOfLine));
+                    var indentSteps = IndentationHelper.GetIndentationSteps(settings.Indentation, firstTokenOnLine);
+                    var indentTrivia = IndentationHelper.GenerateWhitespaceTrivia(settings.Indentation, indentSteps);
+                    var block = SyntaxFactory.Block(
+                        SyntaxFactory.Token(
+                            node.GetLeadingTrivia().WithoutTrailingWhitespace().Add(indentTrivia),
+                            SyntaxKind.OpenBraceToken,
+                            SyntaxFactory.TriviaList(endOfLine)),
+                        SyntaxFactory.List<StatementSyntax>(),
+                        SyntaxFactory.Token(
+                            SyntaxFactory.TriviaList(indentTrivia),
+                            SyntaxKind.CloseBraceToken,
+                            node.GetTrailingTrivia()));
+                    newRoot = root.ReplaceSyntax(
+                        new[] { node },
+                        (originalNode, rewrittenNode) => block,
+                        new[] { previousToken },
+                        (originalToken, rewrittenToken) => replacementPreviousToken,
+                        new SyntaxTrivia[0],
+                        (originalToken, rewrittenToken) => rewrittenToken);
+                    return document.WithSyntaxRoot(newRoot);
+                }
 
             case SyntaxKind.LabeledStatement:
                 // handle this case as a text manipulation for simplicity

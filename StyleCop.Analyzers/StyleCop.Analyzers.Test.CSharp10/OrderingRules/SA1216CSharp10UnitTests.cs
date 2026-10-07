@@ -108,5 +108,43 @@ class TestClass
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3982, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3982")]
+        public async Task TestOrderingResetsBetweenGlobalAndLocalStaticAndAliasUsingDirectivesAsync()
+        {
+            await new CSharpTest
+            {
+                TestSources =
+                {
+                    @"
+{|#0:global using static System.Math;|}
+global using System;
+global using Alias = System.Console;
+
+using System;
+using AliasLocal = System.Text.StringBuilder;
+{|#1:using static System.Console;|}
+",
+                },
+                FixedSources =
+                {
+                    @"
+global using System;
+global using static System.Math;
+global using Alias = System.Console;
+
+using System;
+using static System.Console;
+using AliasLocal = System.Text.StringBuilder;
+",
+                },
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(0),
+                    Diagnostic().WithLocation(1),
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

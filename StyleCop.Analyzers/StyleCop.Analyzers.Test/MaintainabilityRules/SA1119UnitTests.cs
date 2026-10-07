@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.MaintainabilityRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.MaintainabilityRules.SA1119StatementMustNotUseUnnecessaryParenthesis,
@@ -32,22 +33,24 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestLiteralParenthesisAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestLiteralParenthesisAsync(string lineEnding)
         {
             var testCode = @"public class Foo
 {
     public void Bar()
     {
-        int x = (1);
+        int x = {|#0:{|#1:(|}1{|#2:)|}|};
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
                 {
-                    Diagnostic(DiagnosticId).WithSpan(5, 17, 5, 20),
-                    Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 17),
-                    Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 19),
+                    Diagnostic(DiagnosticId).WithLocation(0),
+                    Diagnostic(ParenthesesDiagnosticId).WithLocation(1),
+                    Diagnostic(ParenthesesDiagnosticId).WithLocation(2),
                 };
 
             var fixedCode = @"public class Foo
@@ -56,7 +59,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     {
         int x = 1;
     }
-}";
+}".ReplaceLineEndings(lineEnding);
+
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
