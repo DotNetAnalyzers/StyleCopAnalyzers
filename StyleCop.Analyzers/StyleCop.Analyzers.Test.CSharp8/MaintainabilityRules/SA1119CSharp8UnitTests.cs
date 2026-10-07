@@ -328,5 +328,167 @@ public class TestClass
 
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3008, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3008")]
+        public async Task TestParenthesizedRangeExpressionsAreAcceptedAsync()
+        {
+            const string testCode = @"using System;
+
+public class TestClass
+{
+    public Range TestMethod(int length)
+    {
+        Range local = {|#0:{|#1:(|}1..^3{|#2:)|}|};
+        return {|#3:{|#4:(|}1..^length{|#5:)|}|};
+    }
+}
+";
+            const string fixedCode = @"using System;
+
+public class TestClass
+{
+    public Range TestMethod(int length)
+    {
+        Range local = 1..^3;
+        return 1..^length;
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DiagnosticId).WithLocation(0),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(1),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(2),
+                Diagnostic(DiagnosticId).WithLocation(3),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(4),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(5),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3008, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3008")]
+        public async Task TestParenthesizedIndexExpressionsAreAcceptedAsync()
+        {
+            const string testCode = @"using System;
+
+public class TestClass
+{
+    public int TestMethod(int length)
+    {
+        Index index = {|#0:{|#1:(|}^5{|#2:)|}|};
+        return (^2).GetOffset(length);
+    }
+}
+";
+            const string fixedCode = @"using System;
+
+public class TestClass
+{
+    public int TestMethod(int length)
+    {
+        Index index = ^5;
+        return (^2).GetOffset(length);
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DiagnosticId).WithLocation(0),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(1),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(2),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3003, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3003")]
+        public async Task TestReturnSwitchExpressionWithUnnecessaryParenthesisAsync()
+        {
+            const string testCode = @"
+public class TestClass
+{
+    public object TestMethod(int n, object a, object b)
+    {
+        return {|#0:{|#1:(|}n switch { 1 => a, _ => b }{|#2:)|}|};
+    }
+}
+";
+
+            const string fixedCode = @"
+public class TestClass
+{
+    public object TestMethod(int n, object a, object b)
+    {
+        return n switch { 1 => a, _ => b };
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DiagnosticId).WithLocation(0),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(1),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(2),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3003, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3003")]
+        public async Task TestPropertyPatternWithUnnecessaryParenthesisAsync()
+        {
+            const string testCode = @"
+public class TestClass
+{
+    public bool TestMethod(string value)
+    {
+        return {|#0:{|#1:(|}value is { Length: 1 }{|#2:)|}|};
+    }
+}
+";
+
+            const string fixedCode = @"
+public class TestClass
+{
+    public bool TestMethod(string value)
+    {
+        return value is { Length: 1 };
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DiagnosticId).WithLocation(0),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(1),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(2),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3003, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3003")]
+        public async Task TestNegatedPropertyPatternIsNotReportedAsync()
+        {
+            const string testCode = @"
+public class TestClass
+{
+    public bool TestMethod(string value)
+    {
+        return !(value is { Length: 0 });
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

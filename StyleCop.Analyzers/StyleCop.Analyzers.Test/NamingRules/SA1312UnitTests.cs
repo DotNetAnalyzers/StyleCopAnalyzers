@@ -73,23 +73,25 @@ public class TypeName
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestThatDiagnosticIsReported_SingleVariableAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestThatDiagnosticIsReported_SingleVariableAsync(string lineEnding)
         {
             var testCode = @"public class TypeName
 {
     public void MethodName()
     {
-        string Bar;
+        string {|#0:Bar|};
         string car;
-        string Par;
+        string {|#1:Par|};
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithArguments("Bar").WithLocation(5, 16),
-                Diagnostic().WithArguments("Par").WithLocation(7, 16),
+                Diagnostic().WithArguments("Bar").WithLocation(0),
+                Diagnostic().WithArguments("Par").WithLocation(1),
             };
 
             var fixedCode = @"public class TypeName
@@ -100,7 +102,7 @@ public class TypeName
         string car;
         string par;
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }

@@ -9,8 +9,10 @@ namespace StyleCop.Analyzers
     using System.Collections.Concurrent;
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
+    using System.Runtime.CompilerServices;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -32,8 +34,28 @@ namespace StyleCop.Analyzers
             context.RegisterSyntaxTreeAction(
                 context =>
                 {
-                    StyleCopSettings settings = context.GetStyleCopSettings(settingsFile);
+                    StyleCopSettings settings = context.GetStyleCopSettings(GetOrCreateSettingsStorage(context.Tree), settingsFile);
                     action(context, settings);
+                });
+
+            StrongBox<StyleCopSettings> GetOrCreateSettingsStorage(SyntaxTree tree)
+                => SettingsHelper.GetOrCreateSettingsStorage(context, tree);
+        }
+
+        /// <summary>
+        /// Register an action to be executed at completion of parsing of a code document. The action receives the
+        /// tokens of the <see cref="SyntaxTree"/>, which are collected once and shared by the analyzers of the
+        /// compilation.
+        /// </summary>
+        /// <param name="context">The analysis context.</param>
+        /// <param name="action">Action to be executed at completion of parsing of a document.</param>
+        public static void RegisterSyntaxTreeTokensAction(this AnalysisContext context, Action<SyntaxTreeAnalysisContext, SyntaxTreeTokens> action)
+        {
+            context.RegisterCompilationStartAction(
+                context =>
+                {
+                    context.RegisterSyntaxTreeAction(
+                        treeContext => action(treeContext, SyntaxTreeTokens.GetOrCreate(context, treeContext.Tree)));
                 });
         }
 
@@ -74,10 +96,13 @@ namespace StyleCop.Analyzers
             context.RegisterSyntaxNodeAction(
                 context =>
                 {
-                    StyleCopSettings settings = context.GetStyleCopSettings(settingsFile);
+                    StyleCopSettings settings = context.GetStyleCopSettings(GetOrCreateSettingsStorage(context.Node.SyntaxTree), settingsFile);
                     action(context, settings);
                 },
                 syntaxKinds);
+
+            StrongBox<StyleCopSettings> GetOrCreateSettingsStorage(SyntaxTree tree)
+                => SettingsHelper.GetOrCreateSettingsStorage(context, tree);
         }
 
         private static class LanguageKindArrays<TLanguageKindEnum>

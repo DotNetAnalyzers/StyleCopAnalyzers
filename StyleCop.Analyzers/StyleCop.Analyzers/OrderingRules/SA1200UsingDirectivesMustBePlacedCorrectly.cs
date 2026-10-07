@@ -237,12 +237,17 @@ namespace StyleCop.Analyzers.OrderingRules
                     return;
 
                 case SyntaxKind.UsingDirective:
-                    usingDirectives.Add(child);
+                    // Global using directives are only allowed at the top level, so ignore those
+                    if (!((UsingDirectiveSyntax)child).GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword))
+                    {
+                        usingDirectives.Add(child);
+                    }
+
                     continue;
 
-                case SyntaxKind.ExternAliasDirective:
                 case SyntaxKind.NamespaceDeclaration:
                 case SyntaxKindEx.FileScopedNamespaceDeclaration:
+                case SyntaxKind.ExternAliasDirective:
                 default:
                     continue;
                 }

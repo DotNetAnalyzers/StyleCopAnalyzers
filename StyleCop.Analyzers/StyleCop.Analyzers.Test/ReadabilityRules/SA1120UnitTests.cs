@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1120CommentsMustContainText,
@@ -15,19 +16,21 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
     public class SA1120UnitTests
     {
-        [Fact]
-        public async Task TestViolationWithSingleLineCommentAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestViolationWithSingleLineCommentAsync(string lineEnding)
         {
             var testCode = @"
 class Foo
 {
     public void Bar()
     {
-        //
+        {|#0://|}
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
-            DiagnosticResult expected = Diagnostic().WithLocation(6, 9);
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
 
             var expectedFixedCode = @"
 class Foo
@@ -35,7 +38,7 @@ class Foo
     public void Bar()
     {
     }
-}";
+}".ReplaceLineEndings(lineEnding);
             await VerifyCSharpFixAsync(testCode, expected, expectedFixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 {
     using System.Threading;
@@ -17,6 +15,76 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 
     public partial class SA1019CSharp8UnitTests : SA1019CSharp7UnitTests
     {
+        [Fact]
+        [WorkItem(3006, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3006")]
+        public async Task TestNullForgivingOperatorWithMemberAccessAsync()
+        {
+            var testCode = @"#nullable enable
+
+class TestClass
+{
+    void Test(string? text)
+    {
+        _ = text!.Length;
+        _ = text! {|#0:.|}Length;
+        _ = text!{|#1:.|} Length;
+        _ = text! {|#2:?|}.ToString();
+        _ = text!?{|#3:.|} ToString();
+        _ = text! {|#4:?|}{|#5:.|} ToString();
+    }
+}
+";
+
+            var fixedCode = @"#nullable enable
+
+class TestClass
+{
+    void Test(string? text)
+    {
+        _ = text!.Length;
+        _ = text!.Length;
+        _ = text!.Length;
+        _ = text!?.ToString();
+        _ = text!?.ToString();
+        _ = text!?.ToString();
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DescriptorNotPreceded).WithArguments(".").WithLocation(0),
+                Diagnostic(DescriptorNotFollowed).WithArguments(".").WithLocation(1),
+                Diagnostic(DescriptorNotPreceded).WithArguments("?").WithLocation(2),
+                Diagnostic(DescriptorNotFollowed).WithArguments(".").WithLocation(3),
+                Diagnostic(DescriptorNotPreceded).WithArguments("?").WithLocation(4),
+                Diagnostic(DescriptorNotFollowed).WithArguments(".").WithLocation(5),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3006, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3006")]
+        public async Task TestNullForgivingOperatorWithMemberAccessNoDiagnosticsAsync()
+        {
+            const string testCode = @"#nullable enable
+
+class TestClass
+{
+    void Test(string? text)
+    {
+        _ = text!.Length;
+        _ = text!?.ToString();
+        _ = (text![0])!.ToString();
+        _ = (new TestClass()!).ToString();
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         [WorkItem(3052, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3052")]
         public async Task TestClosingSquareBracketFollowedByExclamationAsync()
@@ -61,6 +129,62 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
                 Diagnostic(DescriptorNotPreceded).WithArguments(".").WithLocation(9, 40),
                 Diagnostic(DescriptorNotPreceded).WithArguments("?").WithLocation(11, 39),
                 Diagnostic(DescriptorNotPreceded).WithArguments("?").WithLocation(12, 40),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3008, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3008")]
+        public async Task TestMemberAccessAfterIndexAndRangeExpressionsAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod(string[] values)
+        {
+            var value1 = values[^1] {|#0:.|}ToString();
+            var value2 = values[^1]{|#1:.|} ToString();
+            var value3 = values[1..^1] {|#2:.|}ToString();
+            var value4 = values[1..^1]{|#3:.|} ToString();
+            var value5 = values[^1] {|#4:?|}.ToString();
+            var value6 = values[^1]?{|#5:.|} ToString();
+            var value7 = values[1..^1] {|#6:?|}.ToString();
+            var value8 = values[1..^1]?{|#7:.|} ToString();
+        }
+    }
+}
+";
+            var fixedCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod(string[] values)
+        {
+            var value1 = values[^1].ToString();
+            var value2 = values[^1].ToString();
+            var value3 = values[1..^1].ToString();
+            var value4 = values[1..^1].ToString();
+            var value5 = values[^1]?.ToString();
+            var value6 = values[^1]?.ToString();
+            var value7 = values[1..^1]?.ToString();
+            var value8 = values[1..^1]?.ToString();
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DescriptorNotPreceded).WithArguments('.').WithLocation(0),
+                Diagnostic(DescriptorNotFollowed).WithArguments('.').WithLocation(1),
+                Diagnostic(DescriptorNotPreceded).WithArguments('.').WithLocation(2),
+                Diagnostic(DescriptorNotFollowed).WithArguments('.').WithLocation(3),
+                Diagnostic(DescriptorNotPreceded).WithArguments('?').WithLocation(4),
+                Diagnostic(DescriptorNotFollowed).WithArguments('.').WithLocation(5),
+                Diagnostic(DescriptorNotPreceded).WithArguments('?').WithLocation(6),
+                Diagnostic(DescriptorNotFollowed).WithArguments('.').WithLocation(7),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);

@@ -16,6 +16,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1503BracesMustNotBeOmitted"/>.
@@ -66,11 +67,89 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, StatementSyntax node, CancellationToken cancellationToken)
         {
-            // Currently unused
-            _ = cancellationToken;
-
-            var newSyntaxRoot = root.ReplaceNode(node, SyntaxFactory.Block(node));
+            var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, root.SyntaxTree, cancellationToken);
+            var newSyntaxRoot = AddBraces(root, new[] { node }, settings.Indentation);
             return Task.FromResult(document.WithSyntaxRoot(newSyntaxRoot));
+        }
+
+        private static SyntaxNode AddBraces(SyntaxNode root, IReadOnlyCollection<SyntaxNode> nodes, IndentationSettings indentationSettings)
+        {
+            var annotation = new SyntaxAnnotation();
+            var shiftAnnotation = new SyntaxAnnotation();
+            var annotatedRoot = root.ReplaceNodes(
+                nodes,
+                (originalNode, rewrittenNode) => NeedsShift(originalNode, indentationSettings)
+                    ? rewrittenNode.WithAdditionalAnnotations(annotation, shiftAnnotation)
+                    : rewrittenNode.WithAdditionalAnnotations(annotation));
+
+            // Every line of a statement that is not already indented below its parent moves one indentation step to the right.
+            string indentationStep = IndentationHelper.GenerateIndentationString(indentationSettings, 1);
+            var tokensToIndent = new List<SyntaxToken>();
+            foreach (SyntaxNode annotatedNode in annotatedRoot.GetAnnotatedNodes(annotation))
+            {
+                if (!HasAnnotatedAncestor(annotatedNode, annotation))
+                {
+                    tokensToIndent.AddRange(annotatedNode.DescendantTokens());
+                }
+            }
+
+            var indentedRoot = annotatedRoot.ReplaceTokens(
+                tokensToIndent,
+                (originalToken, rewrittenToken) =>
+                {
+                    int depth = 0;
+                    for (SyntaxNode current = originalToken.Parent; current != null; current = current.Parent)
+                    {
+                        if (current.HasAnnotation(shiftAnnotation))
+                        {
+                            depth++;
+                        }
+                    }
+
+                    if (depth == 0)
+                    {
+                        return rewrittenToken;
+                    }
+
+                    var step = new System.Text.StringBuilder();
+                    for (int i = 0; i < depth; i++)
+                    {
+                        step.Append(indentationStep);
+                    }
+
+                    return rewrittenToken.WithLeadingTrivia(IndentationHelper.IndentLeadingTrivia(originalToken, rewrittenToken.LeadingTrivia, step.ToString(), default(SyntaxTriviaList)));
+                });
+
+            return indentedRoot.ReplaceNodes(
+                indentedRoot.GetAnnotatedNodes(annotation),
+                (originalNode, rewrittenNode) => SyntaxFactory.Block((StatementSyntax)rewrittenNode.WithoutAnnotations(annotation)));
+        }
+
+        private static bool NeedsShift(SyntaxNode node, IndentationSettings indentationSettings)
+        {
+            SyntaxToken firstToken = node.GetFirstToken();
+            SyntaxToken previousToken = firstToken.GetPreviousToken();
+            if (previousToken.IsKind(SyntaxKind.None) || previousToken.GetLine() == firstToken.GetLine())
+            {
+                // The statement does not start a line, so it is moved to a new line by the formatter.
+                return false;
+            }
+
+            SyntaxToken parentLineToken = IndentationHelper.GetFirstTokenOnTextLine(previousToken);
+            return IndentationHelper.GetIndentationSteps(indentationSettings, firstToken) <= IndentationHelper.GetIndentationSteps(indentationSettings, parentLineToken);
+        }
+
+        private static bool HasAnnotatedAncestor(SyntaxNode node, SyntaxAnnotation annotation)
+        {
+            for (SyntaxNode current = node.Parent; current != null; current = current.Parent)
+            {
+                if (current.HasAnnotation(annotation))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static bool ContainsConditionalDirectiveTrivia(SyntaxNode node)
@@ -124,7 +203,8 @@ namespace StyleCop.Analyzers.LayoutRules
                     nodesNeedingBlocks.Add(node);
                 }
 
-                return syntaxRoot.ReplaceNodes(nodesNeedingBlocks, (originalNode, rewrittenNode) => SyntaxFactory.Block((StatementSyntax)rewrittenNode));
+                var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, fixAllContext.CancellationToken);
+                return AddBraces(syntaxRoot, nodesNeedingBlocks, settings.Indentation);
             }
         }
     }

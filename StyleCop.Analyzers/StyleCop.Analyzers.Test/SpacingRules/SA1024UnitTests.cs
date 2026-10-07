@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.SpacingRules.SA1024ColonsMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -135,11 +134,14 @@ base()
         /// <summary>
         /// Verifies that the analyzer will produce the proper diagnostics when the colons not followed by space.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestInvalidSpacedColonsMustBeFollowedAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestInvalidSpacedColonsMustBeFollowedAsync(string lineEnding)
         {
-            const string testCode = @"using System;
+            string testCode = @"using System;
 
 public class Foo<T> :object where T :IFormattable
 {
@@ -166,7 +168,7 @@ public class Foo<T> :object where T :IFormattable
                 goto _label;
         }
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {
@@ -177,7 +179,7 @@ public class Foo<T> :object where T :IFormattable
                 Diagnostic(DescriptorFollowed).WithLocation(10, 30),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, ExpectedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, ExpectedCode.ReplaceLineEndings(lineEnding), CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>

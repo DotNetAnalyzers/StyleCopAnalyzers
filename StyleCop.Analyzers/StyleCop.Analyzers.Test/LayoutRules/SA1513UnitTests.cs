@@ -790,6 +790,268 @@ public class TestClass
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(2365, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2365")]
+        public async Task VerifyThatMissingBlankLineInsideLambdaInsideArgumentListWillProduceDiagnosticAsync()
+        {
+            var testCode = @"
+using System;
+public class TestClass
+{
+    private int x;
+
+    public void Test(bool b)
+    {
+        var a = new Action(() =>
+        {
+            if (b)
+            {
+            }
+            x = 1;
+            if (b)
+            {
+            }
+            ;
+        });
+    }
+}
+";
+
+            var fixedCode = @"
+using System;
+public class TestClass
+{
+    private int x;
+
+    public void Test(bool b)
+    {
+        var a = new Action(() =>
+        {
+            if (b)
+            {
+            }
+
+            x = 1;
+            if (b)
+            {
+            }
+
+            ;
+        });
+    }
+}
+";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(13, 14),
+                Diagnostic().WithLocation(17, 14),
+            };
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2365, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2365")]
+        public async Task VerifyThatMissingBlankLineInsideAnonymousMethodInsideArgumentListWillProduceDiagnosticAsync()
+        {
+            var testCode = @"
+using System;
+public class TestClass
+{
+    private int x;
+
+    public void Test(bool b)
+    {
+        var a = new Action(delegate
+        {
+            if (b)
+            {
+            }
+            x = 1;
+            if (b)
+            {
+            }
+            ;
+        });
+    }
+}
+";
+
+            var fixedCode = @"
+using System;
+public class TestClass
+{
+    private int x;
+
+    public void Test(bool b)
+    {
+        var a = new Action(delegate
+        {
+            if (b)
+            {
+            }
+
+            x = 1;
+            if (b)
+            {
+            }
+
+            ;
+        });
+    }
+}
+";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(13, 14),
+                Diagnostic().WithLocation(17, 14),
+            };
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2365, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2365")]
+        public async Task VerifyThatMissingBlankLineInsideNestedLambdaWillProduceDiagnosticAsync()
+        {
+            var testCode = @"
+using System;
+public class TestClass
+{
+    private int x;
+
+    public void Test(bool b)
+    {
+        var a = new Action(() =>
+        {
+            var c = new Action(() =>
+            {
+                if (b)
+                {
+                }
+                x = 1;
+                if (b)
+                {
+                }
+                ;
+            });
+        });
+    }
+}
+";
+
+            var fixedCode = @"
+using System;
+public class TestClass
+{
+    private int x;
+
+    public void Test(bool b)
+    {
+        var a = new Action(() =>
+        {
+            var c = new Action(() =>
+            {
+                if (b)
+                {
+                }
+
+                x = 1;
+                if (b)
+                {
+                }
+
+                ;
+            });
+        });
+    }
+}
+";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(15, 18),
+                Diagnostic().WithLocation(19, 18),
+            };
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2365, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2365")]
+        public async Task VerifyThatClosingBraceOfLambdaOrInitializerInArgumentListWillNotProduceDiagnosticAsync()
+        {
+            var testCode = @"
+using System;
+using System.Collections.Generic;
+public class TestClass
+{
+    private int x;
+
+    public void Test(bool b)
+    {
+        Run(() =>
+        {
+            if (b)
+            {
+                x = 2;
+            }
+
+            x = 1;
+        });
+
+        Run2(
+            () =>
+            {
+                x = 1;
+            },
+            () =>
+            {
+                x = 2;
+            });
+
+        Run(delegate
+        {
+            x = 1;
+        });
+
+        Run3(new List<int>
+        {
+            1,
+            2
+        });
+
+        Run3(
+            new List<int>
+            {
+                1
+            },
+            new List<int>
+            {
+                2
+            });
+    }
+
+    private void Run(Action action)
+    {
+    }
+
+    private void Run2(Action action, Action other)
+    {
+    }
+
+    private void Run3(List<int> list)
+    {
+    }
+
+    private void Run3(List<int> list, List<int> other)
+    {
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Verifies the analyzer will properly handle an object initializer without assignment.
         /// This is a regression test for <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1301">DotNetAnalyzers/StyleCopAnalyzers#1301</see>.
@@ -1033,6 +1295,100 @@ public class TestClass
 // Hello".ReplaceLineEndings("\n");
 
             await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestJoinIntoClauseSyntaxQueryExpressionAsync()
+        {
+            var testCode = @"
+using System.Collections.Generic;
+using System.Linq;
+
+public class JoinIntoClauseSyntaxQueryExpressionTest
+{
+    public JoinIntoClauseSyntaxQueryExpressionTest()
+    {
+        List<Foo> fooList = new List<Foo>();
+        List<Bar> barList = new List<Bar>();
+
+        var query =
+            from foo in fooList
+            join bar in barList
+                on new
+                {
+                    foo.Id,
+                    foo.Name
+                }
+                equals new
+                {
+                    bar.Id,
+                    bar.Name
+                }
+            into grouping
+            from joined in grouping.DefaultIfEmpty()
+            select new
+            {
+                joined.Id,
+                BarName = joined.Name,
+                FooName = foo.Name
+            };
+    }
+
+    private class Foo
+    {
+        public Foo(int id, string name)
+        {
+            this.Id = id;
+            this.Name = name;
+        }
+        
+        public int Id { get; }
+
+        public string Name { get; }
+    }
+
+    private class Bar
+    {
+        public Bar(int id, string name)
+        {
+            this.Id = id;
+            this.Name = name;
+        }
+
+        public int Id { get; }
+
+        public string Name { get; }
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a property initializer may follow the closing brace of a multi-line accessor list.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(4028, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4028")]
+        public async Task TestPropertyInitializerAfterMultiLineAccessorListAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public int Property1
+    {
+        get;
+        set;
+    } = 1;
+
+    public int Property2
+    {
+        get;
+    } = 2;
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

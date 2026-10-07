@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation,
@@ -49,6 +48,32 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             DiagnosticResult expected = Diagnostic().WithArguments("new").WithLocation(1, 46);
 
             await VerifyCSharpFixAsync(testCode, expected, expectedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestInvalidSpacingOfImplicitlyTypedArrayWithLineEndingsAsync(string lineEnding)
+        {
+            const string testCode = @"public class Foo
+{
+    public Foo()
+    {
+        var ints = new [] { 1, 2, 3 };
+    }
+}";
+
+            const string expectedCode = @"public class Foo
+{
+    public Foo()
+    {
+        var ints = new[] { 1, 2, 3 };
+    }
+}";
+
+            DiagnosticResult expected = Diagnostic().WithArguments("new").WithLocation(5, 20);
+
+            await VerifyCSharpFixAsync(testCode.ReplaceLineEndings(lineEnding), expected, expectedCode.ReplaceLineEndings(lineEnding), CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

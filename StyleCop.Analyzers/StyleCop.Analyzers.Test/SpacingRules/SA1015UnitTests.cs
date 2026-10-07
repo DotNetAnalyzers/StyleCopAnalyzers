@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.SpacingRules.SA1015ClosingGenericBracketsMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -49,9 +48,12 @@ public class TestClass<T> where T : IEnumerable<object>
         /// <summary>
         /// Verifies that the analyzer will properly handle invalid closing generic brackets in a class declaration.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestInvalidSpacingOfClassDeclarationAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestInvalidSpacingOfClassDeclarationAsync(string lineEnding)
         {
             var testCode = @"using System.Collections.Generic;
 
@@ -59,14 +61,14 @@ public class TestClass1<T> where T : IEnumerable<object>
 {
 }
 
-public class TestClass2<T > where T : IEnumerable<object >
+public class TestClass2<T {|#0:>|} where T : IEnumerable<object {|#1:>|}
 {
 }
 
-public class TestClass3<T>where T : IEnumerable<object>
+public class TestClass3<T{|#2:>|}where T : IEnumerable<object>
 {
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             var fixedCode = @"using System.Collections.Generic;
 
@@ -81,13 +83,13 @@ public class TestClass2<T> where T : IEnumerable<object>
 public class TestClass3<T> where T : IEnumerable<object>
 {
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {
-                Diagnostic(DescriptorNotPreceded).WithLocation(7, 27),
-                Diagnostic(DescriptorNotPreceded).WithLocation(7, 58),
-                Diagnostic(DescriptorFollowed).WithLocation(11, 26),
+                Diagnostic(DescriptorNotPreceded).WithLocation(0),
+                Diagnostic(DescriptorNotPreceded).WithLocation(1),
+                Diagnostic(DescriptorFollowed).WithLocation(2),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
@@ -428,6 +430,55 @@ public class TestClass
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData(" M<int> ")]
+        [InlineData("M<int>")]
+        [WorkItem(3856, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3856")]
+        public async Task TestSpacingAfterGenericMethodGroupInCollectionInitializerAsync(string item)
+        {
+            var testCode = $@"
+using System;
+using System.Collections.Generic;
+
+public class TestClass
+{{
+    private List<Action> values = new List<Action> {{{item}}};
+    
+    private static void M<T>()
+    {{
+    }}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData(" 1, M<int> ")]
+        [InlineData("1, M<int>")]
+        [WorkItem(3856, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3856")]
+        public async Task TestSpacingAfterGenericMethodGroupInDictionaryInitializerItemAsync(string item)
+        {
+            var testCode = $@"
+using System;
+using System.Collections.Generic;
+
+public class TestClass
+{{
+    private Dictionary<int, Action> values = new Dictionary<int, Action>
+    {{
+        {{{item}}}
+    }};
+    
+    private static void M<T>()
+    {{
+    }}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected virtual DiagnosticResult[] GetExpectedResultMissingToken()

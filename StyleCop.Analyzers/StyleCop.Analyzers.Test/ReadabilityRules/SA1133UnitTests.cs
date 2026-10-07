@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1133DoNotCombineAttributes,
@@ -56,24 +57,27 @@ public class TestClass
         /// <summary>
         /// Verifies that an attribute list will produce the required diagnostics.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task VerifyThatAttributeListProducesDiagnosticAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task VerifyThatAttributeListProducesDiagnosticAsync(string lineEnding)
         {
             var testCode = @"using System.ComponentModel;
 
-[EditorBrowsable(EditorBrowsableState.Never), DesignOnly(true)]
+[EditorBrowsable(EditorBrowsableState.Never), {|#0:DesignOnly|}(true)]
 public class TestClass
 {
     /// <summary>
     /// Test method.
     /// </summary>
-    [EditorBrowsable(EditorBrowsableState.Never), DesignOnly(true), DisplayName(""Test"")] // test comment
+    [EditorBrowsable(EditorBrowsableState.Never), {|#1:DesignOnly|}(true), DisplayName(""Test"")] // test comment
     public void TestMethod()
     {
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             var fixedTestCode = @"using System.ComponentModel;
 
@@ -91,12 +95,12 @@ public class TestClass
     {
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(3, 47),
-                Diagnostic().WithLocation(9, 51),
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);

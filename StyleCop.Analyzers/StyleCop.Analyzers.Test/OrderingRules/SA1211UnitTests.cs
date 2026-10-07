@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.OrderingRules.SA1211UsingAliasDirectivesMustBeOrderedAlphabeticallyByAliasName,
@@ -97,15 +96,18 @@ public class Foo
         /// <summary>
         /// Verifies that the analyzer will produce the proper diagnostics when the using directives are ordered wrong.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestInvalidUsingDirectivesOrderingAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestInvalidUsingDirectivesOrderingAsync(string lineEnding)
         {
             var testCode = @"namespace Foo
 {
     using System;
     using \u0069nt = System.Int32;
-    using character = System.Char;
+    {|#0:using character = System.Char;|}
 }
 
 namespace Bar
@@ -114,16 +116,16 @@ namespace Bar
     using Stream = System.IO.Stream;
     using StringBuilder = System.Text.StringBuilder;
     using StringWriter = System.IO.StringWriter;
-    using MemoryStream = System.IO.MemoryStream;
+    {|#1:using MemoryStream = System.IO.MemoryStream;|}
 }
 
 namespace Spam
 {
     using System;
     using @int = System.Int32;
-    using Character = System.Char;
+    {|#2:using Character = System.Char;|}
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             var fixedTestCode = @"namespace Foo
 {
@@ -147,13 +149,13 @@ namespace Spam
     using Character = System.Char;
     using @int = System.Int32;
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                Diagnostic().WithLocation(5, 5).WithArguments("character", "int"),
-                Diagnostic().WithLocation(14, 5).WithArguments("MemoryStream", "Stream"),
-                Diagnostic().WithLocation(21, 5).WithArguments("Character", "int"),
+                Diagnostic().WithLocation(0).WithArguments("character", "int"),
+                Diagnostic().WithLocation(1).WithArguments("MemoryStream", "Stream"),
+                Diagnostic().WithLocation(2).WithArguments("Character", "int"),
             };
 
             await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);

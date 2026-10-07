@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1016OpeningAttributeBracketsMustBeSpacedCorrectly,
@@ -70,26 +69,29 @@ sealed class MyAttribute : System.Attribute { }
         /// <summary>
         /// Verifies that the analyzer will properly report invalid bracket placements.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestInvalidBracketsAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestInvalidBracketsAsync(string lineEnding)
         {
             var testCode = @"
-[ System.Obsolete]
+{|#0:[|} System.Obsolete]
 class ClassName
 {
 }
 
-[  System.Obsolete]
+{|#1:[|}  System.Obsolete]
 class ClassName2
 {
 }
 
-[ /*comment*/ System.Obsolete]
+{|#2:[|} /*comment*/ System.Obsolete]
 class ClassName3
 {
 }
-";
+".ReplaceLineEndings(lineEnding);
             var fixedCode = @"
 [System.Obsolete]
 class ClassName
@@ -105,13 +107,13 @@ class ClassName2
 class ClassName3
 {
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(2, 1),
-                Diagnostic().WithLocation(7, 1),
-                Diagnostic().WithLocation(12, 1),
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+                Diagnostic().WithLocation(2),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);

@@ -165,6 +165,12 @@ namespace StyleCop.Analyzers.LayoutRules
                 return false;
             }
 
+            private static RecursivePatternSyntaxWrapper FindRecursivePattern(SyntaxToken token)
+            {
+                var recursivePatternSyntax = token.Parent.FirstAncestorOrSelf<SyntaxNode>(static node => RecursivePatternSyntaxWrapper.IsInstance(node));
+                return (RecursivePatternSyntaxWrapper)recursivePatternSyntax;
+            }
+
             private static bool IsPartOf<T>(SyntaxToken token)
             {
                 var result = false;
@@ -175,6 +181,13 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
 
                 return result;
+            }
+
+            private static bool IsPartOfSameNode(SyntaxToken token, SyntaxToken nextToken)
+            {
+                // The semicolon must terminate a construct that contains the close brace. A semicolon that forms a
+                // separate (empty) statement does not.
+                return nextToken.Parent != null && token.Parent.AncestorsAndSelf().Contains(nextToken.Parent);
             }
 
             private void AnalyzeCloseBrace(SyntaxToken token)
@@ -238,7 +251,8 @@ namespace StyleCop.Analyzers.LayoutRules
                     {
                         if (nextToken.Parent is QueryClauseSyntax
                             || nextToken.Parent is SelectOrGroupClauseSyntax
-                            || nextToken.Parent is QueryContinuationSyntax)
+                            || nextToken.Parent is QueryContinuationSyntax
+                            || nextToken.Parent is JoinIntoClauseSyntax)
                         {
                             // the close brace is part of a query expression
                             return;
@@ -246,6 +260,7 @@ namespace StyleCop.Analyzers.LayoutRules
                     }
 
                     if (nextToken.IsKind(SyntaxKind.SemicolonToken) &&
+                        IsPartOfSameNode(token, nextToken) &&
                         (IsPartOf<VariableDeclaratorSyntax>(token) ||
                          IsPartOf<YieldStatementSyntax>(token) ||
                          IsPartOf<ArrowExpressionClauseSyntax>(token) ||
@@ -272,6 +287,29 @@ namespace StyleCop.Analyzers.LayoutRules
                         return;
                     }
 
+                    if (nextToken.IsKind(SyntaxKind.EqualsGreaterThanToken))
+                    {
+                        // the close brace is followed by a switch expression arm arrow
+                        return;
+                    }
+
+                    if (nextToken.IsKind(SyntaxKind.AmpersandAmpersandToken)
+                        || nextToken.IsKind(SyntaxKind.BarBarToken))
+                    {
+                        // the close brace is followed by a logical operator continuing the same expression
+                        return;
+                    }
+
+                    var recursivePattern = FindRecursivePattern(token);
+                    var nextRecursivePattern = FindRecursivePattern(nextToken);
+                    if (recursivePattern.SyntaxNode != null
+                        && nextRecursivePattern.SyntaxNode == recursivePattern.SyntaxNode
+                        && nextToken.IsKind(SyntaxKind.IdentifierToken))
+                    {
+                        // the close brace is part of a recursive pattern that continues with a designation
+                        return;
+                    }
+
                     if (nextToken.IsKind(SyntaxKind.CloseBracketToken))
                     {
                         // the close brace is for example in an object initializer at the end of a collection expression.
@@ -285,6 +323,12 @@ namespace StyleCop.Analyzers.LayoutRules
                         || nextToken.IsKind(SyntaxKindEx.InitKeyword))
                     {
                         // the close brace is followed by an accessor (SA1516 will handle that)
+                        return;
+                    }
+
+                    if (token.Parent is AccessorListSyntax && nextToken.IsKind(SyntaxKind.EqualsToken))
+                    {
+                        // the close brace is followed by a property initializer
                         return;
                     }
 

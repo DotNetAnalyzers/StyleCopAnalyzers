@@ -16,6 +16,16 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 
     public class SA1519UnitTests
     {
+        private const string AllowConsecutiveUsingsDisabledSettings = @"
+{
+  ""settings"": {
+    ""layoutRules"": {
+      ""allowConsecutiveUsings"": false
+    }
+  }
+}
+";
+
         /// <summary>
         /// Gets the statements that will be used in the theory test cases.
         /// </summary>
@@ -169,8 +179,8 @@ public class Foo
         using (default(IDisposable))
         {
             using (default(IDisposable))
-        {
-        }
+            {
+            }
         }
     }
 }";
@@ -192,6 +202,161 @@ public class Foo
   }
 }
 ",
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix indents every line of the wrapped statement, not only its first line.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2183, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2183")]
+        public async Task TestCodeFixIndentsThreeNestedUsingStatementsAsync()
+        {
+            var testCode = @"using System;
+public class Foo
+{
+    public void Bar(int i)
+    {
+        using (default(IDisposable))
+        using (default(IDisposable))
+        using (default(IDisposable))
+        {
+        }
+    }
+}";
+            var fixedCode = @"using System;
+public class Foo
+{
+    public void Bar(int i)
+    {
+        using (default(IDisposable))
+        {
+            using (default(IDisposable))
+            {
+                using (default(IDisposable))
+                {
+                }
+            }
+        }
+    }
+}";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(7, 9),
+                    Diagnostic().WithLocation(8, 9),
+                },
+                FixedCode = fixedCode,
+                Settings = AllowConsecutiveUsingsDisabledSettings,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix indents every line of a multi-line statement that follows an <c>if</c>.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2183, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2183")]
+        public async Task TestCodeFixIndentsMultiLineBodyOfIfStatementAsync()
+        {
+            var testCode = @"public class Foo
+{
+    public void Bar(int i)
+    {
+        if (i == 0)
+        foreach (var j in new[] { 1, 2, 3 })
+        {
+            i += j;
+        }
+    }
+}";
+            var fixedCode = @"public class Foo
+{
+    public void Bar(int i)
+    {
+        if (i == 0)
+        {
+            foreach (var j in new[] { 1, 2, 3 })
+            {
+                i += j;
+            }
+        }
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(6, 9), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix does not change the contents of a verbatim string in the wrapped statement.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2183, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2183")]
+        public async Task TestCodeFixKeepsVerbatimStringContentsAsync()
+        {
+            var testCode = @"using System;
+public class Foo
+{
+    public void Bar(int i)
+    {
+        using (default(IDisposable))
+        using (default(IDisposable))
+        {
+            var s = @""first
+  second
+third"";
+        }
+    }
+}";
+            var fixedCode = @"using System;
+public class Foo
+{
+    public void Bar(int i)
+    {
+        using (default(IDisposable))
+        {
+            using (default(IDisposable))
+            {
+                var s = @""first
+  second
+third"";
+            }
+        }
+    }
+}";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics = { Diagnostic().WithLocation(7, 9) },
+                FixedCode = fixedCode,
+                Settings = AllowConsecutiveUsingsDisabledSettings,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix indents every line of the wrapped statement with tabs.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2183, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2183")]
+        public async Task TestCodeFixIndentsWithTabsAsync()
+        {
+            var testCode = "using System;\r\npublic class Foo\r\n{\r\n\tpublic void Bar(int i)\r\n\t{\r\n\t\tusing (default(IDisposable))\r\n\t\tusing (default(IDisposable))\r\n\t\t{\r\n\t\t}\r\n\t}\r\n}";
+            var fixedCode = "using System;\r\npublic class Foo\r\n{\r\n\tpublic void Bar(int i)\r\n\t{\r\n\t\tusing (default(IDisposable))\r\n\t\t{\r\n\t\t\tusing (default(IDisposable))\r\n\t\t\t{\r\n\t\t\t}\r\n\t\t}\r\n\t}\r\n}";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics = { Diagnostic().WithLocation(7, 3) },
+                FixedCode = fixedCode,
+                Settings = AllowConsecutiveUsingsDisabledSettings,
+                UseTabs = true,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 

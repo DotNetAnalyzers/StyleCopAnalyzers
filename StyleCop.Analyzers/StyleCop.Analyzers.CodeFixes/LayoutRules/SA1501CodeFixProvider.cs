@@ -60,7 +60,7 @@ namespace StyleCop.Analyzers.LayoutRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
+            var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
             if (!(syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) is StatementSyntax statement))
             {
                 return document;
@@ -133,7 +133,7 @@ namespace StyleCop.Analyzers.LayoutRules
             }
             else
             {
-                parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationSettings, GetFirstOnLineParent(parent));
+                parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationSettings, parent.GetFirstOnLineAncestorOrSelf());
             }
 
             return parentIndentationLevel;
@@ -275,18 +275,6 @@ namespace StyleCop.Analyzers.LayoutRules
             return statementSyntax;
         }
 
-        private static SyntaxNode GetFirstOnLineParent(SyntaxNode parent)
-        {
-            // if the parent is not the first on a line, find the parent that is.
-            // This mainly happens for 'else if' statements.
-            while (!parent.GetFirstToken().IsFirstInLine())
-            {
-                parent = parent.Parent;
-            }
-
-            return parent;
-        }
-
         private class FixAll : DocumentBasedFixAllProvider
         {
             public static FixAllProvider Instance { get; } =
@@ -304,7 +292,7 @@ namespace StyleCop.Analyzers.LayoutRules
 
                 var tokenReplaceMap = new Dictionary<SyntaxToken, SyntaxToken>();
                 SyntaxNode syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
-                var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, fixAllContext.CancellationToken);
+                var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, fixAllContext.CancellationToken);
 
                 foreach (var diagnostic in diagnostics.Sort(DiagnosticComparer.Instance))
                 {

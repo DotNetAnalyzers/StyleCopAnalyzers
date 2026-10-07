@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1020IncrementDecrementSymbolsMustBeSpacedCorrectly,
@@ -52,11 +51,14 @@ class ClassName
         /// </summary>
         /// <param name="symbol">The operator to test.</param>
         /// <param name="symbolName">The name of the symbol, as it appears in diagnostics.</param>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("++", "Increment")]
-        [InlineData("--", "Decrement")]
-        public async Task TestInvalidSymbolSpacingAsync(string symbol, string symbolName)
+        [InlineData("++", "Increment", "\n")]
+        [InlineData("++", "Increment", "\r\n")]
+        [InlineData("--", "Decrement", "\n")]
+        [InlineData("--", "Decrement", "\r\n")]
+        public async Task TestInvalidSymbolSpacingAsync(string symbol, string symbolName, string lineEnding)
         {
             var testCode = $@"
 class ClassName
@@ -82,7 +84,7 @@ class ClassName
         }}
     }}
 }}
-";
+".ReplaceLineEndings(lineEnding);
 
             var fixedCode = $@"
 class ClassName
@@ -104,7 +106,7 @@ class ClassName
         }}
     }}
 }}
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {

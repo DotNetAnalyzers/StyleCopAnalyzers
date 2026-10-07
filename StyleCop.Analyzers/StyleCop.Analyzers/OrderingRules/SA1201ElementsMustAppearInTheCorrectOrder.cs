@@ -47,6 +47,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// <item><description>Events</description></item>
     /// <item><description>Enums</description></item>
     /// <item><description>Interfaces</description></item>
+    /// <item><description>Extension blocks</description></item>
     /// <item><description>Properties</description></item>
     /// <item><description>Indexers</description></item>
     /// <item><description>Methods</description></item>
@@ -141,6 +142,7 @@ namespace StyleCop.Analyzers.OrderingRules
             SyntaxKind.EventDeclaration,
             SyntaxKind.EnumDeclaration,
             SyntaxKind.InterfaceDeclaration,
+            SyntaxKindEx.ExtensionBlockDeclaration,
             SyntaxKind.PropertyDeclaration,
             SyntaxKind.IndexerDeclaration,
             SyntaxKind.ConversionOperatorDeclaration,
@@ -151,25 +153,26 @@ namespace StyleCop.Analyzers.OrderingRules
 
         private static readonly Dictionary<SyntaxKind, string> MemberNames = new Dictionary<SyntaxKind, string>
         {
-            [SyntaxKind.NamespaceDeclaration] = "namespace",
-            [SyntaxKindEx.FileScopedNamespaceDeclaration] = "namespace",
-            [SyntaxKind.DelegateDeclaration] = "delegate",
-            [SyntaxKind.EnumDeclaration] = "enum",
-            [SyntaxKind.InterfaceDeclaration] = "interface",
-            [SyntaxKind.StructDeclaration] = "struct",
-            [SyntaxKind.ClassDeclaration] = "class",
-            [SyntaxKindEx.RecordDeclaration] = "record",
-            [SyntaxKindEx.RecordStructDeclaration] = "record struct",
-            [SyntaxKind.FieldDeclaration] = "field",
-            [SyntaxKind.ConstructorDeclaration] = "constructor",
-            [SyntaxKind.DestructorDeclaration] = "destructor",
-            [SyntaxKind.EventDeclaration] = "event",
-            [SyntaxKind.EventFieldDeclaration] = "event",
-            [SyntaxKind.PropertyDeclaration] = "property",
-            [SyntaxKind.IndexerDeclaration] = "indexer",
-            [SyntaxKind.MethodDeclaration] = "method",
-            [SyntaxKind.ConversionOperatorDeclaration] = "conversion",
-            [SyntaxKind.OperatorDeclaration] = "operator",
+            [SyntaxKind.NamespaceDeclaration] = "a namespace",
+            [SyntaxKindEx.FileScopedNamespaceDeclaration] = "a namespace",
+            [SyntaxKind.DelegateDeclaration] = "a delegate",
+            [SyntaxKind.EnumDeclaration] = "an enum",
+            [SyntaxKind.InterfaceDeclaration] = "an interface",
+            [SyntaxKind.StructDeclaration] = "a struct",
+            [SyntaxKind.ClassDeclaration] = "a class",
+            [SyntaxKindEx.RecordDeclaration] = "a record",
+            [SyntaxKindEx.RecordStructDeclaration] = "a record struct",
+            [SyntaxKindEx.ExtensionBlockDeclaration] = "an extension",
+            [SyntaxKind.FieldDeclaration] = "a field",
+            [SyntaxKind.ConstructorDeclaration] = "a constructor",
+            [SyntaxKind.DestructorDeclaration] = "a destructor",
+            [SyntaxKind.EventDeclaration] = "an event",
+            [SyntaxKind.EventFieldDeclaration] = "an event",
+            [SyntaxKind.PropertyDeclaration] = "a property",
+            [SyntaxKind.IndexerDeclaration] = "an indexer",
+            [SyntaxKind.MethodDeclaration] = "a method",
+            [SyntaxKind.ConversionOperatorDeclaration] = "a conversion",
+            [SyntaxKind.OperatorDeclaration] = "an operator",
         };
 
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CompilationUnitAction = HandleCompilationUnit;
@@ -300,12 +303,17 @@ namespace StyleCop.Analyzers.OrderingRules
                 if (index > nextIndex)
                 {
                     // [Issue #3160] Added hardening here to make sure that this won't crash when working with invalid code.
-                    var nextElementMemberName = MemberNames.GetValueOrDefault(nextElementSyntaxKind, "<unknown>");
+                    var nextElementMemberName = Capitalize(MemberNames.GetValueOrDefault(nextElementSyntaxKind, "<unknown>"));
                     var elementMemberName = MemberNames.GetValueOrDefault(elementSyntaxKind, "<unknown>");
 
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(members[i + 1]), nextElementMemberName, elementMemberName));
                 }
             }
+        }
+
+        private static string Capitalize(string value)
+        {
+            return char.ToUpperInvariant(value[0]) + value.Substring(1);
         }
 
         private static SyntaxKind GetSyntaxKindForOrdering(SyntaxKind syntaxKind)

@@ -1,10 +1,9 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
@@ -16,12 +15,28 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
     public class SA1106UnitTests
     {
+        public static TheoryData<string, string> StatementAsBlock
+        {
+            get
+            {
+                var result = new TheoryData<string, string>();
+                foreach (var lineEndingData in CommonData.EndOfLineSequences)
+                {
+                    var lineEnding = (string)lineEndingData.Single();
+                    result.Add("if (true)", lineEnding);
+                    result.Add("if (true) { } else", lineEnding);
+                    result.Add("for (int i = 0; i < 10; i++)", lineEnding);
+                    result.Add("foreach (int i in new int[] { 0 })", lineEnding);
+                    result.Add("while (true)", lineEnding);
+                }
+
+                return result;
+            }
+        }
+
         [Theory]
-        [InlineData("if (true)")]
-        [InlineData("if (true) { } else")]
-        [InlineData("for (int i = 0; i < 10; i++)")]
-        [InlineData("while (true)")]
-        public async Task TestEmptyStatementAsBlockAsync(string controlFlowConstruct)
+        [MemberData(nameof(StatementAsBlock))]
+        public async Task TestEmptyStatementAsBlockAsync(string controlFlowConstruct, string lineEnding)
         {
             var testCode = $@"
 class TestClass
@@ -29,9 +44,9 @@ class TestClass
     public void TestMethod()
     {{
         {controlFlowConstruct}
-            ;
+            {{|#0:;|}}
     }}
-}}";
+}}".ReplaceLineEndings(lineEnding);
             var fixedCode = $@"
 class TestClass
 {{
@@ -41,15 +56,17 @@ class TestClass
         {{
         }}
     }}
-}}";
+}}".ReplaceLineEndings(lineEnding);
 
-            DiagnosticResult expected = Diagnostic().WithLocation(7, 13);
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestEmptyStatementAsBlockInDoWhileAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestEmptyStatementAsBlockInDoWhileAsync(string lineEnding)
         {
             var testCode = @"
 class TestClass
@@ -57,10 +74,10 @@ class TestClass
     public void TestMethod()
     {
         do
-            ;
+            {|#0:;|}
         while (false);
     }
-}";
+}".ReplaceLineEndings(lineEnding);
             var fixedCode = @"
 class TestClass
 {
@@ -71,9 +88,9 @@ class TestClass
         }
         while (false);
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
-            DiagnosticResult expected = Diagnostic().WithLocation(7, 13);
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
@@ -127,26 +144,28 @@ class TestClass
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestEmptyStatementAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestEmptyStatementAsync(string lineEnding)
         {
             var testCode = @"
 class TestClass
 {
     public void TestMethod()
     {
-        ;
+        {|#0:;|}
     }
-}";
+}".ReplaceLineEndings(lineEnding);
             var fixedCode = @"
 class TestClass
 {
     public void TestMethod()
     {
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
-            DiagnosticResult expected = Diagnostic().WithLocation(6, 9);
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }

@@ -90,9 +90,17 @@ namespace StyleCop.Analyzers.OrderingRules
         private static void ProcessUsingsAndReportDiagnostic(SyntaxList<UsingDirectiveSyntax> usings, SyntaxNodeAnalysisContext context)
         {
             string systemUsingDirectivesShouldBeBeforeThisName = null;
+            bool systemUsingDirectivesShouldBeBeforeThisNameIsGlobal = false;
             for (var i = 1; i < usings.Count; i++)
             {
                 var usingDirective = usings[i];
+
+                if (systemUsingDirectivesShouldBeBeforeThisName != null
+                    && systemUsingDirectivesShouldBeBeforeThisNameIsGlobal != usingDirective.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword))
+                {
+                    // Global and local using directives are ordered independently
+                    systemUsingDirectivesShouldBeBeforeThisName = null;
+                }
 
                 if (usingDirective.Alias != null || !usingDirective.StaticKeyword.IsKind(SyntaxKind.None) || usingDirective.IsPrecededByPreprocessorDirective())
                 {
@@ -108,12 +116,18 @@ namespace StyleCop.Analyzers.OrderingRules
                     }
 
                     var previousUsing = usings[i - 1];
+                    if (previousUsing.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword) != usingDirective.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword))
+                    {
+                        // Only compare usings with the same 'global' modifier
+                        continue;
+                    }
 
                     if (!previousUsing.IsSystemUsingDirective()
                         || previousUsing.HasNamespaceAliasQualifier()
                         || !previousUsing.StaticKeyword.IsKind(SyntaxKind.None))
                     {
                         systemUsingDirectivesShouldBeBeforeThisName = previousUsing.Name.ToNormalizedString();
+                        systemUsingDirectivesShouldBeBeforeThisNameIsGlobal = previousUsing.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword);
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation(), usingDirective.Name.ToNormalizedString(), systemUsingDirectivesShouldBeBeforeThisName));
                     }
                 }

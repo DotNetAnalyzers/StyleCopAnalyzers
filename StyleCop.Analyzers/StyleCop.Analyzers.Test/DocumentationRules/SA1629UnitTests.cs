@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Threading;
@@ -962,10 +960,32 @@ public interface ITest
             await VerifyCSharpDiagnosticAsync(testCode, testSettings, expectedResult, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory]
+        [InlineData("&lt;")]
+        [InlineData("&amp;")]
+        [InlineData("&quot;")]
+        [WorkItem(3802, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3802")]
+        public async Task TestSentenceEndingWithXmlEntityAsync(string xmlEntity)
+        {
+            var testCode = $@"
+/// <summary>Something {xmlEntity}[|<|]/summary>
+public class TestClass
+{{
+}}";
+
+            var fixedTestCode = $@"
+/// <summary>Something {xmlEntity}.</summary>
+public class TestClass
+{{
+}}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
             => VerifyCSharpDiagnosticAsync(source, testSettings: null, expected, cancellationToken);
 
-        private static Task VerifyCSharpDiagnosticAsync(string source, string testSettings, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        private static Task VerifyCSharpDiagnosticAsync(string source, string? testSettings, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
             var test = CreateTest(testSettings, expected);
             test.TestCode = source;
@@ -985,7 +1005,7 @@ public interface ITest
             return test.RunAsync(cancellationToken);
         }
 
-        private static StyleCopCodeFixVerifier<SA1629DocumentationTextMustEndWithAPeriod, SA1629CodeFixProvider>.CSharpTest CreateTest(string testSettings, DiagnosticResult[] expected)
+        private static StyleCopCodeFixVerifier<SA1629DocumentationTextMustEndWithAPeriod, SA1629CodeFixProvider>.CSharpTest CreateTest(string? testSettings, DiagnosticResult[] expected)
         {
             string contentClassInheritDoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <TestClass>

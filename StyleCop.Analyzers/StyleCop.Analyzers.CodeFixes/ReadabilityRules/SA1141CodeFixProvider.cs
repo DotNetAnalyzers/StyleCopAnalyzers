@@ -75,6 +75,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             case SyntaxKind.PropertyDeclaration:
             case SyntaxKind.IndexerDeclaration:
             case SyntaxKind.DelegateDeclaration:
+            case SyntaxKind.ParenthesizedLambdaExpression:
                 newNode = newNode.WithTrailingTrivia(SyntaxFactory.Space);
                 break;
             }

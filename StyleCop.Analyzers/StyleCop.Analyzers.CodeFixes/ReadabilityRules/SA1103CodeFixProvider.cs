@@ -120,7 +120,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             var nodeList = CreateQueryNodeList(queryExpression);
 
-            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
+            var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
             var indentationTrivia = QueryIndentationHelpers.GetQueryIndentationTrivia(settings.Indentation, queryExpression);
 
             for (var i = 1; i < nodeList.Length; i++)

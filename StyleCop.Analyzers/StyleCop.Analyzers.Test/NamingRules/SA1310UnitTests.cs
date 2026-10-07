@@ -1,13 +1,12 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.NamingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.NamingRules.SA1310FieldNamesMustNotContainUnderscore,
@@ -15,20 +14,22 @@ namespace StyleCop.Analyzers.Test.NamingRules
 
     public class SA1310UnitTests
     {
-        [Fact]
-        public async Task TestFieldWithUnderscoreAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestFieldWithUnderscoreAsync(string lineEnding)
         {
             var testCode = @"public class ClassName
 {
-    public string name_bar = ""baz"";
-}";
+    public string {|#0:name_bar|} = ""baz"";
+}".ReplaceLineEndings(lineEnding);
 
-            DiagnosticResult expected = Diagnostic().WithArguments("name_bar").WithLocation(3, 19);
+            DiagnosticResult expected = Diagnostic().WithArguments("name_bar").WithLocation(0);
 
             var fixedCode = @"public class ClassName
 {
     public string nameBar = ""baz"";
-}";
+}".ReplaceLineEndings(lineEnding);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }

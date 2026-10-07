@@ -87,5 +87,44 @@ public class Foo
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3966, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3966")]
+        public async Task TestIndexerDeclarationInitBeforeGetterAsync()
+        {
+            var testCode = @"
+public class Foo
+{
+    public int this[int index]
+    {
+        [|init
+        {
+        }|]
+
+        get
+        {
+            return index;
+        }
+    }
+}";
+
+            var fixedCode = @"
+public class Foo
+{
+    public int this[int index]
+    {
+        get
+        {
+            return index;
+        }
+
+        init
+        {
+        }
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

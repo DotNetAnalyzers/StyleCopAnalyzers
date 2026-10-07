@@ -77,7 +77,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <summary>
         /// This is the backing field for the <see cref="DocumentInterfaces"/> property.
         /// </summary>
-        private readonly bool documentInterfaces;
+        private readonly InterfaceDocumentationMode documentInterfaces;
 
         /// <summary>
         /// This is the backing field for the <see cref="DocumentPrivateFields"/> property.
@@ -116,14 +116,14 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         {
             this.companyName = DefaultCompanyName;
             this.copyrightText = DefaultCopyrightText;
-            this.headerDecoration = null;
+            this.headerDecoration = string.Empty;
             this.variables = ImmutableDictionary<string, string>.Empty;
             this.xmlHeader = true;
 
             this.documentExposedElements = true;
             this.documentInternalElements = true;
             this.documentPrivateElements = false;
-            this.documentInterfaces = true;
+            this.documentInterfaces = InterfaceDocumentationMode.All;
             this.documentPrivateFields = false;
 
             this.fileNamingConvention = FileNamingConvention.StyleCop;
@@ -145,7 +145,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             bool? documentExposedElements = null;
             bool? documentInternalElements = null;
             bool? documentPrivateElements = null;
-            bool? documentInterfaces = null;
+            InterfaceDocumentationMode? documentInterfaces = null;
             bool? documentPrivateFields = null;
             string companyName = null;
             string copyrightText = null;
@@ -173,7 +173,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                     break;
 
                 case "documentInterfaces":
-                    documentInterfaces = kvp.ToBooleanValue();
+                    documentInterfaces = ParseDocumentInterfacesValue(kvp);
                     break;
 
                 case "documentPrivateFields":
@@ -241,7 +241,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             documentExposedElements ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.documentExposedElements");
             documentInternalElements ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.documentInternalElements");
             documentPrivateElements ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.documentPrivateElements");
-            documentInterfaces ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.documentInterfaces");
+            documentInterfaces ??= TryGetDocumentInterfacesValue(analyzerConfigOptions);
             documentPrivateFields ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.documentPrivateFields");
 
             companyName ??= AnalyzerConfigHelper.TryGetStringValue(analyzerConfigOptions, "stylecop.documentation.companyName");
@@ -263,11 +263,11 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.documentExposedElements = documentExposedElements.GetValueOrDefault(true);
             this.documentInternalElements = documentInternalElements.GetValueOrDefault(true);
             this.documentPrivateElements = documentPrivateElements.GetValueOrDefault(false);
-            this.documentInterfaces = documentInterfaces.GetValueOrDefault(true);
+            this.documentInterfaces = documentInterfaces ?? InterfaceDocumentationMode.All;
             this.documentPrivateFields = documentPrivateFields.GetValueOrDefault(false);
             this.companyName = companyName ?? DefaultCompanyName;
             this.copyrightText = copyrightText ?? DefaultCopyrightText;
-            this.headerDecoration = headerDecoration;
+            this.headerDecoration = headerDecoration ?? string.Empty;
             this.variables = variables?.ToImmutable() ?? ImmutableDictionary<string, string>.Empty;
             this.xmlHeader = xmlHeader.GetValueOrDefault(true);
             this.fileNamingConvention = fileNamingConvention.GetValueOrDefault(FileNamingConvention.StyleCop);
@@ -317,7 +317,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         public bool DocumentPrivateElements =>
             this.documentPrivateElements;
 
-        public bool DocumentInterfaces =>
+        public InterfaceDocumentationMode DocumentInterfaces =>
             this.documentInterfaces;
 
         public bool DocumentPrivateFields =>
@@ -352,6 +352,47 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
             this.copyrightTextCache = expandedCopyrightText.Key;
             return this.copyrightTextCache;
+        }
+
+        private static InterfaceDocumentationMode ParseDocumentInterfacesValue(KeyValuePair<string, JsonValue> kvp)
+        {
+            if (kvp.Value.IsBoolean)
+            {
+                return kvp.Value.AsBoolean ? InterfaceDocumentationMode.All : InterfaceDocumentationMode.None;
+            }
+
+            if (kvp.Value.IsString)
+            {
+                return kvp.ToEnumValue<InterfaceDocumentationMode>();
+            }
+
+            throw new StyleCop.Analyzers.InvalidSettingsException($"{kvp.Key} must contain a boolean or string value");
+        }
+
+        private static InterfaceDocumentationMode? TryGetDocumentInterfacesValue(AnalyzerConfigOptionsWrapper analyzerConfigOptions)
+        {
+            var value = AnalyzerConfigHelper.TryGetStringValue(analyzerConfigOptions, "stylecop.documentation.documentInterfaces");
+            if (value is null)
+            {
+                return null;
+            }
+
+            if (bool.TryParse(value, out var boolValue))
+            {
+                return boolValue ? InterfaceDocumentationMode.All : InterfaceDocumentationMode.None;
+            }
+
+            switch (value.ToLowerInvariant())
+            {
+            case "all":
+                return InterfaceDocumentationMode.All;
+            case "exposed":
+                return InterfaceDocumentationMode.Exposed;
+            case "none":
+                return InterfaceDocumentationMode.None;
+            default:
+                return null;
+            }
         }
 
         private static bool IsValidVariableName(string name)

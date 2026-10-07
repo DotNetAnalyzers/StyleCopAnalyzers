@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Text;
@@ -10,6 +8,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1025CodeMustNotContainMultipleWhitespaceInARow,
@@ -61,19 +60,22 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         /// <summary>
         /// Verifies that the analyzer will produce the proper diagnostics with multiple whitespace characters in namespace declaration.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestMultipleWhitespaceInNamespaceDeclarationAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestMultipleWhitespaceInNamespaceDeclarationAsync(string lineEnding)
         {
             var testCode = @"namespace  TestNamespace
 {
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             var fixedCode = @"namespace TestNamespace
 {
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected = { Diagnostic().WithLocation(1, 10) };
 

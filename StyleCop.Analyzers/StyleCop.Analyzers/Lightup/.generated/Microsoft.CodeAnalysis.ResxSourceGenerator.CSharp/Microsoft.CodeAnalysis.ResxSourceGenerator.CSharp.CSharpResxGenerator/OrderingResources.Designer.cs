@@ -30,7 +30,7 @@ namespace StyleCop.Analyzers.OrderingRules
         public static string @SA1200Title => GetResourceString("SA1200Title")!;
         /// <summary>An element within a C# code file is out of order in relation to the other elements in the code.</summary>
         public static string @SA1201Description => GetResourceString("SA1201Description")!;
-        /// <summary>A {0} should not follow a {1}</summary>
+        /// <summary>{0} should not follow {1}</summary>
         public static string @SA1201MessageFormat => GetResourceString("SA1201MessageFormat")!;
         /// <summary>Elements should appear in the correct order</summary>
         public static string @SA1201Title => GetResourceString("SA1201Title")!;

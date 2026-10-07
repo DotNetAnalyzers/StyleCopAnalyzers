@@ -534,5 +534,32 @@ class ClassName
             };
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that a property initializer may follow the closing brace of a multi-line accessor list.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(4028, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4028")]
+        public async Task TestPropertyInitializerAfterMultiLineAccessorListAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public int Property1
+    {
+        get;
+        set;
+    } = 1;
+
+    public int Property2
+    {
+        get;
+    } = 2;
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
