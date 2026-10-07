@@ -47,6 +47,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// <item><description>Events</description></item>
     /// <item><description>Enums</description></item>
     /// <item><description>Interfaces</description></item>
+    /// <item><description>Extension blocks</description></item>
     /// <item><description>Properties</description></item>
     /// <item><description>Indexers</description></item>
     /// <item><description>Methods</description></item>
@@ -141,6 +142,7 @@ namespace StyleCop.Analyzers.OrderingRules
             SyntaxKind.EventDeclaration,
             SyntaxKind.EnumDeclaration,
             SyntaxKind.InterfaceDeclaration,
+            SyntaxKindEx.ExtensionBlockDeclaration,
             SyntaxKind.PropertyDeclaration,
             SyntaxKind.IndexerDeclaration,
             SyntaxKind.ConversionOperatorDeclaration,
@@ -160,6 +162,7 @@ namespace StyleCop.Analyzers.OrderingRules
             [SyntaxKind.ClassDeclaration] = "class",
             [SyntaxKindEx.RecordDeclaration] = "record",
             [SyntaxKindEx.RecordStructDeclaration] = "record struct",
+            [SyntaxKindEx.ExtensionBlockDeclaration] = "extension",
             [SyntaxKind.FieldDeclaration] = "field",
             [SyntaxKind.ConstructorDeclaration] = "constructor",
             [SyntaxKind.DestructorDeclaration] = "destructor",
