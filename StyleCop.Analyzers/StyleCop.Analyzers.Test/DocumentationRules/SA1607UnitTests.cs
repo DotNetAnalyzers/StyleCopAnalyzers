@@ -374,6 +374,7 @@ public partial class ClassName
         }
 
         [Fact]
+        [WorkItem(1946, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1946")]
         public async Task TestPartialTypeWithEmptySummaryAndInheritdocWithoutSourceAsync()
         {
             var testCode = @"
@@ -389,6 +390,7 @@ public partial class ClassName
         }
 
         [Fact]
+        [WorkItem(1946, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1946")]
         public async Task TestPartialTypeWithEmptySummaryAndInheritdocWithBaseClassAsync()
         {
             var testCode = @"
@@ -409,6 +411,7 @@ public class BaseClass
         }
 
         [Fact]
+        [WorkItem(1946, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1946")]
         public async Task TestPartialTypeWithEmptySummaryAndInheritdocWithInterfaceAsync()
         {
             var testCode = @"
@@ -429,6 +432,7 @@ public interface IInterface
         }
 
         [Fact]
+        [WorkItem(1946, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1946")]
         public async Task TestPartialTypeWithBaseListOnOtherPartAsync()
         {
             var testCode = @"
@@ -453,6 +457,7 @@ public interface IInterface
         }
 
         [Fact]
+        [WorkItem(1946, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1946")]
         public async Task TestPartialTypeWithEmptySummaryAndInheritdocWithCrefAsync()
         {
             var testCode = @"
@@ -466,6 +471,7 @@ public partial class ClassName
         }
 
         [Fact]
+        [WorkItem(1946, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1946")]
         public async Task TestPartialMethodWithEmptySummaryAndInheritdocWithoutSourceAsync()
         {
             var testCode = @"

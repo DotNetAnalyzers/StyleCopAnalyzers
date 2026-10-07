@@ -549,6 +549,8 @@ public class ClassName
         }
 
         [Fact]
+        [WorkItem(1945, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1945")]
+        [WorkItem(1946, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1946")]
         public async Task TestMethodWithEmptyReturnsAndInheritdocWithoutSourceAsync()
         {
             var testCode = @"
@@ -567,6 +569,8 @@ public class ClassName
         }
 
         [Fact]
+        [WorkItem(1945, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1945")]
+        [WorkItem(1946, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1946")]
         public async Task TestOverrideWithEmptyReturnsAndInheritdocAsync()
         {
             var testCode = @"

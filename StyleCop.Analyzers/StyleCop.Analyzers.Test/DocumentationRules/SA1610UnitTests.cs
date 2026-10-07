@@ -364,6 +364,7 @@ public class ClassName : ITestInterface
         }
 
         [Fact]
+        [WorkItem(1945, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1945")]
         public async Task TestPropertyWithEmptyValueAndInheritdocWithoutSourceAsync()
         {
             var testCode = @"
@@ -384,6 +385,7 @@ public class ClassName
         }
 
         [Fact]
+        [WorkItem(1945, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1945")]
         public async Task TestOverrideWithEmptyValueAndInheritdocAsync()
         {
             var testCode = @"
@@ -411,6 +413,7 @@ public class BaseClass
         }
 
         [Fact]
+        [WorkItem(1945, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1945")]
         public async Task TestImplicitInterfaceImplementationWithEmptyValueAndInheritdocAsync()
         {
             var testCode = @"
@@ -438,6 +441,7 @@ public interface IInterface
         }
 
         [Fact]
+        [WorkItem(1945, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1945")]
         public async Task TestExplicitInterfaceImplementationWithEmptyValueAndInheritdocAsync()
         {
             var testCode = @"
@@ -465,6 +469,7 @@ public interface IInterface
         }
 
         [Fact]
+        [WorkItem(1945, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1945")]
         public async Task TestPropertyWithEmptyValueAndInheritdocWithCrefAsync()
         {
             var testCode = @"
