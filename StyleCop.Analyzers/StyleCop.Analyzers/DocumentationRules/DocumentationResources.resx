@@ -405,6 +405,9 @@
   <data name="SA1626CodeFix" xml:space="preserve">
     <value>Convert to line comment</value>
   </data>
+  <data name="SA1626CodeFixStrayComment" xml:space="preserve">
+    <value>Convert to documentation comment</value>
+  </data>
   <data name="SA1626Description" xml:space="preserve">
     <value>The C# code contains a single-line comment which begins with three forward slashes in a row.</value>
   </data>

@@ -1,4 +1,4 @@
-// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test.CSharp15.DocumentationRules
@@ -7,13 +7,13 @@ namespace StyleCop.Analyzers.Test.CSharp15.DocumentationRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
-    using StyleCop.Analyzers.Test.CSharp13.DocumentationRules;
+    using StyleCop.Analyzers.Test.CSharp14.DocumentationRules;
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<
         StyleCop.Analyzers.DocumentationRules.SA1649FileNameMustMatchTypeName>;
 
-    public partial class SA1649CSharp15UnitTests : SA1649CSharp13UnitTests
+    public partial class SA1649CSharp15UnitTests : SA1649CSharp14UnitTests
     {
         [Fact]
         public async Task VerifyWrongFileNameForUnionDeclarationAsync()

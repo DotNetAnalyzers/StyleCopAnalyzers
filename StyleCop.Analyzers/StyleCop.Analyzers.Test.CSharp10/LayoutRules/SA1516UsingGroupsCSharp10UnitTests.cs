@@ -3,9 +3,79 @@
 
 namespace StyleCop.Analyzers.Test.CSharp10.LayoutRules
 {
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.LayoutRules;
+    using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.Test.CSharp9.LayoutRules;
+    using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1516ElementsMustBeSeparatedByBlankLine,
+        StyleCop.Analyzers.LayoutRules.SA1516CodeFixProvider>;
 
     public partial class SA1516UsingGroupsCSharp10UnitTests : SA1516UsingGroupsCSharp9UnitTests
     {
+        [Fact]
+        [WorkItem(3982, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3982")]
+        public async Task TestBlankLineRequiredBetweenGlobalAndLocalUsingGroupsAsync()
+        {
+            var testCode = @"
+global using System;
+global using System.Threading;
+{|#0:using|} System.IO;
+
+Console.WriteLine();
+";
+
+            var fixedCode = @"
+global using System;
+global using System.Threading;
+
+using System.IO;
+
+Console.WriteLine();
+";
+
+            var test = new CSharpTest
+            {
+                TestState =
+                {
+                    OutputKind = OutputKind.ConsoleApplication,
+                    Sources = { testCode },
+                },
+                FixedCode = fixedCode,
+                Settings = GetBlankLinesBetweenUsingGroupsSettings(OptionSetting.Require),
+            };
+            test.TestState.ExpectedDiagnostics.AddRange(this.GetExpectedResultTestBlankLineRequiredBetweenGlobalAndLocalUsingGroups());
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestBlankLineRequiredBetweenGlobalAndLocalUsingGroups()
+        {
+            // NOTE: Seems like a Roslyn bug made diagnostics be reported twice. Fixed in a later version.
+            return new[]
+            {
+                // /0/Test0.cs(4,1): warning SA1516: Using directives should be separated by blank line
+                Diagnostic(SA1516ElementsMustBeSeparatedByBlankLine.DescriptorRequire).WithLocation(0),
+
+                // /0/Test0.cs(4,1): warning SA1516: Using directives should be separated by blank line
+                Diagnostic(SA1516ElementsMustBeSeparatedByBlankLine.DescriptorRequire).WithLocation(0),
+            };
+        }
+
+        private static string GetBlankLinesBetweenUsingGroupsSettings(OptionSetting optionSetting)
+        {
+            return $@"{{
+    ""settings"": {{
+        ""orderingRules"": {{
+            ""systemUsingDirectivesFirst"": true,
+            ""blankLinesBetweenUsingGroups"": ""{optionSetting.ToString().ToLowerInvariant()}""
+        }}
+    }}
+}}
+";
+        }
     }
 }

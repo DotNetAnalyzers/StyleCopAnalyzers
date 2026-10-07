@@ -104,6 +104,12 @@ namespace StyleCop.Analyzers.Helpers
         internal static Location GetNameOrIdentifierLocation(SyntaxNode member)
         {
             Location location = null;
+            if (member.IsKind(SyntaxKindEx.ExtensionBlockDeclaration))
+            {
+                // A C# 14 extension block has no identifier, so report on the 'extension' keyword
+                location = ((TypeDeclarationSyntax)member).Keyword.GetLocation();
+            }
+
             location = location ?? (member as PropertyDeclarationSyntax)?.Identifier.GetLocation();
             location = location ?? (member as FieldDeclarationSyntax)?.Declaration?.Variables.FirstOrDefault()?.Identifier.GetLocation();
             location = location ?? (member as MethodDeclarationSyntax)?.Identifier.GetLocation();

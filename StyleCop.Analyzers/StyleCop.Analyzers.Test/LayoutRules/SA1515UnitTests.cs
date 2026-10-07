@@ -301,5 +301,62 @@ class TestClass
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that the analyzer does not fire in expression bodied properties.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3550, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3550")]
+        public async Task TestExpressionBodiedPropertyAsync()
+        {
+            var testCode = @"
+class TestClass
+{
+    public int TestProperty =>
+        // A comment line
+        42;
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer does not fire in expression bodied indexers.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3550, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3550")]
+        public async Task TestExpressionBodiedIndexerAsync()
+        {
+            var testCode = @"
+class TestClass
+{
+    public int this[int i] =>
+        // A comment line
+        42;
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer does not fire in expression bodied methods.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3550, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3550")]
+        public async Task TestExpressionBodiedMethodAsync()
+        {
+            var testCode = @"
+class TestClass
+{
+    public int TestMethod(int x) =>
+        // A comment line
+        42;
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
