@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.Test
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -48,6 +49,7 @@ class TypeName
         /// were resulting in AD0001 during the build.
         /// </summary>
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        [SuppressMessage("MicrosoftCodeAnalysisCorrectness", "RS1041:Compiler extensions should be implemented in assemblies targeting netstandard2.0", Justification = "OK in tests")]
         internal class CompilationStartDiagnosticAnalyzer : DiagnosticAnalyzer
         {
             public const string DiagnosticId = "SA0002";
