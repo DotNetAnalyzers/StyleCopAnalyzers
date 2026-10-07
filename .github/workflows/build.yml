@@ -289,13 +289,17 @@ jobs:
         path: build/OpenCover.Reports
         if-no-files-found: warn
 
-  # Mirrors the "Publish Code Coverage" stage in build/build-and-test.yml (minus the codecov.io upload).
+  # Merges the per-language coverage reports and publishes them to codecov.io (previously the "Publish Code Coverage"
+  # stage in the retired build/build-and-test.yml).
   coverage:
     name: Merge code coverage
     needs: test
     if: ${{ !cancelled() }}
     runs-on: windows-latest
     timeout-minutes: 30
+    permissions:
+      contents: read
+      id-token: write # Codecov upload authenticates with GitHub OIDC, so no Codecov token secret is needed
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -329,3 +333,15 @@ jobs:
       with:
         name: coverage-merged
         path: coverage-final
+
+    # Only publish complete results: a failed test job uploads no coverage, which would understate coverage.
+    # Pull requests from forks can't get an OIDC token; the action then uploads tokenless, as Codecov allows for forks.
+    - name: Upload coverage to Codecov
+      if: needs.test.result == 'success'
+      uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+      with:
+        files: coverage-final/Cobertura.xml
+        disable_search: true
+        use_oidc: true
+        fail_ci_if_error: false
+        verbose: true
