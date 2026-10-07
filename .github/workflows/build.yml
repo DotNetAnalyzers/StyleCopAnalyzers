@@ -220,13 +220,10 @@ jobs:
       with:
         nuget-version: '6.0.6'
 
-    # coverlet.console is a net6.0 tool. Without a .NET 6 runtime it rolls forward to a newer one, but there its
-    # Windows PDB rewriting (Mono.Cecil + diasymreader) crashed with an AccessViolationException in a Debug job, so
-    # keep running it on .NET 6 as before.
-    - name: Setup .NET SDK (from global.json) and .NET 6 for coverlet
+    # Provides the .NET 10 runtime for coverlet.console.
+    - name: Setup .NET SDK (from global.json)
       uses: actions/setup-dotnet@v6
       with:
-        dotnet-version: 6.0.x
         global-json-file: global.json
 
     # .nuget/packages.config provides xunit.runner.console and coverlet.console (same change as #4104).
@@ -251,7 +248,7 @@ jobs:
         $xunitrunner_version = $packageConfig.SelectSingleNode('/packages/package[@id="xunit.runner.console"]').version
 
         $packages_folder = '..\packages'
-        $coverlet_console = "$packages_folder\coverlet.console.$coverlet_version\tools\net6.0\any\coverlet.console.dll"
+        $coverlet_console = "$packages_folder\coverlet.console.$coverlet_version\tools\net10.0\any\coverlet.console.dll"
         $xunit_runner_console = "$packages_folder\xunit.runner.console.$xunitrunner_version\tools\${{ matrix.framework }}\xunit.console.x86.exe"
         # Same legacy OpenCover.Reports / OpenCover.*.xml names as build/test.yml (content is Cobertura).
         $report_folder = '.\OpenCover.Reports'
