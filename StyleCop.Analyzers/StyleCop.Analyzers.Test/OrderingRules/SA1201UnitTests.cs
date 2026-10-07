@@ -59,8 +59,8 @@ public struct FooStruct { }
 ";
             var expected = new[]
             {
-                Diagnostic().WithLocation(4, 22).WithArguments("delegate", "enum"),
-                Diagnostic().WithLocation(7, 15).WithArguments("struct", "class"),
+                Diagnostic().WithLocation(4, 22).WithArguments("A delegate", "an enum"),
+                Diagnostic().WithLocation(7, 15).WithArguments("A struct", "a class"),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -84,16 +84,45 @@ public {classKeyword} FooClass {{ }}
 
             var reportedClassKind = classKeyword switch
             {
-                "record class" => "record",
-                _ => classKeyword,
+                "record class" => "a record",
+                _ => "a " + classKeyword,
             };
+
+            var reportedStructKind = "A " + structKeyword;
 
             var expected = new[]
             {
-                Diagnostic().WithLocation(0).WithArguments(structKeyword, reportedClassKind),
+                Diagnostic().WithLocation(0).WithArguments(reportedStructKind, reportedClassKind),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMessageUsesCorrectArticleAsync()
+        {
+            string testCode = @"public class OuterType
+{
+    public void Method() { }
+    public static bool operator ==(OuterType left, OuterType right) { return true; }
+    public static bool operator !=(OuterType left, OuterType right) { return false; }
+    public static implicit operator int(OuterType value) { return 0; }
+    public enum InnerEnum { A }
+}
+
+public class OtherType { }
+public enum OtherEnum { A }
+";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(4, 5).WithMessage("An operator should not follow a method"),
+                Diagnostic().WithLocation(6, 5).WithMessage("A conversion should not follow an operator"),
+                Diagnostic().WithLocation(7, 17).WithMessage("An enum should not follow a conversion"),
+                Diagnostic().WithLocation(11, 13).WithMessage("An enum should not follow a class"),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -183,12 +212,12 @@ public {classKeyword} FooClass {{ }}
 ";
             var expected = new[]
             {
-                Diagnostic().WithLocation(5, 12).WithArguments("constructor", "destructor"),
-                Diagnostic().WithLocation(7, 26).WithArguments("delegate", "interface"),
-                Diagnostic().WithLocation(11, 5).WithArguments("conversion", "operator"),
-                Diagnostic().WithLocation(12, 19).WithArguments("property", "conversion"),
-                Diagnostic().WithLocation(14, 17).WithArguments("method", "struct"),
-                Diagnostic().WithLocation(16, 19).WithArguments("indexer", "class"),
+                Diagnostic().WithLocation(5, 12).WithArguments("A constructor", "a destructor"),
+                Diagnostic().WithLocation(7, 26).WithArguments("A delegate", "an interface"),
+                Diagnostic().WithLocation(11, 5).WithArguments("A conversion", "an operator"),
+                Diagnostic().WithLocation(12, 19).WithArguments("A property", "a conversion"),
+                Diagnostic().WithLocation(14, 17).WithArguments("A method", "a struct"),
+                Diagnostic().WithLocation(16, 19).WithArguments("An indexer", "a class"),
             };
 
             string fixedCode = @"public class OuterType
@@ -244,11 +273,11 @@ public {classKeyword} FooClass {{ }}
 ";
             var expected = new[]
             {
-                Diagnostic().WithLocation(6, 26).WithArguments("delegate", "interface"),
-                Diagnostic().WithLocation(10, 5).WithArguments("conversion", "operator"),
-                Diagnostic().WithLocation(11, 19).WithArguments("property", "conversion"),
-                Diagnostic().WithLocation(13, 17).WithArguments("method", "struct"),
-                Diagnostic().WithLocation(15, 19).WithArguments("indexer", "class"),
+                Diagnostic().WithLocation(6, 26).WithArguments("A delegate", "an interface"),
+                Diagnostic().WithLocation(10, 5).WithArguments("A conversion", "an operator"),
+                Diagnostic().WithLocation(11, 19).WithArguments("A property", "a conversion"),
+                Diagnostic().WithLocation(13, 17).WithArguments("A method", "a struct"),
+                Diagnostic().WithLocation(15, 19).WithArguments("An indexer", "a class"),
             };
 
             string fixedCode = @"public struct OuterType
@@ -297,8 +326,8 @@ public {classKeyword} FooClass {{ }}
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(0).WithArguments("event", "property"),
-                Diagnostic().WithLocation(1).WithArguments("indexer", "method"),
+                Diagnostic().WithLocation(0).WithArguments("An event", "a property"),
+                Diagnostic().WithLocation(1).WithArguments("An indexer", "a method"),
             };
 
             string fixedCode = @"public interface OuterType

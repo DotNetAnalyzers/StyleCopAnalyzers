@@ -87,7 +87,7 @@ public static class TestClass
 }
 ";
 
-            var expected = Diagnostic().WithLocation(0).WithArguments("extension", "property");
+            var expected = Diagnostic().WithLocation(0).WithArguments("An extension", "a property");
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -119,7 +119,7 @@ public static class TestClass
 }
 ";
 
-            var expected = Diagnostic().WithLocation(0).WithArguments("field", "extension");
+            var expected = Diagnostic().WithLocation(0).WithArguments("A field", "an extension");
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
