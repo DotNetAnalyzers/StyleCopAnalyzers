@@ -89,8 +89,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             SyntaxNode updatedRoot = root.ReplaceTokens(
                 tokensToUpdate,
                 (original, rewritten) => original == originalToken
-                    ? rewritten.WithLeadingTrivia(IndentLeadingTrivia(original, rewritten.LeadingTrivia, indentationStep, newTrivia))
-                    : rewritten.WithLeadingTrivia(IndentLeadingTrivia(original, rewritten.LeadingTrivia, indentationStep, default(SyntaxTriviaList))));
+                    ? rewritten.WithLeadingTrivia(IndentationHelper.IndentLeadingTrivia(original, rewritten.LeadingTrivia, indentationStep, newTrivia))
+                    : rewritten.WithLeadingTrivia(IndentationHelper.IndentLeadingTrivia(original, rewritten.LeadingTrivia, indentationStep, default(SyntaxTriviaList))));
             return document.WithSyntaxRoot(updatedRoot);
         }
 
@@ -112,50 +112,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             return null;
-        }
-
-        private static SyntaxTriviaList IndentLeadingTrivia(SyntaxToken original, SyntaxTriviaList leadingTrivia, string indentationStep, SyntaxTriviaList prefix)
-        {
-            SyntaxTriviaList previousTrailingTrivia = original.GetPreviousToken(includeZeroWidth: true).TrailingTrivia;
-            bool atLineStart = previousTrailingTrivia.Count > 0 && previousTrailingTrivia.Last().IsKind(SyntaxKind.EndOfLineTrivia);
-            var result = new List<SyntaxTrivia>(prefix);
-            for (int i = 0; i < leadingTrivia.Count; i++)
-            {
-                SyntaxTrivia trivia = leadingTrivia[i];
-                if (trivia.IsKind(SyntaxKind.EndOfLineTrivia))
-                {
-                    result.Add(trivia);
-                    atLineStart = true;
-                }
-                else if (trivia.IsKind(SyntaxKind.WhitespaceTrivia))
-                {
-                    bool isBlankLine = i + 1 < leadingTrivia.Count && leadingTrivia[i + 1].IsKind(SyntaxKind.EndOfLineTrivia);
-                    result.Add(atLineStart && !isBlankLine ? SyntaxFactory.Whitespace(indentationStep + trivia.ToString()) : trivia);
-                    atLineStart = false;
-                }
-                else if (trivia.IsDirective)
-                {
-                    result.Add(trivia);
-                    atLineStart = true;
-                }
-                else
-                {
-                    if (atLineStart)
-                    {
-                        result.Add(SyntaxFactory.Whitespace(indentationStep));
-                    }
-
-                    result.Add(trivia);
-                    atLineStart = false;
-                }
-            }
-
-            if (atLineStart && prefix.Count == 0)
-            {
-                result.Add(SyntaxFactory.Whitespace(indentationStep));
-            }
-
-            return SyntaxFactory.TriviaList(result);
         }
     }
 }
