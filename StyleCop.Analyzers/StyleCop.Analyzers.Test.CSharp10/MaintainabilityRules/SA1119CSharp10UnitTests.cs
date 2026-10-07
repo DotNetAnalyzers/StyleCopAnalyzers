@@ -24,7 +24,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.MaintainabilityRules
     public void TestMethod()
     {
         int a = 1;
-        (a, int c) = ((2, 3));
+        (a, int c) = {|#0:{|#1:(|}(2, 3){|#2:)|}|};
     }
 }";
 
@@ -39,9 +39,9 @@ namespace StyleCop.Analyzers.Test.CSharp10.MaintainabilityRules
 
             DiagnosticResult[] expected =
             {
-                Diagnostic(DiagnosticId).WithSpan(6, 22, 6, 30),
-                Diagnostic(ParenthesesDiagnosticId).WithSpan(6, 22, 6, 23),
-                Diagnostic(ParenthesesDiagnosticId).WithSpan(6, 29, 6, 30),
+                Diagnostic(DiagnosticId).WithLocation(0),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(1),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(2),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
