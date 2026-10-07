@@ -318,6 +318,12 @@ namespace StyleCop.Analyzers.LayoutRules
                         return;
                     }
 
+                    if (token.Parent is AccessorListSyntax && nextToken.IsKind(SyntaxKind.EqualsToken))
+                    {
+                        // the close brace is followed by a property initializer
+                        return;
+                    }
+
                     if ((nextToken.IsKind(SyntaxKind.PrivateKeyword)
                         || nextToken.IsKind(SyntaxKind.ProtectedKeyword)
                         || nextToken.IsKind(SyntaxKind.InternalKeyword))
