@@ -1,6 +1,6 @@
 ﻿# Configuring StyleCop Analyzers
 
-StyleCop Analyzers is configured using two separate mechanisms: code analysis rule set files, and **stylecop.json**.
+StyleCop Analyzers can be configured using multiple separate mechanisms:
 
 1. Code analysis rule set files
 
@@ -12,7 +12,11 @@ StyleCop Analyzers is configured using two separate mechanisms: code analysis ru
    * Specify project-specific text, such as the name of the company and the structure to use for copyright headers
    * Fine-tune the behavior of certain rules
 
-Code analysis rule sets are the standard way to configure most diagnostic analyzers within Visual Studio. Information about creating and customizing these files can be found in the [Using Rule Sets to Group Code Analysis Rules](https://docs.microsoft.com/visualstudio/code-quality/using-rule-sets-to-group-code-analysis-rules) documentation on docs.microsoft.com.
+3. **.editorconfig**
+
+   * Can be used in place of rule set files and **stylecop.json**
+
+Code analysis rule sets have been the standard way to configure most diagnostic analyzers within Visual Studio. Information about creating and customizing these files can be found in the [Using Rule Sets to Group Code Analysis Rules](https://docs.microsoft.com/visualstudio/code-quality/using-rule-sets-to-group-code-analysis-rules) documentation on docs.microsoft.com.
 
 An example rule set file containing the default StyleCop Analyzers configuration is available at <https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/StyleCop.Analyzers/StyleCop.Analyzers.CodeFixes/rulesets/StyleCopAnalyzersDefault.ruleset>.
 
@@ -47,8 +51,7 @@ For best results, **stylecop.json** should be included in source control. This w
 
 ## Indentation
 
-This section describes the indentation rules which can be configured in **stylecop.json**. Each of the described
-properties are configured in the `indentation` object, which is shown in the following sample file.
+This section describes the indentation rules which can be configured in **stylecop.json** or **.editorconfig**. Each of the described properties can be configured in the `indentation` object of the **stylecop.json** file, which is shown in the following sample.
 
 ```json
 {
@@ -61,7 +64,7 @@ properties are configured in the `indentation` object, which is shown in the fol
 
 ### Basic Indentation
 
-The following properties are used to configure basic indentation in StyleCop Analyzers.
+The following properties are used in **stylecop.json** to configure basic indentation in StyleCop Analyzers.
 
 | Property | Default Value | Minimum Version | Summary |
 | --- | --- | --- | --- |
@@ -69,14 +72,14 @@ The following properties are used to configure basic indentation in StyleCop Ana
 | `tabSize` | **4** | 1.1.0 | The width of a hard tab character in source code. This value is used when converting between tabs and spaces. |
 | `useTabs` | **false** | 1.1.0 | **true** to indent using hard tabs; otherwise, **false** to indent using spaces |
 
+When using an **.editorconfig** file to configure StyleCop Analyzers, the basic indentation settings (`indent_size`, `tab_width` and `indent_style`) as described at editorconfig.org can be used.
 > :bulb: When working in Visual Studio, the IDE will not automatically adjust editor settings according to the values in
-> **stylecop.json**. To provide this functionality as well, we recommend duplicating the basic indentation settings in a
-> [**.editorconfig**](http://editorconfig.org/) file. Users of the [EditorConfig](https://visualstudiogallery.msdn.microsoft.com/c8bccfe2-650c-4b42-bc5c-845e21f96328)
+> **stylecop.json**. To provide this functionality, we recommend using the **.editorconfig** file instead. Users of the [EditorConfig](https://visualstudiogallery.msdn.microsoft.com/c8bccfe2-650c-4b42-bc5c-845e21f96328)
 > extension for Visual Studio will not need to update their C# indentation settings in order to match your project style.
 
 ## Spacing Rules
 
-This section describes the features of spacing rules which can be configured in **stylecop.json**. Each of the described properties are configured in the `spacingRules` object, which is shown in the following sample file.
+This section describes the features of spacing rules which can be configured in **stylecop.json** or **.editorconfig**. Each of the described properties are configured in the `spacingRules` object of the **stylecop.json** file, which is shown in the following sample.
 
 ```json
 {
@@ -91,7 +94,7 @@ This section describes the features of spacing rules which can be configured in 
 
 ## Readability Rules
 
-This section describes the features of readability rules which can be configured in **stylecop.json**. Each of the described properties are configured in the `readabilityRules` object, which is shown in the following sample file.
+This section describes the features of readability rules which can be configured in **stylecop.json** or **.editorconfig**. Each of the described properties are configured in the `readabilityRules` object of the **stylecop.json** file, which is shown in the following sample.
 
 ```json
 {
@@ -103,6 +106,8 @@ This section describes the features of readability rules which can be configured
 ```
 
 ### Aliases for Built-In Types
+
+The following property is used in **stylecop.json** to configure aliases for built-in types.
 
 | Property | Default Value | Minimum Version | Summary |
 | --- | --- | --- | --- |
@@ -118,9 +123,14 @@ HRESULT hr = SomeNativeOperation(); // SA1121
 
 The `allowBuiltInTypeAliases` configuration property can be set to `true` to allow cases like this while continuing to report diagnostics for direct references to the metadata type name, `Int32`.
 
+When using an **.editorconfig** file to configure StyleCop Analyzers, the following property can be used:
+```ini
+stylecop.readability.allowBuiltInTypeAliases = true
+```
+
 ## Ordering Rules
 
-This section describes the features of ordering rules which can be configured in **stylecop.json**. Each of the described properties are configured in the `orderingRules` object, which is shown in the following sample file.
+This section describes the features of ordering rules which can be configured in **stylecop.json** or **.editorconfig**. Each of the described properties are configured in the `orderingRules` object of the **stylecop.json** file, which is shown in the following sample.
 
 ```json
 {
@@ -133,7 +143,7 @@ This section describes the features of ordering rules which can be configured in
 
 ### Element Order
 
-The following properties are used to configure element ordering in StyleCop Analyzers.
+The following properties are used in **stylecop.json** to configure element ordering in StyleCop Analyzers.
 
 | Property | Default Value | Minimum Version | Summary |
 | --- | --- | --- | --- |
@@ -194,15 +204,24 @@ rules remain enforced.
 }
 ```
 
+> :bulb: This property can currently not be set in an **.editorconfig** file.
+
 ### Using Directives
 
-The following properties are used to configure using directives in StyleCop Analyzers.
+The following properties are used in **stylecop.json** to configure using directives in StyleCop Analyzers.
 
 | Property | Default Value | Minimum Version | Summary |
 | --- | --- | --- | --- |
 | `systemUsingDirectivesFirst` | true | 1.0.0 | Specifies whether `System` using directives are placed before other using directives |
 | `usingDirectivesPlacement` | `"insideNamespace"` | 1.0.0 | Specifies the desired placement of using directives |
 | `blankLinesBetweenUsingGroups` | `"allow"` | 1.1.0 | Specifies is blank lines are required to separate groups of using statements |
+
+When using an **.editorconfig** file to configure StyleCop Analyzers, the respective properties for [formatting .NET/C#](https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/formatting-rules) can be used:
+```ini
+dotnet_sort_system_directives_first = true
+csharp_using_directive_placement = inside_namespace
+dotnet_separate_import_directive_groups = true
+```
 
 #### Using Directives Placement
 
@@ -281,7 +300,7 @@ In this mode, a blank line between groups for using directives is *not allowed*.
 
 ## Naming Rules
 
-This section describes the features of naming rules which can be configured in **stylecop.json**. Each of the described properties are configured in the `namingRules` object, which is shown in the following sample file.
+This section describes the features of naming rules which can be configured in **stylecop.json** or **.editorconfig**. Each of the described properties are configured in the `namingRules` object of the **stylecop.json** file, which is shown in the following sample.
 
 ```json
 {
@@ -294,7 +313,7 @@ This section describes the features of naming rules which can be configured in *
 
 ### Hungarian Notation
 
-The following properties are used to configure allowable Hungarian notation prefixes in StyleCop Analyzers.
+The following properties are used in **stylecop.json** to configure allowable Hungarian notation prefixes in StyleCop Analyzers.
 
 | Property | Default Value | Minimum Version | Summary |
 | --- | --- | --- | --- |
@@ -316,9 +335,15 @@ The following example shows a settings file which allows the common prefixes as 
 }
 ```
 
+When using an **.editorconfig** file to configure StyleCop Analyzers, the following properties can be used:
+```ini
+stylecop.naming.allowCommonHungarianPrefixes = true
+stylecop.naming.allowedHungarianPrefixes = cd, md
+```
+
 ### Namespace Components
 
-The following property is used to configure allowable namespace components (e.g. ones that start with a lowercase letter).
+The following property is used in **stylecop.json** to configure allowable namespace components (e.g. ones that start with a lowercase letter).
 
 | Property | Default Value | Minimum Version | Summary |
 | --- | --- | --- | --- |
@@ -339,10 +364,14 @@ The following example shows a settings file which allows namespace components su
 }
 ```
 
+When using an **.editorconfig** file to configure StyleCop Analyzers, the following property can be used:
+```ini
+stylecop.naming.allowedNamespaceComponents = eBay, iPod
+```
 
 ### Tuple element names
 
-The following properties are used to configure the behavior of the tuple element name analyzers.
+The following properties are used in **stylecop.json** to configure the behavior of the tuple element name analyzers.
 
 | Property | Default Value | Minimum Version | Summary |
 | --- | --- | --- | --- |
@@ -362,6 +391,12 @@ The following example shows a settings file which requires tuple element names t
 }
 ```
 
+When using an **.editorconfig** file to configure StyleCop Analyzers, the following properties can be used:
+```ini
+stylecop.naming.includeInferredTupleElementNames = true
+stylecop.naming.tupleElementNameCasing = camelCase
+```
+
 #### Tuple Element Name Casing
 The `tupleElementNameCasing` property affects the behavior of the [SA1316 Tuple element names should use correct casing](SA1316.md) analyzer.
 
@@ -376,7 +411,7 @@ In this mode, tuple element names must start with an uppercase letter.
 
 ## Maintainability Rules
 
-This section describes the features of maintainability rules which can be configured in **stylecop.json**. Each of the described properties are configured in the `maintainabilityRules` object, which is shown in the following sample file.
+This section describes the features of maintainability rules which can be configured in **stylecop.json** or **.editorconfig**. Each of the described properties are configured in the `maintainabilityRules` object of the **stylecop.json** file, which is shown in the following sample.
 
 ```json
 {
@@ -387,7 +422,7 @@ This section describes the features of maintainability rules which can be config
 }
 ```
 
-The following properties are used to configure maintainability rules in StyleCop Analyzers.
+The following properties are used in **stylecop.json** to configure maintainability rules in StyleCop Analyzers.
 
 | Property | Default Value | Minimum Version | Summary |
 | --- | --- | --- | --- |
@@ -401,9 +436,11 @@ according to rule SA1402. The following types are supported:
 * `enum`
 * `delegate`
 
+> :bulb: This property can currently not be set in an **.editorconfig** file.
+
 ## Layout Rules
 
-This section describes the features of layout rules which can be configured in **stylecop.json**. Each of the described properties are configured in the `layoutRules` object, which is shown in the following sample file.
+This section describes the features of layout rules which can be configured in **stylecop.json** or **.editorconfig**. Each of the described properties are configured in the `layoutRules` object of the **stylecop.json** file, which is shown in the following sample.
 
 ```json
 {
@@ -414,13 +451,19 @@ This section describes the features of layout rules which can be configured in *
 }
 ```
 
-The following properties are used to configure layout rules in StyleCop Analyzers.
+The following properties are used in **stylecop.json** to configure layout rules in StyleCop Analyzers.
 
 | Property | Default Value | Minimum Version | Summary |
 | --- | --- | --- | --- |
 | `newlineAtEndOfFile` | `"allow"` | 1.0.0 | Specifies the handling for newline characters which appear at the end of a file |
 | `allowConsecutiveUsings` | `true` | 1.1.0 | Specifies if SA1519 will allow consecutive using statements without braces |
 | `allowDoWhileOnClosingBrace` | `false` | >1.2.0 | Specifies if SA1500 will allow the `while` expression of a `do`/`while` loop to be on the same line as the closing brace, as is generated by the default code snippet of Visual Studio |
+
+When using an **.editorconfig** file to configure StyleCop Analyzers, the newline setting (`insert_final_newline`) as described at editorconfig.org can be used, and the following additional properties:
+```ini
+stylecop.layout.allowConsecutiveUsings = true
+stylecop.layout.allowDoWhileOnClosingBrace = false
+```
 
 ### Lines at End of File
 
@@ -451,7 +494,7 @@ The behavior of [SA1500](SA1500.md) can be customized regarding the manner in wh
 
 ## Documentation Rules
 
-This section describes the features of documentation rules which can be configured in **stylecop.json**. Each of the described properties are configured in the `documentationRules` object, which is shown in the following sample file.
+This section describes the features of documentation rules which can be configured in **stylecop.json** or **.editorconfig**. Each of the described properties are configured in the `documentationRules` object of the **stylecop.json** file, which is shown in the following sample.
 
 ```json
 {
@@ -464,7 +507,7 @@ This section describes the features of documentation rules which can be configur
 
 ### Copyright Headers
 
-The following properties are used to configure copyright headers in StyleCop Analyzers.
+The following properties are used in **stylecop.json** to configure copyright headers in StyleCop Analyzers.
 
 | Property | Default Value | Minimum Version | Summary |
 | --- | --- | --- | --- |
@@ -473,6 +516,18 @@ The following properties are used to configure copyright headers in StyleCop Ana
 | `xmlHeader` | **true** | 1.0.0 | Specifies whether file headers should use standard StyleCop XML format, where the copyright notice is wrapped in a `<copyright>` element |
 | `variables` | n/a | 1.0.0 | Specifies replacement variables which can be referenced in the `copyrightText` value |
 | `headerDecoration` | n/a | 1.1.0 | This value can be set to add a decoration for the header comment so headers look similar to the ones generated by the StyleCop Classic ReSharper fix |
+
+When using an **.editorconfig** file to configure StyleCop Analyzers, the following properties can be used:
+```ini
+stylecop.documentation.companyName = PlaceholderCompany
+stylecop.documentation.copyrightText = Copyright (c) {companyName}. All rights reserved.
+stylecop.documentation.xmlHeader = true
+stylecop.documentation.headerDecoration = -----------------
+```
+
+> :memo: Instead of `stylecop.documentation.copyrightText` the `file_header_template` property as described in [IDE0073 (Require file header)](https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0073) can be used. However the StyleCop specific property will take precedence.
+
+> :bulb: The `variables` property can currently not be set in an **.editorconfig** file.
 
 #### Configuring Copyright Text
 
@@ -602,6 +657,15 @@ The following example shows a configuration file which requires developers to do
 }
 ```
 
+When using an **.editorconfig** file to configure StyleCop Analyzers, the following properties can be used:
+```ini
+stylecop.documentation.documentInterfaces = true
+stylecop.documentation.documentExposedElements = true
+stylecop.documentation.documentInternalElements = true
+stylecop.documentation.documentPrivateElements = false
+stylecop.documentation.documentPrivateFields = false
+```
+
 ### Documentation Culture
 
 Some documentation rules require summary texts to start with specific strings. To allow teams to document their code in their native language, **stylecop.json** contains the `documentationCulture` property.
@@ -641,9 +705,19 @@ The following values are currently supported. Unsupported values will automatica
 }
 ```
 
+When using an **.editorconfig** file to configure StyleCop Analyzers, the following property can be used:
+```ini
+stylecop.documentation.documentationCulture = de-DE
+```
+
 ### File naming conventions
 
-The `fileNamingConvention` property will determine how the [SA1649 File name should match type name](SA1649.md) analyzer will check file names.
+The `fileNamingConvention` property in **stylecop.json** will determine how the [SA1649 File name should match type name](SA1649.md) analyzer will check file names.
+
+| Property | Default Value | Minimum Version | Summary |
+| --- | --- | --- | --- |
+| `fileNamingConvention` | `"stylecop"` |  1.0.0 | Specifies the convention for file names of generics. |
+
 Given the following code:
 
 ```csharp
@@ -659,13 +733,23 @@ File naming convention | Expected file name
 stylecop               | Class1{T1,T2,T3}.cs
 metadata               | Class1`3.cs
 
+When using an **.editorconfig** file to configure StyleCop Analyzers, the following property can be used:
+```ini
+stylecop.documentation.fileNamingConvention = stylecop
+```
+
 ### Text ending with a period
 
-The [SA1629 Documentation Text Must End With A Period](SA1629.md) analyzer checks if sections within XML documentation end with a period. The following properties can be used to control the behavior of the analyzer:
+The [SA1629 Documentation Text Must End With A Period](SA1629.md) analyzer checks if sections within XML documentation end with a period. The following properties can be used in **stylecop.json** to control the behavior of the analyzer:
 
 | Property | Default Value | Minimum Version | Summary |
 | --- | --- | --- | --- |
 | `excludeFromPunctuationCheck` | `[ "seealso" ]` |  1.1.0 | Specifies the top-level tags within XML documentation that will be excluded from analysis. |
+
+When using an **.editorconfig** file to configure StyleCop Analyzers, the following property can be used:
+```ini
+stylecop.documentation.excludeFromPunctuationCheck = seealso
+```
 
 ## Sharing configuration among solutions
 
