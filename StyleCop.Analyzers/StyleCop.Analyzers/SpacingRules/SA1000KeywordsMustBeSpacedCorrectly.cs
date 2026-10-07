@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.SpacingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
 
     /// <summary>
@@ -47,7 +48,7 @@ namespace StyleCop.Analyzers.SpacingRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
+        private static readonly Action<SyntaxTreeAnalysisContext, SyntaxTreeTokens> SyntaxTreeAction = HandleSyntaxTree;
         private static readonly Action<SyntaxNodeAnalysisContext> InvocationExpressionAction = HandleInvocationExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> IdentifierNameAction = HandleIdentifierName;
         private static readonly ReportDiagnosticCallback<SyntaxTreeAnalysisContext> ReportSyntaxTreeDiagnostic =
@@ -69,7 +70,7 @@ namespace StyleCop.Analyzers.SpacingRules
             context.EnableConcurrentExecution();
 
             // handle everything except nameof
-            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
+            context.RegisterSyntaxTreeTokensAction(SyntaxTreeAction);
 
             // handle nameof (which appears as an invocation expression??)
             context.RegisterSyntaxNodeAction(InvocationExpressionAction, SyntaxKind.InvocationExpression);
@@ -78,10 +79,9 @@ namespace StyleCop.Analyzers.SpacingRules
             context.RegisterSyntaxNodeAction(IdentifierNameAction, SyntaxKind.IdentifierName);
         }
 
-        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context, SyntaxTreeTokens tokens)
         {
-            SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
-            foreach (var token in root.DescendantTokens())
+            foreach (var token in tokens.GetTokens(context.CancellationToken))
             {
                 switch (token.Kind())
                 {

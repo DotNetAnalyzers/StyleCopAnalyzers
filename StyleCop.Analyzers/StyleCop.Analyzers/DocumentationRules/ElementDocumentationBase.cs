@@ -219,6 +219,16 @@ namespace StyleCop.Analyzers.DocumentationRules
             this.HandleDeclaration(context, settings, needsComment, node, node.Identifier.GetLocation());
         }
 
+        private bool HasMatchingElement(DocumentationCommentTriviaSyntax documentation)
+        {
+            if (string.IsNullOrEmpty(this.matchElementName))
+            {
+                return true;
+            }
+
+            return documentation.Content.GetFirstXmlElement(this.matchElementName) != null;
+        }
+
         private void HandleDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, SyntaxNode node, params Location[] locations)
         {
             var documentation = node.GetDocumentationCommentTriviaSyntax();
@@ -228,10 +238,14 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
+            var inheritdocElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag);
             if (this.inheritDocSuppressesWarnings
-                && documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag) != null)
+                && inheritdocElement != null
+                && (XmlCommentHelper.CanInheritDocumentation(node, inheritdocElement, context.SemanticModel, context.CancellationToken)
+                    || !this.HasMatchingElement(documentation)))
             {
-                // Ignore nodes with an <inheritdoc/> tag.
+                // Ignore nodes with an <inheritdoc/> tag. Without anything to inherit, the tag only stands in for
+                // documentation that is missing entirely; text written by the user is still validated.
                 return;
             }
 

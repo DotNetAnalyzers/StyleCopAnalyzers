@@ -74,7 +74,7 @@ namespace StyleCop.Analyzers.SpacingRules
         private static readonly LocalizableString MessagePreceded = new LocalizableResourceString(nameof(SpacingResources.SA1024MessagePreceded), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString MessageFollowed = new LocalizableResourceString(nameof(SpacingResources.SA1024MessageFollowed), SpacingResources.ResourceManager, typeof(SpacingResources));
 
-        private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
+        private static readonly Action<SyntaxTreeAnalysisContext, SyntaxTreeTokens> SyntaxTreeAction = HandleSyntaxTree;
 
 #pragma warning disable SA1202 // Elements should be ordered by access
         internal static readonly DiagnosticDescriptor DescriptorNotPreceded =
@@ -97,13 +97,12 @@ namespace StyleCop.Analyzers.SpacingRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
+            context.RegisterSyntaxTreeTokensAction(SyntaxTreeAction);
         }
 
-        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context, SyntaxTreeTokens tokens)
         {
-            SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
-            foreach (var token in root.DescendantTokens())
+            foreach (var token in tokens.GetTokens(context.CancellationToken))
             {
                 if (token.IsKind(SyntaxKind.ColonToken))
                 {
