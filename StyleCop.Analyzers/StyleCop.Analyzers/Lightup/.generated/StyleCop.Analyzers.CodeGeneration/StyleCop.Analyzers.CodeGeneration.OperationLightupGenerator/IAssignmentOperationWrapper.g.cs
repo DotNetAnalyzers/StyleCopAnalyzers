@@ -30,6 +30,7 @@ namespace StyleCop.Analyzers.Lightup
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public IOperation Target => TargetAccessor(this.WrappedOperation);
         public IOperation Value => ValueAccessor(this.WrappedOperation);
+
         public static explicit operator IAssignmentOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IAssignmentOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IAssignmentOperationWrapper FromOperation(IOperation operation)

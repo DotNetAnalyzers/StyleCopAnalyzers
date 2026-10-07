@@ -62,7 +62,7 @@
 
   <!-- C# Compiler -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.Net.Compilers.Toolset" Version="4.0.1" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Net.Compilers.Toolset" Version="5.0.0" PrivateAssets="all" />
   </ItemGroup>
 
   <!-- Public API -->

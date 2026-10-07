@@ -43,7 +43,7 @@ jobs:
         fetch-depth: 0 # Nerdbank.GitVersioning needs full history
 
     - name: Setup .NET SDK (from global.json)
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v6
       with:
         global-json-file: global.json
 
@@ -220,9 +220,10 @@ jobs:
       with:
         nuget-version: '6.0.6'
 
-    # coverlet.console (net6.0 tool) needs a .NET 6 runtime; global.json's SDK provides it.
+    # coverlet.console is a net6.0 tool whose runtimeconfig allows major-version roll forward
+    # (rollForwardOnNoCandidateFx: 2), so it runs on the .NET 10 runtime from global.json's SDK.
     - name: Setup .NET SDK (from global.json)
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v6
       with:
         global-json-file: global.json
 

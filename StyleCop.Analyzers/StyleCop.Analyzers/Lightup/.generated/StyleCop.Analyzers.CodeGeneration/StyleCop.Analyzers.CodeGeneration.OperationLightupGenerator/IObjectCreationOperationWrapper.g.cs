@@ -33,6 +33,7 @@ namespace StyleCop.Analyzers.Lightup
         public IMethodSymbol Constructor => ConstructorAccessor(this.WrappedOperation);
         public IObjectOrCollectionInitializerOperationWrapper Initializer => IObjectOrCollectionInitializerOperationWrapper.FromOperation(InitializerAccessor(this.WrappedOperation));
         public ImmutableArray<IOperation> Arguments => ArgumentsAccessor(this.WrappedOperation);
+
         public static explicit operator IObjectCreationOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IObjectCreationOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IObjectCreationOperationWrapper FromOperation(IOperation operation)

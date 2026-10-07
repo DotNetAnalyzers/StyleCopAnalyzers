@@ -45,6 +45,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public TypeSyntax SyntaxNode => this.node;
 
+
         public SyntaxToken DelegateKeyword
         {
             get
