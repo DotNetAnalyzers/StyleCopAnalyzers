@@ -141,6 +141,13 @@ jobs:
         path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp14/bin/${{ matrix.configuration }}/net472
         if-no-files-found: error
         retention-days: 3
+    - name: Upload test binaries (C# 15)
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-bin-cs15-${{ matrix.configuration }}
+        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp15/bin/${{ matrix.configuration }}/net472
+        if-no-files-found: error
+        retention-days: 3
 
     # Equivalent of AppVeyor's test_script. Best effort: on windows-latest (VS 2022) the generator's old
     # MSBuildWorkspace currently fails with ReflectionTypeLoadException during MEF composition, which is a
@@ -171,7 +178,7 @@ jobs:
       fail-fast: false
       matrix:
         configuration: [ Debug, Release ]
-        langVersion: [ '6', '7', '8', '9', '10', '11', '12', '13', '14' ]
+        langVersion: [ '6', '7', '8', '9', '10', '11', '12', '13', '14', '15' ]
         include:
         - langVersion: '6'
           framework: net452
@@ -200,6 +207,9 @@ jobs:
         - langVersion: '14'
           framework: net472
           project: StyleCop.Analyzers.Test.CSharp14
+        - langVersion: '15'
+          framework: net472
+          project: StyleCop.Analyzers.Test.CSharp15
 
     steps:
     - name: Checkout
