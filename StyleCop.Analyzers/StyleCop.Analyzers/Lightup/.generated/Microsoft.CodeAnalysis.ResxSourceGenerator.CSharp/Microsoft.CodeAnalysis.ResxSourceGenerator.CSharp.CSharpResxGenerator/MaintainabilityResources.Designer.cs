@@ -114,11 +114,11 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         public static string @SA1412Title => GetResourceString("SA1412Title")!;
         /// <summary>Add trailing comma</summary>
         public static string @SA1413CodeFix => GetResourceString("SA1413CodeFix")!;
-        /// <summary>A multi-line initializer in a C# code file should use a comma on the last line.</summary>
+        /// <summary>A multi-line initializer, enum, switch expression or property pattern in a C# code file should use a comma on the last line.</summary>
         public static string @SA1413Description => GetResourceString("SA1413Description")!;
-        /// <summary>Use trailing comma in multi-line initializers</summary>
+        /// <summary>Use trailing comma in multi-line initializers and lists</summary>
         public static string @SA1413MessageFormat => GetResourceString("SA1413MessageFormat")!;
-        /// <summary>Use trailing comma in multi-line initializers</summary>
+        /// <summary>Use trailing comma in multi-line initializers and lists</summary>
         public static string @SA1413Title => GetResourceString("SA1413Title")!;
         /// <summary>Tuple types appearing in member declarations should have explicitly named tuple elements.</summary>
         public static string @SA1414Description => GetResourceString("SA1414Description")!;
