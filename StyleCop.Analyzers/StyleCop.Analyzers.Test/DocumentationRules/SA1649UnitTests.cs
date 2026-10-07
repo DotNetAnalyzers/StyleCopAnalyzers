@@ -533,10 +533,13 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
                     },
                 },
 
-                // Fails without this. Hard to be sure why this is needed, since the error message is not so good,
-                // but one guess could be that the test framework does not respect the fact that both projects
-                // point to the same file, and only inserts '#pragma warning disable' in the primary project's file.
-                // Then we would still get a diagnostic in the additional project.
+                // The test framework's suppression check inserts '#pragma warning disable SA1649' only into the
+                // primary project's sources and re-runs the analyzer; additional projects are left unchanged. Since
+                // both projects contain a document with the same path (which is what links them), the framework
+                // treats the Project2 diagnostic as belonging to a primary-project source file and expects it to be
+                // suppressed, but Project2's copy has no pragma, so the diagnostic is still reported. See
+                // AnalyzerTest<TVerifier>.VerifySuppressionDiagnosticsAsync and IsInSourceFile in
+                // Microsoft.CodeAnalysis.Testing. The other SA1649 tests still cover the suppression check.
                 TestBehaviors = TestBehaviors.SkipSuppressionCheck,
             }.RunAsync().ConfigureAwait(false);
         }
