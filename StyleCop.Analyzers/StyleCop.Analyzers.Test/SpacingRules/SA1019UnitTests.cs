@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System;
@@ -12,6 +10,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.SpacingRules.SA1019MemberAccessSymbolsMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -47,6 +46,20 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         {
             string template = this.GetTemplate($" {op}");
             var fixedCode = this.GetTemplate($"{op}");
+
+            DiagnosticResult expected = Diagnostic(DescriptorNotPreceded).WithLocation(16, 27).WithArguments(op[0]);
+
+            await VerifyCSharpFixAsync(template, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestSpaceBeforeOperatorWithLineEndingsAsync(string lineEnding)
+        {
+            const string op = ".";
+            string template = this.GetTemplate($" {op}").ReplaceLineEndings(lineEnding);
+            var fixedCode = this.GetTemplate($"{op}").ReplaceLineEndings(lineEnding);
 
             DiagnosticResult expected = Diagnostic(DescriptorNotPreceded).WithLocation(16, 27).WithArguments(op[0]);
 

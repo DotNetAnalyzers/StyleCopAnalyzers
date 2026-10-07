@@ -51,6 +51,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly Action<SyntaxNodeAnalysisContext> ConstructorDeclarationAction = HandleConstructorDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> InvocationExpressionAction = HandleInvocationExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> ObjectCreationExpressionAction = HandleObjectCreationExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> ImplicitObjectCreationExpressionAction = HandleImplicitObjectCreationExpression;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -67,6 +68,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(ConstructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
             context.RegisterSyntaxNodeAction(InvocationExpressionAction, SyntaxKind.InvocationExpression);
             context.RegisterSyntaxNodeAction(ObjectCreationExpressionAction, SyntaxKind.ObjectCreationExpression);
+            context.RegisterSyntaxNodeAction(ImplicitObjectCreationExpressionAction, SyntaxKindEx.ImplicitObjectCreationExpression);
         }
 
         private static void HandleObjectCreationExpression(SyntaxNodeAnalysisContext context)
@@ -86,6 +88,28 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     context,
                     objectCreation.ArgumentList.OpenParenToken,
                     objectCreation.ArgumentList.CloseParenToken);
+            }
+        }
+
+        private static void HandleImplicitObjectCreationExpression(SyntaxNodeAnalysisContext context)
+        {
+            var implicitObjectCreation = (ImplicitObjectCreationExpressionSyntaxWrapper)context.Node;
+            var argumentList = implicitObjectCreation.ArgumentList;
+
+            if (argumentList == null ||
+                argumentList.IsMissing ||
+                argumentList.Arguments.Count > 0)
+            {
+                return;
+            }
+
+            if (!argumentList.OpenParenToken.IsMissing &&
+                !argumentList.CloseParenToken.IsMissing)
+            {
+                CheckIfLocationOfOpenAndCloseTokensAreTheSame(
+                    context,
+                    argumentList.OpenParenToken,
+                    argumentList.CloseParenToken);
             }
         }
 

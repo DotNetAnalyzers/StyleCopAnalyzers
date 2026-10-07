@@ -72,10 +72,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
             }
 
+            var options = document.Project.Solution.Workspace.Options;
+            var endOfLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(originalToken, sourceText, options);
             var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, tree, cancellationToken);
             SyntaxTriviaList newTrivia =
                 SyntaxFactory.TriviaList(
-                    SyntaxFactory.CarriageReturnLineFeed,
+                    endOfLineTrivia,
                     SyntaxFactory.Whitespace(lineText.Substring(0, indentLength) + IndentationHelper.GenerateIndentationString(settings.Indentation, 1)));
 
             SyntaxToken updatedToken = originalToken.WithLeadingTrivia(originalToken.LeadingTrivia.AddRange(newTrivia));

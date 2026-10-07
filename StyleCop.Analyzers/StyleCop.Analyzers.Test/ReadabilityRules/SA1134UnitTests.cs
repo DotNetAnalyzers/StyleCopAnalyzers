@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1134AttributesMustNotShareLine,
@@ -41,10 +42,7 @@ public class TestClass
         /// <param name="typeDeclaration">The type declaration to check.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
-        [InlineData("interface")]
-        [InlineData("enum")]
+        [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task VerifyMultipleAttributesOnSameLineForTypeDeclarationsAsync(string typeDeclaration)
         {
             var testCode = $@"using System.ComponentModel;
@@ -54,12 +52,12 @@ namespace TestNamespace
     /// <summary>
     /// Test class.
     /// </summary>
-    [EditorBrowsable(EditorBrowsableState.Never)][DesignOnly(true)]
+    [EditorBrowsable(EditorBrowsableState.Never)]{{|#0:[|}}DesignOnly(true)]
     public {typeDeclaration} Test
     {{
     }}
 
-    [DesignOnly(true)] public {typeDeclaration} Test2
+    {{|#1:[|}}DesignOnly(true)] public {typeDeclaration} Test2
     {{
     }}
 }}
@@ -87,8 +85,60 @@ namespace TestNamespace
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(8, 50),
-                Diagnostic().WithLocation(13, 5),
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task VerifyMultipleAttributesOnSameLineForTypeDeclarationsWithLineEndingsAsync(string lineEnding)
+        {
+            var testCode = @"using System.ComponentModel;
+
+namespace TestNamespace
+{
+    /// <summary>
+    /// Test class.
+    /// </summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]{|#0:[|}DesignOnly(true)]
+    public class Test
+    {
+    }
+
+    {|#1:[|}DesignOnly(true)] public class Test2
+    {
+    }
+}
+".ReplaceLineEndings(lineEnding);
+
+            var fixedTestCode = @"using System.ComponentModel;
+
+namespace TestNamespace
+{
+    /// <summary>
+    /// Test class.
+    /// </summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [DesignOnly(true)]
+    public class Test
+    {
+    }
+
+    [DesignOnly(true)]
+    public class Test2
+    {
+    }
+}
+".ReplaceLineEndings(lineEnding);
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);

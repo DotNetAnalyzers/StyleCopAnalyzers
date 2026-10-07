@@ -125,6 +125,24 @@ internal {keyword} TestClass1 {{ }}
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestTypeOrderingWithLineEndingsAsync(string lineEnding)
+        {
+            var testCode = @"internal class TestClass1 { }
+public class {|#0:TestClass2|} { }
+".ReplaceLineEndings(lineEnding);
+
+            var expected = Diagnostic().WithLocation(0).WithArguments("public", "internal");
+
+            var fixedCode = @"public class TestClass2 { }
+internal class TestClass1 { }
+".ReplaceLineEndings(lineEnding);
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Verifies that the analyzer will properly handle interfaces before classes.
         /// </summary>
@@ -986,6 +1004,24 @@ public class TestClass : TestInterface
                 // /0/Test0.cs(6,1): error CS1519: Invalid token '}' in class, record, struct, or interface member declaration
                 DiagnosticResult.CompilerError("CS1519").WithLocation(6, 1).WithArguments("}"),
             };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3971, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3971")]
+        public async Task TestPartialMethodImplicitPrivateOrderingAsync()
+        {
+            var testCode = @"
+public partial class TestClass
+{
+    partial void TestMethod();
+
+    public void {|#0:PublicMethod|}() { }
+}
+";
+
+            var expected = Diagnostic().WithLocation(0).WithArguments("public", "private");
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }

@@ -1,12 +1,11 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp9.OrderingRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -62,6 +61,73 @@ class A
                     Diagnostic().WithLocation(2).WithArguments("System.Threading.Tasks", "Xyz"),
                 },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3964, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3964")]
+        public async Task TestWhenSystemGlobalUsingDirectivesAreNotOnTopAsync()
+        {
+            await new CSharpTest
+            {
+                TestSources =
+                {
+                    "namespace Xyz {}",
+                    "namespace AnotherNamespace {}",
+                    @"
+global using Xyz;
+{|#0:global using System;|}
+{|#1:global using System.IO;|}
+global using AnotherNamespace;
+{|#2:global using System.Threading.Tasks;|}
+
+class A
+{
+}",
+                },
+                FixedSources =
+                {
+                    "namespace Xyz {}",
+                    "namespace AnotherNamespace {}",
+                    @"
+global using System;
+global using System.IO;
+global using System.Threading.Tasks;
+global using AnotherNamespace;
+global using Xyz;
+
+class A
+{
+}",
+                },
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(0).WithArguments("System", "Xyz"),
+                    Diagnostic().WithLocation(1).WithArguments("System.IO", "Xyz"),
+                    Diagnostic().WithLocation(2).WithArguments("System.Threading.Tasks", "Xyz"),
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3964, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3964")]
+        public async Task TestGlobalUsingDirectivesAreAnalyzedIndependentlyFromLocalUsingDirectivesAsync()
+        {
+            var testCode = @"global using Xyz;
+
+using System;
+
+namespace Xyz
+{
+    public class Placeholder
+    {
+    }
+}
+
+class TestClass
+{
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

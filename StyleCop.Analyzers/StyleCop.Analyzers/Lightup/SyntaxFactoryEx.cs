@@ -19,6 +19,8 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<SyntaxToken, SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>, SyntaxToken, CSharpSyntaxNode> PositionalPatternClauseAccessor2;
         private static readonly Func<SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>, CSharpSyntaxNode> PropertyPatternClauseAccessor1;
         private static readonly Func<SyntaxToken, SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>, SyntaxToken, CSharpSyntaxNode> PropertyPatternClauseAccessor2;
+        private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode> ParenthesizedPatternAccessor1;
+        private static readonly Func<SyntaxToken, CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> ParenthesizedPatternAccessor3;
         private static readonly Func<TypeSyntax, CSharpSyntaxNode> TupleElementAccessor1;
         private static readonly Func<TypeSyntax, SyntaxToken, CSharpSyntaxNode> TupleElementAccessor2;
         private static readonly Func<SeparatedSyntaxList<ArgumentSyntax>, ExpressionSyntax> TupleExpressionAccessor1;
@@ -130,6 +132,55 @@ namespace StyleCop.Analyzers.Lightup
             else
             {
                 PropertyPatternClauseAccessor2 = ThrowNotSupportedOnFallback<SyntaxToken, SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>, SyntaxToken, TypeSyntax>(nameof(SyntaxFactory), nameof(PropertyPatternClause));
+            }
+
+            var parenthesizedPatternMethods = typeof(SyntaxFactory).GetTypeInfo().GetDeclaredMethods(nameof(ParenthesizedPattern));
+            var parenthesizedPatternMethod = parenthesizedPatternMethods.FirstOrDefault(method => method.GetParameters().Length == 1 && method.GetParameters()[0].ParameterType == SyntaxWrapperHelper.GetWrappedType(typeof(PatternSyntaxWrapper)));
+            if (parenthesizedPatternMethod is object)
+            {
+                var patternParameter = Expression.Parameter(typeof(CSharpSyntaxNode), "pattern");
+                Expression<Func<CSharpSyntaxNode, CSharpSyntaxNode>> expression =
+                    Expression.Lambda<Func<CSharpSyntaxNode, CSharpSyntaxNode>>(
+                        Expression.Call(
+                            parenthesizedPatternMethod,
+                            Expression.Convert(
+                                patternParameter,
+                                parenthesizedPatternMethod.GetParameters()[0].ParameterType)),
+                        patternParameter);
+                ParenthesizedPatternAccessor1 = expression.Compile();
+            }
+            else
+            {
+                ParenthesizedPatternAccessor1 = ThrowNotSupportedOnFallback<CSharpSyntaxNode, CSharpSyntaxNode>(nameof(SyntaxFactory), nameof(ParenthesizedPattern));
+            }
+
+            parenthesizedPatternMethod = parenthesizedPatternMethods.FirstOrDefault(method => method.GetParameters().Length == 3
+                && method.GetParameters()[0].ParameterType == typeof(SyntaxToken)
+                && method.GetParameters()[1].ParameterType == typeof(SeparatedSyntaxList<>).MakeGenericType(SyntaxWrapperHelper.GetWrappedType(typeof(SubpatternSyntaxWrapper)))
+                && method.GetParameters()[2].ParameterType == typeof(SyntaxToken));
+            if (parenthesizedPatternMethod is object)
+            {
+                var openParenTokenParameter = Expression.Parameter(typeof(SyntaxToken), "openParenToken");
+                var patternParameter = Expression.Parameter(typeof(CSharpSyntaxNode), "pattern");
+                var closeParenTokenParameter = Expression.Parameter(typeof(SyntaxToken), "closeParenToken");
+
+                Expression<Func<SyntaxToken, CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode>> expression =
+                    Expression.Lambda<Func<SyntaxToken, CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode>>(
+                        Expression.Call(
+                            parenthesizedPatternMethod,
+                            openParenTokenParameter,
+                            Expression.Convert(
+                                patternParameter,
+                                parenthesizedPatternMethod.GetParameters()[1].ParameterType),
+                            closeParenTokenParameter),
+                        openParenTokenParameter,
+                        patternParameter,
+                        closeParenTokenParameter);
+                ParenthesizedPatternAccessor3 = expression.Compile();
+            }
+            else
+            {
+                ParenthesizedPatternAccessor3 = ThrowNotSupportedOnFallback<SyntaxToken, CSharpSyntaxNode, SyntaxToken, TypeSyntax>(nameof(SyntaxFactory), nameof(ParenthesizedPattern));
             }
 
             var tupleElementMethods = typeof(SyntaxFactory).GetTypeInfo().GetDeclaredMethods(nameof(TupleElement));
@@ -274,6 +325,16 @@ namespace StyleCop.Analyzers.Lightup
         public static PropertyPatternClauseSyntaxWrapper PropertyPatternClause(SyntaxToken openBraceToken, SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper> subpatterns, SyntaxToken closeBraceToken)
         {
             return (PropertyPatternClauseSyntaxWrapper)PropertyPatternClauseAccessor2(openBraceToken, subpatterns, closeBraceToken);
+        }
+
+        public static ParenthesizedPatternSyntaxWrapper ParenthesizedPattern(PatternSyntaxWrapper pattern)
+        {
+            return (ParenthesizedPatternSyntaxWrapper)ParenthesizedPatternAccessor1(pattern);
+        }
+
+        public static ParenthesizedPatternSyntaxWrapper ParenthesizedPattern(SyntaxToken openParenToken, PatternSyntaxWrapper pattern, SyntaxToken closeParenToken)
+        {
+            return (ParenthesizedPatternSyntaxWrapper)ParenthesizedPatternAccessor3(openParenToken, pattern, closeParenToken);
         }
 
         public static TupleElementSyntaxWrapper TupleElement(TypeSyntax type)

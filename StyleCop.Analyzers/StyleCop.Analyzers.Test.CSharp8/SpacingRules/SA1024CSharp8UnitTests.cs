@@ -1,12 +1,11 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp7.SpacingRules;
     using Xunit;
     using static StyleCop.Analyzers.SpacingRules.SA1024ColonsMustBeSpacedCorrectly;
@@ -25,7 +24,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
         [WorkItem(3053, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3053")]
         public async Task TestColonAfterClosingBraceInPatternAsync()
         {
-            const string testCode = @"using System;
+            string testCode = @"using System;
 
 public class Foo
 {
@@ -33,12 +32,12 @@ public class Foo
     {
         switch (value)
         {
-        case Exception { Message: { } message } :
+        case Exception { Message: { } message } {|#0::|}
             break;
         }
     }
 }";
-            const string fixedCode = @"using System;
+            string fixedCode = @"using System;
 
 public class Foo
 {
@@ -52,7 +51,47 @@ public class Foo
     }
 }";
 
-            var expected = Diagnostic(DescriptorNotPreceded).WithSpan(9, 49, 9, 50);
+            var expected = Diagnostic(DescriptorNotPreceded).WithLocation(0);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3003, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3003")]
+        public async Task TestPropertyPatternColonSpacingAsync()
+        {
+            string testCode = @"
+public class TestClass
+{
+    public bool Test(SomeType value) => value is { X {|#0::|}1, Y{|#1::|}2 };
+}
+
+public class SomeType
+{
+    public int X { get; set; }
+    public int Y { get; set; }
+}
+";
+
+            string fixedCode = @"
+public class TestClass
+{
+    public bool Test(SomeType value) => value is { X: 1, Y: 2 };
+}
+
+public class SomeType
+{
+    public int X { get; set; }
+    public int Y { get; set; }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DescriptorNotPreceded).WithLocation(0),
+                Diagnostic(DescriptorFollowed).WithLocation(0),
+                Diagnostic(DescriptorFollowed).WithLocation(1),
+            };
+
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }

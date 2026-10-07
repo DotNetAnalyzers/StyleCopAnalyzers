@@ -303,11 +303,8 @@ public class Foo
         }
     }
 }";
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS0501").WithMessage("'Foo.Prop.get' must declare a body because it is not marked abstract, extern, or partial").WithLocation(6, 9),
-            };
 
+            var expected = this.GetExpectedResultAccessorWithoutBody();
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -386,6 +383,14 @@ public class Foo
                 FixedCode = fixedTestCodeMultiple,
                 CodeActionIndex = 1,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultAccessorWithoutBody()
+        {
+            return new DiagnosticResult[]
+            {
+                DiagnosticResult.CompilerError("CS0501").WithMessage("'Foo.Prop.get' must declare a body because it is not marked abstract, extern, or partial").WithLocation(6, 9),
+            };
         }
     }
 }

@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.MaintainabilityRules.SA1407ArithmeticExpressionsMustDeclarePrecedence,
@@ -54,17 +55,19 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestAdditionMultiplicationAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestAdditionMultiplicationAsync(string lineEnding)
         {
             var testCode = @"public class Foo
 {
     public void Bar()
     {
-        int x = 1 + 1 * 1;
+        int x = 1 + {|#0:1 * 1|};
     }
-}";
-            DiagnosticResult expected = Diagnostic().WithLocation(5, 21);
+}".ReplaceLineEndings(lineEnding);
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
 
             var fixedCode = @"public class Foo
 {
@@ -72,7 +75,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     {
         int x = 1 + (1 * 1);
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }

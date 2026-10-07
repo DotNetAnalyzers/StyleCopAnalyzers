@@ -69,10 +69,14 @@ namespace StyleCop.Analyzers.OrderingRules
                     continue;
                 }
 
+                // Force preserving the placement of using directives when we are fixing a diagnostic not directly
+                // related to placement of using directives inside/outside namespaces.
+                bool forcePreservePlacement = !isSA1200;
+
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         OrderingResources.UsingCodeFix,
-                        cancellationToken => GetTransformedDocumentAsync(context.Document, syntaxRoot, !isSA1200, cancellationToken),
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, syntaxRoot, forcePreservePlacement, cancellationToken),
                         nameof(UsingCodeFixProvider)),
                     diagnostic);
             }
@@ -84,11 +88,15 @@ namespace StyleCop.Analyzers.OrderingRules
             var compilationUnit = (CompilationUnitSyntax)syntaxRoot;
 
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            var sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
             var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, semanticModel.SyntaxTree, cancellationToken);
             var usingDirectivesPlacement = forcePreservePlacement ? UsingDirectivesPlacement.Preserve : DeterminePlacement(compilationUnit, settings);
 
             var usingsHelper = new UsingsSorter(settings, semanticModel, compilationUnit, fileHeader);
             var usingsIndentation = DetermineIndentation(compilationUnit, settings.Indentation, usingDirectivesPlacement);
+
+            var options = document.Project.Solution.Workspace.Options;
+            var endOfLine = FormattingHelper.GetEndOfLineForCodeFix(syntaxRoot.GetFirstToken(includeZeroWidth: true), sourceText, options);
 
             // - The strategy is to strip all using directive that are not inside a conditional directive and replace them later with a sorted list at the correct spot
             // - The using directives that are inside a conditional directive are replaced (in sorted order) on the spot.
@@ -100,7 +108,7 @@ namespace StyleCop.Analyzers.OrderingRules
             // When there are multiple namespaces, do not move using statements outside of them, only sort.
             if (usingDirectivesPlacement == UsingDirectivesPlacement.Preserve)
             {
-                BuildReplaceMapForNamespaces(usingsHelper, replaceMap, settings.Indentation, false);
+                BuildReplaceMapForNamespaces(usingsHelper, replaceMap, settings.Indentation, endOfLine, false);
                 stripList = new List<UsingDirectiveSyntax>();
             }
             else
@@ -108,18 +116,20 @@ namespace StyleCop.Analyzers.OrderingRules
                 stripList = BuildStripList(usingsHelper);
             }
 
-            BuildReplaceMapForConditionalDirectives(usingsHelper, replaceMap, settings.Indentation, usingsHelper.ConditionalRoot);
+            BuildReplaceMapForConditionalDirectives(usingsHelper, replaceMap, settings.Indentation, endOfLine, usingsHelper.ConditionalRoot);
 
             var usingSyntaxRewriter = new UsingSyntaxRewriter(stripList, replaceMap, fileHeader);
             var newSyntaxRoot = usingSyntaxRewriter.Visit(syntaxRoot);
 
             if (usingDirectivesPlacement == UsingDirectivesPlacement.InsideNamespace)
             {
-                newSyntaxRoot = AddUsingsToNamespace(newSyntaxRoot, usingsHelper, usingsIndentation, replaceMap.Any());
+                newSyntaxRoot = AddUsingsToNamespace(newSyntaxRoot, endOfLine, usingsHelper, usingsIndentation, replaceMap.Any());
             }
-            else if (usingDirectivesPlacement == UsingDirectivesPlacement.OutsideNamespace)
+
+            if (usingDirectivesPlacement != UsingDirectivesPlacement.Preserve)
             {
-                newSyntaxRoot = AddUsingsToCompilationRoot(newSyntaxRoot, usingsHelper, usingsIndentation, replaceMap.Any());
+                bool onlyGlobal = usingDirectivesPlacement == UsingDirectivesPlacement.InsideNamespace;
+                newSyntaxRoot = AddUsingsToCompilationRoot(newSyntaxRoot, endOfLine, usingsHelper, replaceMap.Any(), onlyGlobal);
             }
 
             // Final cleanup
@@ -206,7 +216,7 @@ namespace StyleCop.Analyzers.OrderingRules
             return usingsHelper.GetContainedUsings(TreeTextSpan.Empty).ToList();
         }
 
-        private static void BuildReplaceMapForNamespaces(UsingsSorter usingsHelper, Dictionary<UsingDirectiveSyntax, UsingDirectiveSyntax> replaceMap, IndentationSettings indentationSettings, bool qualifyNames)
+        private static void BuildReplaceMapForNamespaces(UsingsSorter usingsHelper, Dictionary<UsingDirectiveSyntax, UsingDirectiveSyntax> replaceMap, IndentationSettings indentationSettings, SyntaxTrivia endOfLine, bool qualifyNames)
         {
             var usingsPerNamespace = usingsHelper
                 .GetContainedUsings(TreeTextSpan.Empty)
@@ -229,7 +239,7 @@ namespace StyleCop.Analyzers.OrderingRules
                     var indentation = IndentationHelper.GenerateIndentationString(indentationSettings, indentationSteps);
                     var withLeadingBlankLine = usingList[0].Parent.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration);
 
-                    var modifiedUsings = usingsHelper.GenerateGroupedUsings(usingList, indentation, withLeadingBlankLine, withTrailingBlankLine: false, qualifyNames);
+                    var modifiedUsings = usingsHelper.GenerateGroupedUsings(usingList, indentation, endOfLine, withLeadingBlankLine, withTrailingBlankLine: false, qualifyNames);
 
                     for (var i = 0; i < usingList.Count; i++)
                     {
@@ -239,7 +249,7 @@ namespace StyleCop.Analyzers.OrderingRules
             }
         }
 
-        private static void BuildReplaceMapForConditionalDirectives(UsingsSorter usingsHelper, Dictionary<UsingDirectiveSyntax, UsingDirectiveSyntax> replaceMap, IndentationSettings indentationSettings, TreeTextSpan rootSpan)
+        private static void BuildReplaceMapForConditionalDirectives(UsingsSorter usingsHelper, Dictionary<UsingDirectiveSyntax, UsingDirectiveSyntax> replaceMap, IndentationSettings indentationSettings, SyntaxTrivia endOfLine, TreeTextSpan rootSpan)
         {
             foreach (var childSpan in rootSpan.Children)
             {
@@ -257,7 +267,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
                     var indentation = IndentationHelper.GenerateIndentationString(indentationSettings, indentationSteps);
 
-                    var modifiedUsings = usingsHelper.GenerateGroupedUsings(childSpan, indentation, false, false, qualifyNames: false);
+                    var modifiedUsings = usingsHelper.GenerateGroupedUsings(childSpan, indentation, endOfLine, false, false, qualifyNames: false, includeGlobal: true, includeLocal: true);
 
                     for (var i = 0; i < originalUsings.Count; i++)
                     {
@@ -265,7 +275,7 @@ namespace StyleCop.Analyzers.OrderingRules
                     }
                 }
 
-                BuildReplaceMapForConditionalDirectives(usingsHelper, replaceMap, indentationSettings, childSpan);
+                BuildReplaceMapForConditionalDirectives(usingsHelper, replaceMap, indentationSettings, endOfLine, childSpan);
             }
         }
 
@@ -274,13 +284,13 @@ namespace StyleCop.Analyzers.OrderingRules
             return left.SpanStart - right.SpanStart;
         }
 
-        private static SyntaxNode AddUsingsToNamespace(SyntaxNode newSyntaxRoot, UsingsSorter usingsHelper, string usingsIndentation, bool hasConditionalDirectives)
+        private static SyntaxNode AddUsingsToNamespace(SyntaxNode newSyntaxRoot, SyntaxTrivia endOfLine, UsingsSorter usingsHelper, string usingsIndentation, bool hasConditionalDirectives)
         {
             var rootNamespace = (BaseNamespaceDeclarationSyntaxWrapper)((CompilationUnitSyntax)newSyntaxRoot).Members.First(member => BaseNamespaceDeclarationSyntaxWrapper.IsInstance(member));
             var withLeadingBlankLine = rootNamespace.SyntaxNode.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration);
             var withTrailingBlankLine = hasConditionalDirectives || rootNamespace.Members.Any() || rootNamespace.Externs.Any();
 
-            var groupedUsings = usingsHelper.GenerateGroupedUsings(TreeTextSpan.Empty, usingsIndentation, withLeadingBlankLine, withTrailingBlankLine, qualifyNames: false);
+            var groupedUsings = usingsHelper.GenerateGroupedUsings(TreeTextSpan.Empty, usingsIndentation, endOfLine, withLeadingBlankLine, withTrailingBlankLine, qualifyNames: false, includeGlobal: false, includeLocal: true);
             groupedUsings = groupedUsings.AddRange(rootNamespace.Usings);
 
             var newRootNamespace = rootNamespace.WithUsings(groupedUsings);
@@ -289,12 +299,12 @@ namespace StyleCop.Analyzers.OrderingRules
             return newSyntaxRoot;
         }
 
-        private static SyntaxNode AddUsingsToCompilationRoot(SyntaxNode newSyntaxRoot, UsingsSorter usingsHelper, string usingsIndentation, bool hasConditionalDirectives)
+        private static SyntaxNode AddUsingsToCompilationRoot(SyntaxNode newSyntaxRoot, SyntaxTrivia endOfLine, UsingsSorter usingsHelper, bool hasConditionalDirectives, bool onlyGlobal)
         {
             var newCompilationUnit = (CompilationUnitSyntax)newSyntaxRoot;
             var withTrailingBlankLine = hasConditionalDirectives || newCompilationUnit.AttributeLists.Any() || newCompilationUnit.Members.Any() || newCompilationUnit.Externs.Any();
 
-            var groupedUsings = usingsHelper.GenerateGroupedUsings(TreeTextSpan.Empty, usingsIndentation, withLeadingBlankLine: false, withTrailingBlankLine, qualifyNames: true);
+            var groupedUsings = usingsHelper.GenerateGroupedUsings(TreeTextSpan.Empty, indentation: string.Empty, endOfLine, withLeadingBlankLine: false, withTrailingBlankLine, qualifyNames: true, includeGlobal: true, includeLocal: !onlyGlobal);
             groupedUsings = groupedUsings.AddRange(newCompilationUnit.Usings);
             newSyntaxRoot = newCompilationUnit.WithUsings(groupedUsings);
 
@@ -513,9 +523,12 @@ namespace StyleCop.Analyzers.OrderingRules
                     return null;
                 }
 
+                var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+
+                // Force preserving the placement of using directives when we are fixing any diagnostic not directly
+                // related to placement of using directives inside/outside namespaces.
                 var forcePreserve = diagnostics.All(d => d.Id != SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId);
 
-                var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
                 Document newDocument = await GetTransformedDocumentAsync(document, syntaxRoot, forcePreserve, fixAllContext.CancellationToken).ConfigureAwait(false);
                 return await newDocument.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
             }

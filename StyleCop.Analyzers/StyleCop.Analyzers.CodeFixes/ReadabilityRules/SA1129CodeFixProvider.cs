@@ -71,6 +71,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var namedTypeSymbol = (symbolInfo.Symbol as IMethodSymbol)?.ContainingType;
 
             var type = GetOrCreateTypeSyntax(project, newExpression, namedTypeSymbol);
+            bool supportsNativeSizedIntegers = semanticModel.Compilation.SupportsNativeSizedIntegers();
+            bool usesNativeSizedIntegerKeyword = IsNativeSizedIntegerKeyword(type);
 
             SyntaxNode replacement;
 
@@ -81,6 +83,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 if (IsDefaultParameterValue(newExpression))
                 {
+                    replacement = SyntaxFactory.DefaultExpression(type);
+                }
+                else if (!supportsNativeSizedIntegers && usesNativeSizedIntegerKeyword)
+                {
+                    // nint.Zero and nuint.Zero are only available in C# 11 with .NET 7+. For older versions, we need to
+                    // keep using 'default(nint)'.
                     replacement = SyntaxFactory.DefaultExpression(type);
                 }
                 else
@@ -119,6 +127,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
             return replacement
                 .WithLeadingTrivia(newExpression.SyntaxNode.GetLeadingTrivia())
                 .WithTrailingTrivia(newExpression.SyntaxNode.GetTrailingTrivia());
+        }
+
+        private static bool IsNativeSizedIntegerKeyword(TypeSyntax type)
+        {
+            return type is IdentifierNameSyntax { Identifier.ValueText: "nint" or "nuint" };
         }
 
         private static TypeSyntax GetOrCreateTypeSyntax(Project project, BaseObjectCreationExpressionSyntaxWrapper baseObjectCreationExpression, INamedTypeSymbol constructedType)

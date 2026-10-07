@@ -13,6 +13,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
@@ -92,16 +93,39 @@ namespace StyleCop.Analyzers.OrderingRules
                 return result;
             }
 
-            public SyntaxList<UsingDirectiveSyntax> GenerateGroupedUsings(TreeTextSpan directiveSpan, string indentation, bool withLeadingBlankLine, bool withTrailingBlankLine, bool qualifyNames)
+            public SyntaxList<UsingDirectiveSyntax> GenerateGroupedUsings(TreeTextSpan directiveSpan, string indentation, SyntaxTrivia endOfLine, bool withLeadingBlankLine, bool withTrailingBlankLine, bool qualifyNames, bool includeGlobal, bool includeLocal)
             {
                 var usingList = new List<UsingDirectiveSyntax>();
                 List<SyntaxTrivia> triviaToMove = new List<SyntaxTrivia>();
+                int lastGlobalDirective = -1;
 
-                usingList.AddRange(this.GenerateUsings(this.systemUsings, directiveSpan, indentation, triviaToMove, qualifyNames));
-                usingList.AddRange(this.GenerateUsings(this.namespaceUsings, directiveSpan, indentation, triviaToMove, qualifyNames));
-                usingList.AddRange(this.GenerateUsings(this.systemStaticImports, directiveSpan, indentation, triviaToMove, qualifyNames));
-                usingList.AddRange(this.GenerateUsings(this.staticImports, directiveSpan, indentation, triviaToMove, qualifyNames));
-                usingList.AddRange(this.GenerateUsings(this.aliases, directiveSpan, indentation, triviaToMove, qualifyNames));
+                if (includeGlobal)
+                {
+                    usingList.AddRange(this.GenerateUsings(this.systemUsings, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: true));
+                    usingList.AddRange(this.GenerateUsings(this.namespaceUsings, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: true));
+                    usingList.AddRange(this.GenerateUsings(this.systemStaticImports, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: true));
+                    usingList.AddRange(this.GenerateUsings(this.staticImports, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: true));
+                    usingList.AddRange(this.GenerateUsings(this.aliases, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: true));
+                    lastGlobalDirective = usingList.Count - 1;
+                }
+
+                if (includeLocal)
+                {
+                    usingList.AddRange(this.GenerateUsings(this.systemUsings, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: false));
+                    usingList.AddRange(this.GenerateUsings(this.namespaceUsings, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: false));
+                    usingList.AddRange(this.GenerateUsings(this.systemStaticImports, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: false));
+                    usingList.AddRange(this.GenerateUsings(this.staticImports, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: false));
+                    usingList.AddRange(this.GenerateUsings(this.aliases, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: false));
+                }
+
+                if (!this.insertBlankLinesBetweenGroups && lastGlobalDirective >= 0 && lastGlobalDirective < usingList.Count - 1)
+                {
+                    // Need to ensure there is a blank line after the global usings so they are separated from the local
+                    // usings
+                    var last = usingList[lastGlobalDirective];
+
+                    usingList[lastGlobalDirective] = last.WithTrailingTrivia(last.GetTrailingTrivia().Add(endOfLine));
+                }
 
                 if (triviaToMove.Count > 0)
                 {
@@ -112,28 +136,44 @@ namespace StyleCop.Analyzers.OrderingRules
                 if (withLeadingBlankLine && usingList.Count > 0)
                 {
                     var firstUsing = usingList[0];
-                    usingList[0] = firstUsing.WithLeadingTrivia(firstUsing.GetLeadingTrivia().Insert(0, SyntaxFactory.CarriageReturnLineFeed));
+                    usingList[0] = firstUsing.WithLeadingTrivia(firstUsing.GetLeadingTrivia().Insert(0, endOfLine));
                 }
 
                 if (withTrailingBlankLine && (usingList.Count > 0))
                 {
                     var lastUsing = usingList[usingList.Count - 1];
-                    usingList[usingList.Count - 1] = lastUsing.WithTrailingTrivia(lastUsing.GetTrailingTrivia().Add(SyntaxFactory.CarriageReturnLineFeed));
+                    usingList[usingList.Count - 1] = lastUsing.WithTrailingTrivia(lastUsing.GetTrailingTrivia().Add(endOfLine));
                 }
 
                 return SyntaxFactory.List(usingList);
             }
 
-            public SyntaxList<UsingDirectiveSyntax> GenerateGroupedUsings(List<UsingDirectiveSyntax> usingsList, string indentation, bool withLeadingBlankLine, bool withTrailingBlankLine, bool qualifyNames)
+            public SyntaxList<UsingDirectiveSyntax> GenerateGroupedUsings(List<UsingDirectiveSyntax> usingsList, string indentation, SyntaxTrivia endOfLine, bool withLeadingBlankLine, bool withTrailingBlankLine, bool qualifyNames)
             {
                 var usingList = new List<UsingDirectiveSyntax>();
                 List<SyntaxTrivia> triviaToMove = new List<SyntaxTrivia>();
 
-                usingList.AddRange(this.GenerateUsings(this.systemUsings, usingsList, indentation, triviaToMove, qualifyNames));
-                usingList.AddRange(this.GenerateUsings(this.namespaceUsings, usingsList, indentation, triviaToMove, qualifyNames));
-                usingList.AddRange(this.GenerateUsings(this.systemStaticImports, usingsList, indentation, triviaToMove, qualifyNames));
-                usingList.AddRange(this.GenerateUsings(this.staticImports, usingsList, indentation, triviaToMove, qualifyNames));
-                usingList.AddRange(this.GenerateUsings(this.aliases, usingsList, indentation, triviaToMove, qualifyNames));
+                usingList.AddRange(this.GenerateUsings(this.systemUsings, usingsList, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: true));
+                usingList.AddRange(this.GenerateUsings(this.namespaceUsings, usingsList, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: true));
+                usingList.AddRange(this.GenerateUsings(this.systemStaticImports, usingsList, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: true));
+                usingList.AddRange(this.GenerateUsings(this.staticImports, usingsList, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: true));
+                usingList.AddRange(this.GenerateUsings(this.aliases, usingsList, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: true));
+                int lastGlobalDirective = usingList.Count - 1;
+
+                usingList.AddRange(this.GenerateUsings(this.systemUsings, usingsList, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: false));
+                usingList.AddRange(this.GenerateUsings(this.namespaceUsings, usingsList, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: false));
+                usingList.AddRange(this.GenerateUsings(this.systemStaticImports, usingsList, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: false));
+                usingList.AddRange(this.GenerateUsings(this.staticImports, usingsList, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: false));
+                usingList.AddRange(this.GenerateUsings(this.aliases, usingsList, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: false));
+
+                if (!this.insertBlankLinesBetweenGroups && lastGlobalDirective >= 0 && lastGlobalDirective < usingList.Count - 1)
+                {
+                    // Need to ensure there is a blank line after the global usings so they are separated from the local
+                    // usings
+                    var last = usingList[lastGlobalDirective];
+
+                    usingList[lastGlobalDirective] = last.WithTrailingTrivia(last.GetTrailingTrivia().Add(endOfLine));
+                }
 
                 if (triviaToMove.Count > 0)
                 {
@@ -144,19 +184,19 @@ namespace StyleCop.Analyzers.OrderingRules
                 if (withLeadingBlankLine && usingList.Count > 0)
                 {
                     var firstUsing = usingList[0];
-                    usingList[0] = firstUsing.WithLeadingTrivia(firstUsing.GetLeadingTrivia().Insert(0, SyntaxFactory.CarriageReturnLineFeed));
+                    usingList[0] = firstUsing.WithLeadingTrivia(firstUsing.GetLeadingTrivia().Insert(0, endOfLine));
                 }
 
                 if (withTrailingBlankLine && (usingList.Count > 0))
                 {
                     var lastUsing = usingList[usingList.Count - 1];
-                    usingList[usingList.Count - 1] = lastUsing.WithTrailingTrivia(lastUsing.GetTrailingTrivia().Add(SyntaxFactory.CarriageReturnLineFeed));
+                    usingList[usingList.Count - 1] = lastUsing.WithTrailingTrivia(lastUsing.GetTrailingTrivia().Add(endOfLine));
                 }
 
                 return SyntaxFactory.List(usingList);
             }
 
-            private List<UsingDirectiveSyntax> GenerateUsings(Dictionary<TreeTextSpan, List<UsingDirectiveSyntax>> usingsGroup, TreeTextSpan directiveSpan, string indentation, List<SyntaxTrivia> triviaToMove, bool qualifyNames)
+            private List<UsingDirectiveSyntax> GenerateUsings(Dictionary<TreeTextSpan, List<UsingDirectiveSyntax>> usingsGroup, TreeTextSpan directiveSpan, string indentation, SyntaxTrivia endOfLine, List<SyntaxTrivia> triviaToMove, bool qualifyNames, bool isGlobal)
             {
                 List<UsingDirectiveSyntax> result = new List<UsingDirectiveSyntax>();
                 List<UsingDirectiveSyntax> usingsList;
@@ -166,10 +206,10 @@ namespace StyleCop.Analyzers.OrderingRules
                     return result;
                 }
 
-                return this.GenerateUsings(usingsList, indentation, triviaToMove, qualifyNames);
+                return this.GenerateUsings(usingsList, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal);
             }
 
-            private List<UsingDirectiveSyntax> GenerateUsings(List<UsingDirectiveSyntax> usingsList, string indentation, List<SyntaxTrivia> triviaToMove, bool qualifyNames)
+            private List<UsingDirectiveSyntax> GenerateUsings(List<UsingDirectiveSyntax> usingsList, string indentation, SyntaxTrivia endOfLine, List<SyntaxTrivia> triviaToMove, bool qualifyNames, bool isGlobal)
             {
                 List<UsingDirectiveSyntax> result = new List<UsingDirectiveSyntax>();
 
@@ -181,6 +221,10 @@ namespace StyleCop.Analyzers.OrderingRules
                 for (var i = 0; i < usingsList.Count; i++)
                 {
                     var currentUsing = usingsList[i];
+                    if (currentUsing.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword) != isGlobal)
+                    {
+                        continue;
+                    }
 
                     // strip the file header, if the using is the first node in the source file.
                     List<SyntaxTrivia> leadingTrivia;
@@ -322,7 +366,7 @@ namespace StyleCop.Analyzers.OrderingRules
                     var newTrailingTrivia = currentTrailingTrivia;
                     if (!currentTrailingTrivia.Any() || !currentTrailingTrivia.Last().IsKind(SyntaxKind.EndOfLineTrivia))
                     {
-                        newTrailingTrivia = newTrailingTrivia.Add(SyntaxFactory.CarriageReturnLineFeed);
+                        newTrailingTrivia = newTrailingTrivia.Add(endOfLine);
                     }
 
                     var processedUsing = (qualifyNames ? this.QualifyUsingDirective(currentUsing) : currentUsing)
@@ -335,11 +379,11 @@ namespace StyleCop.Analyzers.OrderingRules
 
                 result.Sort(this.CompareUsings);
 
-                if (this.insertBlankLinesBetweenGroups)
+                if (this.insertBlankLinesBetweenGroups && result.Count > 0)
                 {
                     var last = result[result.Count - 1];
 
-                    result[result.Count - 1] = last.WithTrailingTrivia(last.GetTrailingTrivia().Add(SyntaxFactory.CarriageReturnLineFeed));
+                    result[result.Count - 1] = last.WithTrailingTrivia(last.GetTrailingTrivia().Add(endOfLine));
                 }
 
                 return result;
@@ -533,11 +577,11 @@ namespace StyleCop.Analyzers.OrderingRules
                 usingList.Add(usingDirective);
             }
 
-            private List<UsingDirectiveSyntax> GenerateUsings(Dictionary<TreeTextSpan, List<UsingDirectiveSyntax>> usingsGroup, List<UsingDirectiveSyntax> usingsList, string indentation, List<SyntaxTrivia> triviaToMove, bool qualifyNames)
+            private List<UsingDirectiveSyntax> GenerateUsings(Dictionary<TreeTextSpan, List<UsingDirectiveSyntax>> usingsGroup, List<UsingDirectiveSyntax> usingsList, string indentation, SyntaxTrivia endOfLine, List<SyntaxTrivia> triviaToMove, bool qualifyNames, bool isGlobal)
             {
                 var filteredUsingsList = this.FilterRelevantUsings(usingsGroup, usingsList);
 
-                return this.GenerateUsings(filteredUsingsList, indentation, triviaToMove, qualifyNames);
+                return this.GenerateUsings(filteredUsingsList, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal);
             }
 
             private List<UsingDirectiveSyntax> FilterRelevantUsings(Dictionary<TreeTextSpan, List<UsingDirectiveSyntax>> usingsGroup, List<UsingDirectiveSyntax> usingsList)

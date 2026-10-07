@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Threading;
@@ -20,8 +18,9 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     /// </summary>
     public class UsingCodeFixProviderGroupSeparationUnitTests
     {
-        private bool usingsInsideNamespace = true;
-        private bool? systemUsingDirectivesFirst;
+        protected bool UsingsInsideNamespace { get; set; } = true;
+
+        protected bool? SystemUsingDirectivesFirst { get; set; }
 
         /// <summary>
         /// Verifies that the code fix will properly reorder using statements.
@@ -30,7 +29,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
         [Fact]
         public async Task VerifyUsingReorderingAsync()
         {
-            this.systemUsingDirectivesFirst = true;
+            this.SystemUsingDirectivesFirst = true;
 
             var testCode = @"using Microsoft.CodeAnalysis;
 using SystemAction = System.Action;
@@ -93,7 +92,7 @@ namespace Foo
         [Fact]
         public async Task VerifyUsingReorderingOutsideNamespaceAsync()
         {
-            this.systemUsingDirectivesFirst = true;
+            this.SystemUsingDirectivesFirst = true;
 
             var testCode = @"namespace Foo
 {
@@ -132,7 +131,7 @@ namespace Foo
 }
 ";
 
-            this.usingsInsideNamespace = false;
+            this.UsingsInsideNamespace = false;
             DiagnosticResult[] expected =
             {
                 Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(3, 5),
@@ -154,15 +153,15 @@ namespace Foo
             await this.VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
+        protected Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
         {
-            var systemUsingDirectivesFirst = this.systemUsingDirectivesFirst ?? true;
+            var systemUsingDirectivesFirst = this.SystemUsingDirectivesFirst ?? true;
 
             var testSettings = $@"
 {{
     ""settings"": {{
         ""orderingRules"": {{
-            ""usingDirectivesPlacement"": ""{(this.usingsInsideNamespace ? "insideNamespace" : "outsideNamespace")}"",
+            ""usingDirectivesPlacement"": ""{(this.UsingsInsideNamespace ? "insideNamespace" : "outsideNamespace")}"",
             ""systemUsingDirectivesFirst"" : {systemUsingDirectivesFirst.ToString().ToLowerInvariant()},
             ""blankLinesBetweenUsingGroups"": ""require""
         }}

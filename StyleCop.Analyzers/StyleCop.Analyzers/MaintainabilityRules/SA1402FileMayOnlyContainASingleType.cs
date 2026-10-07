@@ -108,8 +108,13 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             return node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration) || node.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration);
         }
 
-        private static bool IsRelevantType(SyntaxNode node, StyleCopSettings settings)
+        private static bool IsRelevantType(MemberDeclarationSyntax node, StyleCopSettings settings)
         {
+            if (IsFileLocalType(node))
+            {
+                return false;
+            }
+
             var topLevelTypes = settings.MaintainabilityRules.TopLevelTypes;
             var isRelevant = false;
 
@@ -135,6 +140,11 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             }
 
             return isRelevant;
+        }
+
+        private static bool IsFileLocalType(MemberDeclarationSyntax node)
+        {
+            return node.GetModifiers().Any(SyntaxKindEx.FileKeyword);
         }
     }
 }

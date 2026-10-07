@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.OrderingRules.SA1200UsingDirectivesMustBePlacedCorrectly,
@@ -100,29 +99,32 @@ namespace TestNamespace
         /// <summary>
         /// Verifies that having using statements in the compilation unit will produce the expected diagnostics.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestInvalidUsingStatementsInCompilationUnitAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestInvalidUsingStatementsInCompilationUnitAsync(string lineEnding)
         {
-            var testCode = @"using System;
-using System.Threading;
+            var testCode = @"{|#0:using System;|}
+{|#1:using System.Threading;|}
 
 namespace TestNamespace
 {
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             var fixedTestCode = @"namespace TestNamespace
 {
     using System;
     using System.Threading;
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expectedResults =
             {
-                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(1, 1),
-                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(2, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(0),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(1),
             };
 
             await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);

@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.OrderingRules.SA1209UsingAliasDirectivesMustBePlacedAfterOtherUsingDirectives,
@@ -44,10 +45,12 @@ class A
             await VerifyCSharpDiagnosticAsync(usingsInNamespaceDeclaration, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestWhenUsingAliasDirectivesAreNotPlacedCorrectlyInCompilationAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestWhenUsingAliasDirectivesAreNotPlacedCorrectlyInCompilationAsync(string lineEnding)
         {
-            var testCodeCompilationUnit = @"using TasksNamespace = System.Threading.Tasks;
+            var testCodeCompilationUnit = @"{|#0:using TasksNamespace = System.Threading.Tasks;|}
 using System.Net;
 using System;
 using System.IO;
@@ -55,7 +58,7 @@ using System.Linq;
 
 class A
 {
-}";
+}".ReplaceLineEndings(lineEnding);
             var fixedTestCodeCompilationUnit = @"using System;
 using System.IO;
 using System.Linq;
@@ -64,9 +67,9 @@ using TasksNamespace = System.Threading.Tasks;
 
 class A
 {
-}";
+}".ReplaceLineEndings(lineEnding);
 
-            DiagnosticResult expectedForCompilationUnit = Diagnostic().WithLocation(1, 1);
+            DiagnosticResult expectedForCompilationUnit = Diagnostic().WithLocation(0);
 
             await VerifyCSharpFixAsync(testCodeCompilationUnit, expectedForCompilationUnit, fixedTestCodeCompilationUnit, CancellationToken.None).ConfigureAwait(false);
         }

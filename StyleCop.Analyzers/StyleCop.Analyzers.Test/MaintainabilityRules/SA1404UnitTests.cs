@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.MaintainabilityRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.MaintainabilityRules.SA1404CodeAnalysisSuppressionMustHaveJustification,
@@ -66,38 +67,40 @@ public class Foo
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestSuppressionWithNoJustificationAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestSuppressionWithNoJustificationAsync(string lineEnding)
         {
             var testCode = @"public class Foo
 {
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null)]
+    [{|#0:System.Diagnostics.CodeAnalysis.SuppressMessage(null, null)|}]
     public void Bar()
     {
 
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
-            var fixedCode = @"public class Foo
-{
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = """ + SA1404CodeAnalysisSuppressionMustHaveJustification.JustificationPlaceholder + @""")]
+            var fixedCode = $@"public class Foo
+{{
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, {{|#0:Justification = ""{SA1404CodeAnalysisSuppressionMustHaveJustification.JustificationPlaceholder}""|}})]
     public void Bar()
-    {
+    {{
 
-    }
-}";
+    }}
+}}".ReplaceLineEndings(lineEnding);
 
             await new CSharpTest
             {
                 TestCode = testCode,
                 ExpectedDiagnostics =
                 {
-                    Diagnostic().WithLocation(3, 6),
+                    Diagnostic().WithLocation(0),
                 },
                 FixedCode = fixedCode,
                 RemainingDiagnostics =
                 {
-                    Diagnostic().WithLocation(3, 66),
+                    Diagnostic().WithLocation(0),
                 },
                 NumberOfIncrementalIterations = 2,
                 NumberOfFixAllIterations = 2,

@@ -3,9 +3,82 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
 {
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.SpacingRules;
+    using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.SpacingRules.SA1017ClosingAttributeBracketsMustBeSpacedCorrectly,
+        StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
     public partial class SA1017CSharp9UnitTests : SA1017CSharp8UnitTests
     {
+        [Fact]
+        [WorkItem(3978, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3978")]
+        public async Task TestAttributesOnLocalFunctionsAsync()
+        {
+            var testCode = @"using System;
+
+class TestClass
+{
+    void Outer()
+    {
+        [Obsolete {|#0:]|}
+        void Local1()
+        {
+        }
+
+        void Local2<[MyAttribute {|#1:]|} T>()
+        {
+        }
+
+        void Local3([MyAttribute {|#2:]|} int value)
+        {
+        }
+    }
+}
+
+[AttributeUsage(AttributeTargets.All)]
+class MyAttributeAttribute : Attribute
+{
+}
+";
+
+            var fixedCode = @"using System;
+
+class TestClass
+{
+    void Outer()
+    {
+        [Obsolete]
+        void Local1()
+        {
+        }
+
+        void Local2<[MyAttribute] T>()
+        {
+        }
+
+        void Local3([MyAttribute] int value)
+        {
+        }
+    }
+}
+
+[AttributeUsage(AttributeTargets.All)]
+class MyAttributeAttribute : Attribute
+{
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+                Diagnostic().WithLocation(2),
+            };
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

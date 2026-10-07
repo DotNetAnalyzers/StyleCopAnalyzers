@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
 
@@ -108,26 +107,29 @@ public class Foo
         /// <summary>
         /// Verifies that the analyzer will produce the proper diagnostics when the using directives are ordered wrong.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestInvalidUsingDirectivesOrderingAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestInvalidUsingDirectivesOrderingAsync(string lineEnding)
         {
             var testCode = @"namespace Foo
 {
     using System;
     using Execute = System.Action;
-    using static System.Math;
+    {|#0:using static System.Math;|}
     using static System.Array;
 }
 
 namespace Bar
 {
-    using static System.Math;
+    {|#1:using static System.Math;|}
     using Execute = System.Action;
     using static System.Array;
     using System;
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             var fixedTestCode = @"namespace Foo
 {
@@ -144,12 +146,12 @@ namespace Bar
     using static System.Math;
     using Execute = System.Action;
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                Diagnostic().WithLocation(5, 5).WithArguments("System.Math", "System.Array"),
-                Diagnostic().WithLocation(11, 5).WithArguments("System.Math", "System.Array"),
+                Diagnostic().WithLocation(0).WithArguments("System.Math", "System.Array"),
+                Diagnostic().WithLocation(1).WithArguments("System.Math", "System.Array"),
             };
 
             await this.VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);

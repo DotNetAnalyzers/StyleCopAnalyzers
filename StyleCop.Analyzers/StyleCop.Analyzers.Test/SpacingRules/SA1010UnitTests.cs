@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.SpacingRules.SA1010OpeningSquareBracketsMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -45,10 +44,12 @@ public class Foo
             await VerifyCSharpDiagnosticAsync(ExpectedCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestOpenSquareBracketMustNotBePrecededBySpaceAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestOpenSquareBracketMustNotBePrecededBySpaceAsync(string lineEnding)
         {
-            const string testCode = @"using System;
+            string testCode = @"using System;
 
 public class Foo
 {
@@ -65,7 +66,7 @@ public class Foo
             return ints [0] [0];
         }
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {
@@ -79,7 +80,7 @@ public class Foo
                 Diagnostic(DescriptorNotPreceded).WithLocation(15, 29),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, ExpectedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, ExpectedCode.ReplaceLineEndings(lineEnding), CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
 {
     using System.Threading;
@@ -46,6 +44,69 @@ class A
 ";
 
             await VerifyCSharpFixAsync(testCodeNamespace, DiagnosticResult.EmptyDiagnosticResults, fixedTestCodeNamespace, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3964, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3964")]
+        public async Task TestWhenGlobalUsingAliasDirectivesAreNotPlacedCorrectlyAsync()
+        {
+            await new CSharpTest
+            {
+                TestSources =
+                {
+                    "namespace Xyz {}",
+                    "namespace AnotherNamespace {}",
+                    @"
+{|#0:global using Alias = System.Threading.Tasks;|}
+global using System;
+global using AnotherNamespace;
+global using System.Threading;
+
+class A
+{
+}",
+                },
+                FixedSources =
+                {
+                    "namespace Xyz {}",
+                    "namespace AnotherNamespace {}",
+                    @"
+global using System;
+global using System.Threading;
+global using AnotherNamespace;
+global using Alias = System.Threading.Tasks;
+
+class A
+{
+}",
+                },
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(0),
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3964, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3964")]
+        public async Task TestGlobalUsingAliasDirectivesAreAnalyzedIndependentlyFromLocalUsingDirectivesAsync()
+        {
+            var testCode = @"global using Alias = System.IO;
+
+using System;
+
+namespace Xyz
+{
+    public class Placeholder
+    {
+    }
+}
+
+class TestClass
+{
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

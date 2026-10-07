@@ -17,6 +17,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
+    using Microsoft.CodeAnalysis.Options;
+    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
@@ -58,8 +60,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+            var options = document.Project.Solution.Workspace.Options;
             var baseFieldDeclaration = (BaseFieldDeclarationSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
-            List<BaseFieldDeclarationSyntax> newFieldDeclarations = SplitDeclaration(document, baseFieldDeclaration);
+            List<BaseFieldDeclarationSyntax> newFieldDeclarations = SplitDeclaration(sourceText, options, baseFieldDeclaration);
 
             if (newFieldDeclarations != null)
             {
@@ -72,12 +76,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
             return document;
         }
 
-        private static List<BaseFieldDeclarationSyntax> SplitDeclaration(Document document, BaseFieldDeclarationSyntax baseFieldDeclaration)
+        private static List<BaseFieldDeclarationSyntax> SplitDeclaration(SourceText sourceText, OptionSet options, BaseFieldDeclarationSyntax baseFieldDeclaration)
         {
             if (baseFieldDeclaration is FieldDeclarationSyntax fieldDeclaration)
             {
                 return DeclarationSplitter(
-                    document,
+                    sourceText,
+                    options,
                     fieldDeclaration.Declaration,
                     fieldDeclaration.WithDeclaration,
                     fieldDeclaration.SemicolonToken.TrailingTrivia);
@@ -86,7 +91,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             if (baseFieldDeclaration is EventFieldDeclarationSyntax eventFieldDeclaration)
             {
                 return DeclarationSplitter(
-                    document,
+                    sourceText,
+                    options,
                     eventFieldDeclaration.Declaration,
                     eventFieldDeclaration.WithDeclaration,
                     eventFieldDeclaration.SemicolonToken.TrailingTrivia);
@@ -96,7 +102,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         }
 
         private static List<BaseFieldDeclarationSyntax> DeclarationSplitter(
-            Document document,
+            SourceText sourceText,
+            OptionSet options,
             VariableDeclarationSyntax declaration,
             Func<VariableDeclarationSyntax, BaseFieldDeclarationSyntax> declarationFactory,
             SyntaxTriviaList declarationTrailingTrivia)
@@ -145,17 +152,18 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 else
                 {
                     SyntaxToken commaToken = nodeOrToken.AsToken();
+                    SyntaxTrivia endOfLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(commaToken, sourceText, options);
                     SyntaxTriviaList trailingTrivia = commaToken.TrailingTrivia;
                     if (trailingTrivia.Any())
                     {
                         if (!trailingTrivia.Last().IsKind(SyntaxKind.EndOfLineTrivia))
                         {
-                            trailingTrivia = trailingTrivia.WithoutTrailingWhitespace().Add(FormattingHelper.GetNewLineTrivia(document));
+                            trailingTrivia = trailingTrivia.WithoutTrailingWhitespace().Add(endOfLineTrivia);
                         }
                     }
                     else
                     {
-                        trailingTrivia = SyntaxTriviaList.Create(FormattingHelper.GetNewLineTrivia(document));
+                        trailingTrivia = SyntaxTriviaList.Create(endOfLineTrivia);
                     }
 
                     newFieldDeclarations.Add(previous.WithTrailingTrivia(trailingTrivia));

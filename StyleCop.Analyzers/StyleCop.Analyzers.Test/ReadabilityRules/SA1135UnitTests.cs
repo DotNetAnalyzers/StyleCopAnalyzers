@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1135UsingDirectivesMustBeQualified,
@@ -17,26 +18,28 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
     public class SA1135UnitTests
     {
-        [Fact]
-        public async Task TestUnqualifiedUsingsAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestUnqualifiedUsingsAsync(string lineEnding)
         {
-            const string testCode = @"
+            string testCode = @"
 namespace System.Threading
 {
-    using IO;
-    using Tasks;
-}";
-            const string fixedCode = @"
+    {|#0:using IO;|}
+    {|#1:using Tasks;|}
+}".ReplaceLineEndings(lineEnding);
+            string fixedCode = @"
 namespace System.Threading
 {
     using System.IO;
     using System.Threading.Tasks;
-}";
+}".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {
-                Diagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorNamespace).WithLocation(4, 5).WithArguments("System.IO"),
-                Diagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorNamespace).WithLocation(5, 5).WithArguments("System.Threading.Tasks"),
+                Diagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorNamespace).WithLocation(0).WithArguments("System.IO"),
+                Diagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorNamespace).WithLocation(1).WithArguments("System.Threading.Tasks"),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);

@@ -275,8 +275,18 @@ namespace StyleCop.Analyzers
                 if (IsStyleCopSettingsFile(additionalFile.Path))
                 {
                     SourceText additionalTextContent = additionalFile.GetText(cancellationToken);
-                    var content = getJsonValue(additionalTextContent);
-                    return new SettingsFile(additionalFile.Path, content);
+                    if (additionalTextContent != null)
+                    {
+                        var content = getJsonValue(additionalTextContent);
+                        return new SettingsFile(additionalFile.Path, content);
+                    }
+                    else
+                    {
+                        // Failed to read the file! Probably because of a broken link.
+                        var content = new Lazy<JsonValue>(() => throw new InvalidSettingsException(
+                            $"Settings file at '{additionalFile.Path}' could not be read"));
+                        return new SettingsFile(additionalFile.Path, content);
+                    }
                 }
             }
 
