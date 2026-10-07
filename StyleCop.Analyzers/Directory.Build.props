@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <LangVersion>10</LangVersion>
+    <LangVersion>14</LangVersion>
     <Nullable>enable</Nullable>
     <WarningLevel>99</WarningLevel>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
