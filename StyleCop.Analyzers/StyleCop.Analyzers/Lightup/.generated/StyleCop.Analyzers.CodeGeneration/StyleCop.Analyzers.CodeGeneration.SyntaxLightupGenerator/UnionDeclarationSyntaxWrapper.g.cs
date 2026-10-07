@@ -9,17 +9,15 @@ namespace StyleCop.Analyzers.Lightup
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal readonly partial struct RecordDeclarationSyntaxWrapper : ISyntaxWrapper<TypeDeclarationSyntax>
+    internal readonly partial struct UnionDeclarationSyntaxWrapper : ISyntaxWrapper<TypeDeclarationSyntax>
     {
-        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.RecordDeclarationSyntax";
+        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.UnionDeclarationSyntax";
         private static readonly Type WrappedType;
 
-        private static readonly Func<TypeDeclarationSyntax, SyntaxToken> ClassOrStructKeywordAccessor;
         private static readonly Func<TypeDeclarationSyntax, ParameterListSyntax> ParameterListAccessor;
         private static readonly Func<TypeDeclarationSyntax, SyntaxList<AttributeListSyntax>, TypeDeclarationSyntax> WithAttributeListsAccessor;
         private static readonly Func<TypeDeclarationSyntax, SyntaxTokenList, TypeDeclarationSyntax> WithModifiersAccessor;
         private static readonly Func<TypeDeclarationSyntax, SyntaxToken, TypeDeclarationSyntax> WithKeywordAccessor;
-        private static readonly Func<TypeDeclarationSyntax, SyntaxToken, TypeDeclarationSyntax> WithClassOrStructKeywordAccessor;
         private static readonly Func<TypeDeclarationSyntax, SyntaxToken, TypeDeclarationSyntax> WithIdentifierAccessor;
         private static readonly Func<TypeDeclarationSyntax, TypeParameterListSyntax, TypeDeclarationSyntax> WithTypeParameterListAccessor;
         private static readonly Func<TypeDeclarationSyntax, ParameterListSyntax, TypeDeclarationSyntax> WithParameterListAccessor;
@@ -32,15 +30,13 @@ namespace StyleCop.Analyzers.Lightup
 
         private readonly TypeDeclarationSyntax node;
 
-        static RecordDeclarationSyntaxWrapper()
+        static UnionDeclarationSyntaxWrapper()
         {
-            WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(RecordDeclarationSyntaxWrapper));
-            ClassOrStructKeywordAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<TypeDeclarationSyntax, SyntaxToken>(WrappedType, nameof(ClassOrStructKeyword));
+            WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(UnionDeclarationSyntaxWrapper));
             ParameterListAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<TypeDeclarationSyntax, ParameterListSyntax>(WrappedType, nameof(ParameterList));
             WithAttributeListsAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, SyntaxList<AttributeListSyntax>>(WrappedType, nameof(AttributeLists));
             WithModifiersAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, SyntaxTokenList>(WrappedType, nameof(Modifiers));
             WithKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, SyntaxToken>(WrappedType, nameof(Keyword));
-            WithClassOrStructKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, SyntaxToken>(WrappedType, nameof(ClassOrStructKeyword));
             WithIdentifierAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, SyntaxToken>(WrappedType, nameof(Identifier));
             WithTypeParameterListAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, TypeParameterListSyntax>(WrappedType, nameof(TypeParameterList));
             WithParameterListAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, ParameterListSyntax>(WrappedType, nameof(ParameterList));
@@ -52,7 +48,7 @@ namespace StyleCop.Analyzers.Lightup
             WithSemicolonTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, SyntaxToken>(WrappedType, nameof(SemicolonToken));
         }
 
-        private RecordDeclarationSyntaxWrapper(TypeDeclarationSyntax node)
+        private UnionDeclarationSyntaxWrapper(TypeDeclarationSyntax node)
         {
             this.node = node;
         }
@@ -80,14 +76,6 @@ namespace StyleCop.Analyzers.Lightup
             get
             {
                 return this.SyntaxNode.Keyword;
-            }
-        }
-
-        public SyntaxToken ClassOrStructKeyword
-        {
-            get
-            {
-                return ClassOrStructKeywordAccessor(this.SyntaxNode);
             }
         }
 
@@ -163,7 +151,7 @@ namespace StyleCop.Analyzers.Lightup
             }
         }
 
-        public static explicit operator RecordDeclarationSyntaxWrapper(SyntaxNode node)
+        public static explicit operator UnionDeclarationSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)
             {
@@ -175,10 +163,10 @@ namespace StyleCop.Analyzers.Lightup
                 throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
             }
 
-            return new RecordDeclarationSyntaxWrapper((TypeDeclarationSyntax)node);
+            return new UnionDeclarationSyntaxWrapper((TypeDeclarationSyntax)node);
         }
 
-        public static implicit operator TypeDeclarationSyntax(RecordDeclarationSyntaxWrapper wrapper)
+        public static implicit operator TypeDeclarationSyntax(UnionDeclarationSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
@@ -188,69 +176,64 @@ namespace StyleCop.Analyzers.Lightup
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
-        public RecordDeclarationSyntaxWrapper WithAttributeLists(SyntaxList<AttributeListSyntax> attributeLists)
+        public UnionDeclarationSyntaxWrapper WithAttributeLists(SyntaxList<AttributeListSyntax> attributeLists)
         {
-            return new RecordDeclarationSyntaxWrapper(WithAttributeListsAccessor(this.SyntaxNode, attributeLists));
+            return new UnionDeclarationSyntaxWrapper(WithAttributeListsAccessor(this.SyntaxNode, attributeLists));
         }
 
-        public RecordDeclarationSyntaxWrapper WithModifiers(SyntaxTokenList modifiers)
+        public UnionDeclarationSyntaxWrapper WithModifiers(SyntaxTokenList modifiers)
         {
-            return new RecordDeclarationSyntaxWrapper(WithModifiersAccessor(this.SyntaxNode, modifiers));
+            return new UnionDeclarationSyntaxWrapper(WithModifiersAccessor(this.SyntaxNode, modifiers));
         }
 
-        public RecordDeclarationSyntaxWrapper WithKeyword(SyntaxToken keyword)
+        public UnionDeclarationSyntaxWrapper WithKeyword(SyntaxToken keyword)
         {
-            return new RecordDeclarationSyntaxWrapper(WithKeywordAccessor(this.SyntaxNode, keyword));
+            return new UnionDeclarationSyntaxWrapper(WithKeywordAccessor(this.SyntaxNode, keyword));
         }
 
-        public RecordDeclarationSyntaxWrapper WithClassOrStructKeyword(SyntaxToken classOrStructKeyword)
+        public UnionDeclarationSyntaxWrapper WithIdentifier(SyntaxToken identifier)
         {
-            return new RecordDeclarationSyntaxWrapper(WithClassOrStructKeywordAccessor(this.SyntaxNode, classOrStructKeyword));
+            return new UnionDeclarationSyntaxWrapper(WithIdentifierAccessor(this.SyntaxNode, identifier));
         }
 
-        public RecordDeclarationSyntaxWrapper WithIdentifier(SyntaxToken identifier)
+        public UnionDeclarationSyntaxWrapper WithTypeParameterList(TypeParameterListSyntax typeParameterList)
         {
-            return new RecordDeclarationSyntaxWrapper(WithIdentifierAccessor(this.SyntaxNode, identifier));
+            return new UnionDeclarationSyntaxWrapper(WithTypeParameterListAccessor(this.SyntaxNode, typeParameterList));
         }
 
-        public RecordDeclarationSyntaxWrapper WithTypeParameterList(TypeParameterListSyntax typeParameterList)
+        public UnionDeclarationSyntaxWrapper WithParameterList(ParameterListSyntax parameterList)
         {
-            return new RecordDeclarationSyntaxWrapper(WithTypeParameterListAccessor(this.SyntaxNode, typeParameterList));
+            return new UnionDeclarationSyntaxWrapper(WithParameterListAccessor(this.SyntaxNode, parameterList));
         }
 
-        public RecordDeclarationSyntaxWrapper WithParameterList(ParameterListSyntax parameterList)
+        public UnionDeclarationSyntaxWrapper WithBaseList(BaseListSyntax baseList)
         {
-            return new RecordDeclarationSyntaxWrapper(WithParameterListAccessor(this.SyntaxNode, parameterList));
+            return new UnionDeclarationSyntaxWrapper(WithBaseListAccessor(this.SyntaxNode, baseList));
         }
 
-        public RecordDeclarationSyntaxWrapper WithBaseList(BaseListSyntax baseList)
+        public UnionDeclarationSyntaxWrapper WithConstraintClauses(SyntaxList<TypeParameterConstraintClauseSyntax> constraintClauses)
         {
-            return new RecordDeclarationSyntaxWrapper(WithBaseListAccessor(this.SyntaxNode, baseList));
+            return new UnionDeclarationSyntaxWrapper(WithConstraintClausesAccessor(this.SyntaxNode, constraintClauses));
         }
 
-        public RecordDeclarationSyntaxWrapper WithConstraintClauses(SyntaxList<TypeParameterConstraintClauseSyntax> constraintClauses)
+        public UnionDeclarationSyntaxWrapper WithOpenBraceToken(SyntaxToken openBraceToken)
         {
-            return new RecordDeclarationSyntaxWrapper(WithConstraintClausesAccessor(this.SyntaxNode, constraintClauses));
+            return new UnionDeclarationSyntaxWrapper(WithOpenBraceTokenAccessor(this.SyntaxNode, openBraceToken));
         }
 
-        public RecordDeclarationSyntaxWrapper WithOpenBraceToken(SyntaxToken openBraceToken)
+        public UnionDeclarationSyntaxWrapper WithMembers(SyntaxList<MemberDeclarationSyntax> members)
         {
-            return new RecordDeclarationSyntaxWrapper(WithOpenBraceTokenAccessor(this.SyntaxNode, openBraceToken));
+            return new UnionDeclarationSyntaxWrapper(WithMembersAccessor(this.SyntaxNode, members));
         }
 
-        public RecordDeclarationSyntaxWrapper WithMembers(SyntaxList<MemberDeclarationSyntax> members)
+        public UnionDeclarationSyntaxWrapper WithCloseBraceToken(SyntaxToken closeBraceToken)
         {
-            return new RecordDeclarationSyntaxWrapper(WithMembersAccessor(this.SyntaxNode, members));
+            return new UnionDeclarationSyntaxWrapper(WithCloseBraceTokenAccessor(this.SyntaxNode, closeBraceToken));
         }
 
-        public RecordDeclarationSyntaxWrapper WithCloseBraceToken(SyntaxToken closeBraceToken)
+        public UnionDeclarationSyntaxWrapper WithSemicolonToken(SyntaxToken semicolonToken)
         {
-            return new RecordDeclarationSyntaxWrapper(WithCloseBraceTokenAccessor(this.SyntaxNode, closeBraceToken));
-        }
-
-        public RecordDeclarationSyntaxWrapper WithSemicolonToken(SyntaxToken semicolonToken)
-        {
-            return new RecordDeclarationSyntaxWrapper(WithSemicolonTokenAccessor(this.SyntaxNode, semicolonToken));
+            return new UnionDeclarationSyntaxWrapper(WithSemicolonTokenAccessor(this.SyntaxNode, semicolonToken));
         }
     }
 }
