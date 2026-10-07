@@ -11,6 +11,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1130UseLambdaSyntax,
@@ -32,8 +33,10 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         private static readonly DiagnosticDescriptor CS1669 =
                           new DiagnosticDescriptor(nameof(CS1669), "Title", "__arglist is not valid in this context", "Category", DiagnosticSeverity.Error, AnalyzerConstants.EnabledByDefault);
 
-        [Fact]
-        public async Task TestSimpleDelegateUseAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestSimpleDelegateUseAsync(string lineEnding)
         {
             var testCode = @"
 using System;
@@ -41,11 +44,11 @@ public class TypeName
 {
     public void Test()
     {
-        Action action1 = delegate { };
-        Action action2 = delegate() { };
-        Action<int> action3 = delegate(int i) { };
+        Action action1 = {|#0:delegate|} { };
+        Action action2 = {|#1:delegate|}() { };
+        Action<int> action3 = {|#2:delegate|}(int i) { };
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
             string fixedCode = @"
 using System;
@@ -57,13 +60,13 @@ public class TypeName
         Action action2 = () => { };
         Action<int> action3 = i => { };
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
             var expected = new[]
             {
-                Diagnostic().WithLocation(7, 26),
-                Diagnostic().WithLocation(8, 26),
-                Diagnostic().WithLocation(9, 31),
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+                Diagnostic().WithLocation(2),
             };
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }

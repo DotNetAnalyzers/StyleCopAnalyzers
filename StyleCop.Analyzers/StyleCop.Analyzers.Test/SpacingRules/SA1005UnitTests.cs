@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Threading;
@@ -10,6 +8,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1005SingleLineCommentsMustBeginWithSingleSpace,
@@ -44,9 +43,12 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         /// <summary>
         /// Verify that a single line comment without a leading space gets detected and fixed properly.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestNoLeadingSpaceAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestNoLeadingSpaceAsync(string lineEnding)
         {
             var testCode = @"public class Foo
 {
@@ -55,7 +57,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     {
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             var fixedTestCode = @"public class Foo
 {
@@ -64,7 +66,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     {
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             var expected = Diagnostic().WithLocation(3, 5);
 

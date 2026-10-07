@@ -170,6 +170,13 @@ namespace StyleCop.Analyzers.LayoutRules
                     // no leading blank line necessary at start of scope.
                     return;
                 }
+
+                // Logic to handle global namespace case
+                if (prevToken.IsKind(SyntaxKind.None))
+                {
+                    // Node is the first element in the global namespace
+                    return;
+                }
             }
 
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, GetDiagnosticLocation(documentationHeader)));

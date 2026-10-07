@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Collections.Generic;
@@ -12,6 +10,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.OrderingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.OrderingRules.SA1205PartialElementsMustDeclareAccess,
@@ -187,20 +186,23 @@ namespace StyleCop.Analyzers.Test.OrderingRules
         /// <summary>
         /// Verifies that the code fix will properly copy over the access modifier defined in another fragment of the partial element.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestProperAccessModifierPropagationAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestProperAccessModifierPropagationAsync(string lineEnding)
         {
             var testCode = @"public partial class Foo
 {
     private int field1;
 }
 
-partial class Foo
+partial class {|#0:Foo|}
 {
     private int field2;
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             var fixedTestCode = @"public partial class Foo
 {
@@ -211,9 +213,9 @@ public partial class Foo
 {
     private int field2;
 }
-";
+".ReplaceLineEndings(lineEnding);
 
-            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(6, 15), fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>

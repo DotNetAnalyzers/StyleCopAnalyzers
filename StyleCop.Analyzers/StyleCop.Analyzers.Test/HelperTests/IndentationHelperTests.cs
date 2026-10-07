@@ -115,7 +115,7 @@ namespace StyleCop.Analyzers.Test.HelperTests
             var testSource = $"{indentationString}public class TestClass {{}}";
             var document = await CreateTestDocumentAsync(testSource, indentationSize, false, tabSize, CancellationToken.None).ConfigureAwait(false);
             var syntaxRoot = await document.GetSyntaxRootAsync(CancellationToken.None).ConfigureAwait(false);
-            StyleCopSettings settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, CancellationToken.None);
+            StyleCopSettings settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, CancellationToken.None);
 
             var firstToken = syntaxRoot.GetFirstToken();
 
@@ -133,7 +133,7 @@ namespace StyleCop.Analyzers.Test.HelperTests
             var testSource = "    public class TestClass {}";
             var document = await CreateTestDocumentAsync(testSource, cancellationToken: CancellationToken.None).ConfigureAwait(false);
             var syntaxRoot = await document.GetSyntaxRootAsync(CancellationToken.None).ConfigureAwait(false);
-            StyleCopSettings settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, CancellationToken.None);
+            StyleCopSettings settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, CancellationToken.None);
 
             var secondToken = syntaxRoot.GetFirstToken().GetNextToken();
 
@@ -142,7 +142,7 @@ namespace StyleCop.Analyzers.Test.HelperTests
 
         private static async Task<Document> CreateTestDocumentAsync(string source, int indentationSize = 4, bool useTabs = false, int tabSize = 4, CancellationToken cancellationToken = default)
         {
-            var workspace = GenericAnalyzerTest.CreateWorkspace();
+            var workspace = await GenericAnalyzerTest.CreateWorkspaceAsync().ConfigureAwait(false);
             workspace.Options = workspace.Options
                 .WithChangedOption(FormattingOptions.IndentationSize, LanguageNames.CSharp, indentationSize)
                 .WithChangedOption(FormattingOptions.UseTabs, LanguageNames.CSharp, useTabs)

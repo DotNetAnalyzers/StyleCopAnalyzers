@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
@@ -87,6 +85,15 @@ namespace StyleCop.Analyzers.SpacingRules
             {
                 switch (token.Kind())
                 {
+                case SyntaxKind.DelegateKeyword:
+                    if (token.Parent.IsKind(SyntaxKindEx.FunctionPointerType))
+                    {
+                        HandleDisallowedSpaceToken(ref context, token);
+                        break;
+                    }
+
+                    goto default;
+
                 case SyntaxKindEx.AndKeyword:
                 case SyntaxKind.AwaitKeyword:
                 case SyntaxKind.CaseKeyword:
@@ -143,7 +150,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 case SyntaxKind.DefaultKeyword:
                     if (token.Parent.IsKind(SyntaxKindEx.DefaultLiteralExpression))
                     {
-                        // Ignore spacing around a default literal expression for now
+                        // Ignore spacing around a default literal expression
                         break;
                     }
 
@@ -167,6 +174,14 @@ namespace StyleCop.Analyzers.SpacingRules
 
                 case SyntaxKind.ThrowKeyword:
                     HandleThrowKeywordToken(ref context, token);
+                    break;
+
+                case SyntaxKindEx.UnmanagedKeyword:
+                    if (token.Parent.IsKind(SyntaxKindEx.FunctionPointerCallingConvention))
+                    {
+                        HandleDisallowedSpaceToken(ref context, token);
+                    }
+
                     break;
 
                 default:

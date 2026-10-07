@@ -87,6 +87,27 @@ namespace StyleCop.Analyzers.OrderingRules
                     firstNonSystemUsing = null;
                 }
 
+                if (lastStaticUsingDirective is not null
+                    && lastStaticUsingDirective.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword) != usingDirective.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword))
+                {
+                    // Only compare usings with the same 'global' modifier
+                    lastStaticUsingDirective = null;
+                }
+
+                if (lastSystemStaticUsingDirective is not null
+                    && lastSystemStaticUsingDirective.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword) != usingDirective.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword))
+                {
+                    // Only compare usings with the same 'global' modifier
+                    lastSystemStaticUsingDirective = null;
+                }
+
+                if (firstNonSystemUsing is not null
+                    && firstNonSystemUsing.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword) != usingDirective.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword))
+                {
+                    // Only compare usings with the same 'global' modifier
+                    firstNonSystemUsing = null;
+                }
+
                 if (usingDirective.StaticKeyword.IsKind(SyntaxKind.StaticKeyword))
                 {
                     if (orderingSettings.SystemUsingDirectivesFirst && usingDirective.IsSystemUsingDirective())

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Threading;
@@ -120,7 +118,7 @@ namespace MyNamespace
             await this.VerifyCSharpFixAsync(testCode, new[] { expected }, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
+        protected Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
         {
             var testSettings = @"
 {

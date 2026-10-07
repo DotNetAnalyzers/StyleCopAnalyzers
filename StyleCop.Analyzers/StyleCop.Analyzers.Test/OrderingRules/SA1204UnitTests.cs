@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.OrderingRules.SA1204StaticElementsMustAppearBeforeInstanceElements,
@@ -107,22 +108,25 @@ public class TestClass2
         /// <summary>
         /// Verifies that the analyzer will properly handle non-static classes before static.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestNonStaticClassBeforeStaticAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestNonStaticClassBeforeStaticAsync(string lineEnding)
         {
             var testCode = @"public class TestClass1 { }
-public static class TestClass2 { }
-";
+public static class {|#0:TestClass2|} { }
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(2, 21),
+                Diagnostic().WithLocation(0),
             };
 
             var fixedCode = @"public static class TestClass2 { }
 public class TestClass1 { }
-";
+".ReplaceLineEndings(lineEnding);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }

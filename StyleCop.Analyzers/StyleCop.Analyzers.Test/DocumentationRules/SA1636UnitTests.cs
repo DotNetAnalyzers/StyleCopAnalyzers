@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
 
     /// <summary>
@@ -45,18 +44,21 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         /// <summary>
         /// Verifies that a file header with a copyright message that is different than in the settings will produce the expected diagnostic message.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestFileHeaderWithDifferentCopyrightMessageAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestFileHeaderWithDifferentCopyrightMessageAsync(string lineEnding)
         {
-            var testCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
+            var testCode = @"// {|#0:<copyright|} file=""Test0.cs"" company=""FooCorp"">
 //   My custom copyright message.
 // </copyright>
 
 namespace Bar
 {
 }
-";
+".ReplaceLineEndings(lineEnding);
             var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
 // Copyright (c) FooCorp. All rights reserved.
 // </copyright>
@@ -64,9 +66,9 @@ namespace Bar
 namespace Bar
 {
 }
-";
+".ReplaceLineEndings(lineEnding);
 
-            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(1, 4);
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(0);
             await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 

@@ -108,5 +108,33 @@ class Foo
                 TestCode = testCode,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3973, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3973")]
+        public async Task TestStaticLambdaSpanningMultipleLinesAsync()
+        {
+            var testCode = @"using System;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        UseValues(
+            1,
+            static (int x, int y) =>
+            {
+                return x + y;
+            },
+            3);
+    }
+
+    private void UseValues(int first, Func<int, int, int> combine, int last)
+    {
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

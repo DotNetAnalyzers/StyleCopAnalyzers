@@ -53,7 +53,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
+            var sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+            var options = document.Project.Solution.Workspace.Options;
+            var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
 
             var enumMemberDeclaration = (EnumMemberDeclarationSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
             var enumDeclaration = (EnumDeclarationSyntax)enumMemberDeclaration.Parent;
@@ -71,7 +73,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             var newTrailingTrivia = SyntaxFactory.TriviaList(sharedTrivia)
                 .WithoutTrailingWhitespace()
-                .Add(SyntaxFactory.CarriageReturnLineFeed);
+                .Add(FormattingHelper.GetEndOfLineForCodeFix(precedingSeparatorToken, sourceText, options));
 
             // replace the trivia for the tokens
             var replacements = new Dictionary<SyntaxToken, SyntaxToken>

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
 {
     using System.Threading;
@@ -39,6 +37,52 @@ using System.Threading;
             };
 
             await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("\n")]
+        [InlineData("// A comment.\n")]
+        [WorkItem(3875, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3875")]
+        public async Task TestOnlyGlobalUsingStatementInFileAsync(string leadingTrivia)
+        {
+            var testCode = $@"{leadingTrivia}global using System;";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3875, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3875")]
+        public async Task TestGlobalUsingStatementInFileWithNamespaceAsync()
+        {
+            var testCode = @"global using System;
+
+namespace TestNamespace
+{
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3875, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3875")]
+        public async Task TestGlobalUsingStatementInFileWithOtherUsingDirectivesAsync()
+        {
+            var testCode = @"global using System;
+
+[|using System.Linq;|]
+
+namespace TestNamespace
+{
+}";
+            var fixedTestCode = @"global using System;
+
+namespace TestNamespace
+{
+    using System.Linq;
+}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

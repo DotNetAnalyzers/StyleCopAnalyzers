@@ -1881,8 +1881,10 @@ class ClassName
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestAnonymousObjectCreationExpressionAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestAnonymousObjectCreationExpressionAsync(string lineEnding)
         {
             string testCode = @"
 class ClassName
@@ -1893,8 +1895,8 @@ class ClassName
             new
             {
                 X = 0,
-              Y = 0,
-Z = 0,
+{|#0:              |}Y = 0,
+{|#1:Z|} = 0,
             };
     }
 
@@ -1904,12 +1906,12 @@ Z = 0,
             new
             {
 X = 0,
-              Y = 0,
-                Z = 0,
+{|#2:              |}Y = 0,
+{|#3:                |}Z = 0,
             };
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
             string fixedCode = @"
 class ClassName
 {
@@ -1935,14 +1937,14 @@ Z = 0,
             };
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(10, 1),
-                Diagnostic().WithLocation(11, 1),
-                Diagnostic().WithLocation(21, 1),
-                Diagnostic().WithLocation(22, 1),
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+                Diagnostic().WithLocation(2),
+                Diagnostic().WithLocation(3),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);

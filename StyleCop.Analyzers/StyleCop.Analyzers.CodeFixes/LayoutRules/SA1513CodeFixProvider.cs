@@ -61,11 +61,13 @@ namespace StyleCop.Analyzers.LayoutRules
         private static async Task<SyntaxNode> GetTransformedDocumentAsync(Document document, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+            var options = document.Project.Solution.Workspace.Options;
             return root.ReplaceTokens(
                 diagnostics.Select(diagnostic => root.FindToken(diagnostic.Location.SourceSpan.End)),
                 (originalToken, rewrittenToken) =>
                 {
-                    var endOfLineTrivia = rewrittenToken.GetPrecedingEndOfLineTrivia();
+                    var endOfLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(rewrittenToken, text, options);
                     var newTrivia = rewrittenToken.LeadingTrivia.Insert(0, endOfLineTrivia);
                     return rewrittenToken.WithLeadingTrivia(newTrivia);
                 });

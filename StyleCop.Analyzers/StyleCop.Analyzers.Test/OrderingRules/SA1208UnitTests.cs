@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.OrderingRules.SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives,
@@ -306,8 +307,10 @@ namespace Test
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestPreprocessorDirectivesAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestPreprocessorDirectivesAsync(string lineEnding)
         {
             var testCode = @"using System;
 using Microsoft.Win32;
@@ -316,8 +319,8 @@ using Microsoft.CodeAnalysis;
 
 #if true
 using Microsoft.CodeAnalysis.CSharp;
-using System.Threading;
-using System.Collections;
+{|#0:using System.Threading;|}
+{|#1:using System.Collections;|}
 #if true
 using System.Collections.Generic;
 #endif
@@ -325,7 +328,7 @@ using System.Collections.Generic;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Threading;
 using System.Collections;
-#endif";
+#endif".ReplaceLineEndings(lineEnding);
 
             var fixedTestCode = @"using System;
 using Microsoft.CodeAnalysis;
@@ -343,13 +346,13 @@ using System.Collections.Generic;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Threading;
 using System.Collections;
-#endif";
+#endif".ReplaceLineEndings(lineEnding);
 
             // else block is skipped
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(8, 1).WithArguments("System.Threading", "Microsoft.CodeAnalysis.CSharp"),
-                Diagnostic().WithLocation(9, 1).WithArguments("System.Collections", "Microsoft.CodeAnalysis.CSharp"),
+                Diagnostic().WithLocation(0).WithArguments("System.Threading", "Microsoft.CodeAnalysis.CSharp"),
+                Diagnostic().WithLocation(1).WithArguments("System.Collections", "Microsoft.CodeAnalysis.CSharp"),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);

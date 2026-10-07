@@ -1,25 +1,21 @@
-version: '{build}'
-image: Visual Studio 2019
-init:
-- git config --global core.autocrlf true
-configuration:
-- Debug
-- Release
-before_build:
-- ps: .\init.ps1 -NoRestore
-- nuget restore
-skip_tags: true
-build:
-  project: StyleCopAnalyzers.sln
-  verbosity: minimal
-test_script:
-- .\StyleCop.Analyzers\StyleCop.Analyzers.Status.Generator\bin\%Configuration%\net472\StyleCop.Analyzers.Status.Generator.exe .\StyleCopAnalyzers.sln > StyleCop.Analyzers.Status.json
-cache:
-  - packages -> **\packages.config
-  - C:\Users\appveyor\.nuget\packages -> appveyor.yml
+# AppVeyor is retired: CI runs on GitHub Actions (.github/workflows/build.yml).
+#
+# This file is intentionally kept. The AppVeyor project (ci.appveyor.com/project/sharwell/stylecopanalyzers)
+# has "skip branches without appveyor.yml" turned off, so deleting this file would make AppVeyor fall back to
+# the build settings in its web UI and keep building. These settings stop webhook-triggered builds instead.
+# This file can be deleted once a maintainer removes the AppVeyor project or its GitHub webhook.
 
-# 'Release' is hard-coded to ensure VSIX and NuGet artifacts are only published for release configuration builds
-artifacts:
-- path: 'StyleCop.Analyzers\StyleCop.Analyzers.Vsix\bin\Release\net452\*.vsix'
-- path: 'StyleCop.Analyzers\StyleCop.Analyzers.CodeFixes\bin\Release\*.nupkg'
-- path: 'StyleCop.Analyzers.Status.json'
+# Only build a branch that doesn't exist. Note: per AppVeyor docs, "only" does not exclude PRs based on a listed branch.
+branches:
+  only:
+    - __appveyor_disabled__
+
+# Skip every push and pull request, whatever the commit message (regex matched against the commit message title).
+skip_commits:
+  message: /.*/
+
+skip_tags: true
+
+# If a build is started anyway (UI, API, or schedule, which ignore the filters above), do nothing.
+build: off
+test: off

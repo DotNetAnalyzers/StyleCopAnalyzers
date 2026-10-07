@@ -281,22 +281,24 @@ public {classKeyword} FooClass {{ }}
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestTypeMemberOrderWrongOrderInterfaceAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestTypeMemberOrderWrongOrderInterfaceAsync(string lineEnding)
         {
             string testCode = @"public interface OuterType
 {
     string TestProperty { get; set; }
-    event System.Action TestEvent;
+    {|#0:event System.Action TestEvent;|}
     void TestMethod ();
-    string this[string arg] { get; set; }
+    string {|#1:this|}[string arg] { get; set; }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(4, 5).WithArguments("event", "property"),
-                Diagnostic().WithLocation(6, 12).WithArguments("indexer", "method"),
+                Diagnostic().WithLocation(0).WithArguments("event", "property"),
+                Diagnostic().WithLocation(1).WithArguments("indexer", "method"),
             };
 
             string fixedCode = @"public interface OuterType
@@ -306,7 +308,7 @@ public {classKeyword} FooClass {{ }}
     string this[string arg] { get; set; }
     void TestMethod ();
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }

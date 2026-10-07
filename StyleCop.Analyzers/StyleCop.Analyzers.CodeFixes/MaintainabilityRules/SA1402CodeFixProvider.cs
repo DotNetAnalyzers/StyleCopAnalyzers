@@ -68,7 +68,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             DocumentId extractedDocumentId = DocumentId.CreateNewId(document.Project.Id);
             string suffix;
             FileNameHelpers.GetFileNameAndSuffix(document.Name, out suffix);
-            var settings = document.Project.AnalyzerOptions.GetStyleCopSettings(root.SyntaxTree, cancellationToken);
+            var settings = document.Project.AnalyzerOptions.GetStyleCopSettingsInCodeFix(root.SyntaxTree, cancellationToken);
             string extractedDocumentName = FileNameHelpers.GetConventionalFileName(memberDeclarationSyntax, settings.DocumentationRules.FileNamingConvention) + suffix;
 
             List<SyntaxNode> nodesToRemoveFromExtracted = new List<SyntaxNode>();

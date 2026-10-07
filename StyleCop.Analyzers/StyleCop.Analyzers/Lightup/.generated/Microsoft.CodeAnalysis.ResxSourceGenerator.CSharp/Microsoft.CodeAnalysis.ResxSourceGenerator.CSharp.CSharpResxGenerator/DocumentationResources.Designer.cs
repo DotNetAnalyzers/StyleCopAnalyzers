@@ -394,6 +394,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         public static string @StaticConstructorStandardTextFirstPart => GetResourceString("StaticConstructorStandardTextFirstPart")!;
         /// <summary>{0}</summary>
         public static string @StaticConstructorStandardTextSecondPart => GetResourceString("StaticConstructorStandardTextSecondPart")!;
+        /// <summary>Gets or initializes</summary>
+        public static string @StartingTextGetsOrInitializes => GetResourceString("StartingTextGetsOrInitializes")!;
         /// <summary>A</summary>
         public static string @TaskReturnElementFirstPart => GetResourceString("TaskReturnElementFirstPart")!;
         /// <summary>representing the result of the asynchronous operation.</summary>
@@ -402,6 +404,12 @@ namespace StyleCop.Analyzers.DocumentationRules
         public static string @TypeTextClass => GetResourceString("TypeTextClass")!;
         /// <summary>struct</summary>
         public static string @TypeTextStruct => GetResourceString("TypeTextStruct")!;
+        /// <summary>Gets or initializes a value indicating whether</summary>
+        public static string @StartingTextGetsOrInitializesWhether => GetResourceString("StartingTextGetsOrInitializesWhether")!;
+        /// <summary>Initializes</summary>
+        public static string @StartingTextInitializes => GetResourceString("StartingTextInitializes")!;
+        /// <summary>Initializes a value indicating whether</summary>
+        public static string @StartingTextInitializesWhether => GetResourceString("StartingTextInitializesWhether")!;
 
     }
 }

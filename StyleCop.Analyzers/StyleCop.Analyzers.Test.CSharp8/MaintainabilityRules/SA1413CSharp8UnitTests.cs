@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp8.MaintainabilityRules
 {
     using System.Threading;
@@ -53,6 +51,53 @@ namespace StyleCop.Analyzers.Test.CSharp8.MaintainabilityRules
             };
         }
     }
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3003, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3003")]
+        public async Task TestPropertyPatternAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public bool Test1(SomeType value) => value is SomeType { X: 1, Y: 2 };
+    public bool Test2(SomeType value) => value is SomeType { X: 1, Y: 2, };
+    public bool Test3(SomeType value) => value is SomeType
+    {
+        X: 1,
+        [|Y: 2|]
+    };
+}
+
+public class SomeType
+{
+    public int X { get; set; }
+
+    public int Y { get; set; }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    public bool Test1(SomeType value) => value is SomeType { X: 1, Y: 2 };
+    public bool Test2(SomeType value) => value is SomeType { X: 1, Y: 2, };
+    public bool Test3(SomeType value) => value is SomeType
+    {
+        X: 1,
+        Y: 2,
+    };
+}
+
+public class SomeType
+{
+    public int X { get; set; }
+
+    public int Y { get; set; }
 }
 ";
 

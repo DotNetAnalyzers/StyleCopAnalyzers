@@ -66,8 +66,16 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             var type = semanticModel.GetSymbolInfo(node, cancellationToken).Symbol as INamedTypeSymbol;
 
-            PredefinedTypeSyntax typeSyntax;
-            if (!SpecialTypeHelper.TryGetPredefinedType(type.SpecialType, out typeSyntax))
+            TypeSyntax typeSyntax;
+            if (SpecialTypeHelper.TryGetPredefinedType(type.SpecialType, out var predefinedType))
+            {
+                typeSyntax = predefinedType;
+            }
+            else if (type.SpecialType is SpecialType.System_IntPtr or SpecialType.System_UIntPtr)
+            {
+                typeSyntax = SyntaxFactory.IdentifierName(type.SpecialType == SpecialType.System_IntPtr ? "nint" : "nuint");
+            }
+            else
             {
                 return node;
             }

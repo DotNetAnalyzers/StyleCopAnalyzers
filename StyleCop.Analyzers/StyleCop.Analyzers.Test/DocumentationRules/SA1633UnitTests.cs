@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
 
     /// <summary>
@@ -186,16 +185,19 @@ namespace Bar
         /// <summary>
         /// Verifies that a file without a header, but with leading trivia will produce the correct diagnostic message.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestMissingFileHeaderWithLeadingTriviaAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestMissingFileHeaderWithLeadingTriviaAsync(string lineEnding)
         {
-            var testCode = @"#define MYDEFINE
+            var testCode = @"{|#0:|}#define MYDEFINE
 
 namespace Foo
 {
 }
-";
+".ReplaceLineEndings(lineEnding);
             var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
 // Copyright (c) FooCorp. All rights reserved.
 // </copyright>
@@ -205,9 +207,9 @@ namespace Foo
 namespace Foo
 {
 }
-";
+".ReplaceLineEndings(lineEnding);
 
-            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(0);
             await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 

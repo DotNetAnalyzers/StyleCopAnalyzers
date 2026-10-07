@@ -1,13 +1,12 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.DocumentationRules.SA1626SingleLineCommentsMustNotUseDocumentationStyleSlashes,
@@ -45,17 +44,19 @@ public class TypeName
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestMethodWithOneLineThreeSlashCommentAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestMethodWithOneLineThreeSlashCommentAsync(string lineEnding)
         {
             var testCode = @"public class TypeName
 {
     public void Bar()
     {
-        /// This is a comment
+        {|#0:///|} This is a comment
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
             var fixedCode = @"public class TypeName
 {
     public void Bar()
@@ -63,9 +64,9 @@ public class TypeName
         // This is a comment
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
-            DiagnosticResult expected = Diagnostic().WithLocation(5, 9);
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 

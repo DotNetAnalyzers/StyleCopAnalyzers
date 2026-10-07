@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.MaintainabilityRules.SA1411AttributeConstructorMustNotUseUnnecessaryParenthesis,
@@ -90,16 +91,18 @@ public class Foo
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestCodeFixAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestCodeFixAsync(string lineEnding)
         {
             var oldSource = @"public class Foo
 {
-    [System.Obsolete()]
+    [System.Obsolete{|#0:()|}]
     public void Bar()
     {
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
             var newSource = @"public class Foo
 {
@@ -107,9 +110,9 @@ public class Foo
     public void Bar()
     {
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
-            var expected = Diagnostic().WithLocation(3, 21);
+            var expected = Diagnostic().WithLocation(0);
             await VerifyCSharpFixAsync(oldSource, expected, newSource, CancellationToken.None).ConfigureAwait(false);
         }
 

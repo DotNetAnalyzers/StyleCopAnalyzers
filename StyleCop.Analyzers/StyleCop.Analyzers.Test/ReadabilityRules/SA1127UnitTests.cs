@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1127GenericTypeConstraintsMustBeOnOwnLine,
@@ -49,22 +50,24 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestViolationWithMethodDeclarationAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestViolationWithMethodDeclarationAsync(string lineEnding)
         {
             var testCode = $@"
 class Foo
 {{
-    private void Method<T>() where T : class {{ }}
-}}";
+    private void Method<T>() {{|#0:where T : class|}} {{ }}
+}}".ReplaceLineEndings(lineEnding);
             var fixedCode = $@"
 class Foo
 {{
     private void Method<T>()
         where T : class
     {{ }}
-}}";
-            var expected = Diagnostic().WithLocation(4, 30);
+}}".ReplaceLineEndings(lineEnding);
+            var expected = Diagnostic().WithLocation(0);
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 

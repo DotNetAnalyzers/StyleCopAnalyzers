@@ -13,6 +13,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     internal sealed class SA1407SA1408FixAllProvider : DocumentBasedFixAllProvider
     {
@@ -44,16 +45,26 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
         private static SyntaxNode AddParentheses(SyntaxNode node)
         {
-            if (!(node is BinaryExpressionSyntax syntax))
+            if (node is BinaryExpressionSyntax syntax)
             {
-                return node;
+                BinaryExpressionSyntax trimmedSyntax = syntax.WithoutTrivia();
+
+                return SyntaxFactory.ParenthesizedExpression(trimmedSyntax)
+                    .WithTriviaFrom(syntax)
+                    .WithoutFormatting();
             }
 
-            BinaryExpressionSyntax trimmedSyntax = syntax.WithoutTrivia();
+            if (BinaryPatternSyntaxWrapper.IsInstance(node))
+            {
+                BinaryPatternSyntaxWrapper trimmedSyntax = (BinaryPatternSyntaxWrapper)node.WithoutTrivia();
 
-            return SyntaxFactory.ParenthesizedExpression(trimmedSyntax)
-                .WithTriviaFrom(syntax)
-                .WithoutFormatting();
+                return SyntaxFactoryEx.ParenthesizedPattern(trimmedSyntax)
+                    .SyntaxNode
+                    .WithTriviaFrom(node)
+                    .WithoutFormatting();
+            }
+
+            return node;
         }
     }
 }
