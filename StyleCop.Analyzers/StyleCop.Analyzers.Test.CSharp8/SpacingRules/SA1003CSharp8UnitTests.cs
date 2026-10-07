@@ -329,5 +329,97 @@ namespace TestNamespace
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestNullForgivingOperatorAtEndOfLineBeforeMemberAccessAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestOnParameter(string? maybeNullParameter)
+        {
+            var result = maybeNullParameter!
+                .ToString();
+        }
+
+        private string? _maybeNullProperty;
+        public void TestOnProperty()
+        {
+            var result = _maybeNullProperty!
+                .ToString();
+        }
+
+        private string? MaybeNullMethod() => null;
+        public void TestOnMethod()
+        {
+            var result = MaybeNullMethod()!
+                .ToString();
+        }
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestNullForgivingOperatorAtEndOfLineBeforeConditionalExpressionColonAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod(bool condition, string? canBeNullExpression)
+        {
+            var result1 = condition ? canBeNullExpression!
+                : ""default"";
+
+            var result2 = condition
+                ? canBeNullExpression!
+                : ""default"";
+
+            var result3 = condition ? canBeNullExpression! : ""default"";
+        }
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestNullForgivingOperatorWithDelegateInvocationAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    using System;
+
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            Func<string>? delegateThatMightReturnNull = null;
+
+            // Inline invocation
+            var result1 = delegateThatMightReturnNull!();
+
+            // Invocation with arguments
+            Func<int, string>? delegateWithArgs = null;
+            var result2 = delegateWithArgs!(42);
+
+            // Multi-line invocation
+            var result3 = delegateThatMightReturnNull!
+                ();
+        }
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
