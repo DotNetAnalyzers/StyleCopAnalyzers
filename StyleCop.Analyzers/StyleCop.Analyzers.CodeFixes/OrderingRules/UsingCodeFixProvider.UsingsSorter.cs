@@ -93,7 +93,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 return result;
             }
 
-            public SyntaxList<UsingDirectiveSyntax> GenerateGroupedUsings(TreeTextSpan directiveSpan, string indentation, SyntaxTrivia endOfLine, bool withLeadingBlankLine, bool withTrailingBlankLine, bool qualifyNames, bool includeGlobal, bool includeLocal)
+            public SyntaxList<UsingDirectiveSyntax> GenerateGroupedUsings(TreeTextSpan directiveSpan, string indentation, SyntaxTrivia endOfLine, bool withLeadingBlankLine, bool withTrailingBlankLine, bool qualifyNames, bool includeGlobal, bool includeLocal, bool expandAliases = false)
             {
                 var usingList = new List<UsingDirectiveSyntax>();
                 List<SyntaxTrivia> triviaToMove = new List<SyntaxTrivia>();
@@ -101,21 +101,21 @@ namespace StyleCop.Analyzers.OrderingRules
 
                 if (includeGlobal)
                 {
-                    usingList.AddRange(this.GenerateUsings(this.systemUsings, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: true));
-                    usingList.AddRange(this.GenerateUsings(this.namespaceUsings, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: true));
-                    usingList.AddRange(this.GenerateUsings(this.systemStaticImports, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: true));
-                    usingList.AddRange(this.GenerateUsings(this.staticImports, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: true));
-                    usingList.AddRange(this.GenerateUsings(this.aliases, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: true));
+                    usingList.AddRange(this.GenerateUsings(this.systemUsings, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: true, expandAliases));
+                    usingList.AddRange(this.GenerateUsings(this.namespaceUsings, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: true, expandAliases));
+                    usingList.AddRange(this.GenerateUsings(this.systemStaticImports, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: true, expandAliases));
+                    usingList.AddRange(this.GenerateUsings(this.staticImports, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: true, expandAliases));
+                    usingList.AddRange(this.GenerateUsings(this.aliases, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: true, expandAliases));
                     lastGlobalDirective = usingList.Count - 1;
                 }
 
                 if (includeLocal)
                 {
-                    usingList.AddRange(this.GenerateUsings(this.systemUsings, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: false));
-                    usingList.AddRange(this.GenerateUsings(this.namespaceUsings, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: false));
-                    usingList.AddRange(this.GenerateUsings(this.systemStaticImports, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: false));
-                    usingList.AddRange(this.GenerateUsings(this.staticImports, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: false));
-                    usingList.AddRange(this.GenerateUsings(this.aliases, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: false));
+                    usingList.AddRange(this.GenerateUsings(this.systemUsings, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: false, expandAliases));
+                    usingList.AddRange(this.GenerateUsings(this.namespaceUsings, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: false, expandAliases));
+                    usingList.AddRange(this.GenerateUsings(this.systemStaticImports, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: false, expandAliases));
+                    usingList.AddRange(this.GenerateUsings(this.staticImports, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: false, expandAliases));
+                    usingList.AddRange(this.GenerateUsings(this.aliases, directiveSpan, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal: false, expandAliases));
                 }
 
                 if (!this.insertBlankLinesBetweenGroups && lastGlobalDirective >= 0 && lastGlobalDirective < usingList.Count - 1)
@@ -196,7 +196,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 return SyntaxFactory.List(usingList);
             }
 
-            private List<UsingDirectiveSyntax> GenerateUsings(Dictionary<TreeTextSpan, List<UsingDirectiveSyntax>> usingsGroup, TreeTextSpan directiveSpan, string indentation, SyntaxTrivia endOfLine, List<SyntaxTrivia> triviaToMove, bool qualifyNames, bool isGlobal)
+            private List<UsingDirectiveSyntax> GenerateUsings(Dictionary<TreeTextSpan, List<UsingDirectiveSyntax>> usingsGroup, TreeTextSpan directiveSpan, string indentation, SyntaxTrivia endOfLine, List<SyntaxTrivia> triviaToMove, bool qualifyNames, bool isGlobal, bool expandAliases)
             {
                 List<UsingDirectiveSyntax> result = new List<UsingDirectiveSyntax>();
                 List<UsingDirectiveSyntax> usingsList;
@@ -206,10 +206,10 @@ namespace StyleCop.Analyzers.OrderingRules
                     return result;
                 }
 
-                return this.GenerateUsings(usingsList, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal);
+                return this.GenerateUsings(usingsList, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal, expandAliases);
             }
 
-            private List<UsingDirectiveSyntax> GenerateUsings(List<UsingDirectiveSyntax> usingsList, string indentation, SyntaxTrivia endOfLine, List<SyntaxTrivia> triviaToMove, bool qualifyNames, bool isGlobal)
+            private List<UsingDirectiveSyntax> GenerateUsings(List<UsingDirectiveSyntax> usingsList, string indentation, SyntaxTrivia endOfLine, List<SyntaxTrivia> triviaToMove, bool qualifyNames, bool isGlobal, bool expandAliases = false)
             {
                 List<UsingDirectiveSyntax> result = new List<UsingDirectiveSyntax>();
 
@@ -369,7 +369,7 @@ namespace StyleCop.Analyzers.OrderingRules
                         newTrailingTrivia = newTrailingTrivia.Add(endOfLine);
                     }
 
-                    var processedUsing = (qualifyNames ? this.QualifyUsingDirective(currentUsing) : currentUsing)
+                    var processedUsing = (qualifyNames ? this.QualifyUsingDirective(currentUsing) : (expandAliases && !isGlobal ? this.ExpandAliasReferences(currentUsing) : currentUsing))
                         .WithLeadingTrivia(newLeadingTrivia)
                         .WithTrailingTrivia(newTrailingTrivia)
                         .WithAdditionalAnnotations(UsingCodeFixAnnotation);
@@ -470,6 +470,34 @@ namespace StyleCop.Analyzers.OrderingRules
                     rewrittenName = originalName;
                     break;
                 }
+
+                if (rewrittenName == originalName)
+                {
+                    return usingDirective;
+                }
+
+                return usingDirective.ReplaceNode(originalName, rewrittenName);
+            }
+
+            private UsingDirectiveSyntax ExpandAliasReferences(UsingDirectiveSyntax usingDirective)
+            {
+                if (usingDirective.Alias == null)
+                {
+                    return usingDirective;
+                }
+
+                // The target of an alias is resolved without the other using directives of the block that declares
+                // it. References to aliases (and to names imported by a using directive of an outer block) are
+                // therefore replaced by their fully qualified form before the directive is moved.
+                NameSyntax originalName = usingDirective.Name;
+                string enclosingNamespaceName = null;
+                if (BaseNamespaceDeclarationSyntaxWrapper.IsInstance(usingDirective.Parent))
+                {
+                    enclosingNamespaceName = ((BaseNamespaceDeclarationSyntaxWrapper)usingDirective.Parent).Name.WithoutTrivia().ToString();
+                }
+
+                var rewriter = new AliasReferenceExpander(this.semanticModel, enclosingNamespaceName);
+                var rewrittenName = (NameSyntax)rewriter.Visit(originalName);
 
                 if (rewrittenName == originalName)
                 {
@@ -594,6 +622,145 @@ namespace StyleCop.Analyzers.OrderingRules
                 }
 
                 return groupList.Where(u => usingsList.Contains(u)).ToList();
+            }
+
+            private sealed class AliasReferenceExpander : CSharpSyntaxRewriter
+            {
+                private readonly SemanticModel semanticModel;
+                private readonly string enclosingNamespaceName;
+
+                public AliasReferenceExpander(SemanticModel semanticModel, string enclosingNamespaceName)
+                {
+                    this.semanticModel = semanticModel;
+                    this.enclosingNamespaceName = enclosingNamespaceName;
+                }
+
+                public override SyntaxNode VisitIdentifierName(IdentifierNameSyntax node)
+                {
+                    if (!IsFirstPart(node))
+                    {
+                        return base.VisitIdentifierName(node);
+                    }
+
+                    var alias = this.semanticModel.GetAliasInfo(node);
+                    if (alias != null)
+                    {
+                        return IsDeclaredByLocalUsing(alias) ? Expand(node, alias.Target) : node;
+                    }
+
+                    return this.ExpandImportedName(node);
+                }
+
+                public override SyntaxNode VisitGenericName(GenericNameSyntax node)
+                {
+                    if (!IsFirstPart(node))
+                    {
+                        return base.VisitGenericName(node);
+                    }
+
+                    var expanded = this.ExpandImportedName(node);
+                    return expanded != node ? expanded : base.VisitGenericName(node);
+                }
+
+                private static bool IsFirstPart(SimpleNameSyntax node)
+                {
+                    switch (node.Parent.Kind())
+                    {
+                    case SyntaxKind.QualifiedName:
+                        return ((QualifiedNameSyntax)node.Parent).Left == node;
+
+                    case SyntaxKind.AliasQualifiedName:
+                        return false;
+
+                    default:
+                        return true;
+                    }
+                }
+
+                private static bool IsDeclaredByLocalUsing(IAliasSymbol alias)
+                {
+                    foreach (var reference in alias.DeclaringSyntaxReferences)
+                    {
+                        if (reference.GetSyntax() is UsingDirectiveSyntax u && !u.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword))
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+
+                private static SyntaxNode Expand(SimpleNameSyntax originalName, ISymbol symbol)
+                {
+                    string fullName;
+                    if (symbol is INamespaceSymbol)
+                    {
+                        fullName = symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+                    }
+                    else if (symbol is INamedTypeSymbol namedTypeSymbol)
+                    {
+                        if (SpecialTypeHelper.IsPredefinedType(namedTypeSymbol.OriginalDefinition.SpecialType))
+                        {
+                            fullName = "global::System." + symbol.Name;
+                        }
+                        else if (namedTypeSymbol.IsTupleType())
+                        {
+                            fullName = namedTypeSymbol.TupleUnderlyingTypeOrSelf().ToFullyQualifiedValueTupleDisplayString();
+                        }
+                        else
+                        {
+                            fullName = symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+                        }
+                    }
+                    else
+                    {
+                        return originalName;
+                    }
+
+                    NameSyntax replacement = SyntaxFactory.ParseName(fullName);
+                    replacement = replacement.ReplaceNodes(
+                        replacement.DescendantNodesAndSelf().OfType<AliasQualifiedNameSyntax>(),
+                        (originalNode, rewrittenNode) => rewrittenNode.Name);
+
+                    return replacement.WithTriviaFrom(originalName);
+                }
+
+                private SyntaxNode ExpandImportedName(SimpleNameSyntax node)
+                {
+                    if (this.enclosingNamespaceName == null)
+                    {
+                        // Targets of aliases declared in the compilation unit never depend on another using directive.
+                        return node;
+                    }
+
+                    var symbol = this.semanticModel.GetSymbolInfo(node).Symbol;
+                    if (symbol == null || !(symbol is INamespaceSymbol || symbol is INamedTypeSymbol))
+                    {
+                        return node;
+                    }
+
+                    // Names declared in the global namespace or in an enclosing namespace do not depend on any using
+                    // directive.
+                    if (symbol.ContainingType == null
+                        && (symbol.ContainingNamespace == null || this.IsEnclosingNamespaceOrGlobal(symbol.ContainingNamespace)))
+                    {
+                        return node;
+                    }
+
+                    return Expand(node, symbol);
+                }
+
+                private bool IsEnclosingNamespaceOrGlobal(INamespaceSymbol containingNamespace)
+                {
+                    if (containingNamespace.IsGlobalNamespace)
+                    {
+                        return true;
+                    }
+
+                    var name = containingNamespace.ToDisplayString(FullNamespaceDisplayFormat);
+                    return string.Equals(name, this.enclosingNamespaceName, StringComparison.Ordinal)
+                        || this.enclosingNamespaceName.StartsWith(name + ".", StringComparison.Ordinal);
+                }
             }
         }
     }

@@ -314,6 +314,7 @@ class Foo
         }
 
         [Fact]
+        [WorkItem(1620, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1620")]
         public async Task TestMultiLineLambdaFirstArgumentIsIndentedAsAWholeAsync()
         {
             var testCode = @"
@@ -365,6 +366,7 @@ class Foo
         }
 
         [Fact]
+        [WorkItem(1620, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1620")]
         public async Task TestMultiLineObjectCreationFirstArgumentIsIndentedAsAWholeAsync()
         {
             var testCode = @"
@@ -404,6 +406,7 @@ class Foo
         }
 
         [Fact]
+        [WorkItem(1620, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1620")]
         public async Task TestMultiLineVerbatimStringContentIsNotChangedAsync()
         {
             var testCode = @"
@@ -435,6 +438,7 @@ line three"",
         }
 
         [Fact]
+        [WorkItem(1620, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1620")]
         public async Task TestMultiLineLambdaFirstArgumentWithTabsAsync()
         {
             var testCode = "class Foo\r\n{\r\n\tvoid Bar(System.Action a, int b)\r\n\t{\r\n\t\tBar({|#0:() =>\r\n\t\t{\r\n\t\t\tBar(null, 1);\r\n\t\t}|}, 1);\r\n\t}\r\n}\r\n";
