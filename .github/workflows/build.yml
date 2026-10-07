@@ -220,11 +220,13 @@ jobs:
       with:
         nuget-version: '6.0.6'
 
-    # coverlet.console is a net6.0 tool whose runtimeconfig allows major-version roll forward
-    # (rollForwardOnNoCandidateFx: 2), so it runs on the .NET 10 runtime from global.json's SDK.
-    - name: Setup .NET SDK (from global.json)
+    # coverlet.console is a net6.0 tool. Without a .NET 6 runtime it rolls forward to a newer one, but there its
+    # Windows PDB rewriting (Mono.Cecil + diasymreader) crashed with an AccessViolationException in a Debug job, so
+    # keep running it on .NET 6 as before.
+    - name: Setup .NET SDK (from global.json) and .NET 6 for coverlet
       uses: actions/setup-dotnet@v6
       with:
+        dotnet-version: 6.0.x
         global-json-file: global.json
 
     # .nuget/packages.config provides xunit.runner.console and coverlet.console (same change as #4104).
