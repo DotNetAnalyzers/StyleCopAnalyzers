@@ -55,6 +55,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public TypeDeclarationSyntax SyntaxNode => this.node;
 
+
         public SyntaxList<AttributeListSyntax> AttributeLists
         {
             get
