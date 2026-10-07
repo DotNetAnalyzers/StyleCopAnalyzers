@@ -53,6 +53,8 @@ namespace StyleCop.Analyzers.OrderingRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+            var options = document.Project.Solution.Workspace.Options;
 
             var accessorToken = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
             var accessorList = (AccessorListSyntax)accessorToken.Parent.Parent;
@@ -67,8 +69,9 @@ namespace StyleCop.Analyzers.OrderingRules
 
             if (HasLeadingBlankLines(secondAccessor))
             {
+                var endOfLine = FormattingHelper.GetEndOfLineForCodeFix(firstAccesor.Keyword, sourceText, options);
                 trackedFirstAccessor = syntaxRoot.GetCurrentNode(firstAccesor);
-                var newFirstAccessor = trackedFirstAccessor.WithLeadingTrivia(new[] { SyntaxFactory.CarriageReturnLineFeed }.Concat(firstAccesor.GetFirstToken().WithoutLeadingBlankLines().LeadingTrivia));
+                var newFirstAccessor = trackedFirstAccessor.WithLeadingTrivia(new[] { endOfLine }.Concat(firstAccesor.GetFirstToken().WithoutLeadingBlankLines().LeadingTrivia));
                 syntaxRoot = syntaxRoot.ReplaceNode(trackedFirstAccessor, newFirstAccessor);
             }
 

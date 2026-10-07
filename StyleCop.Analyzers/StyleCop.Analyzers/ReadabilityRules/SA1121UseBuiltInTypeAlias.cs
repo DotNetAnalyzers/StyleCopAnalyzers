@@ -6,7 +6,6 @@
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
-    using System.Collections.Concurrent;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -153,17 +152,19 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            Analyzer analyzer = new Analyzer(context.Compilation.GetOrCreateUsingAliasCache());
+            Analyzer analyzer = new Analyzer(context.Compilation.GetOrCreateUsingAliasCache(), context.Compilation.SupportsNativeSizedIntegers());
             context.RegisterSyntaxNodeAction(analyzer.HandleIdentifierNameSyntax, SyntaxKind.IdentifierName);
         }
 
         private sealed class Analyzer
         {
-            private readonly ConcurrentDictionary<SyntaxTree, bool> usingAliasCache;
+            private readonly UsingAliasCache usingAliasCache;
+            private readonly bool supportsNativeSizedIntegers;
 
-            public Analyzer(ConcurrentDictionary<SyntaxTree, bool> usingAliasCache)
+            public Analyzer(UsingAliasCache usingAliasCache, bool supportsNativeSizedIntegers)
             {
                 this.usingAliasCache = usingAliasCache;
+                this.supportsNativeSizedIntegers = supportsNativeSizedIntegers;
             }
 
             public void HandleIdentifierNameSyntax(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
@@ -211,7 +212,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 // Most source files will not have any using alias directives. Then we don't have to use semantics
                 // if the identifier name doesn't match the name of a special type
                 if (settings.ReadabilityRules.AllowBuiltInTypeAliases
-                    || !identifierNameSyntax.SyntaxTree.ContainsUsingAlias(this.usingAliasCache))
+                    || !this.usingAliasCache.ContainsUsingAlias(identifierNameSyntax.SyntaxTree, context.SemanticModel, context.CancellationToken))
                 {
                     switch (identifierNameSyntax.Identifier.ValueText)
                     {
@@ -230,6 +231,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     case nameof(UInt16):
                     case nameof(UInt32):
                     case nameof(UInt64):
+                    case nameof(IntPtr) or nameof(UIntPtr) when this.supportsNativeSizedIntegers:
                         break;
 
                     default:
@@ -266,6 +268,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 case SpecialType.System_UInt16:
                 case SpecialType.System_UInt32:
                 case SpecialType.System_UInt64:
+                case SpecialType.System_IntPtr or SpecialType.System_UIntPtr when this.supportsNativeSizedIntegers:
                     break;
 
                 default:

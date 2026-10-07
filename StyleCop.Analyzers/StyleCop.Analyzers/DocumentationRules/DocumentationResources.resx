@@ -405,6 +405,9 @@
   <data name="SA1626CodeFix" xml:space="preserve">
     <value>Convert to line comment</value>
   </data>
+  <data name="SA1626CodeFixStrayComment" xml:space="preserve">
+    <value>Convert to documentation comment</value>
+  </data>
   <data name="SA1626Description" xml:space="preserve">
     <value>The C# code contains a single-line comment which begins with three forward slashes in a row.</value>
   </data>
@@ -687,6 +690,9 @@
   <data name="StaticConstructorStandardTextSecondPart" xml:space="preserve">
     <value> {0}</value>
   </data>
+  <data name="StartingTextGetsOrInitializes" xml:space="preserve">
+    <value>Gets or initializes</value>
+  </data>
   <data name="TaskReturnElementFirstPart" xml:space="preserve">
     <value>A </value>
   </data>
@@ -698,5 +704,14 @@
   </data>
   <data name="TypeTextStruct" xml:space="preserve">
     <value>struct</value>
+  </data>
+  <data name="StartingTextGetsOrInitializesWhether" xml:space="preserve">
+    <value>Gets or initializes a value indicating whether</value>
+  </data>
+  <data name="StartingTextInitializes" xml:space="preserve">
+    <value>Initializes</value>
+  </data>
+  <data name="StartingTextInitializesWhether" xml:space="preserve">
+    <value>Initializes a value indicating whether</value>
   </data>
 </root>

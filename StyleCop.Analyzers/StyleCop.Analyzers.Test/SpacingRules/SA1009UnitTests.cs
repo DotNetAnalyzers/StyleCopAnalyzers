@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.SpacingRules.SA1009ClosingParenthesisMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -35,25 +34,27 @@ public class Foo
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestMethodWithWhitespaceBeforeClosingParenthesisAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestMethodWithWhitespaceBeforeClosingParenthesisAsync(string lineEnding)
         {
-            const string testCode = @"using System;
+            string testCode = @"using System;
 
 public class Foo
 {
     public void Method( )
     {
     }
-}";
-            const string fixedCode = @"using System;
+}".ReplaceLineEndings(lineEnding);
+            string fixedCode = @"using System;
 
 public class Foo
 {
     public void Method()
     {
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult expected = Diagnostic(DescriptorNotPreceded).WithLocation(5, 25);
 
@@ -1028,7 +1029,7 @@ public class TestClass
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestWhitespaceInStatementOrDeclAsync(string originalStatement, string fixedStatement, params DiagnosticResult[] expected)
+        private async Task TestWhitespaceInStatementOrDeclAsync(string originalStatement, string? fixedStatement, params DiagnosticResult[] expected)
         {
             string template = @"namespace Foo
 {{

@@ -92,5 +92,53 @@ public class Foo
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Validates that a closing brace followed by a null-forgiving operator is allowed after an object initializer.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3006, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3006")]
+        public async Task TestObjectInitializerWithNullForgivingOperatorAsync()
+        {
+            const string testCode = @"#nullable enable
+public class Foo
+{
+    public Foo? Value { get; set; }
+
+    public void TestMethod()
+    {
+        var item = new Foo { Value = null }!;
+        var other = new Foo { }!;
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Validates that a closing brace followed by a null-forgiving operator is allowed after a collection initializer.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3006, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3006")]
+        public async Task TestCollectionInitializerWithNullForgivingOperatorAsync()
+        {
+            const string testCode = @"#nullable enable
+using System.Collections.Generic;
+
+public class Foo
+{
+    public void TestMethod()
+    {
+        var numbers = new List<int> { 1, 2, 3 }!;
+        var nested = new List<List<int>> { new List<int> { 1, 2 }!, new List<int> { 3 }! };
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers
     using System.Runtime.CompilerServices;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -39,6 +40,23 @@ namespace StyleCop.Analyzers
 
             StrongBox<StyleCopSettings> GetOrCreateSettingsStorage(SyntaxTree tree)
                 => SettingsHelper.GetOrCreateSettingsStorage(context, tree);
+        }
+
+        /// <summary>
+        /// Register an action to be executed at completion of parsing of a code document. The action receives the
+        /// tokens of the <see cref="SyntaxTree"/>, which are collected once and shared by the analyzers of the
+        /// compilation.
+        /// </summary>
+        /// <param name="context">The analysis context.</param>
+        /// <param name="action">Action to be executed at completion of parsing of a document.</param>
+        public static void RegisterSyntaxTreeTokensAction(this AnalysisContext context, Action<SyntaxTreeAnalysisContext, SyntaxTreeTokens> action)
+        {
+            context.RegisterCompilationStartAction(
+                context =>
+                {
+                    context.RegisterSyntaxTreeAction(
+                        treeContext => action(treeContext, SyntaxTreeTokens.GetOrCreate(context, treeContext.Tree)));
+                });
         }
 
         /// <summary>

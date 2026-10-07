@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.SpacingRules.SA1015ClosingGenericBracketsMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -47,9 +48,12 @@ public class TestClass<T> where T : IEnumerable<object>
         /// <summary>
         /// Verifies that the analyzer will properly handle invalid closing generic brackets in a class declaration.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestInvalidSpacingOfClassDeclarationAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestInvalidSpacingOfClassDeclarationAsync(string lineEnding)
         {
             var testCode = @"using System.Collections.Generic;
 
@@ -57,14 +61,14 @@ public class TestClass1<T> where T : IEnumerable<object>
 {
 }
 
-public class TestClass2<T > where T : IEnumerable<object >
+public class TestClass2<T {|#0:>|} where T : IEnumerable<object {|#1:>|}
 {
 }
 
-public class TestClass3<T>where T : IEnumerable<object>
+public class TestClass3<T{|#2:>|}where T : IEnumerable<object>
 {
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             var fixedCode = @"using System.Collections.Generic;
 
@@ -79,13 +83,13 @@ public class TestClass2<T> where T : IEnumerable<object>
 public class TestClass3<T> where T : IEnumerable<object>
 {
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {
-                Diagnostic(DescriptorNotPreceded).WithLocation(7, 27),
-                Diagnostic(DescriptorNotPreceded).WithLocation(7, 58),
-                Diagnostic(DescriptorFollowed).WithLocation(11, 26),
+                Diagnostic(DescriptorNotPreceded).WithLocation(0),
+                Diagnostic(DescriptorNotPreceded).WithLocation(1),
+                Diagnostic(DescriptorFollowed).WithLocation(2),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);

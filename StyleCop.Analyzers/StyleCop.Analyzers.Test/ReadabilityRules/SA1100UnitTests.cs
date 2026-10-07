@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists,
@@ -15,8 +16,10 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
     public class SA1100UnitTests
     {
-        [Fact]
-        public async Task TestChildClassUsesBaseButNoOverrideAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestChildClassUsesBaseButNoOverrideAsync(string lineEnding)
         {
             var testCode = @"
 public class Foo
@@ -31,11 +34,11 @@ public class FooChild : Foo
 {
     protected void Baz()
     {
-        base.Bar();
+        {|#0:base|}.Bar();
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
-            DiagnosticResult expected = Diagnostic().WithLocation(14, 9);
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
 
             var fixedTest = @"
 public class Foo
@@ -52,7 +55,7 @@ public class FooChild : Foo
     {
         this.Bar();
     }
-}";
+}".ReplaceLineEndings(lineEnding);
             await VerifyCSharpFixAsync(testCode, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
         }
 

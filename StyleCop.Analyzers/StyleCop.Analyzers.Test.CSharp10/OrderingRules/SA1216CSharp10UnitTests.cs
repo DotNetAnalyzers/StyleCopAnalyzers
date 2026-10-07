@@ -1,12 +1,11 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp9.OrderingRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -56,6 +55,94 @@ using static System.Array;
 using static System.Math;
 using Execute = System.Action;
 ",
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3964, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3964")]
+        public async Task TestWhenGlobalUsingStaticDirectivesAreNotPlacedCorrectlyAsync()
+        {
+            await new CSharpTest
+            {
+                TestSources =
+                {
+                    @"
+{|#0:global using static System.Math;|}
+global using System;
+
+class TestClass
+{
+}
+",
+                },
+                FixedSources =
+                {
+                    @"
+global using System;
+global using static System.Math;
+
+class TestClass
+{
+}
+",
+                },
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(0),
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3964, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3964")]
+        public async Task TestGlobalUsingStaticDirectivesAreAnalyzedIndependentlyFromLocalUsingDirectivesAsync()
+        {
+            var testCode = @"global using static System.Math;
+
+using System;
+
+class TestClass
+{
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3982, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3982")]
+        public async Task TestOrderingResetsBetweenGlobalAndLocalStaticAndAliasUsingDirectivesAsync()
+        {
+            await new CSharpTest
+            {
+                TestSources =
+                {
+                    @"
+{|#0:global using static System.Math;|}
+global using System;
+global using Alias = System.Console;
+
+using System;
+using AliasLocal = System.Text.StringBuilder;
+{|#1:using static System.Console;|}
+",
+                },
+                FixedSources =
+                {
+                    @"
+global using System;
+global using static System.Math;
+global using Alias = System.Console;
+
+using System;
+using static System.Console;
+using AliasLocal = System.Text.StringBuilder;
+",
+                },
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(0),
+                    Diagnostic().WithLocation(1),
                 },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }

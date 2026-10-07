@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.OrderingRules.SA1214ReadonlyElementsMustAppearBeforeNonReadonlyElements,
@@ -111,25 +112,28 @@ namespace StyleCop.Analyzers.Test.OrderingRules
         /// <summary>
         /// Verifies that the analyzer will properly handle readonly fields in classes.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestReadonlyOrderingInClassAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestReadonlyOrderingInClassAsync(string lineEnding)
         {
             var testCode = @"public class TestClass
 {
     public int TestField1;
-    public readonly int TestField2 = 1;
+    public readonly int {|#0:TestField2|} = 1;
 }
-";
+".ReplaceLineEndings(lineEnding);
 
-            DiagnosticResult expected = Diagnostic().WithLocation(4, 25);
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
 
             var fixTestCode = @"public class TestClass
 {
     public readonly int TestField2 = 1;
     public int TestField1;
 }
-";
+".ReplaceLineEndings(lineEnding);
             await VerifyCSharpFixAsync(testCode, expected, fixTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 

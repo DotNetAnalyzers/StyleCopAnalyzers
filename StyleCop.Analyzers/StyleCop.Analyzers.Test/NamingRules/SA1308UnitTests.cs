@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.NamingRules
 {
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.NamingRules.SA1308VariableNamesMustNotBePrefixed,
@@ -50,14 +49,16 @@ namespace StyleCop.Analyzers.Test.NamingRules
             }
         }
 
-        [Fact]
-        public async Task TestMUnderscoreOnlyAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestMUnderscoreOnlyAsync(string lineEnding)
         {
             var originalCode = @"public class Foo
 {
-private string m_ = ""baz"";
-}";
-            DiagnosticResult expected = Diagnostic().WithArguments("m_", "m_").WithLocation(3, 16);
+private string {|#0:m_|} = ""baz"";
+}".ReplaceLineEndings(lineEnding);
+            DiagnosticResult expected = Diagnostic().WithArguments("m_", "m_").WithLocation(0);
 
             // When the variable name is simply the disallowed prefix, we will not offer a code fix, as we cannot infer the correct variable name.
             await VerifyCSharpFixAsync(originalCode, expected, originalCode, CancellationToken.None).ConfigureAwait(false);

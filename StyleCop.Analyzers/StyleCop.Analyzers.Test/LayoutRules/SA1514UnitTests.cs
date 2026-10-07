@@ -1151,5 +1151,205 @@ public class TestClass
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3849, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3849")]
+        public async Task TestClassInGlobalNamespaceAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// X.
+/// </summary>
+public class TestClass
+{
+}
+";
+
+            var expected = DiagnosticResult.EmptyDiagnosticResults;
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3849, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3849")]
+        public async Task TestClassInGlobalNamespaceWithoutNewlineAsync()
+        {
+            var testCode = @"/// <summary>
+/// X.
+/// </summary>
+public class TestClass
+{
+}
+";
+
+            var expected = DiagnosticResult.EmptyDiagnosticResults;
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3849, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3849")]
+        public async Task TestClassInNamespaceAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    /// <summary>
+    /// X.
+    /// </summary>
+    public class TestClass
+    {
+    }
+}
+";
+
+            var expected = DiagnosticResult.EmptyDiagnosticResults;
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3849, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3849")]
+        public async Task TestClassInNamespaceWithCommentAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    // Normal comment
+    {|#0:///|} <summary>
+    /// X.
+    /// </summary>
+    public class TestClass
+    {
+    }
+}
+";
+
+            var fixedCode = @"
+namespace TestNamespace
+{
+    // Normal comment
+
+    /// <summary>
+    /// X.
+    /// </summary>
+    public class TestClass
+    {
+    }
+}
+";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(0).WithArguments(" not", "preceded"),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3849, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3849")]
+        public async Task TestClassInGlobalNamespaceWithCommentAsync()
+        {
+            var testCode = @"
+// Normal comment
+{|#0:///|} <summary>
+/// X.
+/// </summary>
+public class TestClass
+{
+}
+";
+
+            var fixedCode = @"
+// Normal comment
+
+/// <summary>
+/// X.
+/// </summary>
+public class TestClass
+{
+}
+";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(0).WithArguments(" not", "preceded"),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3849, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3849")]
+        public async Task TestClassInGlobalNamespaceWithPreprocessorDirectiveAsync()
+        {
+            var testCode = @"
+#if DEBUG
+#endif
+{|#0:///|} <summary>
+/// X.
+/// </summary>
+public class TestClass
+{
+}
+";
+
+            var fixedCode = @"
+#if DEBUG
+#endif
+
+/// <summary>
+/// X.
+/// </summary>
+public class TestClass
+{
+}
+";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(0).WithArguments(" not", "preceded"),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3849, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3849")]
+        public async Task TestClassInGlobalNamespaceWithMultilineCommentAsync()
+        {
+            var testCode = @"
+/* Normal
+ * multiline
+ * comment */
+{|#0:///|} <summary>
+/// X.
+/// </summary>
+public class TestClass
+{
+}
+";
+
+            var fixedCode = @"
+/* Normal
+ * multiline
+ * comment */
+
+/// <summary>
+/// X.
+/// </summary>
+public class TestClass
+{
+}
+";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(0).WithArguments(" not", "preceded"),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

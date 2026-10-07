@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System;
@@ -10,6 +8,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1001CommasMustBeSpacedCorrectly,
@@ -302,9 +301,11 @@ class ClassName
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
         [WorkItem(2468, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2468")]
-        public async Task TestCodeFixCommaPlacementAsync()
+        public async Task TestCodeFixCommaPlacementAsync(string lineEnding)
         {
             var testCode = @"using System;
 
@@ -315,12 +316,12 @@ public class TestClass
         var test = (new[]
         {
             new Tuple<int, int>(1, 2)
-           ,new Tuple<int, int>(3, 4)
-           ,new Tuple<int, int>(5, 6)
+           {|#0:,|}new Tuple<int, int>(3, 4)
+           {|#1:,|}new Tuple<int, int>(5, 6)
         }).ToString();
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             var fixedCode = @"using System;
 
@@ -336,14 +337,132 @@ public class TestClass
         }).ToString();
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(10, 12),
-                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(10, 12),
-                Diagnostic().WithArguments(" not", "preceded").WithLocation(11, 12),
-                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(11, 12),
+                Diagnostic().WithArguments(" not", "preceded").WithLocation(0),
+                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(0),
+                Diagnostic().WithArguments(" not", "preceded").WithLocation(1),
+                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3816, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3816")]
+        public async Task TestCommaFollowingPreprocessorDirectiveAsync()
+        {
+            var testCode = @"
+interface IFormattable {}
+interface ISpanFormattable {}
+
+partial struct Money : IFormattable
+#if true
+    , ISpanFormattable
+#endif
+{
+}
+";
+
+            var expected = DiagnosticResult.EmptyDiagnosticResults;
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3816, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3816")]
+        public async Task TestCommaFollowingElifDirectiveAsync()
+        {
+            var testCode = @"
+interface IFormattable {}
+interface ISpanFormattable {}
+
+partial struct Money : IFormattable
+#if false
+#elif true
+    , ISpanFormattable
+#endif
+{
+}
+";
+
+            var expected = DiagnosticResult.EmptyDiagnosticResults;
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3816, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3816")]
+        public async Task TestCommaFollowingElseDirectiveAsync()
+        {
+            var testCode = @"
+interface IFormattable {}
+interface ISpanFormattable {}
+
+partial struct Money : IFormattable
+#if false
+#else
+    , ISpanFormattable
+#endif
+{
+}
+";
+
+            var expected = DiagnosticResult.EmptyDiagnosticResults;
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3816, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3816")]
+        public async Task TestCommaFollowingEndIfDirectiveAsync()
+        {
+            var testCode = @"
+interface IFormattable {}
+interface ISpanFormattable {}
+
+partial struct Money : IFormattable
+#if false
+#endif
+    , ISpanFormattable
+{
+}
+";
+
+            var expected = DiagnosticResult.EmptyDiagnosticResults;
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3816, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3816")]
+        public async Task TestCommaNotFollowingDirectiveAsync()
+        {
+            var testCode = @"
+interface IFormattable {}
+interface ISpanFormattable {}
+
+partial struct Money : IFormattable
+    {|#0:,|} ISpanFormattable
+{
+}
+";
+
+            var fixedCode = @"
+interface IFormattable {}
+interface ISpanFormattable {}
+
+partial struct Money : IFormattable,
+    ISpanFormattable
+{
+}
+";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(0).WithArguments(" not", "preceded"),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);

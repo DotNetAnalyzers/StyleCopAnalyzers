@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.NamingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.NamingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.NamingRules.SA1306FieldNamesMustBeginWithLowerCaseLetter,
@@ -259,22 +258,24 @@ string bar, car, dar;
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestFieldWithCodefixRenameConflictAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestFieldWithCodefixRenameConflictAsync(string lineEnding)
         {
             var testCode = @"public class Foo
 {
     private string _test = ""test1"";
-    private string _Test = ""test2"";
-}";
+    private string {|#0:_Test|} = ""test2"";
+}".ReplaceLineEndings(lineEnding);
 
             var fixedTestCode = @"public class Foo
 {
     private string _test = ""test1"";
     private string _test1 = ""test2"";
-}";
+}".ReplaceLineEndings(lineEnding);
 
-            var expected = Diagnostic().WithArguments("_Test").WithLocation(4, 20);
+            var expected = Diagnostic().WithArguments("_Test").WithLocation(0);
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 

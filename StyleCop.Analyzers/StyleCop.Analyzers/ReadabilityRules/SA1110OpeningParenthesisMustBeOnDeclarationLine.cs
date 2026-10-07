@@ -60,6 +60,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly Action<SyntaxNodeAnalysisContext> ConstructorDeclarationAction = HandleConstructorDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> InvocationExpressionAction = HandleInvocationExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> ObjectCreationExpressionAction = HandleObjectCreationExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> ImplicitObjectCreationExpressionAction = HandleImplicitObjectCreationExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> IndexerDeclarationAction = HandleIndexerDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> ElementAccessExpressionAction = HandleElementAccessExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> AttributeAction = HandleAttribute;
@@ -86,6 +87,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(ConstructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
             context.RegisterSyntaxNodeAction(InvocationExpressionAction, SyntaxKind.InvocationExpression);
             context.RegisterSyntaxNodeAction(ObjectCreationExpressionAction, SyntaxKind.ObjectCreationExpression);
+            context.RegisterSyntaxNodeAction(ImplicitObjectCreationExpressionAction, SyntaxKindEx.ImplicitObjectCreationExpression);
             context.RegisterSyntaxNodeAction(IndexerDeclarationAction, SyntaxKind.IndexerDeclaration);
             context.RegisterSyntaxNodeAction(ElementAccessExpressionAction, SyntaxKind.ElementAccessExpression);
             context.RegisterSyntaxNodeAction(AttributeAction, SyntaxKind.Attribute);
@@ -255,6 +257,24 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 bool preserveLayout = objectCreation.ArgumentList.Arguments.Any();
                 CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, objectCreation.ArgumentList.OpenParenToken, preserveLayout);
+            }
+        }
+
+        private static void HandleImplicitObjectCreationExpression(SyntaxNodeAnalysisContext context)
+        {
+            var implicitObjectCreation = (ImplicitObjectCreationExpressionSyntaxWrapper)context.Node;
+            if (implicitObjectCreation.NewKeyword.IsMissing)
+            {
+                return;
+            }
+
+            var argumentList = implicitObjectCreation.ArgumentList;
+
+            if (argumentList != null
+                && !argumentList.OpenParenToken.IsMissing)
+            {
+                bool preserveLayout = argumentList.Arguments.Any();
+                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, argumentList.OpenParenToken, preserveLayout);
             }
         }
 

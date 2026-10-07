@@ -89,15 +89,19 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag) != null)
+            var inheritdocElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag);
+            var relevantXmlElement = documentation.Content.GetFirstXmlElement(this.XmlTagToHandle);
+            if (inheritdocElement != null
+                && (relevantXmlElement == null
+                    || XmlCommentHelper.CanInheritDocumentation(node, inheritdocElement, context.SemanticModel, context.CancellationToken)))
             {
-                // Ignore nodes with an <inheritdoc/> tag.
+                // Ignore nodes with an <inheritdoc/> tag. Without anything to inherit, the tag only stands in for
+                // documentation that is missing entirely; text written by the user is still validated.
                 return;
             }
 
             XElement completeDocumentation = null;
 
-            var relevantXmlElement = documentation.Content.GetFirstXmlElement(this.XmlTagToHandle);
             if (relevantXmlElement == null)
             {
                 relevantXmlElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag);

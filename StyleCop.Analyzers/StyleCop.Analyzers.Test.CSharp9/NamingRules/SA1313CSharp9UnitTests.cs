@@ -15,6 +15,25 @@ namespace StyleCop.Analyzers.Test.CSharp9.NamingRules
     public partial class SA1313CSharp9UnitTests : SA1313CSharp8UnitTests
     {
         [Fact]
+        [WorkItem(3977, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3977")]
+        public async Task TestLambdaDiscardParametersAsync()
+        {
+            var testCode = @"
+using System;
+
+public class TestClass
+{
+    public void Test()
+    {
+        Action<int, int> handler = (_, _) => { };
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(3168, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3168")]
         [WorkItem(3181, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3181")]
         public async Task TestPositionalRecordAsync()

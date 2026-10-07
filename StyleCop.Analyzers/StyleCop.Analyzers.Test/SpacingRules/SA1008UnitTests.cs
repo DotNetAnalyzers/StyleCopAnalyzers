@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.SpacingRules.SA1008OpeningParenthesisMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -1895,6 +1894,34 @@ namespace TestNamespace
             await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(3931, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3931")]
+        public async Task TestLambdaInCollectionInitializerAsync()
+        {
+            var testCode = @"
+using System;
+using System.Collections.Generic;
+
+class TestClass
+{
+    private List<Action<int, int>> actions = new List<Action<int, int>>() {{|#0:(|}x, y) => { } };
+}
+";
+
+            var fixedCode = @"
+using System;
+using System.Collections.Generic;
+
+class TestClass
+{
+    private List<Action<int, int>> actions = new List<Action<int, int>>() { (x, y) => { } };
+}
+";
+
+            var expected = Diagnostic(DescriptorPreceded).WithLocation(0);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Verifies that multi-line comments are handled properly.
         /// </summary>
@@ -1997,9 +2024,12 @@ namespace TestNamespace
         /// <summary>
         /// Verifies that interpolations are handled properly.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestInterpolationWrongSpacingAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestInterpolationWrongSpacingAsync(string lineEnding)
         {
             var testCode = @"namespace TestNamespace
 {
@@ -2014,7 +2044,7 @@ namespace TestNamespace
             var fileTitle = $""{fileName}{ (FileContainer.HasContentChanged ? ""*"" : String.Empty)}"";
         }
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
             var fixedTestCode = @"namespace TestNamespace
 {
@@ -2029,7 +2059,7 @@ namespace TestNamespace
             var fileTitle = $""{fileName}{(FileContainer.HasContentChanged ? ""*"" : String.Empty)}"";
         }
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expectedDiagnostics =
             {

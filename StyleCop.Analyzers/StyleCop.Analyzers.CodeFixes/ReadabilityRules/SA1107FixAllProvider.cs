@@ -5,12 +5,11 @@
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.Editing;
     using StyleCop.Analyzers.Helpers;
 
     internal class SA1107FixAllProvider : DocumentBasedFixAllProvider
@@ -24,9 +23,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return null;
             }
 
-            DocumentEditor editor = await DocumentEditor.CreateAsync(document, fixAllContext.CancellationToken).ConfigureAwait(false);
-
-            SyntaxNode root = editor.GetChangedRoot();
+            var root = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+            var text = await document.GetTextAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+            var options = document.Project.Solution.Workspace.Options;
+            var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, root.SyntaxTree, fixAllContext.CancellationToken);
 
             ImmutableList<SyntaxNode> nodesToChange = ImmutableList.Create<SyntaxNode>();
 
@@ -37,17 +37,29 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 var syntaxNode = root.FindNode(location.SourceSpan);
                 if (syntaxNode != null)
                 {
-                    editor.TrackNode(syntaxNode);
                     nodesToChange = nodesToChange.Add(syntaxNode);
                 }
             }
 
+            var replacementTokens = new Dictionary<SyntaxToken, SyntaxToken>();
             foreach (var node in nodesToChange)
             {
-                editor.ReplaceNode(node, node.WithLeadingTrivia(SyntaxFactory.ElasticCarriageReturnLineFeed));
+                var firstToken = node.GetFirstToken();
+                var endOfLine = FormattingHelper.GetEndOfLineForCodeFix(firstToken, text, options);
+
+                var firstTokenOnLine = IndentationHelper.GetFirstTokenOnTextLine(firstToken);
+                var previousToken = firstToken.GetPreviousToken(includeZeroWidth: true);
+                var replacementPreviousToken = previousToken.WithTrailingTrivia(previousToken.TrailingTrivia.WithoutTrailingWhitespace().Add(endOfLine));
+                var indentSteps = IndentationHelper.GetIndentationSteps(settings.Indentation, firstTokenOnLine);
+                var indentTrivia = IndentationHelper.GenerateWhitespaceTrivia(settings.Indentation, indentSteps);
+
+                replacementTokens.Add(previousToken, replacementPreviousToken);
+                replacementTokens.Add(firstToken, firstToken.WithLeadingTrivia(indentTrivia));
             }
 
-            return editor.GetChangedRoot();
+            return root.ReplaceTokens(
+                replacementTokens.Keys,
+                (originalToken, rewrittenToken) => replacementTokens[originalToken]);
         }
     }
 }

@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.MaintainabilityRules.SA1410RemoveDelegateParenthesisWhenPossible,
@@ -56,16 +57,18 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestCodeFixAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestCodeFixAsync(string lineEnding)
         {
             var oldSource = @"public class Foo
 {
     public void Bar()
     {
-        System.Func<int> getRandomNumber = delegate() { return 3; };
+        System.Func<int> getRandomNumber = delegate{|#0:()|} { return 3; };
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
             var newSource = @"public class Foo
 {
@@ -73,9 +76,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     {
         System.Func<int> getRandomNumber = delegate { return 3; };
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
-            var expected = Diagnostic().WithLocation(5, 52);
+            var expected = Diagnostic().WithLocation(0);
             await VerifyCSharpFixAsync(oldSource, expected, newSource, CancellationToken.None).ConfigureAwait(false);
         }
 
