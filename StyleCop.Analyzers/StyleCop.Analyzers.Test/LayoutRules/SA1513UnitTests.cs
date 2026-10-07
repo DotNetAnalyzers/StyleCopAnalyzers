@@ -791,6 +791,7 @@ public class TestClass
         }
 
         [Fact]
+        [WorkItem(2365, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2365")]
         public async Task VerifyThatMissingBlankLineInsideLambdaInsideArgumentListWillProduceDiagnosticAsync()
         {
             var testCode = @"
@@ -850,6 +851,7 @@ public class TestClass
         }
 
         [Fact]
+        [WorkItem(2365, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2365")]
         public async Task VerifyThatMissingBlankLineInsideAnonymousMethodInsideArgumentListWillProduceDiagnosticAsync()
         {
             var testCode = @"
@@ -909,6 +911,7 @@ public class TestClass
         }
 
         [Fact]
+        [WorkItem(2365, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2365")]
         public async Task VerifyThatMissingBlankLineInsideNestedLambdaWillProduceDiagnosticAsync()
         {
             var testCode = @"
@@ -974,6 +977,7 @@ public class TestClass
         }
 
         [Fact]
+        [WorkItem(2365, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2365")]
         public async Task VerifyThatClosingBraceOfLambdaOrInitializerInArgumentListWillNotProduceDiagnosticAsync()
         {
             var testCode = @"
