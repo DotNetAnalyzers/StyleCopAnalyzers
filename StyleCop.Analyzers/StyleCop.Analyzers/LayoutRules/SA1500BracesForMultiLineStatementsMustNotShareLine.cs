@@ -300,8 +300,11 @@ namespace StyleCop.Analyzers.LayoutRules
                 case SyntaxKind.CommaToken:
                 case SyntaxKind.SemicolonToken:
                 case SyntaxKind.DotToken:
-                case SyntaxKind.EqualsToken:
                     // these are allowed to appear on the same line
+                    return;
+
+                case SyntaxKind.EqualsToken when token.Parent.IsKind(SyntaxKind.AccessorList):
+                    // the close brace of an accessor list is followed by a property initializer
                     return;
 
                 case SyntaxKind.EndOfFileToken:

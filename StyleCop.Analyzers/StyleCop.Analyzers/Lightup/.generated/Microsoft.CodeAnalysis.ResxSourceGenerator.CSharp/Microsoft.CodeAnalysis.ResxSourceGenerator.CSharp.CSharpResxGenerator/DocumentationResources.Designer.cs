@@ -206,6 +206,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         public static string @SA1625Title => GetResourceString("SA1625Title")!;
         /// <summary>Convert to line comment</summary>
         public static string @SA1626CodeFix => GetResourceString("SA1626CodeFix")!;
+        /// <summary>Convert to documentation comment</summary>
+        public static string @SA1626CodeFixStrayComment => GetResourceString("SA1626CodeFixStrayComment")!;
         /// <summary>The C# code contains a single-line comment which begins with three forward slashes in a row.</summary>
         public static string @SA1626Description => GetResourceString("SA1626Description")!;
         /// <summary>Single-line comments should not use documentation style slashes</summary>

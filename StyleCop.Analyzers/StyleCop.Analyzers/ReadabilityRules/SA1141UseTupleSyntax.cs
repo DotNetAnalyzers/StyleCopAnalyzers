@@ -111,6 +111,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var lambdaExpression = (LambdaExpressionSyntax)context.Node;
             if (lambdaExpression is ParenthesizedLambdaExpressionSyntax parenthesizedLambdaExpression)
             {
+                var returnType = parenthesizedLambdaExpression.ReturnType();
+                CheckType(context, expressionType: null, returnType);
                 CheckParameterList(context, parenthesizedLambdaExpression.ParameterList);
             }
         }
