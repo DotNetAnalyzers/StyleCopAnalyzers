@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA110xQueryClauses,
@@ -22,9 +23,12 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         /// <summary>
         /// Verifies that a select query expression produces the expected results.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestSelectQueryExpressionAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestSelectQueryExpressionAsync(string lineEnding)
         {
             var testCode = @"namespace TestNamespace
 {
@@ -43,11 +47,11 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 from element in TestMethod1
                 (
                     12
-                ) select element;
+                ) {|#0:select|} element;
         }
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             var fixedTestCode = @"namespace TestNamespace
 {
@@ -71,11 +75,11 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         }
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                Diagnostic(SA110xQueryClauses.SA1104Descriptor).WithLocation(18, 19),
+                Diagnostic(SA110xQueryClauses.SA1104Descriptor).WithLocation(0),
             };
 
             await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);

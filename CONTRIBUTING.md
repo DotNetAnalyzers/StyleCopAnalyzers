@@ -9,8 +9,8 @@ You can also help by filing issues, participating in discussions and doing code 
 
 ## Building prerequisites
 
-* Visual Studio 2017 (Community Edition or higher) is required for building this repository.
-* The version of the [.NET Core SDK](https://dotnet.microsoft.com/download/dotnet-core) as specified in the global.json file at the root of this repo.
+* The latest version of Visual Studio 2026 (Community Edition or higher) is required for building this repository. Version 18.9 is the minimum, because the build uses the Roslyn 5.9 compiler and analyzers.
+* The version of the [.NET SDK](https://dotnet.microsoft.com/download/dotnet) as specified in the global.json file at the root of this repo.
   Use the init script at the root of the repo to conveniently acquire and install the right version.
 
 ## Implementing a diagnostic

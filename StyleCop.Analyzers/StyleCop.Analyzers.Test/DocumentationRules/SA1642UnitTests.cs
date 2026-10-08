@@ -905,6 +905,31 @@ public class TestClass
                 false).ConfigureAwait(false);
         }
 
+        [Theory]
+        [InlineData("class", "třídy")]
+        [InlineData("struct", "struktury")]
+        [WorkItem(3944, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3944")]
+        public async Task TestCzechDocumentationCultureIsUsedAsync(string typeKind, string typeKindText)
+        {
+            var settings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""documentationCulture"": ""cs-CZ"",
+    }
+  }
+}
+";
+
+            await TestConstructorCorrectDocumentationSimpleAsync(
+                settings,
+                typeKind,
+                "public",
+                "Inicializuje novou instanci " + typeKindText + " ",
+                string.Empty,
+                false).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Verify that the codefix will work properly with Visual Studio generated documentation headers.
         /// </summary>

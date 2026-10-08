@@ -16,6 +16,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Options;
+    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
@@ -58,6 +60,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+            var options = document.Project.Solution.Workspace.Options;
             var nodeInSourceSpan = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
             AttributeListSyntax attributeList = nodeInSourceSpan.FirstAncestorOrSelf<AttributeListSyntax>();
 
@@ -65,7 +69,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var indentationSteps = IndentationHelper.GetIndentationSteps(settings.Indentation, attributeList);
             var indentationTrivia = IndentationHelper.GenerateWhitespaceTrivia(settings.Indentation, indentationSteps);
 
-            List<AttributeListSyntax> newAttributeLists = GetNewAttributeList(attributeList, indentationTrivia);
+            List<AttributeListSyntax> newAttributeLists = GetNewAttributeList(attributeList, indentationTrivia, sourceText, options);
 
             var newSyntaxRoot = syntaxRoot.ReplaceNode(attributeList, newAttributeLists);
             var newDocument = document.WithSyntaxRoot(newSyntaxRoot.WithoutFormatting());
@@ -73,7 +77,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             return newDocument;
         }
 
-        private static List<AttributeListSyntax> GetNewAttributeList(AttributeListSyntax attributeList, SyntaxTrivia indentationTrivia)
+        private static List<AttributeListSyntax> GetNewAttributeList(AttributeListSyntax attributeList, SyntaxTrivia indentationTrivia, SourceText sourceText, OptionSet options)
         {
             var newAttributeLists = new List<AttributeListSyntax>();
 
@@ -90,7 +94,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 newAttributeList = (i == (attributeList.Attributes.Count - 1))
                     ? newAttributeList.WithTrailingTrivia(attributeList.GetTrailingTrivia())
-                    : newAttributeList.WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed);
+                    : newAttributeList.WithTrailingTrivia(FormattingHelper.GetEndOfLineForCodeFix(attributeList.CloseBracketToken, sourceText, options));
 
                 newAttributeLists.Add(newAttributeList);
             }
@@ -114,6 +118,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
 
                 var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var sourceText = await document.GetTextAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var options = document.Project.Solution.Workspace.Options;
                 var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, fixAllContext.CancellationToken);
 
                 // 🐉 Need to eagerly evaluate this with ToList() to ensure nodes are not garbage collected between the
@@ -126,7 +132,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 {
                     var indentationSteps = IndentationHelper.GetIndentationSteps(settings.Indentation, attributeList);
                     var indentationTrivia = IndentationHelper.GenerateWhitespaceTrivia(settings.Indentation, indentationSteps);
-                    newRoot = newRoot.ReplaceNode(newRoot.GetCurrentNode(attributeList), GetNewAttributeList(attributeList, indentationTrivia));
+                    newRoot = newRoot.ReplaceNode(newRoot.GetCurrentNode(attributeList), GetNewAttributeList(attributeList, indentationTrivia, sourceText, options));
                 }
 
                 return newRoot;

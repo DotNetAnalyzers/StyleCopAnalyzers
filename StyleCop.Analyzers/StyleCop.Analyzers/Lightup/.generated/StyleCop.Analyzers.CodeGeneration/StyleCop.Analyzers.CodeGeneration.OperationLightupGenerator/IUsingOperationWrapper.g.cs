@@ -36,6 +36,7 @@ namespace StyleCop.Analyzers.Lightup
         public IOperation Body => BodyAccessor(this.WrappedOperation);
         public ImmutableArray<ILocalSymbol> Locals => LocalsAccessor(this.WrappedOperation);
         public bool IsAsynchronous => IsAsynchronousAccessor(this.WrappedOperation);
+
         public static explicit operator IUsingOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IUsingOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IUsingOperationWrapper FromOperation(IOperation operation)

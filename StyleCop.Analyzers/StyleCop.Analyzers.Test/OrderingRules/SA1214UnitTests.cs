@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.OrderingRules.SA1214ReadonlyElementsMustAppearBeforeNonReadonlyElements,
@@ -84,19 +85,46 @@ public class TestClass2
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestTwoFieldsInClassStaticReadonlyFieldPlacedAfterStaticNonReadonlyAsync()
+        [Theory]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestTwoFieldsInClassStaticReadonlyFieldPlacedAfterStaticNonReadonlyAsync(string keyword)
+        {
+            var testCode = $@"
+public {keyword} Foo
+{{
+    private static int i = 0;
+    private static readonly int {{|#0:j|}} = 0;
+}}";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(0),
+            };
+
+            var fixTestCode = $@"
+public {keyword} Foo
+{{
+    private static readonly int j = 0;
+    private static int i = 0;
+}}";
+            await VerifyCSharpFixAsync(testCode, expected, fixTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestTwoFieldsInClassStaticReadonlyFieldPlacedAfterStaticNonReadonlyWithLineEndingAsync(string lineEnding)
         {
             var testCode = @"
 public class Foo
 {
     private static int i = 0;
-    private static readonly int j = 0;
-}";
+    private static readonly int {|#0:j|} = 0;
+}".ReplaceLineEndings(lineEnding);
 
             var expected = new[]
             {
-                Diagnostic().WithLocation(5, 33),
+                Diagnostic().WithLocation(0),
             };
 
             var fixTestCode = @"
@@ -104,7 +132,7 @@ public class Foo
 {
     private static readonly int j = 0;
     private static int i = 0;
-}";
+}".ReplaceLineEndings(lineEnding);
             await VerifyCSharpFixAsync(testCode, expected, fixTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -143,36 +171,24 @@ public class Foo
             await VerifyCSharpFixAsync(testCode, expected, fixTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestTwoFieldsInClassStaticReadonlyFieldPlacedBeforeStaticNonReadonlyAsync()
+        [Theory]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestTwoFieldsInClassNonStaticReadonlyFieldPlacedAfterNonStaticNonReadonlyAsync(string keyword)
         {
-            var testCode = @"
-public class Foo
-{
-    private static readonly int i = 0;
-    private static int j = 0;
-}";
+            var testCode = $@"
+public {keyword} Foo
+{{
+    private int i;
+    private readonly int {{|#0:j|}};
+}}";
+            var fixedCode = $@"
+public {keyword} Foo
+{{
+    private readonly int j;
+    private int i;
+}}";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestTwoFieldsInClassNonStaticReadonlyFieldPlacedAfterNonStaticNonReadonlyAsync()
-        {
-            var testCode = @"
-public class Foo
-{
-    private int i = 0;
-    private readonly int j = 0;
-}";
-            var fixedCode = @"
-public class Foo
-{
-    private readonly int j = 0;
-    private int i = 0;
-}";
-
-            var expected = Diagnostic().WithLocation(5, 26);
+            var expected = Diagnostic().WithLocation(0);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }

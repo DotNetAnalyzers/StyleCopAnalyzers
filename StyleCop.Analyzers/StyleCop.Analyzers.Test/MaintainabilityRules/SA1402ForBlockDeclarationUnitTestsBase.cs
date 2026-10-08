@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.MaintainabilityRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
 
     public abstract class SA1402ForBlockDeclarationUnitTestsBase : FileMayOnlyContainTestBase
@@ -28,31 +29,33 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
         protected abstract bool IsConfiguredAsTopLevelTypeByDefault { get; }
 
-        [Fact]
-        public async Task TestTwoGenericElementsAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestTwoGenericElementsAsync(string lineEnding)
         {
             var testCode = @"%1 Foo<T1>
 {
 }
-%1 Bar<T2, T3>
+%1 {|#0:Bar|}<T2, T3>
 {
-}";
+}".ReplaceLineEndings(lineEnding);
 
             var fixedCode = new[]
             {
                 ("/0/Test0.cs", @"%1 Foo<T1>
 {
 }
-"),
+".ReplaceLineEndings(lineEnding)),
                 ("Bar{T2,T3}.cs", @"%1 Bar<T2, T3>
 {
-}"),
+}".ReplaceLineEndings(lineEnding)),
             };
 
             testCode = testCode.Replace("%1", this.Keyword);
             fixedCode = fixedCode.Select(c => (c.Item1, c.Item2.Replace("%1", this.Keyword))).ToArray();
 
-            DiagnosticResult expected = this.Diagnostic().WithLocation(4, this.Keyword.Length + 2);
+            DiagnosticResult expected = this.Diagnostic().WithLocation(0);
             await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 

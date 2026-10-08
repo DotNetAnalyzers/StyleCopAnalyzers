@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1014OpeningGenericBracketsMustBeSpacedCorrectly,
@@ -46,24 +45,27 @@ public class TestClass<T> where T : IEnumerable<object>
         /// <summary>
         /// Verifies that the analyzer will properly handle invalid opening generic brackets in a class declaration.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestInvalidSpacingOfClassDeclarationAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestInvalidSpacingOfClassDeclarationAsync(string lineEnding)
         {
             var testCode = @"using System.Collections.Generic;
 
-public class TestClass1 <T> where T : IEnumerable< object>
+public class TestClass1 {|#0:<|}T> where T : IEnumerable{|#1:<|} object>
 {
 }
 
-public class TestClass2< T> where T : IEnumerable <object>
+public class TestClass2{|#2:<|} T> where T : IEnumerable {|#3:<|}object>
 {
 }
 
-public class TestClass3 < T> where T : IEnumerable < object>
+public class TestClass3 {|#4:<|} T> where T : IEnumerable {|#5:<|} object>
 {
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             var fixedCode = @"using System.Collections.Generic;
 
@@ -78,18 +80,18 @@ public class TestClass2<T> where T : IEnumerable<object>
 public class TestClass3<T> where T : IEnumerable<object>
 {
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(3, 25).WithArguments("preceded"),
-                Diagnostic().WithLocation(3, 50).WithArguments("followed"),
-                Diagnostic().WithLocation(7, 24).WithArguments("followed"),
-                Diagnostic().WithLocation(7, 51).WithArguments("preceded"),
-                Diagnostic().WithLocation(11, 25).WithArguments("preceded"),
-                Diagnostic().WithLocation(11, 25).WithArguments("followed"),
-                Diagnostic().WithLocation(11, 52).WithArguments("preceded"),
-                Diagnostic().WithLocation(11, 52).WithArguments("followed"),
+                Diagnostic().WithLocation(0).WithArguments("preceded"),
+                Diagnostic().WithLocation(1).WithArguments("followed"),
+                Diagnostic().WithLocation(2).WithArguments("followed"),
+                Diagnostic().WithLocation(3).WithArguments("preceded"),
+                Diagnostic().WithLocation(4).WithArguments("preceded"),
+                Diagnostic().WithLocation(4).WithArguments("followed"),
+                Diagnostic().WithLocation(5).WithArguments("preceded"),
+                Diagnostic().WithLocation(5).WithArguments("followed"),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);

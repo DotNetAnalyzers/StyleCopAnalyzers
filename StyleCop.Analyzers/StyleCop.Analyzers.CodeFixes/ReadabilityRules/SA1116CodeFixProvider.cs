@@ -5,6 +5,7 @@
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading;
@@ -13,6 +14,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
 
@@ -72,15 +74,44 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
             }
 
+            var options = document.Project.Solution.Workspace.Options;
+            var endOfLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(originalToken, sourceText, options);
             var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, tree, cancellationToken);
+            string indentationStep = IndentationHelper.GenerateIndentationString(settings.Indentation, 1);
             SyntaxTriviaList newTrivia =
                 SyntaxFactory.TriviaList(
-                    SyntaxFactory.CarriageReturnLineFeed,
-                    SyntaxFactory.Whitespace(lineText.Substring(0, indentLength) + IndentationHelper.GenerateIndentationString(settings.Indentation, 1)));
+                    endOfLineTrivia,
+                    SyntaxFactory.Whitespace(lineText.Substring(0, indentLength) + indentationStep));
 
-            SyntaxToken updatedToken = originalToken.WithLeadingTrivia(originalToken.LeadingTrivia.AddRange(newTrivia));
-            SyntaxNode updatedRoot = root.ReplaceToken(originalToken, updatedToken);
+            // The first element moves one indentation step to the right, so every other line of it moves as well.
+            SyntaxNode element = GetListElement(originalToken);
+            IEnumerable<SyntaxToken> tokensToUpdate = element != null ? element.DescendantTokens() : new[] { originalToken };
+            SyntaxNode updatedRoot = root.ReplaceTokens(
+                tokensToUpdate,
+                (original, rewritten) => original == originalToken
+                    ? rewritten.WithLeadingTrivia(IndentationHelper.IndentLeadingTrivia(original, rewritten.LeadingTrivia, indentationStep, newTrivia))
+                    : rewritten.WithLeadingTrivia(IndentationHelper.IndentLeadingTrivia(original, rewritten.LeadingTrivia, indentationStep, default(SyntaxTriviaList))));
             return document.WithSyntaxRoot(updatedRoot);
+        }
+
+        private static SyntaxNode GetListElement(SyntaxToken token)
+        {
+            SyntaxNode current = token.Parent;
+            while (current != null)
+            {
+                SyntaxNode parent = current.Parent;
+                if (parent is BaseArgumentListSyntax
+                    || parent is BaseParameterListSyntax
+                    || parent is AttributeArgumentListSyntax
+                    || parent is ArrayRankSpecifierSyntax)
+                {
+                    return current.SpanStart == token.SpanStart ? current : null;
+                }
+
+                current = parent;
+            }
+
+            return null;
         }
     }
 }

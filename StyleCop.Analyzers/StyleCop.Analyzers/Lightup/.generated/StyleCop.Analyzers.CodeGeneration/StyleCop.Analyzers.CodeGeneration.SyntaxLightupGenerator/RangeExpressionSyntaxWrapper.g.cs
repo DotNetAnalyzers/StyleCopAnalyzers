@@ -41,6 +41,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public ExpressionSyntax SyntaxNode => this.node;
 
+
         public ExpressionSyntax LeftOperand
         {
             get

@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.OrderingRules.SA1200UsingDirectivesMustBePlacedCorrectly,
@@ -100,29 +99,32 @@ namespace TestNamespace
         /// <summary>
         /// Verifies that having using statements in the compilation unit will produce the expected diagnostics.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestInvalidUsingStatementsInCompilationUnitAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestInvalidUsingStatementsInCompilationUnitAsync(string lineEnding)
         {
-            var testCode = @"using System;
-using System.Threading;
+            var testCode = @"{|#0:using System;|}
+{|#1:using System.Threading;|}
 
 namespace TestNamespace
 {
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             var fixedTestCode = @"namespace TestNamespace
 {
     using System;
     using System.Threading;
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expectedResults =
             {
-                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(1, 1),
-                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(2, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(0),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(1),
             };
 
             await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
@@ -347,6 +349,113 @@ namespace TestNamespace
             {
                 Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(4, 1),
                 Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(5, 1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an alias referring to an alias of the compilation unit is expanded when the aliases end up
+        /// in the same namespace block, because the target of an alias is resolved without the other using
+        /// directives of its block.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(1771, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1771")]
+        public async Task TestAliasReferringToAliasIsExpandedWhenMovedInsideNamespaceAsync()
+        {
+            var testCode = @"{|#0:using MyAction = System.Action;|}
+
+namespace NamespaceName
+{
+    using MyOtherAction = MyAction;
+}
+";
+
+            var fixedTestCode = @"namespace NamespaceName
+{
+    using MyAction = System.Action;
+    using MyOtherAction = System.Action;
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(0),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an alias referring to an alias in a type argument is expanded when the aliases end up in
+        /// the same namespace block.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(1771, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1771")]
+        public async Task TestAliasReferringToAliasInTypeArgumentIsExpandedWhenMovedInsideNamespaceAsync()
+        {
+            var testCode = @"{|#0:using MyAction = System.Action;|}
+
+namespace NamespaceName
+{
+    using MyList = System.Collections.Generic.List<MyAction>;
+}
+";
+
+            var fixedTestCode = @"namespace NamespaceName
+{
+    using MyAction = System.Action;
+    using MyList = System.Collections.Generic.List<System.Action>;
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(0),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an alias target imported by a using directive of the compilation unit is fully qualified
+        /// when that directive is moved into the namespace, while names declared in the namespace are preserved.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(1771, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1771")]
+        public async Task TestAliasTargetImportedByNamespaceUsingIsQualifiedWhenMovedInsideNamespaceAsync()
+        {
+            var testCode = @"{|#0:using System;|}
+
+namespace NamespaceName
+{
+    using MyAction = Action;
+    using MyLocal = Local;
+
+    public class Local
+    {
+    }
+}
+";
+
+            var fixedTestCode = @"namespace NamespaceName
+{
+    using System;
+    using MyAction = System.Action;
+    using MyLocal = Local;
+
+    public class Local
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(0),
             };
 
             await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);

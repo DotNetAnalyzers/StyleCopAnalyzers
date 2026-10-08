@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
 
     using static StyleCop.Analyzers.SpacingRules.SA1003SymbolsMustBeSpacedCorrectly;
@@ -725,9 +724,12 @@ public class Foo : Exception
         /// <summary>
         /// Verifies that invalid auto property initializers produce the correct diagnostics and code fixes.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestInvalidAutoPropertyInitializersAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestInvalidAutoPropertyInitializersAsync(string lineEnding)
         {
             var testCode = @"public class Foo
 {
@@ -737,7 +739,7 @@ public class Foo : Exception
 
     public int Qux { get; }=3;
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             var fixedTestCode = @"public class Foo
 {
@@ -747,7 +749,7 @@ public class Foo : Exception
 
     public int Qux { get; } = 3;
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {

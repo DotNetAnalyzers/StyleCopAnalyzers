@@ -36,6 +36,7 @@ namespace StyleCop.Analyzers.Lightup
         public IOperation Collection => CollectionAccessor(this.WrappedOperation);
         public ImmutableArray<IOperation> NextVariables => NextVariablesAccessor(this.WrappedOperation);
         public bool IsAsynchronous => IsAsynchronousAccessor(this.WrappedOperation);
+
         public static explicit operator IForEachLoopOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IForEachLoopOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public object LoopKind => ((ILoopOperationWrapper)this).LoopKind;
@@ -43,6 +44,7 @@ namespace StyleCop.Analyzers.Lightup
         public ImmutableArray<ILocalSymbol> Locals => ((ILoopOperationWrapper)this).Locals;
         public ILabelSymbol ContinueLabel => ((ILoopOperationWrapper)this).ContinueLabel;
         public ILabelSymbol ExitLabel => ((ILoopOperationWrapper)this).ExitLabel;
+
         public static explicit operator IForEachLoopOperationWrapper(ILoopOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator ILoopOperationWrapper(IForEachLoopOperationWrapper wrapper) => ILoopOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IForEachLoopOperationWrapper FromOperation(IOperation operation)

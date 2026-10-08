@@ -1,13 +1,12 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.NamingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.NamingRules.SA1303ConstFieldNamesMustBeginWithUpperCaseLetter,
@@ -15,19 +14,21 @@ namespace StyleCop.Analyzers.Test.NamingRules
 
     public class SA1303UnitTests
     {
-        [Fact]
-        public async Task TestConstFieldStartingWithLowerCaseAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestConstFieldStartingWithLowerCaseAsync(string lineEnding)
         {
             var testCode = @"public class Foo
 {
-    public const string bar = ""baz"";
-}";
+    public const string {|#0:bar|} = ""baz"";
+}".ReplaceLineEndings(lineEnding);
             var fixedCode = @"public class Foo
 {
     public const string Bar = ""baz"";
-}";
+}".ReplaceLineEndings(lineEnding);
 
-            DiagnosticResult expected = Diagnostic().WithLocation(3, 25);
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 

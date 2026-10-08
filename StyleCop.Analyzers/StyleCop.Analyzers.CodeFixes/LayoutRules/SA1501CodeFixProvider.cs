@@ -133,7 +133,7 @@ namespace StyleCop.Analyzers.LayoutRules
             }
             else
             {
-                parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationSettings, GetFirstOnLineParent(parent));
+                parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationSettings, parent.GetFirstOnLineAncestorOrSelf());
             }
 
             return parentIndentationLevel;
@@ -273,18 +273,6 @@ namespace StyleCop.Analyzers.LayoutRules
             }
 
             return statementSyntax;
-        }
-
-        private static SyntaxNode GetFirstOnLineParent(SyntaxNode parent)
-        {
-            // if the parent is not the first on a line, find the parent that is.
-            // This mainly happens for 'else if' statements.
-            while (!parent.GetFirstToken().IsFirstInLine())
-            {
-                parent = parent.Parent;
-            }
-
-            return parent;
         }
 
         private class FixAll : DocumentBasedFixAllProvider

@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1122UseStringEmptyForEmptyStrings,
@@ -48,8 +49,10 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestCodeFixMultipleNodesAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestCodeFixMultipleNodesAsync(string lineEnding)
         {
             // Tests if the code fix works if the SourceSpan of the diagnostic has more then one SyntaxNode associated with it
             // In this case it is a InterpolatedStringInsert and the StringLiteralExpression
@@ -57,18 +60,18 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     public void Bar()
     {
-        string test = $""{""""}"";
+        string test = $""{{|#0:""""|}}"";
     }
-}";
+}".ReplaceLineEndings(lineEnding);
             string newSource = @"public class Foo
 {
     public void Bar()
     {
         string test = $""{string.Empty}"";
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
-            var expected = Diagnostic().WithLocation(5, 26);
+            var expected = Diagnostic().WithLocation(0);
             await VerifyCSharpFixAsync(oldSource, expected, newSource, CancellationToken.None).ConfigureAwait(false);
         }
 

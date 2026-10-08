@@ -41,6 +41,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public TypeSyntax SyntaxNode => this.node;
 
+
         public SyntaxToken OpenParenToken
         {
             get

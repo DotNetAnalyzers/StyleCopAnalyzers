@@ -30,6 +30,7 @@ namespace StyleCop.Analyzers.Lightup
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public ImmutableArray<IOperation> Clauses => ClausesAccessor(this.WrappedOperation);
         public bool Preserve => PreserveAccessor(this.WrappedOperation);
+
         public static explicit operator IReDimOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IReDimOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IReDimOperationWrapper FromOperation(IOperation operation)

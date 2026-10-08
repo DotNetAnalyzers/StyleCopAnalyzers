@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1002SemicolonsMustBeSpacedCorrectly,
@@ -20,20 +19,22 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     /// </summary>
     public class SA1002UnitTests
     {
-        [Fact]
-        public async Task TestForLoopAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestForLoopAsync(string lineEnding)
         {
             string testCode = @"
 class ClassName
 {
     void MethodName()
     {
-        for (int x =0;x<10;x++)
+        for (int x =0{|#0:;|}x<10{|#1:;|}x++)
         {
         }
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
             string fixedCode = @"
 class ClassName
 {
@@ -44,12 +45,12 @@ class ClassName
         }
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(6, 22),
-                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(6, 27),
+                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(0),
+                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(1),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
