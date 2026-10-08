@@ -147,6 +147,118 @@ public partial class TypeName
         }
 
         [Fact]
+        public async Task TestPartialMethodImplementationWithoutDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Some Documentation
+/// </summary>
+public partial class TypeName
+{
+    /// <summary>
+    /// Some Documentation
+    /// </summary>
+    partial void MemberName();
+}
+
+/// <summary>
+/// Some Documentation
+/// </summary>
+public partial class TypeName
+{
+    partial void MemberName()
+    {
+    }
+}";
+
+            // The defining declaration is documented, which is enough for the partial method
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPartialMethodDefinitionWithoutDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Some Documentation
+/// </summary>
+public partial class TypeName
+{
+    partial void MemberName();
+}
+
+/// <summary>
+/// Some Documentation
+/// </summary>
+public partial class TypeName
+{
+    /// <summary>
+    /// Some Documentation
+    /// </summary>
+    partial void MemberName()
+    {
+    }
+}";
+
+            // The implementing declaration is documented, which is enough for the partial method
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPartialMethodWithoutAnyDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Some Documentation
+/// </summary>
+public partial class TypeName
+{
+    partial void [|MemberName|]();
+}
+
+/// <summary>
+/// Some Documentation
+/// </summary>
+public partial class TypeName
+{
+    partial void [|MemberName|]()
+    {
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPartialMethodImplementationWithEmptyDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Some Documentation
+/// </summary>
+public partial class TypeName
+{
+    partial void [|MemberName|]();
+}
+
+/// <summary>
+/// Some Documentation
+/// </summary>
+public partial class TypeName
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    partial void [|MemberName|]()
+    {
+    }
+}";
+
+            // Empty documentation on one part does not count as documenting the partial method
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestPartialMethodWithEmptyDocumentationAsync()
         {
             var testCode = @"

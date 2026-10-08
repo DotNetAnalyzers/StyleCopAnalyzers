@@ -47,7 +47,7 @@ public partial class TypeName
 
         [Fact]
         [WorkItem(4021, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4021")]
-        public async Task TestPartialPropertyWithoutDocumentationAsync()
+        public async Task TestPartialPropertyDefinitionWithoutDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -55,7 +55,7 @@ public partial class TypeName
 /// </summary>
 public partial class TypeName
 {
-    public partial int [|MemberName|] { get; set; }
+    public partial int MemberName { get; set; }
 }
 
 /// <summary>
@@ -72,6 +72,68 @@ public partial class TypeName
         set { }
     }
 }";
+
+            // The implementing declaration is documented, which is enough for the partial property
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(4021, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4021")]
+        public async Task TestPartialPropertyImplementationWithoutDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Some Documentation
+/// </summary>
+public partial class TypeName
+{
+    /// <summary>
+    /// Some Documentation
+    /// </summary>
+    public partial int MemberName { get; set; }
+}
+
+/// <summary>
+/// Some Documentation
+/// </summary>
+public partial class TypeName
+{
+    public partial int MemberName
+    {
+        get => 0;
+        set { }
+    }
+}";
+
+            // The defining declaration is documented, which is enough for the partial property
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(4021, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4021")]
+        public async Task TestPartialPropertyWithoutAnyDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Some Documentation
+/// </summary>
+public partial class TypeName
+{
+    public partial int [|MemberName|] { get; set; }
+}
+
+/// <summary>
+/// Some Documentation
+/// </summary>
+public partial class TypeName
+{
+    public partial int [|MemberName|]
+    {
+        get => 0;
+        set { }
+    }
+}";
+
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -110,7 +172,7 @@ public partial class TypeName
 
         [Fact]
         [WorkItem(4021, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4021")]
-        public async Task TestPartialIndexerWithoutDocumentationAsync()
+        public async Task TestPartialIndexerDefinitionWithoutDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -118,7 +180,7 @@ public partial class TypeName
 /// </summary>
 public partial class TypeName
 {
-    public partial int [|this|][int index] { get; set; }
+    public partial int this[int index] { get; set; }
 }
 
 /// <summary>
@@ -135,6 +197,68 @@ public partial class TypeName
         set { }
     }
 }";
+
+            // The implementing declaration is documented, which is enough for the partial indexer
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(4021, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4021")]
+        public async Task TestPartialIndexerImplementationWithoutDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Some Documentation
+/// </summary>
+public partial class TypeName
+{
+    /// <summary>
+    /// Some Documentation
+    /// </summary>
+    public partial int this[int index] { get; set; }
+}
+
+/// <summary>
+/// Some Documentation
+/// </summary>
+public partial class TypeName
+{
+    public partial int this[int index]
+    {
+        get => 0;
+        set { }
+    }
+}";
+
+            // The defining declaration is documented, which is enough for the partial indexer
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(4021, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4021")]
+        public async Task TestPartialIndexerWithoutAnyDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Some Documentation
+/// </summary>
+public partial class TypeName
+{
+    public partial int [|this|][int index] { get; set; }
+}
+
+/// <summary>
+/// Some Documentation
+/// </summary>
+public partial class TypeName
+{
+    public partial int [|this|][int index]
+    {
+        get => 0;
+        set { }
+    }
+}";
+
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 

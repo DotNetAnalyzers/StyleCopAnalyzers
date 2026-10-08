@@ -13,6 +13,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -26,6 +27,12 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// missing a documentation header, or if the header is empty. In C# the following types of elements can be
     /// attributed with the partial attribute: classes, structs, interfaces, records, methods, properties, and
     /// indexers.</para>
+    ///
+    /// <para>For partial members (methods, properties, and indexers), documenting any one part of the member is
+    /// enough. The compiler uses the documentation from the implementing declaration when it has one, and otherwise the
+    /// documentation from the defining declaration. An undocumented part of a partial member is therefore only reported
+    /// when no part of that member has a documentation header, in which case each undocumented part is reported.
+    /// Partial types are not affected: each part of a partial type must have a documentation header.</para>
     ///
     /// <para>When documentation is provided on more than one part of the partial class, the documentation for the two
     /// classes may be merged together to form a single source of documentation. For example, consider the following two
@@ -152,7 +159,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
                 if (SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
                 {
-                    if (!XmlCommentHelper.HasDocumentation(declaration))
+                    if (!XmlCommentHelper.HasDocumentation(declaration) && !HasDocumentedPartialPart(context, declaration))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
                     }
@@ -176,7 +183,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
                 if (SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
                 {
-                    if (!XmlCommentHelper.HasDocumentation(declaration))
+                    if (!XmlCommentHelper.HasDocumentation(declaration) && !HasDocumentedPartialPart(context, declaration))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
                     }
@@ -200,10 +207,55 @@ namespace StyleCop.Analyzers.DocumentationRules
                 Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
                 if (SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
                 {
-                    if (!XmlCommentHelper.HasDocumentation(declaration))
+                    if (!XmlCommentHelper.HasDocumentation(declaration) && !HasDocumentedPartialPart(context, declaration))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.ThisKeyword.GetLocation()));
                     }
+                }
+            }
+
+            /// <summary>
+            /// Determines whether another part of a partial member has documentation. This is only called after the
+            /// current part was found to be undocumented, so the semantic model is not consulted for documented
+            /// members.
+            /// </summary>
+            /// <param name="context">The analysis context.</param>
+            /// <param name="node">The declaration (or variable declarator) of the current part.</param>
+            /// <returns><see langword="true"/> if another part of the member has documentation; otherwise,
+            /// <see langword="false"/>.</returns>
+            private static bool HasDocumentedPartialPart(SyntaxNodeAnalysisContext context, SyntaxNode node)
+            {
+                ISymbol otherPart = GetOtherPartialPart(context.SemanticModel.GetDeclaredSymbol(node, context.CancellationToken));
+                if (otherPart == null)
+                {
+                    return false;
+                }
+
+                foreach (SyntaxReference reference in otherPart.DeclaringSyntaxReferences)
+                {
+                    SyntaxNode otherNode = reference.GetSyntax(context.CancellationToken);
+                    MemberDeclarationSyntax otherDeclaration = otherNode.FirstAncestorOrSelf<MemberDeclarationSyntax>();
+                    if (otherDeclaration != null && XmlCommentHelper.HasDocumentation(otherDeclaration))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            private static ISymbol GetOtherPartialPart(ISymbol symbol)
+            {
+                switch (symbol)
+                {
+                case IMethodSymbol method:
+                    return method.PartialImplementationPart ?? method.PartialDefinitionPart;
+
+                case IPropertySymbol property:
+                    return property.PartialImplementationPart() ?? property.PartialDefinitionPart();
+
+                default:
+                    return null;
                 }
             }
         }
