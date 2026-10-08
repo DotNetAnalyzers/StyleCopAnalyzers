@@ -67,5 +67,80 @@ namespace TestNamespace
 
             await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(4007, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4007")]
+        public async Task VerifyMultiLineCollectionExpressionWithSpreadAndNestedElementsAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod(int[] other)
+        {
+            int[] values =
+            [
+                1,
+                [|.. other|]
+            ];
+
+            Use(
+            [
+                [1, 2],
+                [
+                    3,
+                    [|4|]
+                ],
+            ]);
+
+            int[] empty =
+            [
+            ];
+        }
+
+        private static void Use(int[][] value)
+        {
+        }
+    }
+}
+";
+
+            var fixedCode = @"
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod(int[] other)
+        {
+            int[] values =
+            [
+                1,
+                .. other,
+            ];
+
+            Use(
+            [
+                [1, 2],
+                [
+                    3,
+                    4,
+                ],
+            ]);
+
+            int[] empty =
+            [
+            ];
+        }
+
+        private static void Use(int[][] value)
+        {
+        }
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
