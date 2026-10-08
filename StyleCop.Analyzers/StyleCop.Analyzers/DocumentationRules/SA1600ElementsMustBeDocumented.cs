@@ -190,6 +190,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
 
                 MethodDeclarationSyntax declaration = (MethodDeclarationSyntax)context.Node;
+                if (declaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                {
+                    // Handled by SA1601
+                    return;
+                }
+
                 if (declaration.ExplicitInterfaceSpecifier != null)
                 {
                     return;
@@ -214,6 +220,11 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
 
                 ConstructorDeclarationSyntax declaration = (ConstructorDeclarationSyntax)context.Node;
+                if (declaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                {
+                    // Handled by SA1601
+                    return;
+                }
 
                 Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
                 Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
@@ -254,6 +265,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
 
                 PropertyDeclarationSyntax declaration = (PropertyDeclarationSyntax)context.Node;
+                if (declaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                {
+                    // Handled by SA1601
+                    return;
+                }
+
                 if (declaration.ExplicitInterfaceSpecifier != null)
                 {
                     return;
@@ -278,6 +295,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
 
                 IndexerDeclarationSyntax declaration = (IndexerDeclarationSyntax)context.Node;
+                if (declaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                {
+                    // Handled by SA1601
+                    return;
+                }
+
                 if (declaration.ExplicitInterfaceSpecifier != null)
                 {
                     return;
@@ -352,6 +375,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                     return;
                 }
 
+                if (declaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                {
+                    // Handled by SA1601
+                    return;
+                }
+
                 Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
                 Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
                 if (NeedsComment(settings.DocumentationRules, declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
@@ -371,6 +400,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
 
                 EventFieldDeclarationSyntax declaration = (EventFieldDeclarationSyntax)context.Node;
+                if (declaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                {
+                    // Handled by SA1601
+                    return;
+                }
+
                 VariableDeclarationSyntax variableDeclaration = declaration.Declaration;
 
                 Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);

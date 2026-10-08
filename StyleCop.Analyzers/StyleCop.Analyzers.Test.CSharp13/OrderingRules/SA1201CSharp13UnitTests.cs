@@ -13,6 +13,32 @@ namespace StyleCop.Analyzers.Test.CSharp13.OrderingRules
     public partial class SA1201CSharp13UnitTests : SA1201CSharp12UnitTests
     {
         [Fact]
+        [WorkItem(4021, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4021")]
+        public async Task TestFieldAfterPartialPropertyAsync()
+        {
+            var testCode = @"
+public partial class TypeName
+{
+    public partial int Test { get; set; }
+
+    public int {|#0:TestField|};
+}
+
+public partial class TypeName
+{
+    public partial int Test
+    {
+        get => 0;
+        set { }
+    }
+}";
+
+            var expected = Diagnostic().WithLocation(0).WithArguments("A field", "a property");
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(4019, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4019")]
         public async Task TestRefStructImplementingInterfaceFieldAfterMethodAsync()
         {
