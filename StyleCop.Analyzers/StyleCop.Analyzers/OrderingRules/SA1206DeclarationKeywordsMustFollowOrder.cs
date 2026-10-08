@@ -55,6 +55,8 @@ namespace StyleCop.Analyzers.OrderingRules
                 SyntaxKind.StructDeclaration,
                 SyntaxKind.InterfaceDeclaration,
                 SyntaxKind.EnumDeclaration,
+                SyntaxKindEx.RecordDeclaration,
+                SyntaxKindEx.RecordStructDeclaration,
                 SyntaxKind.DelegateDeclaration,
                 SyntaxKind.FieldDeclaration,
                 SyntaxKind.MethodDeclaration,

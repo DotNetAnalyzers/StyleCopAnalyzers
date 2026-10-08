@@ -29,9 +29,11 @@ namespace StyleCop.Analyzers.SpecialRules
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpecialResources.SA0002Description), SpecialResources.ResourceManager, typeof(SpecialResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable RS1033 // Define diagnostic description correctly (Description ends with formatted exception text)
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpecialRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink, customTags: new[] { "CompilationEnd" });
 #pragma warning restore RS1033 // Define diagnostic description correctly
+#pragma warning restore IDE0079 // Remove unnecessary suppression
 
         private static readonly Action<CompilationAnalysisContext> CompilationAction = HandleCompilation;
 

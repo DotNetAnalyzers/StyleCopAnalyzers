@@ -14,6 +14,24 @@ namespace StyleCop.Analyzers.Test.CSharp14.SpacingRules
 
     public partial class SA1000CSharp14UnitTests : SA1000CSharp13UnitTests
     {
+        [Theory]
+        [WorkItem(4023, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4023")]
+        [InlineData("")]
+        [InlineData(" ")]
+        public async Task TestExtensionBlockDeclarationAsync(string spaces)
+        {
+            var testCode = $@"
+public static class TestClass
+{{
+    extension{spaces}(string source)
+    {{
+    }}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         [WorkItem(4027, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4027")]
         public async Task TestSimpleLambdaParameterWithRefModifierAsync()

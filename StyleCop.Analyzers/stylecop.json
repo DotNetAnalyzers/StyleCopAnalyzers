@@ -11,6 +11,7 @@
       "newlineAtEndOfFile": "require"
     },
     "namingRules": {
+      "allowedHungarianPrefixes": [ "ui" ],
       "tupleElementNameCasing": "camelCase"
     }
   }

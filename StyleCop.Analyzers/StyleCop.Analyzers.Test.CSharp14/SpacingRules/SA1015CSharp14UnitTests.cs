@@ -9,12 +9,65 @@ namespace StyleCop.Analyzers.Test.CSharp14.SpacingRules
     using StyleCop.Analyzers.SpacingRules;
     using StyleCop.Analyzers.Test.CSharp13.SpacingRules;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.SpacingRules.SA1015ClosingGenericBracketsMustBeSpacedCorrectly,
-        StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
+    using static StyleCop.Analyzers.SpacingRules.SA1015ClosingGenericBracketsMustBeSpacedCorrectly;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<StyleCop.Analyzers.SpacingRules.SA1015ClosingGenericBracketsMustBeSpacedCorrectly, StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
     public partial class SA1015CSharp14UnitTests : SA1015CSharp13UnitTests
     {
+        [Fact]
+        [WorkItem(4023, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4023")]
+        public async Task TestExtensionBlockDeclarationWithSpaceBeforeBracketAsync()
+        {
+            var testCode = @"
+public static class TestClass
+{
+    extension<T {|#0:>|}(T source)
+    {
+    }
+}
+";
+
+            var fixedCode = @"
+public static class TestClass
+{
+    extension<T>(T source)
+    {
+    }
+}
+";
+
+            var expected = Diagnostic(DescriptorNotPreceded).WithLocation(0);
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(4023, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4023")]
+        public async Task TestExtensionBlockDeclarationWithSpaceAfterBracketAsync()
+        {
+            var testCode = @"
+public static class TestClass
+{
+    extension<T{|#0:>|} (T source)
+    {
+    }
+}
+";
+
+            var fixedCode = @"
+public static class TestClass
+{
+    extension<T>(T source)
+    {
+    }
+}
+";
+
+            var expected = Diagnostic(DescriptorNotFollowed).WithLocation(0);
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         [WorkItem(4025, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4025")]
         public async Task TestUnboundGenericTypeInNameofAsync()
