@@ -81,10 +81,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly ImmutableArray<SyntaxKind> BaseTypeDeclarationKinds =
-            ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration);
-
-        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> BaseTypeDeclarationAction = Analyzer.HandleBaseTypeDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> TypeDeclarationAction = Analyzer.HandleTypeDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> MethodDeclarationAction = Analyzer.HandleMethodDeclaration;
 
         /// <inheritdoc/>
@@ -99,21 +96,21 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             context.RegisterCompilationStartAction(context =>
             {
-                context.RegisterSyntaxNodeAction(BaseTypeDeclarationAction, BaseTypeDeclarationKinds);
+                context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
                 context.RegisterSyntaxNodeAction(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
             });
         }
 
         private static class Analyzer
         {
-            public static void HandleBaseTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+            public static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
             {
                 if (context.GetDocumentationMode() == DocumentationMode.None)
                 {
                     return;
                 }
 
-                BaseTypeDeclarationSyntax declaration = (BaseTypeDeclarationSyntax)context.Node;
+                TypeDeclarationSyntax declaration = (TypeDeclarationSyntax)context.Node;
                 if (!declaration.Modifiers.Any(SyntaxKind.PartialKeyword))
                 {
                     return;
