@@ -39,5 +39,26 @@ public partial {keyword} TestRecord
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.TypeKeywordsWhichSupportPrimaryConstructors), MemberType = typeof(CommonMemberData))]
+        [WorkItem(4006, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4006")]
+        public async Task TestPartialTypeWithPrimaryConstructorWithoutDocumentationAsync(string typeKeyword)
+        {
+            var testCode = $@"public partial {typeKeyword} {{|#0:TestType|}}(int X);";
+
+            var expected = this.GetExpectedResultTestPartialTypeWithPrimaryConstructorWithoutDocumentation();
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestPartialTypeWithPrimaryConstructorWithoutDocumentation()
+        {
+            return new[]
+            {
+                // Diagnostic issued twice because of https://github.com/dotnet/roslyn/issues/53136
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(0),
+            };
+        }
     }
 }

@@ -35,5 +35,38 @@ namespace StyleCop.Analyzers.Test.CSharp9.OrderingRules
 
             await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.TypeKeywordsWhichSupportPrimaryConstructors), MemberType = typeof(CommonMemberData))]
+        [WorkItem(4006, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4006")]
+        public async Task TestMemberOrderInTypeWithPrimaryConstructorAsync(string typeKeyword)
+        {
+            var testCode = $@"public {typeKeyword} TestType(int X)
+{{
+    public int Field = 0;
+
+    public const int {{|#0:Constant|}} = 1;
+}}";
+
+            var fixedCode = $@"public {typeKeyword} TestType(int X)
+{{
+    public const int Constant = 1;
+
+    public int Field = 0;
+}}";
+
+            var expected = this.GetExpectedResultTestMemberOrderInTypeWithPrimaryConstructor();
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestMemberOrderInTypeWithPrimaryConstructor()
+        {
+            return new[]
+            {
+                // Diagnostic issued twice because of https://github.com/dotnet/roslyn/issues/53136
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(0),
+            };
+        }
     }
 }

@@ -79,5 +79,28 @@ public class DerivedClass : BaseClass
             var expected = Diagnostic().WithLocation(0).WithArguments("public", "unsafe");
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.ReferenceTypeKeywordsWhichSupportPrimaryConstructors), MemberType = typeof(CommonMemberData))]
+        [WorkItem(4006, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4006")]
+        public async Task TestModifierOrderInTypeWithPrimaryConstructorAsync(string typeKeyword)
+        {
+            var testCode = $@"sealed {{|#0:public|}} {typeKeyword} TestType(int X);";
+
+            var fixedCode = $@"public sealed {typeKeyword} TestType(int X);";
+
+            var expected = this.GetExpectedResultTestModifierOrderInTypeWithPrimaryConstructor();
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestModifierOrderInTypeWithPrimaryConstructor()
+        {
+            return new[]
+            {
+                // Diagnostic issued twice because of https://github.com/dotnet/roslyn/issues/53136
+                Diagnostic().WithLocation(0).WithArguments("public", "sealed"),
+                Diagnostic().WithLocation(0).WithArguments("public", "sealed"),
+            };
+        }
     }
 }
