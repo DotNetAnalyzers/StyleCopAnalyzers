@@ -25,8 +25,8 @@ namespace StyleCop.Analyzers.DocumentationRules
     ///
     /// <para>A violation of this rule occurs if a partial element (an element with the partial attribute) is completely
     /// missing a documentation header, or if the header is empty. In C# the following types of elements can be
-    /// attributed with the partial attribute: classes, structs, interfaces, records, methods, properties, and
-    /// indexers.</para>
+    /// attributed with the partial attribute: classes, structs, interfaces, records, methods, properties, indexers,
+    /// constructors, and events.</para>
     ///
     /// <para>For partial members (methods, properties, and indexers), documenting any one part of the member is
     /// enough. The compiler uses the documentation from the implementing declaration when it has one, and otherwise the
@@ -93,6 +93,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> MethodDeclarationAction = Analyzer.HandleMethodDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> PropertyDeclarationAction = Analyzer.HandlePropertyDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> IndexerDeclarationAction = Analyzer.HandleIndexerDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> ConstructorDeclarationAction = Analyzer.HandleConstructorDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> EventDeclarationAction = Analyzer.HandleEventDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> EventFieldDeclarationAction = Analyzer.HandleEventFieldDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -110,6 +113,9 @@ namespace StyleCop.Analyzers.DocumentationRules
                 context.RegisterSyntaxNodeAction(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
                 context.RegisterSyntaxNodeAction(PropertyDeclarationAction, SyntaxKind.PropertyDeclaration);
                 context.RegisterSyntaxNodeAction(IndexerDeclarationAction, SyntaxKind.IndexerDeclaration);
+                context.RegisterSyntaxNodeAction(ConstructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
+                context.RegisterSyntaxNodeAction(EventDeclarationAction, SyntaxKind.EventDeclaration);
+                context.RegisterSyntaxNodeAction(EventFieldDeclarationAction, SyntaxKind.EventFieldDeclaration);
             });
         }
 
@@ -207,6 +213,81 @@ namespace StyleCop.Analyzers.DocumentationRules
                     if (!XmlCommentHelper.HasDocumentation(declaration) && !HasDocumentedPartialPart(context, declaration))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.ThisKeyword.GetLocation()));
+                    }
+                }
+            }
+
+            public static void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+            {
+                if (context.GetDocumentationMode() == DocumentationMode.None)
+                {
+                    return;
+                }
+
+                ConstructorDeclarationSyntax declaration = (ConstructorDeclarationSyntax)context.Node;
+                if (!declaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                {
+                    return;
+                }
+
+                Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+                Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+                if (SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
+                {
+                    if (!XmlCommentHelper.HasDocumentation(declaration))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
+                    }
+                }
+            }
+
+            public static void HandleEventDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+            {
+                if (context.GetDocumentationMode() == DocumentationMode.None)
+                {
+                    return;
+                }
+
+                EventDeclarationSyntax declaration = (EventDeclarationSyntax)context.Node;
+                if (!declaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                {
+                    return;
+                }
+
+                Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+                Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+                if (SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
+                {
+                    if (!XmlCommentHelper.HasDocumentation(declaration))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
+                    }
+                }
+            }
+
+            public static void HandleEventFieldDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+            {
+                if (context.GetDocumentationMode() == DocumentationMode.None)
+                {
+                    return;
+                }
+
+                EventFieldDeclarationSyntax declaration = (EventFieldDeclarationSyntax)context.Node;
+                if (declaration.Declaration == null || !declaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                {
+                    return;
+                }
+
+                Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+                Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+                if (SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
+                {
+                    if (!XmlCommentHelper.HasDocumentation(declaration))
+                    {
+                        foreach (var variable in declaration.Declaration.Variables)
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, variable.Identifier.GetLocation()));
+                        }
                     }
                 }
             }

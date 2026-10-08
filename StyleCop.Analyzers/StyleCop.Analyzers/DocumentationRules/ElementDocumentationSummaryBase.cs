@@ -141,6 +141,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
+            if (node.Modifiers.Any(SyntaxKind.PartialKeyword))
+            {
+                // partial elements are handled by PartialElementDocumentationSummaryBase
+                return;
+            }
+
             Accessibility declaredAccessibility = node.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
             Accessibility effectiveAccessibility = node.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
             bool needsComment = SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, node.Kind(), node.Parent.Kind(), declaredAccessibility, effectiveAccessibility);
@@ -209,6 +215,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
+            if (node.Modifiers.Any(SyntaxKind.PartialKeyword))
+            {
+                // partial elements are handled by PartialElementDocumentationSummaryBase
+                return;
+            }
+
             Location[] locations = new Location[node.Declaration.Variables.Count];
 
             int insertionIndex = 0;
@@ -238,6 +250,12 @@ namespace StyleCop.Analyzers.DocumentationRules
             var node = (EventDeclarationSyntax)context.Node;
             if (node.Identifier.IsMissing)
             {
+                return;
+            }
+
+            if (node.Modifiers.Any(SyntaxKind.PartialKeyword))
+            {
+                // partial elements are handled by PartialElementDocumentationSummaryBase
                 return;
             }
 

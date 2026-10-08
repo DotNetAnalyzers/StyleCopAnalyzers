@@ -62,5 +62,43 @@ internal static class TestClass2
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(4029, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4029")]
+        public async Task TestPartialConstructorAndEventWithoutDocumentationAsync()
+        {
+            // Partial members are handled by SA1601, which only reports them when no part of the member is documented.
+            var testCode = @"
+using System;
+
+/// <summary>
+/// A class.
+/// </summary>
+public partial class TestClass
+{
+    public partial TestClass(int x);
+
+    public partial event EventHandler TestEvent;
+}
+
+/// <content>
+/// More.
+/// </content>
+public partial class TestClass
+{
+    public partial TestClass(int x)
+    {
+    }
+
+    public partial event EventHandler TestEvent
+    {
+        add { }
+        remove { }
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

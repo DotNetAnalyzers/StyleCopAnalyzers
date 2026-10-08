@@ -27,6 +27,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> methodDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> propertyDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> indexerDeclarationAction;
+        private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> constructorDeclarationAction;
+        private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> eventDeclarationAction;
+        private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> eventFieldDeclarationAction;
 
         protected PartialElementDocumentationSummaryBase()
         {
@@ -34,6 +37,9 @@ namespace StyleCop.Analyzers.DocumentationRules
             this.methodDeclarationAction = this.HandleMethodDeclaration;
             this.propertyDeclarationAction = this.HandlePropertyDeclaration;
             this.indexerDeclarationAction = this.HandleIndexerDeclaration;
+            this.constructorDeclarationAction = this.HandleConstructorDeclaration;
+            this.eventDeclarationAction = this.HandleEventDeclaration;
+            this.eventFieldDeclarationAction = this.HandleEventFieldDeclaration;
         }
 
         /// <inheritdoc/>
@@ -48,6 +54,9 @@ namespace StyleCop.Analyzers.DocumentationRules
                 context.RegisterSyntaxNodeAction(this.methodDeclarationAction, SyntaxKind.MethodDeclaration);
                 context.RegisterSyntaxNodeAction(this.propertyDeclarationAction, SyntaxKind.PropertyDeclaration);
                 context.RegisterSyntaxNodeAction(this.indexerDeclarationAction, SyntaxKind.IndexerDeclaration);
+                context.RegisterSyntaxNodeAction(this.constructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
+                context.RegisterSyntaxNodeAction(this.eventDeclarationAction, SyntaxKind.EventDeclaration);
+                context.RegisterSyntaxNodeAction(this.eventFieldDeclarationAction, SyntaxKind.EventFieldDeclaration);
             });
         }
 
@@ -133,6 +142,25 @@ namespace StyleCop.Analyzers.DocumentationRules
             return true;
         }
 
+        private static bool IsPartialConstructorOrEventDefinition(SyntaxNode node)
+        {
+            switch (node)
+            {
+            case ConstructorDeclarationSyntax constructorDeclaration:
+                // The declaring part of a partial constructor has no body.
+                return constructorDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword)
+                    && constructorDeclaration.Body == null
+                    && constructorDeclaration.ExpressionBody() == null;
+
+            case EventFieldDeclarationSyntax eventFieldDeclaration:
+                // The declaring part of a partial event is field-like; the implementing part has accessors.
+                return eventFieldDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword);
+
+            default:
+                return false;
+            }
+        }
+
         private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             // We handle TypeDeclarationSyntax instead of BaseTypeDeclarationSyntax because enums are not allowed to be
@@ -215,6 +243,71 @@ namespace StyleCop.Analyzers.DocumentationRules
             this.HandleDeclaration(context, needsComment, node, node.ThisKeyword.GetLocation());
         }
 
+        private void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        {
+            var node = (ConstructorDeclarationSyntax)context.Node;
+            if (node.Identifier.IsMissing)
+            {
+                return;
+            }
+
+            if (!node.Modifiers.Any(SyntaxKind.PartialKeyword))
+            {
+                // non-partial elements are handled by ElementDocumentationSummaryBase
+                return;
+            }
+
+            Accessibility declaredAccessibility = node.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+            Accessibility effectiveAccessibility = node.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+            bool needsComment = SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, node.Kind(), node.Parent.Kind(), declaredAccessibility, effectiveAccessibility);
+            this.HandleDeclaration(context, needsComment, node, node.Identifier.GetLocation());
+        }
+
+        private void HandleEventDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        {
+            var node = (EventDeclarationSyntax)context.Node;
+            if (node.Identifier.IsMissing)
+            {
+                return;
+            }
+
+            if (!node.Modifiers.Any(SyntaxKind.PartialKeyword))
+            {
+                // non-partial elements are handled by ElementDocumentationSummaryBase
+                return;
+            }
+
+            Accessibility declaredAccessibility = node.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+            Accessibility effectiveAccessibility = node.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+            bool needsComment = SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, node.Kind(), node.Parent.Kind(), declaredAccessibility, effectiveAccessibility);
+            this.HandleDeclaration(context, needsComment, node, node.Identifier.GetLocation());
+        }
+
+        private void HandleEventFieldDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        {
+            var node = (EventFieldDeclarationSyntax)context.Node;
+            if (node.Declaration == null)
+            {
+                return;
+            }
+
+            if (!node.Modifiers.Any(SyntaxKind.PartialKeyword))
+            {
+                // non-partial elements are handled by ElementDocumentationSummaryBase
+                return;
+            }
+
+            Location[] locations = node.Declaration.Variables
+                .Where(variable => !variable.Identifier.IsMissing)
+                .Select(variable => variable.Identifier.GetLocation())
+                .ToArray();
+
+            Accessibility declaredAccessibility = node.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+            Accessibility effectiveAccessibility = node.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+            bool needsComment = SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, node.Kind(), node.Parent.Kind(), declaredAccessibility, effectiveAccessibility);
+            this.HandleDeclaration(context, needsComment, node, locations);
+        }
+
         private void HandleDeclaration(SyntaxNodeAnalysisContext context, bool needsComment, SyntaxNode node, params Location[] locations)
         {
             var documentation = node.GetDocumentationCommentTriviaSyntax();
@@ -247,7 +340,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 if (relevantXmlElement != null)
                 {
                     string rawDocumentation;
-                    if (IsPartialMethodDefinition(node) || IsPartialPropertyOrIndexerDefinition(node))
+                    if (IsPartialMethodDefinition(node) || IsPartialPropertyOrIndexerDefinition(node) || IsPartialConstructorOrEventDefinition(node))
                     {
                         // TODO: Investigate this further. Possibly add a test with an actual partial implemented method.
                         // Workaround: Roslyn does not support expanding include directives for partial method definitions.
