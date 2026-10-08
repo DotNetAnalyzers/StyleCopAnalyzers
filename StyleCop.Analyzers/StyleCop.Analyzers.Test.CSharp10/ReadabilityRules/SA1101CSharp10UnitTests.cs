@@ -91,6 +91,91 @@ namespace StyleCop.Analyzers.Test.CSharp10.ReadabilityRules
         }
 
         [Fact]
+        [WorkItem(3980, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3980")]
+        public async Task TestStructWithExpressionAsync()
+        {
+            var testCode = @"public struct S
+{
+    public int X { get; init; }
+
+    public int Y { get; init; }
+
+    public S M() => this with { X = [|Y|] };
+}";
+
+            var fixedCode = @"public struct S
+{
+    public int X { get; init; }
+
+    public int Y { get; init; }
+
+    public S M() => this with { X = this.Y };
+}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3980, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3980")]
+        public async Task TestAnonymousTypeWithExpressionAsync()
+        {
+            var testCode = @"public class Test
+{
+    public int X { get; set; }
+
+    public object M()
+    {
+        var a = new { X = 1 };
+        return a with { X = [|X|] };
+    }
+}";
+
+            var fixedCode = @"public class Test
+{
+    public int X { get; set; }
+
+    public object M()
+    {
+        var a = new { X = 1 };
+        return a with { X = this.X };
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3983, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3983")]
+        public async Task TestFileScopedNamespaceAsync()
+        {
+            var testCode = @"namespace Foo.Bar;
+
+public class Test
+{
+    public int Bar;
+
+    public void Method()
+    {
+        [|Bar|] = 1;
+    }
+}";
+
+            var fixedCode = @"namespace Foo.Bar;
+
+public class Test
+{
+    public int Bar;
+
+    public void Method()
+    {
+        this.Bar = 1;
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(3985, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3985")]
         public async Task TestMethodGroupWithNaturalTypeAsync()
         {

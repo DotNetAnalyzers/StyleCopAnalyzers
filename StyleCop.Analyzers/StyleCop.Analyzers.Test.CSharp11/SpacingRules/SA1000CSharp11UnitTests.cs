@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.Test.CSharp11.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp10.SpacingRules;
     using Xunit;
 
@@ -44,6 +45,32 @@ public class MyClass
                 Diagnostic().WithArguments("checked", string.Empty, "followed").WithLocation(0),
                 Diagnostic().WithArguments("checked", string.Empty, "followed").WithLocation(1),
             };
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the <c>is</c> keyword must be followed by a space before a list pattern.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3998, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3998")]
+        public async Task TestIsKeywordBeforeListPatternAsync()
+        {
+            var testCode = @"
+class TestClass
+{
+    bool TestMethod(int[] values) => values {|#0:is|}[1, ..];
+}
+";
+
+            var fixedCode = @"
+class TestClass
+{
+    bool TestMethod(int[] values) => values is [1, ..];
+}
+";
+
+            var expected = Diagnostic().WithArguments("is", string.Empty, "followed").WithLocation(0);
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 

@@ -21,6 +21,9 @@ env:
   # Workaround for unreliable NuGet credential provider handshakes (mirrors init.ps1)
   NUGET_PLUGIN_HANDSHAKE_TIMEOUT_IN_SECONDS: 20
   NUGET_PLUGIN_REQUEST_TIMEOUT_IN_SECONDS: 20
+  # No project uses a workload. Without this, every MSBuild start reads the workload manifests of the runner image,
+  # which takes several seconds on Windows.
+  MSBuildEnableWorkloadResolver: false
 
 jobs:
   build:
@@ -38,7 +41,7 @@ jobs:
       run: git config --global core.autocrlf true
 
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         fetch-depth: 0 # Nerdbank.GitVersioning needs full history
 
@@ -48,30 +51,35 @@ jobs:
         global-json-file: global.json
 
     - name: Setup NuGet
-      uses: nuget/setup-nuget@v2
+      uses: nuget/setup-nuget@v4
       with:
         nuget-version: '6.0.6' # matches Azure Pipelines
 
+    # Packages go to the work drive; the system drive of the runner is slow.
     - name: Restore NuGet packages
+      env:
+        NUGET_PACKAGES: ${{ runner.temp }}/nuget-packages
       run: nuget restore StyleCopAnalyzers.sln -ConfigFile NuGet.config
 
     - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v2
+      uses: microsoft/setup-msbuild@v3
 
     # No /m: AnnotatorBuildTask doesn't support parallel builds (same as Azure Pipelines).
     - name: Build solution
+      env:
+        NUGET_PACKAGES: ${{ runner.temp }}/nuget-packages
       run: msbuild StyleCopAnalyzers.sln /p:Configuration=${{ matrix.configuration }} /p:Platform="Any CPU" /v:minimal /bl:msbuild.binlog
 
     - name: Upload build log
       if: failure()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: build-logs-${{ matrix.configuration }}
         path: msbuild.binlog
 
     - name: Upload NuGet packages
       if: matrix.configuration == 'Release'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: nuget-packages
         path: StyleCop.Analyzers/StyleCop.Analyzers.CodeFixes/bin/Release/*.nupkg
@@ -79,70 +87,70 @@ jobs:
 
     # Test binaries for each language version, consumed by the test jobs below.
     - name: Upload test binaries (C# 6)
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs6-${{ matrix.configuration }}
         path: StyleCop.Analyzers/StyleCop.Analyzers.Test/bin/${{ matrix.configuration }}/net452
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 7)
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs7-${{ matrix.configuration }}
         path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp7/bin/${{ matrix.configuration }}/net46
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 8)
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs8-${{ matrix.configuration }}
         path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp8/bin/${{ matrix.configuration }}/net472
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 9)
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs9-${{ matrix.configuration }}
         path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp9/bin/${{ matrix.configuration }}/net472
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 10)
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs10-${{ matrix.configuration }}
         path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp10/bin/${{ matrix.configuration }}/net472
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 11)
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs11-${{ matrix.configuration }}
         path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp11/bin/${{ matrix.configuration }}/net472
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 12)
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs12-${{ matrix.configuration }}
         path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp12/bin/${{ matrix.configuration }}/net472
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 13)
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs13-${{ matrix.configuration }}
         path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp13/bin/${{ matrix.configuration }}/net472
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 14)
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs14-${{ matrix.configuration }}
         path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp14/bin/${{ matrix.configuration }}/net472
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 15)
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs15-${{ matrix.configuration }}
         path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp15/bin/${{ matrix.configuration }}/net472
@@ -162,7 +170,7 @@ jobs:
 
     - name: Upload rule status report
       if: matrix.configuration == 'Release' && steps.status.outcome == 'success'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: status-json
         path: StyleCop.Analyzers.Status.json
@@ -186,7 +194,7 @@ jobs:
       run: git config --global core.autocrlf true
 
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         fetch-depth: 0 # Nerdbank.GitVersioning needs full history
 
@@ -201,6 +209,8 @@ jobs:
       run: Remove-Item -Recurse -Force StyleCop.Analyzers/StyleCop.Analyzers/Lightup/.generated
 
     - name: Build StyleCop.Analyzers (runs the source generators)
+      env:
+        NUGET_PACKAGES: ${{ runner.temp }}/nuget-packages
       run: dotnet build StyleCop.Analyzers/StyleCop.Analyzers/StyleCop.Analyzers.csproj -c Debug --no-incremental -maxcpucount:1
 
     # The generators write CRLF (and the resx generator writes mixed line endings on Linux) while the repository stores
@@ -276,10 +286,10 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: Setup NuGet
-      uses: nuget/setup-nuget@v2
+      uses: nuget/setup-nuget@v4
       with:
         nuget-version: '6.0.6'
 
@@ -294,13 +304,18 @@ jobs:
       run: nuget restore .nuget/packages.config -PackagesDirectory packages -ConfigFile NuGet.config
 
     - name: Download test binaries
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: test-bin-cs${{ matrix.langVersion }}-${{ matrix.configuration }}
         path: StyleCop.Analyzers/${{ matrix.project }}/bin/${{ matrix.configuration }}/${{ matrix.framework }}
 
-    # xunit.console.x86 wrapped by coverlet.console, which writes a Cobertura report.
+    # xunit.console.x86 wrapped by coverlet.console, which writes a Cobertura report. The tests allocate heavily on every
+    # core, and the workstation GC is the bottleneck; .NET Framework turns server GC on from COMPlus_BuildFlavor (it
+    # ignores COMPlus_gcServer).
     - name: Run tests
+      env:
+        COMPlus_BuildFlavor: SVR
+        COMPlus_gcConcurrent: 0
       working-directory: build
       shell: pwsh
       run: |
@@ -339,7 +354,7 @@ jobs:
 
     - name: Upload test results
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: test-results-cs${{ matrix.langVersion }}-${{ matrix.configuration }}
         path: build/*.xunit.xml
@@ -347,7 +362,7 @@ jobs:
 
     - name: Upload code coverage
       if: success() && matrix.configuration == 'Debug' # same as Azure: only publish coverage from passing runs
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: coverage-cs${{ matrix.langVersion }}
         path: build/coverage
@@ -366,10 +381,10 @@ jobs:
       id-token: write # Codecov upload authenticates with GitHub OIDC, so no Codecov token secret is needed
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: Setup NuGet
-      uses: nuget/setup-nuget@v2
+      uses: nuget/setup-nuget@v4
       with:
         nuget-version: '6.0.6'
 
@@ -377,7 +392,7 @@ jobs:
       run: nuget restore .nuget/packages.config -PackagesDirectory packages -ConfigFile NuGet.config
 
     - name: Download coverage results
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         pattern: coverage-cs*
         path: coverage
@@ -392,7 +407,7 @@ jobs:
         exit $LASTEXITCODE
 
     - name: Upload merged coverage
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: coverage-merged
         path: coverage-final
