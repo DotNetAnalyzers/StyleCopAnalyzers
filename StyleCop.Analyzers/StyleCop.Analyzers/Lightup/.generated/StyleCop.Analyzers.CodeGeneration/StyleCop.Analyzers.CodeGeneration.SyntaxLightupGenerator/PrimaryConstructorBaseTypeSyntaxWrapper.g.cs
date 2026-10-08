@@ -35,6 +35,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public BaseTypeSyntax SyntaxNode => this.node;
 
+
         public TypeSyntax Type
         {
             get

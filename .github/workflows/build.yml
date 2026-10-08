@@ -43,7 +43,7 @@ jobs:
         fetch-depth: 0 # Nerdbank.GitVersioning needs full history
 
     - name: Setup .NET SDK (from global.json)
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v6
       with:
         global-json-file: global.json
 
@@ -220,9 +220,9 @@ jobs:
       with:
         nuget-version: '6.0.6'
 
-    # coverlet.console (net6.0 tool) needs a .NET 6 runtime; global.json's SDK provides it.
+    # Provides the .NET 10 runtime for coverlet.console.
     - name: Setup .NET SDK (from global.json)
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v6
       with:
         global-json-file: global.json
 
@@ -248,7 +248,7 @@ jobs:
         $xunitrunner_version = $packageConfig.SelectSingleNode('/packages/package[@id="xunit.runner.console"]').version
 
         $packages_folder = '..\packages'
-        $coverlet_console = "$packages_folder\coverlet.console.$coverlet_version\tools\net6.0\any\coverlet.console.dll"
+        $coverlet_console = "$packages_folder\coverlet.console.$coverlet_version\tools\net10.0\any\coverlet.console.dll"
         $xunit_runner_console = "$packages_folder\xunit.runner.console.$xunitrunner_version\tools\${{ matrix.framework }}\xunit.console.x86.exe"
         # Same legacy OpenCover.Reports / OpenCover.*.xml names as build/test.yml (content is Cobertura).
         $report_folder = '.\OpenCover.Reports'
@@ -259,6 +259,8 @@ jobs:
         if (-not (Test-Path $target_dll)) { throw "Test assembly not found at $target_dll" }
         $coverage_output = "$report_folder\OpenCover.StyleCopAnalyzers.CSharp${{ matrix.langVersion }}.xml"
         # Trailing separator makes coverlet write coverage.cobertura.xml into the folder.
+        # The scope matches the old OpenCover setup (-filter:"+[StyleCop*]*"), which also covered the test assembly
+        # under test and did not see source generator output. File globs need "**/" to match at any depth.
         dotnet $coverlet_console `
           $target_dll `
           --target "$xunit_runner_console" `
@@ -266,8 +268,10 @@ jobs:
           --format "cobertura" `
           --output "$report_folder/" `
           --include "[StyleCop*]*" `
+          --include-test-assembly `
           --exclude-by-attribute "System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" `
-          --exclude-by-file "*\*Designer.cs"
+          --exclude-by-file "**/*Designer.cs" `
+          --exclude-by-file "**/.generated/**"
         if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
         $generated = Get-ChildItem -Path $report_folder -Filter "*.cobertura.xml" -File | Select-Object -First 1
         if (-not $generated) { throw "coverlet did not produce a Cobertura report in $report_folder" }
@@ -289,13 +293,17 @@ jobs:
         path: build/OpenCover.Reports
         if-no-files-found: warn
 
-  # Mirrors the "Publish Code Coverage" stage in build/build-and-test.yml (minus the codecov.io upload).
+  # Merges the per-language coverage reports and publishes them to codecov.io (previously the "Publish Code Coverage"
+  # stage in the retired build/build-and-test.yml).
   coverage:
     name: Merge code coverage
     needs: test
     if: ${{ !cancelled() }}
     runs-on: windows-latest
     timeout-minutes: 30
+    permissions:
+      contents: read
+      id-token: write # Codecov upload authenticates with GitHub OIDC, so no Codecov token secret is needed
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -329,3 +337,15 @@ jobs:
       with:
         name: coverage-merged
         path: coverage-final
+
+    # Only publish complete results: a failed test job uploads no coverage, which would understate coverage.
+    # Pull requests from forks can't get an OIDC token; the action then uploads tokenless, as Codecov allows for forks.
+    - name: Upload coverage to Codecov
+      if: needs.test.result == 'success'
+      uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+      with:
+        files: coverage-final/Cobertura.xml
+        disable_search: true
+        use_oidc: true
+        fail_ci_if_error: false
+        verbose: true

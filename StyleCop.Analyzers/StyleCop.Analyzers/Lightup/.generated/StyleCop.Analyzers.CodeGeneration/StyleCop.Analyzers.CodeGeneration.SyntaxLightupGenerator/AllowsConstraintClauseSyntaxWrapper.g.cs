@@ -37,6 +37,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public TypeParameterConstraintSyntax SyntaxNode => this.node;
 
+
         public SyntaxToken AllowsKeyword
         {
             get

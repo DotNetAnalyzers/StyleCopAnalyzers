@@ -49,6 +49,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public MemberCrefSyntax SyntaxNode => this.node;
 
+
         public SyntaxToken ExtensionKeyword
         {
             get

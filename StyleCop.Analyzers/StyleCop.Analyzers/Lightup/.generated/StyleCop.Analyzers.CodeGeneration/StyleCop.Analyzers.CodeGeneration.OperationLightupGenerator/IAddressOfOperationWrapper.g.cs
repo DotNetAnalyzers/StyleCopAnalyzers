@@ -27,6 +27,7 @@ namespace StyleCop.Analyzers.Lightup
         public IOperation WrappedOperation => this.operation;
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public IOperation Reference => ReferenceAccessor(this.WrappedOperation);
+
         public static explicit operator IAddressOfOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IAddressOfOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IAddressOfOperationWrapper FromOperation(IOperation operation)

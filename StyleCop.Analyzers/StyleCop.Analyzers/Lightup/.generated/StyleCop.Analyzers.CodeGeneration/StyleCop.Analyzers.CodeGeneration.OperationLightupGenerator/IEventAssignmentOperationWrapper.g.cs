@@ -33,6 +33,7 @@ namespace StyleCop.Analyzers.Lightup
         public IOperation EventReference => EventReferenceAccessor(this.WrappedOperation);
         public IOperation HandlerValue => HandlerValueAccessor(this.WrappedOperation);
         public bool Adds => AddsAccessor(this.WrappedOperation);
+
         public static explicit operator IEventAssignmentOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IEventAssignmentOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IEventAssignmentOperationWrapper FromOperation(IOperation operation)

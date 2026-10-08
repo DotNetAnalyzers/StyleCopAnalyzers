@@ -36,6 +36,7 @@ namespace StyleCop.Analyzers.Lightup
         public IOperation Guard => GuardAccessor(this.WrappedOperation);
         public IOperation Value => ValueAccessor(this.WrappedOperation);
         public ImmutableArray<ILocalSymbol> Locals => LocalsAccessor(this.WrappedOperation);
+
         public static explicit operator ISwitchExpressionArmOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(ISwitchExpressionArmOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static ISwitchExpressionArmOperationWrapper FromOperation(IOperation operation)
