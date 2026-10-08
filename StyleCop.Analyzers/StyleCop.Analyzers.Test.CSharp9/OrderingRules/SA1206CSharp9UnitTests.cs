@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.OrderingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.OrderingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.OrderingRules.SA1206DeclarationKeywordsMustFollowOrder,
@@ -59,6 +60,24 @@ public class DerivedClass : BaseClass
 ";
 
             await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.RecordTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestRecordModifierOrderAsync(string keyword)
+        {
+            var testCode = $@"unsafe {{|#0:public|}} {keyword} TestRecord
+{{
+}}
+";
+
+            var fixedCode = $@"public unsafe {keyword} TestRecord
+{{
+}}
+";
+
+            var expected = Diagnostic().WithLocation(0).WithArguments("public", "unsafe");
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
