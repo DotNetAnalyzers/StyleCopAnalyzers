@@ -224,6 +224,8 @@ namespace StyleCop.Analyzers.OrderingRules
                 case SyntaxKind.InterfaceDeclaration:
                 case SyntaxKind.EnumDeclaration:
                 case SyntaxKind.StructDeclaration:
+                case SyntaxKindEx.RecordDeclaration:
+                case SyntaxKindEx.RecordStructDeclaration:
                 case SyntaxKind.DelegateDeclaration:
                     // Suppress SA1200 if file contains a type in the global namespace
                     return;
@@ -278,9 +280,11 @@ namespace StyleCop.Analyzers.OrderingRules
             foreach (UsingDirectiveSyntax directive in syntax.Usings)
             {
                 // Using directive should appear outside a namespace declaration
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
                 context.ReportDiagnostic(Diagnostic.Create(DescriptorOutside, directive.GetLocation()));
 #pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
+#pragma warning restore IDE0079 // Remove unnecessary suppression
             }
         }
     }

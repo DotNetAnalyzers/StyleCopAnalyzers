@@ -40,9 +40,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 #endif
                 yield return new object[] { Encoding.Unicode.CodePage };
                 yield return new object[] { Encoding.UTF32.CodePage };
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable SYSLIB0001 // Type or member is obsolete
                 yield return new object[] { Encoding.UTF7.CodePage };
 #pragma warning restore SYSLIB0001 // Type or member is obsolete
+#pragma warning restore IDE0079 // Remove unnecessary suppression
             }
         }
 
@@ -105,9 +107,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 {
                     SourceText.From("class Foo { }", Encoding.Unicode),
                     SourceText.From("class Bar { }", Encoding.Unicode),
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable SYSLIB0001 // Type or member is obsolete
                     SourceText.From("class FooBar { }", Encoding.UTF7),
 #pragma warning restore SYSLIB0001 // Type or member is obsolete
+#pragma warning restore IDE0079 // Remove unnecessary suppression
                 },
                 ExpectedDiagnostics =
                 {
@@ -131,12 +135,14 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
         private static Encoding GetEncoding(int codepage)
         {
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable SYSLIB0001 // Type or member is obsolete
             if (codepage == Encoding.UTF7.CodePage)
             {
                 return Encoding.UTF7;
             }
 #pragma warning restore SYSLIB0001 // Type or member is obsolete
+#pragma warning restore IDE0079 // Remove unnecessary suppression
 
             return Encoding.GetEncoding(codepage);
         }

@@ -21,7 +21,9 @@ namespace StyleCop.Analyzers.Helpers
         /// </summary>
         /// <param name="context">The analysis context that will be checked.</param>
         /// <returns>True if tuples are supported by the compiler.</returns>
+#pragma warning disable IDE0079 // Remove unnecessary suppression
         [SuppressMessage("MicrosoftCodeAnalysisPerformance", "RS1012:Start action has no registered actions", Justification = "This is not a start action method.")]
+#pragma warning restore IDE0079 // Remove unnecessary suppression
         internal static bool SupportsTuples(this CompilationStartAnalysisContext context)
         {
             return context.Compilation is CSharpCompilation { LanguageVersion: >= LanguageVersionEx.CSharp7 };

@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// The keyword <c>protected</c> is positioned after the keyword <c>internal</c> within the declaration of a
@@ -42,7 +43,9 @@ namespace StyleCop.Analyzers.OrderingRules
         private static readonly ImmutableArray<SyntaxKind> HandledSyntaxKinds =
             ImmutableArray.Create(
                 SyntaxKind.ClassDeclaration,
+                SyntaxKind.ConstructorDeclaration,
                 SyntaxKind.DelegateDeclaration,
+                SyntaxKind.EnumDeclaration,
                 SyntaxKind.EventDeclaration,
                 SyntaxKind.EventFieldDeclaration,
                 SyntaxKind.FieldDeclaration,
@@ -50,7 +53,9 @@ namespace StyleCop.Analyzers.OrderingRules
                 SyntaxKind.InterfaceDeclaration,
                 SyntaxKind.MethodDeclaration,
                 SyntaxKind.PropertyDeclaration,
-                SyntaxKind.StructDeclaration);
+                SyntaxKind.StructDeclaration,
+                SyntaxKindEx.RecordDeclaration,
+                SyntaxKindEx.RecordStructDeclaration);
 
         private static readonly Action<SyntaxNodeAnalysisContext> DeclarationAction = HandleDeclaration;
 
