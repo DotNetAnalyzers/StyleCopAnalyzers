@@ -96,5 +96,34 @@ class TestClass
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that a space is required between a tuple return type and the parameter list of a lambda expression,
+        /// consistent with SA1008.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3986, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3986")]
+        public async Task TestLambdaWithTupleReturnTypeAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    public void TestMethod()
+    {
+        var a = (int, int{|#0:)|}() => (1, 2);
+    }
+}";
+
+            var fixedCode = @"public class TestClass
+{
+    public void TestMethod()
+    {
+        var a = (int, int) () => (1, 2);
+    }
+}";
+
+            var expected = Diagnostic(DescriptorFollowed).WithLocation(0);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
