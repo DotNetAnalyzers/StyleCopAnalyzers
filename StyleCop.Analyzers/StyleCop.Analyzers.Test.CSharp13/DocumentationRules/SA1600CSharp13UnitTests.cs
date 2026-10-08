@@ -34,5 +34,67 @@ public partial class ClassName
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(4019, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4019")]
+        public async Task TestRefStructExplicitInterfaceImplementationWithDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// A summary.
+/// </summary>
+public interface IInterface
+{
+    /// <summary>
+    /// A summary.
+    /// </summary>
+    void TestMethod();
+}
+
+/// <summary>
+/// A summary.
+/// </summary>
+public ref struct TestRefStruct : IInterface
+{
+    /// <summary>
+    /// A summary.
+    /// </summary>
+    void IInterface.TestMethod()
+    {
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(4019, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4019")]
+        public async Task TestRefStructExplicitInterfaceImplementationWithoutDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// A summary.
+/// </summary>
+public interface IInterface
+{
+    /// <summary>
+    /// A summary.
+    /// </summary>
+    void TestMethod();
+}
+
+/// <summary>
+/// A summary.
+/// </summary>
+public ref struct TestRefStruct : IInterface
+{
+    void IInterface.TestMethod()
+    {
+    }
+}";
+
+            // Explicit interface implementations don't need documentation, the same as in classes.
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

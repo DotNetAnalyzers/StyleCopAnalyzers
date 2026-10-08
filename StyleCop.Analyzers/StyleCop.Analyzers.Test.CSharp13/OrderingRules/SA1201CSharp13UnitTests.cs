@@ -37,5 +37,27 @@ public partial class TypeName
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(4019, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4019")]
+        public async Task TestRefStructImplementingInterfaceFieldAfterMethodAsync()
+        {
+            var testCode = @"
+public interface IInterface
+{
+    void TestMethod();
+}
+
+public ref struct TestRefStruct : IInterface
+{
+    public void TestMethod() { }
+
+    public int {|#0:TestField|};
+}";
+
+            var expected = Diagnostic().WithLocation(0).WithArguments("A field", "a method");
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
