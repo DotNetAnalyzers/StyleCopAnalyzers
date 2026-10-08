@@ -28,24 +28,14 @@ namespace StyleCop.Analyzers.CodeGeneration
 
         private void Execute(SourceProductionContext context, AdditionalText operationInterfacesFile)
         {
-            var operationInterfacesText = operationInterfacesFile.GetText(context.CancellationToken);
-            if (operationInterfacesText is null)
-            {
-                throw new InvalidOperationException("Failed to read OperationInterfaces.xml");
-            }
-
+            var operationInterfacesText = operationInterfacesFile.GetText(context.CancellationToken) ?? throw new InvalidOperationException("Failed to read OperationInterfaces.xml");
             var operationInterfaces = XDocument.Parse(operationInterfacesText.ToString());
             this.GenerateOperationInterfaces(in context, operationInterfaces);
         }
 
         private void GenerateOperationInterfaces(in SourceProductionContext context, XDocument operationInterfaces)
         {
-            var tree = operationInterfaces.XPathSelectElement("/Tree");
-            if (tree is null)
-            {
-                throw new InvalidOperationException("Failed to find the IOperation root.");
-            }
-
+            var tree = operationInterfaces.XPathSelectElement("/Tree") ?? throw new InvalidOperationException("Failed to find the IOperation root.");
             var documentData = new DocumentData(operationInterfaces);
             foreach (var pair in documentData.Interfaces)
             {
