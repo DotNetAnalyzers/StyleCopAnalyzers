@@ -21,6 +21,9 @@ env:
   # Workaround for unreliable NuGet credential provider handshakes (mirrors init.ps1)
   NUGET_PLUGIN_HANDSHAKE_TIMEOUT_IN_SECONDS: 20
   NUGET_PLUGIN_REQUEST_TIMEOUT_IN_SECONDS: 20
+  # No project uses a workload. Without this, every MSBuild start reads the workload manifests of the runner image,
+  # which takes several seconds on Windows.
+  MSBuildEnableWorkloadResolver: false
 
 jobs:
   build:
@@ -52,7 +55,10 @@ jobs:
       with:
         nuget-version: '6.0.6' # matches Azure Pipelines
 
+    # Packages go to the work drive; the system drive of the runner is slow.
     - name: Restore NuGet packages
+      env:
+        NUGET_PACKAGES: ${{ runner.temp }}/nuget-packages
       run: nuget restore StyleCopAnalyzers.sln -ConfigFile NuGet.config
 
     - name: Setup MSBuild
@@ -60,6 +66,8 @@ jobs:
 
     # No /m: AnnotatorBuildTask doesn't support parallel builds (same as Azure Pipelines).
     - name: Build solution
+      env:
+        NUGET_PACKAGES: ${{ runner.temp }}/nuget-packages
       run: msbuild StyleCopAnalyzers.sln /p:Configuration=${{ matrix.configuration }} /p:Platform="Any CPU" /v:minimal /bl:msbuild.binlog
 
     - name: Upload build log
@@ -201,6 +209,8 @@ jobs:
       run: Remove-Item -Recurse -Force StyleCop.Analyzers/StyleCop.Analyzers/Lightup/.generated
 
     - name: Build StyleCop.Analyzers (runs the source generators)
+      env:
+        NUGET_PACKAGES: ${{ runner.temp }}/nuget-packages
       run: dotnet build StyleCop.Analyzers/StyleCop.Analyzers/StyleCop.Analyzers.csproj -c Debug --no-incremental -maxcpucount:1
 
     # The generators write CRLF (and the resx generator writes mixed line endings on Linux) while the repository stores
@@ -299,8 +309,13 @@ jobs:
         name: test-bin-cs${{ matrix.langVersion }}-${{ matrix.configuration }}
         path: StyleCop.Analyzers/${{ matrix.project }}/bin/${{ matrix.configuration }}/${{ matrix.framework }}
 
-    # xunit.console.x86 wrapped by coverlet.console, which writes a Cobertura report.
+    # xunit.console.x86 wrapped by coverlet.console, which writes a Cobertura report. The tests allocate heavily on every
+    # core, and the workstation GC is the bottleneck; .NET Framework turns server GC on from COMPlus_BuildFlavor (it
+    # ignores COMPlus_gcServer).
     - name: Run tests
+      env:
+        COMPlus_BuildFlavor: SVR
+        COMPlus_gcConcurrent: 0
       working-directory: build
       shell: pwsh
       run: |
