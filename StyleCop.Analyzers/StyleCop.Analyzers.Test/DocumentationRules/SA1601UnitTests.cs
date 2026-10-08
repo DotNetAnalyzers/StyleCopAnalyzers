@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1601PartialElementsMustBeDocumented>;
@@ -213,7 +214,7 @@ public partial class TypeName
 /// </summary>
 public partial class TypeName
 {
-    partial void [|MemberName|]();
+    partial void {|#0:MemberName|}();
 }
 
 /// <summary>
@@ -221,12 +222,18 @@ public partial class TypeName
 /// </summary>
 public partial class TypeName
 {
-    partial void [|MemberName|]()
+    partial void {|#1:MemberName|}()
     {
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            // Roslyn 1.x does not run syntax node actions on the implementing declaration of a partial method, so only
+            // the defining declaration is reported there.
+            DiagnosticResult[] expected = LightupHelpers.SupportsCSharp7
+                ? new[] { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1) }
+                : new[] { Diagnostic().WithLocation(0) };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -238,7 +245,7 @@ public partial class TypeName
 /// </summary>
 public partial class TypeName
 {
-    partial void [|MemberName|]();
+    partial void {|#0:MemberName|}();
 }
 
 /// <summary>
@@ -249,13 +256,19 @@ public partial class TypeName
     /// <summary>
     /// 
     /// </summary>
-    partial void [|MemberName|]()
+    partial void {|#1:MemberName|}()
     {
     }
 }";
 
             // Empty documentation on one part does not count as documenting the partial method
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            // Roslyn 1.x does not run syntax node actions on the implementing declaration of a partial method, so only
+            // the defining declaration is reported there.
+            DiagnosticResult[] expected = LightupHelpers.SupportsCSharp7
+                ? new[] { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1) }
+                : new[] { Diagnostic().WithLocation(0) };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
