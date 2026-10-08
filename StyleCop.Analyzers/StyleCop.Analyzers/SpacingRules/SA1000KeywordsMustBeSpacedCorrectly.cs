@@ -22,9 +22,9 @@ namespace StyleCop.Analyzers.SpacingRules
     /// <strong>fixed</strong>, <strong>for</strong>, <strong>foreach</strong>, <strong>from</strong>,
     /// <strong>group</strong>, <strong>if</strong>, <strong>in</strong>, <strong>into</strong>, <strong>join</strong>,
     /// <strong>let</strong>, <strong>lock</strong>, <strong>orderby</strong>, <strong>out</strong>,
-    /// <strong>ref</strong>, <strong>return</strong>, <strong>select</strong>, <strong>switch</strong>,
-    /// <strong>throw</strong>, <strong>using</strong>, <strong>var</strong>, <strong>where</strong>,
-    /// <strong>while</strong>, <strong>yield</strong>.</para>
+    /// <strong>ref</strong>, <strong>return</strong>, <strong>scoped</strong>, <strong>select</strong>,
+    /// <strong>switch</strong>, <strong>throw</strong>, <strong>using</strong>, <strong>var</strong>,
+    /// <strong>where</strong>, <strong>while</strong>, <strong>yield</strong>.</para>
     ///
     /// <para>The following keywords should not be followed by any space: <strong>checked</strong>,
     /// <strong>default</strong>, <strong>sizeof</strong>, <strong>typeof</strong>, <strong>unchecked</strong>.</para>
@@ -115,6 +115,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 case SyntaxKind.OrderByKeyword:
                 case SyntaxKind.OutKeyword:
                 case SyntaxKind.RefKeyword:
+                case SyntaxKindEx.ScopedKeyword:
                 case SyntaxKind.SelectKeyword:
                 case SyntaxKind.SwitchKeyword:
                 case SyntaxKind.UsingKeyword:

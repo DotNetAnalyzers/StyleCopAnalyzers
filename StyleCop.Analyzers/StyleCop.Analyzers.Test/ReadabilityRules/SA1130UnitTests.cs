@@ -998,6 +998,45 @@ public class TypeName
             await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that the parameter types are kept when an anonymous method is passed for a generic delegate
+        /// parameter, because the type argument is inferred from the explicit parameter types.
+        /// The parameter is named <c>arg</c>, like the parameter of <see cref="System.Func{T, TResult}"/>, because the
+        /// analyzer only reports an argument if a lambda with the delegate's parameter names binds to the same method.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestAnonymousMethodInferringTypeArgumentAsync()
+        {
+            var testCode = @"using System;
+public class TestClass
+{
+    public void TestMethod()
+    {
+        Generic([|delegate|](int arg) { return arg; });
+    }
+
+    private static void Generic<T>(Func<T, T> f)
+    {
+    }
+}";
+
+            var fixedCode = @"using System;
+public class TestClass
+{
+    public void TestMethod()
+    {
+        Generic((int arg) => { return arg; });
+    }
+
+    private static void Generic<T>(Func<T, T> f)
+    {
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected virtual DiagnosticResult[] GetCompilerExpectedResultCodeFixSpecialCases()
         {
             return new[]
