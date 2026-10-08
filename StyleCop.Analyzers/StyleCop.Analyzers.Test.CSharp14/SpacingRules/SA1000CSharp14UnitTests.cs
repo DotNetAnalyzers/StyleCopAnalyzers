@@ -33,6 +33,76 @@ public static class TestClass
         }
 
         [Fact]
+        [WorkItem(4028, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4028")]
+        public async Task TestFieldKeywordIsSpacedLikeAnIdentifierAsync()
+        {
+            // SA1000 only governs the spacing after specific keywords (such as 'new', 'return', or 'checked'). The
+            // contextual 'field' keyword is used like an identifier, so SA1000 neither requires nor forbids a space
+            // after it. Spacing of the operators and punctuation around 'field' is still enforced by the other spacing
+            // rules (see SA1003CSharp14UnitTests, SA1008CSharp14UnitTests, etc.).
+            var testCode = @"
+public class TestClass
+{
+    public string Prop
+    {
+        get => field;
+        set => field = value?.Trim();
+    }
+
+    public int Count
+    {
+        get
+        {
+            return field;
+        }
+
+        set
+        {
+            field = value;
+            field++;
+            field = field.CompareTo(0) + (field);
+        }
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(4005, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4005")]
+        public async Task TestSimpleLambdaParameterWithScopedModifierAsync()
+        {
+            var testCode = @"
+public delegate void ScopedSpanAction(scoped System.Span<int> value);
+
+public class TestClass
+{
+    public void Method()
+    {
+        ScopedSpanAction action = ({|#0:scoped|}@x) => { };
+    }
+}
+";
+
+            var fixedCode = @"
+public delegate void ScopedSpanAction(scoped System.Span<int> value);
+
+public class TestClass
+{
+    public void Method()
+    {
+        ScopedSpanAction action = (scoped @x) => { };
+    }
+}
+";
+
+            var expected = Diagnostic().WithArguments("scoped", string.Empty, "followed").WithLocation(0);
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(4027, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4027")]
         public async Task TestSimpleLambdaParameterWithRefModifierAsync()
         {
@@ -99,39 +169,6 @@ public class MyClass
                 Diagnostic().WithArguments("checked", string.Empty, "followed").WithLocation(0),
                 Diagnostic().WithArguments("checked", string.Empty, "followed").WithLocation(1),
             };
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        [WorkItem(4005, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4005")]
-        public async Task TestSimpleLambdaParameterWithScopedModifierAsync()
-        {
-            var testCode = @"
-public delegate void ScopedSpanAction(scoped System.Span<int> value);
-
-public class TestClass
-{
-    public void Method()
-    {
-        ScopedSpanAction action = ({|#0:scoped|}@x) => { };
-    }
-}
-";
-
-            var fixedCode = @"
-public delegate void ScopedSpanAction(scoped System.Span<int> value);
-
-public class TestClass
-{
-    public void Method()
-    {
-        ScopedSpanAction action = (scoped @x) => { };
-    }
-}
-";
-
-            var expected = Diagnostic().WithArguments("scoped", string.Empty, "followed").WithLocation(0);
-
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }

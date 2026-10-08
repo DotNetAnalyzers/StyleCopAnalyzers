@@ -9,28 +9,46 @@ namespace StyleCop.Analyzers.Test.CSharp14.SpacingRules
     using StyleCop.Analyzers.Test.CSharp13.SpacingRules;
     using Xunit;
     using static StyleCop.Analyzers.SpacingRules.SA1009ClosingParenthesisMustBeSpacedCorrectly;
-    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<StyleCop.Analyzers.SpacingRules.SA1009ClosingParenthesisMustBeSpacedCorrectly, StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.SpacingRules.SA1009ClosingParenthesisMustBeSpacedCorrectly,
+        StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
     public partial class SA1009CSharp14UnitTests : SA1009CSharp13UnitTests
     {
         [Fact]
-        [WorkItem(4023, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4023")]
-        public async Task TestExtensionBlockDeclarationAsync()
+        [WorkItem(4028, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4028")]
+        public async Task TestFieldKeywordInvocationAsync()
         {
             var testCode = @"
-public static class TestClass
+public class TestClass
 {
-    extension(string source {|#0:)|}
+    private int result;
+
+    public System.Func<int, int> Handler
     {
+        get => field;
+        set
+        {
+            field = value;
+            this.result = field(9 {|#0:)|};
+        }
     }
 }
 ";
 
             var fixedCode = @"
-public static class TestClass
+public class TestClass
 {
-    extension(string source)
+    private int result;
+
+    public System.Func<int, int> Handler
     {
+        get => field;
+        set
+        {
+            field = value;
+            this.result = field(9);
+        }
     }
 }
 ";
@@ -64,6 +82,33 @@ public class TestClass
     public void operator +=(int x)
     {
         this.value += x;
+    }
+}
+";
+
+            var expected = Diagnostic(DescriptorNotPreceded).WithLocation(0);
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(4023, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4023")]
+        public async Task TestExtensionBlockDeclarationAsync()
+        {
+            var testCode = @"
+public static class TestClass
+{
+    extension(string source {|#0:)|}
+    {
+    }
+}
+";
+
+            var fixedCode = @"
+public static class TestClass
+{
+    extension(string source)
+    {
     }
 }
 ";

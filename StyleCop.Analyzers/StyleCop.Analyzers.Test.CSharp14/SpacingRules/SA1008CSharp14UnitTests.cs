@@ -9,60 +9,51 @@ namespace StyleCop.Analyzers.Test.CSharp14.SpacingRules
     using StyleCop.Analyzers.Test.CSharp13.SpacingRules;
     using Xunit;
     using static StyleCop.Analyzers.SpacingRules.SA1008OpeningParenthesisMustBeSpacedCorrectly;
-    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<StyleCop.Analyzers.SpacingRules.SA1008OpeningParenthesisMustBeSpacedCorrectly, StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.SpacingRules.SA1008OpeningParenthesisMustBeSpacedCorrectly,
+        StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
     public partial class SA1008CSharp14UnitTests : SA1008CSharp13UnitTests
     {
         [Fact]
-        [WorkItem(4023, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4023")]
-        public async Task TestExtensionBlockDeclarationWithSpaceBeforeParenthesisAsync()
+        [WorkItem(4028, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4028")]
+        public async Task TestFieldKeywordInvocationAsync()
         {
             var testCode = @"
-public static class TestClass
+public class TestClass
 {
-    extension {|#0:(|}string source)
+    private int result;
+
+    public System.Func<int, int> Handler
     {
+        get => field;
+        set
+        {
+            field = value;
+            this.result = field {|#0:(|}9);
+        }
     }
 }
 ";
 
             var fixedCode = @"
-public static class TestClass
+public class TestClass
 {
-    extension(string source)
+    private int result;
+
+    public System.Func<int, int> Handler
     {
+        get => field;
+        set
+        {
+            field = value;
+            this.result = field(9);
+        }
     }
 }
 ";
 
             var expected = Diagnostic(DescriptorNotPreceded).WithLocation(0);
-
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        [WorkItem(4023, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4023")]
-        public async Task TestExtensionBlockDeclarationWithSpaceAfterParenthesisAsync()
-        {
-            var testCode = @"
-public static class TestClass
-{
-    extension{|#0:(|} string source)
-    {
-    }
-}
-";
-
-            var fixedCode = @"
-public static class TestClass
-{
-    extension(string source)
-    {
-    }
-}
-";
-
-            var expected = Diagnostic(DescriptorNotFollowed).WithLocation(0);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
@@ -129,6 +120,60 @@ public class TestClass
 ";
 
             var expected = Diagnostic(DescriptorNotPreceded).WithLocation(0);
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(4023, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4023")]
+        public async Task TestExtensionBlockDeclarationWithSpaceBeforeParenthesisAsync()
+        {
+            var testCode = @"
+public static class TestClass
+{
+    extension {|#0:(|}string source)
+    {
+    }
+}
+";
+
+            var fixedCode = @"
+public static class TestClass
+{
+    extension(string source)
+    {
+    }
+}
+";
+
+            var expected = Diagnostic(DescriptorNotPreceded).WithLocation(0);
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(4023, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4023")]
+        public async Task TestExtensionBlockDeclarationWithSpaceAfterParenthesisAsync()
+        {
+            var testCode = @"
+public static class TestClass
+{
+    extension{|#0:(|} string source)
+    {
+    }
+}
+";
+
+            var fixedCode = @"
+public static class TestClass
+{
+    extension(string source)
+    {
+    }
+}
+";
+
+            var expected = Diagnostic(DescriptorNotFollowed).WithLocation(0);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
