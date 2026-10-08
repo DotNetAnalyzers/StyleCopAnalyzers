@@ -36,16 +36,6 @@ namespace StyleCop.Analyzers.SpacingRules
         /// The ID for diagnostics produced by the <see cref="SA1009ClosingParenthesisMustBeSpacedCorrectly"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1009";
-
-        internal static readonly DiagnosticDescriptor DescriptorNotPreceded =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageNotPreceded, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
-
-        internal static readonly DiagnosticDescriptor DescriptorNotFollowed =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageNotFollowed, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
-
-        internal static readonly DiagnosticDescriptor DescriptorFollowed =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFollowed, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
-
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1009.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1009Title), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1009Description), SpacingResources.ResourceManager, typeof(SpacingResources));
@@ -55,6 +45,17 @@ namespace StyleCop.Analyzers.SpacingRules
         private static readonly LocalizableString MessageFollowed = new LocalizableResourceString(nameof(SpacingResources.SA1009MessageFollowed), SpacingResources.ResourceManager, typeof(SpacingResources));
 
         private static readonly Action<SyntaxTreeAnalysisContext, SyntaxTreeTokens> SyntaxTreeAction = HandleSyntaxTree;
+
+#pragma warning disable SA1202 // Elements should be ordered by access
+        internal static readonly DiagnosticDescriptor DescriptorNotPreceded =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageNotPreceded, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
+        internal static readonly DiagnosticDescriptor DescriptorNotFollowed =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageNotFollowed, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
+        internal static readonly DiagnosticDescriptor DescriptorFollowed =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFollowed, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+#pragma warning restore SA1202 // Elements should be ordered by access
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
