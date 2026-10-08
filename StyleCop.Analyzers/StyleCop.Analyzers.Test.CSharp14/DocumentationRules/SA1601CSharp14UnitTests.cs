@@ -60,6 +60,96 @@ public partial class TestClass
 
         [Fact]
         [WorkItem(4029, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4029")]
+        public async Task TestPartialConstructorAndEventImplementationWithoutDocumentationAsync()
+        {
+            var testCode = @"
+using System;
+
+/// <summary>
+/// A class.
+/// </summary>
+public partial class TestClass
+{
+    /// <summary>
+    /// Initializes a new instance of the <see cref=""TestClass""/> class.
+    /// </summary>
+    /// <param name=""x"">The value.</param>
+    public partial TestClass(int x);
+
+    /// <summary>
+    /// An event.
+    /// </summary>
+    public partial event EventHandler TestEvent;
+}
+
+/// <content>
+/// More.
+/// </content>
+public partial class TestClass
+{
+    public partial TestClass(int x)
+    {
+    }
+
+    public partial event EventHandler TestEvent
+    {
+        add { }
+        remove { }
+    }
+}
+";
+
+            // The defining declarations are documented, which is enough for the partial members
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(4029, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4029")]
+        public async Task TestPartialConstructorAndEventDefinitionWithoutDocumentationAsync()
+        {
+            var testCode = @"
+using System;
+
+/// <summary>
+/// A class.
+/// </summary>
+public partial class TestClass
+{
+    public partial TestClass(int x);
+
+    public partial event EventHandler TestEvent;
+}
+
+/// <content>
+/// More.
+/// </content>
+public partial class TestClass
+{
+    /// <summary>
+    /// Initializes a new instance of the <see cref=""TestClass""/> class.
+    /// </summary>
+    /// <param name=""x"">The value.</param>
+    public partial TestClass(int x)
+    {
+    }
+
+    /// <summary>
+    /// An event.
+    /// </summary>
+    public partial event EventHandler TestEvent
+    {
+        add { }
+        remove { }
+    }
+}
+";
+
+            // The implementing declarations are documented, which is enough for the partial members
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(4029, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4029")]
         public async Task TestPartialConstructorAndEventWithDocumentationAsync()
         {
             var testCode = @"

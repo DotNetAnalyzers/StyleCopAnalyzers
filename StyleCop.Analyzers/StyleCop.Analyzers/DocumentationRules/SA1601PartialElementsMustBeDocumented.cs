@@ -28,11 +28,11 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// attributed with the partial attribute: classes, structs, interfaces, records, methods, properties, indexers,
     /// constructors, and events.</para>
     ///
-    /// <para>For partial members (methods, properties, and indexers), documenting any one part of the member is
-    /// enough. The compiler uses the documentation from the implementing declaration when it has one, and otherwise the
-    /// documentation from the defining declaration. An undocumented part of a partial member is therefore only reported
-    /// when no part of that member has a documentation header, in which case each undocumented part is reported.
-    /// Partial types are not affected: each part of a partial type must have a documentation header.</para>
+    /// <para>For partial members (methods, properties, indexers, constructors, and events), documenting any one part of
+    /// the member is enough. The compiler uses the documentation from the implementing declaration when it has one, and
+    /// otherwise the documentation from the defining declaration. An undocumented part of a partial member is therefore
+    /// only reported when no part of that member has a documentation header, in which case each undocumented part is
+    /// reported. Partial types are not affected: each part of a partial type must have a documentation header.</para>
     ///
     /// <para>When documentation is provided on more than one part of the partial class, the documentation for the two
     /// classes may be merged together to form a single source of documentation. For example, consider the following two
@@ -234,7 +234,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
                 if (SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
                 {
-                    if (!XmlCommentHelper.HasDocumentation(declaration))
+                    if (!XmlCommentHelper.HasDocumentation(declaration) && !HasDocumentedPartialPart(context, declaration))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
                     }
@@ -258,7 +258,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
                 if (SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
                 {
-                    if (!XmlCommentHelper.HasDocumentation(declaration))
+                    if (!XmlCommentHelper.HasDocumentation(declaration) && !HasDocumentedPartialPart(context, declaration))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
                     }
@@ -286,7 +286,10 @@ namespace StyleCop.Analyzers.DocumentationRules
                     {
                         foreach (var variable in declaration.Declaration.Variables)
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, variable.Identifier.GetLocation()));
+                            if (!HasDocumentedPartialPart(context, variable))
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptor, variable.Identifier.GetLocation()));
+                            }
                         }
                     }
                 }
@@ -331,6 +334,9 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 case IPropertySymbol property:
                     return property.PartialImplementationPart() ?? property.PartialDefinitionPart();
+
+                case IEventSymbol @event:
+                    return @event.PartialImplementationPart() ?? @event.PartialDefinitionPart();
 
                 default:
                     return null;
