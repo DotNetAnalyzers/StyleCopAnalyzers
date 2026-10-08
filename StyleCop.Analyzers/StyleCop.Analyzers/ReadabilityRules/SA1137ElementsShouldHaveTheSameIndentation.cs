@@ -48,6 +48,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly Action<SyntaxNodeAnalysisContext> BlockAction = HandleBlock;
         private static readonly Action<SyntaxNodeAnalysisContext> SwitchStatementAction = HandleSwitchStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> InitializerExpressionAction = HandleInitializerExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> CollectionExpressionAction = HandleCollectionExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> AnonymousObjectCreationExpressionAction = HandleAnonymousObjectCreationExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> TupleTypeAction = HandleTupleType;
         private static readonly Action<SyntaxNodeAnalysisContext> TupleExpressionAction = HandleTupleExpression;
@@ -77,6 +78,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(BlockAction, SyntaxKind.Block);
             context.RegisterSyntaxNodeAction(SwitchStatementAction, SyntaxKind.SwitchStatement);
             context.RegisterSyntaxNodeAction(InitializerExpressionAction, SyntaxKinds.InitializerExpression);
+            context.RegisterSyntaxNodeAction(CollectionExpressionAction, SyntaxKindEx.CollectionExpression);
             context.RegisterSyntaxNodeAction(AnonymousObjectCreationExpressionAction, SyntaxKind.AnonymousObjectCreationExpression);
             context.RegisterSyntaxNodeAction(TupleTypeAction, SyntaxKindEx.TupleType);
             context.RegisterSyntaxNodeAction(TupleExpressionAction, SyntaxKindEx.TupleExpression);
@@ -260,6 +262,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             CheckBraces(context, initializerExpression.OpenBraceToken, initializerExpression.CloseBraceToken);
             CheckElements(context, initializerExpression.Expressions);
+        }
+
+        private static void HandleCollectionExpression(SyntaxNodeAnalysisContext context)
+        {
+            var collectionExpression = (CollectionExpressionSyntaxWrapper)context.Node;
+
+            CheckBraces(context, collectionExpression.OpenBracketToken, collectionExpression.CloseBracketToken);
+            CheckElements(context, collectionExpression.Elements);
         }
 
         private static void HandleAnonymousObjectCreationExpression(SyntaxNodeAnalysisContext context)
@@ -507,6 +517,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             return firstToken;
         }
 
+        // NOTE: This is called CheckBraces for simplicity, but it is used for brackets as well
         private static void CheckBraces(SyntaxNodeAnalysisContext context, SyntaxToken openBraceToken, SyntaxToken closeBraceToken)
         {
             if (openBraceToken.GetLine() == closeBraceToken.GetLine())
