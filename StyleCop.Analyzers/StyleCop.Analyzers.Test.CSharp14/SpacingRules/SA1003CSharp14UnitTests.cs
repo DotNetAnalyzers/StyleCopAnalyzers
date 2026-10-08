@@ -47,5 +47,47 @@ public class TestClass
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Theory]
+        [WorkItem(4028, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4028")]
+        [InlineData("field")]
+        [InlineData("this.storage")]
+        public async Task TestFieldKeywordAssignmentAsync(string target)
+        {
+            // Operator spacing next to the 'field' keyword is reported the same way as next to any other expression.
+            var testCode = $@"
+public class TestClass
+{{
+    private int storage;
+
+    public int Prop
+    {{
+        get => {target};
+        set {{|#0:=>|}}{target}{{|#1:=|}} value;
+    }}
+}}
+";
+
+            var fixedCode = $@"
+public class TestClass
+{{
+    private int storage;
+
+    public int Prop
+    {{
+        get => {target};
+        set => {target} = value;
+    }}
+}}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DescriptorFollowedByWhitespace).WithLocation(0).WithArguments("=>"),
+                Diagnostic(DescriptorPrecededByWhitespace).WithLocation(1).WithArguments("="),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

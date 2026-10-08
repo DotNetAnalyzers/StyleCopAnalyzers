@@ -34,15 +34,34 @@ public static class TestClass
 
         [Fact]
         [WorkItem(4028, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4028")]
-        public async Task TestFieldKeywordIsIgnoredAsync()
+        public async Task TestFieldKeywordIsSpacedLikeAnIdentifierAsync()
         {
+            // SA1000 only governs the spacing after specific keywords (such as 'new', 'return', or 'checked'). The
+            // contextual 'field' keyword is used like an identifier, so SA1000 neither requires nor forbids a space
+            // after it. Spacing of the operators and punctuation around 'field' is still enforced by the other spacing
+            // rules (see SA1003CSharp14UnitTests, SA1008CSharp14UnitTests, etc.).
             var testCode = @"
 public class TestClass
 {
-    public int Prop
+    public string Prop
     {
         get => field;
-        set =>field= value;
+        set => field = value?.Trim();
+    }
+
+    public int Count
+    {
+        get
+        {
+            return field;
+        }
+
+        set
+        {
+            field = value;
+            field++;
+            field = field.CompareTo(0) + (field);
+        }
     }
 }
 ";
