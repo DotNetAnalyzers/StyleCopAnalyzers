@@ -5,10 +5,10 @@
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
-    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.ReadabilityRules;
     using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
@@ -20,99 +20,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     /// This class contains unit tests for <see cref="SA1122UseStringEmptyForEmptyStrings"/> and
     /// <see cref="SA1122CodeFixProvider"/>.
     /// </summary>
-    // TODO: Check if this can be simplified, using the theory tests
     public class SA1122UnitTests
     {
-        public static TheoryData<string> EmptyStringLiterals
-        {
-            get
-            {
-                var data = new TheoryData<string>()
-                {
-                    "\"\"",
-                    "@\"\"",
-                    "$\"\"",
-                    "$@\"\"",
-                };
-
-                if (LightupHelpers.SupportsCSharp8)
-                {
-                    data.Add("@$\"\"");
-                }
-
-                if (LightupHelpers.SupportsCSharp11)
-                {
-                    // Only the multi-line form of a raw string literal can be empty, written as a single blank line
-                    // between the delimiters.
-                    data.Add("\"\"\"\r\n\r\n            \"\"\"");
-                }
-
-                return data;
-            }
-        }
-
-        public static TheoryData<string> NotReportedStringLiterals
-        {
-            get
-            {
-                var data = new TheoryData<string>()
-                {
-                    "\"text\"",
-                    "@\"text\"",
-                    "$\"text\"",
-                    "$@\"text\"",
-                    "$\"{value}\"",
-                };
-
-                if (LightupHelpers.SupportsCSharp8)
-                {
-                    data.Add("@$\"text\"");
-                }
-
-                if (LightupHelpers.SupportsCSharp11)
-                {
-                    data.Add("\"\"\"text\"\"\"");
-
-                    // Two blank lines is the boundary of the empty case above: the newline ending the last content
-                    // line belongs to the closing delimiter, so this value is a single line break, not empty.
-                    data.Add("\"\"\"\r\n\r\n\r\n            \"\"\"");
-
-                    // A UTF-8 string literal is a ReadOnlySpan<byte> rather than a string, so string.Empty can never replace it.
-                    data.Add("\"\"u8");
-                    data.Add("\"text\"u8");
-                }
-
-                return data;
-            }
-        }
-
-        public static TheoryData<string> EmptyStringLiteralsAllowedAsConstant
-        {
-            get
-            {
-                var data = new TheoryData<string>()
-                {
-                    "\"\"",
-                    "@\"\"",
-                };
-
-                // An interpolated string is only a constant expression from C# 10 onwards.
-                if (LightupHelpers.SupportsCSharp10)
-                {
-                    data.Add("$\"\"");
-                    data.Add("$@\"\"");
-                    data.Add("@$\"\"");
-                }
-
-                if (LightupHelpers.SupportsCSharp11)
-                {
-                    data.Add("\"\"\"\r\n\r\n            \"\"\"");
-                }
-
-                return data;
-            }
-        }
-
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
@@ -167,8 +76,18 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             await VerifyCSharpFixAsync(oldSource, expected, newSource, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that every form of empty string literal available in C# 6 is reported, including empty interpolated
+        /// strings, and that the code fix replaces it with <c>string.Empty</c>. Forms added in later language versions
+        /// are covered by the test project for that version.
+        /// </summary>
+        /// <param name="literal">The empty string literal.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(EmptyStringLiterals))]
+        [InlineData("\"\"")]
+        [InlineData("@\"\"")]
+        [InlineData("$\"\"")]
+        [InlineData("$@\"\"")]
         public async Task TestEmptyStringLiteralIsReportedAsync(string literal)
         {
             var testCode = $@"public class Foo
@@ -189,8 +108,20 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that string literals and interpolated strings with any content are not reported, even when the
+        /// content is only an interpolation.
+        /// </summary>
+        /// <param name="literal">The string literal.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(NotReportedStringLiterals))]
+        [InlineData("\"text\"")]
+        [InlineData("@\"text\"")]
+        [InlineData("$\"text\"")]
+        [InlineData("$@\"text\"")]
+        [InlineData("$\"{value}\"")]
+        [InlineData("$@\"{value}\"")]
+        [InlineData("$\"{{}}\"")]
         public async Task TestStringLiteralIsNotReportedAsync(string literal)
         {
             var testCode = $@"public class Foo
@@ -204,8 +135,15 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that empty string literals are not reported in <see langword="const"/> declarations. Interpolated
+        /// strings can only be constants from C# 10 onwards, so they are covered by that test project.
+        /// </summary>
+        /// <param name="literal">The empty string literal.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(EmptyStringLiteralsAllowedAsConstant))]
+        [InlineData("\"\"")]
+        [InlineData("@\"\"")]
         public async Task TestEmptyStringLiteralAsConstantIsNotReportedAsync(string literal)
         {
             var testCode = $@"public class Foo
@@ -219,6 +157,94 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 }}";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that several empty interpolated strings in one expression are all reported and fixed.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestMultipleEmptyInterpolatedStringsAsync()
+        {
+            var testCode = @"public class Foo
+{
+    public void Bar(string value)
+    {
+        string test = [|$""""|] + value + ([|$@""""|]);
+        Baz([|$""""|]);
+    }
+
+    public void Baz(object value)
+    {
+    }
+}";
+            var fixedCode = @"public class Foo
+{
+    public void Bar(string value)
+    {
+        string test = string.Empty + value + (string.Empty);
+        Baz(string.Empty);
+    }
+
+    public void Baz(object value)
+    {
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an empty interpolated string converted to <c>FormattableString</c> or
+        /// <see cref="IFormattable"/> is not reported, because <c>string.Empty</c> can't be converted to those types,
+        /// while one converted to a type that a string converts to is still reported.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestEmptyInterpolatedStringConvertedToFormattableStringAsync()
+        {
+            var testCode = @"using System;
+
+public class Foo
+{
+    public void Bar()
+    {
+        FormattableString formattable = $"""";
+        IFormattable formattable2 = $@"""";
+        Baz($"""");
+        object value = [|$""""|];
+        IComparable comparable = [|$""""|];
+    }
+
+    public void Baz(FormattableString value)
+    {
+    }
+}";
+            var fixedCode = @"using System;
+
+public class Foo
+{
+    public void Bar()
+    {
+        FormattableString formattable = $"""";
+        IFormattable formattable2 = $@"""";
+        Baz($"""");
+        object value = string.Empty;
+        IComparable comparable = string.Empty;
+    }
+
+    public void Baz(FormattableString value)
+    {
+    }
+}";
+
+            // FormattableString first appeared in .NET Framework 4.6.
+            await new CSharpTest
+            {
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net46.Default,
+                TestCode = testCode,
+                FixedCode = fixedCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
