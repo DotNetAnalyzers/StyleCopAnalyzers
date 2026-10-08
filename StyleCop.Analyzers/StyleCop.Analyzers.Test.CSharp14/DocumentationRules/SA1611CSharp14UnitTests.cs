@@ -14,6 +14,22 @@ namespace StyleCop.Analyzers.Test.CSharp14.DocumentationRules
     public partial class SA1611CSharp14UnitTests : SA1611CSharp13UnitTests
     {
         [Fact]
+        [WorkItem(4023, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4023")]
+        public async Task TestExtensionBlockDeclarationAsync()
+        {
+            var testCode = @"
+public static class TestClass
+{
+    extension(string source)
+    {
+    };
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(4030, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4030")]
         public async Task TestCompoundAssignmentOperatorMissingParameterDocumentationAsync()
         {
