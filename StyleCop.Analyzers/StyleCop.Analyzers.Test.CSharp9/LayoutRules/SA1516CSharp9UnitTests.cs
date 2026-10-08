@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.LayoutRules
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.LayoutRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.LayoutRules.SA1516ElementsMustBeSeparatedByBlankLine,
@@ -185,6 +186,29 @@ class C
 
             test.TestState.ExpectedDiagnostics.AddRange(this.GetExpectedResultTopLevelStatementsFollowedByType());
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.RecordTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        [WorkItem(3979, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3979")]
+        public async Task TestRecordMembersAsync(string keyword)
+        {
+            var testCode = $@"public {keyword} Foo
+{{
+    public int A {{ get; }}
+[|    |]public void B() {{ }}
+}}
+";
+
+            var fixedCode = $@"public {keyword} Foo
+{{
+    public int A {{ get; }}
+
+    public void B() {{ }}
+}}
+";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected virtual DiagnosticResult[] GetExpectedResultTestUsingAndGlobalStatementSpacingInTopLevelProgram()

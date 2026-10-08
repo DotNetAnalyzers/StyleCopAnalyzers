@@ -3,9 +3,35 @@
 
 namespace StyleCop.Analyzers.Test.CSharp13.OrderingRules
 {
+    using System.Threading;
+    using System.Threading.Tasks;
     using StyleCop.Analyzers.Test.CSharp12.OrderingRules;
+    using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<
+        StyleCop.Analyzers.OrderingRules.SA1202ElementsMustBeOrderedByAccess>;
 
     public partial class SA1202CSharp13UnitTests : SA1202CSharp12UnitTests
     {
+        [Fact]
+        [WorkItem(4019, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4019")]
+        public async Task TestRefStructExplicitInterfaceImplementationAfterInternalMemberAsync()
+        {
+            var testCode = @"
+public interface IInterface
+{
+    void TestMethod();
+}
+
+public ref struct TestRefStruct : IInterface
+{
+    internal void TestMethod2() { }
+
+    void IInterface.{|#0:TestMethod|}() { }
+}";
+
+            var expected = Diagnostic().WithLocation(0).WithArguments("public", "internal");
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
