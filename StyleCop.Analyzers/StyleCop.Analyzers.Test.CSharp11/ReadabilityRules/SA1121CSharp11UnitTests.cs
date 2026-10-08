@@ -19,7 +19,7 @@ namespace StyleCop.Analyzers.Test.CSharp11.ReadabilityRules
         // we use in the c# 10 test project, so the test was added here instead.
         [Fact]
         [WorkItem(3594, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3594")]
-        public async Task TestUsingNameChangeInGlobalUsingInAnotherFileAsync()
+        public virtual async Task TestUsingNameChangeInGlobalUsingInAnotherFileAsync()
         {
             var source1 = @"
 global using MyDouble = System.Double;";
@@ -45,7 +45,7 @@ class TestClass
 
         [Fact]
         [WorkItem(3594, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3594")]
-        public async Task TestUsingNameChangeInGlobalUsingInSameFileAsync()
+        public virtual async Task TestUsingNameChangeInGlobalUsingInSameFileAsync()
         {
             var source = @"global using MyDouble = System.Double;
 class TestClass

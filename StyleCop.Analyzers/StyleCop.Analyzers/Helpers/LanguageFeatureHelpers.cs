@@ -62,6 +62,19 @@ namespace StyleCop.Analyzers.Helpers
             return (csharpParseOptions != null) && (csharpParseOptions.LanguageVersion >= LanguageVersionEx.CSharp7_1);
         }
 
+        /// <summary>
+        /// Checks if using alias directives can refer to any type (C# 12). From C# 12, the target of a using alias can be
+        /// written with a built-in type keyword (<c>using I32 = int;</c>) or as a nullable value type
+        /// (<c>using N = int?;</c>).
+        /// </summary>
+        /// <param name="context">The analysis context that will be checked.</param>
+        /// <returns>True if using aliases to any type are supported for the analyzed syntax tree.</returns>
+        internal static bool SupportsUsingAliasToAnyType(this SyntaxNodeAnalysisContext context)
+        {
+            var csharpParseOptions = context.Node.SyntaxTree.Options as CSharpParseOptions;
+            return (csharpParseOptions != null) && (csharpParseOptions.LanguageVersion >= LanguageVersionEx.CSharp12);
+        }
+
         internal static bool SupportsNativeSizedIntegers(this Compilation compilation)
         {
             if (compilation is not CSharpCompilation { LanguageVersion: >= LanguageVersionEx.CSharp11 } csharpCompilation)

@@ -49,5 +49,13 @@ namespace StyleCop.Analyzers.Test.CSharp11.MaintainabilityRules
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        protected override DiagnosticResult[] GetExpectedResultTestTypeWithPrimaryConstructorWithoutAccessModifier()
+        {
+            return new[]
+            {
+                Diagnostic().WithLocation(0).WithArguments("TestType"),
+            };
+        }
     }
 }
