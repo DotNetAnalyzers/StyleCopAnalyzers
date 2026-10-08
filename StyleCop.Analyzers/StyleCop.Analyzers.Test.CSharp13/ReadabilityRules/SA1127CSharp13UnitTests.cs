@@ -7,7 +7,6 @@ namespace StyleCop.Analyzers.Test.CSharp13.ReadabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp12.ReadabilityRules;
-    using StyleCop.Analyzers.Test.CSharp13.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1127GenericTypeConstraintsMustBeOnOwnLine,
@@ -31,7 +30,6 @@ class Foo<T>
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
-                ReferenceAssemblies = RuntimeReferenceAssemblies.Net90,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -58,7 +56,6 @@ class Foo<T>
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
-                ReferenceAssemblies = RuntimeReferenceAssemblies.Net90,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
