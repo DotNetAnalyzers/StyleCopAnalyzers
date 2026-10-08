@@ -168,6 +168,69 @@ jobs:
         path: StyleCop.Analyzers.Status.json
         if-no-files-found: error
 
+  # The lightup wrappers and resx accessors under StyleCop.Analyzers/Lightup/.generated are written by source
+  # generators during the build (EmitCompilerGeneratedFiles) and checked in for review. Fail if they are stale.
+  # Runs on Windows (with core.autocrlf, like the build job) and Linux, so line ending handling is covered on both.
+  generated-files:
+    name: Check generated files (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ windows-latest, ubuntu-latest ]
+
+    steps:
+    - name: Configure git line endings
+      if: runner.os == 'Windows'
+      run: git config --global core.autocrlf true
+
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # Nerdbank.GitVersioning needs full history
+
+    - name: Setup .NET SDK (from global.json)
+      uses: actions/setup-dotnet@v6
+      with:
+        global-json-file: global.json
+
+    # Deleting the checked-in copies first means outputs the generators no longer produce show up as deletions.
+    - name: Delete checked-in generated files
+      shell: pwsh
+      run: Remove-Item -Recurse -Force StyleCop.Analyzers/StyleCop.Analyzers/Lightup/.generated
+
+    - name: Build StyleCop.Analyzers (runs the source generators)
+      run: dotnet build StyleCop.Analyzers/StyleCop.Analyzers/StyleCop.Analyzers.csproj -c Debug --no-incremental -maxcpucount:1
+
+    # The generators write CRLF (and the resx generator writes mixed line endings on Linux) while the repository stores
+    # LF. These files have the 'text' attribute, so git normalizes line endings before comparing: only real content
+    # changes are reported.
+    - name: Check generated files are up to date
+      shell: pwsh
+      run: |
+        $path = 'StyleCop.Analyzers/StyleCop.Analyzers/Lightup/.generated'
+        # Intent-to-add makes new (untracked) outputs show up in the diff alongside modified and deleted files.
+        git -c core.safecrlf=false add --all --intent-to-add -- $path
+        git -c core.safecrlf=false diff HEAD --exit-code --stat -- $path
+        if ($LASTEXITCODE -eq 0) {
+          Write-Host 'Checked-in generated files are up to date.'
+          exit 0
+        }
+
+        git -c core.safecrlf=false --no-pager diff HEAD -- $path | Select-Object -First 400
+        Write-Host ''
+        Write-Host "::error title=Stale generated files::The checked-in files under $path do not match what the build generates."
+        Write-Host 'They are produced by the StyleCop.Analyzers build from Lightup/Syntax.xml, Lightup/OperationInterfaces.xml,'
+        Write-Host 'the StyleCop.Analyzers.CodeGeneration generators and the *.resx files. To regenerate them, run from the repo root:'
+        Write-Host ''
+        Write-Host "  git rm -r -q $path"
+        Write-Host '  dotnet build StyleCop.Analyzers/StyleCop.Analyzers/StyleCop.Analyzers.csproj --no-incremental'
+        Write-Host "  git add -A $path"
+        Write-Host ''
+        Write-Host 'and commit the result. See CONTRIBUTING.md.'
+        exit 1
+
   # Mirrors build/test.yml: each language version runs its test assembly under xunit.console.x86 + coverlet.
   test:
     name: Test C# ${{ matrix.langVersion }} ${{ matrix.configuration }}
