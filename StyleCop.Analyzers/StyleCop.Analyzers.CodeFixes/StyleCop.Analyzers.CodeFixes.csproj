@@ -13,7 +13,6 @@
     <CheckNotRecommendedTargetFramework>false</CheckNotRecommendedTargetFramework>
     <RootNamespace>StyleCop.Analyzers</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <IncludeSymbols>true</IncludeSymbols>
 
     <NuspecFile Condition="'$(MetadataPackage)' != 'true'">StyleCop.Analyzers.nuspec</NuspecFile>
     <NuspecFile Condition="'$(MetadataPackage)' == 'true'">StyleCop.Analyzers.Metadata.nuspec</NuspecFile>
@@ -22,6 +21,16 @@
   <PropertyGroup>
     <!-- This package intentionally uses SemVer 2. -->
     <NoWarn>$(NoWarn),NU5105</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <!--
+      Embed the portable PDB in the shipped assembly. Analyzers are loaded by the compiler and the IDE, not by the
+      user's application, so a separate symbol package is rarely found. With the PDB inside the DLL, stack traces
+      from analyzer hosts include file and line information, and a debugger finds the symbols without a symbol
+      server. Debug builds keep a separate portable PDB (see Directory.Build.props), which code coverage uses.
+    -->
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -73,7 +82,7 @@
   <Target Name="PackMetadata" AfterTargets="Pack" Condition="'$(MetadataPackage)' != 'true'">
     <MSBuild Projects="$(MSBuildProjectFullPath)"
              Targets="Pack"
-             Properties="MetadataPackage=true;IncludeSymbols=false" />
+             Properties="MetadataPackage=true" />
   </Target>
 
 </Project>
