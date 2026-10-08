@@ -28,6 +28,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public CSharpSyntaxNode SyntaxNode => this.node;
 
+
         public static explicit operator AllowsConstraintSyntaxWrapper(SyntaxNode node)
         {
             if (node == null)

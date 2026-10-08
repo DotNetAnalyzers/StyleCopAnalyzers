@@ -43,7 +43,7 @@ jobs:
         fetch-depth: 0 # Nerdbank.GitVersioning needs full history
 
     - name: Setup .NET SDK (from global.json)
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v6
       with:
         global-json-file: global.json
 
@@ -168,6 +168,69 @@ jobs:
         path: StyleCop.Analyzers.Status.json
         if-no-files-found: error
 
+  # The lightup wrappers and resx accessors under StyleCop.Analyzers/Lightup/.generated are written by source
+  # generators during the build (EmitCompilerGeneratedFiles) and checked in for review. Fail if they are stale.
+  # Runs on Windows (with core.autocrlf, like the build job) and Linux, so line ending handling is covered on both.
+  generated-files:
+    name: Check generated files (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ windows-latest, ubuntu-latest ]
+
+    steps:
+    - name: Configure git line endings
+      if: runner.os == 'Windows'
+      run: git config --global core.autocrlf true
+
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # Nerdbank.GitVersioning needs full history
+
+    - name: Setup .NET SDK (from global.json)
+      uses: actions/setup-dotnet@v6
+      with:
+        global-json-file: global.json
+
+    # Deleting the checked-in copies first means outputs the generators no longer produce show up as deletions.
+    - name: Delete checked-in generated files
+      shell: pwsh
+      run: Remove-Item -Recurse -Force StyleCop.Analyzers/StyleCop.Analyzers/Lightup/.generated
+
+    - name: Build StyleCop.Analyzers (runs the source generators)
+      run: dotnet build StyleCop.Analyzers/StyleCop.Analyzers/StyleCop.Analyzers.csproj -c Debug --no-incremental -maxcpucount:1
+
+    # The generators write CRLF (and the resx generator writes mixed line endings on Linux) while the repository stores
+    # LF. These files have the 'text' attribute, so git normalizes line endings before comparing: only real content
+    # changes are reported.
+    - name: Check generated files are up to date
+      shell: pwsh
+      run: |
+        $path = 'StyleCop.Analyzers/StyleCop.Analyzers/Lightup/.generated'
+        # Intent-to-add makes new (untracked) outputs show up in the diff alongside modified and deleted files.
+        git -c core.safecrlf=false add --all --intent-to-add -- $path
+        git -c core.safecrlf=false diff HEAD --exit-code --stat -- $path
+        if ($LASTEXITCODE -eq 0) {
+          Write-Host 'Checked-in generated files are up to date.'
+          exit 0
+        }
+
+        git -c core.safecrlf=false --no-pager diff HEAD -- $path | Select-Object -First 400
+        Write-Host ''
+        Write-Host "::error title=Stale generated files::The checked-in files under $path do not match what the build generates."
+        Write-Host 'They are produced by the StyleCop.Analyzers build from Lightup/Syntax.xml, Lightup/OperationInterfaces.xml,'
+        Write-Host 'the StyleCop.Analyzers.CodeGeneration generators and the *.resx files. To regenerate them, run from the repo root:'
+        Write-Host ''
+        Write-Host "  git rm -r -q $path"
+        Write-Host '  dotnet build StyleCop.Analyzers/StyleCop.Analyzers/StyleCop.Analyzers.csproj --no-incremental'
+        Write-Host "  git add -A $path"
+        Write-Host ''
+        Write-Host 'and commit the result. See CONTRIBUTING.md.'
+        exit 1
+
   # Mirrors build/test.yml: each language version runs its test assembly under xunit.console.x86 + coverlet.
   test:
     name: Test C# ${{ matrix.langVersion }} ${{ matrix.configuration }}
@@ -220,9 +283,9 @@ jobs:
       with:
         nuget-version: '6.0.6'
 
-    # coverlet.console (net6.0 tool) needs a .NET 6 runtime; global.json's SDK provides it.
+    # Provides the .NET 10 runtime for coverlet.console.
     - name: Setup .NET SDK (from global.json)
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v6
       with:
         global-json-file: global.json
 
@@ -236,9 +299,7 @@ jobs:
         name: test-bin-cs${{ matrix.langVersion }}-${{ matrix.configuration }}
         path: StyleCop.Analyzers/${{ matrix.project }}/bin/${{ matrix.configuration }}/${{ matrix.framework }}
 
-    # Mirrors build/test.yml after #4104: xunit.console.x86 wrapped by coverlet.console (Cobertura output).
-    # OpenCover 4.6.519 intermittently crashed the test process in Debug jobs (AccessViolationException in
-    # analyzer static constructors), so it is no longer used.
+    # xunit.console.x86 wrapped by coverlet.console, which writes a Cobertura report.
     - name: Run tests
       working-directory: build
       shell: pwsh
@@ -248,17 +309,18 @@ jobs:
         $xunitrunner_version = $packageConfig.SelectSingleNode('/packages/package[@id="xunit.runner.console"]').version
 
         $packages_folder = '..\packages'
-        $coverlet_console = "$packages_folder\coverlet.console.$coverlet_version\tools\net6.0\any\coverlet.console.dll"
+        $coverlet_console = "$packages_folder\coverlet.console.$coverlet_version\tools\net10.0\any\coverlet.console.dll"
         $xunit_runner_console = "$packages_folder\xunit.runner.console.$xunitrunner_version\tools\${{ matrix.framework }}\xunit.console.x86.exe"
-        # Same legacy OpenCover.Reports / OpenCover.*.xml names as build/test.yml (content is Cobertura).
-        $report_folder = '.\OpenCover.Reports'
+        $report_folder = '.\coverage'
         New-Item -ItemType Directory -Force -Path $report_folder | Out-Null
         $target_dll = "..\StyleCop.Analyzers\${{ matrix.project }}\bin\${{ matrix.configuration }}\${{ matrix.framework }}\${{ matrix.project }}.dll"
         if (-not (Test-Path $coverlet_console)) { throw "coverlet.console not found at $coverlet_console" }
         if (-not (Test-Path $xunit_runner_console)) { throw "xunit console not found at $xunit_runner_console" }
         if (-not (Test-Path $target_dll)) { throw "Test assembly not found at $target_dll" }
-        $coverage_output = "$report_folder\OpenCover.StyleCopAnalyzers.CSharp${{ matrix.langVersion }}.xml"
+        $coverage_output = "$report_folder\coverage.StyleCopAnalyzers.CSharp${{ matrix.langVersion }}.cobertura.xml"
         # Trailing separator makes coverlet write coverage.cobertura.xml into the folder.
+        # The scope matches the old OpenCover setup (-filter:"+[StyleCop*]*"), which also covered the test assembly
+        # under test and did not see source generator output. File globs need "**/" to match at any depth.
         dotnet $coverlet_console `
           $target_dll `
           --target "$xunit_runner_console" `
@@ -266,8 +328,10 @@ jobs:
           --format "cobertura" `
           --output "$report_folder/" `
           --include "[StyleCop*]*" `
+          --include-test-assembly `
           --exclude-by-attribute "System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" `
-          --exclude-by-file "*\*Designer.cs"
+          --exclude-by-file "**/*Designer.cs" `
+          --exclude-by-file "**/.generated/**"
         if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
         $generated = Get-ChildItem -Path $report_folder -Filter "*.cobertura.xml" -File | Select-Object -First 1
         if (-not $generated) { throw "coverlet did not produce a Cobertura report in $report_folder" }
@@ -286,16 +350,20 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: coverage-cs${{ matrix.langVersion }}
-        path: build/OpenCover.Reports
+        path: build/coverage
         if-no-files-found: warn
 
-  # Mirrors the "Publish Code Coverage" stage in build/build-and-test.yml (minus the codecov.io upload).
+  # Merges the per-language coverage reports and publishes them to codecov.io (previously the "Publish Code Coverage"
+  # stage in the retired build/build-and-test.yml).
   coverage:
     name: Merge code coverage
     needs: test
     if: ${{ !cancelled() }}
     runs-on: windows-latest
     timeout-minutes: 30
+    permissions:
+      contents: read
+      id-token: write # Codecov upload authenticates with GitHub OIDC, so no Codecov token secret is needed
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -320,8 +388,7 @@ jobs:
         $packageConfig = [xml](Get-Content .\.nuget\packages.config)
         $reportgenerator_version = $packageConfig.SelectSingleNode('/packages/package[@id="ReportGenerator"]').version
         $report_generator = ".\packages\ReportGenerator.$reportgenerator_version\tools\net47\ReportGenerator.exe"
-        # Inputs are Cobertura files from coverlet, kept under the legacy OpenCover.*.xml names.
-        &$report_generator -targetdir:coverage-final -reporttypes:"Cobertura;HtmlSummary" "-reports:coverage/*/OpenCover.*.xml"
+        &$report_generator -targetdir:coverage-final -reporttypes:"Cobertura;HtmlSummary" "-reports:coverage/*/coverage.*.cobertura.xml"
         exit $LASTEXITCODE
 
     - name: Upload merged coverage
@@ -329,3 +396,15 @@ jobs:
       with:
         name: coverage-merged
         path: coverage-final
+
+    # Only publish complete results: a failed test job uploads no coverage, which would understate coverage.
+    # Pull requests from forks can't get an OIDC token; the action then uploads tokenless, as Codecov allows for forks.
+    - name: Upload coverage to Codecov
+      if: needs.test.result == 'success'
+      uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+      with:
+        files: coverage-final/Cobertura.xml
+        disable_search: true
+        use_oidc: true
+        fail_ci_if_error: false
+        verbose: true

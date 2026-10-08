@@ -5,6 +5,12 @@
     <TargetFramework>netstandard1.1</TargetFramework>
     <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
     <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
+
+    <!--
+      netstandard1.1 is intentional: it keeps the analyzers loadable by Roslyn 1.2+ hosts (Visual Studio 2015 Update 2
+      and later). Silence the .NET SDK's NETSDK1215 "not recommended" warning for that deliberate choice.
+    -->
+    <CheckNotRecommendedTargetFramework>false</CheckNotRecommendedTargetFramework>
     <PackageId>StyleCop.Analyzers.NewIdRequiredDueToNuGetBug</PackageId>
   </PropertyGroup>
 

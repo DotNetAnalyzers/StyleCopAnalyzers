@@ -18,3 +18,8 @@ LICENSE text
 *.png binary
 *.ico binary
 *.snk binary
+
+# Checked-in output of the lightup and resx source generators (EmitCompilerGeneratedFiles in StyleCop.Analyzers.csproj).
+# The generators write CRLF line endings, so check these files out with CRLF on every platform to match what a build
+# writes. The repository stores them with LF like all other text files.
+StyleCop.Analyzers/StyleCop.Analyzers/Lightup/.generated/** text eol=crlf

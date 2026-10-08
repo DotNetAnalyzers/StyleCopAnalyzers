@@ -42,6 +42,7 @@ namespace StyleCop.Analyzers.Lightup
         public IOperation StepValue => StepValueAccessor(this.WrappedOperation);
         public bool IsChecked => IsCheckedAccessor(this.WrappedOperation);
         public ImmutableArray<IOperation> NextVariables => NextVariablesAccessor(this.WrappedOperation);
+
         public static explicit operator IForToLoopOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IForToLoopOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public object LoopKind => ((ILoopOperationWrapper)this).LoopKind;
@@ -49,6 +50,7 @@ namespace StyleCop.Analyzers.Lightup
         public ImmutableArray<ILocalSymbol> Locals => ((ILoopOperationWrapper)this).Locals;
         public ILabelSymbol ContinueLabel => ((ILoopOperationWrapper)this).ContinueLabel;
         public ILabelSymbol ExitLabel => ((ILoopOperationWrapper)this).ExitLabel;
+
         public static explicit operator IForToLoopOperationWrapper(ILoopOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator ILoopOperationWrapper(IForToLoopOperationWrapper wrapper) => ILoopOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IForToLoopOperationWrapper FromOperation(IOperation operation)
