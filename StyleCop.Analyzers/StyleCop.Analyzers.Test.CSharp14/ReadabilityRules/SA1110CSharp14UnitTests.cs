@@ -39,5 +39,32 @@ public class Foo
 
             await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(4023, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4023")]
+        public async Task TestExtensionBlockOpeningParenthesisOnNextLineAsync()
+        {
+            var testCode = @"
+public static class TestClass
+{
+    extension
+        [|(|]string source)
+    {
+    }
+}
+";
+
+            var fixedCode = @"
+public static class TestClass
+{
+    extension(
+        string source)
+    {
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
