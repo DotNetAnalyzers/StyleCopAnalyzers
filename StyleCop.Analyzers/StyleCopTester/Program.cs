@@ -608,7 +608,7 @@ namespace StyleCopTester
             Console.WriteLine("/edititer:<iterations>  Specifies the number of iterations to use for testing documents with /editperf. When this is not specified, the default value is 10.");
         }
 
-        private struct DocumentAnalyzerPerformance
+        private readonly struct DocumentAnalyzerPerformance
         {
             public DocumentAnalyzerPerformance(double editsPerSecond)
             {

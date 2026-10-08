@@ -17,6 +17,8 @@ namespace StyleCop.Analyzers.Lightup
         {
             var csharpCodeAnalysisAssembly = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly;
             var builder = ImmutableDictionary.CreateBuilder<Type, Type>();
+            builder.Add(typeof(AllowsConstraintClauseSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(AllowsConstraintClauseSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(AllowsConstraintSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(AllowsConstraintSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(BaseExpressionColonSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(BaseExpressionColonSyntaxWrapper.WrappedTypeName));
 
             var baseNamespaceDeclarationSyntaxType = csharpCodeAnalysisAssembly.GetType(BaseNamespaceDeclarationSyntaxWrapper.WrappedTypeName) ?? csharpCodeAnalysisAssembly.GetType(BaseNamespaceDeclarationSyntaxWrapper.FallbackWrappedTypeName);
@@ -27,6 +29,8 @@ namespace StyleCop.Analyzers.Lightup
             builder.Add(typeof(BaseParameterSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(BaseParameterSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(BinaryPatternSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(BinaryPatternSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(CasePatternSwitchLabelSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(CasePatternSwitchLabelSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(CollectionElementSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(CollectionElementSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(CollectionExpressionSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(CollectionExpressionSyntaxWrapper.WrappedTypeName));
             var forEachStatementSyntaxType = csharpCodeAnalysisAssembly.GetType(CommonForEachStatementSyntaxWrapper.WrappedTypeName) ?? csharpCodeAnalysisAssembly.GetType(CommonForEachStatementSyntaxWrapper.FallbackWrappedTypeName);
             builder.Add(typeof(CommonForEachStatementSyntaxWrapper), forEachStatementSyntaxType);
             builder.Add(typeof(ConstantPatternSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ConstantPatternSyntaxWrapper.WrappedTypeName));
@@ -36,7 +40,11 @@ namespace StyleCop.Analyzers.Lightup
             builder.Add(typeof(DiscardDesignationSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(DiscardDesignationSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(DiscardPatternSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(DiscardPatternSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(ExpressionColonSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ExpressionColonSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(ExpressionElementSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ExpressionElementSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(ExpressionOrPatternSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ExpressionOrPatternSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(ExtensionBlockDeclarationSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ExtensionBlockDeclarationSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(ExtensionMemberCrefSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ExtensionMemberCrefSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(FieldExpressionSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(FieldExpressionSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(FileScopedNamespaceDeclarationSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(FileScopedNamespaceDeclarationSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(ForEachVariableStatementSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ForEachVariableStatementSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(FunctionPointerCallingConventionSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(FunctionPointerCallingConventionSyntaxWrapper.WrappedTypeName));
@@ -45,12 +53,14 @@ namespace StyleCop.Analyzers.Lightup
             builder.Add(typeof(FunctionPointerTypeSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(FunctionPointerTypeSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(FunctionPointerUnmanagedCallingConventionListSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(FunctionPointerUnmanagedCallingConventionListSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(FunctionPointerUnmanagedCallingConventionSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(FunctionPointerUnmanagedCallingConventionSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(IgnoredDirectiveTriviaSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(IgnoredDirectiveTriviaSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(ImplicitObjectCreationExpressionSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ImplicitObjectCreationExpressionSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(ImplicitStackAllocArrayCreationExpressionSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ImplicitStackAllocArrayCreationExpressionSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(IsPatternExpressionSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(IsPatternExpressionSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(LineDirectivePositionSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(LineDirectivePositionSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(LineOrSpanDirectiveTriviaSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(LineOrSpanDirectiveTriviaSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(LineSpanDirectiveTriviaSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(LineSpanDirectiveTriviaSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(ListPatternSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ListPatternSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(LocalFunctionStatementSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(LocalFunctionStatementSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(NullableDirectiveTriviaSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(NullableDirectiveTriviaSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(ParenthesizedPatternSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ParenthesizedPatternSyntaxWrapper.WrappedTypeName));
@@ -63,9 +73,13 @@ namespace StyleCop.Analyzers.Lightup
             builder.Add(typeof(RecordDeclarationSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(RecordDeclarationSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(RecursivePatternSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(RecursivePatternSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(RefExpressionSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(RefExpressionSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(RefStructConstraintSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(RefStructConstraintSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(RefTypeSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(RefTypeSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(RelationalPatternSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(RelationalPatternSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(ScopedTypeSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(ScopedTypeSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(SingleVariableDesignationSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(SingleVariableDesignationSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(SlicePatternSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(SlicePatternSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(SpreadElementSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(SpreadElementSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(SubpatternSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(SubpatternSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(SwitchExpressionArmSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(SwitchExpressionArmSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(SwitchExpressionSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(SwitchExpressionSyntaxWrapper.WrappedTypeName));
@@ -75,9 +89,12 @@ namespace StyleCop.Analyzers.Lightup
             builder.Add(typeof(TupleTypeSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(TupleTypeSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(TypePatternSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(TypePatternSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(UnaryPatternSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(UnaryPatternSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(UnionDeclarationSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(UnionDeclarationSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(UnsafeExpressionSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(UnsafeExpressionSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(VariableDesignationSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(VariableDesignationSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(VarPatternSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(VarPatternSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(WhenClauseSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(WhenClauseSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(WithElementSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(WithElementSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(WithExpressionSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(WithExpressionSyntaxWrapper.WrappedTypeName));
 
             WrappedTypes = builder.ToImmutable();

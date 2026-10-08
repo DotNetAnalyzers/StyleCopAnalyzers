@@ -83,15 +83,13 @@ namespace StyleCop.Analyzers.Helpers
 
         internal static string GetNameOrIdentifier(MemberDeclarationSyntax member)
         {
+            if (member is TypeDeclarationSyntax typeDeclaration)
+            {
+                return typeDeclaration.Identifier.Text;
+            }
+
             switch (member.Kind())
             {
-            case SyntaxKind.ClassDeclaration:
-            case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.StructDeclaration:
-            case SyntaxKindEx.RecordDeclaration:
-            case SyntaxKindEx.RecordStructDeclaration:
-                return ((TypeDeclarationSyntax)member).Identifier.Text;
-
             case SyntaxKind.EnumDeclaration:
                 return ((EnumDeclarationSyntax)member).Identifier.Text;
 
@@ -106,6 +104,12 @@ namespace StyleCop.Analyzers.Helpers
         internal static Location GetNameOrIdentifierLocation(SyntaxNode member)
         {
             Location location = null;
+            if (member.IsKind(SyntaxKindEx.ExtensionBlockDeclaration))
+            {
+                // A C# 14 extension block has no identifier, so report on the 'extension' keyword
+                location = ((TypeDeclarationSyntax)member).Keyword.GetLocation();
+            }
+
             location = location ?? (member as PropertyDeclarationSyntax)?.Identifier.GetLocation();
             location = location ?? (member as FieldDeclarationSyntax)?.Declaration?.Variables.FirstOrDefault()?.Identifier.GetLocation();
             location = location ?? (member as MethodDeclarationSyntax)?.Identifier.GetLocation();

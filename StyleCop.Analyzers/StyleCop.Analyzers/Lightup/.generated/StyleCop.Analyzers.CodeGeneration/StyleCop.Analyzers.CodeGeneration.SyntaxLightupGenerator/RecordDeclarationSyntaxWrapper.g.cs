@@ -63,7 +63,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return this.SyntaxNode.AttributeLists();
+                return this.SyntaxNode.AttributeLists;
             }
         }
 
@@ -71,7 +71,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return this.SyntaxNode.Modifiers();
+                return this.SyntaxNode.Modifiers;
             }
         }
 

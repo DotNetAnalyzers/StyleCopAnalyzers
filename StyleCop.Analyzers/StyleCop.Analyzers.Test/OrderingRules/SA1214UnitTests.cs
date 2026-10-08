@@ -86,9 +86,34 @@ public class TestClass2
         }
 
         [Theory]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestTwoFieldsInClassStaticReadonlyFieldPlacedAfterStaticNonReadonlyAsync(string keyword)
+        {
+            var testCode = $@"
+public {keyword} Foo
+{{
+    private static int i = 0;
+    private static readonly int {{|#0:j|}} = 0;
+}}";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(0),
+            };
+
+            var fixTestCode = $@"
+public {keyword} Foo
+{{
+    private static readonly int j = 0;
+    private static int i = 0;
+}}";
+            await VerifyCSharpFixAsync(testCode, expected, fixTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
         [InlineData("\n")]
         [InlineData("\r\n")]
-        public async Task TestTwoFieldsInClassStaticReadonlyFieldPlacedAfterStaticNonReadonlyAsync(string lineEnding)
+        public async Task TestTwoFieldsInClassStaticReadonlyFieldPlacedAfterStaticNonReadonlyWithLineEndingAsync(string lineEnding)
         {
             var testCode = @"
 public class Foo
@@ -146,36 +171,24 @@ public class Foo
             await VerifyCSharpFixAsync(testCode, expected, fixTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestTwoFieldsInClassStaticReadonlyFieldPlacedBeforeStaticNonReadonlyAsync()
+        [Theory]
+        [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        public async Task TestTwoFieldsInClassNonStaticReadonlyFieldPlacedAfterNonStaticNonReadonlyAsync(string keyword)
         {
-            var testCode = @"
-public class Foo
-{
-    private static readonly int i = 0;
-    private static int j = 0;
-}";
+            var testCode = $@"
+public {keyword} Foo
+{{
+    private int i;
+    private readonly int {{|#0:j|}};
+}}";
+            var fixedCode = $@"
+public {keyword} Foo
+{{
+    private readonly int j;
+    private int i;
+}}";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestTwoFieldsInClassNonStaticReadonlyFieldPlacedAfterNonStaticNonReadonlyAsync()
-        {
-            var testCode = @"
-public class Foo
-{
-    private int i = 0;
-    private readonly int j = 0;
-}";
-            var fixedCode = @"
-public class Foo
-{
-    private readonly int j = 0;
-    private int i = 0;
-}";
-
-            var expected = Diagnostic().WithLocation(5, 26);
+            var expected = Diagnostic().WithLocation(0);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }

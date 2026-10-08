@@ -282,17 +282,21 @@ namespace StyleCop.Analyzers.LayoutRules
             var blankLinesBetweenUsingGroups = settings.OrderingRules.BlankLinesBetweenUsingGroups;
 
             var previousGroupType = usings[0].GetUsingGroupType(settings);
+            var previousIsGlobal = usings[0].GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword);
             var previousLineSpan = usings[0].GetLineSpan();
 
             for (var i = 1; i < usings.Count; i++)
             {
                 var currentGroupType = usings[i].GetUsingGroupType(settings);
+                var currentIsGlobal = usings[i].GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword);
                 var currentLineSpan = usings[i].GetLineSpan();
 
-                var partOfSameGroup = previousGroupType == currentGroupType;
+                // Global using directives form their own set of using groups.
+                var partOfSameGroup = previousGroupType == currentGroupType && previousIsGlobal == currentIsGlobal;
                 var lineDistance = currentLineSpan.StartLinePosition.Line - previousLineSpan.EndLinePosition.Line;
 
                 previousGroupType = currentGroupType;
+                previousIsGlobal = currentIsGlobal;
                 previousLineSpan = currentLineSpan;
 
                 if (partOfSameGroup)

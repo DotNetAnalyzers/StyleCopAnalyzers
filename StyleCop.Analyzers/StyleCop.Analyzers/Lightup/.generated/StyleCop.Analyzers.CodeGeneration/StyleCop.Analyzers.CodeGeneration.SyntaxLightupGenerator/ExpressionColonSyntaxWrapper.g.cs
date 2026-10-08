@@ -13,6 +13,9 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionColonSyntax";
         private static readonly Type WrappedType;
+
+        private static readonly Func<CSharpSyntaxNode, ExpressionSyntax> ExpressionAccessor;
+        private static readonly Func<CSharpSyntaxNode, SyntaxToken> ColonTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, ExpressionSyntax, CSharpSyntaxNode> WithExpressionAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithColonTokenAccessor;
 
@@ -21,6 +24,8 @@ namespace StyleCop.Analyzers.Lightup
         static ExpressionColonSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(ExpressionColonSyntaxWrapper));
+            ExpressionAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, ExpressionSyntax>(WrappedType, nameof(Expression));
+            ColonTokenAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(ColonToken));
             WithExpressionAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, ExpressionSyntax>(WrappedType, nameof(Expression));
             WithColonTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(ColonToken));
         }
@@ -36,7 +41,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ((BaseExpressionColonSyntaxWrapper)this).Expression;
+                return ExpressionAccessor(this.SyntaxNode);
             }
         }
 
@@ -44,7 +49,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ((BaseExpressionColonSyntaxWrapper)this).ColonToken;
+                return ColonTokenAccessor(this.SyntaxNode);
             }
         }
 
