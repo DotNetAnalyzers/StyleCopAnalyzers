@@ -307,6 +307,12 @@ namespace StyleCop.Analyzers.LayoutRules
                     // the close brace of an accessor list is followed by a property initializer
                     return;
 
+                case SyntaxKind.CloseBraceToken when nextToken.Parent.IsKind(SyntaxKind.Interpolation):
+                case SyntaxKind.ColonToken when nextToken.Parent.IsKind(SyntaxKind.InterpolationFormatClause):
+                    // the close brace ends the expression of an interpolation, which can span multiple lines in a
+                    // verbatim interpolated string, and from C# 11 in any interpolated string
+                    return;
+
                 case SyntaxKind.EndOfFileToken:
                     // last token of this file
                     return;

@@ -3,9 +3,19 @@
 
 namespace StyleCop.Analyzers.Test.CSharp11.ReadabilityRules
 {
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp10.ReadabilityRules;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<
+        StyleCop.Analyzers.ReadabilityRules.SA1115ParameterMustFollowComma>;
 
     public partial class SA1115CSharp11UnitTests : SA1115CSharp10UnitTests
     {
+        protected override DiagnosticResult[] GetExpectedResultTestPrimaryConstructorEmptyLineBetweenParameters()
+        {
+            return new[]
+            {
+                Diagnostic().WithLocation(0),
+            };
+        }
     }
 }

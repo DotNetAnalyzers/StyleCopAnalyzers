@@ -83,5 +83,13 @@ class Foo
             DiagnosticResult expected = Diagnostic().WithLocation(0);
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        protected override DiagnosticResult[] GetExpectedResultTestPrimaryConstructorSplitParametersNotStartingOnNextLine()
+        {
+            return new[]
+            {
+                Diagnostic().WithLocation(0),
+            };
+        }
     }
 }
