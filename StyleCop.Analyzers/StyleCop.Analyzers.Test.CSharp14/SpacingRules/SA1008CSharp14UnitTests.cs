@@ -66,5 +66,71 @@ public static class TestClass
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(4027, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4027")]
+        public async Task TestSimpleLambdaParameterWithRefModifierAsync()
+        {
+            var testCode = @"
+public delegate void RefIntAction(ref int value);
+
+public class TestClass
+{
+    public void Method()
+    {
+        RefIntAction action = {|#0:(|} ref @x) => { x = 1; };
+    }
+}
+";
+
+            var fixedCode = @"
+public delegate void RefIntAction(ref int value);
+
+public class TestClass
+{
+    public void Method()
+    {
+        RefIntAction action = (ref @x) => { x = 1; };
+    }
+}
+";
+
+            var expected = Diagnostic(DescriptorNotFollowed).WithLocation(0);
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(4030, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4030")]
+        public async Task TestInstanceIncrementOperatorDeclarationWithSpaceBeforeParenthesisAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    private int value;
+
+    public void operator ++ {|#0:(|})
+    {
+        this.value++;
+    }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    private int value;
+
+    public void operator ++()
+    {
+        this.value++;
+    }
+}
+";
+
+            var expected = Diagnostic(DescriptorNotPreceded).WithLocation(0);
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

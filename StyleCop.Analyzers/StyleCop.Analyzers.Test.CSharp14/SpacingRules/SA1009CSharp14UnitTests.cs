@@ -39,5 +39,38 @@ public static class TestClass
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(4030, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4030")]
+        public async Task TestCompoundAssignmentOperatorDeclarationAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    private int value;
+
+    public void operator +=(int x {|#0:)|}
+    {
+        this.value += x;
+    }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    private int value;
+
+    public void operator +=(int x)
+    {
+        this.value += x;
+    }
+}
+";
+
+            var expected = Diagnostic(DescriptorNotPreceded).WithLocation(0);
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

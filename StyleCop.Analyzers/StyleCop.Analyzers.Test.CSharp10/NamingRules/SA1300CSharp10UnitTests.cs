@@ -17,6 +17,26 @@ namespace StyleCop.Analyzers.Test.CSharp10.NamingRules
     public partial class SA1300CSharp10UnitTests : SA1300CSharp9UnitTests
     {
         [Fact]
+        [WorkItem(3979, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3979")]
+        public async Task TestLowerCaseRecordStructAsync()
+        {
+            var testCode = @"
+public record struct {|#0:r|}
+{
+}
+";
+
+            var fixedCode = @"
+public record struct R
+{
+}
+";
+
+            DiagnosticResult expected = Diagnostic().WithArguments("r").WithLocation(0);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestUpperCaseFileScopedNamespaceAsync()
         {
             var testCode = @"namespace Test;";

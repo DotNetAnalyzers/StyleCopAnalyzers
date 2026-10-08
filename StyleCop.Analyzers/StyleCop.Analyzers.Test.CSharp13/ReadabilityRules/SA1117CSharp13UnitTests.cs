@@ -13,6 +13,22 @@ namespace StyleCop.Analyzers.Test.CSharp13.ReadabilityRules
 
     public partial class SA1117CSharp13UnitTests : SA1117CSharp12UnitTests
     {
+        [Fact]
+        [WorkItem(4013, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4013")]
+        public async Task TestParamsCollectionParameterOnSeparateLineAsync()
+        {
+            var testCode = @"
+using System;
+
+class Foo
+{
+    public Foo(int a, int b,
+        [|params ReadOnlySpan<int> s|]) { }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override DiagnosticResult[] GetExpectedResultTestInvalidPrimaryConstructorBaseList()
         {
             return new[]
