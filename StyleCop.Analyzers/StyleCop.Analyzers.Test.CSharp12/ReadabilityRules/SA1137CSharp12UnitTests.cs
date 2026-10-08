@@ -87,5 +87,60 @@ class TestClass
 
             await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3904, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3904")]
+        public async Task TestCollectionExpressionWithSpreadAndNestedElementsAsync()
+        {
+            string testCode = @"
+class TestClass
+{
+    void TestMethod(int[] other)
+    {
+        int[] a =
+        [
+            1,
+[|              |].. other,
+            3,
+        ];
+        Use(
+        [
+            [1, 2],
+[|              |][3, 4],
+        ]);
+    }
+
+    static void Use(int[][] value)
+    {
+    }
+}
+";
+
+            string fixedCode = @"
+class TestClass
+{
+    void TestMethod(int[] other)
+    {
+        int[] a =
+        [
+            1,
+            .. other,
+            3,
+        ];
+        Use(
+        [
+            [1, 2],
+            [3, 4],
+        ]);
+    }
+
+    static void Use(int[][] value)
+    {
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
