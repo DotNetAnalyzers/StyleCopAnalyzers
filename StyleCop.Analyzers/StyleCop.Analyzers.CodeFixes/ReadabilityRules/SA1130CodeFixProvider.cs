@@ -163,7 +163,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
             }
 
-            bool keepParameterTypes = anonymousMethod.ParameterList != null && !HasTargetDelegateType(semanticModel, anonymousMethod);
+            // A lambda parameter with a ref, out or in modifier needs an explicit type.
+            bool keepParameterTypes = anonymousMethod.ParameterList != null
+                && (parameterList.Parameters.Any(parameter => parameter.Modifiers.Count > 0)
+                    || !HasTargetDelegateType(semanticModel, anonymousMethod)
+                    || !BindsToSameSymbolWithoutParameterTypes(semanticModel, anonymousMethod));
 
             if (parameterList.Parameters.Count == 1 && !keepParameterTypes)
             {
@@ -236,6 +240,40 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             var convertedType = semanticModel.GetTypeInfo(anonymousMethod).ConvertedType;
             return convertedType?.TypeKind == TypeKind.Delegate;
+        }
+
+        /// <summary>
+        /// Determines whether the call that the anonymous method is passed to still binds to the same method when the
+        /// anonymous method is replaced by a lambda without parameter types. Without the types, the call can become
+        /// ambiguous between overloads that take delegates with different parameter types.
+        /// </summary>
+        /// <param name="semanticModel">The semantic model.</param>
+        /// <param name="anonymousMethod">The anonymous method, which must have a parameter list.</param>
+        /// <returns><see langword="true"/> if the call binds to the same method, or if the anonymous method is not passed
+        /// as an argument; otherwise, <see langword="false"/>.</returns>
+        private static bool BindsToSameSymbolWithoutParameterTypes(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod)
+        {
+            if (!(anonymousMethod.Parent is ArgumentSyntax argumentSyntax)
+                || !(argumentSyntax.Parent is BaseArgumentListSyntax argumentListSyntax))
+            {
+                return true;
+            }
+
+            var originalInvocableExpression = argumentListSyntax.Parent;
+            var originalSymbol = semanticModel.GetSymbolInfo(originalInvocableExpression).Symbol;
+            if (originalSymbol == null)
+            {
+                return true;
+            }
+
+            var lambdaExpression = SyntaxFactory.ParenthesizedLambdaExpression(
+                anonymousMethod.AsyncKeyword,
+                RemoveType(anonymousMethod.ParameterList),
+                SyntaxFactory.Token(SyntaxKind.EqualsGreaterThanToken),
+                anonymousMethod.Body);
+            var invocationExpression = originalInvocableExpression.ReplaceNode(anonymousMethod, lambdaExpression);
+            var newSymbol = semanticModel.GetSpeculativeSymbolInfo(originalInvocableExpression.SpanStart, invocationExpression, SpeculativeBindingOption.BindAsExpression).Symbol;
+            return originalSymbol.Equals(newSymbol);
         }
 
         /// <summary>
@@ -377,7 +415,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             // If one of the following conditions is false the code won't compile, but we want to check for it anyway and not make it worse by applying this code fix.
             return parameterSyntax.AttributeLists.Count == 0
                 && parameterSyntax.Default == null
-                && parameterSyntax.Modifiers.Count == 0
+                && parameterSyntax.Modifiers.All(modifier => modifier.IsKind(SyntaxKind.RefKeyword) || modifier.IsKind(SyntaxKind.OutKeyword) || modifier.IsKind(SyntaxKind.InKeyword))
                 && !parameterSyntax.Identifier.IsKind(SyntaxKind.ArgListKeyword);
         }
 

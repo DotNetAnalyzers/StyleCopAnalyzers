@@ -1038,8 +1038,6 @@ public class TypeName
         /// <summary>
         /// Verifies that the parameter types are kept when an anonymous method is passed for a generic delegate
         /// parameter, because the type argument is inferred from the explicit parameter types.
-        /// The parameter is named <c>arg</c>, like the parameter of <see cref="System.Func{T, TResult}"/>, because the
-        /// analyzer only reports an argument if a lambda with the delegate's parameter names binds to the same method.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -1067,6 +1065,207 @@ public class TestClass
     }
 
     private static void Generic<T>(Func<T, T> f)
+    {
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an anonymous method passed as an argument is reported even when its parameter names differ from
+        /// the parameter names of the delegate type, and that the lambda keeps the anonymous method's parameter names.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestAnonymousMethodWithDifferentParameterNamesAsync()
+        {
+            var testCode = @"using System;
+public class TestClass
+{
+    public void TestMethod()
+    {
+        Single([|delegate|](int value) { return value; });
+        Multiple([|delegate|](int first, string second) { });
+        new TestClass([|delegate|](int value) { return value; });
+        var x = this[[|delegate|](int value) { return value; }];
+    }
+
+    public TestClass()
+    {
+    }
+
+    public TestClass(Func<int, int> f)
+    {
+    }
+
+    public int this[Func<int, int> f] => 0;
+
+    private static void Single(Func<int, int> f)
+    {
+    }
+
+    private static void Multiple(Action<int, string> a)
+    {
+    }
+}";
+
+            var fixedCode = @"using System;
+public class TestClass
+{
+    public void TestMethod()
+    {
+        Single(value => { return value; });
+        Multiple((first, second) => { });
+        new TestClass(value => { return value; });
+        var x = this[value => { return value; }];
+    }
+
+    public TestClass()
+    {
+    }
+
+    public TestClass(Func<int, int> f)
+    {
+    }
+
+    public int this[Func<int, int> f] => 0;
+
+    private static void Single(Func<int, int> f)
+    {
+    }
+
+    private static void Multiple(Action<int, string> a)
+    {
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an anonymous method passed to a generic LINQ method is reported even when its parameter name
+        /// differs from the delegate's, and that the lambda keeps the parameter type the type arguments are inferred
+        /// from.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestAnonymousMethodWithDifferentParameterNamesPassedToLinqAsync()
+        {
+            var testCode = @"using System.Collections.Generic;
+using System.Linq;
+public class TestClass
+{
+    public IEnumerable<int> TestMethod(List<int> list)
+    {
+        return list.Select([|delegate|](int x) { return x; });
+    }
+}";
+
+            var fixedCode = @"using System.Collections.Generic;
+using System.Linq;
+public class TestClass
+{
+    public IEnumerable<int> TestMethod(List<int> list)
+    {
+        return list.Select((int x) => { return x; });
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the lambda keeps the parameter types when removing them would make the call ambiguous between
+        /// overloads that take delegates with different parameter types.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestAnonymousMethodWithOverloadsDifferingInParameterTypesAsync()
+        {
+            var testCode = @"using System;
+public class TestClass
+{
+    public void TestMethod()
+    {
+        Overloaded([|delegate|](int value) { return 0; });
+    }
+
+    private static void Overloaded(Func<int, int> f)
+    {
+    }
+
+    private static void Overloaded(Func<string, int> f)
+    {
+    }
+}";
+
+            var fixedCode = @"using System;
+public class TestClass
+{
+    public void TestMethod()
+    {
+        Overloaded((int value) => { return 0; });
+    }
+
+    private static void Overloaded(Func<int, int> f)
+    {
+    }
+
+    private static void Overloaded(Func<string, int> f)
+    {
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an anonymous method with <see langword="ref"/> or <see langword="out"/> parameters is replaced
+        /// by a lambda that keeps the parameter types, because a lambda parameter with a modifier needs an explicit type.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestAnonymousMethodWithRefAndOutParametersAsync()
+        {
+            var testCode = @"public delegate void RefAction(ref int value);
+public delegate void OutAction(out int value);
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        RefAction r = [|delegate|](ref int value) { value++; };
+        Ref([|delegate|](ref int x) { x++; });
+        Out([|delegate|](out int x) { x = 0; });
+    }
+
+    private static void Ref(RefAction a)
+    {
+    }
+
+    private static void Out(OutAction a)
+    {
+    }
+}";
+
+            var fixedCode = @"public delegate void RefAction(ref int value);
+public delegate void OutAction(out int value);
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        RefAction r = (ref int value) => { value++; };
+        Ref((ref int x) => { x++; });
+        Out((out int x) => { x = 0; });
+    }
+
+    private static void Ref(RefAction a)
+    {
+    }
+
+    private static void Out(OutAction a)
     {
     }
 }";
