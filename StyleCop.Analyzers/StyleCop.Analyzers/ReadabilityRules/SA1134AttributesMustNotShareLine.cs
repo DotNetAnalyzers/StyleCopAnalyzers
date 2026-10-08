@@ -68,6 +68,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
+            if (attributeList.Parent.IsKind(SyntaxKind.ParenthesizedLambdaExpression) || attributeList.Parent.IsKind(SyntaxKind.SimpleLambdaExpression))
+            {
+                // no analysis required for attributes on lambda expressions, which are part of an expression
+                return;
+            }
+
             var attributeListLineSpan = attributeList.GetLineSpan();
 
             var prevToken = attributeList.OpenBracketToken.GetPreviousToken();
