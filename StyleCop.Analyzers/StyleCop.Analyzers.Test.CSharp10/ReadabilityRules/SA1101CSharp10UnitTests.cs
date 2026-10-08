@@ -174,5 +174,28 @@ public class Test
 
             await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3985, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3985")]
+        public async Task TestMethodGroupWithNaturalTypeAsync()
+        {
+            var testCode = @"public class Test
+{
+    public void Method()
+    {
+        var action = [|Method|];
+    }
+}";
+
+            var fixedCode = @"public class Test
+{
+    public void Method()
+    {
+        var action = this.Method;
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
