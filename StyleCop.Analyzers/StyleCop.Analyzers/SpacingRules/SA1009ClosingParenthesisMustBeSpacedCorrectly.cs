@@ -88,6 +88,12 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
+            if (token.Parent.IsKind(SyntaxKindEx.LineDirectivePosition))
+            {
+                // #line span directives are primarily used in generated code
+                return;
+            }
+
             bool precededBySpace = token.IsFirstInLine() || token.IsPrecededByWhitespace(context.CancellationToken);
             bool followedBySpace = token.IsFollowedByWhitespace();
             bool lastInLine = token.IsLastInLine();

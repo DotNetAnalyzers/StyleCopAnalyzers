@@ -45,5 +45,27 @@ namespace StyleCop.Analyzers.Test.CSharp10.SpacingRules
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3992, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3992")]
+        public async Task TestLineSpanDirectiveAsync()
+        {
+            // #line span directives are primarily used in generated code, so the spacing of its commas is not checked
+            var testCode = @"public class TestClass
+{
+    public void TestMethod()
+    {
+#line (1,1)-(5,60) ""file.cs""
+        int x = 0;
+#line ( 1 , 1 ) - ( 5 , 60 ) 10 ""file.cs""
+        int y = 0;
+#line (1, 1) -(5, 60) 10 ""file.cs""
+        int z = 0;
+#line default
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

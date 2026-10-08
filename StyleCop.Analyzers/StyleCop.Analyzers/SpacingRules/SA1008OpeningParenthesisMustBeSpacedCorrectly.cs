@@ -97,6 +97,12 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
+            if (token.Parent.IsKind(SyntaxKindEx.LineDirectivePosition))
+            {
+                // #line span directives are primarily used in generated code
+                return;
+            }
+
             var prevToken = token.GetPreviousToken();
 
             // Don't check leading spaces when preceded by a keyword that is already handled by SA1000
