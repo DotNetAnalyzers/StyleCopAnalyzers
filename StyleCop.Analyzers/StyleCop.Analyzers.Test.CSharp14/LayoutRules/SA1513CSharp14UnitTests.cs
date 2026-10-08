@@ -62,5 +62,39 @@ public class TestClass
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(4023, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4023")]
+        public async Task TestExtensionBlockDeclarationAsync()
+        {
+            var testCode = @"
+public static class TestClass
+{
+    extension(string source)
+    {
+    }
+    extension(string source)
+    {
+    }
+}
+";
+
+            var fixedCode = @"
+public static class TestClass
+{
+    extension(string source)
+    {
+    }
+
+    extension(string source)
+    {
+    }
+}
+";
+
+            var expected = Diagnostic().WithSpan(6, 6, 7, 1);
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
