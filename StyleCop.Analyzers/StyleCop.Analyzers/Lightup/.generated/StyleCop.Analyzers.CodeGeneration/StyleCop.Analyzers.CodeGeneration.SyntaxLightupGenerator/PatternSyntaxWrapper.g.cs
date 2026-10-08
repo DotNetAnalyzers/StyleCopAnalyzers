@@ -28,6 +28,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public CSharpSyntaxNode SyntaxNode => this.node;
 
+
         public static explicit operator PatternSyntaxWrapper(ExpressionOrPatternSyntaxWrapper node)
         {
             return (PatternSyntaxWrapper)node.SyntaxNode;

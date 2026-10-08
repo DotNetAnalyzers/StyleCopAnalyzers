@@ -36,6 +36,7 @@ namespace StyleCop.Analyzers.Lightup
         public IOperation WhenTrue => WhenTrueAccessor(this.WrappedOperation);
         public IOperation WhenFalse => WhenFalseAccessor(this.WrappedOperation);
         public bool IsRef => IsRefAccessor(this.WrappedOperation);
+
         public static explicit operator IConditionalOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IConditionalOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IConditionalOperationWrapper FromOperation(IOperation operation)

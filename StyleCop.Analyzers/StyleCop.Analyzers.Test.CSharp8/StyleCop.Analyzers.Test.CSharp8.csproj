@@ -24,7 +24,7 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" PrivateAssets="all" />
 
     <!-- Increase the NuGet.Framworks version to the minimum supported by the net472 build of the testing library -->
-    <PackageReference Include="NuGet.Frameworks" Version="6.3.3" />
+    <PackageReference Include="NuGet.Frameworks" Version="6.3.4" />
   </ItemGroup>
 
   <ItemGroup>

@@ -30,6 +30,7 @@ namespace StyleCop.Analyzers.Lightup
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public ITypeSymbol InputType => InputTypeAccessor(this.WrappedOperation);
         public ITypeSymbol NarrowedType => NarrowedTypeAccessor(this.WrappedOperation);
+
         public static explicit operator IPatternOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IPatternOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IPatternOperationWrapper FromOperation(IOperation operation)

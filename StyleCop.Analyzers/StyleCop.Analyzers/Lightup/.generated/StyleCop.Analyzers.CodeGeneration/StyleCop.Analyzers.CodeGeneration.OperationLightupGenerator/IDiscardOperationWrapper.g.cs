@@ -25,6 +25,7 @@ namespace StyleCop.Analyzers.Lightup
         public IOperation WrappedOperation => this.operation;
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public object DiscardSymbol => throw new NotImplementedException("Property 'IDiscardOperation.DiscardSymbol' has unsupported type 'IDiscardSymbol'");
+
         public static explicit operator IDiscardOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IDiscardOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IDiscardOperationWrapper FromOperation(IOperation operation)

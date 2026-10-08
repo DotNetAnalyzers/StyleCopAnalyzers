@@ -48,5 +48,30 @@ class TestClass
                 },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3990, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3990")]
+        public async Task TestMixedDeconstructionClosingParenthesisSpacingAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    public void TestMethod()
+    {
+        int value = 1;
+        (value, int newValue {|#0:)|} = (2, 3);
+    }
+}";
+
+            var fixedCode = @"public class TestClass
+{
+    public void TestMethod()
+    {
+        int value = 1;
+        (value, int newValue) = (2, 3);
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic(DescriptorNotPreceded).WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

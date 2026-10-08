@@ -31,6 +31,7 @@ namespace StyleCop.Analyzers.Lightup
         public IOperation Value => ValueAccessor(this.WrappedOperation);
         public IOperation WhenNull => WhenNullAccessor(this.WrappedOperation);
         public object ValueConversion => throw new NotImplementedException("Property 'ICoalesceOperation.ValueConversion' has unsupported type 'CommonConversion'");
+
         public static explicit operator ICoalesceOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(ICoalesceOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static ICoalesceOperationWrapper FromOperation(IOperation operation)

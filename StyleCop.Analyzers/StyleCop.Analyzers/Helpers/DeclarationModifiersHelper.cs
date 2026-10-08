@@ -99,29 +99,29 @@ namespace StyleCop.Analyzers.Helpers
 
         internal static SyntaxTokenList GetModifiers(this MemberDeclarationSyntax syntax)
         {
-            if (syntax is BaseMethodDeclarationSyntax)
+            if (syntax is BaseMethodDeclarationSyntax syntax1)
             {
-                return ((BaseMethodDeclarationSyntax)syntax).Modifiers;
+                return syntax1.Modifiers;
             }
-            else if (syntax is BasePropertyDeclarationSyntax)
+            else if (syntax is BasePropertyDeclarationSyntax syntax2)
             {
-                return ((BasePropertyDeclarationSyntax)syntax).Modifiers;
+                return syntax2.Modifiers;
             }
-            else if (syntax is BaseTypeDeclarationSyntax)
+            else if (syntax is BaseTypeDeclarationSyntax syntax3)
             {
-                return ((BaseTypeDeclarationSyntax)syntax).Modifiers;
+                return syntax3.Modifiers;
             }
-            else if (syntax is BaseFieldDeclarationSyntax)
+            else if (syntax is BaseFieldDeclarationSyntax syntax4)
             {
-                return ((BaseFieldDeclarationSyntax)syntax).Modifiers;
+                return syntax4.Modifiers;
             }
-            else if (syntax is DelegateDeclarationSyntax)
+            else if (syntax is DelegateDeclarationSyntax syntax5)
             {
-                return ((DelegateDeclarationSyntax)syntax).Modifiers;
+                return syntax5.Modifiers;
             }
-            else if (syntax is IncompleteMemberSyntax)
+            else if (syntax is IncompleteMemberSyntax syntax6)
             {
-                return ((IncompleteMemberSyntax)syntax).Modifiers;
+                return syntax6.Modifiers;
             }
 
             return default;
