@@ -46,6 +46,43 @@ public partial class TestClass
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that an undocumented part of a partial method is not reported when the other part is documented.
+        /// SA1601 does not report it either, since one documented part is enough for a partial member.
+        /// </summary>
+        /// <param name="documentDefinition"><see langword="true"/> to document the defining declaration;
+        /// <see langword="false"/> to document the implementing declaration.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task TestPartialMethodWithAccessModifierOnePartDocumentedAsync(bool documentDefinition)
+        {
+            var documentation = @"/// <summary>
+    /// Summary.
+    /// </summary>
+    ";
+            var testCode = $@"/// <summary>
+/// Summary.
+/// </summary>
+public partial class TestClass
+{{
+    {(documentDefinition ? documentation : string.Empty)}public partial int TestMethod(out int x);
+}}
+
+public partial class TestClass
+{{
+    {(documentDefinition ? string.Empty : documentation)}public partial int TestMethod(out int x)
+    {{
+        x = 0;
+        return 0;
+    }}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Theory]
         [MemberData(nameof(CommonMemberData.TypeKeywordsWhichSupportPrimaryConstructors), MemberType = typeof(CommonMemberData))]
         [WorkItem(4006, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4006")]

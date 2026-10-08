@@ -72,6 +72,46 @@ public partial class TestClass
         }
 
         /// <summary>
+        /// Verifies that an undocumented part of a partial method with an access modifier is not reported when the
+        /// other part is documented.
+        /// </summary>
+        /// <param name="documentDefinition"><see langword="true"/> to document the defining declaration;
+        /// <see langword="false"/> to document the implementing declaration.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task TestPartialMethodWithAccessModifierOnePartDocumentedAsync(bool documentDefinition)
+        {
+            var documentation = @"/// <summary>
+    /// Summary.
+    /// </summary>
+    ";
+            var testCode = $@"/// <summary>
+/// Summary.
+/// </summary>
+public partial class TestClass
+{{
+    {(documentDefinition ? documentation : string.Empty)}public partial int TestMethod(out int x);
+}}
+
+/// <summary>
+/// Summary.
+/// </summary>
+public partial class TestClass
+{{
+    {(documentDefinition ? string.Empty : documentation)}public partial int TestMethod(out int x)
+    {{
+        x = 0;
+        return 0;
+    }}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that a private partial method with an explicit access modifier is handled like other private
         /// elements, i.e. only reported when <c>documentPrivateElements</c> is enabled.
         /// </summary>

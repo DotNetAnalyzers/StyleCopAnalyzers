@@ -126,5 +126,53 @@ public ref struct TestRefStruct : IInterface
             // Explicit interface implementations don't need documentation, the same as in classes.
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that an undocumented part of a partial property or indexer is not reported when the other part is
+        /// documented. SA1601 does not report it either, since one documented part is enough for a partial member.
+        /// </summary>
+        /// <param name="documentDefinition"><see langword="true"/> to document the defining declaration;
+        /// <see langword="false"/> to document the implementing declaration.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        [WorkItem(4021, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4021")]
+        public async Task TestPartialPropertyAndIndexerOnePartDocumentedAsync(bool documentDefinition)
+        {
+            var documentation = @"/// <summary>
+    /// Summary.
+    /// </summary>
+    ";
+            var definitionDocumentation = documentDefinition ? documentation : string.Empty;
+            var implementationDocumentation = documentDefinition ? string.Empty : documentation;
+            var testCode = $@"
+/// <summary>
+/// Summary.
+/// </summary>
+public partial class ClassName
+{{
+    {definitionDocumentation}public partial int Test {{ get; set; }}
+
+    {definitionDocumentation}public partial int this[int index] {{ get; set; }}
+}}
+
+public partial class ClassName
+{{
+    {implementationDocumentation}public partial int Test
+    {{
+        get => 0;
+        set {{ }}
+    }}
+
+    {implementationDocumentation}public partial int this[int index]
+    {{
+        get => 0;
+        set {{ }}
+    }}
+}}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
