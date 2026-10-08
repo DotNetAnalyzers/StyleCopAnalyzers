@@ -96,5 +96,48 @@ public static class TestClass
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(4030, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4030")]
+        public async Task TestStaticOperatorAfterInstanceCompoundAssignmentOperatorAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public int Value;
+
+    public void operator +=(int x)
+    {
+        this.Value += x;
+    }
+
+    public static TestClass operator +(TestClass a, int b)
+    {
+        return a;
+    }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    public int Value;
+
+    public static TestClass operator +(TestClass a, int b)
+    {
+        return a;
+    }
+
+    public void operator +=(int x)
+    {
+        this.Value += x;
+    }
+}
+";
+
+            var expected = Diagnostic().WithLocation(11, 5);
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

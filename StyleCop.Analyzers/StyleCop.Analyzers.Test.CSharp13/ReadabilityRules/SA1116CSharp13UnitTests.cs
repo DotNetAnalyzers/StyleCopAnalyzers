@@ -14,6 +14,32 @@ namespace StyleCop.Analyzers.Test.CSharp13.ReadabilityRules
 
     public partial class SA1116CSharp13UnitTests : SA1116CSharp12UnitTests
     {
+        [Fact]
+        [WorkItem(4013, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4013")]
+        public async Task TestSplitParamsCollectionParameterNotStartingOnNextLineAsync()
+        {
+            var testCode = @"
+using System;
+
+class Foo
+{
+    public Foo([|int a|],
+        params ReadOnlySpan<int> s) { }
+}";
+
+            var fixedCode = @"
+using System;
+
+class Foo
+{
+    public Foo(
+        int a,
+        params ReadOnlySpan<int> s) { }
+}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override DiagnosticResult[] GetExpectedResultTestPrimaryConstructorBaseListSplitArgumentsNotStartingOnNextLine()
         {
             return new[]

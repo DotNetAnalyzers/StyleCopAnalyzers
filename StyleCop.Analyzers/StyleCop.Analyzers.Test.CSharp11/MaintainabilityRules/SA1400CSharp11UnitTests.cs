@@ -24,5 +24,30 @@ namespace StyleCop.Analyzers.Test.CSharp11.MaintainabilityRules
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that static abstract and static virtual interface members, used for generic math, do not require an
+        /// access modifier.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3994, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3994")]
+        public async Task TestStaticAbstractInterfaceMembersAsync()
+        {
+            var testCode = @"public interface IAddable<TSelf>
+    where TSelf : IAddable<TSelf>
+{
+    static abstract TSelf Zero { get; }
+
+    static abstract TSelf operator +(TSelf left, TSelf right);
+
+    static abstract explicit operator int(TSelf value);
+
+    static virtual TSelf Twice(TSelf value) => value + value;
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

@@ -41,5 +41,53 @@ public static class TestClass
             var expected = Diagnostic().WithLocation(0).WithArguments("public", "static");
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(4030, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4030")]
+        public async Task TestOverrideBeforeAccessModifierOnCompoundAssignmentOperatorAsync()
+        {
+            var testCode = @"
+public class Base
+{
+    public int Value;
+
+    public virtual void operator +=(int x)
+    {
+        this.Value += x;
+    }
+}
+
+public class Derived : Base
+{
+    override {|#0:public|} void operator +=(int x)
+    {
+        this.Value += x * 2;
+    }
+}
+";
+            var fixedCode = @"
+public class Base
+{
+    public int Value;
+
+    public virtual void operator +=(int x)
+    {
+        this.Value += x;
+    }
+}
+
+public class Derived : Base
+{
+    public override void operator +=(int x)
+    {
+        this.Value += x * 2;
+    }
+}
+";
+
+            var expected = Diagnostic().WithLocation(0).WithArguments("public", "override");
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
