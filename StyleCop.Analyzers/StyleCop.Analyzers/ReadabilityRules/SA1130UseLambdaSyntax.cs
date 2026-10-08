@@ -52,7 +52,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// </summary>
         /// <param name="symbol">The symbol containing information about the method invocation.</param>
         /// <param name="argumentIndex">The index of the argument containing the delegate.</param>
-        /// <returns>A parameter list for the delegate parameters.</returns>
+        /// <returns>A parameter list for the delegate parameters, or <see langword="null"/> if the parameter is not
+        /// of a delegate type.</returns>
         internal static ParameterListSyntax GetDelegateParameterList(ISymbol symbol, int argumentIndex)
         {
             ImmutableArray<IParameterSymbol> parameterList;
@@ -89,7 +90,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
             }
 
-            delegateType = (INamedTypeSymbol)type;
+            delegateType = type as INamedTypeSymbol;
+            if (delegateType?.DelegateInvokeMethod == null)
+            {
+                // The parameter is not a delegate type, e.g. Delegate, object or a type parameter. This is possible
+                // from C# 10, where an anonymous method with a parameter list has a natural type.
+                return null;
+            }
 
             var delegateParameters = delegateType.DelegateInvokeMethod.Parameters;
 
@@ -168,8 +175,15 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 if (parameterList == null)
                 {
-                    // This might happen if the call was using params with a type unknown to the analyzer, e.g. params Span<T>.
-                    return false;
+                    // This might happen if the call was using params with a type unknown to the analyzer, e.g. params
+                    // Span<T>, or if the parameter is not of a delegate type. In the latter case, the anonymous method
+                    // has a natural type (C# 10), and a lambda with the same explicit parameter list keeps it.
+                    if (anonymousMethod.ParameterList == null)
+                    {
+                        return false;
+                    }
+
+                    parameterList = anonymousMethod.ParameterList;
                 }
 
                 // In some cases passing a delegate as an argument to a method is required to call the right overload

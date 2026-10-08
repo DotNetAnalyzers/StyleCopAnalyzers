@@ -71,6 +71,7 @@ namespace StyleCop.Analyzers.LayoutRules
             context.EnableConcurrentExecution();
 
             context.RegisterSyntaxNodeAction(BaseTypeDeclarationAction, SyntaxKinds.BaseTypeDeclaration);
+            context.RegisterSyntaxNodeAction(BaseTypeDeclarationAction, SyntaxKindEx.ExtensionBlockDeclaration);
             context.RegisterSyntaxNodeAction(BasePropertyDeclarationAction, SyntaxKinds.BasePropertyDeclaration);
             context.RegisterSyntaxNodeAction(BaseMethodDeclarationAction, SyntaxKinds.BaseMethodDeclaration);
             context.RegisterSyntaxNodeAction(LocalFunctionStatementAction, SyntaxKindEx.LocalFunctionStatement);

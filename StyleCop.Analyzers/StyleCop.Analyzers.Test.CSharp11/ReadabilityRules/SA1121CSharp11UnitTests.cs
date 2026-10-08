@@ -114,5 +114,77 @@ class TestClass
                 TestCode = testCode,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that type arguments of generic attributes are reported and fixed.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3995, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3995")]
+        public async Task TestGenericAttributeTypeArgumentAsync()
+        {
+            var testCode = @"using System;
+
+[AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
+class TypeAttribute<T> : Attribute
+{
+}
+
+[Type<[|Int32|]>]
+[Type<[|System.String|]>]
+class TestClass
+{
+}
+";
+
+            var fixedCode = @"using System;
+
+[AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
+class TypeAttribute<T> : Attribute
+{
+}
+
+[Type<int>]
+[Type<string>]
+class TestClass
+{
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(4005, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4005")]
+        public async Task TestScopedRefLocalDeclarationAsync()
+        {
+            var testCode = @"namespace System
+{
+    public class Foo
+    {
+        public void Bar()
+        {
+            int value = 5;
+            scoped ref [|Int32|] test = ref value;
+        }
+    }
+}
+";
+
+            var fixedCode = @"namespace System
+{
+    public class Foo
+    {
+        public void Bar()
+        {
+            int value = 5;
+            scoped ref int test = ref value;
+        }
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
