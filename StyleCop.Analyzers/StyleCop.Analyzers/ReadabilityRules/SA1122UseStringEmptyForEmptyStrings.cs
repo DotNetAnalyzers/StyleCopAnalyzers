@@ -46,6 +46,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<SyntaxNodeAnalysisContext> StringLiteralExpressionAction = HandleStringLiteralExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> InterpolatedStringExpressionAction = HandleInterpolatedStringExpression;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -58,30 +59,86 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.EnableConcurrentExecution();
 
             context.RegisterSyntaxNodeAction(StringLiteralExpressionAction, SyntaxKind.StringLiteralExpression);
+            context.RegisterSyntaxNodeAction(InterpolatedStringExpressionAction, SyntaxKind.InterpolatedStringExpression);
         }
 
         private static void HandleStringLiteralExpression(SyntaxNodeAnalysisContext context)
         {
             LiteralExpressionSyntax literalExpression = (LiteralExpressionSyntax)context.Node;
-
             var token = literalExpression.Token;
-            if (token.IsKind(SyntaxKind.StringLiteralToken))
-            {
-                if (HasToBeConstant(literalExpression))
-                {
-                    return;
-                }
 
-                if (token.ValueText == string.Empty)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, literalExpression.GetLocation()));
-                }
+            // The token kind check is needed: a UTF-8 string literal such as ""u8 is also a string literal expression
+            // with an empty value, but it is a ReadOnlySpan<byte> that string.Empty can't replace. A single-line raw
+            // string literal can never be empty, so only the multi-line form needs to be checked.
+            if (!token.IsKind(SyntaxKind.StringLiteralToken) && !token.IsKind(SyntaxKindEx.MultiLineRawStringLiteralToken))
+            {
+                return;
             }
+
+            // Check the value first, because it is much cheaper than walking up the tree in HasToBeConstant.
+            if (token.ValueText != string.Empty)
+            {
+                return;
+            }
+
+            if (HasToBeConstant(literalExpression))
+            {
+                return;
+            }
+
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, literalExpression.GetLocation()));
         }
 
-        private static bool HasToBeConstant(LiteralExpressionSyntax literalExpression)
+        private static void HandleInterpolatedStringExpression(SyntaxNodeAnalysisContext context)
         {
-            ExpressionSyntax outermostExpression = FindOutermostExpression(literalExpression);
+            var interpolatedStringExpression = (InterpolatedStringExpressionSyntax)context.Node;
+
+            // Only an interpolated string without any content at all is considered empty
+            if (interpolatedStringExpression.Contents.Count > 0)
+            {
+                return;
+            }
+
+            if (HasToBeConstant(interpolatedStringExpression))
+            {
+                return;
+            }
+
+            if (!CanBeReplacedByString(context, interpolatedStringExpression))
+            {
+                return;
+            }
+
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, interpolatedStringExpression.GetLocation()));
+        }
+
+        /// <summary>
+        /// Determines whether a string expression such as <c>string.Empty</c> can take the place of an interpolated
+        /// string. Unlike a string literal, an interpolated string can also be converted to
+        /// <c>FormattableString</c>, <see cref="IFormattable"/> or an interpolated string handler
+        /// type, and a string can't be converted to any of those.
+        /// </summary>
+        /// <param name="context">The analysis context.</param>
+        /// <param name="interpolatedStringExpression">The interpolated string expression.</param>
+        /// <returns><see langword="true"/> if a string can replace the interpolated string; otherwise, <see langword="false"/>.</returns>
+        private static bool CanBeReplacedByString(SyntaxNodeAnalysisContext context, InterpolatedStringExpressionSyntax interpolatedStringExpression)
+        {
+            var convertedType = context.SemanticModel.GetTypeInfo(interpolatedStringExpression, context.CancellationToken).ConvertedType;
+            if (convertedType == null
+                || convertedType.TypeKind == TypeKind.Error
+                || convertedType.SpecialType == SpecialType.System_String)
+            {
+                return true;
+            }
+
+            var compilation = (CSharpCompilation)context.SemanticModel.Compilation;
+            var conversion = compilation.ClassifyConversion(compilation.GetSpecialType(SpecialType.System_String), convertedType);
+            return conversion.Exists && conversion.IsImplicit;
+        }
+
+        private static bool HasToBeConstant(ExpressionSyntax expression)
+        {
+            ExpressionSyntax outermostExpression = FindOutermostExpression(expression);
 
             if (outermostExpression.Parent.IsKind(SyntaxKind.AttributeArgument)
                 || outermostExpression.Parent.IsKind(SyntaxKind.CaseSwitchLabel)

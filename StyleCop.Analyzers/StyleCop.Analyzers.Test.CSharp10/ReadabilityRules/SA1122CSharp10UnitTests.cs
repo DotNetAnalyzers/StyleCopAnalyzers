@@ -56,5 +56,43 @@ public class TestClass
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that an empty interpolated string is not reported where the language requires a constant, because
+        /// C# 10 made interpolated strings constant expressions and <c>string.Empty</c> can't be used there.
+        /// </summary>
+        /// <param name="literal">The empty interpolated string.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("$\"\"")]
+        [InlineData("$@\"\"")]
+        [InlineData("@$\"\"")]
+        public async Task TestEmptyInterpolatedStringAsConstantIsNotReportedAsync(string literal)
+        {
+            var testCode = $@"using System.ComponentModel;
+
+public class Foo
+{{
+    private const string TestField = {literal};
+
+    [Description({literal})]
+    public void Bar(string value, string optional = {literal})
+    {{
+        const string test = {literal};
+
+        switch (value)
+        {{
+        case {literal}:
+            break;
+        }}
+
+        if (value is {literal})
+        {{
+        }}
+    }}
+}}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

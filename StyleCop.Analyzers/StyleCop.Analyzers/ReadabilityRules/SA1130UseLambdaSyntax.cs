@@ -172,22 +172,22 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return false;
                 }
 
-                var argumentIndex = FindParameterIndex(originalSymbolInfo, argumentSyntax, argumentListSyntax);
-
-                // Determine the parameter list from the method that is invoked, as delegates without parameters are allowed, but they cannot be replaced by a lambda without parameters.
-                var parameterList = GetDelegateParameterList(originalSymbolInfo.Symbol, argumentIndex);
+                // An anonymous method with a parameter list becomes a lambda with the same parameters, so the body
+                // keeps binding to them. Only an anonymous method without a parameter list needs the parameter list of
+                // the delegate, because it can't be replaced by a lambda without parameters.
+                var parameterList = anonymousMethod.ParameterList;
 
                 if (parameterList == null)
                 {
-                    // This might happen if the call was using params with a type unknown to the analyzer, or if the
-                    // parameter is not of a delegate type. In the latter case, the anonymous method has a natural type
-                    // (C# 10), and a lambda with the same explicit parameter list keeps it.
-                    if (anonymousMethod.ParameterList == null)
+                    var argumentIndex = FindParameterIndex(originalSymbolInfo, argumentSyntax, argumentListSyntax);
+
+                    // This returns null if the call was using params with a type unknown to the analyzer, or if the
+                    // parameter is not of a delegate type.
+                    parameterList = GetDelegateParameterList(originalSymbolInfo.Symbol, argumentIndex);
+                    if (parameterList == null)
                     {
                         return false;
                     }
-
-                    parameterList = anonymousMethod.ParameterList;
                 }
 
                 // In some cases passing a delegate as an argument to a method is required to call the right overload
