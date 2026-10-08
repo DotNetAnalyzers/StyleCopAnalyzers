@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.ReadabilityRules
     public partial class SA1121CSharp10UnitTests : SA1121CSharp9UnitTests
     {
         [Fact]
-        public async Task TestUsingNameChangeInFileScopedNamespaceAsync()
+        public virtual async Task TestUsingNameChangeInFileScopedNamespaceAsync()
         {
             string oldSource = @"namespace Foo;
 
