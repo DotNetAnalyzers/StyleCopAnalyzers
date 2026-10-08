@@ -153,5 +153,38 @@ class TestClass
 
             await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(4005, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4005")]
+        public async Task TestScopedRefLocalDeclarationAsync()
+        {
+            var testCode = @"namespace System
+{
+    public class Foo
+    {
+        public void Bar()
+        {
+            int value = 5;
+            scoped ref [|Int32|] test = ref value;
+        }
+    }
+}
+";
+
+            var fixedCode = @"namespace System
+{
+    public class Foo
+    {
+        public void Bar()
+        {
+            int value = 5;
+            scoped ref int test = ref value;
+        }
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

@@ -73,5 +73,34 @@ class TestClass
             var expected = Diagnostic().WithArguments("is", string.Empty, "followed").WithLocation(0);
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(4005, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4005")]
+        public async Task TestScopedLocalDeclarationAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void Method()
+    {
+        {|#0:scoped|}@System.Span<int> test = default;
+    }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    public void Method()
+    {
+        scoped @System.Span<int> test = default;
+    }
+}
+";
+
+            var expected = Diagnostic().WithArguments("scoped", string.Empty, "followed").WithLocation(0);
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
