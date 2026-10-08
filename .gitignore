@@ -9,8 +9,7 @@ packages/
 *.suo
 *.user
 TestResults/
-OpenCover.Reports/
-OpenCover.Symbols/
+/build/coverage/
 .nuget/NuGet.exe
 build/nuget/
 *.log
