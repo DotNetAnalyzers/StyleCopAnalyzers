@@ -259,6 +259,8 @@ jobs:
         if (-not (Test-Path $target_dll)) { throw "Test assembly not found at $target_dll" }
         $coverage_output = "$report_folder\OpenCover.StyleCopAnalyzers.CSharp${{ matrix.langVersion }}.xml"
         # Trailing separator makes coverlet write coverage.cobertura.xml into the folder.
+        # The scope matches the old OpenCover setup (-filter:"+[StyleCop*]*"), which also covered the test assembly
+        # under test and did not see source generator output. File globs need "**/" to match at any depth.
         dotnet $coverlet_console `
           $target_dll `
           --target "$xunit_runner_console" `
@@ -266,8 +268,10 @@ jobs:
           --format "cobertura" `
           --output "$report_folder/" `
           --include "[StyleCop*]*" `
+          --include-test-assembly `
           --exclude-by-attribute "System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" `
-          --exclude-by-file "*\*Designer.cs"
+          --exclude-by-file "**/*Designer.cs" `
+          --exclude-by-file "**/.generated/**"
         if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
         $generated = Get-ChildItem -Path $report_folder -Filter "*.cobertura.xml" -File | Select-Object -First 1
         if (-not $generated) { throw "coverlet did not produce a Cobertura report in $report_folder" }
