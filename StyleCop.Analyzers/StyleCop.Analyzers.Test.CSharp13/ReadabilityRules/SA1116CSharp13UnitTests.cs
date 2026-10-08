@@ -39,5 +39,14 @@ class Foo
 
             await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        protected override DiagnosticResult[] GetExpectedResultTestPrimaryConstructorBaseListSplitArgumentsNotStartingOnNextLine()
+        {
+            return new[]
+            {
+                // Diagnostic previously issued twice because of https://github.com/dotnet/roslyn/issues/70488
+                Diagnostic().WithLocation(0),
+            };
+        }
     }
 }

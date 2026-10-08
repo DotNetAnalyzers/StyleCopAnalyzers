@@ -151,6 +151,8 @@ namespace StyleCop.Analyzers.SpacingRules
                 case SyntaxKind.OpenParenToken:
                 case SyntaxKind.CloseParenToken:
                 case SyntaxKind.AsteriskToken:
+                case SyntaxKind.SemicolonToken:
+                    // A semicolon can follow a pointer type in a using alias, e.g. 'using unsafe Pointer = int*;'
                     allowTrailingSpace = false;
                     break;
 
