@@ -11,6 +11,7 @@ namespace StyleCop.Analyzers.Helpers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// Contains helper methods for determining an element's access level.
@@ -149,6 +150,13 @@ namespace StyleCop.Analyzers.Helpers
         {
             Requires.NotNull(syntax, nameof(syntax));
             Requires.NotNull(semanticModel, nameof(semanticModel));
+
+            if (syntax.IsKind(SyntaxKindEx.ExtensionBlockDeclaration))
+            {
+                // A C# 14 extension block has no accessibility of its own. Its members are exposed through the
+                // containing (static) class, so the block itself doesn't restrict their effective accessibility.
+                return Accessibility.Public;
+            }
 
             AccessLevel accessLevel = GetAccessLevel(syntax.Modifiers);
             if (accessLevel != AccessLevel.NotSpecified)
