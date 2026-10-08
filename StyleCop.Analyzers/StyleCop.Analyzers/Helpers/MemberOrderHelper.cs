@@ -48,6 +48,7 @@ namespace StyleCop.Analyzers.Helpers
                 SyntaxKind.EventFieldDeclaration => SyntaxKind.EventDeclaration,
                 SyntaxKindEx.RecordDeclaration => SyntaxKind.ClassDeclaration,
                 SyntaxKindEx.RecordStructDeclaration => SyntaxKind.StructDeclaration,
+                SyntaxKindEx.UnionDeclaration => SyntaxKind.StructDeclaration,
                 var kind => kind,
             };
 

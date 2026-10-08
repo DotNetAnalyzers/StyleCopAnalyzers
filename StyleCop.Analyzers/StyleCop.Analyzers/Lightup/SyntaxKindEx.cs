@@ -84,5 +84,6 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind LineDirectivePosition = (SyntaxKind)9070;
         public const SyntaxKind CollectionExpression = (SyntaxKind)9076;
         public const SyntaxKind ExtensionBlockDeclaration = (SyntaxKind)9079;
+        public const SyntaxKind UnionDeclaration = (SyntaxKind)9082;
     }
 }

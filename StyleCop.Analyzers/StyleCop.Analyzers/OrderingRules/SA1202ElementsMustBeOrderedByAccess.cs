@@ -68,7 +68,8 @@ namespace StyleCop.Analyzers.OrderingRules
             SyntaxKind.ConversionOperatorDeclaration,
             SyntaxKind.OperatorDeclaration,
             SyntaxKindEx.RecordDeclaration,
-            SyntaxKindEx.RecordStructDeclaration);
+            SyntaxKindEx.RecordStructDeclaration,
+            SyntaxKindEx.UnionDeclaration);
 
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CompilationUnitAction = HandleCompilationUnit;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> BaseNamespaceDeclarationAction = HandleBaseNamespaceDeclaration;

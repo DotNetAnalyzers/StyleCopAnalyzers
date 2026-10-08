@@ -162,6 +162,7 @@ namespace StyleCop.Analyzers.OrderingRules
             [SyntaxKind.ClassDeclaration] = "a class",
             [SyntaxKindEx.RecordDeclaration] = "a record",
             [SyntaxKindEx.RecordStructDeclaration] = "a record struct",
+            [SyntaxKindEx.UnionDeclaration] = "a union",
             [SyntaxKindEx.ExtensionBlockDeclaration] = "an extension",
             [SyntaxKind.FieldDeclaration] = "a field",
             [SyntaxKind.ConstructorDeclaration] = "a constructor",
@@ -324,6 +325,9 @@ namespace StyleCop.Analyzers.OrderingRules
                 SyntaxKind.EventFieldDeclaration => SyntaxKind.EventDeclaration,
                 SyntaxKindEx.RecordDeclaration => SyntaxKind.ClassDeclaration,
                 SyntaxKindEx.RecordStructDeclaration => SyntaxKind.StructDeclaration,
+
+                // A union declaration declares a struct (C# 15).
+                SyntaxKindEx.UnionDeclaration => SyntaxKind.StructDeclaration,
                 _ => syntaxKind,
             };
         }
