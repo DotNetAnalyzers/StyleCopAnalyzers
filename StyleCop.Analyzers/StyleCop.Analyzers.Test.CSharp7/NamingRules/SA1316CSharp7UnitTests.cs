@@ -341,6 +341,59 @@ public class TestClass
             await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp7_1.OrLaterDefault(), testCode, settings, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Validates that improperly cased explicit element names in tuple expressions produce diagnostics, regardless
+        /// of the 'includeInferredTupleElementNames' option.
+        /// </summary>
+        /// <param name="settings">The test settings to use.</param>
+        /// <param name="tupleElementName1">The improper tuple element name for the first field.</param>
+        /// <param name="tupleElementName2">The improper tuple element name for the second field.</param>
+        /// <param name="fixedTupleElementName1">The expected fixed tuple element name for the first field.</param>
+        /// <param name="fixedTupleElementName2">The expected fixed tuple element name for the second field.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData(DefaultTestSettings, "elementName1", "elementName2", "ElementName1", "ElementName2")]
+        [InlineData(CamelCaseTestSettings, "ElementName1", "ElementName2", "elementName1", "elementName2")]
+        [InlineData(PascalCaseTestSettings, "elementName1", "elementName2", "ElementName1", "ElementName2")]
+        [InlineData(CamelCaseExplicitOnlyTestSettings, "ElementName1", "ElementName2", "elementName1", "elementName2")]
+        [InlineData(PascalCaseExplicitOnlyTestSettings, "elementName1", "elementName2", "ElementName1", "ElementName2")]
+        [InlineData(CamelCaseInferredTestSettings, "ElementName1", "ElementName2", "elementName1", "elementName2")]
+        [InlineData(PascalCaseInferredTestSettings, "elementName1", "elementName2", "ElementName1", "ElementName2")]
+        [WorkItem(3947, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3947")]
+        public async Task ValidateImproperCasedExplicitTupleExpressionElementNamesAsync(string settings, string tupleElementName1, string tupleElementName2, string fixedTupleElementName1, string fixedTupleElementName2)
+        {
+            var testCode = $@"
+public class TestClass
+{{
+    public void TestMethod()
+    {{
+        var tuple1 = ([|{tupleElementName1}|]: 1, [|{tupleElementName2}|]: ""test"");
+        var tuple2 = (/* 1 */ [|{tupleElementName1}|] /* 2 */: 1, {fixedTupleElementName2}: 2);
+        var tuple3 = (_: 1, {fixedTupleElementName1}: 2);
+    }}
+}}
+";
+
+            var fixedCode = $@"
+public class TestClass
+{{
+    public void TestMethod()
+    {{
+        var tuple1 = ({fixedTupleElementName1}: 1, {fixedTupleElementName2}: ""test"");
+        var tuple2 = (/* 1 */ {fixedTupleElementName1} /* 2 */: 1, {fixedTupleElementName2}: 2);
+        var tuple3 = (_: 1, {fixedTupleElementName1}: 2);
+    }}
+}}
+";
+
+            DiagnosticResult[] expectedDiagnostics =
+            {
+                // diagnostics are specified inline
+            };
+
+            await VerifyCSharpFixAsync(testCode, settings, expectedDiagnostics, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         [WorkItem(3031, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3031")]
         public async Task TestTupleDesconstructionCamelCaseAsync()

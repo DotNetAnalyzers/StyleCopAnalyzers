@@ -375,7 +375,7 @@ The following properties are used in **stylecop.json** to configure the behavior
 
 | Property | Default Value | Minimum Version | Summary |
 | --- | --- | --- | --- |
-| `includeInferredTupleElementNames` | false | 1.2.0 | Specifies whether inferred tuple element names will be analyzed as well. |
+| `includeInferredTupleElementNames` | false | 1.2.0 | Specifies whether inferred tuple element names will be analyzed as well. Explicit element names, including those in tuple expressions, are always analyzed. |
 | `tupleElementNameCasing` | "PascalCase" | 1.2.0 | Specifies the casing convention used for tuple element names. |
 
 The following example shows a settings file which requires tuple element names to use camel case for all tuple elements (including inferred element names).
