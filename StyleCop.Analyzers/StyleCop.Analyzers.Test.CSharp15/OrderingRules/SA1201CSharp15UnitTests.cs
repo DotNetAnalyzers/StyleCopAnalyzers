@@ -146,5 +146,45 @@ public class OuterClass
                 CompilerDiagnostics = CompilerDiagnostics.None,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that members inside a union body are ordered by kind, that each misplaced member is reported
+        /// exactly once, and that the code fix reorders them.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(4182, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4182")]
+        public async Task TestMembersInsideUnionAsync()
+        {
+            var testCode = @"
+public union Pet(int, string)
+{
+    public void Feed()
+    {
+    }
+
+    public int {|#0:Legs|} => 4;
+}
+";
+
+            var fixedCode = @"
+public union Pet(int, string)
+{
+    public int Legs => 4;
+
+    public void Feed()
+    {
+    }
+}
+";
+
+            await new CSharpTest(LanguageVersion.Preview)
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                ExpectedDiagnostics = { Diagnostic().WithLocation(0).WithArguments("A property", "a method") },
+                CompilerDiagnostics = CompilerDiagnostics.None,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

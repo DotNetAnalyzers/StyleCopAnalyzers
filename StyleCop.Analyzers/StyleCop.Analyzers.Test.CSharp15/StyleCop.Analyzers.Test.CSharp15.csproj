@@ -24,7 +24,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.9.0" />
+    <!-- Temporary: Roslyn 5.9.0 runs syntax node actions on union members up to three times (dotnet/roslyn#84570, fixed by
+         dotnet/roslyn#84604), so these tests use a 5.10 preview build from the dotnet-tools feed (see NuGet.config) that
+         includes the fix. Move to 5.10.0 on nuget.org once it ships. -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.10.0-1.26477.9" />
+    <!-- Microsoft.CodeAnalysis.CSharp.Workspaces 5.10.0-1.26477.9 depends on this version; without it, NuGet reports a
+         downgrade (NU1605) to the version referenced in Directory.Build.props. Remove this with the preview reference above. -->
+    <PackageReference Update="Microsoft.CodeAnalysis.Analyzers" Version="5.10.0-1.26365.3" />
     <PackageReference Include="xunit" Version="2.4.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" PrivateAssets="all" />
   </ItemGroup>

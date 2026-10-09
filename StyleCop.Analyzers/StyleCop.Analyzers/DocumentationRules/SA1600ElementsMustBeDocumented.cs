@@ -143,6 +143,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             context.RegisterCompilationStartAction(context =>
             {
                 context.RegisterSyntaxNodeAction(BaseTypeDeclarationAction, SyntaxKinds.BaseTypeDeclaration);
+                context.RegisterSyntaxNodeAction(BaseTypeDeclarationAction, SyntaxKindEx.UnionDeclaration);
                 context.RegisterSyntaxNodeAction(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
                 context.RegisterSyntaxNodeAction(ConstructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
                 context.RegisterSyntaxNodeAction(DestructorDeclarationAction, SyntaxKind.DestructorDeclaration);

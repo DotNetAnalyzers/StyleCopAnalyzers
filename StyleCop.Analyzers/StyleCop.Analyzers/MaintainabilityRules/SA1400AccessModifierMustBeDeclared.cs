@@ -60,6 +60,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             context.EnableConcurrentExecution();
 
             context.RegisterSyntaxNodeAction(BaseTypeDeclarationAction, SyntaxKinds.BaseTypeDeclaration);
+            context.RegisterSyntaxNodeAction(BaseTypeDeclarationAction, SyntaxKindEx.UnionDeclaration);
             context.RegisterSyntaxNodeAction(DelegateDeclarationAction, SyntaxKind.DelegateDeclaration);
             context.RegisterSyntaxNodeAction(EventDeclarationAction, SyntaxKind.EventDeclaration);
             context.RegisterSyntaxNodeAction(MethodDeclarationAction, SyntaxKind.MethodDeclaration);

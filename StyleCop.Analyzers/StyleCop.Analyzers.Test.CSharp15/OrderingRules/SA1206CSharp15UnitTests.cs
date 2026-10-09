@@ -177,5 +177,58 @@ public struct Layout
                 CompilerDiagnostics = CompilerDiagnostics.None,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that modifiers on a union declaration and on its members are checked, that each misordered modifier
+        /// is reported exactly once, and that the code fix reorders them.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(4182, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4182")]
+        public async Task TestUnionDeclarationAsync()
+        {
+            // The reference assemblies used by these tests do not define System.Runtime.CompilerServices.IUnion and
+            // UnionAttribute, so union declarations produce CS0518 and CS0656, and compiler diagnostics are ignored.
+            var testCode = @"
+readonly {|#0:public|} union Pet(int, string)
+{
+    static {|#1:public|} int Count => 0;
+}
+
+public readonly partial union Animal(int, string);
+
+public class Outer
+{
+    partial {|#2:internal|} union NestedPet(int, string);
+}
+";
+
+            var fixedCode = @"
+public readonly union Pet(int, string)
+{
+    public static int Count => 0;
+}
+
+public readonly partial union Animal(int, string);
+
+public class Outer
+{
+    internal partial union NestedPet(int, string);
+}
+";
+
+            await new CSharpTest(LanguageVersion.Preview)
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(0).WithArguments("public", "readonly"),
+                    Diagnostic().WithLocation(1).WithArguments("public", "static"),
+                    Diagnostic().WithLocation(2).WithArguments("internal", "partial"),
+                },
+                CompilerDiagnostics = CompilerDiagnostics.None,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
