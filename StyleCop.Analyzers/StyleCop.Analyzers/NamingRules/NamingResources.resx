@@ -231,6 +231,9 @@
   <data name="SA1311Title" xml:space="preserve">
     <value>Static readonly fields should begin with upper-case letter</value>
   </data>
+  <data name="SA1312CodeFix" xml:space="preserve">
+    <value>Replace with discard</value>
+  </data>
   <data name="SA1312Description" xml:space="preserve">
     <value>The name of a variable in C# does not begin with a lower-case letter.</value>
   </data>
