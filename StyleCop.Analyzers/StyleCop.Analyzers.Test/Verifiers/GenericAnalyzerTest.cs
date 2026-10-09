@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
 {
     using System;
     using System.Collections.Immutable;
+    using System.IO;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Testing;
@@ -51,8 +52,20 @@ namespace StyleCop.Analyzers.Test.Verifiers
 
             // Use appropriate default reference assemblies per the support matrix:
             // https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/configure-language-version
+            // C# 13 ships with .NET 9 and C# 14 with .NET 10. ReferenceAssemblies.Net.Net90/Net100 exist in
+            // Microsoft.CodeAnalysis.Testing 1.1.3+, but 1.1.4 drops net452 and this repo's C# 6 tests still
+            // target net452 on Windows, so the package stays at 1.1.2-beta1.23509.1. Net90 and Net100 are
+            // constructed the same way that package constructs Net80.
             ReferenceAssemblies defaultReferenceAssemblies;
-            if (LightupHelpers.SupportsCSharp12)
+            if (LightupHelpers.SupportsCSharp14)
+            {
+                defaultReferenceAssemblies = CreateNetReferenceAssemblies("net10.0", "10.0.1");
+            }
+            else if (LightupHelpers.SupportsCSharp13)
+            {
+                defaultReferenceAssemblies = CreateNetReferenceAssemblies("net9.0", "9.0.0");
+            }
+            else if (LightupHelpers.SupportsCSharp12)
             {
                 defaultReferenceAssemblies = ReferenceAssemblies.Net.Net80;
             }
@@ -84,6 +97,14 @@ namespace StyleCop.Analyzers.Test.Verifiers
             return defaultReferenceAssemblies.AddPackages(ImmutableArray.Create(
                 new PackageIdentity("Microsoft.CodeAnalysis.CSharp", codeAnalysisTestVersion),
                 new PackageIdentity("System.ValueTuple", "4.5.0")));
+        }
+
+        private static ReferenceAssemblies CreateNetReferenceAssemblies(string targetFramework, string packageVersion)
+        {
+            return new ReferenceAssemblies(
+                targetFramework,
+                new PackageIdentity("Microsoft.NETCore.App.Ref", packageVersion),
+                Path.Combine("ref", targetFramework));
         }
     }
 }

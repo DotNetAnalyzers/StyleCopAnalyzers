@@ -48,6 +48,48 @@ public class TestClass
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(4028, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4028")]
+        public async Task TestFieldKeywordBinaryExpressionOnNetFrameworkAsync()
+        {
+            // The 'field' keyword does not need a newer runtime. This pins .NET Framework reference assemblies so a
+            // newer language version targeting an older framework still reports operator spacing around 'field'.
+            var testCode = @"
+public class TestClass
+{
+    public int Prop
+    {
+        get => field{|#0:+|}field;
+    }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    public int Prop
+    {
+        get => field + field;
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DescriptorPrecededByWhitespace).WithLocation(0).WithArguments("+"),
+                Diagnostic(DescriptorFollowedByWhitespace).WithLocation(0).WithArguments("+"),
+            };
+
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net472.Default,
+            };
+            test.ExpectedDiagnostics.AddRange(expected);
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Theory]
         [WorkItem(4028, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4028")]
         [InlineData("field")]

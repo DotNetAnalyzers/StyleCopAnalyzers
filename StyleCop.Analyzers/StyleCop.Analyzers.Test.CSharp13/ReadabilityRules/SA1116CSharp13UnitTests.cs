@@ -40,6 +40,40 @@ class Foo
             await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(4013, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4013")]
+        public async Task TestSplitParamsCollectionParameterOnNetFrameworkAsync()
+        {
+            // params ReadOnlySpan<T> needs runtime support that .NET Framework reference assemblies don't have, so the
+            // snippet does not compile there. SA1116 still has to report and fix the parameter list.
+            var testCode = @"
+using System;
+
+class Foo
+{
+    public Foo([|int a|],
+        params ReadOnlySpan<int> s) { }
+}";
+
+            var fixedCode = @"
+using System;
+
+class Foo
+{
+    public Foo(
+        int a,
+        params ReadOnlySpan<int> s) { }
+}";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net472.Default,
+                CompilerDiagnostics = CompilerDiagnostics.None,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override DiagnosticResult[] GetExpectedResultTestPrimaryConstructorBaseListSplitArgumentsNotStartingOnNextLine()
         {
             return new[]

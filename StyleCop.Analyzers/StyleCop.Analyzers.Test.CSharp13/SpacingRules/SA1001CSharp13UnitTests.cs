@@ -6,7 +6,6 @@ namespace StyleCop.Analyzers.Test.CSharp13.SpacingRules
     using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.Test.CSharp12.SpacingRules;
-    using StyleCop.Analyzers.Test.CSharp13.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1001CommasMustBeSpacedCorrectly,
@@ -43,7 +42,6 @@ class Foo<T>
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
-                ReferenceAssemblies = RuntimeReferenceAssemblies.Net90,
             };
             test.ExpectedDiagnostics.Add(expected);
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
