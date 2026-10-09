@@ -302,6 +302,49 @@ public class TestClass
             await VerifyCSharpFixAsync(testCode, expectedDiagnostics, testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory]
+        [WorkItem(2860, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2860")]
+        [InlineData("Period")]
+        [InlineData("PeriodParenthesis")]
+        [InlineData("DoubleQuote")]
+        [InlineData("SingleQuote")]
+        [InlineData("CurlyDoubleQuote")]
+        [InlineData("CurlySingleQuote")]
+        [InlineData("NestedQuotes")]
+        [InlineData("QuoteParenthesis")]
+        [InlineData("QuoteEntity")]
+        public async Task TestIncludedDocumentationEndingWithPeriodAsync(string element)
+        {
+            var testCode = $@"
+/// <include file='QuotedInheritDoc.xml' path='/TestClass/{element}/*'/>
+public class TestClass
+{{
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [WorkItem(2860, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2860")]
+        [InlineData("NoPeriodQuoted")]
+        [InlineData("NoPeriodCurlyQuoted")]
+        [InlineData("PeriodBeforeText")]
+        [InlineData("OnlyParenthesis")]
+        [InlineData("OnlyQuote")]
+        [InlineData("OnlyQuoteParenthesis")]
+        public async Task TestIncludedDocumentationEndingWithoutPeriodAsync(string element)
+        {
+            var testCode = $@"
+/// <include file='QuotedInheritDoc.xml' path='/TestClass/{element}/*'/>
+public class TestClass
+{{
+}}
+";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(3, 14), testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestInvalidIncludedDocumentationAsync()
         {
@@ -528,6 +571,10 @@ public interface ITest
         [InlineData("Summary \"quoted\"")]
         [InlineData("Summary \u201Cquoted\u201D")]
         [InlineData("Summary 'quoted.' text")]
+        [InlineData(")")]
+        [InlineData("\"")]
+        [InlineData("\u201D")]
+        [InlineData("\")")]
         public async Task TestSentenceEndingWithQuotesWithoutPeriodAsync(string summary)
         {
             var testCode = $@"
@@ -1098,6 +1145,26 @@ public class TestClass
 </TestClass>
 ";
 
+            string contentQuotedInheritDoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <Period><summary>Test class.</summary></Period>
+  <PeriodParenthesis><summary>Test class (see remarks.)</summary></PeriodParenthesis>
+  <DoubleQuote><summary>Test ""class.""</summary></DoubleQuote>
+  <SingleQuote><summary>Test 'class.'</summary></SingleQuote>
+  <CurlyDoubleQuote><summary>Test &#x201C;class.&#x201D;</summary></CurlyDoubleQuote>
+  <CurlySingleQuote><summary>Test &#x2018;class.&#x2019;</summary></CurlySingleQuote>
+  <NestedQuotes><summary>Test ""a 'nested class.'""</summary></NestedQuotes>
+  <QuoteParenthesis><summary>Test (""class."")</summary></QuoteParenthesis>
+  <QuoteEntity><summary>Test &quot;class.&quot;</summary></QuoteEntity>
+  <NoPeriodQuoted><summary>Test ""class""</summary></NoPeriodQuoted>
+  <NoPeriodCurlyQuoted><summary>Test &#x201C;class&#x201D;</summary></NoPeriodCurlyQuoted>
+  <PeriodBeforeText><summary>Test 'class.' text</summary></PeriodBeforeText>
+  <OnlyParenthesis><summary>)</summary></OnlyParenthesis>
+  <OnlyQuote><summary>""</summary></OnlyQuote>
+  <OnlyQuoteParenthesis><summary>"")</summary></OnlyQuoteParenthesis>
+</TestClass>
+";
+
             var test = new StyleCopCodeFixVerifier<SA1629DocumentationTextMustEndWithAPeriod, SA1629CodeFixProvider>.CSharpTest
             {
                 XmlReferences =
@@ -1106,6 +1173,7 @@ public class TestClass
                     { "InvalidClassInheritDoc.xml", contentInvalidClassInheritDoc },
                     { "PropertyInheritDoc.xml", contentPropertyInheritDoc },
                     { "MethodInheritDoc.xml", contentMethodInheritDoc },
+                    { "QuotedInheritDoc.xml", contentQuotedInheritDoc },
                 },
             };
 
