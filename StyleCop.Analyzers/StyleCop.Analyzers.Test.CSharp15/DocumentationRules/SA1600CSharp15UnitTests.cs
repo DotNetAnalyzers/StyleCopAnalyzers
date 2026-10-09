@@ -5,7 +5,6 @@ namespace StyleCop.Analyzers.Test.CSharp15.DocumentationRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp14.DocumentationRules;
     using Xunit;
@@ -13,9 +12,9 @@ namespace StyleCop.Analyzers.Test.CSharp15.DocumentationRules
         StyleCop.Analyzers.DocumentationRules.SA1600ElementsMustBeDocumented,
         StyleCop.Analyzers.DocumentationRules.SA1600CodeFixProvider>;
 
-    // Union declarations are only parsed with the preview language version. The reference assemblies used by these
-    // tests do not define System.Runtime.CompilerServices.IUnion and UnionAttribute, so union declarations produce
-    // CS0518 and CS0656, and compiler diagnostics are therefore ignored.
+    // Union declarations are only parsed with the preview language version, which is the default for this test project.
+    // The reference assemblies used by these tests do not define System.Runtime.CompilerServices.IUnion and
+    // UnionAttribute, so union declarations produce CS0518 and CS0656, and compiler diagnostics are therefore ignored.
     public partial class SA1600CSharp15UnitTests : SA1600CSharp14UnitTests
     {
         /// <summary>
@@ -46,7 +45,7 @@ public class Outer
 }
 ";
 
-            await new CSharpTest(LanguageVersion.Preview)
+            await new CSharpTest()
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1) },
@@ -72,7 +71,7 @@ public partial union Pet
 }
 ";
 
-            await new CSharpTest(LanguageVersion.Preview)
+            await new CSharpTest()
             {
                 TestCode = testCode,
                 CompilerDiagnostics = CompilerDiagnostics.None,
@@ -113,7 +112,7 @@ public union Pet(int, string)
 }
 ";
 
-            await new CSharpTest(LanguageVersion.Preview)
+            await new CSharpTest()
             {
                 TestCode = testCode,
                 ExpectedDiagnostics =

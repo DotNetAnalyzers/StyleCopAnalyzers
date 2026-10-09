@@ -5,7 +5,6 @@ namespace StyleCop.Analyzers.Test.CSharp15.DocumentationRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp14.DocumentationRules;
     using StyleCop.Analyzers.Test.Verifiers;
@@ -23,7 +22,7 @@ namespace StyleCop.Analyzers.Test.CSharp15.DocumentationRules
             var fixedCode = @"public union TestUnion(int, string);
 ";
 
-            var test = new StyleCopCodeFixVerifier<StyleCop.Analyzers.DocumentationRules.SA1649FileNameMustMatchTypeName, StyleCop.Analyzers.DocumentationRules.SA1649CodeFixProvider>.CSharpTest(LanguageVersion.Preview)
+            var test = new StyleCopCodeFixVerifier<StyleCop.Analyzers.DocumentationRules.SA1649FileNameMustMatchTypeName, StyleCop.Analyzers.DocumentationRules.SA1649CodeFixProvider>.CSharpTest()
             {
                 TestSources = { ("WrongFileName.cs", testCode) },
                 FixedSources = { ("TestUnion.cs", fixedCode) },
@@ -40,7 +39,7 @@ namespace StyleCop.Analyzers.Test.CSharp15.DocumentationRules
             var testCode = @"public union TestUnion<T>(T, string);
 ";
 
-            var test = new StyleCopCodeFixVerifier<StyleCop.Analyzers.DocumentationRules.SA1649FileNameMustMatchTypeName, StyleCop.Analyzers.DocumentationRules.SA1649CodeFixProvider>.CSharpTest(LanguageVersion.Preview)
+            var test = new StyleCopCodeFixVerifier<StyleCop.Analyzers.DocumentationRules.SA1649FileNameMustMatchTypeName, StyleCop.Analyzers.DocumentationRules.SA1649CodeFixProvider>.CSharpTest()
             {
                 TestSources = { ("TestUnion.cs", testCode) },
                 CompilerDiagnostics = CompilerDiagnostics.None,

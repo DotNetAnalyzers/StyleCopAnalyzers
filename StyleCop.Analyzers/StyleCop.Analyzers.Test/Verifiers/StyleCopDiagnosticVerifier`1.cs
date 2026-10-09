@@ -12,7 +12,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
     using Microsoft.CodeAnalysis.CSharp.Testing;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Testing;
-    using StyleCop.Analyzers.Lightup;
+    using StyleCop.Analyzers.Test.Helpers;
 
     internal static class StyleCopDiagnosticVerifier<TAnalyzer>
         where TAnalyzer : DiagnosticAnalyzer, new()
@@ -64,7 +64,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
 
             public CSharpTest(LanguageVersion? languageVersion)
             {
-                this.LanguageVersion = languageVersion ?? this.GetDefaultLanguageVersion();
+                this.LanguageVersion = languageVersion ?? TestLanguageVersion.Default;
             }
 
             private LanguageVersion? LanguageVersion { get; }
@@ -78,19 +78,6 @@ namespace StyleCop.Analyzers.Test.Verifiers
                 }
 
                 return parseOptions;
-            }
-
-            // NOTE: If needed, this method can be temporarily updated to default to a preview version
-            private LanguageVersion? GetDefaultLanguageVersion()
-            {
-                if (LightupHelpers.SupportsCSharp15)
-                {
-                    // C# 15 is still in preview, so the C# 15 test project runs every test with the preview language
-                    // version. Remove this once C# 15 is the default language version of the referenced compiler.
-                    return LanguageVersionEx.Preview;
-                }
-
-                return null;
             }
         }
     }
