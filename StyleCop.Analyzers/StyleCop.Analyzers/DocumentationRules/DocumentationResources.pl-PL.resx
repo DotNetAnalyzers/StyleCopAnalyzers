@@ -168,6 +168,9 @@
   <data name="TypeTextStruct" xml:space="preserve">
     <value>struktury</value>
   </data>
+  <data name="TypeTextUnion" xml:space="preserve">
+    <value>unii</value>
+  </data>
   <data name="StartingTextGetsOrInitializes" xml:space="preserve">
     <value>Pobiera lub inicjalizuje</value>
   </data>

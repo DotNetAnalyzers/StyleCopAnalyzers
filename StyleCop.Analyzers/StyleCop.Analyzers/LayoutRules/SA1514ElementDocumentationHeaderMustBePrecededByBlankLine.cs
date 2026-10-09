@@ -84,6 +84,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 SyntaxKind.InterfaceDeclaration,
                 SyntaxKindEx.RecordDeclaration,
                 SyntaxKindEx.RecordStructDeclaration,
+                SyntaxKindEx.UnionDeclaration,
                 SyntaxKind.EnumDeclaration,
                 SyntaxKind.EnumMemberDeclaration,
                 SyntaxKind.MethodDeclaration,

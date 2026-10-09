@@ -3,9 +3,40 @@
 
 namespace StyleCop.Analyzers.Test.CSharp15.ReadabilityRules
 {
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp14.ReadabilityRules;
+    using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<
+        StyleCop.Analyzers.ReadabilityRules.SA1117ParametersMustBeOnSameLineOrSeparateLines>;
 
+    // Union declarations are only parsed with the preview language version, which is the default for this test project.
+    // The reference assemblies used by these tests do not define System.Runtime.CompilerServices.IUnion and
+    // UnionAttribute, so union declarations produce CS0518 and CS0656, and compiler diagnostics are therefore ignored.
     public partial class SA1117CSharp15UnitTests : SA1117CSharp14UnitTests
     {
+        /// <summary>
+        /// Verifies that the case types of a union must all be on the same line or each on its own line, and that the
+        /// violation is reported exactly once.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(4182, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4182")]
+        public async Task TestUnionDeclarationAsync()
+        {
+            var testCode = @"
+public union Pet(
+    int, string,
+    {|#0:long|});
+";
+
+            await new CSharpTest()
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics = { Diagnostic().WithLocation(0) },
+                CompilerDiagnostics = CompilerDiagnostics.None,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

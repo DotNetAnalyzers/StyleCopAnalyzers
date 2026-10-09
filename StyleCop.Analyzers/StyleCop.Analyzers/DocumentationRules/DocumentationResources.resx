@@ -705,6 +705,9 @@
   <data name="TypeTextStruct" xml:space="preserve">
     <value>struct</value>
   </data>
+  <data name="TypeTextUnion" xml:space="preserve">
+    <value>union</value>
+  </data>
   <data name="StartingTextGetsOrInitializesWhether" xml:space="preserve">
     <value>Gets or initializes a value indicating whether</value>
   </data>
