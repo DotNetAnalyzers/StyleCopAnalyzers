@@ -89,6 +89,10 @@ namespace StyleCop.Analyzers.NamingRules
                 return;
             }
 
+            // A using declaration (C# 8) cannot use a discard, so names made only of underscores are allowed there.
+            bool allowUnderscoreOnlyNames = parentDeclaration != null
+                && !parentDeclaration.UsingKeyword().IsKind(SyntaxKind.None);
+
             foreach (VariableDeclaratorSyntax variableDeclarator in syntax.Variables)
             {
                 if (variableDeclarator == null)
@@ -97,7 +101,7 @@ namespace StyleCop.Analyzers.NamingRules
                 }
 
                 var identifier = variableDeclarator.Identifier;
-                CheckIdentifier(context, identifier);
+                CheckIdentifier(context, identifier, allowUnderscoreOnlyNames);
             }
         }
 
@@ -133,7 +137,8 @@ namespace StyleCop.Analyzers.NamingRules
 
         private static void HandleForEachStatement(SyntaxNodeAnalysisContext context)
         {
-            CheckIdentifier(context, ((ForEachStatementSyntax)context.Node).Identifier);
+            // A foreach iteration variable cannot be a discard, so names made only of underscores are allowed there.
+            CheckIdentifier(context, ((ForEachStatementSyntax)context.Node).Identifier, allowUnderscoreOnlyNames: true);
         }
 
         private static void HandleSingleVariableDesignation(SyntaxNodeAnalysisContext context)
@@ -141,7 +146,7 @@ namespace StyleCop.Analyzers.NamingRules
             CheckIdentifier(context, ((SingleVariableDesignationSyntaxWrapper)context.Node).Identifier);
         }
 
-        private static void CheckIdentifier(SyntaxNodeAnalysisContext context, SyntaxToken identifier)
+        private static void CheckIdentifier(SyntaxNodeAnalysisContext context, SyntaxToken identifier, bool allowUnderscoreOnlyNames = false)
         {
             if (identifier.IsMissing)
             {
@@ -154,6 +159,11 @@ namespace StyleCop.Analyzers.NamingRules
                 return;
             }
 
+            if (allowUnderscoreOnlyNames && IsUnderscoreOnly(name))
+            {
+                return;
+            }
+
             if (NamedTypeHelpers.IsContainedInNativeMethodsClass(identifier.Parent))
             {
                 return;
@@ -161,6 +171,19 @@ namespace StyleCop.Analyzers.NamingRules
 
             // Variable names should begin with lower-case letter
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), name));
+        }
+
+        private static bool IsUnderscoreOnly(string name)
+        {
+            foreach (char c in name)
+            {
+                if (c != '_')
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }
