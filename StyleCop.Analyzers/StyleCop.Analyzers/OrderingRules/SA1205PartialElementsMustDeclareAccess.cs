@@ -13,6 +13,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// The partial element does not have an access modifier defined.
@@ -59,7 +60,8 @@ namespace StyleCop.Analyzers.OrderingRules
                 if (!typeDeclarationNode.Modifiers.Any(SyntaxKind.PublicKeyword)
                     && !typeDeclarationNode.Modifiers.Any(SyntaxKind.InternalKeyword)
                     && !typeDeclarationNode.Modifiers.Any(SyntaxKind.ProtectedKeyword)
-                    && !typeDeclarationNode.Modifiers.Any(SyntaxKind.PrivateKeyword))
+                    && !typeDeclarationNode.Modifiers.Any(SyntaxKind.PrivateKeyword)
+                    && !typeDeclarationNode.Modifiers.Any(SyntaxKindEx.FileKeyword))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, typeDeclarationNode.Identifier.GetLocation()));
                 }
