@@ -1,13 +1,12 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.NamingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.NamingRules.SA1314TypeParameterNamesMustBeginWithT,
@@ -15,20 +14,22 @@ namespace StyleCop.Analyzers.Test.NamingRules
 
     public class SA1314UnitTests
     {
-        [Fact]
-        public async Task TestTypeParameterDoesNotStartWithTAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestTypeParameterDoesNotStartWithTAsync(string lineEnding)
         {
             var testCode = @"
-public interface IFoo<Key>
+public interface IFoo<{|#0:Key|}>
 {
-}";
+}".ReplaceLineEndings(lineEnding);
 
-            DiagnosticResult expected = Diagnostic().WithLocation(2, 23);
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
 
             var fixedCode = @"
 public interface IFoo<TKey>
 {
-}";
+}".ReplaceLineEndings(lineEnding);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }

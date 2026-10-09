@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
@@ -11,6 +9,7 @@ namespace StyleCop.Analyzers.SpacingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
 
     /// <summary>
@@ -23,9 +22,9 @@ namespace StyleCop.Analyzers.SpacingRules
     /// <strong>fixed</strong>, <strong>for</strong>, <strong>foreach</strong>, <strong>from</strong>,
     /// <strong>group</strong>, <strong>if</strong>, <strong>in</strong>, <strong>into</strong>, <strong>join</strong>,
     /// <strong>let</strong>, <strong>lock</strong>, <strong>orderby</strong>, <strong>out</strong>,
-    /// <strong>ref</strong>, <strong>return</strong>, <strong>select</strong>, <strong>switch</strong>,
-    /// <strong>throw</strong>, <strong>using</strong>, <strong>var</strong>, <strong>where</strong>,
-    /// <strong>while</strong>, <strong>yield</strong>.</para>
+    /// <strong>ref</strong>, <strong>return</strong>, <strong>scoped</strong>, <strong>select</strong>,
+    /// <strong>switch</strong>, <strong>throw</strong>, <strong>using</strong>, <strong>var</strong>,
+    /// <strong>where</strong>, <strong>while</strong>, <strong>yield</strong>.</para>
     ///
     /// <para>The following keywords should not be followed by any space: <strong>checked</strong>,
     /// <strong>default</strong>, <strong>sizeof</strong>, <strong>typeof</strong>, <strong>unchecked</strong>.</para>
@@ -49,7 +48,7 @@ namespace StyleCop.Analyzers.SpacingRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
+        private static readonly Action<SyntaxTreeAnalysisContext, SyntaxTreeTokens> SyntaxTreeAction = HandleSyntaxTree;
         private static readonly Action<SyntaxNodeAnalysisContext> InvocationExpressionAction = HandleInvocationExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> IdentifierNameAction = HandleIdentifierName;
         private static readonly ReportDiagnosticCallback<SyntaxTreeAnalysisContext> ReportSyntaxTreeDiagnostic =
@@ -71,7 +70,7 @@ namespace StyleCop.Analyzers.SpacingRules
             context.EnableConcurrentExecution();
 
             // handle everything except nameof
-            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
+            context.RegisterSyntaxTreeTokensAction(SyntaxTreeAction);
 
             // handle nameof (which appears as an invocation expression??)
             context.RegisterSyntaxNodeAction(InvocationExpressionAction, SyntaxKind.InvocationExpression);
@@ -80,13 +79,21 @@ namespace StyleCop.Analyzers.SpacingRules
             context.RegisterSyntaxNodeAction(IdentifierNameAction, SyntaxKind.IdentifierName);
         }
 
-        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context, SyntaxTreeTokens tokens)
         {
-            SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
-            foreach (var token in root.DescendantTokens())
+            foreach (var token in tokens.GetTokens(context.CancellationToken))
             {
                 switch (token.Kind())
                 {
+                case SyntaxKind.DelegateKeyword:
+                    if (token.Parent.IsKind(SyntaxKindEx.FunctionPointerType))
+                    {
+                        HandleDisallowedSpaceToken(ref context, token);
+                        break;
+                    }
+
+                    goto default;
+
                 case SyntaxKindEx.AndKeyword:
                 case SyntaxKind.AwaitKeyword:
                 case SyntaxKind.CaseKeyword:
@@ -108,6 +115,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 case SyntaxKind.OrderByKeyword:
                 case SyntaxKind.OutKeyword:
                 case SyntaxKind.RefKeyword:
+                case SyntaxKindEx.ScopedKeyword:
                 case SyntaxKind.SelectKeyword:
                 case SyntaxKind.SwitchKeyword:
                 case SyntaxKind.UsingKeyword:
@@ -143,7 +151,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 case SyntaxKind.DefaultKeyword:
                     if (token.Parent.IsKind(SyntaxKindEx.DefaultLiteralExpression))
                     {
-                        // Ignore spacing around a default literal expression for now
+                        // Ignore spacing around a default literal expression
                         break;
                     }
 
@@ -167,6 +175,14 @@ namespace StyleCop.Analyzers.SpacingRules
 
                 case SyntaxKind.ThrowKeyword:
                     HandleThrowKeywordToken(ref context, token);
+                    break;
+
+                case SyntaxKindEx.UnmanagedKeyword:
+                    if (token.Parent.IsKind(SyntaxKindEx.FunctionPointerCallingConvention))
+                    {
+                        HandleDisallowedSpaceToken(ref context, token);
+                    }
+
                     break;
 
                 default:

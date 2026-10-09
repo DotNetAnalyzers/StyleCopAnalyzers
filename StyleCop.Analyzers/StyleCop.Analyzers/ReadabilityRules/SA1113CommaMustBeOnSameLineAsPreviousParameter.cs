@@ -60,9 +60,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 SyntaxKind.OperatorDeclaration);
 
         private static readonly Action<SyntaxNodeAnalysisContext> BaseMethodDeclarationAction = HandleBaseMethodDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> TypeDeclarationAction = HandleTypeDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> PrimaryConstructorBaseTypeAction = HandlePrimaryConstructorBaseType;
         private static readonly Action<SyntaxNodeAnalysisContext> LocalFunctionStatementAction = HandleLocalFunctionStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> InvocationExpressionAction = HandleInvocationExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> ObjectCreationExpressionAction = HandleObjectCreationExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> ImplicitObjectCreationExpressionAction = HandleImplicitObjectCreationExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> IndexerDeclarationAction = HandleIndexerDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> ElementAccessExpressionAction = HandleElementAccessExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> AnonymousMethodExpressionAction = HandleAnonymousMethodExpression;
@@ -84,9 +87,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.EnableConcurrentExecution();
 
             context.RegisterSyntaxNodeAction(BaseMethodDeclarationAction, BaseMethodDeclarationKinds);
+            context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
+            context.RegisterSyntaxNodeAction(PrimaryConstructorBaseTypeAction, SyntaxKindEx.PrimaryConstructorBaseType);
             context.RegisterSyntaxNodeAction(LocalFunctionStatementAction, SyntaxKindEx.LocalFunctionStatement);
             context.RegisterSyntaxNodeAction(InvocationExpressionAction, SyntaxKind.InvocationExpression);
             context.RegisterSyntaxNodeAction(ObjectCreationExpressionAction, SyntaxKind.ObjectCreationExpression);
+            context.RegisterSyntaxNodeAction(ImplicitObjectCreationExpressionAction, SyntaxKindEx.ImplicitObjectCreationExpression);
             context.RegisterSyntaxNodeAction(IndexerDeclarationAction, SyntaxKind.IndexerDeclaration);
             context.RegisterSyntaxNodeAction(ElementAccessExpressionAction, SyntaxKind.ElementAccessExpression);
             context.RegisterSyntaxNodeAction(AnonymousMethodExpressionAction, SyntaxKind.AnonymousMethodExpression);
@@ -187,6 +193,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
             HandleBaseArgumentListSyntax(context, objectCreationExpression.ArgumentList);
         }
 
+        private static void HandleImplicitObjectCreationExpression(SyntaxNodeAnalysisContext context)
+        {
+            var implicitObjectCreation = (ImplicitObjectCreationExpressionSyntaxWrapper)context.Node;
+            HandleBaseArgumentListSyntax(context, implicitObjectCreation.ArgumentList);
+        }
+
         private static void HandleInvocationExpression(SyntaxNodeAnalysisContext context)
         {
             var invocationEpression = (InvocationExpressionSyntax)context.Node;
@@ -197,6 +209,22 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var baseMethodDeclaration = (BaseMethodDeclarationSyntax)context.Node;
             HandleBaseParameterListSyntax(context, baseMethodDeclaration.ParameterList);
+        }
+
+        private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var typeDeclaration = (TypeDeclarationSyntax)context.Node;
+            var parameterList = typeDeclaration.ParameterList();
+            if (parameterList != null)
+            {
+                HandleBaseParameterListSyntax(context, parameterList);
+            }
+        }
+
+        private static void HandlePrimaryConstructorBaseType(SyntaxNodeAnalysisContext context)
+        {
+            var primaryConstructorBaseType = (PrimaryConstructorBaseTypeSyntaxWrapper)context.Node;
+            HandleBaseArgumentListSyntax(context, primaryConstructorBaseType.ArgumentList);
         }
 
         private static void HandleLocalFunctionStatement(SyntaxNodeAnalysisContext context)

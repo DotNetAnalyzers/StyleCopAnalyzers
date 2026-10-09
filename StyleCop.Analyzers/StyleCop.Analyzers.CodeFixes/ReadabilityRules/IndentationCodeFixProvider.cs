@@ -105,8 +105,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 foreach (var diagnostic in diagnostics)
                 {
-                    TextChange textChange;
-                    if (TryGetTextChange(diagnostic, syntaxRoot, out textChange))
+                    // Some compilers report the same diagnostic twice for positional records and in files with
+                    // top-level statements (https://github.com/dotnet/roslyn/issues/53136 and
+                    // https://github.com/dotnet/roslyn/issues/58561), and overlapping text changes are not allowed.
+                    if (TryGetTextChange(diagnostic, syntaxRoot, out var textChange) && !changes.Contains(textChange))
                     {
                         changes.Add(textChange);
                     }

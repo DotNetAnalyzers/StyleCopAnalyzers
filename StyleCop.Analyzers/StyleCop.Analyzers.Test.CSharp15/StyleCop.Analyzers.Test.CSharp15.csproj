@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">$(TargetFrameworks);net472</TargetFrameworks>
+    <EnforceExtendedAnalyzerRules>false</EnforceExtendedAnalyzerRules>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <!-- Roslyn 5.x depends on 9.0.0+ System.* packages, which warn on net6.0 (only used for local Linux testing) -->
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+    <!-- Roslyn marks the syntax APIs for C# 15 preview features (such as UnionDeclarationSyntax) as experimental, and
+         these tests exist to exercise exactly those APIs. -->
+    <NoWarn>$(NoWarn);RSEXPERIMENTAL006</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <CodeAnalysisRuleSet>..\StyleCop.Analyzers.Internal.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\build\keys\TestingKey.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Temporary: Roslyn 5.9.0 runs syntax node actions on union members up to three times (dotnet/roslyn#84570, fixed by
+         dotnet/roslyn#84604), so these tests use a 5.10 preview build from the dotnet-tools feed (see NuGet.config) that
+         includes the fix. Move to 5.10.0 on nuget.org once it ships. -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.10.0-1.26477.9" />
+    <!-- Microsoft.CodeAnalysis.CSharp.Workspaces 5.10.0-1.26477.9 depends on this version; without it, NuGet reports a
+         downgrade (NU1605) to the version referenced in Directory.Build.props. Remove this with the preview reference above. -->
+    <PackageReference Update="Microsoft.CodeAnalysis.Analyzers" Version="5.10.0-1.26365.3" />
+    <PackageReference Include="xunit" Version="2.4.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StyleCop.Analyzers\StyleCop.Analyzers.csproj" />
+    <ProjectReference Include="..\StyleCop.Analyzers.CodeFixes\StyleCop.Analyzers.CodeFixes.csproj" />
+    <ProjectReference Include="..\StyleCop.Analyzers.Test\StyleCop.Analyzers.Test.csproj" />
+    <ProjectReference Include="..\StyleCop.Analyzers.Test.CSharp7\StyleCop.Analyzers.Test.CSharp7.csproj" />
+    <ProjectReference Include="..\StyleCop.Analyzers.Test.CSharp8\StyleCop.Analyzers.Test.CSharp8.csproj" />
+    <ProjectReference Include="..\StyleCop.Analyzers.Test.CSharp9\StyleCop.Analyzers.Test.CSharp9.csproj" />
+    <ProjectReference Include="..\StyleCop.Analyzers.Test.CSharp10\StyleCop.Analyzers.Test.CSharp10.csproj" />
+    <ProjectReference Include="..\StyleCop.Analyzers.Test.CSharp11\StyleCop.Analyzers.Test.CSharp11.csproj" />
+    <ProjectReference Include="..\StyleCop.Analyzers.Test.CSharp12\StyleCop.Analyzers.Test.CSharp12.csproj" />
+    <ProjectReference Include="..\StyleCop.Analyzers.Test.CSharp13\StyleCop.Analyzers.Test.CSharp13.csproj" />
+    <ProjectReference Include="..\StyleCop.Analyzers.Test.CSharp14\StyleCop.Analyzers.Test.CSharp14.csproj" />
+    <ProjectReference Include="..\StyleCop.Analyzers.PrivateCodeFixes\StyleCop.Analyzers.PrivateCodeFixes.csproj" PrivateAssets="all" SetTargetFramework="TargetFramework=netstandard2.0" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+</Project>

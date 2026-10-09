@@ -73,6 +73,8 @@ namespace StyleCop.Analyzers.LayoutRules
             case SyntaxKind.StructDeclaration:
             case SyntaxKindEx.RecordDeclaration:
             case SyntaxKindEx.RecordStructDeclaration:
+            case SyntaxKindEx.UnionDeclaration:
+            case SyntaxKindEx.ExtensionBlockDeclaration:
             case SyntaxKind.EnumDeclaration:
                 newSyntaxRoot = this.RegisterBaseTypeDeclarationCodeFix(syntaxRoot, (BaseTypeDeclarationSyntax)node, indentationSettings);
                 break;

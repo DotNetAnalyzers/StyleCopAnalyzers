@@ -43,7 +43,7 @@ namespace StyleCop.Analyzers.SpacingRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
+        private static readonly Action<SyntaxTreeAnalysisContext, SyntaxTreeTokens> SyntaxTreeAction = HandleSyntaxTree;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -55,13 +55,12 @@ namespace StyleCop.Analyzers.SpacingRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
+            context.RegisterSyntaxTreeTokensAction(SyntaxTreeAction);
         }
 
-        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context, SyntaxTreeTokens tokens)
         {
-            SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
-            foreach (var token in root.DescendantTokens())
+            foreach (var token in tokens.GetTokens(context.CancellationToken))
             {
                 if (token.IsKind(SyntaxKind.OpenBraceToken))
                 {
@@ -103,7 +102,7 @@ namespace StyleCop.Analyzers.SpacingRules
                     // value is ({ P: 0 })
                     expectPrecedingSpace = false;
                 }
-                else if (prevToken is { RawKind: (int)SyntaxKind.OpenBracketToken, Parent: { RawKind: (int)SyntaxKindEx.ListPattern } })
+                else if (prevToken is { RawKind: (int)SyntaxKind.OpenBracketToken, Parent.RawKind: (int)SyntaxKindEx.ListPattern })
                 {
                     // value is [{ P: 0 }, { P: 0 }]
                     expectPrecedingSpace = false;

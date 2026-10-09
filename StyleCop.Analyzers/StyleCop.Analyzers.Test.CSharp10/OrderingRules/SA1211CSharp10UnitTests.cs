@@ -1,12 +1,11 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp9.OrderingRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -73,6 +72,56 @@ using @int = System.Int32;
 ",
                 },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3964, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3964")]
+        public async Task TestWhenGlobalUsingAliasDirectivesAreNotOrderedAlphabeticallyAsync()
+        {
+            await new CSharpTest
+            {
+                TestSources =
+                {
+                    @"
+global using ZAlias = System.String;
+{|#0:global using AAlias = System.Int32;|}
+
+class TestClass
+{
+}
+",
+                },
+                FixedSources =
+                {
+                    @"
+global using AAlias = System.Int32;
+global using ZAlias = System.String;
+
+class TestClass
+{
+}
+",
+                },
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(0).WithArguments("AAlias", "ZAlias"),
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3964, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3964")]
+        public async Task TestGlobalUsingAliasDirectivesAreAnalyzedIndependentlyFromLocalUsingAliasDirectivesAsync()
+        {
+            var testCode = @"global using AliasZ = System.IO;
+
+using AliasA = System.Text.StringBuilder;
+
+class TestClass
+{
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

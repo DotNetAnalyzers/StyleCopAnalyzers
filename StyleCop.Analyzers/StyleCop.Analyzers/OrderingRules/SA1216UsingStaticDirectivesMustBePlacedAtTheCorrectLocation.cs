@@ -72,12 +72,34 @@ namespace StyleCop.Analyzers.OrderingRules
         {
             UsingDirectiveSyntax lastStaticUsingDirective = null;
             UsingDirectiveSyntax lastAliasUsingDirective = null;
+            bool? reportedForGlobal = null;
 
             foreach (var usingDirective in usingDirectives)
             {
+                var isGlobal = usingDirective.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword);
+                if (reportedForGlobal == isGlobal)
+                {
+                    // Only a single diagnostic is reported for each set (global or local) of using directives
+                    continue;
+                }
+
                 if (usingDirective.IsPrecededByPreprocessorDirective())
                 {
                     lastStaticUsingDirective = null;
+                    lastAliasUsingDirective = null;
+                }
+
+                if (lastStaticUsingDirective is not null
+                    && lastStaticUsingDirective.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword) != usingDirective.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword))
+                {
+                    // Only compare usings with the same 'global' modifier
+                    lastStaticUsingDirective = null;
+                }
+
+                if (lastAliasUsingDirective is not null
+                    && lastAliasUsingDirective.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword) != usingDirective.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword))
+                {
+                    // Only compare usings with the same 'global' modifier
                     lastAliasUsingDirective = null;
                 }
 
@@ -87,7 +109,10 @@ namespace StyleCop.Analyzers.OrderingRules
                     {
                         // only report a single instance when a static using directive is following an alias using directive.
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation()));
-                        break;
+                        reportedForGlobal = isGlobal;
+                        lastStaticUsingDirective = null;
+                        lastAliasUsingDirective = null;
+                        continue;
                     }
 
                     lastStaticUsingDirective = usingDirective;
@@ -100,7 +125,10 @@ namespace StyleCop.Analyzers.OrderingRules
                 {
                     // only report a single diagnostic for the last static using directive that is followed by a non-static using directive
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, lastStaticUsingDirective.GetLocation()));
-                    break;
+                    reportedForGlobal = isGlobal;
+                    lastStaticUsingDirective = null;
+                    lastAliasUsingDirective = null;
+                    continue;
                 }
             }
         }

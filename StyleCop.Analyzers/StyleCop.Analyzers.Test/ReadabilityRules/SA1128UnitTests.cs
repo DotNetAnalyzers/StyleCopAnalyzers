@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1128ConstructorInitializerMustBeOnOwnLine,
@@ -30,16 +31,18 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             await VerifyCSharpDiagnosticAsync(declaration, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestViolationWithBaseInitializerOnSameLineAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestViolationWithBaseInitializerOnSameLineAsync(string lineEnding)
         {
             var testCode = @"
 public class TypeName
 {
-    public TypeName() : base()
+    public TypeName() {|#0:: base()|}
     {
     }
-}";
+}".ReplaceLineEndings(lineEnding);
             var fixedCode = @"
 public class TypeName
 {
@@ -47,8 +50,8 @@ public class TypeName
         : base()
     {
     }
-}";
-            var expected = Diagnostic().WithLocation(4, 23);
+}".ReplaceLineEndings(lineEnding);
+            var expected = Diagnostic().WithLocation(0);
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 

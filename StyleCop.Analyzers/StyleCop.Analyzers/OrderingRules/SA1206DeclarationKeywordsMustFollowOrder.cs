@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using static ModifierOrderHelper;
 
     /// <summary>
@@ -54,6 +55,9 @@ namespace StyleCop.Analyzers.OrderingRules
                 SyntaxKind.StructDeclaration,
                 SyntaxKind.InterfaceDeclaration,
                 SyntaxKind.EnumDeclaration,
+                SyntaxKindEx.RecordDeclaration,
+                SyntaxKindEx.RecordStructDeclaration,
+                SyntaxKindEx.UnionDeclaration,
                 SyntaxKind.DelegateDeclaration,
                 SyntaxKind.FieldDeclaration,
                 SyntaxKind.MethodDeclaration,
@@ -66,6 +70,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 SyntaxKind.ConstructorDeclaration);
 
         private static readonly Action<SyntaxNodeAnalysisContext> DeclarationAction = HandleDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> LocalFunctionStatementAction = HandleLocalFunctionStatement;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -78,12 +83,19 @@ namespace StyleCop.Analyzers.OrderingRules
             context.EnableConcurrentExecution();
 
             context.RegisterSyntaxNodeAction(DeclarationAction, HandledSyntaxKinds);
+            context.RegisterSyntaxNodeAction(LocalFunctionStatementAction, SyntaxKindEx.LocalFunctionStatement);
         }
 
         private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
         {
             var modifiers = DeclarationModifiersHelper.GetModifiers(context.Node as MemberDeclarationSyntax);
             CheckModifiersOrderAndReportDiagnostics(context, modifiers);
+        }
+
+        private static void HandleLocalFunctionStatement(SyntaxNodeAnalysisContext context)
+        {
+            var localFunction = (LocalFunctionStatementSyntaxWrapper)context.Node;
+            CheckModifiersOrderAndReportDiagnostics(context, localFunction.Modifiers);
         }
 
         private static void CheckModifiersOrderAndReportDiagnostics(SyntaxNodeAnalysisContext context, SyntaxTokenList modifiers)

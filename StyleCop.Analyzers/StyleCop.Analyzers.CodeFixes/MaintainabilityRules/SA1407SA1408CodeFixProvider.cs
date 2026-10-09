@@ -14,6 +14,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1407ArithmeticExpressionsMustDeclarePrecedence"/> and  <see cref="SA1408ConditionalExpressionsMustDeclarePrecedence"/>.
@@ -59,12 +60,33 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                             nameof(SA1407SA1408CodeFixProvider)),
                         diagnostic);
                 }
+                else if (BinaryPatternSyntaxWrapper.IsInstance(node))
+                {
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            MaintainabilityResources.SA1407SA1408CodeFix,
+                            cancellationToken => GetTransformedDocumentAsync(context.Document, root, (BinaryPatternSyntaxWrapper)node),
+                            nameof(SA1407SA1408CodeFixProvider)),
+                        diagnostic);
+                }
             }
         }
 
         private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, BinaryExpressionSyntax syntax)
         {
             var newNode = SyntaxFactory.ParenthesizedExpression(syntax.WithoutTrivia())
+                .WithTriviaFrom(syntax)
+                .WithoutFormatting();
+
+            var newSyntaxRoot = root.ReplaceNode(syntax, newNode);
+
+            return Task.FromResult(document.WithSyntaxRoot(newSyntaxRoot));
+        }
+
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, BinaryPatternSyntaxWrapper syntax)
+        {
+            var newNode = (ParenthesizedPatternSyntaxWrapper)SyntaxFactoryEx.ParenthesizedPattern((PatternSyntaxWrapper)syntax.SyntaxNode.WithoutTrivia())
+                .SyntaxNode
                 .WithTriviaFrom(syntax)
                 .WithoutFormatting();
 

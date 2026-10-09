@@ -21,7 +21,6 @@ namespace StyleCop.Analyzers.Test.Verifiers
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Formatting;
     using Microsoft.CodeAnalysis.Testing;
-    using Microsoft.CodeAnalysis.Testing.Verifiers;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
@@ -33,10 +32,10 @@ namespace StyleCop.Analyzers.Test.Verifiers
         where TCodeFix : CodeFixProvider, new()
     {
         internal static DiagnosticResult Diagnostic()
-            => CSharpCodeFixVerifier<TAnalyzer, TCodeFix, XUnitVerifier>.Diagnostic();
+            => CSharpCodeFixVerifier<TAnalyzer, TCodeFix, DefaultVerifier>.Diagnostic();
 
         internal static DiagnosticResult Diagnostic(string diagnosticId)
-            => CSharpCodeFixVerifier<TAnalyzer, TCodeFix, XUnitVerifier>.Diagnostic(diagnosticId);
+            => CSharpCodeFixVerifier<TAnalyzer, TCodeFix, DefaultVerifier>.Diagnostic(diagnosticId);
 
         internal static DiagnosticResult Diagnostic(DiagnosticDescriptor descriptor)
             => new DiagnosticResult(descriptor);
@@ -96,7 +95,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
             return test.RunAsync(cancellationToken);
         }
 
-        internal class CSharpTest : CSharpCodeFixTest<TAnalyzer, TCodeFix, XUnitVerifier>
+        internal class CSharpTest : CSharpCodeFixTest<TAnalyzer, TCodeFix, DefaultVerifier>
         {
             private const int DefaultIndentationSize = 4;
             private const int DefaultTabSize = 4;
@@ -110,7 +109,11 @@ namespace StyleCop.Analyzers.Test.Verifiers
             {
                 // If we have outdated defaults from the host unit test application targeting an older .NET Framework,
                 // use more reasonable TLS protocol version for outgoing connections.
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+#pragma warning disable CS0618 // Type or member is obsolete
                 if (ServicePointManager.SecurityProtocol == (SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls))
+#pragma warning restore CS0618 // Type or member is obsolete
+#pragma warning restore IDE0079 // Remove unnecessary suppression
                 {
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                 }
@@ -124,7 +127,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
             public CSharpTest(LanguageVersion? languageVersion)
             {
                 this.ReferenceAssemblies = GenericAnalyzerTest.ReferenceAssemblies;
-                this.LanguageVersion = languageVersion ?? this.GetDefaultLanguageVersion();
+                this.LanguageVersion = languageVersion ?? TestLanguageVersion.Default;
 
                 this.OptionsTransforms.Add(options =>
                     options
@@ -364,12 +367,6 @@ indent_size = {this.IndentationSize}
 indent_style = {(this.UseTabs ? "tab" : "space")}
 tab_width = {this.TabSize}
 "));
-            }
-
-            // NOTE: If needed, this method can be temporarily updated to default to a preview version
-            private LanguageVersion? GetDefaultLanguageVersion()
-            {
-                return null;
             }
         }
     }

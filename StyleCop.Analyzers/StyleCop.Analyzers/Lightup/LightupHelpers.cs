@@ -55,6 +55,12 @@ namespace StyleCop.Analyzers.Lightup
         public static bool SupportsCSharp13 { get; }
             = Enum.GetNames(typeof(LanguageVersion)).Contains(nameof(LanguageVersionEx.CSharp13));
 
+        public static bool SupportsCSharp14 { get; }
+            = Enum.GetNames(typeof(LanguageVersion)).Contains(nameof(LanguageVersionEx.CSharp14));
+
+        public static bool SupportsCSharp15 { get; }
+            = Enum.GetNames(typeof(LanguageVersion)).Contains(nameof(LanguageVersionEx.CSharp15));
+
         public static bool SupportsIOperation => SupportsCSharp73;
 
         internal static bool CanWrapObject(object obj, Type underlyingType)
@@ -394,6 +400,98 @@ namespace StyleCop.Analyzers.Lightup
             return expression.Compile();
         }
 
+        internal static Func<TSyntax, TArg1, TArg2, TProperty> CreateSyntaxPropertyAccessor<TSyntax, TArg1, TArg2, TProperty>(Type type, Type argumentType1, Type argumentType2, string accessorMethodName)
+        {
+            static TProperty FallbackAccessor(TSyntax syntax, TArg1 argument1, TArg2 argument2)
+            {
+                if (syntax == null)
+                {
+                    // Unlike an extension method which would throw ArgumentNullException here, the light-up
+                    // behavior needs to match behavior of the underlying property.
+                    throw new NullReferenceException();
+                }
+
+                return default;
+            }
+
+            if (type == null)
+            {
+                return FallbackAccessor;
+            }
+
+            if (!typeof(TSyntax).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (!typeof(TArg1).GetTypeInfo().IsAssignableFrom(argumentType1.GetTypeInfo()))
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (!typeof(TArg2).GetTypeInfo().IsAssignableFrom(argumentType2.GetTypeInfo()))
+            {
+                throw new InvalidOperationException();
+            }
+
+            var methods = type.GetTypeInfo().GetDeclaredMethods(accessorMethodName);
+            MethodInfo method = null;
+            foreach (var candidate in methods)
+            {
+                var parameters = candidate.GetParameters();
+                if (parameters.Length != 2)
+                {
+                    continue;
+                }
+
+                if (!Equals(argumentType1, parameters[0].ParameterType))
+                {
+                    continue;
+                }
+
+                if (!Equals(argumentType2, parameters[1].ParameterType))
+                {
+                    continue;
+                }
+
+                method = candidate;
+            }
+
+            if (method == null)
+            {
+                return FallbackAccessor;
+            }
+
+            if (!typeof(TProperty).GetTypeInfo().IsAssignableFrom(method.ReturnType.GetTypeInfo()))
+            {
+                throw new InvalidOperationException();
+            }
+
+            var syntaxParameter = Expression.Parameter(typeof(TSyntax), "syntax");
+            var arg1Parameter = Expression.Parameter(typeof(TArg1), "arg1");
+            var arg2Parameter = Expression.Parameter(typeof(TArg2), "arg2");
+            Expression instance =
+                type.GetTypeInfo().IsAssignableFrom(typeof(TSyntax).GetTypeInfo())
+                ? (Expression)syntaxParameter
+                : Expression.Convert(syntaxParameter, type);
+            Expression argument1 =
+                argumentType1.GetTypeInfo().IsAssignableFrom(typeof(TArg1).GetTypeInfo())
+                ? (Expression)arg1Parameter
+                : Expression.Convert(arg1Parameter, argumentType1);
+            Expression argument2 =
+                argumentType2.GetTypeInfo().IsAssignableFrom(typeof(TArg2).GetTypeInfo())
+                ? (Expression)arg2Parameter
+                : Expression.Convert(arg2Parameter, argumentType2);
+
+            Expression<Func<TSyntax, TArg1, TArg2, TProperty>> expression =
+                Expression.Lambda<Func<TSyntax, TArg1, TArg2, TProperty>>(
+                    Expression.Call(instance, method, argument1, argument2),
+                    syntaxParameter,
+                    arg1Parameter,
+                    arg2Parameter);
+            return expression.Compile();
+        }
+
         internal static TryGetValueAccessor<TSyntax, TKey, TValue> CreateTryGetValueAccessor<TSyntax, TKey, TValue>(Type type, Type keyType, string methodName)
         {
             static bool FallbackAccessor(TSyntax syntax, TKey key, out TValue value)
@@ -470,6 +568,105 @@ namespace StyleCop.Analyzers.Lightup
                     syntaxParameter,
                     keyParameter,
                     valueParameter);
+            return expression.Compile();
+        }
+
+        internal static Func<T, TArg1, TArg2, ImmutableArrayWrapper<TResult>> CreateImmutableArrayMethodAccessor<T, TArg1, TArg2, TResult>(Type type, Type argumentType1, Type argumentType2, string methodName)
+        {
+            ImmutableArrayWrapper<TResult> FallbackAccessor(T instance, TArg1 arg1, TArg2 arg2)
+            {
+                if (instance == null)
+                {
+                    // Unlike an extension method which would throw ArgumentNullException here, the light-up
+                    // behavior needs to match behavior of the underlying property.
+                    throw new NullReferenceException();
+                }
+
+                return ImmutableArrayWrapper<TResult>.UnsupportedDefault;
+            }
+
+            if (type == null)
+            {
+                return FallbackAccessor;
+            }
+
+            if (!typeof(T).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (!typeof(TArg1).GetTypeInfo().IsAssignableFrom(argumentType1.GetTypeInfo()))
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (!typeof(TArg2).GetTypeInfo().IsAssignableFrom(argumentType2.GetTypeInfo()))
+            {
+                throw new InvalidOperationException();
+            }
+
+            var methods = type.GetTypeInfo().GetDeclaredMethods(methodName);
+            MethodInfo method = null;
+            foreach (var candidate in methods)
+            {
+                var parameters = candidate.GetParameters();
+                if (parameters.Length != 2)
+                {
+                    continue;
+                }
+
+                if (Equals(argumentType1, parameters[0].ParameterType)
+                    && Equals(argumentType2, parameters[1].ParameterType))
+                {
+                    method = candidate;
+                    break;
+                }
+            }
+
+            if (method == null)
+            {
+                return FallbackAccessor;
+            }
+
+            if (method.ReturnType.GetGenericTypeDefinition() != typeof(ImmutableArray<>))
+            {
+                throw new InvalidOperationException();
+            }
+
+            var methodResultType = method.ReturnType.GenericTypeArguments[0];
+            if (!ValidatePropertyType(typeof(TResult), methodResultType))
+            {
+                throw new InvalidOperationException();
+            }
+
+            var instanceParameter = Expression.Parameter(typeof(T), "instance");
+            var arg1Parameter = Expression.Parameter(typeof(TArg1), "arg1");
+            var arg2Parameter = Expression.Parameter(typeof(TArg2), "arg2");
+            Expression instance =
+                type.GetTypeInfo().IsAssignableFrom(typeof(T).GetTypeInfo())
+                ? (Expression)instanceParameter
+                : Expression.Convert(instanceParameter, type);
+            Expression argument1 =
+                argumentType1.GetTypeInfo().IsAssignableFrom(typeof(TArg1).GetTypeInfo())
+                ? (Expression)arg1Parameter
+                : Expression.Convert(arg1Parameter, argumentType1);
+            Expression argument2 =
+                argumentType2.GetTypeInfo().IsAssignableFrom(typeof(TArg2).GetTypeInfo())
+                ? (Expression)arg2Parameter
+                : Expression.Convert(arg2Parameter, argumentType2);
+
+            Expression methodAccess = Expression.Call(instance, method, argument1, argument2);
+
+            var unboundWrapperType = typeof(ImmutableArrayWrapper<>.AutoWrapImmutableArray<>);
+            var boundWrapperType = unboundWrapperType.MakeGenericType(typeof(TResult), methodResultType);
+            var constructorInfo = boundWrapperType.GetTypeInfo().DeclaredConstructors.Single(constructor => constructor.GetParameters().Length == 1);
+
+            Expression<Func<T, TArg1, TArg2, ImmutableArrayWrapper<TResult>>> expression =
+                Expression.Lambda<Func<T, TArg1, TArg2, ImmutableArrayWrapper<TResult>>>(
+                    Expression.New(constructorInfo, methodAccess),
+                    instanceParameter,
+                    arg1Parameter,
+                    arg2Parameter);
             return expression.Compile();
         }
 
@@ -671,7 +868,10 @@ namespace StyleCop.Analyzers.Lightup
 
         private static bool ValidatePropertyType(Type returnType, Type actualType)
         {
-            var requiredType = SyntaxWrapperHelper.GetWrappedType(returnType) ?? returnType;
+            var requiredType = SyntaxWrapperHelper.GetWrappedType(returnType)
+                ?? OperationWrapperHelper.GetWrappedType(returnType)
+                ?? WrapperHelper.GetWrappedType(returnType)
+                ?? returnType;
             return requiredType == actualType;
         }
     }

@@ -3,10 +3,6 @@
 
 #nullable disable
 
-// Several test methods in this file use the same member data, but in some cases the test does not use all of the
-// supported parameters. See https://github.com/xunit/xunit/issues/1556.
-#pragma warning disable xUnit1026 // Theory methods should use all of their parameters
-
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System;
@@ -16,6 +12,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1121UseBuiltInTypeAlias,
@@ -511,18 +508,21 @@ public class Foo
             await VerifyCSharpFixAsync(string.Format(testSource, fullName), expected, string.Format(testSource, predefined), CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestMissleadingUsingAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public virtual async Task TestMissleadingUsingAsync(string lineEnding)
         {
             string oldSource = @"namespace Foo
 {
   using Int32 = System.UInt32;
   class Bar
   {
-    Int32 value = 3;
+    {|#0:Int32|} value = 3;
   }
 }
-";
+".ReplaceLineEndings(lineEnding);
+
             string newSource = @"namespace Foo
 {
   using Int32 = System.UInt32;
@@ -531,18 +531,18 @@ public class Foo
     uint value = 3;
   }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             await new CSharpTest
             {
                 TestCode = oldSource,
-                ExpectedDiagnostics = { Diagnostic().WithLocation(6, 5) },
+                ExpectedDiagnostics = { Diagnostic().WithLocation(0) },
                 FixedCode = newSource,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestUsingNameChangeAsync()
+        public virtual async Task TestUsingNameChangeAsync()
         {
             string oldSource = @"namespace Foo
 {
@@ -572,7 +572,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestMissleadingUsingAllowAliasesAsync()
+        public virtual async Task TestMissleadingUsingAllowAliasesAsync()
         {
             string oldSource = @"namespace Foo
 {
@@ -603,7 +603,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestUsingNameChangeAllowAliasesAsync()
+        public virtual async Task TestUsingNameChangeAllowAliasesAsync()
         {
             string testSource = @"namespace Foo
 {

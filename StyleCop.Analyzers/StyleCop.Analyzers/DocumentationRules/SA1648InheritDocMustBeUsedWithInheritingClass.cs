@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// <c>&lt;inheritdoc&gt;</c> has been used on an element that doesn't inherit from a base class or implement an
@@ -34,7 +35,15 @@ namespace StyleCop.Analyzers.DocumentationRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<SyntaxKind> HandledTypeLikeDeclarationKinds =
-            ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EnumDeclaration, SyntaxKind.DelegateDeclaration);
+            ImmutableArray.Create(
+                SyntaxKind.ClassDeclaration,
+                SyntaxKind.StructDeclaration,
+                SyntaxKind.InterfaceDeclaration,
+                SyntaxKindEx.RecordDeclaration,
+                SyntaxKindEx.RecordStructDeclaration,
+                SyntaxKindEx.UnionDeclaration,
+                SyntaxKind.EnumDeclaration,
+                SyntaxKind.DelegateDeclaration);
 
         private static readonly ImmutableArray<SyntaxKind> MemberDeclarationKinds =
             ImmutableArray.Create(
@@ -64,6 +73,47 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             context.RegisterSyntaxNodeAction(BaseTypeLikeDeclarationAction, HandledTypeLikeDeclarationKinds);
             context.RegisterSyntaxNodeAction(MemberDeclarationAction, MemberDeclarationKinds);
+        }
+
+        /// <summary>
+        /// Method compares a <paramref name="constructorMethodSymbol">constructor method</paramref> signature against its
+        /// <paramref name="baseConstructorSymbols">base type constructors</paramref> to find if there is a method signature match.
+        /// </summary>
+        /// <param name="baseConstructorSymbols">The base type constructors.</param>
+        /// <param name="constructorMethodSymbol">The constructor to match.</param>
+        /// <returns><see langword="true"/> if any base type constructor's signature matches the signature of <paramref name="constructorMethodSymbol"/>, <see langword="false"/> otherwise.</returns>
+        internal static bool HasMatchingSignature(ImmutableArray<IMethodSymbol> baseConstructorSymbols, IMethodSymbol constructorMethodSymbol)
+        {
+            foreach (IMethodSymbol baseConstructorMethod in baseConstructorSymbols)
+            {
+                // Constructors must have the same number of parameters.
+                if (constructorMethodSymbol.Parameters.Length != baseConstructorMethod.Parameters.Length)
+                {
+                    continue;
+                }
+
+                // Our constructor and the base constructor must have the same signature. But variable names can be different.
+                bool success = true;
+
+                for (int i = 0; i < constructorMethodSymbol.Parameters.Length; i++)
+                {
+                    IParameterSymbol constructorParameter = constructorMethodSymbol.Parameters[i];
+                    IParameterSymbol baseParameter = baseConstructorMethod.Parameters[i];
+
+                    if (!constructorParameter.Type.Equals(baseParameter.Type))
+                    {
+                        success = false;
+                        break;
+                    }
+                }
+
+                if (success)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static void HandleBaseTypeLikeDeclaration(SyntaxNodeAnalysisContext context)
@@ -216,45 +266,6 @@ namespace StyleCop.Analyzers.DocumentationRules
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
             }
-        }
-
-        /// <summary>
-        /// Method compares a <paramref name="constructorMethodSymbol">constructor method</paramref> signature against its
-        /// <paramref name="baseConstructorSymbols">base type constructors</paramref> to find if there is a method signature match.
-        /// </summary>
-        /// <returns><see langword="true"/> if any base type constructor's signature matches the signature of <paramref name="constructorMethodSymbol"/>, <see langword="false"/> otherwise.</returns>
-        private static bool HasMatchingSignature(ImmutableArray<IMethodSymbol> baseConstructorSymbols, IMethodSymbol constructorMethodSymbol)
-        {
-            foreach (IMethodSymbol baseConstructorMethod in baseConstructorSymbols)
-            {
-                // Constructors must have the same number of parameters.
-                if (constructorMethodSymbol.Parameters.Length != baseConstructorMethod.Parameters.Length)
-                {
-                    continue;
-                }
-
-                // Our constructor and the base constructor must have the same signature. But variable names can be different.
-                bool success = true;
-
-                for (int i = 0; i < constructorMethodSymbol.Parameters.Length; i++)
-                {
-                    IParameterSymbol constructorParameter = constructorMethodSymbol.Parameters[i];
-                    IParameterSymbol baseParameter = baseConstructorMethod.Parameters[i];
-
-                    if (!constructorParameter.Type.Equals(baseParameter.Type))
-                    {
-                        success = false;
-                        break;
-                    }
-                }
-
-                if (success)
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         private static bool HasXmlCrefAttribute(XmlNodeSyntax inheritDocElement)

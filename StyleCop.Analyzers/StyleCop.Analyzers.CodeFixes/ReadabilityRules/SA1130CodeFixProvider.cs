@@ -5,6 +5,7 @@
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
@@ -18,6 +19,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Formatting;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1130UseLambdaSyntax"/>.
@@ -72,7 +74,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static SyntaxNode ReplaceWithLambda(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod)
         {
             var parameterList = anonymousMethod.ParameterList;
-            ExpressionSyntax lambdaExpression;
+            AnonymousFunctionExpressionSyntax lambdaExpression;
             SyntaxToken arrowToken;
 
             if (parameterList == null)
@@ -82,8 +84,16 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 switch (anonymousMethod.Parent.Kind())
                 {
                 case SyntaxKind.Argument:
-                    argumentList = GetMethodInvocationArgumentList(semanticModel, anonymousMethod);
-                    break;
+                    {
+                        var list = GetMethodInvocationArgumentList(semanticModel, anonymousMethod);
+                        if (list == null)
+                        {
+                            return null;
+                        }
+
+                        argumentList = list.Value;
+                        break;
+                    }
 
                 case SyntaxKind.EqualsValueClause:
                     argumentList = GetEqualsArgumentList(semanticModel, anonymousMethod);
@@ -153,7 +163,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
             }
 
-            if (parameterList.Parameters.Count == 1)
+            // A lambda parameter with a ref, out or in modifier needs an explicit type.
+            bool keepParameterTypes = anonymousMethod.ParameterList != null
+                && (parameterList.Parameters.Any(parameter => parameter.Modifiers.Count > 0)
+                    || !HasTargetDelegateType(semanticModel, anonymousMethod)
+                    || !BindsToSameSymbolWithoutParameterTypes(semanticModel, anonymousMethod));
+
+            if (parameterList.Parameters.Count == 1 && !keepParameterTypes)
             {
                 var parameterSyntax = RemoveType(parameterList.Parameters[0]);
 
@@ -173,23 +189,129 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
             else
             {
-                var parameterListSyntax = RemoveType(parameterList)
+                var parameterListSyntax = (keepParameterTypes ? parameterList : RemoveType(parameterList))
                     .WithTrailingTrivia(parameterList.GetTrailingTrivia().WithoutTrailingWhitespace().Add(SyntaxFactory.ElasticSpace));
                 lambdaExpression = SyntaxFactory.ParenthesizedLambdaExpression(anonymousMethod.AsyncKeyword, parameterListSyntax, arrowToken, anonymousMethod.Body);
             }
 
+            var modifiers = anonymousMethod.Modifiers();
+            if (modifiers.Count > 0)
+            {
+                lambdaExpression = lambdaExpression.WithModifiers(modifiers);
+            }
+
+            ExpressionSyntax resultExpression = lambdaExpression;
             if (anonymousMethod.Parent.IsKind(SyntaxKind.CastExpression))
             {
                 // In this case, the lambda needs enclosing parenthesis to be syntactically correct
-                lambdaExpression = SyntaxFactory.ParenthesizedExpression(lambdaExpression);
+                resultExpression = SyntaxFactory.ParenthesizedExpression(resultExpression);
             }
 
             // TODO: No tests require this annotation. Can it be removed?
-            return lambdaExpression
+            return resultExpression
                 .WithAdditionalAnnotations(Formatter.Annotation);
         }
 
-        private static ImmutableArray<string> GetMethodInvocationArgumentList(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod)
+        /// <summary>
+        /// Determines whether the anonymous method is converted to a delegate type, which the parameter types of the
+        /// lambda can be inferred from. Otherwise, e.g. when assigned to <see langword="var"/>, <see cref="object"/> or
+        /// <see cref="System.Delegate"/>, the anonymous method has a natural type (C# 10), and the lambda needs explicit
+        /// parameter types to keep it.
+        /// </summary>
+        /// <param name="semanticModel">The semantic model.</param>
+        /// <param name="anonymousMethod">The anonymous method.</param>
+        /// <returns><see langword="true"/> if the anonymous method is converted to a delegate type; otherwise,
+        /// <see langword="false"/>.</returns>
+        private static bool HasTargetDelegateType(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod)
+        {
+            if (anonymousMethod.Parent.IsKind(SyntaxKind.EqualsValueClause)
+                && anonymousMethod.Parent.Parent?.Parent is VariableDeclarationSyntax variableDeclaration
+                && variableDeclaration.Type is IdentifierNameSyntax { IsVar: true })
+            {
+                return false;
+            }
+
+            if (anonymousMethod.Parent is ArgumentSyntax argumentSyntax
+                && argumentSyntax.Parent is BaseArgumentListSyntax argumentListSyntax
+                && IsParameterTypeInferred(semanticModel, argumentSyntax, argumentListSyntax))
+            {
+                return false;
+            }
+
+            var convertedType = semanticModel.GetTypeInfo(anonymousMethod).ConvertedType;
+            return convertedType?.TypeKind == TypeKind.Delegate;
+        }
+
+        /// <summary>
+        /// Determines whether the call that the anonymous method is passed to still binds to the same method when the
+        /// anonymous method is replaced by a lambda without parameter types. Without the types, the call can become
+        /// ambiguous between overloads that take delegates with different parameter types.
+        /// </summary>
+        /// <param name="semanticModel">The semantic model.</param>
+        /// <param name="anonymousMethod">The anonymous method, which must have a parameter list.</param>
+        /// <returns><see langword="true"/> if the call binds to the same method, or if the anonymous method is not passed
+        /// as an argument; otherwise, <see langword="false"/>.</returns>
+        private static bool BindsToSameSymbolWithoutParameterTypes(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod)
+        {
+            if (!(anonymousMethod.Parent is ArgumentSyntax argumentSyntax)
+                || !(argumentSyntax.Parent is BaseArgumentListSyntax argumentListSyntax))
+            {
+                return true;
+            }
+
+            var originalInvocableExpression = argumentListSyntax.Parent;
+            var originalSymbol = semanticModel.GetSymbolInfo(originalInvocableExpression).Symbol;
+            if (originalSymbol == null)
+            {
+                return true;
+            }
+
+            var lambdaExpression = SyntaxFactory.ParenthesizedLambdaExpression(
+                anonymousMethod.AsyncKeyword,
+                RemoveType(anonymousMethod.ParameterList),
+                SyntaxFactory.Token(SyntaxKind.EqualsGreaterThanToken),
+                anonymousMethod.Body);
+            var invocationExpression = originalInvocableExpression.ReplaceNode(anonymousMethod, lambdaExpression);
+            var newSymbol = semanticModel.GetSpeculativeSymbolInfo(originalInvocableExpression.SpanStart, invocationExpression, SpeculativeBindingOption.BindAsExpression).Symbol;
+            return originalSymbol.Equals(newSymbol);
+        }
+
+        /// <summary>
+        /// Determines whether the type of the parameter that the argument is passed for depends on type inference, e.g.
+        /// <c>T</c> or <c>Func&lt;T, T&gt;</c> for a generic method. The type argument can then be inferred from the
+        /// explicit parameter types of the anonymous method, but not from a lambda without parameter types.
+        /// </summary>
+        /// <param name="semanticModel">The semantic model.</param>
+        /// <param name="argumentSyntax">The argument containing the anonymous method.</param>
+        /// <param name="argumentListSyntax">The argument list containing the argument.</param>
+        /// <returns><see langword="true"/> if the parameter type depends on type inference; otherwise,
+        /// <see langword="false"/>.</returns>
+        private static bool IsParameterTypeInferred(SemanticModel semanticModel, ArgumentSyntax argumentSyntax, BaseArgumentListSyntax argumentListSyntax)
+        {
+            var symbolInfo = semanticModel.GetSymbolInfo(argumentListSyntax.Parent);
+            if (!(symbolInfo.Symbol is IMethodSymbol methodSymbol) || methodSymbol.TypeArguments.IsEmpty)
+            {
+                return false;
+            }
+
+            var parameters = methodSymbol.Parameters;
+            var originalParameters = methodSymbol.OriginalDefinition.Parameters;
+            if (parameters.IsEmpty || parameters.Length != originalParameters.Length)
+            {
+                return false;
+            }
+
+            var argumentIndex = SA1130UseLambdaSyntax.FindParameterIndex(symbolInfo, argumentSyntax, argumentListSyntax);
+            var index = Math.Min(argumentIndex, parameters.Length - 1);
+            if (index < 0)
+            {
+                return false;
+            }
+
+            return !parameters[index].Type.Equals(originalParameters[index].Type);
+        }
+
+        private static ImmutableArray<string>? GetMethodInvocationArgumentList(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod)
         {
             var argumentSyntax = (ArgumentSyntax)anonymousMethod.Parent;
             var argumentListSyntax = (BaseArgumentListSyntax)argumentSyntax.Parent;
@@ -198,7 +320,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var originalSymbolInfo = semanticModel.GetSymbolInfo(originalInvocableExpression);
             var argumentIndex = SA1130UseLambdaSyntax.FindParameterIndex(originalSymbolInfo, argumentSyntax, argumentListSyntax);
             var parameterList = SA1130UseLambdaSyntax.GetDelegateParameterList(originalSymbolInfo.Symbol, argumentIndex);
-            return parameterList.Parameters.Select(p => p.Identifier.ToString()).ToImmutableArray();
+            return parameterList?.Parameters.Select(p => p.Identifier.ToString()).ToImmutableArray();
         }
 
         private static ImmutableArray<string> GetEqualsArgumentList(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod)
@@ -293,7 +415,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             // If one of the following conditions is false the code won't compile, but we want to check for it anyway and not make it worse by applying this code fix.
             return parameterSyntax.AttributeLists.Count == 0
                 && parameterSyntax.Default == null
-                && parameterSyntax.Modifiers.Count == 0
+                && parameterSyntax.Modifiers.All(modifier => modifier.IsKind(SyntaxKind.RefKeyword) || modifier.IsKind(SyntaxKind.OutKeyword) || modifier.IsKind(SyntaxKind.InKeyword))
                 && !parameterSyntax.Identifier.IsKind(SyntaxKind.ArgListKeyword);
         }
 

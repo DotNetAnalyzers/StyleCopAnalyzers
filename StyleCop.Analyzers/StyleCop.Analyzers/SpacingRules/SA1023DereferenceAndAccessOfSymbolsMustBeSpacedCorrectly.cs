@@ -58,7 +58,7 @@ namespace StyleCop.Analyzers.SpacingRules
         private static readonly LocalizableString MessageNotAtBeginningOfLine = new LocalizableResourceString(nameof(SpacingResources.SA1023MessageNotAtBeginningOfLine), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString MessageNotAtEndOfLine = new LocalizableResourceString(nameof(SpacingResources.SA1023MessageNotAtEndOfLine), SpacingResources.ResourceManager, typeof(SpacingResources));
 
-        private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
+        private static readonly Action<SyntaxTreeAnalysisContext, SyntaxTreeTokens> SyntaxTreeAction = HandleSyntaxTree;
 
 #pragma warning disable SA1202 // Elements should be ordered by access
         internal static readonly DiagnosticDescriptor DescriptorNotPreceded =
@@ -87,13 +87,12 @@ namespace StyleCop.Analyzers.SpacingRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
+            context.RegisterSyntaxTreeTokensAction(SyntaxTreeAction);
         }
 
-        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context, SyntaxTreeTokens tokens)
         {
-            SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
-            foreach (var token in root.DescendantTokens())
+            foreach (var token in tokens.GetTokens(context.CancellationToken))
             {
                 if (token.IsKind(SyntaxKind.AsteriskToken))
                 {
@@ -152,6 +151,8 @@ namespace StyleCop.Analyzers.SpacingRules
                 case SyntaxKind.OpenParenToken:
                 case SyntaxKind.CloseParenToken:
                 case SyntaxKind.AsteriskToken:
+                case SyntaxKind.SemicolonToken:
+                    // A semicolon can follow a pointer type in a using alias, e.g. 'using unsafe Pointer = int*;'
                     allowTrailingSpace = false;
                     break;
 
@@ -194,9 +195,11 @@ namespace StyleCop.Analyzers.SpacingRules
             {
                 // Dereference symbol '*' should {not appear at the beginning of a line}.
                 var properties = TokenSpacingProperties.RemovePreceding;
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
                 context.ReportDiagnostic(Diagnostic.Create(DescriptorNotAtBeginningOfLine, token.GetLocation(), properties));
 #pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
+#pragma warning restore IDE0079 // Remove unnecessary suppression
             }
             else if (allowAtLineStart && firstInLine)
             {
@@ -213,26 +216,32 @@ namespace StyleCop.Analyzers.SpacingRules
             {
                 // Dereference symbol '*' should {not appear at the end of a line}.
                 var properties = TokenSpacingProperties.RemoveFollowing;
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
                 context.ReportDiagnostic(Diagnostic.Create(DescriptorNotAtEndOfLine, token.GetLocation(), properties));
 #pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
+#pragma warning restore IDE0079 // Remove unnecessary suppression
             }
             else if (!allowTrailingSpace && followedBySpace)
             {
                 // Dereference symbol '*' should {not be followed by a space}.
                 var properties = TokenSpacingProperties.RemoveFollowing;
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
                 context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowed, token.GetLocation(), properties));
 #pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
+#pragma warning restore IDE0079 // Remove unnecessary suppression
             }
 
             if (!followedBySpace && allowTrailingSpace)
             {
                 // Dereference symbol '*' should {be followed by a space}.
                 var properties = TokenSpacingProperties.InsertFollowing;
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
                 context.ReportDiagnostic(Diagnostic.Create(DescriptorFollowed, token.GetLocation(), properties));
 #pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
+#pragma warning restore IDE0079 // Remove unnecessary suppression
             }
         }
     }

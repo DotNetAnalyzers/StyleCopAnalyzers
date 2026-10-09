@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1124DoNotUseRegions,
@@ -56,20 +57,22 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestRegionPartialyInMethod2Async()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestRegionPartialyInMethod2Async(string lineEnding)
         {
             var testCode = @"public class Foo
 {
     public void Bar()
-#region Foo
+{|#0:#region Foo|}
     {
         string test = """";
     }
 #endregion
-}";
+}".ReplaceLineEndings(lineEnding);
 
-            DiagnosticResult expected = Diagnostic().WithLocation(4, 1);
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
 
             string fixedCode = @"public class Foo
 {
@@ -77,7 +80,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     {
         string test = """";
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }

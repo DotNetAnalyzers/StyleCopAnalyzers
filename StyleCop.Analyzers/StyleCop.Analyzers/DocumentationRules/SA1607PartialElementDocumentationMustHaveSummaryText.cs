@@ -24,7 +24,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// <para>A violation of this rule occurs when the documentation header for a partial element (an element with the
     /// partial attribute) contains an empty <c>&lt;summary&gt;</c> tag or <c>&lt;content&gt;</c> tag which does not
     /// contain a description of the element. In C# the following types of elements can be attributed with the partial
-    /// attribute: classes, methods.</para>
+    /// attribute: classes, methods, properties, indexers.</para>
     ///
     /// <para>When documentation is provided on more than one part of the partial class, the documentation for the two
     /// classes may be merged together to form a single source of documentation. For example, consider the following two

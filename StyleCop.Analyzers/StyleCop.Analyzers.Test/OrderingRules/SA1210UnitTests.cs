@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.OrderingRules.SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace,
@@ -48,24 +49,26 @@ namespace Bar
             await VerifyCSharpDiagnosticAsync(namespaceDeclaration, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestInvalidOrderedUsingDirectivesInCompilationUnitAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestInvalidOrderedUsingDirectivesInCompilationUnitAsync(string lineEnding)
         {
-            var testCode = @"using System.Threading;
-using System.IO;
+            var testCode = @"{|#0:using System.Threading;|}
+{|#1:using System.IO;|}
 using System;
-using System.Linq;";
+using System.Linq;".ReplaceLineEndings(lineEnding);
 
             var fixedTestCode = @"using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(1, 1),
-                Diagnostic().WithLocation(2, 1),
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);

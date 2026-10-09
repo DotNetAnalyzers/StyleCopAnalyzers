@@ -126,6 +126,26 @@ namespace StyleCop.Analyzers.DocumentationRules
             });
         }
 
+        /// <summary>
+        /// Gets the name of the resource that describes the kind of a type in the standard text of its constructors.
+        /// </summary>
+        /// <param name="typeDeclaration">The type declaration that contains the constructor.</param>
+        /// <returns>The name of the <see cref="DocumentationResources"/> string for the type kind.</returns>
+        internal static string GetTypeKindTextResourceName(SyntaxNode typeDeclaration)
+        {
+            if (typeDeclaration.IsKind(SyntaxKindEx.UnionDeclaration))
+            {
+                return nameof(DocumentationResources.TypeTextUnion);
+            }
+
+            if (typeDeclaration.IsKind(SyntaxKind.StructDeclaration) || typeDeclaration.IsKind(SyntaxKindEx.RecordStructDeclaration))
+            {
+                return nameof(DocumentationResources.TypeTextStruct);
+            }
+
+            return nameof(DocumentationResources.TypeTextClass);
+        }
+
         private static void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             var constructorDeclarationSyntax = (ConstructorDeclarationSyntax)context.Node;
@@ -133,10 +153,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             var culture = settings.DocumentationRules.DocumentationCultureInfo;
             var resourceManager = DocumentationResources.ResourceManager;
 
-            var parent = constructorDeclarationSyntax.Parent;
-            bool isStruct = parent != null &&
-                (parent.IsKind(SyntaxKind.StructDeclaration) || parent.IsKind(SyntaxKindEx.RecordStructDeclaration));
-            var typeKindText = resourceManager.GetString(isStruct ? nameof(DocumentationResources.TypeTextStruct) : nameof(DocumentationResources.TypeTextClass), culture);
+            var typeKindText = resourceManager.GetString(GetTypeKindTextResourceName(constructorDeclarationSyntax.Parent), culture);
 
             if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword))
             {

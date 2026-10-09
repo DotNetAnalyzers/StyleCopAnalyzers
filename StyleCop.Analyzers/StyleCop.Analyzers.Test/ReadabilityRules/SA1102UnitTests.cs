@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA110xQueryClauses,
@@ -16,8 +17,10 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
     public class SA1102UnitTests
     {
-        [Fact]
-        public async Task TestSelectOnSeparateLineWithAdditionalEmptyLineAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestSelectOnSeparateLineWithAdditionalEmptyLineAsync(string lineEnding)
         {
             var testCode = @"
 using System.Linq;
@@ -31,9 +34,9 @@ public class Foo4
             from m in source
             where m > 0
 
-            select m;
+            {|#0:select|} m;
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
             var fixedTestCode = @"
 using System.Linq;
@@ -48,9 +51,9 @@ public class Foo4
             where m > 0
             select m;
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
-            DiagnosticResult expected = Diagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(13, 13);
+            DiagnosticResult expected = Diagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(0);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }

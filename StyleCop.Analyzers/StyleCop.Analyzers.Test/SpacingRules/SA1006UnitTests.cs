@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1006PreprocessorKeywordsMustNotBePrecededBySpace,
@@ -20,8 +19,10 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     /// </summary>
     public class SA1006UnitTests
     {
-        [Fact]
-        public async Task TestRegionDirectivesAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestRegionDirectivesAsync(string lineEnding)
         {
             string testCode = @"
 class ClassName
@@ -32,7 +33,7 @@ class ClassName
     }
     #  endregion
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             string fixedCode = @"
 class ClassName
@@ -43,7 +44,7 @@ class ClassName
     }
     #endregion
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             DiagnosticResult[] expected =
             {

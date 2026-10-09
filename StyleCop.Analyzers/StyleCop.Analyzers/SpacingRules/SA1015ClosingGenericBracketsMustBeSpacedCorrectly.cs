@@ -38,7 +38,7 @@ namespace StyleCop.Analyzers.SpacingRules
         private static readonly LocalizableString MessageNotFollowed = new LocalizableResourceString(nameof(SpacingResources.SA1015MessageNotFollowed), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString MessageFollowed = new LocalizableResourceString(nameof(SpacingResources.SA1015MessageFollowed), SpacingResources.ResourceManager, typeof(SpacingResources));
 
-        private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
+        private static readonly Action<SyntaxTreeAnalysisContext, SyntaxTreeTokens> SyntaxTreeAction = HandleSyntaxTree;
 
 #pragma warning disable SA1202 // Elements should be ordered by access
         internal static readonly DiagnosticDescriptor DescriptorNotPreceded =
@@ -61,13 +61,12 @@ namespace StyleCop.Analyzers.SpacingRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
+            context.RegisterSyntaxTreeTokensAction(SyntaxTreeAction);
         }
 
-        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context, SyntaxTreeTokens tokens)
         {
-            SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
-            foreach (var token in root.DescendantTokens())
+            foreach (var token in tokens.GetTokens(context.CancellationToken))
             {
                 if (token.IsKind(SyntaxKind.GreaterThanToken))
                 {
@@ -87,6 +86,7 @@ namespace StyleCop.Analyzers.SpacingRules
             {
             case SyntaxKind.TypeArgumentList:
             case SyntaxKind.TypeParameterList:
+            case SyntaxKindEx.FunctionPointerParameterList:
                 break;
 
             default:
@@ -176,17 +176,21 @@ namespace StyleCop.Analyzers.SpacingRules
                 {
                     // Closing generic bracket should{} be {followed} by a space.
                     var properties = TokenSpacingProperties.InsertFollowing;
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
                     context.ReportDiagnostic(Diagnostic.Create(DescriptorFollowed, token.GetLocation(), properties));
 #pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
+#pragma warning restore IDE0079 // Remove unnecessary suppression
                 }
                 else if (!allowTrailingSpace && followedBySpace)
                 {
                     // Closing generic bracket should{ not} be {followed} by a space.
                     var properties = TokenSpacingProperties.RemoveFollowing;
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
                     context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowed, token.GetLocation(), properties));
 #pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
+#pragma warning restore IDE0079 // Remove unnecessary suppression
                 }
             }
         }

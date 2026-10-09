@@ -11,6 +11,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Lightup;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1130UseLambdaSyntax,
@@ -18,11 +20,15 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
     public class SA1130UnitTests
     {
+#pragma warning disable IDE0079 // Remove unnecessary suppression
         [SuppressMessage("MicrosoftCodeAnalysisDesign", "RS1032:Define diagnostic message correctly", Justification = "The message here matches the compiler.")]
+#pragma warning restore IDE0079 // Remove unnecessary suppression
         private static readonly DiagnosticDescriptor CS1065 =
                    new DiagnosticDescriptor(nameof(CS1065), "Title", "Default values are not valid in this context.", "Category", DiagnosticSeverity.Error, AnalyzerConstants.EnabledByDefault);
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
         [SuppressMessage("MicrosoftCodeAnalysisDesign", "RS1032:Define diagnostic message correctly", Justification = "The message here matches the compiler.")]
+#pragma warning restore IDE0079 // Remove unnecessary suppression
         private static readonly DiagnosticDescriptor CS7014 =
                    new DiagnosticDescriptor(nameof(CS7014), "Title", "Attributes are not valid in this context.", "Category", DiagnosticSeverity.Error, AnalyzerConstants.EnabledByDefault);
 
@@ -32,8 +38,36 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         private static readonly DiagnosticDescriptor CS1669 =
                           new DiagnosticDescriptor(nameof(CS1669), "Title", "__arglist is not valid in this context", "Category", DiagnosticSeverity.Error, AnalyzerConstants.EnabledByDefault);
 
-        [Fact]
-        public async Task TestSimpleDelegateUseAsync()
+        public static TheoryData<string> ParamsTypes
+        {
+            get
+            {
+                var data = new TheoryData<string>()
+                {
+                    "Action[]",
+                };
+
+                if (LightupHelpers.SupportsCSharp13)
+                {
+                    // params collections: params is no longer limited to array types as of C# 13.
+                    data.Add("IEnumerable<Action>");
+                    data.Add("IReadOnlyCollection<Action>");
+                    data.Add("IReadOnlyList<Action>");
+                    data.Add("ICollection<Action>");
+                    data.Add("IList<Action>");
+                    data.Add("List<Action>");
+                    data.Add("ReadOnlySpan<Action>");
+                    data.Add("Span<Action>");
+                }
+
+                return data;
+            }
+        }
+
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestSimpleDelegateUseAsync(string lineEnding)
         {
             var testCode = @"
 using System;
@@ -41,11 +75,11 @@ public class TypeName
 {
     public void Test()
     {
-        Action action1 = delegate { };
-        Action action2 = delegate() { };
-        Action<int> action3 = delegate(int i) { };
+        Action action1 = {|#0:delegate|} { };
+        Action action2 = {|#1:delegate|}() { };
+        Action<int> action3 = {|#2:delegate|}(int i) { };
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
             string fixedCode = @"
 using System;
@@ -57,13 +91,13 @@ public class TypeName
         Action action2 = () => { };
         Action<int> action3 = i => { };
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
             var expected = new[]
             {
-                Diagnostic().WithLocation(7, 26),
-                Diagnostic().WithLocation(8, 26),
-                Diagnostic().WithLocation(9, 31),
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+                Diagnostic().WithLocation(2),
             };
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
@@ -394,43 +428,49 @@ public class TypeName
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestParamsAsync()
+        [Theory]
+        [MemberData(nameof(ParamsTypes))]
+        [WorkItem(4013, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4013")]
+        public async Task TestParamsAsync(string paramsType)
         {
-            var testCode = @"
+            var testCode = $@"
 using System;
-public class TypeName
-{
-    public void Test(params Action[] argument)
-    {
+using System.Collections.Generic;
 
-    }
+public class TypeName
+{{
+    public void Test(params {paramsType} argument)
+    {{
+
+    }}
 
     public void Test()
-    {
-        Test(delegate { }, delegate { });
-    }
-}";
+    {{
+        Test(delegate {{ }}, delegate {{ }});
+    }}
+}}";
 
-            string fixedCode = @"
+            string fixedCode = $@"
 using System;
-public class TypeName
-{
-    public void Test(params Action[] argument)
-    {
+using System.Collections.Generic;
 
-    }
+public class TypeName
+{{
+    public void Test(params {paramsType} argument)
+    {{
+
+    }}
 
     public void Test()
-    {
-        Test(() => { }, () => { });
-    }
-}";
+    {{
+        Test(() => {{ }}, () => {{ }});
+    }}
+}}";
 
             var expected = new[]
             {
-                Diagnostic().WithLocation(12, 14),
-                Diagnostic().WithLocation(12, 28),
+                Diagnostic().WithLocation(14, 14),
+                Diagnostic().WithLocation(14, 28),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
@@ -991,6 +1031,244 @@ public class TypeName
         var z = {fixedExpression};
     }}
 }}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the parameter types are kept when an anonymous method is passed for a generic delegate
+        /// parameter, because the type argument is inferred from the explicit parameter types.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestAnonymousMethodInferringTypeArgumentAsync()
+        {
+            var testCode = @"using System;
+public class TestClass
+{
+    public void TestMethod()
+    {
+        Generic([|delegate|](int arg) { return arg; });
+    }
+
+    private static void Generic<T>(Func<T, T> f)
+    {
+    }
+}";
+
+            var fixedCode = @"using System;
+public class TestClass
+{
+    public void TestMethod()
+    {
+        Generic((int arg) => { return arg; });
+    }
+
+    private static void Generic<T>(Func<T, T> f)
+    {
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an anonymous method passed as an argument is reported even when its parameter names differ from
+        /// the parameter names of the delegate type, and that the lambda keeps the anonymous method's parameter names.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestAnonymousMethodWithDifferentParameterNamesAsync()
+        {
+            var testCode = @"using System;
+public class TestClass
+{
+    public void TestMethod()
+    {
+        Single([|delegate|](int value) { return value; });
+        Multiple([|delegate|](int first, string second) { });
+        new TestClass([|delegate|](int value) { return value; });
+        var x = this[[|delegate|](int value) { return value; }];
+    }
+
+    public TestClass()
+    {
+    }
+
+    public TestClass(Func<int, int> f)
+    {
+    }
+
+    public int this[Func<int, int> f] => 0;
+
+    private static void Single(Func<int, int> f)
+    {
+    }
+
+    private static void Multiple(Action<int, string> a)
+    {
+    }
+}";
+
+            var fixedCode = @"using System;
+public class TestClass
+{
+    public void TestMethod()
+    {
+        Single(value => { return value; });
+        Multiple((first, second) => { });
+        new TestClass(value => { return value; });
+        var x = this[value => { return value; }];
+    }
+
+    public TestClass()
+    {
+    }
+
+    public TestClass(Func<int, int> f)
+    {
+    }
+
+    public int this[Func<int, int> f] => 0;
+
+    private static void Single(Func<int, int> f)
+    {
+    }
+
+    private static void Multiple(Action<int, string> a)
+    {
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an anonymous method passed to a generic LINQ method is reported even when its parameter name
+        /// differs from the delegate's, and that the lambda keeps the parameter type the type arguments are inferred
+        /// from.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestAnonymousMethodWithDifferentParameterNamesPassedToLinqAsync()
+        {
+            var testCode = @"using System.Collections.Generic;
+using System.Linq;
+public class TestClass
+{
+    public IEnumerable<int> TestMethod(List<int> list)
+    {
+        return list.Select([|delegate|](int x) { return x; });
+    }
+}";
+
+            var fixedCode = @"using System.Collections.Generic;
+using System.Linq;
+public class TestClass
+{
+    public IEnumerable<int> TestMethod(List<int> list)
+    {
+        return list.Select((int x) => { return x; });
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the lambda keeps the parameter types when removing them would make the call ambiguous between
+        /// overloads that take delegates with different parameter types.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestAnonymousMethodWithOverloadsDifferingInParameterTypesAsync()
+        {
+            var testCode = @"using System;
+public class TestClass
+{
+    public void TestMethod()
+    {
+        Overloaded([|delegate|](int value) { return 0; });
+    }
+
+    private static void Overloaded(Func<int, int> f)
+    {
+    }
+
+    private static void Overloaded(Func<string, int> f)
+    {
+    }
+}";
+
+            var fixedCode = @"using System;
+public class TestClass
+{
+    public void TestMethod()
+    {
+        Overloaded((int value) => { return 0; });
+    }
+
+    private static void Overloaded(Func<int, int> f)
+    {
+    }
+
+    private static void Overloaded(Func<string, int> f)
+    {
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an anonymous method with <see langword="ref"/> or <see langword="out"/> parameters is replaced
+        /// by a lambda that keeps the parameter types, because a lambda parameter with a modifier needs an explicit type.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestAnonymousMethodWithRefAndOutParametersAsync()
+        {
+            var testCode = @"public delegate void RefAction(ref int value);
+public delegate void OutAction(out int value);
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        RefAction r = [|delegate|](ref int value) { value++; };
+        Ref([|delegate|](ref int x) { x++; });
+        Out([|delegate|](out int x) { x = 0; });
+    }
+
+    private static void Ref(RefAction a)
+    {
+    }
+
+    private static void Out(OutAction a)
+    {
+    }
+}";
+
+            var fixedCode = @"public delegate void RefAction(ref int value);
+public delegate void OutAction(out int value);
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        RefAction r = (ref int value) => { value++; };
+        Ref((ref int x) => { x++; });
+        Out((out int x) => { x = 0; });
+    }
+
+    private static void Ref(RefAction a)
+    {
+    }
+
+    private static void Out(OutAction a)
+    {
+    }
+}";
 
             await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }

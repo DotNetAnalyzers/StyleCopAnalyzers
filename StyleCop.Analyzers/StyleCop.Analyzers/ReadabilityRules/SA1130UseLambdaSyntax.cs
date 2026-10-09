@@ -52,7 +52,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// </summary>
         /// <param name="symbol">The symbol containing information about the method invocation.</param>
         /// <param name="argumentIndex">The index of the argument containing the delegate.</param>
-        /// <returns>A parameter list for the delegate parameters.</returns>
+        /// <returns>A parameter list for the delegate parameters, or <see langword="null"/> if the parameter is not
+        /// of a delegate type.</returns>
         internal static ParameterListSyntax GetDelegateParameterList(ISymbol symbol, int argumentIndex)
         {
             ImmutableArray<IParameterSymbol> parameterList;
@@ -81,15 +82,25 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 {
                     type = arrayTypeSymbol.ElementType;
                 }
+                else if (type is INamedTypeSymbol namedTypeSymbol && namedTypeSymbol.TypeArguments.Length == 1)
+                {
+                    // params collections (C# 13 and later): Span<T>, ReadOnlySpan<T>, etc.
+                    type = namedTypeSymbol.TypeArguments[0];
+                }
                 else
                 {
-                    // Just to make sure that we do not crash if in future versions of the compiler other types are allowed for params.
-                    // This if statement should be extended if e.g. Span params are introduced into the language.
+                    // Just to make sure that we do not crash if future versions of the compiler allow other types.
                     return null;
                 }
             }
 
-            delegateType = (INamedTypeSymbol)type;
+            delegateType = type as INamedTypeSymbol;
+            if (delegateType?.DelegateInvokeMethod == null)
+            {
+                // The parameter is not a delegate type, e.g. Delegate, object or a type parameter. This is possible
+                // from C# 10, where an anonymous method with a parameter list has a natural type.
+                return null;
+            }
 
             var delegateParameters = delegateType.DelegateInvokeMethod.Parameters;
 
@@ -161,15 +172,22 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return false;
                 }
 
-                var argumentIndex = FindParameterIndex(originalSymbolInfo, argumentSyntax, argumentListSyntax);
-
-                // Determine the parameter list from the method that is invoked, as delegates without parameters are allowed, but they cannot be replaced by a lambda without parameters.
-                var parameterList = GetDelegateParameterList(originalSymbolInfo.Symbol, argumentIndex);
+                // An anonymous method with a parameter list becomes a lambda with the same parameters, so the body
+                // keeps binding to them. Only an anonymous method without a parameter list needs the parameter list of
+                // the delegate, because it can't be replaced by a lambda without parameters.
+                var parameterList = anonymousMethod.ParameterList;
 
                 if (parameterList == null)
                 {
-                    // This might happen if the call was using params with a type unknown to the analyzer, e.g. params Span<T>.
-                    return false;
+                    var argumentIndex = FindParameterIndex(originalSymbolInfo, argumentSyntax, argumentListSyntax);
+
+                    // This returns null if the call was using params with a type unknown to the analyzer, or if the
+                    // parameter is not of a delegate type.
+                    parameterList = GetDelegateParameterList(originalSymbolInfo.Symbol, argumentIndex);
+                    if (parameterList == null)
+                    {
+                        return false;
+                    }
                 }
 
                 // In some cases passing a delegate as an argument to a method is required to call the right overload

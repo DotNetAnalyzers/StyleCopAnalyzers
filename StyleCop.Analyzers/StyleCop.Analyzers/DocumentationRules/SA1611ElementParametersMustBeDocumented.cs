@@ -68,6 +68,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
+            if (node.IsKind(SyntaxKindEx.UnionDeclaration))
+            {
+                // The parameter list of a union declares its case types, which have no names to document.
+                return;
+            }
+
             var parameterList = GetParameters(node);
             if (parameterList == null)
             {
@@ -95,6 +101,12 @@ namespace StyleCop.Analyzers.DocumentationRules
             if (node.IsKind(SyntaxKindEx.RecordDeclaration) || node.IsKind(SyntaxKindEx.RecordStructDeclaration))
             {
                 // Record parameters are covered by SA1600 instead.
+                return;
+            }
+
+            if (node.IsKind(SyntaxKindEx.UnionDeclaration))
+            {
+                // The parameter list of a union declares its case types, which have no names to document.
                 return;
             }
 

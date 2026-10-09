@@ -1,13 +1,12 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1113CommaMustBeOnSameLineAsPreviousParameter,
@@ -15,25 +14,27 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
     public class SA1113UnitTests
     {
-        [Fact]
-        public async Task TestMethodDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameterAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestMethodDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameterAsync(string lineEnding)
         {
             var testCode = @"public class Foo
 {
     public void Bar(string s
-                    , int i)
+                    {|#0:,|} int i)
     {
     }
-}";
+}".ReplaceLineEndings(lineEnding);
             var fixedCode = @"public class Foo
 {
     public void Bar(string s,
                     int i)
     {
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
-            DiagnosticResult expected = Diagnostic().WithLocation(4, 21);
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }

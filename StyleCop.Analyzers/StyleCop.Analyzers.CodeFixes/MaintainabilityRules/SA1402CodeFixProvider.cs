@@ -92,6 +92,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                     case SyntaxKind.DelegateDeclaration:
                     case SyntaxKindEx.RecordDeclaration:
                     case SyntaxKindEx.RecordStructDeclaration:
+                    case SyntaxKindEx.UnionDeclaration:
                         nodesToRemoveFromExtracted.Add(child);
                         break;
 

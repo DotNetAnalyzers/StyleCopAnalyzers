@@ -105,6 +105,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 // Prefer to find the first type which is a true TypeDeclarationSyntax
                 MemberDeclarationSyntax firstTypeDeclaration = root.DescendantNodes(descendIntoChildren: node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration) || node.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration))
                     .OfType<TypeDeclarationSyntax>()
+                    .Where(HasName)
                     .FirstOrDefault();
 
                 // If no TypeDeclarationSyntax is found, expand the search to any type declaration as long as only one
@@ -112,6 +113,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 var expandedTypeDeclarations = root.DescendantNodes(descendIntoChildren: node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration) || node.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration))
                     .OfType<MemberDeclarationSyntax>()
                     .Where(node => node is BaseTypeDeclarationSyntax || node.IsKind(SyntaxKind.DelegateDeclaration))
+                    .Where(HasName)
                     .ToList();
                 if (expandedTypeDeclarations.Count == 1)
                 {
@@ -119,6 +121,14 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
 
                 return firstTypeDeclaration;
+            }
+
+            private static bool HasName(MemberDeclarationSyntax node)
+            {
+                // A C# 14 extension block is a type declaration without an identifier, so there is no type name for
+                // the file name to match.
+                return !(node is BaseTypeDeclarationSyntax typeDeclaration)
+                    || !typeDeclaration.Identifier.IsKind(SyntaxKind.None);
             }
         }
     }

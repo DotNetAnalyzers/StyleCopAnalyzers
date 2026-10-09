@@ -67,14 +67,13 @@ namespace StyleCop.Analyzers.SpacingRules
         public const string DiagnosticId = "SA1024";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1024.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1024Title), SpacingResources.ResourceManager, typeof(SpacingResources));
-        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpacingResources.SA1024MessageNotPreceded), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1024Description), SpacingResources.ResourceManager, typeof(SpacingResources));
 
         private static readonly LocalizableString MessageNotPreceded = new LocalizableResourceString(nameof(SpacingResources.SA1024MessageNotPreceded), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString MessagePreceded = new LocalizableResourceString(nameof(SpacingResources.SA1024MessagePreceded), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString MessageFollowed = new LocalizableResourceString(nameof(SpacingResources.SA1024MessageFollowed), SpacingResources.ResourceManager, typeof(SpacingResources));
 
-        private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
+        private static readonly Action<SyntaxTreeAnalysisContext, SyntaxTreeTokens> SyntaxTreeAction = HandleSyntaxTree;
 
 #pragma warning disable SA1202 // Elements should be ordered by access
         internal static readonly DiagnosticDescriptor DescriptorNotPreceded =
@@ -97,13 +96,12 @@ namespace StyleCop.Analyzers.SpacingRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
+            context.RegisterSyntaxTreeTokensAction(SyntaxTreeAction);
         }
 
-        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context, SyntaxTreeTokens tokens)
         {
-            SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
-            foreach (var token in root.DescendantTokens())
+            foreach (var token in tokens.GetTokens(context.CancellationToken))
             {
                 if (token.IsKind(SyntaxKind.ColonToken))
                 {
@@ -137,6 +135,7 @@ namespace StyleCop.Analyzers.SpacingRules
             case SyntaxKindEx.CasePatternSwitchLabel:
             // NameColon is not explicitly listed in the description of this warning, but the behavior is inferred
             case SyntaxKind.NameColon:
+            case SyntaxKindEx.ExpressionColon:
                 requireBefore = false;
                 break;
 
@@ -185,9 +184,11 @@ namespace StyleCop.Analyzers.SpacingRules
             if (missingFollowingSpace && checkRequireAfter)
             {
                 // colon should{} be {followed}{} by a space
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
                 context.ReportDiagnostic(Diagnostic.Create(DescriptorFollowed, token.GetLocation(), TokenSpacingProperties.InsertFollowing));
 #pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
+#pragma warning restore IDE0079 // Remove unnecessary suppression
             }
         }
     }

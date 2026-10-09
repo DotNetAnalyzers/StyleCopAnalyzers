@@ -1,12 +1,11 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp10.ReadabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp9.ReadabilityRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -16,7 +15,36 @@ namespace StyleCop.Analyzers.Test.CSharp10.ReadabilityRules
     public partial class SA1121CSharp10UnitTests : SA1121CSharp9UnitTests
     {
         [Fact]
-        public async Task TestUsingNameChangeInFileScopedNamespaceAsync()
+        [WorkItem(3986, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3986")]
+        public async Task TestLambdaReturnTypeAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    public void TestMethod()
+    {
+        var a = [|System.Int32|] (int x) => x;
+    }
+}
+";
+
+            var fixedCode = @"public class TestClass
+{
+    public void TestMethod()
+    {
+        var a = int (int x) => x;
+    }
+}
+";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public virtual async Task TestUsingNameChangeInFileScopedNamespaceAsync()
         {
             string oldSource = @"namespace Foo;
 
@@ -41,6 +69,44 @@ uint value = 3;
                 ExpectedDiagnostics = { Diagnostic().WithLocation(0) },
                 FixedCode = newSource,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3985, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3985")]
+        public async Task TestExplicitLambdaReturnTypeAsync()
+        {
+            var testCode = @"using System;
+
+class TestClass
+{
+    void TestMethod()
+    {
+        var f = {|#0:Int32|} (int x) => x;
+        var g = {|#1:System.Int32|} ({|#2:System.Int32|} value) => value;
+    }
+}
+";
+
+            var fixedCode = @"using System;
+
+class TestClass
+{
+    void TestMethod()
+    {
+        var f = int (int x) => x;
+        var g = int (int value) => value;
+    }
+}
+";
+
+            var expected = new DiagnosticResult[]
+            {
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+                Diagnostic().WithLocation(2),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

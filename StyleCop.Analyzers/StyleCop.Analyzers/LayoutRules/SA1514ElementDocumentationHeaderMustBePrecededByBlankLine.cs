@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// An element documentation header above a C# element is not preceded by a blank line.
@@ -81,6 +82,9 @@ namespace StyleCop.Analyzers.LayoutRules
                 SyntaxKind.ClassDeclaration,
                 SyntaxKind.StructDeclaration,
                 SyntaxKind.InterfaceDeclaration,
+                SyntaxKindEx.RecordDeclaration,
+                SyntaxKindEx.RecordStructDeclaration,
+                SyntaxKindEx.UnionDeclaration,
                 SyntaxKind.EnumDeclaration,
                 SyntaxKind.EnumMemberDeclaration,
                 SyntaxKind.MethodDeclaration,
@@ -168,6 +172,13 @@ namespace StyleCop.Analyzers.LayoutRules
                 if (prevToken.IsKind(SyntaxKind.OpenBraceToken))
                 {
                     // no leading blank line necessary at start of scope.
+                    return;
+                }
+
+                // Logic to handle global namespace case
+                if (prevToken.IsKind(SyntaxKind.None))
+                {
+                    // Node is the first element in the global namespace
                     return;
                 }
             }

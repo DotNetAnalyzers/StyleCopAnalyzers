@@ -16,13 +16,17 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind ManagedKeyword = (SyntaxKind)8445;
         public const SyntaxKind UnmanagedKeyword = (SyntaxKind)8446;
         public const SyntaxKind RequiredKeyword = (SyntaxKind)8447;
+        public const SyntaxKind ScopedKeyword = (SyntaxKind)8448;
         public const SyntaxKind FileKeyword = (SyntaxKind)8449;
+        public const SyntaxKind ClosedKeyword = (SyntaxKind)8453;
+        public const SyntaxKind SafeKeyword = (SyntaxKind)8454;
         public const SyntaxKind NullableKeyword = (SyntaxKind)8486;
         public const SyntaxKind EnableKeyword = (SyntaxKind)8487;
         public const SyntaxKind WarningsKeyword = (SyntaxKind)8488;
         public const SyntaxKind AnnotationsKeyword = (SyntaxKind)8489;
         public const SyntaxKind VarKeyword = (SyntaxKind)8490;
         public const SyntaxKind UnderscoreToken = (SyntaxKind)8491;
+        public const SyntaxKind MultiLineRawStringLiteralToken = (SyntaxKind)8519;
         public const SyntaxKind ConflictMarkerTrivia = (SyntaxKind)8564;
         public const SyntaxKind IsPatternExpression = (SyntaxKind)8657;
         public const SyntaxKind RangeExpression = (SyntaxKind)8658;
@@ -54,6 +58,11 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind SwitchExpressionArm = (SyntaxKind)9026;
         public const SyntaxKind VarPattern = (SyntaxKind)9027;
         public const SyntaxKind ParenthesizedPattern = (SyntaxKind)9028;
+        public const SyntaxKind RelationalPattern = (SyntaxKind)9029;
+        public const SyntaxKind TypePattern = (SyntaxKind)9030;
+        public const SyntaxKind OrPattern = (SyntaxKind)9031;
+        public const SyntaxKind AndPattern = (SyntaxKind)9032;
+        public const SyntaxKind NotPattern = (SyntaxKind)9033;
         public const SyntaxKind SlicePattern = (SyntaxKind)9034;
         public const SyntaxKind ListPattern = (SyntaxKind)9035;
         public const SyntaxKind DeclarationExpression = (SyntaxKind)9040;
@@ -65,6 +74,8 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind NullableDirectiveTrivia = (SyntaxKind)9055;
         public const SyntaxKind FunctionPointerType = (SyntaxKind)9056;
         public const SyntaxKind FunctionPointerParameter = (SyntaxKind)9057;
+        public const SyntaxKind FunctionPointerParameterList = (SyntaxKind)9058;
+        public const SyntaxKind FunctionPointerCallingConvention = (SyntaxKind)9059;
         public const SyntaxKind InitAccessorDeclaration = (SyntaxKind)9060;
         public const SyntaxKind WithExpression = (SyntaxKind)9061;
         public const SyntaxKind WithInitializerExpression = (SyntaxKind)9062;
@@ -72,6 +83,10 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind PrimaryConstructorBaseType = (SyntaxKind)9065;
         public const SyntaxKind FunctionPointerUnmanagedCallingConventionList = (SyntaxKind)9066;
         public const SyntaxKind RecordStructDeclaration = (SyntaxKind)9068;
+        public const SyntaxKind ExpressionColon = (SyntaxKind)9069;
+        public const SyntaxKind LineDirectivePosition = (SyntaxKind)9070;
         public const SyntaxKind CollectionExpression = (SyntaxKind)9076;
+        public const SyntaxKind ExtensionBlockDeclaration = (SyntaxKind)9079;
+        public const SyntaxKind UnionDeclaration = (SyntaxKind)9082;
     }
 }

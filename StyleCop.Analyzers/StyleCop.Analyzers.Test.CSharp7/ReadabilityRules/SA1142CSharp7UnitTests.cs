@@ -1,14 +1,14 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
+    using StyleCop.Analyzers.Test.Helpers;
+    using StyleCop.Analyzers.Test.ReadabilityRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1142ReferToTupleElementsByName,
@@ -19,7 +19,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
     /// </summary>
     /// <seealso cref="SA1142ReferToTupleElementsByName"/>
     /// <seealso cref="SA1142CodeFixProvider"/>
-    public partial class SA1142CSharp7UnitTests
+    public partial class SA1142CSharp7UnitTests : SA1142UnitTests
     {
         /// <summary>
         /// Validate that tuple fields that are referenced by their name will not produce any diagnostics.
@@ -44,9 +44,12 @@ public class TestClass
         /// <summary>
         /// Verify that tuple names referenced by their metadata name will produce the expected diagnostics.
         /// </summary>
+        /// <param name="lineEnding">The line ending to use for the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task ValidateMetadataNameReferencesAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task ValidateMetadataNameReferencesAsync(string lineEnding)
         {
             var testCode = @"
 public class TestClass
@@ -61,7 +64,7 @@ public class TestClass
         return p1.[|Item1|] + p1.nameB.[|Item1|] + p1.[|Item2|].[|Item2|];
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
             var fixedCode = @"
 public class TestClass
@@ -76,14 +79,9 @@ public class TestClass
         return p1.nameA + p1.nameB.subNameA + p1.nameB.subNameB;
     }
 }
-";
+".ReplaceLineEndings(lineEnding);
 
-            DiagnosticResult[] expectedDiagnostics =
-            {
-                // diagnostics are specified inline
-            };
-
-            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

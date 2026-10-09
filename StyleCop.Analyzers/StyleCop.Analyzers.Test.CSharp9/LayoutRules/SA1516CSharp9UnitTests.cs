@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp9.LayoutRules
 {
     using System.Threading;
@@ -10,6 +8,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.LayoutRules
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.LayoutRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.LayoutRules.SA1516ElementsMustBeSeparatedByBlankLine,
@@ -151,6 +150,67 @@ public class Foo
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies spacing expectations when assembly attributes, top-level statements, and types appear in the same file.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3967, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3967")]
+        public async Task TestAssemblyAttributesTopLevelStatementsAndTypeAsync()
+        {
+            var testCode = @"[assembly: System.Reflection.AssemblyVersion(""1.0.0.0"")]
+{|#0:System|}.Console.WriteLine();
+{|#1:class|} C
+{
+}
+";
+
+            var fixedCode = @"[assembly: System.Reflection.AssemblyVersion(""1.0.0.0"")]
+
+System.Console.WriteLine();
+
+class C
+{
+}
+";
+
+            var test = new CSharpTest()
+            {
+                TestState =
+                {
+                    OutputKind = OutputKind.ConsoleApplication,
+                    Sources = { testCode },
+                },
+                FixedCode = fixedCode,
+            };
+
+            test.TestState.ExpectedDiagnostics.AddRange(this.GetExpectedResultTopLevelStatementsFollowedByType());
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.RecordTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        [WorkItem(3979, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3979")]
+        public async Task TestRecordMembersAsync(string keyword)
+        {
+            var testCode = $@"public {keyword} Foo
+{{
+    public int A {{ get; }}
+[|    |]public void B() {{ }}
+}}
+";
+
+            var fixedCode = $@"public {keyword} Foo
+{{
+    public int A {{ get; }}
+
+    public void B() {{ }}
+}}
+";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected virtual DiagnosticResult[] GetExpectedResultTestUsingAndGlobalStatementSpacingInTopLevelProgram()
         {
             // NOTE: Seems like a Roslyn bug made diagnostics be reported twice. Fixed in a later version.
@@ -174,6 +234,18 @@ public class Foo
 
                 // /0/Test0.cs(2,1): warning SA1516: Elements should be separated by blank line
                 Diagnostic().WithLocation(0),
+            };
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTopLevelStatementsFollowedByType()
+        {
+            // NOTE: Seems like a Roslyn bug made diagnostics be reported twice. Fixed in a later version.
+            return new[]
+            {
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+                Diagnostic().WithLocation(1),
             };
         }
     }

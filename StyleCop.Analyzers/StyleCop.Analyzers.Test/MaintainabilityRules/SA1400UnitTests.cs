@@ -183,6 +183,33 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.TestNestedDeclarationAsync("private", "MemberName", "void MemberName", "  ( int\n parameter\n ) { }").ConfigureAwait(false);
         }
 
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestMethodDeclarationWithLineEndingAsync(string lineEnding)
+        {
+            const string keywordLine = "void {|#0:MemberName|}";
+            const string linesAfter = "  ( int\n parameter\n ) { }";
+
+            var testCode = @$"using System;
+internal class OuterTypeName
+{{
+ {Tab} {keywordLine}
+{linesAfter}
+}}".ReplaceLineEndings(lineEnding);
+
+            DiagnosticResult expected = Diagnostic().WithArguments("MemberName").WithLocation(0);
+
+            var fixedTestCode = @$"using System;
+internal class OuterTypeName
+{{
+ {Tab} private {keywordLine}
+{linesAfter}
+}}".ReplaceLineEndings(lineEnding);
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestMethodDeclarationWithAttributesAsync()
         {

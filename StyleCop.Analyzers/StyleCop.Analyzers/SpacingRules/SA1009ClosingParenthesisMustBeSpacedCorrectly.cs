@@ -44,7 +44,7 @@ namespace StyleCop.Analyzers.SpacingRules
         private static readonly LocalizableString MessageNotFollowed = new LocalizableResourceString(nameof(SpacingResources.SA1009MessageNotFollowed), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString MessageFollowed = new LocalizableResourceString(nameof(SpacingResources.SA1009MessageFollowed), SpacingResources.ResourceManager, typeof(SpacingResources));
 
-        private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
+        private static readonly Action<SyntaxTreeAnalysisContext, SyntaxTreeTokens> SyntaxTreeAction = HandleSyntaxTree;
 
 #pragma warning disable SA1202 // Elements should be ordered by access
         internal static readonly DiagnosticDescriptor DescriptorNotPreceded =
@@ -67,13 +67,12 @@ namespace StyleCop.Analyzers.SpacingRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
+            context.RegisterSyntaxTreeTokensAction(SyntaxTreeAction);
         }
 
-        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context, SyntaxTreeTokens tokens)
         {
-            SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
-            foreach (var token in root.DescendantTokens(descendIntoTrivia: true))
+            foreach (var token in tokens.GetTokensIncludingStructuredTrivia(context.CancellationToken))
             {
                 if (token.IsKind(SyntaxKind.CloseParenToken))
                 {
@@ -86,6 +85,12 @@ namespace StyleCop.Analyzers.SpacingRules
         {
             if (token.IsMissing)
             {
+                return;
+            }
+
+            if (token.Parent.IsKind(SyntaxKindEx.LineDirectivePosition))
+            {
+                // #line span directives are primarily used in generated code
                 return;
             }
 
@@ -102,6 +107,13 @@ namespace StyleCop.Analyzers.SpacingRules
             switch (nextToken.Kind())
             {
             case SyntaxKind.OpenParenToken:
+                if (nextToken.Parent.IsKind(SyntaxKind.ParameterList)
+                    && nextToken.Parent.Parent.IsKind(SyntaxKind.ParenthesizedLambdaExpression))
+                {
+                    precedesStickyCharacter = false;
+                    break;
+                }
+
                 // Allow a space between an open and a close paren when:
                 // - they are part of an if statement
                 // - they are on the same line
@@ -250,17 +262,21 @@ namespace StyleCop.Analyzers.SpacingRules
                 {
                     // Closing parenthesis should{} be {followed} by a space.
                     var properties = TokenSpacingProperties.InsertFollowing;
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
                     context.ReportDiagnostic(Diagnostic.Create(DescriptorFollowed, token.GetLocation(), properties));
 #pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
+#pragma warning restore IDE0079 // Remove unnecessary suppression
                 }
                 else if (precedesStickyCharacter && followedBySpace && (!lastInLine || !allowEndOfLine))
                 {
                     // Closing parenthesis should{ not} be {followed} by a space.
                     var properties = TokenSpacingProperties.RemoveFollowing;
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
                     context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowed, token.GetLocation(), properties));
 #pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
+#pragma warning restore IDE0079 // Remove unnecessary suppression
                 }
             }
         }

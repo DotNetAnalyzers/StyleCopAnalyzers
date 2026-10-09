@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// An element documentation header above a C# element is followed by a blank line.
@@ -57,6 +58,9 @@ namespace StyleCop.Analyzers.LayoutRules
                 SyntaxKind.ClassDeclaration,
                 SyntaxKind.StructDeclaration,
                 SyntaxKind.InterfaceDeclaration,
+                SyntaxKindEx.RecordDeclaration,
+                SyntaxKindEx.RecordStructDeclaration,
+                SyntaxKindEx.UnionDeclaration,
                 SyntaxKind.EnumDeclaration,
                 SyntaxKind.EnumMemberDeclaration,
                 SyntaxKind.MethodDeclaration,

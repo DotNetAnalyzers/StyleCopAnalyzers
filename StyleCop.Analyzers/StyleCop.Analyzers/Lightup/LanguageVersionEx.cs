@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable SA1310 // Field names should not contain underscore - Following roslyn naming conventions
 
 namespace StyleCop.Analyzers.Lightup
@@ -20,6 +21,8 @@ namespace StyleCop.Analyzers.Lightup
         public const LanguageVersion CSharp11 = (LanguageVersion)1100;
         public const LanguageVersion CSharp12 = (LanguageVersion)1200;
         public const LanguageVersion CSharp13 = (LanguageVersion)1300;
+        public const LanguageVersion CSharp14 = (LanguageVersion)1400;
+        public const LanguageVersion CSharp15 = (LanguageVersion)1500;
         public const LanguageVersion LatestMajor = (LanguageVersion)int.MaxValue - 2;
         public const LanguageVersion Preview = (LanguageVersion)int.MaxValue - 1;
         public const LanguageVersion Latest = (LanguageVersion)int.MaxValue;
@@ -27,3 +30,4 @@ namespace StyleCop.Analyzers.Lightup
 }
 
 #pragma warning restore SA1310 // Field names should not contain underscore
+#pragma warning restore IDE0079 // Remove unnecessary suppression

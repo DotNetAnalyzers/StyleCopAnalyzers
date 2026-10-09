@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1651DoNotUsePlaceholderElements>;
@@ -50,18 +51,20 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestTopLevelPlaceholderAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestTopLevelPlaceholderAsync(string lineEnding)
         {
             var testCode = @"namespace FooNamespace
 {
-    /// <placeholder><summary>
+    /// {|#0:<placeholder><summary>
     /// Content.
-    /// </summary></placeholder>
+    /// </summary></placeholder>|}
     public class ClassName
     {
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
             var fixedCode = @"namespace FooNamespace
 {
@@ -71,9 +74,9 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     public class ClassName
     {
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
-            DiagnosticResult expected = Diagnostic().WithLocation(3, 9);
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -95,18 +98,20 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestEmbeddedPlaceholderAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestEmbeddedPlaceholderAsync(string lineEnding)
         {
             var testCode = @"namespace FooNamespace
 {
     /// <summary>
-    /// <placeholder>Content.</placeholder>
+    /// {|#0:<placeholder>Content.</placeholder>|}
     /// </summary>
     public class ClassName
     {
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
             var fixedCode = @"namespace FooNamespace
 {
@@ -116,9 +121,9 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     public class ClassName
     {
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
-            DiagnosticResult expected = Diagnostic().WithLocation(4, 9);
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 

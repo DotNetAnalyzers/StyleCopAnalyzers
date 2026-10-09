@@ -15,7 +15,6 @@ namespace StyleCop.Analyzers.Test
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Testing;
-    using Microsoft.CodeAnalysis.Testing.Verifiers;
     using Xunit;
 
     public class AnalyzerConfigurationUnitTests
@@ -62,7 +61,7 @@ namespace StyleCop.Analyzers.Test
             }
         }
 
-        private class CSharpTest : CodeFixTest<XUnitVerifier>
+        private class CSharpTest : CodeFixTest<DefaultVerifier>
         {
             private readonly Type analyzerType;
 

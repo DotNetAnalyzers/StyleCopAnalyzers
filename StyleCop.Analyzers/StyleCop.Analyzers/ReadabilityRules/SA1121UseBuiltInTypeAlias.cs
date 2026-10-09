@@ -6,7 +6,6 @@
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
-    using System.Collections.Concurrent;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -153,17 +152,19 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            Analyzer analyzer = new Analyzer(context.Compilation.GetOrCreateUsingAliasCache());
+            Analyzer analyzer = new Analyzer(context.Compilation.GetOrCreateUsingAliasCache(), context.Compilation.SupportsNativeSizedIntegers());
             context.RegisterSyntaxNodeAction(analyzer.HandleIdentifierNameSyntax, SyntaxKind.IdentifierName);
         }
 
         private sealed class Analyzer
         {
-            private readonly ConcurrentDictionary<SyntaxTree, bool> usingAliasCache;
+            private readonly UsingAliasCache usingAliasCache;
+            private readonly bool supportsNativeSizedIntegers;
 
-            public Analyzer(ConcurrentDictionary<SyntaxTree, bool> usingAliasCache)
+            public Analyzer(UsingAliasCache usingAliasCache, bool supportsNativeSizedIntegers)
             {
                 this.usingAliasCache = usingAliasCache;
+                this.supportsNativeSizedIntegers = supportsNativeSizedIntegers;
             }
 
             public void HandleIdentifierNameSyntax(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
@@ -202,8 +203,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     break;
                 }
 
-                if (identifierNameSyntax.FirstAncestorOrSelf<UsingDirectiveSyntax>() != null
-                    && identifierNameSyntax.FirstAncestorOrSelf<TypeArgumentListSyntax>() == null)
+                var usingDirective = identifierNameSyntax.FirstAncestorOrSelf<UsingDirectiveSyntax>();
+                if (usingDirective != null
+                    && identifierNameSyntax.FirstAncestorOrSelf<TypeArgumentListSyntax>() == null
+                    && !IsInUsingAliasTargetThatAllowsAnyType(context, usingDirective, identifierNameSyntax))
                 {
                     return;
                 }
@@ -211,7 +214,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 // Most source files will not have any using alias directives. Then we don't have to use semantics
                 // if the identifier name doesn't match the name of a special type
                 if (settings.ReadabilityRules.AllowBuiltInTypeAliases
-                    || !identifierNameSyntax.SyntaxTree.ContainsUsingAlias(this.usingAliasCache))
+                    || !this.usingAliasCache.ContainsUsingAlias(identifierNameSyntax.SyntaxTree, context.SemanticModel, context.CancellationToken))
                 {
                     switch (identifierNameSyntax.Identifier.ValueText)
                     {
@@ -230,6 +233,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     case nameof(UInt16):
                     case nameof(UInt32):
                     case nameof(UInt64):
+                    case nameof(IntPtr) or nameof(UIntPtr) when this.supportsNativeSizedIntegers:
                         break;
 
                     default:
@@ -266,6 +270,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 case SpecialType.System_UInt16:
                 case SpecialType.System_UInt32:
                 case SpecialType.System_UInt64:
+                case SpecialType.System_IntPtr or SpecialType.System_UIntPtr when this.supportsNativeSizedIntegers:
                     break;
 
                 default:
@@ -295,6 +300,28 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 // Use built-in type alias
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, locationNode.GetLocation()));
+            }
+
+            /// <summary>
+            /// Determines whether a name is part of the target of a using alias directive, in a syntax tree whose
+            /// language version allows the target to use a built-in type keyword (C# 12 and newer).
+            /// </summary>
+            /// <param name="context">The analysis context.</param>
+            /// <param name="usingDirective">The using directive containing <paramref name="identifierNameSyntax"/>.</param>
+            /// <param name="identifierNameSyntax">The name to check.</param>
+            /// <returns><see langword="true"/> if the name is part of a using alias target that can be written with a
+            /// built-in type keyword; otherwise, <see langword="false"/>.</returns>
+            private static bool IsInUsingAliasTargetThatAllowsAnyType(SyntaxNodeAnalysisContext context, UsingDirectiveSyntax usingDirective, IdentifierNameSyntax identifierNameSyntax)
+            {
+                // Only alias directives (using A = B;) can have a keyword as their target. Normal and static using
+                // directives still require a namespace or type name. The alias name itself is never a type reference.
+                if (usingDirective.Alias == null
+                    || usingDirective.Alias.Span.Contains(identifierNameSyntax.Span))
+                {
+                    return false;
+                }
+
+                return context.SupportsUsingAliasToAnyType();
             }
 
             private static bool IsNameInNameOfExpression(IdentifierNameSyntax identifierNameSyntax)

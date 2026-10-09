@@ -89,12 +89,7 @@ namespace StyleCop.Analyzers.CodeGeneration
 
         private void Execute(in SourceProductionContext context, CompilationData compilationData, AdditionalText syntaxFile)
         {
-            var syntaxText = syntaxFile.GetText(context.CancellationToken);
-            if (syntaxText is null)
-            {
-                throw new InvalidOperationException("Failed to read Syntax.xml");
-            }
-
+            var syntaxText = syntaxFile.GetText(context.CancellationToken) ?? throw new InvalidOperationException("Failed to read Syntax.xml");
             var syntaxData = new SyntaxData(compilationData, XDocument.Parse(syntaxText.ToString()));
             this.GenerateSyntaxWrappers(in context, syntaxData);
             this.GenerateSyntaxWrapperHelper(in context, syntaxData.Nodes);
@@ -116,7 +111,8 @@ namespace StyleCop.Analyzers.CodeGeneration
                 return;
             }
 
-            var concreteBase = syntaxData.TryGetConcreteBase(nodeData)?.Name ?? nameof(SyntaxNode);
+            var concreteBaseNode = syntaxData.TryGetConcreteBase(nodeData);
+            var concreteBase = concreteBaseNode?.Name ?? nameof(SyntaxNode);
 
             var members = SyntaxFactory.List<MemberDeclarationSyntax>();
 
@@ -147,9 +143,9 @@ namespace StyleCop.Analyzers.CodeGeneration
                     continue;
                 }
 
-                if (field.IsOverride)
+                if (field.UsesDirectPropertyAccess(syntaxData, concreteBaseNode))
                 {
-                    // The 'get' accessor is skipped for override fields
+                    // The 'get' accessor is skipped for override fields which can be read with a direct property call
                     continue;
                 }
 
@@ -229,9 +225,9 @@ namespace StyleCop.Analyzers.CodeGeneration
                     continue;
                 }
 
-                if (field.IsOverride)
+                if (field.UsesDirectPropertyAccess(syntaxData, concreteBaseNode))
                 {
-                    // The 'get' accessor is skipped for override fields
+                    // The 'get' accessor is skipped for override fields which can be read with a direct property call
                     continue;
                 }
 
@@ -406,39 +402,16 @@ namespace StyleCop.Analyzers.CodeGeneration
 
                 TypeSyntax propertyType = SyntaxFactory.ParseTypeName(field.GetAccessorResultType(syntaxData));
                 ExpressionSyntax returnExpression;
-                if (field.IsOverride)
+                if (field.UsesDirectPropertyAccess(syntaxData, concreteBaseNode))
                 {
-                    var declaringNode = field.GetDeclaringNode(syntaxData);
-                    if (declaringNode.WrapperName is not null)
-                    {
-                        // ((CommonForEachStatementSyntaxWrapper)this).OpenParenToken
-                        returnExpression = SyntaxFactory.MemberAccessExpression(
+                    // this.SyntaxNode.OpenParenToken
+                    returnExpression = SyntaxFactory.MemberAccessExpression(
+                        SyntaxKind.SimpleMemberAccessExpression,
+                        expression: SyntaxFactory.MemberAccessExpression(
                             SyntaxKind.SimpleMemberAccessExpression,
-                            expression: SyntaxFactory.ParenthesizedExpression(
-                                SyntaxFactory.CastExpression(
-                                    type: SyntaxFactory.IdentifierName(declaringNode.WrapperName ?? declaringNode.Name),
-                                    expression: SyntaxFactory.ThisExpression())),
-                            name: SyntaxFactory.IdentifierName(field.Name));
-                    }
-                    else
-                    {
-                        // this.SyntaxNode.OpenParenToken
-                        returnExpression = SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            expression: SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                expression: SyntaxFactory.ThisExpression(),
-                                name: SyntaxFactory.IdentifierName("SyntaxNode")),
-                            name: SyntaxFactory.IdentifierName(field.Name));
-
-                        if (declaringNode.TryGetField(field.Name) is { IsExtensionField: true })
-                        {
-                            // this.SyntaxNode.OpenParenToken()
-                            returnExpression = SyntaxFactory.InvocationExpression(
-                                expression: returnExpression,
-                                argumentList: SyntaxFactory.ArgumentList());
-                        }
-                    }
+                            expression: SyntaxFactory.ThisExpression(),
+                            name: SyntaxFactory.IdentifierName("SyntaxNode")),
+                        name: SyntaxFactory.IdentifierName(field.Name));
                 }
                 else if (field.IsWrappedSeparatedSyntaxList(syntaxData, out var elementNode))
                 {
@@ -1378,15 +1351,62 @@ namespace StyleCop.Analyzers.CodeGeneration
             public bool IsOverride { get; }
 
             /// <summary>
-            /// Gets a value indicating whether this field is implemented as an extension method in the lightup layer.
+            /// Determines whether the wrapper property for this field reads the value with a direct property call on
+            /// the wrapped node (<c>this.SyntaxNode.Field</c>), rather than with a reflection-based accessor delegate
+            /// created for the concrete wrapped type.
             /// </summary>
-            public bool IsExtensionField
+            /// <remarks>
+            /// <para>A direct call is only used for an override field when the overridden property is declared, in the
+            /// Roslyn version referenced by the analyzers (1.2.1), on the wrapper's concrete base type or one of its
+            /// base types. Such a call compiles to a virtual call, so at run time it reaches the override on the
+            /// wrapped node without any reflection.</para>
+            ///
+            /// <para>In every other case the accessor delegate is used. In particular, the generated wrapper must not
+            /// delegate to the light-up extension method for the overridden property, because the light-up layer may
+            /// implement that member by calling back into this wrapper (for example
+            /// <c>TypeDeclarationSyntaxExtensions.ParameterList()</c> calls
+            /// <c>RecordDeclarationSyntaxWrapper.ParameterList</c> prior to C# 12), which would cause infinite
+            /// recursion. Delegating to a base wrapper type instead would be correct, but slower than the accessor,
+            /// since the conversion to the base wrapper checks the node type before the base wrapper's own accessor
+            /// delegate is called.</para>
+            /// </remarks>
+            /// <param name="syntaxData">The syntax data.</param>
+            /// <param name="concreteBase">The concrete base type of the wrapper which contains this field, which is
+            /// the type of its <c>SyntaxNode</c> property.</param>
+            /// <returns><see langword="true"/> if the wrapper property uses a direct property call; otherwise,
+            /// <see langword="false"/>.</returns>
+            public bool UsesDirectPropertyAccess(SyntaxData syntaxData, NodeData? concreteBase)
             {
-                get
+                if (!this.IsOverride)
                 {
-                    return this.nodeData.ExistingType is not null
-                        && !this.nodeData.ExistingType.MemberNames.Contains(this.Name);
+                    return false;
                 }
+
+                // Find the base types from this node up to the node which originally declares the overridden
+                // property. A property of the same name on one of these types is the property overridden by this
+                // field (possibly as an intermediate abstract override which Syntax.xml does not list).
+                var overriddenDeclarations = new HashSet<NodeData>();
+                var declaringNode = this.GetDeclaringNode(syntaxData);
+                for (var current = syntaxData.TryGetNode(this.nodeData.BaseName); current is not null; current = syntaxData.TryGetNode(current.BaseName))
+                {
+                    overriddenDeclarations.Add(current);
+                    if (current == declaringNode)
+                    {
+                        break;
+                    }
+                }
+
+                for (var current = concreteBase; current is not null; current = syntaxData.TryGetNode(current.BaseName))
+                {
+                    if (overriddenDeclarations.Contains(current)
+                        && current.ExistingType is { } existingType
+                        && existingType.MemberNames.Contains(this.Name))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
             }
 
             public NodeData GetDeclaringNode(SyntaxData syntaxData)

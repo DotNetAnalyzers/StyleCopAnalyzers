@@ -62,6 +62,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         private static readonly Action<SyntaxNodeAnalysisContext> HandleAnonymousObjectInitializerAction = HandleAnonymousObjectInitializer;
         private static readonly Action<SyntaxNodeAnalysisContext> HandleEnumDeclarationAction = HandleEnumDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> HandleSwitchExpressionAction = HandleSwitchExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> HandlePropertyPatternClauseAction = HandlePropertyPatternClause;
+        private static readonly Action<SyntaxNodeAnalysisContext> HandleCollectionExpressionAction = HandleCollectionExpression;
 
         private static readonly ImmutableArray<SyntaxKind> ObjectInitializerKinds =
             ImmutableArray.Create(SyntaxKind.ObjectInitializerExpression, SyntaxKind.ArrayInitializerExpression, SyntaxKind.CollectionInitializerExpression, SyntaxKindEx.WithInitializerExpression);
@@ -80,6 +82,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             context.RegisterSyntaxNodeAction(HandleAnonymousObjectInitializerAction, SyntaxKind.AnonymousObjectCreationExpression);
             context.RegisterSyntaxNodeAction(HandleEnumDeclarationAction, SyntaxKind.EnumDeclaration);
             context.RegisterSyntaxNodeAction(HandleSwitchExpressionAction, SyntaxKindEx.SwitchExpression);
+            context.RegisterSyntaxNodeAction(HandlePropertyPatternClauseAction, SyntaxKindEx.PropertyPatternClause);
+            context.RegisterSyntaxNodeAction(HandleCollectionExpressionAction, SyntaxKindEx.CollectionExpression);
         }
 
         private static void HandleEnumDeclaration(SyntaxNodeAnalysisContext context)
@@ -136,6 +140,34 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             if (switchExpression.Arms.SeparatorCount < switchExpression.Arms.Count)
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, switchExpression.Arms.Last().SyntaxNode.GetLocation()));
+            }
+        }
+
+        private static void HandlePropertyPatternClause(SyntaxNodeAnalysisContext context)
+        {
+            var propertyPatternClause = (PropertyPatternClauseSyntaxWrapper)context.Node;
+            if (propertyPatternClause.SyntaxNode == null || !propertyPatternClause.SyntaxNode.SpansMultipleLines())
+            {
+                return;
+            }
+
+            if (propertyPatternClause.Subpatterns.SeparatorCount < propertyPatternClause.Subpatterns.Count)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, propertyPatternClause.Subpatterns.Last().SyntaxNode.GetLocation()));
+            }
+        }
+
+        private static void HandleCollectionExpression(SyntaxNodeAnalysisContext context)
+        {
+            var collectionExpression = (CollectionExpressionSyntaxWrapper)context.Node;
+            if (collectionExpression.SyntaxNode == null || !collectionExpression.SyntaxNode.SpansMultipleLines())
+            {
+                return;
+            }
+
+            if (collectionExpression.Elements.SeparatorCount < collectionExpression.Elements.Count)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, collectionExpression.Elements.Last().SyntaxNode.GetLocation()));
             }
         }
     }

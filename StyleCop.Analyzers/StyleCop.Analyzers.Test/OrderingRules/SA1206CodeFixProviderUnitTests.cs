@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.OrderingRules.SA1206DeclarationKeywordsMustFollowOrder,
@@ -30,6 +31,26 @@ namespace StyleCop.Analyzers.Test.OrderingRules
             var fixedTestCode = @"public abstract class FooBar {}";
 
             var expected = Diagnostic().WithLocation(1, 10).WithArguments("public", "abstract");
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task VerifyKeywordReorderingInClassDeclarationWithLineEndingsAsync(string lineEnding)
+        {
+            var testCode = @"abstract
+{|#0:public|}
+class FooBar
+{
+}".ReplaceLineEndings(lineEnding);
+            var fixedTestCode = @"public
+abstract
+class FooBar
+{
+}".ReplaceLineEndings(lineEnding);
+
+            var expected = Diagnostic().WithLocation(0).WithArguments("public", "abstract");
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 

@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.MaintainabilityRules.SA1408ConditionalExpressionsMustDeclarePrecedence,
@@ -41,17 +42,19 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestOrAndAndAsync()
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestOrAndAndAsync(string lineEnding)
         {
             var testCode = @"public class Foo
 {
     public void Bar()
     {
-        bool x = true || false && true;
+        bool x = true || {|#0:false && true|};
     }
-}";
-            DiagnosticResult expected = Diagnostic().WithLocation(5, 26);
+}".ReplaceLineEndings(lineEnding);
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
 
             var fixedCode = @"public class Foo
 {
@@ -59,7 +62,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     {
         bool x = true || (false && true);
     }
-}";
+}".ReplaceLineEndings(lineEnding);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }

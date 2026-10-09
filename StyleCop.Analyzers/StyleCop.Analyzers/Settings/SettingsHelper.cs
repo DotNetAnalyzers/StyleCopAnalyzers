@@ -42,7 +42,9 @@ namespace StyleCop.Analyzers
         /// <param name="cancellationToken">The cancellation token that the operation will observe.</param>
         /// <returns>A <see cref="SettingsFile"/> instance which contains information about the the StyleCop settings file for the given context.
         /// Null if no settings file was found.</returns>
+#pragma warning disable IDE0079 // Remove unnecessary suppression
         [SuppressMessage("MicrosoftCodeAnalysisPerformance", "RS1012:Start action has no registered actions", Justification = "This is not a start action")]
+#pragma warning restore IDE0079 // Remove unnecessary suppression
         internal static SettingsFile GetStyleCopSettingsFile(this CompilationStartAnalysisContext context, CancellationToken cancellationToken)
         {
             return GetSettingsFile(context.Options, GetJsonValue, cancellationToken);
@@ -62,7 +64,9 @@ namespace StyleCop.Analyzers
             }
         }
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
         [SuppressMessage("MicrosoftCodeAnalysisPerformance", "RS1012:Start action has no registered actions", Justification = "This is not a start action")]
+#pragma warning restore IDE0079 // Remove unnecessary suppression
         internal static StrongBox<StyleCopSettings> GetOrCreateSettingsStorage(this CompilationStartAnalysisContext context, SyntaxTree tree)
         {
             if (!context.TryGetValue(tree, SettingsStorageValueProvider, out var storage))
@@ -275,8 +279,18 @@ namespace StyleCop.Analyzers
                 if (IsStyleCopSettingsFile(additionalFile.Path))
                 {
                     SourceText additionalTextContent = additionalFile.GetText(cancellationToken);
-                    var content = getJsonValue(additionalTextContent);
-                    return new SettingsFile(additionalFile.Path, content);
+                    if (additionalTextContent != null)
+                    {
+                        var content = getJsonValue(additionalTextContent);
+                        return new SettingsFile(additionalFile.Path, content);
+                    }
+                    else
+                    {
+                        // Failed to read the file! Probably because of a broken link.
+                        var content = new Lazy<JsonValue>(() => throw new InvalidSettingsException(
+                            $"Settings file at '{additionalFile.Path}' could not be read"));
+                        return new SettingsFile(additionalFile.Path, content);
+                    }
                 }
             }
 
