@@ -27,6 +27,16 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" PrivateAssets="all" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+    <!--
+      The testing library references NuGet.* without compile assets, so on .NET Framework those assemblies (and their
+      System.Text.Json/Microsoft.Bcl.AsyncInterfaces dependencies) are invisible to binding redirect generation. Reference
+      NuGet.Resolver directly so test projects that use newer dependencies (e.g. Roslyn 5.0 with
+      Microsoft.Bcl.AsyncInterfaces 9.0.0) get the binding redirects needed to download reference assemblies.
+    -->
+    <PackageReference Include="NuGet.Resolver" Version="7.0.3" />
+  </ItemGroup>
+
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
     <!-- Exclude Microsoft.Composition which is only needed for .NET Framework execution -->
     <PackageReference Include="Microsoft.Composition" Version="1.0.31" ExcludeAssets="all" />
