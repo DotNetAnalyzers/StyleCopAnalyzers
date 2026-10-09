@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Test
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Testing;
-    using Microsoft.CodeAnalysis.Testing.Verifiers;
+    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
 
     public class AnalyzerConfigurationUnitTests
