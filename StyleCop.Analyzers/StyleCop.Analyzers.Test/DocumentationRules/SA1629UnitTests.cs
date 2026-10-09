@@ -493,6 +493,64 @@ public interface ITest
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory]
+        [WorkItem(2860, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2860")]
+        [InlineData("Summary \"quoted.\"")]
+        [InlineData("Summary 'quoted.'")]
+        [InlineData("Summary \u201Cquoted.\u201D")]
+        [InlineData("Summary \u2018quoted.\u2019")]
+        [InlineData("Summary \"a 'nested quote.'\"")]
+        [InlineData("Summary \u201Ca \u2018nested quote.\u2019\u201D")]
+        [InlineData("Summary (\"quoted.\")")]
+        [InlineData("Summary \"quoted\".")]
+        public async Task TestSentenceEndingWithPeriodInsideQuotesAsync(string allowedSummary)
+        {
+            var testCode = $@"
+/// <summary>
+/// {allowedSummary}
+/// </summary>
+/// <param name=""value"">The {allowedSummary}</param>
+public interface ITest
+{{
+    /// <summary>
+    /// {allowedSummary}
+    /// </summary>
+    /// <param name=""value"">The <c>value</c> {allowedSummary}</param>
+    void Method(int value);
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [WorkItem(2860, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2860")]
+        [InlineData("Summary \"quoted\"")]
+        [InlineData("Summary \u201Cquoted\u201D")]
+        [InlineData("Summary 'quoted.' text")]
+        public async Task TestSentenceEndingWithQuotesWithoutPeriodAsync(string summary)
+        {
+            var testCode = $@"
+/// <summary>
+/// {summary}
+/// </summary>
+public interface ITest
+{{
+}}
+";
+            var fixedTestCode = $@"
+/// <summary>
+/// {summary}.
+/// </summary>
+public interface ITest
+{{
+}}
+";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(3, 5 + summary.Length);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         [WorkItem(2744, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2744")]
         public async Task TestSentenceEndingWithParenthesesWithoutPeriodAsync()
