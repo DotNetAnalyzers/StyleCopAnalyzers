@@ -54,20 +54,17 @@ namespace StyleCop.Analyzers.Lightup
 
         public static bool operator ==(SeparatedSyntaxListWrapper<TNode> left, SeparatedSyntaxListWrapper<TNode> right)
         {
-            // Currently unused
-            _ = left;
-            _ = right;
+            if (left is null)
+            {
+                return right is null;
+            }
 
-            throw new NotImplementedException();
+            return left.Equals(right);
         }
 
         public static bool operator !=(SeparatedSyntaxListWrapper<TNode> left, SeparatedSyntaxListWrapper<TNode> right)
         {
-            // Currently unused
-            _ = left;
-            _ = right;
-
-            throw new NotImplementedException();
+            return !(left == right);
         }
 
         // Summary:
@@ -94,12 +91,24 @@ namespace StyleCop.Analyzers.Lightup
 
         public bool Equals(SeparatedSyntaxListWrapper<TNode> other)
         {
-            throw new NotImplementedException();
+            if (other is null)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
+            // Like SeparatedSyntaxList<TNode>, two wrappers are equal when they wrap the same list. The underlying
+            // list is a boxed SeparatedSyntaxList<T>, which compares by value.
+            return Equals(this.UnderlyingList, other.UnderlyingList);
         }
 
         public override bool Equals(object obj)
         {
-            throw new NotImplementedException();
+            return this.Equals(obj as SeparatedSyntaxListWrapper<TNode>);
         }
 
         public abstract TNode First();
@@ -191,7 +200,7 @@ namespace StyleCop.Analyzers.Lightup
 
             public override readonly int GetHashCode()
             {
-                if (this.wrapper == null)
+                if (this.wrapper is null)
                 {
                     return 0;
                 }
