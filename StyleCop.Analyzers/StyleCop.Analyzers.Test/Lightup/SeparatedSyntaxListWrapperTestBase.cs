@@ -52,6 +52,58 @@ namespace StyleCop.Analyzers.Test.Lightup
             }
         }
 
+        [Fact]
+        [WorkItem(2840, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2840")]
+        public void TestEquality()
+        {
+            var list = this.CreateList();
+            var other = this.CreateList();
+            SeparatedSyntaxListWrapper<SyntaxNode> nullList = null;
+
+            Assert.True(list.Equals(other));
+            Assert.True(list.Equals((object)other));
+            Assert.True(list == other);
+            Assert.False(list != other);
+            Assert.Equal(list.GetHashCode(), other.GetHashCode());
+
+            Assert.False(list.Equals(nullList));
+            Assert.False(list.Equals((object)null));
+            Assert.False(list.Equals(new object()));
+            Assert.False(list == nullList);
+            Assert.False(nullList == list);
+            Assert.True(list != nullList);
+            Assert.True(nullList != list);
+#pragma warning disable CS1718 // Comparison made to same variable
+            Assert.True(nullList == nullList);
+#pragma warning restore CS1718 // Comparison made to same variable
+
+            if (this.TryCreateNonEmptyList(out var nonEmptyList))
+            {
+                var sameNonEmptyList = nonEmptyList;
+                Assert.False(list.Equals(nonEmptyList));
+                Assert.False(list == nonEmptyList);
+                Assert.True(list != nonEmptyList);
+                Assert.True(nonEmptyList.Equals(sameNonEmptyList));
+                Assert.True(nonEmptyList == sameNonEmptyList);
+            }
+        }
+
+        [Fact]
+        [WorkItem(2840, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2840")]
+        public void TestEnumeratorEquality()
+        {
+            var list = this.CreateList();
+            var enumerator1 = list.GetEnumerator();
+            var enumerator2 = list.GetEnumerator();
+
+            Assert.True(enumerator1.Equals(enumerator2));
+            Assert.Equal(enumerator1.GetHashCode(), enumerator2.GetHashCode());
+            Assert.False(enumerator1.Equals(new object()));
+            Assert.False(enumerator1.Equals(default(SeparatedSyntaxListWrapper<SyntaxNode>.Enumerator)));
+            Assert.Equal(0, default(SeparatedSyntaxListWrapper<SyntaxNode>.Enumerator).GetHashCode());
+            Assert.True(default(SeparatedSyntaxListWrapper<SyntaxNode>.Enumerator).Equals(default(SeparatedSyntaxListWrapper<SyntaxNode>.Enumerator)));
+        }
+
         internal abstract SeparatedSyntaxListWrapper<SyntaxNode> CreateList();
 
         internal abstract bool TryCreateNonEmptyList(out SeparatedSyntaxListWrapper<SyntaxNode> list);
