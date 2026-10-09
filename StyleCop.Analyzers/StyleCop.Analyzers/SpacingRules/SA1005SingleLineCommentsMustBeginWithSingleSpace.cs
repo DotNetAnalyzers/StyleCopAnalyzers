@@ -136,6 +136,13 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
+            // Special case: .NET template engine processing directives, such as //-:cnd:noEmit and //+:cnd:noEmit
+            if (text.StartsWith(@"//-:cnd", StringComparison.Ordinal)
+                || text.StartsWith(@"//+:cnd", StringComparison.Ordinal))
+            {
+                return;
+            }
+
             // Special case: //\ negates spacing requirements
             if (text.StartsWith(@"//\", StringComparison.Ordinal))
             {

@@ -174,6 +174,50 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
 
         /// <summary>
+        /// Verify that .NET template engine processing directives (<c>//-:cnd</c> and <c>//+:cnd</c>) do not trigger a
+        /// diagnostic.
+        /// </summary>
+        /// <param name="directive">The template engine directive comment.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("//-:cnd:noEmit")]
+        [InlineData("//+:cnd:noEmit")]
+        [InlineData("//-:cnd")]
+        [InlineData("//+:cnd")]
+        [WorkItem(2689, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2689")]
+        public async Task TestTemplateEngineDirectiveAsync(string directive)
+        {
+            var testCode = $@"{directive}
+public class SomeClass
+{{
+    {directive}
+    public int Value {{ get; set; }}
+}}
+{directive}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verify that comments which only resemble template engine processing directives still trigger a diagnostic.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2689, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2689")]
+        public async Task TestTemplateEngineDirectiveLookalikeAsync()
+        {
+            var testCode = @"[|//-:other|]
+[|//+cnd|]
+public class SomeClass
+{
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verify that an empty comment does not trigger a diagnostic.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
