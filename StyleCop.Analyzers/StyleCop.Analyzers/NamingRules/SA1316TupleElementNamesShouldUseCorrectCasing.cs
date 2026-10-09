@@ -77,23 +77,30 @@ namespace StyleCop.Analyzers.NamingRules
 
         private static void HandleTupleExpressionAction(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
-            if (!context.SupportsInferredTupleElementNames())
+            if (!context.SupportsTuples())
             {
                 return;
             }
 
-            if (!settings.NamingRules.IncludeInferredTupleElementNames)
-            {
-                return;
-            }
+            bool includeInferredNames = settings.NamingRules.IncludeInferredTupleElementNames
+                && context.SupportsInferredTupleElementNames();
 
             var tupleExpression = (TupleExpressionSyntaxWrapper)context.Node;
             foreach (var argument in tupleExpression.Arguments)
             {
-                var inferredMemberName = SyntaxFactsEx.TryGetInferredMemberName(argument.NameColon?.Name ?? argument.Expression);
-                if (inferredMemberName != null)
+                if (argument.NameColon != null)
                 {
-                    CheckName(context, settings, tupleElement: null, inferredMemberName, argument.Expression.GetLocation(), false);
+                    // Explicit element names are always checked, and can be fixed.
+                    var name = argument.NameColon.Name.Identifier;
+                    CheckName(context, settings, tupleElement: null, name.ValueText, name.GetLocation(), true);
+                }
+                else if (includeInferredNames)
+                {
+                    var inferredMemberName = SyntaxFactsEx.TryGetInferredMemberName(argument.Expression);
+                    if (inferredMemberName != null)
+                    {
+                        CheckName(context, settings, tupleElement: null, inferredMemberName, argument.Expression.GetLocation(), false);
+                    }
                 }
             }
         }
