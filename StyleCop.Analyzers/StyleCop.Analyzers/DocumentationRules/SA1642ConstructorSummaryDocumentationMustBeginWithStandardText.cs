@@ -135,7 +135,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             var parent = constructorDeclarationSyntax.Parent;
             bool isStruct = parent != null &&
-                (parent.IsKind(SyntaxKind.StructDeclaration) || parent.IsKind(SyntaxKindEx.RecordStructDeclaration));
+                (parent.IsKind(SyntaxKind.StructDeclaration) || parent.IsKind(SyntaxKindEx.RecordStructDeclaration) || parent.IsKind(SyntaxKindEx.UnionDeclaration));
             var typeKindText = resourceManager.GetString(isStruct ? nameof(DocumentationResources.TypeTextStruct) : nameof(DocumentationResources.TypeTextClass), culture);
 
             if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword))

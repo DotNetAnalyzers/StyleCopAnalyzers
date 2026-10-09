@@ -84,7 +84,9 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         internal static ImmutableArray<string> GenerateStandardText(Document document, BaseMethodDeclarationSyntax methodDeclaration, BaseTypeDeclarationSyntax typeDeclaration, CancellationToken cancellationToken)
         {
-            bool isStruct = typeDeclaration.IsKind(SyntaxKind.StructDeclaration) || typeDeclaration.IsKind(SyntaxKindEx.RecordStructDeclaration);
+            bool isStruct = typeDeclaration.IsKind(SyntaxKind.StructDeclaration)
+                || typeDeclaration.IsKind(SyntaxKindEx.RecordStructDeclaration)
+                || typeDeclaration.IsKind(SyntaxKindEx.UnionDeclaration);
             var settings = document.Project.AnalyzerOptions.GetStyleCopSettingsInCodeFix(methodDeclaration.SyntaxTree, cancellationToken);
             var culture = settings.DocumentationRules.DocumentationCultureInfo;
             var resourceManager = DocumentationResources.ResourceManager;
@@ -157,6 +159,12 @@ namespace StyleCop.Analyzers.DocumentationRules
             {
                 var recordDeclaration = (RecordDeclarationSyntaxWrapper)typeDeclaration;
                 return recordDeclaration.TypeParameterList;
+            }
+
+            if (UnionDeclarationSyntaxWrapper.IsInstance(typeDeclaration))
+            {
+                var unionDeclaration = (UnionDeclarationSyntaxWrapper)typeDeclaration;
+                return unionDeclaration.TypeParameterList;
             }
 
             Debug.Assert(false, $"Unhandled type {typeDeclaration.Kind()}");
