@@ -74,5 +74,25 @@ class C
                 ExpectedDiagnostics = { Diagnostic().WithLocation(4, 35).WithArguments(" not", "preceded") },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that a closing interpolation brace which is the first token on its line is not reported, using the
+        /// newlines in interpolations allowed by C# 11.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3898, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3898")]
+        public async Task TestInterpolationClosingBraceFirstOnLineAsync()
+        {
+            var testCode = @"
+class C
+{
+    string M(int x) => $""abc {x
+        } def"";
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

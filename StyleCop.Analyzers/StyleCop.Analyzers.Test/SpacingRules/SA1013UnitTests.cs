@@ -401,5 +401,40 @@ class ClassName
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that a closing interpolation brace which is the first token on its line is not reported, while one
+        /// preceded by a space on the same line still is.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3898, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3898")]
+        public async Task TestVerbatimInterpolationClosingBraceFirstOnLineAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public string TestMethod(int x)
+    {
+        return $@""abc {x
+            } def {x {|#0:}|} ghi"";
+    }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    public string TestMethod(int x)
+    {
+        return $@""abc {x
+            } def {x} ghi"";
+    }
+}
+";
+
+            var expected = Diagnostic().WithLocation(0).WithArguments(" not", "preceded");
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

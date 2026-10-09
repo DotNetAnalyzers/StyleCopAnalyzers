@@ -79,7 +79,9 @@ namespace StyleCop.Analyzers.SpacingRules
 
             if (token.Parent is InterpolationSyntax)
             {
-                if (precededBySpace)
+                // A closing interpolation brace may be the first token on its line, for example when the
+                // interpolation expression spans multiple lines.
+                if (precededBySpace && !token.IsFirstInLine())
                 {
                     // Closing brace should{ not} be {preceded} by a space.
                     var properties = TokenSpacingProperties.RemovePreceding;
