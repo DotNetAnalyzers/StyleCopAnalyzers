@@ -5,7 +5,6 @@ namespace StyleCop.Analyzers.Test.CSharp15.ReadabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp14.ReadabilityRules;
     using Xunit;
@@ -13,9 +12,9 @@ namespace StyleCop.Analyzers.Test.CSharp15.ReadabilityRules
         StyleCop.Analyzers.ReadabilityRules.SA1101PrefixLocalCallsWithThis,
         StyleCop.Analyzers.ReadabilityRules.SA1101CodeFixProvider>;
 
-    // Union declarations are only parsed with the preview language version. The reference assemblies used by these
-    // tests do not define System.Runtime.CompilerServices.IUnion and UnionAttribute, so union declarations produce
-    // CS0518 and CS0656, and compiler diagnostics are therefore ignored.
+    // Union declarations are only parsed with the preview language version, which is the default for this test project.
+    // The reference assemblies used by these tests do not define System.Runtime.CompilerServices.IUnion and
+    // UnionAttribute, so union declarations produce CS0518 and CS0656, and compiler diagnostics are therefore ignored.
     public partial class SA1101CSharp15UnitTests : SA1101CSharp14UnitTests
     {
         /// <summary>
@@ -52,7 +51,7 @@ public union Pet(int, string)
 }
 ";
 
-            await new CSharpTest(LanguageVersion.Preview)
+            await new CSharpTest()
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,

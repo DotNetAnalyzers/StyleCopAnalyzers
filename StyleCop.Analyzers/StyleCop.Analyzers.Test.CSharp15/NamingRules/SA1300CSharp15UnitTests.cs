@@ -5,7 +5,6 @@ namespace StyleCop.Analyzers.Test.CSharp15.NamingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp14.NamingRules;
     using Xunit;
@@ -13,9 +12,9 @@ namespace StyleCop.Analyzers.Test.CSharp15.NamingRules
         StyleCop.Analyzers.NamingRules.SA1300ElementMustBeginWithUpperCaseLetter,
         StyleCop.Analyzers.NamingRules.RenameToUpperCaseCodeFixProvider>;
 
-    // Union declarations are only parsed with the preview language version. The reference assemblies used by these
-    // tests do not define System.Runtime.CompilerServices.IUnion and UnionAttribute, so union declarations produce
-    // CS0518 and CS0656, and compiler diagnostics are therefore ignored.
+    // Union declarations are only parsed with the preview language version, which is the default for this test project.
+    // The reference assemblies used by these tests do not define System.Runtime.CompilerServices.IUnion and
+    // UnionAttribute, so union declarations produce CS0518 and CS0656, and compiler diagnostics are therefore ignored.
     public partial class SA1300CSharp15UnitTests : SA1300CSharp14UnitTests
     {
         /// <summary>
@@ -55,7 +54,7 @@ public class Outer
 }
 ";
 
-            await new CSharpTest(LanguageVersion.Preview)
+            await new CSharpTest()
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,

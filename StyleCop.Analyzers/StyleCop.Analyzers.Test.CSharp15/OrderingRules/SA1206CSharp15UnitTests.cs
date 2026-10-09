@@ -5,7 +5,6 @@ namespace StyleCop.Analyzers.Test.CSharp15.OrderingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp14.OrderingRules;
     using Xunit;
@@ -78,7 +77,7 @@ partial class Outer
 }
 ";
 
-            await new CSharpTest(LanguageVersion.Preview)
+            await new CSharpTest()
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
@@ -161,7 +160,7 @@ public struct Layout
 }
 ";
 
-            await new CSharpTest(LanguageVersion.Preview)
+            await new CSharpTest()
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
@@ -217,7 +216,7 @@ public class Outer
 }
 ";
 
-            await new CSharpTest(LanguageVersion.Preview)
+            await new CSharpTest()
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
