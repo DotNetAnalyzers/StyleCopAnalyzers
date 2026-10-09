@@ -216,6 +216,14 @@ The following properties are used in **stylecop.json** to configure using direct
 | `usingDirectivesPlacement` | `"insideNamespace"` | 1.0.0 | Specifies the desired placement of using directives |
 | `blankLinesBetweenUsingGroups` | `"allow"` | 1.1.0 | Specifies is blank lines are required to separate groups of using statements |
 
+`systemUsingDirectivesFirst` affects the following rules and their code fixes:
+
+* [SA1208](SA1208.md) only reports `System` using directives placed after other using directives when this property is `true`.
+* [SA1210](SA1210.md) sorts `System` namespaces ahead of other namespaces when this property is `true`, and sorts all
+  namespaces together alphabetically when it is `false`.
+* [SA1217](SA1217.md) sorts `using static` directives for `System` types ahead of other `using static` directives when
+  this property is `true`, and sorts them all together alphabetically when it is `false`.
+
 When using an **.editorconfig** file to configure StyleCop Analyzers, the respective properties for [formatting .NET/C#](https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/formatting-rules) can be used:
 ```ini
 dotnet_sort_system_directives_first = true
