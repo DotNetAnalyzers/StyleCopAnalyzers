@@ -121,7 +121,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 else if (followsSpecialCharacter && precededBySpace)
                 {
                     // Negative sign should{ not} be {preceded} by a space.
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemovePreceding, " not", "preceded"));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemoveImmediatePreceding, " not", "preceded"));
                 }
             }
 
