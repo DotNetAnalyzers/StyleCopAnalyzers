@@ -194,12 +194,8 @@ public class Foo4
     }
 }";
 
-            await new CSharpTest
-            {
-                TestCode = testCode,
-                ExpectedDiagnostics = { Diagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(0) },
-                FixedCode = testCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(0);
+            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
