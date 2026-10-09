@@ -121,6 +121,88 @@ public class Foo4
         }
 
         [Fact]
+        [WorkItem(1956, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1956")]
+        public async Task TestCommentBetweenClausesIsNotRemovedAsync()
+        {
+            var testCode = @"
+using System.Linq;
+public class Foo4
+{
+    public void Bar()
+    {
+        var source = new int[0];
+
+        var query =
+            from m in source
+
+            {|#0:where|} m > 0
+            // m < 10
+            {|#1:select|} m;
+    }
+}";
+
+            var fixedTestCode = @"
+using System.Linq;
+public class Foo4
+{
+    public void Bar()
+    {
+        var source = new int[0];
+
+        var query =
+            from m in source
+            where m > 0
+            // m < 10
+            {|#0:select|} m;
+    }
+}";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(0),
+                    Diagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(1),
+                },
+                FixedCode = fixedTestCode,
+                RemainingDiagnostics =
+                {
+                    Diagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(0),
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1956, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1956")]
+        public async Task TestCommentAndEmptyLineBetweenClausesAsync()
+        {
+            var testCode = @"
+using System.Linq;
+public class Foo4
+{
+    public void Bar()
+    {
+        var source = new int[0];
+
+        var query =
+            from m in source
+            where m > 0
+
+            /* where m < 10 */
+            {|#0:select|} m;
+    }
+}";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics = { Diagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(0) },
+                FixedCode = testCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestComplexQueryInOneLineAsync()
         {
             var testCode = @"

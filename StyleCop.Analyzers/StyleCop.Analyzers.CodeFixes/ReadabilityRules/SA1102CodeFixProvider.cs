@@ -8,11 +8,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp;
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
@@ -33,10 +35,20 @@ namespace StyleCop.Analyzers.ReadabilityRules
         }
 
         /// <inheritdoc/>
-        public override Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
             foreach (var diagnostic in context.Diagnostics)
             {
+                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
+                if (HasNonWhitespaceTriviaBefore(token))
+                {
+                    // The code fix removes the lines between the clauses, so it is not offered when they contain
+                    // comments or other non-whitespace trivia that would be lost.
+                    continue;
+                }
+
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         ReadabilityResources.SA1102CodeFix,
@@ -44,8 +56,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
                         nameof(SA1102CodeFixProvider)),
                     diagnostic);
             }
-
-            return SpecializedTasks.CompletedTask;
         }
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
@@ -69,6 +79,20 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             var newSyntaxRoot = syntaxRoot.ReplaceTokens(replaceMap.Keys, (t1, t2) => replaceMap[t1]).WithoutFormatting();
             return document.WithSyntaxRoot(newSyntaxRoot);
+        }
+
+        private static bool HasNonWhitespaceTriviaBefore(SyntaxToken token)
+        {
+            var precedingToken = token.GetPreviousToken();
+            foreach (var trivia in precedingToken.TrailingTrivia.Concat(token.LeadingTrivia))
+            {
+                if (!trivia.IsKind(SyntaxKind.WhitespaceTrivia) && !trivia.IsKind(SyntaxKind.EndOfLineTrivia))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
