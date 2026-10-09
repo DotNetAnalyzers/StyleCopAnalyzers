@@ -110,7 +110,6 @@ namespace StyleCop.Analyzers.DocumentationRules
             context.RegisterCompilationStartAction(context =>
             {
                 context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
-                context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKindEx.UnionDeclaration);
                 context.RegisterSyntaxNodeAction(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
                 context.RegisterSyntaxNodeAction(PropertyDeclarationAction, SyntaxKind.PropertyDeclaration);
                 context.RegisterSyntaxNodeAction(IndexerDeclarationAction, SyntaxKind.IndexerDeclaration);

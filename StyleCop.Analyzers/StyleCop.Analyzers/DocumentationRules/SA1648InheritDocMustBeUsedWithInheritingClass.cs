@@ -41,6 +41,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 SyntaxKind.InterfaceDeclaration,
                 SyntaxKindEx.RecordDeclaration,
                 SyntaxKindEx.RecordStructDeclaration,
+                SyntaxKindEx.UnionDeclaration,
                 SyntaxKind.EnumDeclaration,
                 SyntaxKind.DelegateDeclaration);
 

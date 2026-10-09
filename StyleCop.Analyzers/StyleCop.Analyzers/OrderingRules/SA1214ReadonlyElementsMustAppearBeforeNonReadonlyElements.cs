@@ -39,7 +39,8 @@ namespace StyleCop.Analyzers.OrderingRules
                 SyntaxKind.ClassDeclaration,
                 SyntaxKind.StructDeclaration,
                 SyntaxKindEx.RecordDeclaration,
-                SyntaxKindEx.RecordStructDeclaration);
+                SyntaxKindEx.RecordStructDeclaration,
+                SyntaxKindEx.UnionDeclaration);
 
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> TypeDeclarationAction = HandleTypeDeclaration;
 
