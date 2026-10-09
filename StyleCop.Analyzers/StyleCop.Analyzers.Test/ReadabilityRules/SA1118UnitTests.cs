@@ -388,6 +388,54 @@ public class Foo
 
         [Theory]
         [MemberData(nameof(ArrayCreationExpressions))]
+        [WorkItem(3676, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3676")]
+        public async Task TestAttributeArrayCreationSpansMultipleLinesAsync(string arrayCreationExpression)
+        {
+            var testCode = $@"
+[System.AttributeUsage(System.AttributeTargets.Class)]
+public class MyAttribute : System.Attribute
+{{
+    public MyAttribute(int a, int[] b)
+    {{
+    }}
+}}
+
+[MyAttribute(
+    1,
+    {arrayCreationExpression})]
+public class Foo
+{{
+}}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3676, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3676")]
+        public async Task TestAttributeInvocationSpansMultipleLinesAsync()
+        {
+            var testCode = @"
+[System.AttributeUsage(System.AttributeTargets.Class)]
+public class MyAttribute : System.Attribute
+{
+    public MyAttribute(int a, string b)
+    {
+    }
+}
+
+[MyAttribute(
+    1,
+    nameof(
+        Foo))]
+public class Foo
+{
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(ArrayCreationExpressions))]
         public async Task TestArrayCreationSpansMultipleLinesAsync(string arrayCreationExpression)
         {
             var testCode = $@"
