@@ -90,14 +90,14 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs6-${{ matrix.configuration }}
-        path: StyleCop.Analyzers/StyleCop.Analyzers.Test/bin/${{ matrix.configuration }}/net452
+        path: StyleCop.Analyzers/StyleCop.Analyzers.Test/bin/${{ matrix.configuration }}/net472
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 7)
       uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs7-${{ matrix.configuration }}
-        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp7/bin/${{ matrix.configuration }}/net46
+        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp7/bin/${{ matrix.configuration }}/net472
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 8)
@@ -254,10 +254,10 @@ jobs:
         langVersion: [ '6', '7', '8', '9', '10', '11', '12', '13', '14', '15' ]
         include:
         - langVersion: '6'
-          framework: net452
+          framework: net472
           project: StyleCop.Analyzers.Test
         - langVersion: '7'
-          framework: net46
+          framework: net472
           project: StyleCop.Analyzers.Test.CSharp7
         - langVersion: '8'
           framework: net472
