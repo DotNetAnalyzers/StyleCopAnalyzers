@@ -7,6 +7,7 @@
     <authors>Sam Harwell et. al.</authors>
     <owners>Sam Harwell</owners>
     <license type="expression">MIT</license>
+    <readme>README.md</readme>
     <projectUrl>https://github.com/DotNetAnalyzers/StyleCopAnalyzers</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>An implementation of StyleCop's rules using Roslyn analyzers and code fixes</description>
@@ -20,6 +21,7 @@
     <!-- Additional Files -->
     <file src="..\..\LICENSE" />
     <file src="..\..\THIRD-PARTY-NOTICES.txt" />
+    <file src="PackageReadme.md" target="README.md" />
 
     <!-- Binaries (the PDBs are embedded in the DLLs) -->
     <file src="bin\$Configuration$\netstandard1.1\StyleCop.Analyzers.dll" target="analyzers\dotnet\cs" />
