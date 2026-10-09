@@ -111,7 +111,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             for (int i = 1; i < attributeArgumentList.Arguments.Count; i++)
             {
                 var argument = attributeArgumentList.Arguments[i];
-                if (CheckIfArgumentIsMultiline(argument))
+                if (CheckIfArgumentIsMultiline(argument)
+                    && !IsArgumentOnExceptionList(argument.Expression))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));
                 }
