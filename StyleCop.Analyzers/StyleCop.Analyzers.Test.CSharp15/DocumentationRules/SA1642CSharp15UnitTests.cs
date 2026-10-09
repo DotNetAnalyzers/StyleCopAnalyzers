@@ -18,8 +18,8 @@ namespace StyleCop.Analyzers.Test.CSharp15.DocumentationRules
     public partial class SA1642CSharp15UnitTests : SA1642CSharp14UnitTests
     {
         /// <summary>
-        /// Verifies that the standard text for a union constructor refers to a struct, because a union is a struct type,
-        /// that the diagnostic is reported exactly once, and that the code fix adds the struct text.
+        /// Verifies that the standard text for a union constructor refers to a union, that the diagnostic is reported
+        /// exactly once, and that the code fix adds the union text.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -50,7 +50,7 @@ public union Pet(int, string)
 public union Pet(int, string)
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref=""Pet""/> struct.
+    /// Initializes a new instance of the <see cref=""Pet""/> union.
     /// Creates a pet.
     /// </summary>
     /// <param name=""legs"">The number of legs.</param>
@@ -104,7 +104,7 @@ public union Result<T>(T, string)
 public union Result<T>(T, string)
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref=""Result{T}""/> struct.
+    /// Initializes a new instance of the <see cref=""Result{T}""/> union.
     /// Creates a result.
     /// </summary>
     /// <param name=""value"">The value.</param>
@@ -124,7 +124,88 @@ public union Result<T>(T, string)
         }
 
         /// <summary>
-        /// Verifies that a union constructor documented with the struct standard text is not reported.
+        /// Verifies that a union constructor documented with the union standard text is not reported.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(4182, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4182")]
+        public async Task TestUnionConstructorWithUnionTextAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// A union.
+/// </summary>
+public union Pet(int, string)
+{
+    /// <summary>
+    /// Initializes a new instance of the <see cref=""Pet""/> union.
+    /// </summary>
+    /// <param name=""legs"">The number of legs.</param>
+    /// <param name=""name"">The name.</param>
+    public Pet(int legs, string name)
+    {
+    }
+}
+";
+
+            await new CSharpTest()
+            {
+                TestCode = testCode,
+                CompilerDiagnostics = CompilerDiagnostics.None,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the standard text for a static union constructor refers to a union, that the diagnostic is
+        /// reported exactly once, and that the code fix adds the union text.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(4182, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4182")]
+        public async Task TestUnionStaticConstructorAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// A union.
+/// </summary>
+public union Pet(int, string)
+{
+    /// [|<summary>
+    /// Sets up shared state.
+    /// </summary>|]
+    static Pet()
+    {
+    }
+}
+";
+
+            var fixedCode = @"
+/// <summary>
+/// A union.
+/// </summary>
+public union Pet(int, string)
+{
+    /// <summary>
+    /// Initializes static members of the <see cref=""Pet""/> union.
+    /// Sets up shared state.
+    /// </summary>
+    static Pet()
+    {
+    }
+}
+";
+
+            await new CSharpTest()
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                CompilerDiagnostics = CompilerDiagnostics.None,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a union constructor documented with the struct standard text is reported exactly once, and that
+        /// the code fix adds the union text.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -137,7 +218,25 @@ public union Result<T>(T, string)
 /// </summary>
 public union Pet(int, string)
 {
+    /// [|<summary>
+    /// Initializes a new instance of the <see cref=""Pet""/> struct.
+    /// </summary>|]
+    /// <param name=""legs"">The number of legs.</param>
+    /// <param name=""name"">The name.</param>
+    public Pet(int legs, string name)
+    {
+    }
+}
+";
+
+            var fixedCode = @"
+/// <summary>
+/// A union.
+/// </summary>
+public union Pet(int, string)
+{
     /// <summary>
+    /// Initializes a new instance of the <see cref=""Pet""/> union.
     /// Initializes a new instance of the <see cref=""Pet""/> struct.
     /// </summary>
     /// <param name=""legs"">The number of legs.</param>
@@ -151,6 +250,7 @@ public union Pet(int, string)
             await new CSharpTest()
             {
                 TestCode = testCode,
+                FixedCode = fixedCode,
                 CompilerDiagnostics = CompilerDiagnostics.None,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }

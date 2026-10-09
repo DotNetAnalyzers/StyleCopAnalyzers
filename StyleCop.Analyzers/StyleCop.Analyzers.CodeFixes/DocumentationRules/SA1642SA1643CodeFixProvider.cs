@@ -84,16 +84,13 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         internal static ImmutableArray<string> GenerateStandardText(Document document, BaseMethodDeclarationSyntax methodDeclaration, BaseTypeDeclarationSyntax typeDeclaration, CancellationToken cancellationToken)
         {
-            bool isStruct = typeDeclaration.IsKind(SyntaxKind.StructDeclaration)
-                || typeDeclaration.IsKind(SyntaxKindEx.RecordStructDeclaration)
-                || typeDeclaration.IsKind(SyntaxKindEx.UnionDeclaration);
             var settings = document.Project.AnalyzerOptions.GetStyleCopSettingsInCodeFix(methodDeclaration.SyntaxTree, cancellationToken);
             var culture = settings.DocumentationRules.DocumentationCultureInfo;
             var resourceManager = DocumentationResources.ResourceManager;
 
             if (methodDeclaration is ConstructorDeclarationSyntax)
             {
-                var typeKindText = resourceManager.GetString(isStruct ? nameof(DocumentationResources.TypeTextStruct) : nameof(DocumentationResources.TypeTextClass), culture);
+                var typeKindText = resourceManager.GetString(SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.GetTypeKindTextResourceName(typeDeclaration), culture);
                 if (methodDeclaration.Modifiers.Any(SyntaxKind.StaticKeyword))
                 {
                     return ImmutableArray.Create(

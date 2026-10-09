@@ -168,6 +168,9 @@
   <data name="TypeTextStruct" xml:space="preserve">
     <value>struktury</value>
   </data>
+  <data name="TypeTextUnion" xml:space="preserve">
+    <value>sjednocení</value>
+  </data>
   <data name="StartingTextGetsOrInitializes" xml:space="preserve">
     <value>Získá nebo inicializuje</value>
   </data>
