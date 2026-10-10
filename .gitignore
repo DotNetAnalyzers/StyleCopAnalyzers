@@ -21,6 +21,7 @@ mono_crash.*
 
 # Build results
 StyleCop.Analyzers.Status.json
+StyleCop.Analyzers.Status.*.json
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/

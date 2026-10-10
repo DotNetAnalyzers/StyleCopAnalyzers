@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="SA0001Description" xml:space="preserve">
+    <value>Анализ XML-комментариев возможен только тогда, когда проект настроен на разбор комментариев документации. Чтобы включить эту возможность, настройте проект на создание файла XML-документации при сборке.</value>
+  </data>
+  <data name="SA0001MessageFormat" xml:space="preserve">
+    <value>Анализ XML-комментариев отключен настройками проекта</value>
+  </data>
+  <data name="SA0001Title" xml:space="preserve">
+    <value>Анализ XML-комментариев отключен</value>
+  </data>
+  <data name="SA0002Description" xml:space="preserve">
+    <value>Различные ошибки в файле stylecop.json могут помешать анализаторам загрузить его. В этом случае используются настройки по умолчанию.
+
+{0}</value>
+  </data>
+  <data name="SA0002MessageFormat" xml:space="preserve">
+    <value>Не удалось загрузить файл настроек stylecop.json</value>
+  </data>
+  <data name="SA0002Title" xml:space="preserve">
+    <value>Недопустимый файл настроек</value>
+  </data>
+</root>

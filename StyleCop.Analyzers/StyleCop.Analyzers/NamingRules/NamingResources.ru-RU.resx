@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="RenameToCodeFix" xml:space="preserve">
+    <value>Переименовать в '{0}'</value>
+  </data>
+  <data name="SA1300Description" xml:space="preserve">
+    <value>Имя элемента C# не начинается с прописной буквы.</value>
+  </data>
+  <data name="SA1300MessageFormat" xml:space="preserve">
+    <value>Имя элемента '{0}' должно начинаться с прописной буквы</value>
+  </data>
+  <data name="SA1300Title" xml:space="preserve">
+    <value>Имя элемента должно начинаться с прописной буквы</value>
+  </data>
+  <data name="SA1301Description" xml:space="preserve">
+    <value>В настоящее время нет ситуаций, в которых срабатывает это правило.</value>
+  </data>
+  <data name="SA1301MessageFormat" xml:space="preserve">
+    <value>Имя элемента должно начинаться со строчной буквы</value>
+  </data>
+  <data name="SA1301Title" xml:space="preserve">
+    <value>Имя элемента должно начинаться со строчной буквы</value>
+  </data>
+  <data name="SA1302CodeFix" xml:space="preserve">
+    <value>Добавить префикс 'I' к имени интерфейса</value>
+  </data>
+  <data name="SA1302Description" xml:space="preserve">
+    <value>Имя интерфейса C# не начинается с прописной буквы I.</value>
+  </data>
+  <data name="SA1302MessageFormat" xml:space="preserve">
+    <value>Имена интерфейсов должны начинаться с I</value>
+  </data>
+  <data name="SA1302Title" xml:space="preserve">
+    <value>Имена интерфейсов должны начинаться с I</value>
+  </data>
+  <data name="SA1303Description" xml:space="preserve">
+    <value>Имя константного поля C# должно начинаться с прописной буквы.</value>
+  </data>
+  <data name="SA1303MessageFormat" xml:space="preserve">
+    <value>Имена константных полей должны начинаться с прописной буквы</value>
+  </data>
+  <data name="SA1303Title" xml:space="preserve">
+    <value>Имена константных полей должны начинаться с прописной буквы</value>
+  </data>
+  <data name="SA1304Description" xml:space="preserve">
+    <value>Имя поля C# с модификатором readonly и уровнем доступа, отличным от private, должно начинаться с прописной буквы.</value>
+  </data>
+  <data name="SA1304MessageFormat" xml:space="preserve">
+    <value>Имена полей readonly с уровнем доступа, отличным от private, должны начинаться с прописной буквы</value>
+  </data>
+  <data name="SA1304Title" xml:space="preserve">
+    <value>Имена полей readonly с уровнем доступа, отличным от private, должны начинаться с прописной буквы</value>
+  </data>
+  <data name="SA1305Description" xml:space="preserve">
+    <value>В имени поля или переменной C# используется венгерская нотация.</value>
+  </data>
+  <data name="SA1305MessageFormat" xml:space="preserve">
+    <value>В имени '{1}' ({0}) не должна использоваться венгерская нотация</value>
+  </data>
+  <data name="SA1305Title" xml:space="preserve">
+    <value>В именах полей не должна использоваться венгерская нотация</value>
+  </data>
+  <data name="SA1306Description" xml:space="preserve">
+    <value>Имя поля C# не начинается со строчной буквы.</value>
+  </data>
+  <data name="SA1306MessageFormat" xml:space="preserve">
+    <value>Имя поля '{0}' должно начинаться со строчной буквы</value>
+  </data>
+  <data name="SA1306Title" xml:space="preserve">
+    <value>Имена полей должны начинаться со строчной буквы</value>
+  </data>
+  <data name="SA1307Description" xml:space="preserve">
+    <value>Имя поля C# с модификатором public или internal не начинается с прописной буквы.</value>
+  </data>
+  <data name="SA1307MessageFormat" xml:space="preserve">
+    <value>Имя поля '{0}' должно начинаться с прописной буквы</value>
+  </data>
+  <data name="SA1307Title" xml:space="preserve">
+    <value>Имена доступных полей должны начинаться с прописной буквы</value>
+  </data>
+  <data name="SA1308Description" xml:space="preserve">
+    <value>Имя поля C# начинается с префикса 'm_', 's_' или 't_'.</value>
+  </data>
+  <data name="SA1308MessageFormat" xml:space="preserve">
+    <value>Имя поля '{0}' не должно начинаться с префикса '{1}'</value>
+  </data>
+  <data name="SA1308Title" xml:space="preserve">
+    <value>Имена переменных не должны содержать префиксы</value>
+  </data>
+  <data name="SA1309Description" xml:space="preserve">
+    <value>Имя поля C# начинается с символа подчеркивания.</value>
+  </data>
+  <data name="SA1309MessageFormat" xml:space="preserve">
+    <value>Имя поля '{0}' не должно начинаться с символа подчеркивания</value>
+  </data>
+  <data name="SA1309Title" xml:space="preserve">
+    <value>Имена полей не должны начинаться с символа подчеркивания</value>
+  </data>
+  <data name="SA1310Description" xml:space="preserve">
+    <value>Имя поля C# содержит символ подчеркивания.</value>
+  </data>
+  <data name="SA1310MessageFormat" xml:space="preserve">
+    <value>Имя поля '{0}' не должно содержать символ подчеркивания</value>
+  </data>
+  <data name="SA1310Title" xml:space="preserve">
+    <value>Имена полей не должны содержать символ подчеркивания</value>
+  </data>
+  <data name="SA1311Description" xml:space="preserve">
+    <value>Имя статического поля readonly не начинается с прописной буквы.</value>
+  </data>
+  <data name="SA1311MessageFormat" xml:space="preserve">
+    <value>Имена статических полей readonly должны начинаться с прописной буквы</value>
+  </data>
+  <data name="SA1311Title" xml:space="preserve">
+    <value>Имена статических полей readonly должны начинаться с прописной буквы</value>
+  </data>
+  <data name="SA1312CodeFix" xml:space="preserve">
+    <value>Заменить на символ отбрасывания</value>
+  </data>
+  <data name="SA1312Description" xml:space="preserve">
+    <value>Имя переменной C# не начинается со строчной буквы.</value>
+  </data>
+  <data name="SA1312MessageFormat" xml:space="preserve">
+    <value>Имя переменной '{0}' должно начинаться со строчной буквы</value>
+  </data>
+  <data name="SA1312Title" xml:space="preserve">
+    <value>Имена переменных должны начинаться со строчной буквы</value>
+  </data>
+  <data name="SA1313Description" xml:space="preserve">
+    <value>Имя параметра C# не начинается со строчной буквы.</value>
+  </data>
+  <data name="SA1313MessageFormat" xml:space="preserve">
+    <value>Имя параметра '{0}' должно начинаться со строчной буквы</value>
+  </data>
+  <data name="SA1313Title" xml:space="preserve">
+    <value>Имена параметров должны начинаться со строчной буквы</value>
+  </data>
+  <data name="SA1314CodeFix" xml:space="preserve">
+    <value>Добавить префикс 'T' к имени параметра типа</value>
+  </data>
+  <data name="SA1314Description" xml:space="preserve">
+    <value>Имя параметра типа C# не начинается с прописной буквы T.</value>
+  </data>
+  <data name="SA1314MessageFormat" xml:space="preserve">
+    <value>Имена параметров типа должны начинаться с T</value>
+  </data>
+  <data name="SA1314Title" xml:space="preserve">
+    <value>Имена параметров типа должны начинаться с T</value>
+  </data>
+  <data name="SA1316CodeFix" xml:space="preserve">
+    <value>Исправить регистр букв в именах элементов кортежа</value>
+  </data>
+  <data name="SA1316Description" xml:space="preserve">
+    <value>В именах элементов типа кортежа должен использоваться правильный регистр букв.</value>
+  </data>
+  <data name="SA1316MessageFormat" xml:space="preserve">
+    <value>В именах элементов кортежа должен использоваться правильный регистр букв</value>
+  </data>
+  <data name="SA1316Title" xml:space="preserve">
+    <value>В именах элементов кортежа должен использоваться правильный регистр букв</value>
+  </data>
+  <data name="SX1309Description" xml:space="preserve">
+    <value>Имя поля C# не начинается с символа подчеркивания.</value>
+  </data>
+  <data name="SX1309MessageFormat" xml:space="preserve">
+    <value>Имя поля '{0}' должно начинаться с символа подчеркивания</value>
+  </data>
+  <data name="SX1309SDescription" xml:space="preserve">
+    <value>Имя статического поля C# не начинается с символа подчеркивания.</value>
+  </data>
+  <data name="SX1309SMessageFormat" xml:space="preserve">
+    <value>Имя статического поля '{0}' должно начинаться с символа подчеркивания</value>
+  </data>
+  <data name="SX1309STitle" xml:space="preserve">
+    <value>Имена статических полей должны начинаться с символа подчеркивания</value>
+  </data>
+  <data name="SX1309Title" xml:space="preserve">
+    <value>Имена полей должны начинаться с символа подчеркивания</value>
+  </data>
+</root>

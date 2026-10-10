@@ -1,0 +1,6 @@
+- name: Документация
+  href: ../index.md
+- name: Состояние правил
+  href: ../RuleStatus.md
+- name: GitHub
+  href: https://github.com/DotNetAnalyzers/StyleCopAnalyzers

@@ -54,6 +54,11 @@ jobs:
     - name: Restore DocFX
       run: dotnet tool restore
 
+    - name: Setup Node.js
+      uses: actions/setup-node@v6
+      with:
+        node-version: '24'
+
     - name: Download rule status report
       uses: actions/download-artifact@v8
       with:
@@ -61,7 +66,11 @@ jobs:
         path: docs
 
     - name: Build documentation
-      run: dotnet docfx docfx.json --warningsAsErrors
+      shell: pwsh
+      run: ./build/documentation.ps1
+
+    - name: Test documentation localization
+      run: node --test build/documentation-localization.test.cjs
 
     - name: Upload Pages artifact
       uses: actions/upload-pages-artifact@v5
