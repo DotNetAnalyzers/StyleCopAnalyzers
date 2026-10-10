@@ -69,8 +69,9 @@ namespace StyleCop.Analyzers.Helpers
 
         internal static string GetSimpleFileName(MemberDeclarationSyntax memberDeclaration)
         {
-            var nameOrIdentifier = NamedTypeHelpers.GetNameOrIdentifier(memberDeclaration);
-            return nameOrIdentifier;
+            var identifier = (memberDeclaration as BaseTypeDeclarationSyntax)?.Identifier
+                ?? ((DelegateDeclarationSyntax)memberDeclaration).Identifier;
+            return identifier.ValueText;
         }
 
         private static string GetMetadataFileName(TypeDeclarationSyntax typeDeclaration)
