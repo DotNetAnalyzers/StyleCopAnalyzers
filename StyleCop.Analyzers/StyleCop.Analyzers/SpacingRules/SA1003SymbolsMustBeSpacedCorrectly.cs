@@ -60,7 +60,7 @@ namespace StyleCop.Analyzers.SpacingRules
         internal const string RemoveEndOfLineTag = "RemoveEndOfLine";
         internal const string RemoveEndOfLineWithTrailingSpaceTag = "RemoveEndOfLineWithTrailingSpace";
 
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1003.md";
+        private static readonly string HelpLink = HelpLinkHelper.GetHelpLink(DiagnosticId);
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1003Title), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString MessageFormatNotFollowedByComment = new LocalizableResourceString(nameof(SpacingResources.SA1003MessageFormatNotFollowedByComment), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString MessageFormatPrecededByWhitespace = new LocalizableResourceString(nameof(SpacingResources.SA1003MessageFormatPrecededByWhitespace), SpacingResources.ResourceManager, typeof(SpacingResources));

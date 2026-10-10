@@ -10,6 +10,7 @@ namespace TestHelper
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Test.Helpers;
 
     /// <summary>
     /// A analyzer that will report a diagnostic at the start of the code file if the
@@ -23,7 +24,7 @@ namespace TestHelper
         private const string Title = "Exclusion test";
         private const string MessageFormat = "Exclusion test";
         private const string Description = "Exclusion test.";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA9999.md";
+        private static readonly string HelpLink = HelpLinkHelper.GetHelpLink(DiagnosticId);
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, "TestRules", DiagnosticSeverity.Warning, true, Description, HelpLink);

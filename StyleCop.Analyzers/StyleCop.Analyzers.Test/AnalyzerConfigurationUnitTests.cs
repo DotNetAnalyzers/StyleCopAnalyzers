@@ -15,6 +15,7 @@ namespace StyleCop.Analyzers.Test
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
 
     public class AnalyzerConfigurationUnitTests
@@ -56,7 +57,7 @@ namespace StyleCop.Analyzers.Test
                     continue;
                 }
 
-                string expected = $"https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/{diagnostic.Id}.md";
+                string expected = HelpLinkHelper.GetHelpLink(diagnostic.Id);
                 Assert.Equal(expected, diagnostic.HelpLinkUri);
             }
         }
