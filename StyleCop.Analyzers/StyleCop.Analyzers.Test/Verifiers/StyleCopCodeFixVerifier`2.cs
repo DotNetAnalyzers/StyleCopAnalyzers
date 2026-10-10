@@ -152,22 +152,6 @@ namespace StyleCop.Analyzers.Test.Verifiers
                         .AddMetadataReference(projectId, system.WithAliases(new[] { "global", "system" }));
                 });
 
-                // TODO: This a temporary hack. Remove when the reference assemblies include the compiler support types for C# 15
-                if (TestLanguageVersion.SupportsCSharp15)
-                {
-                    // The used reference assemblies do not yet include the needed compiler support types for C# 15,
-                    // so add them through a small in-memory assembly instead.
-                    this.SolutionTransforms.Add((solution, mainProjectId) =>
-                    {
-                        foreach (var projectId in solution.ProjectIds.ToArray())
-                        {
-                            solution = solution.AddMetadataReference(projectId, GenericAnalyzerTest.CSharp15PreviewTypesReference);
-                        }
-
-                        return solution;
-                    });
-                }
-
                 return;
 
                 // Local function

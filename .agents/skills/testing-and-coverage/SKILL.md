@@ -23,7 +23,7 @@ Check the csproj files for current versions; this table is from Oct 2026.
 - Version-dependent expectations: `protected virtual` members in the base class, overridden later (examples:
   `SA1504CSharp13/14`, `SA1130CSharp13`), or `LightupHelpers.SupportsCSharpN` inside the test.
 - Reference assemblies follow the language version (`GenericAnalyzerTest.CreateDefaultReferenceAssemblies`:
-  C# 13 → .NET 9, C# 14+ → .NET 10, older versions older frameworks). A test that must also cover .NET Framework
+  C# 13 → .NET 9, C# 14 → .NET 10, C# 15 → .NET 11 RC, older versions older frameworks). A test that must also cover .NET Framework
   sets `ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net472` explicitly.
 - Verifiers live in `StyleCop.Analyzers.Test/Verifiers` (`StyleCopDiagnosticVerifier<TAnalyzer>`,
   `StyleCopCodeFixVerifier<TAnalyzer, TCodeFix>`, `CustomDiagnosticVerifier<TAnalyzer>`) on top of
@@ -96,10 +96,11 @@ diagnostic per location also asserts "no duplicates". When a compiler bug duplic
 
 ## Compiler diagnostics in test code
 
-Snippets should compile. When a preview feature needs runtime types the reference assemblies lack,
-add them to an in-memory assembly that `StyleCopCodeFixVerifier.CSharpTest` adds to the relevant tests
-instead of turning compiler diagnostics off. This is done to prevent tests passing for the wrong reason
-if there are mistakes in the snippets. When the test code is invalid on purpose
+Snippets should compile. C# 15 tests use `Microsoft.NETCore.App.Ref` version `11.0.0-rc.1.26425.128`
+from nuget.org, which supplies `IUnion`, `UnionAttribute`, and `IsClosedTypeAttribute`; no synthetic
+support assembly or compiler diagnostic suppression is needed. When a preview feature needs runtime types,
+prefer an official prerelease reference package instead of turning compiler diagnostics off, so mistakes
+in snippets cannot make tests pass for the wrong reason. When the test code is invalid on purpose
 (a misordered `partial` gives CS0267 for example), expect that compiler diagnostic with markup such as `{|CS0267:partial|}`.
 Use `CompilerDiagnostics = CompilerDiagnostics.None` only as a last resort, and say why in a comment.
 

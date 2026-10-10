@@ -6,19 +6,16 @@ namespace StyleCop.Analyzers.Test.Verifiers
     using System;
     using System.Collections.Immutable;
     using System.IO;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Testing;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Lightup;
+    using StyleCop.Analyzers.Test.Helpers;
 
     internal static class GenericAnalyzerTest
     {
         private static readonly Lazy<ReferenceAssemblies> LazyReferenceAssemblies;
-
-        private static readonly Lazy<MetadataReference> LazyCSharp15PreviewTypesReference;
 
         private static readonly AnalyzerTest<DefaultVerifier> WorkspaceHelper =
             new CSharpCodeFixTest<EmptyDiagnosticAnalyzer, EmptyCodeFixProvider, DefaultVerifier>();
@@ -26,9 +23,6 @@ namespace StyleCop.Analyzers.Test.Verifiers
         static GenericAnalyzerTest()
         {
             LazyReferenceAssemblies = new Lazy<ReferenceAssemblies>(CreateDefaultReferenceAssemblies);
-            LazyCSharp15PreviewTypesReference = new Lazy<MetadataReference>(
-                CreateCSharp15PreviewTypesReference,
-                LazyThreadSafetyMode.PublicationOnly); // Used in case the nuget package download fails, so that won't automatically fail all tests
         }
 
         internal static ReferenceAssemblies ReferenceAssemblies
@@ -36,15 +30,6 @@ namespace StyleCop.Analyzers.Test.Verifiers
             get
             {
                 return LazyReferenceAssemblies.Value;
-            }
-        }
-
-        // TODO: Remove when the reference assemblies include the compiler support types for C# 15
-        internal static MetadataReference CSharp15PreviewTypesReference
-        {
-            get
-            {
-                return LazyCSharp15PreviewTypesReference.Value;
             }
         }
 
@@ -68,9 +53,16 @@ namespace StyleCop.Analyzers.Test.Verifiers
 
             // Use appropriate default reference assemblies per the support matrix:
             // https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/configure-language-version
-            // C# 13 ships with .NET 9 and C# 14 with .NET 10.
+            // C# 13 ships with .NET 9, C# 14 with .NET 10, and C# 15 with .NET 11.
             ReferenceAssemblies defaultReferenceAssemblies;
-            if (LightupHelpers.SupportsCSharp14)
+            if (TestLanguageVersion.SupportsCSharp15)
+            {
+                defaultReferenceAssemblies = new ReferenceAssemblies(
+                    "net11.0",
+                    new PackageIdentity("Microsoft.NETCore.App.Ref", "11.0.0-rc.1.26425.128"),
+                    Path.Combine("ref", "net11.0"));
+            }
+            else if (LightupHelpers.SupportsCSharp14)
             {
                 defaultReferenceAssemblies = ReferenceAssemblies.Net.Net100;
             }
@@ -110,56 +102,6 @@ namespace StyleCop.Analyzers.Test.Verifiers
             return defaultReferenceAssemblies.AddPackages(ImmutableArray.Create(
                 new PackageIdentity("Microsoft.CodeAnalysis.CSharp", codeAnalysisTestVersion),
                 new PackageIdentity("System.ValueTuple", "4.5.0")));
-        }
-
-        private static MetadataReference CreateCSharp15PreviewTypesReference()
-        {
-            var source = @"
-#nullable enable
-
-namespace System.Runtime.CompilerServices
-{
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false)]
-    public sealed class UnionAttribute : Attribute
-    {
-    }
-
-    public interface IUnion
-    {
-        object? Value { get; }
-    }
-
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
-    public sealed class IsClosedTypeAttribute : Attribute
-    {
-    }
-}
-";
-
-            // NOTE: Using .NET Standard here to work in all tests
-            var netStandardReferences = ReferenceAssemblies.NetStandard.NetStandard20
-                .ResolveAsync(LanguageNames.CSharp, CancellationToken.None)
-                .GetAwaiter()
-                .GetResult();
-
-            var compilation = CSharpCompilation.Create(
-                "StyleCop.Analyzers.Test.CSharp15PreviewTypes",
-                [CSharpSyntaxTree.ParseText(source)],
-                netStandardReferences,
-                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
-
-            using (var stream = new MemoryStream())
-            {
-                var emitResult = compilation.Emit(stream);
-                if (!emitResult.Success)
-                {
-                    throw new InvalidOperationException(
-                        "Failed to compile the synthetic C# 15 preview types assembly: "
-                        + string.Join(Environment.NewLine, emitResult.Diagnostics));
-                }
-
-                return MetadataReference.CreateFromImage(stream.ToArray());
-            }
         }
     }
 }
