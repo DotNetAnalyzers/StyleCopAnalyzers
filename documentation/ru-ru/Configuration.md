@@ -1,22 +1,197 @@
-<a id="configuring-stylecop-analyzers"></a>
+﻿<a id="configuring-stylecop-analyzers"></a>
 
 # Настройка StyleCop Analyzers
 
-StyleCop Analyzers можно настроить несколькими независимыми способами:
+Конфигурация StyleCop Analyzers бывает двух видов: **какие правила выполняются и насколько они серьёзны** и **параметры**,
+которые точно настраивают отдельные правила (например, название компании, используемое в заголовках файлов).
 
-1. Файлы наборов правил анализа кода
+**Рекомендация:** используйте для обоих видов файл **.editorconfig** или файл **.globalconfig**. В них можно задать
+любой параметр, поэтому одного файла достаточно. **stylecop.json** и файлы наборов правил по-прежнему работают в
+существующих проектах; они описаны ниже вместе со способами перехода с них.
 
-   * Включение и отключение отдельных правил
-   * Настройка уровня серьёзности нарушений, выдаваемых отдельными правилами
+| Механизм | Уровни серьёзности правил | Параметры |
+| --- | --- | --- |
+| **.editorconfig** / **.globalconfig** (рекомендуется) | Да (`dotnet_diagnostic.<ID>.severity`) | Все (`variables` требует Roslyn 4.4 или новее) |
+| **stylecop.json** | Нет | Все |
+| Файлы наборов правил (`.ruleset`) | Да | Нет |
 
-2. **stylecop.json**
+Если один и тот же параметр задан и в **stylecop.json**, и в файле **.editorconfig**/**.globalconfig**, используется
+значение из **stylecop.json**.
 
-   * Задание специфичного для проекта текста, например названия компании и структуры заголовков с уведомлением об авторских правах
-   * Точная настройка поведения некоторых правил
+<a id="unified-configuration-with-editorconfig-or-globalconfig"></a>
 
-3. **.editorconfig**
+## Единая конфигурация с помощью .editorconfig или .globalconfig
 
-   * Может использоваться вместо файлов наборов правил и **stylecop.json**
+```ini
+# .editorconfig (or .globalconfig, without the [*.cs] section header and with `is_global = true` at the top)
+root = true
+
+[*.cs]
+# Rule severities
+dotnet_diagnostic.SA1633.severity = none
+dotnet_diagnostic.SA1309.severity = none
+
+# Settings
+stylecop.documentation.companyName = Contoso
+csharp_using_directive_placement = outside_namespace
+```
+
+* Уровень серьёзности правила задаётся стандартным свойством `dotnet_diagnostic.<идентификатор правила>.severity`
+  (`error`, `warning`, `suggestion`, `silent`, `none`). См. [Настройка анализаторов кода](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/configuration-files).
+* Файлы **.editorconfig** применяются к каждому исходному файлу в соответствии с заголовками разделов (например,
+  `[*.cs]`) и иерархией папок.
+* Файл **.globalconfig** подхватывается автоматически, если он называется именно **.globalconfig** и расположен в папке
+  проекта или выше. Для других имён файл необходимо добавить в элемент MSBuild `GlobalAnalyzerConfigFiles`. В глобальных
+  файлах конфигурации нет заголовков разделов: сначала запишите `is_global = true`, затем свойства.
+* Шаблона по умолчанию для копирования нет. Выберите только те уровни серьёзности и параметры, которые хотите изменить;
+  значения по умолчанию описаны в разделах ниже. Список всех правил и их уровней серьёзности по умолчанию приведён в
+  [состоянии реализации правил](RuleStatus.md) и на странице каждого правила.
+* SA0001 нельзя отключить через **.editorconfig** (ограничение Roslyn). Используйте файл набора правил или `NoWarn`.
+* Имена свойств не чувствительны к регистру. Логические значения — `true` или `false`, а `unset` отменяет значение,
+  заданное в родительском файле.
+
+<a id="settings-reference"></a>
+
+## Справочник параметров
+
+В этой таблице перечислены все параметры, способы их задания в каждом механизме, допустимые значения и значения по
+умолчанию. Подробности по каждому параметру приведены в следующих разделах.
+
+| Раздел | **stylecop.json** (объект `settings`) | **.editorconfig** / **.globalconfig** | Значения | По умолчанию |
+| --- | --- | --- | --- | --- |
+| Отступы | `indentation.indentationSize` | `indent_size` | целое число | `4` |
+| Отступы | `indentation.tabSize` | `tab_width` | целое число | `4` |
+| Отступы | `indentation.useTabs` | `indent_style` | `true`/`false` ⇄ `tab`/`space` | `false` / `space` |
+| Читаемость | `readabilityRules.allowBuiltInTypeAliases` | `stylecop.readability.allowBuiltInTypeAliases` | логическое | `false` |
+| Упорядочивание | `orderingRules.elementOrder` | `stylecop.ordering.elementOrder` | список из `kind`, `accessibility`, `constant`, `static`, `readonly` | `kind, accessibility, constant, static, readonly` |
+| Упорядочивание | `orderingRules.systemUsingDirectivesFirst` | `dotnet_sort_system_directives_first` | логическое | `true` |
+| Упорядочивание | `orderingRules.usingDirectivesPlacement` | `stylecop.ordering.usingDirectivesPlacement` (или `csharp_using_directive_placement`) | `insideNamespace`, `outsideNamespace`, `preserve` ⇄ `inside_namespace`, `outside_namespace` | `insideNamespace` |
+| Упорядочивание | `orderingRules.blankLinesBetweenUsingGroups` | `stylecop.ordering.blankLinesBetweenUsingGroups` (или `dotnet_separate_import_directive_groups`) | `allow`, `require`, `omit` ⇄ `false`, `true` | `allow` |
+| Именование | `namingRules.allowCommonHungarianPrefixes` | `stylecop.naming.allowCommonHungarianPrefixes` | логическое | `true` |
+| Именование | `namingRules.allowedHungarianPrefixes` | `stylecop.naming.allowedHungarianPrefixes` | список через запятую | пусто |
+| Именование | `namingRules.allowedNamespaceComponents` | `stylecop.naming.allowedNamespaceComponents` | список через запятую | пусто |
+| Именование | `namingRules.includeInferredTupleElementNames` | `stylecop.naming.includeInferredTupleElementNames` | логическое | `false` |
+| Именование | `namingRules.tupleElementNameCasing` | `stylecop.naming.tupleElementNameCasing` | `camelCase`, `pascalCase` | `pascalCase` |
+| Сопровождаемость | `maintainabilityRules.topLevelTypes` | `stylecop.maintainability.topLevelTypes` | список из `class`, `interface`, `struct`, `enum`, `delegate` | `class` |
+| Оформление | `layoutRules.newlineAtEndOfFile` | `stylecop.layout.newlineAtEndOfFile` (или `insert_final_newline`) | `allow`, `require`, `omit` ⇄ `true`, `false` | `allow` |
+| Оформление | `layoutRules.allowConsecutiveUsings` | `stylecop.layout.allowConsecutiveUsings` | логическое | `true` |
+| Оформление | `layoutRules.allowDoWhileOnClosingBrace` | `stylecop.layout.allowDoWhileOnClosingBrace` | логическое | `false` |
+| Документирование | `documentationRules.documentExposedElements` | `stylecop.documentation.documentExposedElements` | логическое | `true` |
+| Документирование | `documentationRules.documentInternalElements` | `stylecop.documentation.documentInternalElements` | логическое | `true` |
+| Документирование | `documentationRules.documentPrivateElements` | `stylecop.documentation.documentPrivateElements` | логическое | `false` |
+| Документирование | `documentationRules.documentPrivateFields` | `stylecop.documentation.documentPrivateFields` | логическое | `false` |
+| Документирование | `documentationRules.documentInterfaces` | `stylecop.documentation.documentInterfaces` | `all`, `exposed`, `none` (или логическое) | `all` |
+| Документирование | `documentationRules.companyName` | `stylecop.documentation.companyName` | текст | `PlaceholderCompany` |
+| Документирование | `documentationRules.copyrightText` | `stylecop.documentation.copyrightText` (или `file_header_template`) | текст; допускаются `\n` и `\r` | `Copyright (c) {companyName}. All rights reserved.` |
+| Документирование | `documentationRules.variables.<name>` | `stylecop.documentation.variables.<name>` (требует Roslyn 4.4 или новее) | текст | нет |
+| Документирование | `documentationRules.headerDecoration` | `stylecop.documentation.headerDecoration` | текст | нет |
+| Документирование | `documentationRules.xmlHeader` | `stylecop.documentation.xmlHeader` | логическое | `true` |
+| Документирование | `documentationRules.fileNamingConvention` | `stylecop.documentation.fileNamingConvention` | `stylecop`, `metadata` | `stylecop` |
+| Документирование | `documentationRules.documentationCulture` | `stylecop.documentation.documentationCulture` | название культуры | `en-US` |
+| Документирование | `documentationRules.excludeFromPunctuationCheck` | `stylecop.documentation.excludeFromPunctuationCheck` | список через запятую | `seealso` |
+
+> :memo: Если в строке в скобках указано универсальное свойство, то при задании обоих свойств приоритет имеет
+> специальное свойство StyleCop. Универсальные свойства являются общими для .NET SDK и среды разработки, поэтому
+> удобны, если вы их уже используете.
+
+<a id="annotated-template"></a>
+
+### Шаблон с комментариями
+
+Редакторы не предлагают автодополнение для ключей `stylecop.*`, поэтому в этом шаблоне перечислены все параметры с
+их значениями по умолчанию. Скопируйте только те строки, которые хотите изменить; значения по умолчанию указывать не
+нужно.
+
+```ini
+[*.cs]
+# Indentation
+indent_size = 4
+tab_width = 4
+indent_style = space                      # tab | space
+
+# Readability
+stylecop.readability.allowBuiltInTypeAliases = false
+
+# Ordering
+stylecop.ordering.elementOrder = kind, accessibility, constant, static, readonly
+dotnet_sort_system_directives_first = true
+stylecop.ordering.usingDirectivesPlacement = insideNamespace   # insideNamespace | outsideNamespace | preserve
+stylecop.ordering.blankLinesBetweenUsingGroups = allow         # allow | require | omit
+
+# Naming
+stylecop.naming.allowCommonHungarianPrefixes = true
+stylecop.naming.allowedHungarianPrefixes =                     # comma-separated
+stylecop.naming.allowedNamespaceComponents =                   # comma-separated
+stylecop.naming.includeInferredTupleElementNames = false
+stylecop.naming.tupleElementNameCasing = pascalCase            # camelCase | pascalCase
+
+# Maintainability
+stylecop.maintainability.topLevelTypes = class                 # class, interface, struct, enum, delegate
+
+# Layout
+stylecop.layout.newlineAtEndOfFile = allow                     # allow | require | omit
+stylecop.layout.allowConsecutiveUsings = true
+stylecop.layout.allowDoWhileOnClosingBrace = false
+
+# Documentation
+stylecop.documentation.documentExposedElements = true
+stylecop.documentation.documentInternalElements = true
+stylecop.documentation.documentPrivateElements = false
+stylecop.documentation.documentPrivateFields = false
+stylecop.documentation.documentInterfaces = all                # all | exposed | none
+stylecop.documentation.companyName = PlaceholderCompany
+stylecop.documentation.copyrightText = Copyright (c) {companyName}. All rights reserved.
+stylecop.documentation.variables.myvariable = value             # requires Roslyn 4.4 or newer
+stylecop.documentation.headerDecoration =
+stylecop.documentation.xmlHeader = true
+stylecop.documentation.fileNamingConvention = stylecop         # stylecop | metadata
+stylecop.documentation.documentationCulture = en-US
+stylecop.documentation.excludeFromPunctuationCheck = seealso   # comma-separated
+```
+
+> :warning: EditorConfig считает `#` комментарием только в начале строки. Перед использованием строки удалите из этого
+> шаблона комментарии в конце строк; иначе они станут частью значения.
+
+<a id="migrating-from-stylecopjson"></a>
+
+## Переход со stylecop.json
+
+1. Создайте файл **.editorconfig** (или **.globalconfig**) и добавьте каждый параметр по таблице *Справочник
+   параметров* выше. Путь JSON `documentationRules.companyName` превращается в `stylecop.documentation.companyName`;
+   в общем случае JSON `<section>Rules.<name>` превращается в `stylecop.<section>.<name>`, за исключением `indentation`
+   (используются `indent_size`, `tab_width`, `indent_style`) и перечисленных выше универсальных свойств.
+2. Преобразуйте массивы в списки через запятую, например `["a", "b"]` превращается в `a, b`.
+3. Преобразуйте каждый элемент `variables` в свойство `stylecop.documentation.variables.<name>`. Имена переменных в
+   **.editorconfig** при сравнении приводятся к нижнему регистру, поэтому ссылка `{name}` в `copyrightText` совпадает
+   независимо от регистра.
+4. Удалите **stylecop.json** (и соответствующий элемент `AdditionalFiles`, если он есть). Пока существуют оба файла,
+   значения из **stylecop.json** имеют приоритет.
+
+> :warning: Чтение `variables` из **.editorconfig** требует компилятора, предоставляющего список заданных ключей
+> (Roslyn 4.4 / Visual Studio 2022 17.4 или новее). Если необходимо поддерживать более старые компиляторы, оставьте
+> `variables` в **stylecop.json**.
+
+<a id="migrating-from-rule-set-files"></a>
+
+## Переход с файлов наборов правил
+
+Каждый элемент набора правил преобразуется в свойство уровня серьёзности:
+
+| Действие набора правил | .editorconfig |
+| --- | --- |
+| `Action="None"` | `dotnet_diagnostic.SA1000.severity = none` |
+| `Action="Hidden"` | `dotnet_diagnostic.SA1000.severity = silent` |
+| `Action="Info"` | `dotnet_diagnostic.SA1000.severity = suggestion` |
+| `Action="Warning"` | `dotnet_diagnostic.SA1000.severity = warning` |
+| `Action="Error"` | `dotnet_diagnostic.SA1000.severity = error` |
+
+Такие средства, как `dotnet format` и Visual Studio, также могут создать эти записи из набора правил.
+
+Прежние механизмы описаны в остальной части этого документа.
+
+<a id="rule-sets"></a>
+
+## Наборы правил
 
 Наборы правил анализа кода традиционно использовались для настройки большинства диагностических анализаторов в Visual Studio.
 Сведения о создании и изменении таких файлов приведены в документации [Использование наборов правил для группировки правил анализа кода](https://docs.microsoft.com/visualstudio/code-quality/using-rule-sets-to-group-code-analysis-rules) на docs.microsoft.com.
@@ -247,7 +422,11 @@ stylecop.readability.allowBuiltInTypeAliases = true
 }
 ```
 
-> :bulb: В настоящее время это свойство нельзя задать в файле **.editorconfig**.
+> :bulb: Это свойство также можно задать в файле **.editorconfig**:
+>
+> ```ini
+> stylecop.ordering.elementOrder = kind, accessibility, constant, static, readonly
+> ```
 
 <a id="using-directives"></a>
 
@@ -277,6 +456,15 @@ dotnet_sort_system_directives_first = true
 csharp_using_directive_placement = inside_namespace
 dotnet_separate_import_directive_groups = true
 ```
+
+> :memo: Универсальные свойства не могут выразить все значения: у `csharp_using_directive_placement` нет `preserve`, а у
+> `dotnet_separate_import_directive_groups` нет `omit`. Для них используйте специальные свойства StyleCop; они имеют
+> приоритет над универсальными:
+>
+> ```ini
+> stylecop.ordering.usingDirectivesPlacement = preserve
+> stylecop.ordering.blankLinesBetweenUsingGroups = omit
+> ```
 
 <a id="using-directives-placement"></a>
 
@@ -519,7 +707,10 @@ stylecop.naming.tupleElementNameCasing = camelCase
 * `enum`
 * `delegate`
 
-> :bulb: В настоящее время это свойство нельзя задать в файле **.editorconfig**.
+При настройке StyleCop Analyzers с помощью **.editorconfig** можно использовать следующее свойство (через запятую, с теми же именами):
+```ini
+stylecop.maintainability.topLevelTypes = class
+```
 
 <a id="layout-rules"></a>
 
@@ -549,9 +740,13 @@ stylecop.naming.tupleElementNameCasing = camelCase
 (`insert_final_newline`), описанный на editorconfig.org, и следующие дополнительные свойства:
 
 ```ini
+stylecop.layout.newlineAtEndOfFile = allow
 stylecop.layout.allowConsecutiveUsings = true
 stylecop.layout.allowDoWhileOnClosingBrace = false
 ```
+
+> :memo: `insert_final_newline = true` соответствует `"require"`, а `false` — `"omit"`. Ни одно из них не выражает `"allow"`,
+> поэтому для него используйте `stylecop.layout.newlineAtEndOfFile`. Специальное свойство StyleCop имеет приоритет.
 
 <a id="lines-at-end-of-file"></a>
 
@@ -630,7 +825,9 @@ stylecop.documentation.headerDecoration = -----------------
 > описанное в [IDE0073 (Требовать заголовок файла)](https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0073).
 > Однако специальное свойство StyleCop имеет приоритет.
 
-> :bulb: В настоящее время свойство `variables` нельзя задать в файле **.editorconfig**.
+> :bulb: Переменные можно задать в файле **.editorconfig** с помощью `stylecop.documentation.variables.<name> = <value>`.
+> EditorConfig приводит имена свойств к нижнему регистру, поэтому `<name>` сопоставляется без учёта регистра. Для этого
+> требуется компилятор, предоставляющий список заданных ключей (Roslyn 4.4 / Visual Studio 2022 17.4 или новее).
 
 <a id="configuring-copyright-text"></a>
 

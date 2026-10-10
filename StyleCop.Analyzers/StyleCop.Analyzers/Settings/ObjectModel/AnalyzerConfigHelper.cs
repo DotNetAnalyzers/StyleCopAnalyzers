@@ -78,6 +78,34 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             return null;
         }
 
+        internal static T? TryGetEnumValue<T>(AnalyzerConfigOptionsWrapper analyzerConfigOptions, string key)
+            where T : struct, System.Enum
+        {
+            var value = TryGetStringValue(analyzerConfigOptions, key)?.Trim();
+            return ParseEnum<T>(value);
+        }
+
+        internal static ImmutableArray<T>? TryGetEnumListValue<T>(AnalyzerConfigOptionsWrapper analyzerConfigOptions, string key)
+            where T : struct, System.Enum
+        {
+            var list = TryGetStringListValue(analyzerConfigOptions, key);
+            if (list is null)
+            {
+                return null;
+            }
+
+            var result = ImmutableArray.CreateBuilder<T>();
+            foreach (var item in list.Value)
+            {
+                if (ParseEnum<T>(item) is { } parsed)
+                {
+                    result.Add(parsed);
+                }
+            }
+
+            return result.ToImmutable();
+        }
+
         internal static ImmutableArray<string>? TryGetStringListValue(AnalyzerConfigOptionsWrapper analyzerConfigOptions, string key, bool allowExplicitUnset = true)
         {
             if (analyzerConfigOptions.TryGetValue(key, out var value))
@@ -88,6 +116,20 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                 }
 
                 return value.Split(',').Select(static x => x.Trim()).ToImmutableArray();
+            }
+
+            return null;
+        }
+
+        private static T? ParseEnum<T>(string value)
+            where T : struct, System.Enum
+        {
+            if (!string.IsNullOrEmpty(value)
+                && !char.IsDigit(value[0])
+                && System.Enum.TryParse<T>(value, ignoreCase: true, out var parsed)
+                && System.Enum.IsDefined(typeof(T), parsed))
+            {
+                return parsed;
             }
 
             return null;

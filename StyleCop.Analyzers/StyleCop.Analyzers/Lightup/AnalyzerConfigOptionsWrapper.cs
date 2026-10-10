@@ -15,12 +15,16 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<StringComparer> KeyComparerAccessor;
         private static readonly TryGetValueAccessor<object, string, string> TryGetValueAccessor;
 
+        private static readonly string[] EmptyKeys = new string[0];
+        private static readonly Func<object, System.Collections.Generic.IEnumerable<string>> KeysAccessor;
+
         private readonly object node;
 
         static AnalyzerConfigOptionsWrapper()
         {
             WrappedType = WrapperHelper.GetWrappedType(typeof(AnalyzerConfigOptionsWrapper));
 
+            KeysAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<object, System.Collections.Generic.IEnumerable<string>>(WrappedType, "Keys");
             KeyComparerAccessor = LightupHelpers.CreateStaticPropertyAccessor<StringComparer>(WrappedType, nameof(KeyComparer));
             TryGetValueAccessor = LightupHelpers.CreateTryGetValueAccessor<object, string, string>(WrappedType, typeof(string), nameof(TryGetValue));
         }
@@ -62,6 +66,21 @@ namespace StyleCop.Analyzers.Lightup
         public static bool IsInstance(object obj)
         {
             return obj != null && LightupHelpers.CanWrapObject(obj, WrappedType);
+        }
+
+        /// <summary>
+        /// Gets the keys defined in the options, or an empty collection when the compiler does not support
+        /// enumerating them.
+        /// </summary>
+        /// <returns>The keys defined in the options.</returns>
+        public System.Collections.Generic.IEnumerable<string> GetKeys()
+        {
+            if (this.node is null)
+            {
+                return EmptyKeys;
+            }
+
+            return KeysAccessor(this.node) ?? EmptyKeys;
         }
 
         public bool TryGetValue(string key, out string value)

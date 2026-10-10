@@ -43,43 +43,20 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <strong>stylecop.json</strong> does not provide values.</param>
         protected internal IndentationSettings(JsonObject indentationSettingsObject, AnalyzerConfigOptionsWrapper analyzerConfigOptions)
         {
-            int? indentationSize = null;
-            int? tabSize = null;
-            bool? useTabs = null;
+            var reader = new SettingsReader(indentationSettingsObject, analyzerConfigOptions);
 
-            foreach (var kvp in indentationSettingsObject)
-            {
-                switch (kvp.Key)
+            this.indentationSize = reader.GetInt32("indentationSize", "indent_size").GetValueOrDefault(4);
+            this.tabSize = reader.GetInt32("tabSize", "tab_width").GetValueOrDefault(4);
+            this.useTabs = reader.GetMapped<bool>(
+                "useTabs",
+                kvp => kvp.ToBooleanValue(),
+                "indent_style",
+                value => value switch
                 {
-                case "indentationSize":
-                    indentationSize = kvp.ToInt32Value();
-                    break;
-
-                case "tabSize":
-                    tabSize = kvp.ToInt32Value();
-                    break;
-
-                case "useTabs":
-                    useTabs = kvp.ToBooleanValue();
-                    break;
-
-                default:
-                    break;
-                }
-            }
-
-            indentationSize ??= AnalyzerConfigHelper.TryGetInt32Value(analyzerConfigOptions, "indent_size");
-            tabSize ??= AnalyzerConfigHelper.TryGetInt32Value(analyzerConfigOptions, "tab_width");
-            useTabs ??= AnalyzerConfigHelper.TryGetStringValue(analyzerConfigOptions, "indent_style") switch
-            {
-                "tab" => true,
-                "space" => false,
-                _ => null,
-            };
-
-            this.indentationSize = indentationSize.GetValueOrDefault(4);
-            this.tabSize = tabSize.GetValueOrDefault(4);
-            this.useTabs = useTabs.GetValueOrDefault(false);
+                    "tab" => true,
+                    "space" => false,
+                    _ => null,
+                }).GetValueOrDefault(false);
         }
 
         public int IndentationSize =>

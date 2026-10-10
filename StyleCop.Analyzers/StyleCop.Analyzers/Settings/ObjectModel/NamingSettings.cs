@@ -33,76 +33,23 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <strong>stylecop.json</strong> does not provide values.</param>
         protected internal NamingSettings(JsonObject namingSettingsObject, AnalyzerConfigOptionsWrapper analyzerConfigOptions)
         {
-            bool? allowCommonHungarianPrefixes = null;
-            ImmutableArray<string>.Builder allowedHungarianPrefixes = null;
-            ImmutableArray<string>.Builder allowedNamespaceComponents = null;
-            bool? includeInferredTupleElementNames = null;
-            TupleElementNameCase? tupleElementNameCasing = null;
+            var reader = new SettingsReader(namingSettingsObject, analyzerConfigOptions);
 
-            foreach (var kvp in namingSettingsObject)
-            {
-                switch (kvp.Key)
+            this.AllowCommonHungarianPrefixes = reader.GetBoolean("allowCommonHungarianPrefixes", "stylecop.naming.allowCommonHungarianPrefixes").GetValueOrDefault(true);
+            this.AllowedHungarianPrefixes = reader.GetStringList("allowedHungarianPrefixes", "stylecop.naming.allowedHungarianPrefixes", static value => IsValidHungarianPrefix(value)) ?? ImmutableArray<string>.Empty;
+            this.AllowedNamespaceComponents = reader.GetStringList("allowedNamespaceComponents", "stylecop.naming.allowedNamespaceComponents") ?? ImmutableArray<string>.Empty;
+
+            this.IncludeInferredTupleElementNames = reader.GetBoolean("includeInferredTupleElementNames", "stylecop.naming.includeInferredTupleElementNames").GetValueOrDefault(false);
+            this.TupleElementNameCasing = reader.GetMapped<TupleElementNameCase>(
+                "tupleElementNameCasing",
+                kvp => kvp.ToEnumValue<TupleElementNameCase>(),
+                "stylecop.naming.tupleElementNameCasing",
+                value => value switch
                 {
-                case "allowCommonHungarianPrefixes":
-                    allowCommonHungarianPrefixes = kvp.ToBooleanValue();
-                    break;
-
-                case "allowedHungarianPrefixes":
-                    kvp.AssertIsArray();
-                    allowedHungarianPrefixes = ImmutableArray.CreateBuilder<string>();
-                    foreach (var prefixJsonValue in kvp.Value.AsJsonArray)
-                    {
-                        var prefix = prefixJsonValue.ToStringValue(kvp.Key);
-
-                        if (!IsValidHungarianPrefix(prefix))
-                        {
-                            continue;
-                        }
-
-                        allowedHungarianPrefixes.Add(prefix);
-                    }
-
-                    break;
-
-                case "allowedNamespaceComponents":
-                    kvp.AssertIsArray();
-                    allowedNamespaceComponents = ImmutableArray.CreateBuilder<string>();
-                    allowedNamespaceComponents.AddRange(kvp.Value.AsJsonArray.Select(static x => x.ToStringValue("allowedNamespaceComponents")));
-                    break;
-
-                case "includeInferredTupleElementNames":
-                    includeInferredTupleElementNames = kvp.ToBooleanValue();
-                    break;
-
-                case "tupleElementNameCasing":
-                    tupleElementNameCasing = kvp.ToEnumValue<TupleElementNameCase>();
-                    break;
-
-                default:
-                    break;
-                }
-            }
-
-            allowCommonHungarianPrefixes ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.naming.allowCommonHungarianPrefixes");
-            allowedHungarianPrefixes ??= AnalyzerConfigHelper.TryGetStringListValue(analyzerConfigOptions, "stylecop.naming.allowedHungarianPrefixes")
-                ?.Where(static value => IsValidHungarianPrefix(value))
-                .ToImmutableArray()
-                .ToBuilder();
-            allowedNamespaceComponents ??= AnalyzerConfigHelper.TryGetStringListValue(analyzerConfigOptions, "stylecop.naming.allowedNamespaceComponents")?.ToBuilder();
-            includeInferredTupleElementNames ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.naming.includeInferredTupleElementNames");
-            tupleElementNameCasing ??= AnalyzerConfigHelper.TryGetStringValue(analyzerConfigOptions, "stylecop.naming.tupleElementNameCasing") switch
-            {
-                "camelCase" => TupleElementNameCase.CamelCase,
-                "pascalCase" => TupleElementNameCase.PascalCase,
-                _ => null,
-            };
-
-            this.AllowCommonHungarianPrefixes = allowCommonHungarianPrefixes.GetValueOrDefault(true);
-            this.AllowedHungarianPrefixes = allowedHungarianPrefixes?.ToImmutable() ?? ImmutableArray<string>.Empty;
-            this.AllowedNamespaceComponents = allowedNamespaceComponents?.ToImmutable() ?? ImmutableArray<string>.Empty;
-
-            this.IncludeInferredTupleElementNames = includeInferredTupleElementNames.GetValueOrDefault(false);
-            this.TupleElementNameCasing = tupleElementNameCasing.GetValueOrDefault(TupleElementNameCase.PascalCase);
+                    "camelCase" => TupleElementNameCase.CamelCase,
+                    "pascalCase" => TupleElementNameCase.PascalCase,
+                    _ => null,
+                }).GetValueOrDefault(TupleElementNameCase.PascalCase);
         }
 
         public bool AllowCommonHungarianPrefixes { get; }
