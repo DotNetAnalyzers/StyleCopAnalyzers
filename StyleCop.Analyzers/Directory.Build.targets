@@ -5,4 +5,18 @@
     <None Include="$(MSBuildProjectFileDirectory)$(AssemblyOriginatorKeyFile)" Link="%(Filename)%(Extension)" />
   </ItemGroup>
 
+  <!--
+    Nerdbank.GitVersioning 2.x put the git height in the fourth version component (1.2.0.556) even though version.json
+    also uses {height} in the prerelease tag. 3.x (adopted in e1d8e526e) leaves the fourth component at 0, which made
+    every build 1.2.0.0 and every StyleCop.Analyzers.Unstable package 1.2.0. Restore the 1.2.0.{height} form so assembly
+    identities stay unique per build and the Unstable package version (derived from AssemblyVersion in
+    StyleCop.Analyzers.CodeFixes.csproj) keeps matching the published 1.2.0.N series.
+  -->
+  <Target Name="RestoreGitHeightRevision" AfterTargets="GetBuildVersion" BeforeTargets="SetNuspecProperties" Condition="'$(GitVersionHeight)' != ''">
+    <PropertyGroup>
+      <AssemblyVersion>$(BuildVersion3Components).$(GitVersionHeight)</AssemblyVersion>
+      <AssemblyFileVersion>$(BuildVersion3Components).$(GitVersionHeight)</AssemblyFileVersion>
+    </PropertyGroup>
+  </Target>
+
 </Project>

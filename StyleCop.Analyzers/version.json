@@ -11,6 +11,9 @@
   "nugetPackageVersion": {
     "semVer": 2
   },
+  "release": {
+    "tagName": "{version}"
+  },
   "cloudBuild": {
     "buildNumber": {
       "enabled": true
