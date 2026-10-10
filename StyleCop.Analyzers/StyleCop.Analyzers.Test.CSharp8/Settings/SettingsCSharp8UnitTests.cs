@@ -115,6 +115,25 @@ stylecop.layout.newlineAtEndOfFile = unset
         }
 
         [Fact]
+        public async Task VerifyStyleCopJsonTakesPrecedenceOverEditorConfigAsync()
+        {
+            var editorConfig = @"root = true
+
+[*]
+stylecop.documentation.companyName = EditorConfigCompany
+stylecop.layout.allowConsecutiveUsings = false
+file_header_template = From generic key
+";
+            var stylecopJson = @"{ ""settings"": { ""documentationRules"": { ""companyName"": ""JsonCompany"" } } }";
+            var context = await this.CreateAnalysisContextFromEditorConfigAsync(editorConfig, stylecopJson).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+
+            Assert.Equal("JsonCompany", styleCopSettings.DocumentationRules.CompanyName);
+            Assert.False(styleCopSettings.LayoutRules.AllowConsecutiveUsings);
+        }
+
+        [Fact]
         public async Task VerifyFileHeaderTemplateFromEditorConfigAsync()
         {
             var settings = @"root = true
@@ -244,7 +263,7 @@ csharp_using_directive_placement = {placement}
         protected virtual AnalyzerConfigOptionsProvider CreateAnalyzerConfigOptionsProvider(AnalyzerConfigSet analyzerConfigSet)
             => new TestAnalyzerConfigOptionsProvider(analyzerConfigSet);
 
-        protected async Task<SyntaxTreeAnalysisContext> CreateAnalysisContextFromEditorConfigAsync(string editorConfig)
+        protected async Task<SyntaxTreeAnalysisContext> CreateAnalysisContextFromEditorConfigAsync(string editorConfig, string stylecopJson = null)
         {
             var projectId = ProjectId.CreateNewId();
             var documentId = DocumentId.CreateNewId(projectId);
@@ -260,7 +279,9 @@ csharp_using_directive_placement = {placement}
             var syntaxTree = await document.GetSyntaxTreeAsync(CancellationToken.None).ConfigureAwait(false);
 
             var analyzerConfigSet = AnalyzerConfigSet.Create(new[] { AnalyzerConfig.Parse(SourceText.From(editorConfig), "/.editorconfig") });
-            var additionalFiles = ImmutableArray<AdditionalText>.Empty;
+            var additionalFiles = stylecopJson is null
+                ? ImmutableArray<AdditionalText>.Empty
+                : ImmutableArray.Create<AdditionalText>(new StyleCopJsonText(stylecopJson));
             var optionsProvider = this.CreateAnalyzerConfigOptionsProvider(analyzerConfigSet);
             var analyzerOptions = new AnalyzerOptions(additionalFiles, optionsProvider);
 
@@ -300,6 +321,20 @@ csharp_using_directive_placement = {placement}
             {
                 return new TestAnalyzerConfigOptions(this.analyzerConfigSet.GetOptionsForSourcePath(textFile.Path));
             }
+        }
+
+        private sealed class StyleCopJsonText : AdditionalText
+        {
+            private readonly SourceText text;
+
+            public StyleCopJsonText(string text)
+            {
+                this.text = SourceText.From(text);
+            }
+
+            public override string Path => SettingsHelper.SettingsFileName;
+
+            public override SourceText GetText(CancellationToken cancellationToken = default) => this.text;
         }
     }
 }

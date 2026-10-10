@@ -16,7 +16,7 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly TryGetValueAccessor<object, string, string> TryGetValueAccessor;
 
         private static readonly string[] EmptyKeys = new string[0];
-        private static readonly System.Reflection.PropertyInfo KeysProperty;
+        private static readonly Func<object, System.Collections.Generic.IEnumerable<string>> KeysAccessor;
 
         private readonly object node;
 
@@ -24,7 +24,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             WrappedType = WrapperHelper.GetWrappedType(typeof(AnalyzerConfigOptionsWrapper));
 
-            KeysProperty = WrappedType is null ? null : System.Reflection.RuntimeReflectionExtensions.GetRuntimeProperty(WrappedType, "Keys");
+            KeysAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<object, System.Collections.Generic.IEnumerable<string>>(WrappedType, "Keys");
             KeyComparerAccessor = LightupHelpers.CreateStaticPropertyAccessor<StringComparer>(WrappedType, nameof(KeyComparer));
             TryGetValueAccessor = LightupHelpers.CreateTryGetValueAccessor<object, string, string>(WrappedType, typeof(string), nameof(TryGetValue));
         }
@@ -75,19 +75,12 @@ namespace StyleCop.Analyzers.Lightup
         /// <returns>The keys defined in the options.</returns>
         public System.Collections.Generic.IEnumerable<string> GetKeys()
         {
-            if (this.node is null || KeysProperty is null)
+            if (this.node is null)
             {
                 return EmptyKeys;
             }
 
-            try
-            {
-                return KeysProperty.GetValue(this.node) as System.Collections.Generic.IEnumerable<string> ?? EmptyKeys;
-            }
-            catch (System.Reflection.TargetInvocationException)
-            {
-                return EmptyKeys;
-            }
+            return KeysAccessor(this.node) ?? EmptyKeys;
         }
 
         public bool TryGetValue(string key, out string value)
