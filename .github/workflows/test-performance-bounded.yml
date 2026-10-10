@@ -1,0 +1,56 @@
+name: Bounded test process experiment
+
+on:
+  push:
+    branches: [aarnott-test-performance-experiments]
+    paths:
+    - .github/workflows/test-performance-bounded.yml
+    - build/test-performance-groups.ps1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  MSBuildEnableWorkloadResolver: false
+  NUGET_PLUGIN_HANDSHAKE_TIMEOUT_IN_SECONDS: 20
+  NUGET_PLUGIN_REQUEST_TIMEOUT_IN_SECONDS: 20
+
+jobs:
+  measure:
+    name: Measure ${{ matrix.processes }} processes
+    runs-on: windows-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        processes: [1, 2]
+    steps:
+    - name: Configure line endings
+      run: git config --global core.autocrlf true
+    - uses: actions/checkout@v7
+      with:
+        fetch-depth: 0
+    - uses: actions/setup-dotnet@v6
+      with:
+        global-json-file: global.json
+    - uses: nuget/setup-nuget@v4
+      with:
+        nuget-version: '6.0.6'
+    - name: Restore console runner
+      run: nuget restore .nuget/packages.config -PackagesDirectory packages -ConfigFile NuGet.config
+    - name: Build original Release tests
+      run: dotnet build .\StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp15 -c Release -f net472 -m:1 -v:minimal
+    - name: Measure oldest and newest suites
+      shell: pwsh
+      run: |
+        .\build\test-performance-groups.ps1 -Runner .\packages\xunit.runner.console.2.4.1\tools\net472\xunit.console.x86.exe `
+          -LanguageVersions 6,15 -MaxProcesses ${{ matrix.processes }} -Repetitions 3 -OutputDirectory results
+    - uses: actions/upload-artifact@v7
+      if: always()
+      with:
+        name: test-performance-bounded-${{ matrix.processes }}
+        path: results
+        if-no-files-found: error
