@@ -22,5 +22,6 @@ Ground rules:
 
 - Build with the SDK in `global.json` and keep warnings at zero. See [CONTRIBUTING.md](CONTRIBUTING.md).
 - Never skip or weaken tests. Never hand-edit `StyleCop.Analyzers/StyleCop.Analyzers/Lightup/.generated`.
+- In new files, use file-scoped namespace declarations (`namespace X;`), not block namespaces. Leave existing files as they are.
 - Open PRs as drafts, and mark them ready only when every CI check is green. Humans merge.
 - Don't close, comment on, or label issues or other people's PRs unless the person you work for asked you to.
