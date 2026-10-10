@@ -85,6 +85,61 @@ setting are in the sections that follow.
 > :memo: When a row lists a generic property in parentheses, the StyleCop-specific property takes precedence if both
 > are set. Generic properties are shared with the .NET SDK and IDE, so they are convenient when you already use them.
 
+### Annotated template
+
+Editors don't offer completion for `stylecop.*` keys, so this template lists every setting with its default value. Copy
+only the lines you want to change; unchanged defaults need not be present. Values are case-insensitive.
+
+```ini
+[*.cs]
+# Indentation
+indent_size = 4
+tab_width = 4
+indent_style = space                      # tab | space
+
+# Readability
+stylecop.readability.allowBuiltInTypeAliases = false
+
+# Ordering
+stylecop.ordering.elementOrder = kind, accessibility, constant, static, readonly
+dotnet_sort_system_directives_first = true
+stylecop.ordering.usingDirectivesPlacement = insideNamespace   # insideNamespace | outsideNamespace | preserve
+stylecop.ordering.blankLinesBetweenUsingGroups = allow         # allow | require | omit
+
+# Naming
+stylecop.naming.allowCommonHungarianPrefixes = true
+stylecop.naming.allowedHungarianPrefixes =                     # comma-separated
+stylecop.naming.allowedNamespaceComponents =                   # comma-separated
+stylecop.naming.includeInferredTupleElementNames = false
+stylecop.naming.tupleElementNameCasing = pascalCase            # camelCase | pascalCase
+
+# Maintainability
+stylecop.maintainability.topLevelTypes = class                 # class, interface, struct, enum, delegate
+
+# Layout
+stylecop.layout.newlineAtEndOfFile = allow                     # allow | require | omit
+stylecop.layout.allowConsecutiveUsings = true
+stylecop.layout.allowDoWhileOnClosingBrace = false
+
+# Documentation
+stylecop.documentation.documentExposedElements = true
+stylecop.documentation.documentInternalElements = true
+stylecop.documentation.documentPrivateElements = false
+stylecop.documentation.documentPrivateFields = false
+stylecop.documentation.documentInterfaces = all                # all | exposed | none
+stylecop.documentation.companyName = PlaceholderCompany
+stylecop.documentation.copyrightText = Copyright (c) {companyName}. All rights reserved.
+stylecop.documentation.variables.myvariable = value
+stylecop.documentation.headerDecoration =
+stylecop.documentation.xmlHeader = true
+stylecop.documentation.fileNamingConvention = stylecop         # stylecop | metadata
+stylecop.documentation.documentationCulture = en-US
+stylecop.documentation.excludeFromPunctuationCheck =           # comma-separated
+```
+
+> :warning: EditorConfig only treats `#` as a comment at the start of a line. Remove the trailing comments in this
+> template before using a line; they would otherwise become part of the value.
+
 ## Migrating from stylecop.json
 
 1. Create an **.editorconfig** (or **.globalconfig**) and add each setting using the *Settings reference* table above.
