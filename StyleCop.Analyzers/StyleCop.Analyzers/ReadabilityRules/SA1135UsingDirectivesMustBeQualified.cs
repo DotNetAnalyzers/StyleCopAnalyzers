@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Immutable;
     using System.Text;
+    using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -74,9 +75,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
-            if (usingDirective.HasNamespaceAliasQualifier())
+            if (IsGlobalAliasQualified(usingDirective))
             {
-                // global qualified namespaces are OK.
+                // global:: qualified names are already qualified.
                 return;
             }
 
@@ -102,7 +103,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
             string symbolString = symbol.ToQualifiedString(usingDirective.Name);
 
             string usingString = UsingDirectiveSyntaxToCanonicalString(usingDirective);
-            if ((symbolString != usingString) && !usingDirective.StartsWithAlias(context.SemanticModel, context.CancellationToken))
+            if ((symbolString != usingString)
+                && !usingDirective.StartsWithAlias(context.SemanticModel, context.CancellationToken)
+                && !AliasExpandedStringMatches(context, usingDirective, symbolString))
             {
                 switch (symbol.Kind)
                 {
@@ -122,24 +125,89 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
+        private static bool IsGlobalAliasQualified(UsingDirectiveSyntax usingDirective)
+        {
+            foreach (var descendant in usingDirective.DescendantNodes())
+            {
+                if (descendant is AliasQualifiedNameSyntax aliasQualifiedName
+                    && aliasQualifiedName.Alias.Identifier.IsKind(SyntaxKind.GlobalKeyword))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Returns true when the using differs from the qualified symbol name only because it uses aliases.
+        /// </summary>
+        private static bool AliasExpandedStringMatches(SyntaxNodeAnalysisContext context, UsingDirectiveSyntax usingDirective, string symbolString)
+        {
+            var builder = StringBuilderPool.Allocate();
+            AppendCanonicalString(builder, usingDirective.Name, context.SemanticModel, context.CancellationToken);
+            string expanded = StringBuilderPool.ReturnAndFree(builder);
+            return expanded == symbolString;
+        }
+
+        private static string QualifiedAliasTarget(INamespaceOrTypeSymbol target)
+        {
+            string display = target.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            const string GlobalPrefix = "global::";
+            if (display.StartsWith(GlobalPrefix, System.StringComparison.Ordinal))
+            {
+                return display.Substring(GlobalPrefix.Length);
+            }
+
+            return display;
+        }
+
         private static string UsingDirectiveSyntaxToCanonicalString(UsingDirectiveSyntax usingDirective)
         {
             var builder = StringBuilderPool.Allocate();
-            AppendCanonicalString(builder, usingDirective.Name);
+            AppendCanonicalString(builder, usingDirective.Name, semanticModel: null, cancellationToken: default);
             return StringBuilderPool.ReturnAndFree(builder);
         }
 
-        private static bool AppendCanonicalString(StringBuilder builder, TypeSyntax type)
+        private static bool AppendCanonicalString(StringBuilder builder, TypeSyntax type, SemanticModel? semanticModel, CancellationToken cancellationToken)
         {
             switch (type)
             {
             case AliasQualifiedNameSyntax aliasQualifiedName:
-                AppendCanonicalString(builder, aliasQualifiedName.Alias);
+                if (semanticModel != null && !aliasQualifiedName.Alias.Identifier.IsKind(SyntaxKind.GlobalKeyword))
+                {
+                    var aliasSymbol = semanticModel.GetAliasInfo(aliasQualifiedName.Alias, cancellationToken);
+                    if (aliasSymbol?.Target != null)
+                    {
+                        builder.Append(QualifiedAliasTarget(aliasSymbol.Target));
+                        builder.Append('.');
+                        AppendCanonicalString(builder, aliasQualifiedName.Name, semanticModel, cancellationToken);
+                        return true;
+                    }
+                }
+
+                if (aliasQualifiedName.Alias.Identifier.IsKind(SyntaxKind.GlobalKeyword))
+                {
+                    AppendCanonicalString(builder, aliasQualifiedName.Name, semanticModel, cancellationToken);
+                    return true;
+                }
+
+                AppendCanonicalString(builder, aliasQualifiedName.Alias, semanticModel, cancellationToken);
                 builder.Append("::");
-                AppendCanonicalString(builder, aliasQualifiedName.Name);
+                AppendCanonicalString(builder, aliasQualifiedName.Name, semanticModel, cancellationToken);
                 return true;
 
             case IdentifierNameSyntax identifierName:
+                if (semanticModel != null)
+                {
+                    var aliasSymbol = semanticModel.GetAliasInfo(identifierName, cancellationToken);
+                    if (aliasSymbol?.Target != null && !(aliasSymbol.Target is INamespaceSymbol namespaceSymbol && namespaceSymbol.IsGlobalNamespace))
+                    {
+                        builder.Append(QualifiedAliasTarget(aliasSymbol.Target));
+                        return true;
+                    }
+                }
+
                 builder.Append(identifierName.Identifier.Text);
                 return true;
 
@@ -155,16 +223,16 @@ namespace StyleCop.Analyzers.ReadabilityRules
                         builder.Append(", ");
                     }
 
-                    AppendCanonicalString(builder, typeArgumentList.Arguments[i]);
+                    AppendCanonicalString(builder, typeArgumentList.Arguments[i], semanticModel, cancellationToken);
                 }
 
                 builder.Append(">");
                 return true;
 
             case QualifiedNameSyntax qualifiedName:
-                AppendCanonicalString(builder, qualifiedName.Left);
+                AppendCanonicalString(builder, qualifiedName.Left, semanticModel, cancellationToken);
                 builder.Append(".");
-                AppendCanonicalString(builder, qualifiedName.Right);
+                AppendCanonicalString(builder, qualifiedName.Right, semanticModel, cancellationToken);
                 return true;
 
             case PredefinedTypeSyntax predefinedType:
@@ -172,7 +240,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return true;
 
             case ArrayTypeSyntax arrayType:
-                AppendCanonicalString(builder, arrayType.ElementType);
+                AppendCanonicalString(builder, arrayType.ElementType, semanticModel, cancellationToken);
                 foreach (var rankSpecifier in arrayType.RankSpecifiers)
                 {
                     builder.Append("[");
@@ -183,7 +251,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return true;
 
             case NullableTypeSyntax nullableType:
-                AppendCanonicalString(builder, nullableType.ElementType);
+                AppendCanonicalString(builder, nullableType.ElementType, semanticModel, cancellationToken);
                 builder.Append("?");
                 return true;
 
@@ -205,7 +273,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                             builder.Append(", ");
                         }
 
-                        AppendCanonicalString(builder, elements[i].Type);
+                        AppendCanonicalString(builder, elements[i].Type, semanticModel, cancellationToken);
                         if (!elements[i].Identifier.IsKind(SyntaxKind.None))
                         {
                             builder.Append(" ").Append(elements[i].Identifier.Text);
