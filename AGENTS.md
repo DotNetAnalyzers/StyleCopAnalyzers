@@ -23,5 +23,6 @@ Ground rules:
 - Build with the SDK in `global.json` and keep warnings at zero. See [CONTRIBUTING.md](CONTRIBUTING.md).
 - Never skip or weaken tests. Never hand-edit `StyleCop.Analyzers/StyleCop.Analyzers/Lightup/.generated`.
 - In new files, use file-scoped namespace declarations (`namespace X;`), not block namespaces. Leave existing files as they are.
+- Every configurable setting must be read through `SettingsReader` (`Settings/ObjectModel`), which checks `stylecop.json` first and then `.editorconfig`/`.globalconfig`. Don't read `AnalyzerConfigOptions` or the JSON object directly. A new setting needs both a `stylecop.json` key and a `stylecop.<section>.<name>` editorconfig key, a schema entry, tests for both sources, and an entry in the settings reference and migration tables in [documentation/Configuration.md](documentation/Configuration.md).
 - Open PRs as drafts, and mark them ready only when every CI check is green. Humans merge.
 - Don't close, comment on, or label issues or other people's PRs unless the person you work for asked you to.

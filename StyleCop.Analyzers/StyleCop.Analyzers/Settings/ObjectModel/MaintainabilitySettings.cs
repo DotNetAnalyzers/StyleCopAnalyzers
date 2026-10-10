@@ -38,31 +38,9 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <strong>stylecop.json</strong> does not provide values.</param>
         protected internal MaintainabilitySettings(JsonObject maintainabilitySettingsObject, AnalyzerConfigOptionsWrapper analyzerConfigOptions)
         {
-            ImmutableArray<TopLevelType>.Builder topLevelTypes = null;
+            var reader = new SettingsReader(maintainabilitySettingsObject, analyzerConfigOptions);
 
-            foreach (var kvp in maintainabilitySettingsObject)
-            {
-                switch (kvp.Key)
-                {
-                case "topLevelTypes":
-                    kvp.AssertIsArray();
-                    topLevelTypes = ImmutableArray.CreateBuilder<TopLevelType>();
-                    foreach (var value in kvp.Value.AsJsonArray)
-                    {
-                        var typeKind = value.ToEnumValue<TopLevelType>(kvp.Key);
-                        topLevelTypes.Add(typeKind);
-                    }
-
-                    break;
-
-                default:
-                    break;
-                }
-            }
-
-            topLevelTypes ??= AnalyzerConfigHelper.TryGetEnumListValue<TopLevelType>(analyzerConfigOptions, "stylecop.maintainability.topLevelTypes")?.ToBuilder();
-
-            this.topLevelTypes = topLevelTypes?.ToImmutable() ?? ImmutableArray<TopLevelType>.Empty;
+            this.topLevelTypes = reader.GetEnumList<TopLevelType>("topLevelTypes", "stylecop.maintainability.topLevelTypes") ?? ImmutableArray<TopLevelType>.Empty;
         }
 
         public ImmutableArray<TopLevelType> TopLevelTypes

@@ -142,156 +142,35 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <strong>stylecop.json</strong> does not provide values.</param>
         protected internal DocumentationSettings(JsonObject documentationSettingsObject, AnalyzerConfigOptionsWrapper analyzerConfigOptions)
         {
-            bool? documentExposedElements = null;
-            bool? documentInternalElements = null;
-            bool? documentPrivateElements = null;
-            InterfaceDocumentationMode? documentInterfaces = null;
-            bool? documentPrivateFields = null;
-            string companyName = null;
-            string copyrightText = null;
-            string headerDecoration = null;
-            ImmutableDictionary<string, string>.Builder variables = null;
-            bool? xmlHeader = null;
-            FileNamingConvention? fileNamingConvention = null;
-            string documentationCulture = null;
-            ImmutableArray<string>.Builder excludeFromPunctuationCheck = null;
+            var reader = new SettingsReader(documentationSettingsObject, analyzerConfigOptions);
 
-            foreach (var kvp in documentationSettingsObject)
-            {
-                switch (kvp.Key)
+            this.documentExposedElements = reader.GetBoolean("documentExposedElements", "stylecop.documentation.documentExposedElements").GetValueOrDefault(true);
+            this.documentInternalElements = reader.GetBoolean("documentInternalElements", "stylecop.documentation.documentInternalElements").GetValueOrDefault(true);
+            this.documentPrivateElements = reader.GetBoolean("documentPrivateElements", "stylecop.documentation.documentPrivateElements").GetValueOrDefault(false);
+            this.documentInterfaces = reader.GetMapped<InterfaceDocumentationMode>(
+                "documentInterfaces",
+                ParseDocumentInterfacesValue,
+                "stylecop.documentation.documentInterfaces",
+                ParseDocumentInterfacesEditorConfigValue) ?? InterfaceDocumentationMode.All;
+            this.documentPrivateFields = reader.GetBoolean("documentPrivateFields", "stylecop.documentation.documentPrivateFields").GetValueOrDefault(false);
+            this.companyName = reader.GetString("companyName", "stylecop.documentation.companyName") ?? DefaultCompanyName;
+            this.copyrightText = reader.GetMultiLineString("copyrightText", "stylecop.documentation.copyrightText", "file_header_template") ?? DefaultCopyrightText;
+            this.headerDecoration = reader.GetString("headerDecoration", "stylecop.documentation.headerDecoration") ?? string.Empty;
+            this.variables = reader.GetStringMap("variables", "stylecop.documentation.variables.", IsValidVariableName) ?? ImmutableDictionary<string, string>.Empty;
+            this.xmlHeader = reader.GetBoolean("xmlHeader", "stylecop.documentation.xmlHeader").GetValueOrDefault(true);
+            this.fileNamingConvention = reader.GetMapped<FileNamingConvention>(
+                "fileNamingConvention",
+                kvp => kvp.ToEnumValue<FileNamingConvention>(),
+                "stylecop.documentation.fileNamingConvention",
+                value => value switch
                 {
-                case "documentExposedElements":
-                    documentExposedElements = kvp.ToBooleanValue();
-                    break;
-
-                case "documentInternalElements":
-                    documentInternalElements = kvp.ToBooleanValue();
-                    break;
-
-                case "documentPrivateElements":
-                    documentPrivateElements = kvp.ToBooleanValue();
-                    break;
-
-                case "documentInterfaces":
-                    documentInterfaces = ParseDocumentInterfacesValue(kvp);
-                    break;
-
-                case "documentPrivateFields":
-                    documentPrivateFields = kvp.ToBooleanValue();
-                    break;
-
-                case "companyName":
-                    companyName = kvp.ToStringValue();
-                    break;
-
-                case "copyrightText":
-                    copyrightText = kvp.ToStringValue();
-                    break;
-
-                case "headerDecoration":
-                    headerDecoration = kvp.ToStringValue();
-                    break;
-
-                case "variables":
-                    kvp.AssertIsObject();
-                    variables = ImmutableDictionary.CreateBuilder<string, string>();
-                    foreach (var child in kvp.Value.AsJsonObject)
-                    {
-                        string name = child.Key;
-
-                        if (!IsValidVariableName(name))
-                        {
-                            continue;
-                        }
-
-                        string value = child.ToStringValue();
-
-                        variables.Add(name, value);
-                    }
-
-                    break;
-
-                case "xmlHeader":
-                    xmlHeader = kvp.ToBooleanValue();
-                    break;
-
-                case "fileNamingConvention":
-                    fileNamingConvention = kvp.ToEnumValue<FileNamingConvention>();
-                    break;
-
-                case "documentationCulture":
-                    documentationCulture = kvp.ToStringValue();
-                    break;
-
-                case "excludeFromPunctuationCheck":
-                    kvp.AssertIsArray();
-                    excludeFromPunctuationCheck = ImmutableArray.CreateBuilder<string>();
-                    foreach (var value in kvp.Value.AsJsonArray)
-                    {
-                        excludeFromPunctuationCheck.Add(value.AsString);
-                    }
-
-                    break;
-
-                default:
-                    break;
-                }
-            }
-
-            documentExposedElements ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.documentExposedElements");
-            if (variables is null)
-            {
-                const string variablesPrefix = "stylecop.documentation.variables.";
-                foreach (var key in analyzerConfigOptions.GetKeys())
-                {
-                    if (key.StartsWith(variablesPrefix, System.StringComparison.OrdinalIgnoreCase))
-                    {
-                        string name = key.Substring(variablesPrefix.Length);
-                        string value = AnalyzerConfigHelper.TryGetMultiLineStringValue(analyzerConfigOptions, key);
-                        if (value != null && IsValidVariableName(name))
-                        {
-                            variables ??= ImmutableDictionary.CreateBuilder<string, string>();
-                            variables[name] = value;
-                        }
-                    }
-                }
-            }
-
-            documentInternalElements ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.documentInternalElements");
-            documentPrivateElements ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.documentPrivateElements");
-            documentInterfaces ??= TryGetDocumentInterfacesValue(analyzerConfigOptions);
-            documentPrivateFields ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.documentPrivateFields");
-
-            companyName ??= AnalyzerConfigHelper.TryGetStringValue(analyzerConfigOptions, "stylecop.documentation.companyName");
-            copyrightText ??= AnalyzerConfigHelper.TryGetMultiLineStringValue(analyzerConfigOptions, "stylecop.documentation.copyrightText")
-                ?? AnalyzerConfigHelper.TryGetMultiLineStringValue(analyzerConfigOptions, "file_header_template");
-            headerDecoration ??= AnalyzerConfigHelper.TryGetStringValue(analyzerConfigOptions, "stylecop.documentation.headerDecoration");
-
-            xmlHeader ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.xmlHeader");
-            fileNamingConvention ??= AnalyzerConfigHelper.TryGetStringValue(analyzerConfigOptions, "stylecop.documentation.fileNamingConvention") switch
-            {
-                "stylecop" => FileNamingConvention.StyleCop,
-                "metadata" => FileNamingConvention.Metadata,
-                _ => null,
-            };
-
-            documentationCulture ??= AnalyzerConfigHelper.TryGetStringValue(analyzerConfigOptions, "stylecop.documentation.documentationCulture");
-            excludeFromPunctuationCheck ??= AnalyzerConfigHelper.TryGetStringListValue(analyzerConfigOptions, "stylecop.documentation.excludeFromPunctuationCheck")?.ToBuilder();
-
-            this.documentExposedElements = documentExposedElements.GetValueOrDefault(true);
-            this.documentInternalElements = documentInternalElements.GetValueOrDefault(true);
-            this.documentPrivateElements = documentPrivateElements.GetValueOrDefault(false);
-            this.documentInterfaces = documentInterfaces ?? InterfaceDocumentationMode.All;
-            this.documentPrivateFields = documentPrivateFields.GetValueOrDefault(false);
-            this.companyName = companyName ?? DefaultCompanyName;
-            this.copyrightText = copyrightText ?? DefaultCopyrightText;
-            this.headerDecoration = headerDecoration ?? string.Empty;
-            this.variables = variables?.ToImmutable() ?? ImmutableDictionary<string, string>.Empty;
-            this.xmlHeader = xmlHeader.GetValueOrDefault(true);
-            this.fileNamingConvention = fileNamingConvention.GetValueOrDefault(FileNamingConvention.StyleCop);
-            this.documentationCulture = documentationCulture ?? DefaultDocumentationCulture;
+                    "stylecop" => FileNamingConvention.StyleCop,
+                    "metadata" => FileNamingConvention.Metadata,
+                    _ => null,
+                }).GetValueOrDefault(FileNamingConvention.StyleCop);
+            this.documentationCulture = reader.GetString("documentationCulture", "stylecop.documentation.documentationCulture") ?? DefaultDocumentationCulture;
             this.documentationCultureInfo = this.documentationCulture == DefaultDocumentationCulture ? CultureInfo.InvariantCulture : new CultureInfo(this.documentationCulture);
-            this.excludeFromPunctuationCheck = excludeFromPunctuationCheck?.ToImmutable() ?? DefaultExcludeFromPunctuationCheck;
+            this.excludeFromPunctuationCheck = reader.GetStringList("excludeFromPunctuationCheck", "stylecop.documentation.excludeFromPunctuationCheck") ?? DefaultExcludeFromPunctuationCheck;
         }
 
         public string CompanyName
@@ -387,14 +266,8 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             throw new StyleCop.Analyzers.InvalidSettingsException($"{kvp.Key} must contain a boolean or string value");
         }
 
-        private static InterfaceDocumentationMode? TryGetDocumentInterfacesValue(AnalyzerConfigOptionsWrapper analyzerConfigOptions)
+        private static InterfaceDocumentationMode? ParseDocumentInterfacesEditorConfigValue(string value)
         {
-            var value = AnalyzerConfigHelper.TryGetStringValue(analyzerConfigOptions, "stylecop.documentation.documentInterfaces");
-            if (value is null)
-            {
-                return null;
-            }
-
             if (bool.TryParse(value, out var boolValue))
             {
                 return boolValue ? InterfaceDocumentationMode.All : InterfaceDocumentationMode.None;

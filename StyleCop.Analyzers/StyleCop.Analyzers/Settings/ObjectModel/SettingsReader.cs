@@ -79,6 +79,18 @@ internal readonly struct SettingsReader
         return AnalyzerConfigHelper.TryGetEnumValue<T>(this.options, editorConfigKey);
     }
 
+    public T? GetMapped<T>(string jsonKey, Func<KeyValuePair<string, JsonValue>, T> fromJson, string editorConfigKey, Func<string, T?> fromEditorConfig)
+        where T : struct
+    {
+        if (this.TryGetJson(jsonKey, out var kvp))
+        {
+            return fromJson(kvp);
+        }
+
+        var value = AnalyzerConfigHelper.TryGetStringValue(this.options, editorConfigKey);
+        return value is null ? null : fromEditorConfig(value);
+    }
+
     public ImmutableArray<T>? GetEnumList<T>(string jsonKey, string editorConfigKey)
         where T : struct, Enum
     {

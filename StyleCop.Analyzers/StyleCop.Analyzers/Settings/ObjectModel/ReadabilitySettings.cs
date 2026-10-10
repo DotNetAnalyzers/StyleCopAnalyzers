@@ -31,24 +31,9 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <strong>stylecop.json</strong> does not provide values.</param>
         protected internal ReadabilitySettings(JsonObject readabilitySettingsObject, AnalyzerConfigOptionsWrapper analyzerConfigOptions)
         {
-            bool? allowBuiltInTypeAliases = null;
+            var reader = new SettingsReader(readabilitySettingsObject, analyzerConfigOptions);
 
-            foreach (var kvp in readabilitySettingsObject)
-            {
-                switch (kvp.Key)
-                {
-                case "allowBuiltInTypeAliases":
-                    allowBuiltInTypeAliases = kvp.ToBooleanValue();
-                    break;
-
-                default:
-                    break;
-                }
-            }
-
-            allowBuiltInTypeAliases ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.readability.allowBuiltInTypeAliases");
-
-            this.allowBuiltInTypeAliases = allowBuiltInTypeAliases.GetValueOrDefault(false);
+            this.allowBuiltInTypeAliases = reader.GetBoolean("allowBuiltInTypeAliases", "stylecop.readability.allowBuiltInTypeAliases").GetValueOrDefault(false);
         }
 
         public bool AllowBuiltInTypeAliases =>
