@@ -88,7 +88,7 @@ setting are in the sections that follow.
 ### Annotated template
 
 Editors don't offer completion for `stylecop.*` keys, so this template lists every setting with its default value. Copy
-only the lines you want to change; unchanged defaults need not be present. Values are case-insensitive.
+only the lines you want to change; unchanged defaults need not be present.
 
 ```ini
 [*.cs]
