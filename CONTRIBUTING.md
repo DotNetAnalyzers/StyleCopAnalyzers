@@ -139,6 +139,45 @@ change of rewriting the original projects. TUnit's platform starts a worker proc
 its CPU and memory columns unavailable rather than reporting the launcher's misleadingly low values.
 Do not remove tests, change assertions, or infer hosted-runner performance from a many-core workstation.
 
+### Initial measurements (October 10, 2026)
+
+Release, .NET Framework 4.7.2, server GC, background GC disabled, no coverage. Values below are
+median end-to-end seconds of three runs, with minimum and maximum in parentheses. The workstation
+has 192 logical processors; the hosted Windows runners reported four. Every completed C# 15 run
+passed all 9,752 cases, with matching per-method case counts in the TUnit pilot.
+
+| Scenario | Workstation | Hosted Windows |
+| --- | ---: | ---: |
+| xUnit x86, default concurrency, C# 15 | 34.9 (33.9-37.9) | 76.3 (76.3-98.7) |
+| xUnit x86, two threads, C# 15 | Not measured | 74.5 (74.1-75.7) |
+| xUnit x64, default concurrency, C# 15 | 65.5 (63.5-78.7) | 121.2 (116.1-140.3) |
+| TUnit x86, default concurrency, C# 15 | 22.7 (19.5-24.0) | 103.5 (102.3-138.1) |
+| C# 6 + 15, separate x86 processes, serial | 66.5 (64.7-84.8) | 197.7 (193.7-228.8) |
+| C# 6 + 15, separate x86 processes, two concurrent | 40.4 (32.6-52.0) | 183.8 (166.6-198.9) |
+
+The local ten-process run passed all 88,004 cases in median 128.9 seconds (123.2-130.7).
+Running all ten assemblies inside one x64 process took 325.1 seconds locally at four threads
+per assembly (one completed sample; remaining repetitions stopped). The hosted default-concurrency
+equivalent exhausted memory and produced incomplete results, so it is **rejected**, not a speedup.
+The local xUnit class timings identify SA1121's 893 sequential cases as a critical path:
+28.3 seconds of a 29.0-second test-execution baseline. More collection threads do not eliminate that tail.
+
+The hosted TUnit result is slower than xUnit x86 despite its local improvement. Its additional
+wrapper build took 29.6 seconds on that runner (12.6 seconds for the initial local build).
+These are separate machines/runs, not a randomized same-runner framework comparison; initial
+cold-cache outliers and local baseline drift are visible in the ranges. TUnit CPU/allocation savings
+were not established. Do not adopt a migration or change normal CI based on the local timing alone.
+The bounded-process experiment shows useful local scaling but only a modest hosted improvement
+over serial execution; it does not demonstrate the same latency as two separate hosted machines.
+Keep the current CI matrix and x86 runner until a coverage-enabled, same-runner comparison supports
+a specific resource/latency tradeoff.
+
+Raw XML/TRX, environment manifests, and CSVs are uploaded by the manual workflows:
+[xUnit and all-assembly experiments](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/actions/runs/38087512468),
+[TUnit pilot](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/actions/runs/38088281517), and
+[bounded processes](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/actions/runs/38089391031).
+Download the artifacts before their retention period expires if preserving raw evidence is required.
+
 ## Generated files
 
 Everything under `StyleCop.Analyzers/StyleCop.Analyzers/Lightup/.generated` is written by source generators during the
