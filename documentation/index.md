@@ -1,4 +1,6 @@
-# StyleCop.Analyzers documentation
+<style>
+#breadcrumb { display: none; }
+</style>
 
 StyleCop.Analyzers provides warnings and code fixes for style and consistency rule violations in C# code.
 
@@ -22,6 +24,3 @@ See [Rule implementation status](RuleStatus.md) for which rules and code fixes a
 - [Layout rules (SA1500-)](LayoutRules.md)
 - [Documentation rules (SA1600-)](DocumentationRules.md)
 - [Alternative rules (SX0000-)](AlternativeRules.md)
-
-Source code, releases, and issue tracking are available in the
-[GitHub repository](https://github.com/DotNetAnalyzers/StyleCopAnalyzers).
