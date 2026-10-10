@@ -183,4 +183,52 @@
   <data name="StartingTextInitializesWhether" xml:space="preserve">
     <value>Inicjalizuje wartość wskazującą czy</value>
   </data>
+  <data name="ConstructorDocumentationCodeFix" xml:space="preserve">
+    <value>Generuj dokumentację konstruktora</value>
+  </data>
+  <data name="DestructorDocumentationCodeFix" xml:space="preserve">
+    <value>Generuj dokumentację destruktora</value>
+  </data>
+  <data name="InheritdocCodeFix" xml:space="preserve">
+    <value>Dziedzicz dokumentację</value>
+  </data>
+  <data name="MethodDocumentationCodeFix" xml:space="preserve">
+    <value>Generuj dokumentację metody</value>
+  </data>
+  <data name="PropertySummaryStartTextCodeFix" xml:space="preserve">
+    <value>Dodaj standardowy tekst</value>
+  </data>
+  <data name="SA1609SA1610CodeFix" xml:space="preserve">
+    <value>Udokumentuj wartość na podstawie podsumowania</value>
+  </data>
+  <data name="SA1615SA1616CodeFix" xml:space="preserve">
+    <value>Udokumentuj wartość zwracaną</value>
+  </data>
+  <data name="SA1617CodeFix" xml:space="preserve">
+    <value>Usuń komentarz XML &lt;returns&gt;</value>
+  </data>
+  <data name="SA1626CodeFix" xml:space="preserve">
+    <value>Konwertuj na komentarz wiersza</value>
+  </data>
+  <data name="SA1626CodeFixStrayComment" xml:space="preserve">
+    <value>Konwertuj na komentarz dokumentacji</value>
+  </data>
+  <data name="SA1629CodeFix" xml:space="preserve">
+    <value>Dodaj kropkę</value>
+  </data>
+  <data name="SA1633CodeFix" xml:space="preserve">
+    <value>Dodaj nagłówek pliku</value>
+  </data>
+  <data name="SA1649CodeFix" xml:space="preserve">
+    <value>Zmień nazwę pliku, aby odpowiadała nazwie pierwszego typu</value>
+  </data>
+  <data name="SA1651CodeFix" xml:space="preserve">
+    <value>Uzupełnij tekst zastępczy</value>
+  </data>
+  <data name="StartingTextReturns" xml:space="preserve">
+    <value>Zwraca</value>
+  </data>
+  <data name="StartingTextReturnsWhether" xml:space="preserve">
+    <value>Zwraca wartość wskazującą, czy</value>
+  </data>
 </root>

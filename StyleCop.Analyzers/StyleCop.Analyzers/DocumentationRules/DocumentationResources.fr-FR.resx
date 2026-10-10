@@ -183,4 +183,52 @@
   <data name="StartingTextInitializesWhether" xml:space="preserve">
     <value>Initialise une valeur indiquant si</value>
   </data>
+  <data name="ConstructorDocumentationCodeFix" xml:space="preserve">
+    <value>Générer la documentation du constructeur</value>
+  </data>
+  <data name="DestructorDocumentationCodeFix" xml:space="preserve">
+    <value>Générer la documentation du finaliseur</value>
+  </data>
+  <data name="InheritdocCodeFix" xml:space="preserve">
+    <value>Hériter de la documentation</value>
+  </data>
+  <data name="MethodDocumentationCodeFix" xml:space="preserve">
+    <value>Générer la documentation de la méthode</value>
+  </data>
+  <data name="PropertySummaryStartTextCodeFix" xml:space="preserve">
+    <value>Ajouter le texte standard</value>
+  </data>
+  <data name="SA1609SA1610CodeFix" xml:space="preserve">
+    <value>Documenter la valeur à partir du résumé</value>
+  </data>
+  <data name="SA1615SA1616CodeFix" xml:space="preserve">
+    <value>Documenter la valeur de retour</value>
+  </data>
+  <data name="SA1617CodeFix" xml:space="preserve">
+    <value>Supprimer le commentaire XML &lt;returns&gt;</value>
+  </data>
+  <data name="SA1626CodeFix" xml:space="preserve">
+    <value>Convertir en commentaire de ligne</value>
+  </data>
+  <data name="SA1626CodeFixStrayComment" xml:space="preserve">
+    <value>Convertir en commentaire de documentation</value>
+  </data>
+  <data name="SA1629CodeFix" xml:space="preserve">
+    <value>Ajouter un point final</value>
+  </data>
+  <data name="SA1633CodeFix" xml:space="preserve">
+    <value>Ajouter un en-tête de fichier</value>
+  </data>
+  <data name="SA1649CodeFix" xml:space="preserve">
+    <value>Renommer le fichier pour qu’il corresponde au nom du premier type</value>
+  </data>
+  <data name="SA1651CodeFix" xml:space="preserve">
+    <value>Finaliser le texte de remplacement</value>
+  </data>
+  <data name="StartingTextReturns" xml:space="preserve">
+    <value>Renvoie</value>
+  </data>
+  <data name="StartingTextReturnsWhether" xml:space="preserve">
+    <value>Renvoie une valeur indiquant si</value>
+  </data>
 </root>
