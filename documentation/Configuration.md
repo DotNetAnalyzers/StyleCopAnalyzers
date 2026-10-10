@@ -40,7 +40,7 @@ csharp_using_directive_placement = outside_namespace
   configuration files have no section headers: write `is_global = true` at the top, then the properties.
 * There is no default template to copy. Choose only the severities and settings you want to change; the defaults are
   documented in the sections below. The list of all rules and their default severities is at
-  [README.md](../README.md#current-status) and in each rule's page.
+  [rule implementation status](RuleStatus.md) and in each rule's page.
 * SA0001 cannot be disabled through **.editorconfig** (a Roslyn limitation). Use a rule set file or `NoWarn`.
 * Property names are case-insensitive. Boolean values are `true` or `false`, and `unset` ignores a value set in a parent file.
 
