@@ -251,6 +251,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
+                NumberOfFixAllIterations = 2,
             };
             test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
             test.ExpectedDiagnostics.Add(new DiagnosticResult(SA1307AccessibleFieldsMustBeginWithUpperCaseLetter.Descriptor).WithLocation(1).WithArguments("bar"));
