@@ -6,8 +6,10 @@
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
+    using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -43,6 +45,8 @@ namespace StyleCop.Analyzers.DocumentationRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> BaseTypeDeclarationAction = Analyzer.HandleBaseTypeDeclaration;
+        private static readonly ImmutableArray<SyntaxKind> RecordDeclarationKinds = ImmutableArray.Create(SyntaxKindEx.RecordDeclaration, SyntaxKindEx.RecordStructDeclaration);
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> RecordDeclarationAction = Analyzer.HandleRecordDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> MethodDeclarationAction = Analyzer.HandleMethodDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> ConstructorDeclarationAction = Analyzer.HandleConstructorDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> DestructorDeclarationAction = Analyzer.HandleDestructorDeclaration;
@@ -143,6 +147,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             context.RegisterCompilationStartAction(context =>
             {
                 context.RegisterSyntaxNodeAction(BaseTypeDeclarationAction, SyntaxKinds.BaseTypeDeclaration);
+                context.RegisterSyntaxNodeAction(RecordDeclarationAction, RecordDeclarationKinds);
                 context.RegisterSyntaxNodeAction(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
                 context.RegisterSyntaxNodeAction(ConstructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
                 context.RegisterSyntaxNodeAction(DestructorDeclarationAction, SyntaxKind.DestructorDeclaration);
@@ -157,6 +162,86 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static class Analyzer
         {
+            public static void HandleRecordDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+            {
+                if (context.GetDocumentationMode() == DocumentationMode.None)
+                {
+                    return;
+                }
+
+                var declaration = (RecordDeclarationSyntaxWrapper)context.Node;
+                var parameterList = declaration.ParameterList;
+                if (parameterList == null || parameterList.Parameters.Count == 0)
+                {
+                    return;
+                }
+
+                var typeDeclaration = (BaseTypeDeclarationSyntax)context.Node;
+                Accessibility declaredAccessibility = typeDeclaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+                Accessibility effectiveAccessibility = typeDeclaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+                if (!NeedsComment(settings.DocumentationRules, context.Node.Kind(), context.Node.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
+                {
+                    return;
+                }
+
+                var documentation = context.Node.GetDocumentationCommentTriviaSyntax();
+                if (documentation?.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag) != null)
+                {
+                    return;
+                }
+
+                var documentedParameters = new HashSet<string>(StringComparer.Ordinal);
+                if (documentation != null)
+                {
+                    XElement completeDocumentation = null;
+                    if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag) != null)
+                    {
+                        var declaredSymbol = context.SemanticModel.GetDeclaredSymbol(context.Node, context.CancellationToken);
+                        if (declaredSymbol != null)
+                        {
+                            var rawDocumentation = declaredSymbol.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
+                            completeDocumentation = XElement.Parse(rawDocumentation ?? "<doc></doc>", LoadOptions.None);
+                        }
+                    }
+
+                    if (completeDocumentation != null)
+                    {
+                        if (completeDocumentation.Elements(XmlCommentHelper.InheritdocXmlTag).Any())
+                        {
+                            return;
+                        }
+
+                        foreach (var element in completeDocumentation.Elements(XmlCommentHelper.ParamXmlTag))
+                        {
+                            var name = element.Attribute("name");
+                            if (name != null)
+                            {
+                                documentedParameters.Add(name.Value);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (var element in documentation.Content.GetXmlElements(XmlCommentHelper.ParamXmlTag))
+                        {
+                            var name = XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>(element);
+                            if (name != null)
+                            {
+                                documentedParameters.Add(name.Identifier.Identifier.ValueText);
+                            }
+                        }
+                    }
+                }
+
+                foreach (var parameter in parameterList.Parameters)
+                {
+                    if (!documentedParameters.Contains(parameter.Identifier.ValueText))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, parameter.Identifier.GetLocation()));
+                    }
+                }
+            }
+
             public static void HandleBaseTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
             {
                 if (context.GetDocumentationMode() == DocumentationMode.None)
