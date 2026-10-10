@@ -26,6 +26,13 @@ dotnet docfx docfx.json --warningsAsErrors
 The generated site is written to `_site` (ignored by git). To preview it locally, run
 `dotnet docfx serve _site` and open the URL printed by DocFX.
 
+The GitHub Build workflow also checks links in all repository Markdown and HTML files using
+[Markup Link Checker (mlc)](https://github.com/becheran/mlc). Install version 1.2.2 from its
+[releases](https://github.com/becheran/mlc/releases/tag/v1.2.2), then run `mlc` from the repository root.
+The shared `.mlc.toml` configuration excludes git-ignored build output and allows Microsoft's
+localized redirects without skipping URL validation. Runtime template URLs and links to generated
+DocFX pages have targeted `mlc-disable-next-line` comments; do not exclude whole documentation directories.
+
 The rule implementation status is a DocFX page at
 <https://dotnetanalyzers.github.io/StyleCopAnalyzers/RuleStatus.html>.
 `documentation/RuleStatus.md` includes the unframed HTML and script fragment in `docs/status.md`

@@ -40,6 +40,8 @@
     <script id="diagnostic" type="text/x-jsrender">
         <tr class="{{include tmpl="#diagnostic-color"/}}">
             <td>{{>Category.replace("StyleCop.CSharp.", "")}}</td>
+            <!-- Runtime template URL. -->
+            <!-- mlc-disable-next-line -->
             <td><a href="{{>Id}}.html">{{>Id}}</a></td>
             <td>{{>Title}}</td>
             <td>{{>HasImplementation}}</td>
@@ -74,6 +76,8 @@
                 <tbody>
                     <tr>
                         <th scope="row">SHA</th>
+                        <!-- Runtime template URL. -->
+                        <!-- mlc-disable-next-line -->
                         <td><a href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/tree/{{>Sha}}">{{>Sha}}</a></td>
                     </tr>
                     <tr>

@@ -1,0 +1,9 @@
+gitignore = true
+root-dir = "."
+throttle = 100
+
+# Microsoft documentation redirects to localized URLs; still check the destinations.
+do-not-warn-for-redirect-to = [
+    "https://learn.microsoft.com/*",
+    "https://dotnet.microsoft.com/*",
+]
