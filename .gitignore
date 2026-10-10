@@ -489,3 +489,6 @@ $RECYCLE.BIN/
 /build/coverage/
 .nuget/NuGet.exe
 build/nuget/
+
+# DocFX output
+/_site/

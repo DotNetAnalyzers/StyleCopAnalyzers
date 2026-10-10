@@ -13,6 +13,34 @@ You can also help by filing issues, participating in discussions and doing code 
 * The version of the [.NET SDK](https://dotnet.microsoft.com/download/dotnet) as specified in the global.json file at the root of this repo.
   Use the init script at the root of the repo to conveniently acquire and install the right version.
 
+## Building documentation
+
+The documentation site is built from the Markdown files in `documentation` using
+[DocFX](https://dotnet.github.io/docfx/). From the repository root, run:
+
+```powershell
+dotnet tool restore
+dotnet docfx docfx.json --warningsAsErrors
+```
+
+The generated site is written to `_site` (ignored by git). To preview it locally, run
+`dotnet docfx serve _site` and open the URL printed by DocFX.
+
+DocFX also copies the existing status page and any assets under `docs` to `_site/status`.
+The documentation is hosted at the site root, and the rule implementation status page is hosted at
+<https://dotnetanalyzers.github.io/StyleCopAnalyzers/status/index.html>.
+Both are included in the same Pages deployment.
+
+When adding a page, link it from `documentation/toc.yml` or an existing rule-area page so it is discoverable.
+The root `toc.yml` defines the short top navigation, while `documentation/toc.yml` defines the left sidebar.
+The sidebar TOC is emitted under `_site/navigation` to keep it separate from the top navigation without
+changing documentation page URLs.
+The GitHub Build workflow compiles the site for pull requests and publishes it to
+<https://dotnetanalyzers.github.io/StyleCopAnalyzers/> only on pushes to `master`.
+In the repository's **Settings > Pages**, the publishing source must be set to **GitHub Actions**
+instead of deployment from a branch. Deployment uses the `github-pages` environment; its protection
+rules must allow the `master` branch.
+
 ## Generated files
 
 Everything under `StyleCop.Analyzers/StyleCop.Analyzers/Lightup/.generated` is written by source generators during the

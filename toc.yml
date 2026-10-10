@@ -1,0 +1,4 @@
+- name: Documentation
+  href: documentation/
+- name: Rule status
+  href: docs/index.html

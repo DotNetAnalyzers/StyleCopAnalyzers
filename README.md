@@ -17,11 +17,11 @@ to the project where you want to enforce StyleCop rules.
 
 The severity of individual rules may be configured using [rule set files](https://docs.microsoft.com/en-us/visualstudio/code-quality/using-rule-sets-to-group-code-analysis-rules)
 in Visual Studio 2015 or newer. **Settings.StyleCop** is not supported, but a **stylecop.json** file may be used to
-customize the behavior of certain rules. See [Configuration.md](documentation/Configuration.md) for more information.
+customize the behavior of certain rules. See [Configuration](https://dotnetanalyzers.github.io/StyleCopAnalyzers/Configuration.html) for more information.
 
-For documentation and reasoning on the rules themselves, see the [Documentation](DOCUMENTATION.md).
+For documentation and reasoning on the rules themselves, see the [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/).
 
-For users upgrading from StyleCop Classic, see [KnownChanges.md](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/tree/master/documentation/KnownChanges.md)
+For users upgrading from StyleCop Classic, see [Known changes](https://dotnetanalyzers.github.io/StyleCopAnalyzers/KnownChanges.html)
 for information about known differences which you may notice when switching to StyleCop Analyzers.
 
 ### C# language versions
@@ -55,4 +55,5 @@ See [Contributing](CONTRIBUTING.md)
 
 ## Current status
 
-An up-to-date list of which StyleCop rules are implemented and which have code fixes can be found [here](https://dotnetanalyzers.github.io/StyleCopAnalyzers/).
+An up-to-date list of which StyleCop rules are implemented and which have code fixes can be found in the
+[rule implementation status](https://dotnetanalyzers.github.io/StyleCopAnalyzers/status/index.html).
