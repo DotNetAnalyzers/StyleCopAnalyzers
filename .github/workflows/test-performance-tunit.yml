@@ -1,11 +1,6 @@
 name: TUnit performance experiment
 
 on:
-  push:
-    branches: [aarnott-test-performance-experiments]
-    paths:
-    - .github/workflows/test-performance-tunit.yml
-    - build/test-performance/**
   workflow_dispatch:
 
 permissions:

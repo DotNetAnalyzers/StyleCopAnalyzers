@@ -90,6 +90,55 @@ In the repository's **Settings > Pages**, the publishing source must be set to *
 instead of deployment from a branch. Deployment uses the `github-pages` environment; its protection
 rules must allow the `master` branch.
 
+## Test performance experiments
+
+`build\test-performance.ps1` measures Release test execution separately from builds and coverage.
+It records repeated wall-clock measurements, xUnit process CPU time and peak working set, test counts,
+the revision, and machine configuration. Alternate repetitions reverse the candidate order.
+For example, after building the C# 15 test project:
+
+```powershell
+.\build\test-performance.ps1 -Runner .\packages\xunit.runner.console.2.4.1\tools\net472\xunit.console.x86.exe `
+    -LanguageVersions 15 -ThreadCounts default,4,16,64 -Repetitions 3 -OutputDirectory <artifact-directory>
+```
+
+xUnit 2 already parallelizes test classes by default, but not methods or theory rows within a class.
+`-LanguageVersions 6,7,8,9,10,11,12,13,14,15 -Parallel all` also parallelizes compiler test assemblies.
+The thread limit applies **per assembly**, not to the entire process. Use the 64-bit console runner
+for the grouped experiment, since all assemblies and their Roslyn dependencies share a process.
+Do not run builds or competing test experiments during a timing run.
+
+The manual **Test performance experiment** workflow measures the single-assembly x86/x64 and grouped
+x64 scenarios on `windows-latest`. Compare both wall time and total runner-minutes; fewer jobs can
+consume less infrastructure while extending the critical path. These measurements omit coverage;
+the regular Build workflow remains unchanged, including every compiler, configuration, and coverage job.
+A proposed CI replacement also needs a coverage-enabled comparison before adoption. The manual
+**Bounded test process experiment** compares one versus two separate x86 processes for the oldest and
+newest suites. `build\test-performance-groups.ps1` accepts all ten language versions and a
+`-MaxProcesses` limit to reproduce this scheduling strategy locally. Separate processes preserve
+compiler dependency isolation and avoid loading every compiler into one large process.
+
+The separate **TUnit performance experiment** generates TUnit entry points for the complete C# 15
+suite without editing any original test body or xUnit assertion. To reproduce it:
+
+```powershell
+dotnet build .\StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp15 -c Release -f net472 -m:1
+dotnet build .\build\test-performance\Generate -c Release -m:1 -p:BuildProjectReferences=false
+.\build\test-performance\Generate\bin\Release\net472\Generate.exe .\build\test-performance\TUnit\GeneratedTests.cs
+dotnet build .\build\test-performance\TUnit -c Release -m:1 -p:BuildProjectReferences=false
+.\build\test-performance.ps1 -Framework TUnit `
+    -Runner .\build\test-performance\TUnit\bin\Release\net472\TestPerformance.TUnit.exe `
+    -ThreadCounts default,4,16,64 -ExpectedTests 9752 -OutputDirectory <artifact-directory>
+```
+
+The pilot preserves data providers, optional parameters, inherited protected tests, and xUnit lifecycle
+hooks. Culture-changing and explicitly sequential classes run exclusively. Most calls to original test
+methods are direct; protected methods use reflection. It measures a scheduling experiment, not a completed
+framework migration: source-generation build time is additional wrapper-build cost, not the net build-time
+change of rewriting the original projects. TUnit's platform starts a worker process, so the script leaves
+its CPU and memory columns unavailable rather than reporting the launcher's misleadingly low values.
+Do not remove tests, change assertions, or infer hosted-runner performance from a many-core workstation.
+
 ## Generated files
 
 Everything under `StyleCop.Analyzers/StyleCop.Analyzers/Lightup/.generated` is written by source generators during the

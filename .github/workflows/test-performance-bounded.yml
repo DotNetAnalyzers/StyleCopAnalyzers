@@ -1,11 +1,6 @@
 name: Bounded test process experiment
 
 on:
-  push:
-    branches: [aarnott-test-performance-experiments]
-    paths:
-    - .github/workflows/test-performance-bounded.yml
-    - build/test-performance-groups.ps1
   workflow_dispatch:
 
 permissions:
