@@ -183,4 +183,52 @@
   <data name="StartingTextInitializesWhether" xml:space="preserve">
     <value>Inicializa un valor que indica si</value>
   </data>
+  <data name="ConstructorDocumentationCodeFix" xml:space="preserve">
+    <value>Generar documentación del constructor</value>
+  </data>
+  <data name="DestructorDocumentationCodeFix" xml:space="preserve">
+    <value>Generar documentación del destructor</value>
+  </data>
+  <data name="InheritdocCodeFix" xml:space="preserve">
+    <value>Heredar documentación</value>
+  </data>
+  <data name="MethodDocumentationCodeFix" xml:space="preserve">
+    <value>Generar documentación del método</value>
+  </data>
+  <data name="PropertySummaryStartTextCodeFix" xml:space="preserve">
+    <value>Agregar texto estándar</value>
+  </data>
+  <data name="SA1609SA1610CodeFix" xml:space="preserve">
+    <value>Documentar el valor a partir del resumen</value>
+  </data>
+  <data name="SA1615SA1616CodeFix" xml:space="preserve">
+    <value>Documentar el valor devuelto</value>
+  </data>
+  <data name="SA1617CodeFix" xml:space="preserve">
+    <value>Quitar el comentario XML &lt;returns&gt;</value>
+  </data>
+  <data name="SA1626CodeFix" xml:space="preserve">
+    <value>Convertir en comentario de línea</value>
+  </data>
+  <data name="SA1626CodeFixStrayComment" xml:space="preserve">
+    <value>Convertir en comentario de documentación</value>
+  </data>
+  <data name="SA1629CodeFix" xml:space="preserve">
+    <value>Agregar punto final</value>
+  </data>
+  <data name="SA1633CodeFix" xml:space="preserve">
+    <value>Agregar encabezado de archivo</value>
+  </data>
+  <data name="SA1649CodeFix" xml:space="preserve">
+    <value>Cambiar el nombre del archivo para que coincida con el nombre del primer tipo</value>
+  </data>
+  <data name="SA1651CodeFix" xml:space="preserve">
+    <value>Completar el texto del marcador de posición</value>
+  </data>
+  <data name="StartingTextReturns" xml:space="preserve">
+    <value>Devuelve</value>
+  </data>
+  <data name="StartingTextReturnsWhether" xml:space="preserve">
+    <value>Devuelve un valor que indica si</value>
+  </data>
 </root>

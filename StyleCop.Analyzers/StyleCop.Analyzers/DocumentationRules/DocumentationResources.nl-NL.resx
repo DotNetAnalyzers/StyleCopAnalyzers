@@ -189,4 +189,46 @@
   <data name="StartingTextInitializesWhether" xml:space="preserve">
     <value>Initialiseert een waarde welke aangeeft</value>
   </data>
+  <data name="ConstructorDocumentationCodeFix" xml:space="preserve">
+    <value>Constructordocumentatie genereren</value>
+  </data>
+  <data name="DestructorDocumentationCodeFix" xml:space="preserve">
+    <value>Destructordocumentatie genereren</value>
+  </data>
+  <data name="InheritdocCodeFix" xml:space="preserve">
+    <value>Documentatie overnemen</value>
+  </data>
+  <data name="MethodDocumentationCodeFix" xml:space="preserve">
+    <value>Methodedocumentatie genereren</value>
+  </data>
+  <data name="PropertySummaryStartTextCodeFix" xml:space="preserve">
+    <value>Standaardtekst toevoegen</value>
+  </data>
+  <data name="SA1609SA1610CodeFix" xml:space="preserve">
+    <value>Waarde uit de samenvatting documenteren</value>
+  </data>
+  <data name="SA1615SA1616CodeFix" xml:space="preserve">
+    <value>Retourwaarde documenteren</value>
+  </data>
+  <data name="SA1617CodeFix" xml:space="preserve">
+    <value>XML-opmerking &lt;returns&gt; verwijderen</value>
+  </data>
+  <data name="SA1626CodeFix" xml:space="preserve">
+    <value>Omzetten naar regelopmerking</value>
+  </data>
+  <data name="SA1626CodeFixStrayComment" xml:space="preserve">
+    <value>Omzetten naar documentatieopmerking</value>
+  </data>
+  <data name="SA1629CodeFix" xml:space="preserve">
+    <value>Punt toevoegen</value>
+  </data>
+  <data name="SA1633CodeFix" xml:space="preserve">
+    <value>Bestandskop toevoegen</value>
+  </data>
+  <data name="SA1649CodeFix" xml:space="preserve">
+    <value>Bestand hernoemen zodat het overeenkomt met de naam van het eerste type</value>
+  </data>
+  <data name="SA1651CodeFix" xml:space="preserve">
+    <value>Plaatshoudertekst voltooien</value>
+  </data>
 </root>

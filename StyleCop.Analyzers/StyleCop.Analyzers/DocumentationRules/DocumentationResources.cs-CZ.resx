@@ -183,4 +183,52 @@
   <data name="StartingTextInitializesWhether" xml:space="preserve">
     <value>Inicializuje hodnotu udávající, zda</value>
   </data>
+  <data name="ConstructorDocumentationCodeFix" xml:space="preserve">
+    <value>Generovat dokumentaci konstruktoru</value>
+  </data>
+  <data name="DestructorDocumentationCodeFix" xml:space="preserve">
+    <value>Generovat dokumentaci destruktoru</value>
+  </data>
+  <data name="InheritdocCodeFix" xml:space="preserve">
+    <value>Převzít dokumentaci</value>
+  </data>
+  <data name="MethodDocumentationCodeFix" xml:space="preserve">
+    <value>Generovat dokumentaci metody</value>
+  </data>
+  <data name="PropertySummaryStartTextCodeFix" xml:space="preserve">
+    <value>Přidat standardní text</value>
+  </data>
+  <data name="SA1609SA1610CodeFix" xml:space="preserve">
+    <value>Zdokumentovat hodnotu podle souhrnu</value>
+  </data>
+  <data name="SA1615SA1616CodeFix" xml:space="preserve">
+    <value>Zdokumentovat návratovou hodnotu</value>
+  </data>
+  <data name="SA1617CodeFix" xml:space="preserve">
+    <value>Odebrat komentář XML &lt;returns&gt;</value>
+  </data>
+  <data name="SA1626CodeFix" xml:space="preserve">
+    <value>Převést na řádkový komentář</value>
+  </data>
+  <data name="SA1626CodeFixStrayComment" xml:space="preserve">
+    <value>Převést na dokumentační komentář</value>
+  </data>
+  <data name="SA1629CodeFix" xml:space="preserve">
+    <value>Přidat tečku</value>
+  </data>
+  <data name="SA1633CodeFix" xml:space="preserve">
+    <value>Přidat hlavičku souboru</value>
+  </data>
+  <data name="SA1649CodeFix" xml:space="preserve">
+    <value>Přejmenovat soubor podle názvu prvního typu</value>
+  </data>
+  <data name="SA1651CodeFix" xml:space="preserve">
+    <value>Dokončit zástupný text</value>
+  </data>
+  <data name="StartingTextReturns" xml:space="preserve">
+    <value>Vrátí</value>
+  </data>
+  <data name="StartingTextReturnsWhether" xml:space="preserve">
+    <value>Vrátí hodnotu určující, zda</value>
+  </data>
 </root>

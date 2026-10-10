@@ -98,7 +98,7 @@ StyleCop Analyzers можно настроить несколькими неза
 
 > :bulb: При работе в Visual Studio среда разработки не изменяет настройки редактора автоматически в соответствии
 > со значениями в **stylecop.json**. Для этого рекомендуется использовать файл **.editorconfig**.
-> Пользователям расширения [EditorConfig](https://visualstudiogallery.msdn.microsoft.com/c8bccfe2-650c-4b42-bc5c-845e21f96328)
+> Пользователям расширения [EditorConfig](https://marketplace.visualstudio.com/items?itemName=EditorConfigTeam.EditorConfig)
 > для Visual Studio не придётся вручную изменять настройки отступов C#, чтобы они соответствовали стилю проекта.
 
 <a id="spacing-rules"></a>
