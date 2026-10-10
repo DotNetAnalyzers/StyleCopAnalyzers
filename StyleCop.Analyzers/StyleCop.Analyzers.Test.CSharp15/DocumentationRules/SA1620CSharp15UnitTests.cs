@@ -5,16 +5,12 @@ namespace StyleCop.Analyzers.Test.CSharp15.DocumentationRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Test.CSharp14.DocumentationRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<
         StyleCop.Analyzers.DocumentationRules.GenericTypeParameterDocumentationAnalyzer>;
 
-    // Union declarations are only parsed with the preview language version, which is the default for this test project.
-    // The reference assemblies used by these tests do not define System.Runtime.CompilerServices.IUnion and
-    // UnionAttribute, so union declarations produce CS0518 and CS0656, and compiler diagnostics are therefore ignored.
     public partial class SA1620CSharp15UnitTests : SA1620CSharp14UnitTests
     {
         /// <summary>
@@ -35,12 +31,9 @@ namespace StyleCop.Analyzers.Test.CSharp15.DocumentationRules
 public union Result<T>(T, string);
 ";
 
-            await new CSharpTest()
-            {
-                TestCode = testCode,
-                ExpectedDiagnostics = { Diagnostic(GenericTypeParameterDocumentationAnalyzer.SA1620MissingTypeParameterDescriptor).WithLocation(0).WithArguments("U") },
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic(GenericTypeParameterDocumentationAnalyzer.SA1620MissingTypeParameterDescriptor).WithLocation(0).WithArguments("U");
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

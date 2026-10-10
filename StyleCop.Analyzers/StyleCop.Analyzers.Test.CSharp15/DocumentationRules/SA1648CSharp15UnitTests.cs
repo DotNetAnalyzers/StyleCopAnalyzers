@@ -5,15 +5,11 @@ namespace StyleCop.Analyzers.Test.CSharp15.DocumentationRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp14.DocumentationRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<
         StyleCop.Analyzers.DocumentationRules.SA1648InheritDocMustBeUsedWithInheritingClass>;
 
-    // Union declarations are only parsed with the preview language version, which is the default for this test project.
-    // The reference assemblies used by these tests do not define System.Runtime.CompilerServices.IUnion and
-    // UnionAttribute, so union declarations produce CS0518 and CS0656, and compiler diagnostics are therefore ignored.
     public partial class SA1648CSharp15UnitTests : SA1648CSharp14UnitTests
     {
         /// <summary>
@@ -39,12 +35,9 @@ public union Shape(int, string) : System.IDisposable
 }
 ";
 
-            await new CSharpTest()
-            {
-                TestCode = testCode,
-                ExpectedDiagnostics = { Diagnostic().WithLocation(0) },
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(0);
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -12,9 +12,6 @@ namespace StyleCop.Analyzers.Test.CSharp15.NamingRules
         StyleCop.Analyzers.NamingRules.SA1300ElementMustBeginWithUpperCaseLetter,
         StyleCop.Analyzers.NamingRules.RenameToUpperCaseCodeFixProvider>;
 
-    // Union declarations are only parsed with the preview language version, which is the default for this test project.
-    // The reference assemblies used by these tests do not define System.Runtime.CompilerServices.IUnion and
-    // UnionAttribute, so union declarations produce CS0518 and CS0656, and compiler diagnostics are therefore ignored.
     public partial class SA1300CSharp15UnitTests : SA1300CSharp14UnitTests
     {
         /// <summary>
@@ -54,18 +51,14 @@ public class Outer
 }
 ";
 
-            await new CSharpTest()
+            DiagnosticResult[] expected =
             {
-                TestCode = testCode,
-                FixedCode = fixedCode,
-                ExpectedDiagnostics =
-                {
-                    Diagnostic().WithArguments("pet").WithLocation(0),
-                    Diagnostic().WithArguments("feed").WithLocation(1),
-                    Diagnostic().WithArguments("nestedPet").WithLocation(2),
-                },
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+                Diagnostic().WithArguments("pet").WithLocation(0),
+                Diagnostic().WithArguments("feed").WithLocation(1),
+                Diagnostic().WithArguments("nestedPet").WithLocation(2),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

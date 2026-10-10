@@ -12,9 +12,6 @@ namespace StyleCop.Analyzers.Test.CSharp15.OrderingRules
         StyleCop.Analyzers.OrderingRules.SA1200UsingDirectivesMustBePlacedCorrectly,
         StyleCop.Analyzers.OrderingRules.UsingCodeFixProvider>;
 
-    // Union declarations are only parsed with the preview language version, which is the default for this test project.
-    // The reference assemblies used by these tests do not define System.Runtime.CompilerServices.IUnion and
-    // UnionAttribute, so union declarations produce CS0518 and CS0656, and compiler diagnostics are therefore ignored.
     public partial class SA1200CSharp15UnitTests : SA1200CSharp14UnitTests
     {
         /// <summary>
@@ -32,11 +29,7 @@ using System;
 public union Pet(int, string);
 ";
 
-            await new CSharpTest()
-            {
-                TestCode = testCode,
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

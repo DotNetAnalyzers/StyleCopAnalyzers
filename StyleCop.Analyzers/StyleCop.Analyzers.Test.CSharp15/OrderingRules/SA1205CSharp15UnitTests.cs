@@ -12,9 +12,6 @@ namespace StyleCop.Analyzers.Test.CSharp15.OrderingRules
         StyleCop.Analyzers.OrderingRules.SA1205PartialElementsMustDeclareAccess,
         StyleCop.Analyzers.OrderingRules.SA1205CodeFixProvider>;
 
-    // Union declarations are only parsed with the preview language version, which is the default for this test project.
-    // The reference assemblies used by these tests do not define System.Runtime.CompilerServices.IUnion and
-    // UnionAttribute, so union declarations produce CS0518 and CS0656, and compiler diagnostics are therefore ignored.
     public partial class SA1205CSharp15UnitTests : SA1205CSharp14UnitTests
     {
         /// <summary>
@@ -44,17 +41,13 @@ public class Outer
 }
 ";
 
-            await new CSharpTest()
+            DiagnosticResult[] expected =
             {
-                TestCode = testCode,
-                FixedCode = fixedCode,
-                ExpectedDiagnostics =
-                {
-                    Diagnostic().WithLocation(0),
-                    Diagnostic().WithLocation(1),
-                },
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -11,9 +11,6 @@ namespace StyleCop.Analyzers.Test.CSharp15.DocumentationRules
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<
         StyleCop.Analyzers.DocumentationRules.SA1611ElementParametersMustBeDocumented>;
 
-    // Union declarations are only parsed with the preview language version, which is the default for this test project.
-    // The reference assemblies used by these tests do not define System.Runtime.CompilerServices.IUnion and
-    // UnionAttribute, so union declarations produce CS0518 and CS0656, and compiler diagnostics are therefore ignored.
     public partial class SA1611CSharp15UnitTests : SA1611CSharp14UnitTests
     {
         /// <summary>
@@ -40,11 +37,7 @@ public union Result<T>(T, string)
 }
 ";
 
-            await new CSharpTest()
-            {
-                TestCode = testCode,
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
