@@ -80,10 +80,10 @@ namespace StyleCop.Analyzers.NamingRules
                 return;
             }
 
-            if (!syntax.Modifiers.Any(SyntaxKind.InternalKeyword))
+            if (syntax.Modifiers.Any(SyntaxKind.PublicKeyword)
+                || syntax.Modifiers.Any(SyntaxKind.InternalKeyword))
             {
-                // SA1307 is taken precedence here. SA1307 should be reported if the field is accessible.
-                // So if SA1307 is enabled this diagnostic will only be reported for internal fields.
+                // SA1307 takes precedence for public and internal fields, including protected internal fields.
                 if (!context.IsAnalyzerSuppressed(SA1307AccessibleFieldsMustBeginWithUpperCaseLetter.Descriptor))
                 {
                     return;
