@@ -20,6 +20,84 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     public class SA1008UnitTests
     {
         /// <summary>
+        /// Verifies that whitespace before a comment after an opening parenthesis is allowed.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3945, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3945")]
+        public async Task TestCommentAfterOpeningParenthesisAsync()
+        {
+            var testCode = @"class C
+{
+    bool M(bool a, bool b)
+    {
+        return !( // comment after open paren
+            a && b
+        );
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that comments after opening parentheses are allowed in different syntactic positions.
+        /// </summary>
+        /// <param name="comment">The whitespace and comment after each opening parenthesis.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData(" // comment\n")]
+        [InlineData("\t// comment\n")]
+        [InlineData("// comment\n")]
+        [InlineData(" /* comment */")]
+        [InlineData(" \t /* comment\ncontinued */")]
+        [InlineData("/* comment */")]
+        [WorkItem(3945, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3945")]
+        public async Task TestCommentsInParenthesisListsAsync(string comment)
+        {
+            var testCode = @"class C
+{
+    bool M(" + comment + @"bool a)
+    {
+        return M(" + comment + @"!(" + comment + @"a));
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a later comment does not exempt whitespace immediately after an opening parenthesis.
+        /// </summary>
+        /// <param name="expression">The expression following the unwanted whitespace.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("a && b")]
+        [InlineData("\n            // comment on the next line\n            a && b")]
+        [InlineData("a /* comment after code */ && b")]
+        [WorkItem(3945, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3945")]
+        public async Task TestWhitespaceBeforeLaterCommentAsync(string expression)
+        {
+            var testCode = @"class C
+{
+    bool M(bool a, bool b)
+    {
+        return !{|#0:(|} " + expression + @");
+    }
+}";
+            var fixedCode = @"class C
+{
+    bool M(bool a, bool b)
+    {
+        return !(" + expression + @");
+    }
+}";
+
+            var expected = Diagnostic(DescriptorNotFollowed).WithLocation(0);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that spacing between consecutive type casts is handled properly.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
