@@ -112,8 +112,12 @@ namespace StyleCop.Analyzers.LayoutRules
                     return;
                 }
 
-                var fileLinePositionSpan = accessor.GetLineSpan();
-                if (fileLinePositionSpan.StartLinePosition.Line == fileLinePositionSpan.EndLinePosition.Line)
+                // Attributes are not part of the accessor body. A single-line accessor with an attribute on the
+                // preceding line is still a single-line accessor.
+                var startToken = accessor.Modifiers.Count > 0 ? accessor.Modifiers[0] : accessor.Keyword;
+                int startLine = startToken.GetLocation().GetLineSpan().StartLinePosition.Line;
+                int endLine = accessor.Body.GetLocation().GetLineSpan().EndLinePosition.Line;
+                if (startLine == endLine)
                 {
                     hasSingleLineAccessor = true;
                 }

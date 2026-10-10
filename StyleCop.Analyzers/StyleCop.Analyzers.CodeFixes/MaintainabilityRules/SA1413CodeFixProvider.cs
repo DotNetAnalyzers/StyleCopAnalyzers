@@ -50,11 +50,12 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
-            var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
-            var syntaxNode = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
 
-            TextChange textChange = new TextChange(diagnostic.Location.SourceSpan, syntaxNode.ToString() + ",");
+            // Insert the comma instead of replacing the last node. Replacing the node drops fixes for
+            // initializers nested inside it, so Fix All would need one pass per nesting level.
+            var insertSpan = new TextSpan(diagnostic.Location.SourceSpan.End, 0);
+            TextChange textChange = new TextChange(insertSpan, ",");
             return document.WithText(text.WithChanges(textChange));
         }
     }
