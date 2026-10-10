@@ -110,5 +110,151 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             var expected = this.Diagnostic().WithLocation(0);
             await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3876, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3876")]
+        public async Task TestExtractedTypeInSecondNamespaceKeepsBlankLineAfterBraceAsync()
+        {
+            var testCode = @"namespace OtherNamespace
+{
+    public class OtherClass
+    {
+    }
+}
+
+namespace TestNamespace
+{
+
+    public class {|#0:TestClass2|}
+    {
+    }
+}
+";
+
+            var fixedCode = new[]
+            {
+                ("/0/Test0.cs", @"namespace OtherNamespace
+{
+    public class OtherClass
+    {
+    }
+}
+
+namespace TestNamespace
+{
+}
+"),
+                ("TestClass2.cs", @"namespace TestNamespace
+{
+
+    public class TestClass2
+    {
+    }
+}
+"),
+            };
+
+            var expected = this.Diagnostic().WithLocation(0);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3876, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3876")]
+        public async Task TestExtractedTypeInSecondNamespaceTrimsSiblingAndNamespaceSeparatorsAsync()
+        {
+            var testCode = @"namespace OtherNamespace
+{
+}
+
+namespace TestNamespace
+{
+    public class TestClass
+    {
+    }
+
+    public class {|#0:TestClass2|}
+    {
+    }
+}
+";
+
+            var fixedCode = new[]
+            {
+                ("/0/Test0.cs", @"namespace OtherNamespace
+{
+}
+
+namespace TestNamespace
+{
+    public class TestClass
+    {
+    }
+}
+"),
+                ("TestClass2.cs", @"namespace TestNamespace
+{
+    public class TestClass2
+    {
+    }
+}
+"),
+            };
+
+            var expected = this.Diagnostic().WithLocation(0);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3876, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3876")]
+        public async Task TestExtractedTypeInSecondNamespaceKeepsBlankLineAfterUsingAsync()
+        {
+            var testCode = @"using System;
+
+namespace OtherNamespace
+{
+    public class OtherClass
+    {
+    }
+}
+
+namespace TestNamespace
+{
+
+    public class {|#0:TestClass2|}
+    {
+    }
+}
+";
+
+            var fixedCode = new[]
+            {
+                ("/0/Test0.cs", @"using System;
+
+namespace OtherNamespace
+{
+    public class OtherClass
+    {
+    }
+}
+
+namespace TestNamespace
+{
+}
+"),
+                ("TestClass2.cs", @"using System;
+
+namespace TestNamespace
+{
+
+    public class TestClass2
+    {
+    }
+}
+"),
+            };
+
+            var expected = this.Diagnostic().WithLocation(0);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

@@ -29,6 +29,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     [Shared]
     internal class SA1402CodeFixProvider : CodeFixProvider
     {
+        private const string TrimAnnotationKind = "SA1402Trim";
+
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(SA1402FileMayOnlyContainASingleType.DiagnosticId);
@@ -76,56 +78,92 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             node = GetAnnotatedNode(root, keptAnnotation);
 
             List<SyntaxNode> nodesToRemoveFromExtracted = new List<SyntaxNode>();
+            List<SyntaxNode> nodesToTrim = new List<SyntaxNode>();
+            List<int> blankLinesToKeep = new List<int>();
             SyntaxNode previous = node;
             for (SyntaxNode current = node.Parent; current != null; previous = current, current = current.Parent)
             {
+                List<SyntaxNode> children = new List<SyntaxNode>();
                 foreach (SyntaxNode child in current.ChildNodes())
                 {
-                    if (child == previous)
+                    children.Add(child);
+                }
+
+                int keptIndex = IndexOfNode(children, previous);
+                for (int i = 0; i < children.Count; i++)
+                {
+                    if (i == keptIndex)
                     {
                         continue;
                     }
 
-                    switch (child.Kind())
+                    if (IsRemovedSibling(children[i]))
                     {
-                    case SyntaxKind.NamespaceDeclaration:
-                    case SyntaxKind.ClassDeclaration:
-                    case SyntaxKind.StructDeclaration:
-                    case SyntaxKind.InterfaceDeclaration:
-                    case SyntaxKind.EnumDeclaration:
-                    case SyntaxKind.DelegateDeclaration:
-                    case SyntaxKindEx.RecordDeclaration:
-                    case SyntaxKindEx.RecordStructDeclaration:
-                    case SyntaxKindEx.UnionDeclaration:
-                        nodesToRemoveFromExtracted.Add(child);
-                        break;
-
-                    case SyntaxKindEx.FileScopedNamespaceDeclaration:
-                        // Only one file-scoped namespace is allowed per syntax tree
-                        throw new InvalidOperationException("This location is not reachable");
-
-                    default:
-                        break;
+                        nodesToRemoveFromExtracted.Add(children[i]);
                     }
+                }
+
+                // Only the node that directly follows a removed sibling owns the leftover separator.
+                // Earlier removals at this level are handled on that node, not on every descendant.
+                if (keptIndex > 0 && IsRemovedSibling(children[keptIndex - 1]))
+                {
+                    int runStart = keptIndex - 1;
+                    while (runStart > 0 && IsRemovedSibling(children[runStart - 1]))
+                    {
+                        runStart--;
+                    }
+
+                    nodesToTrim.Add(previous);
+                    blankLinesToKeep.Add(CountLeadingBlankLines(children[runStart].GetLeadingTrivia()));
+                }
+            }
+
+            // Annotate a copy so removal targets stay findable after the rewrite, and so the
+            // original tree used for the source document is left unchanged.
+            SyntaxNode extractedRoot = root;
+            if (nodesToTrim.Count > 0)
+            {
+                List<SyntaxNode> nodesToAnnotate = new List<SyntaxNode>(nodesToRemoveFromExtracted.Count + nodesToTrim.Count);
+                foreach (var removedNode in nodesToRemoveFromExtracted)
+                {
+                    nodesToAnnotate.Add(removedNode);
+                }
+
+                foreach (var trimNode in nodesToTrim)
+                {
+                    nodesToAnnotate.Add(trimNode);
+                }
+
+                var removeAnnotation = new SyntaxAnnotation("SA1402Remove");
+                extractedRoot = root.ReplaceNodes(
+                    nodesToAnnotate,
+                    (original, rewritten) =>
+                    {
+                        if (ContainsNode(nodesToRemoveFromExtracted, original))
+                        {
+                            rewritten = rewritten.WithAdditionalAnnotations(removeAnnotation);
+                        }
+
+                        int trimIndex = IndexOfNode(nodesToTrim, original);
+                        if (trimIndex >= 0)
+                        {
+                            var trimAnnotation = new SyntaxAnnotation(TrimAnnotationKind, blankLinesToKeep[trimIndex].ToString());
+                            rewritten = rewritten.WithAdditionalAnnotations(trimAnnotation);
+                        }
+
+                        return rewritten;
+                    });
+
+                nodesToRemoveFromExtracted.Clear();
+                foreach (var annotated in extractedRoot.GetAnnotatedNodes(removeAnnotation))
+                {
+                    nodesToRemoveFromExtracted.Add(annotated);
                 }
             }
 
             // Add the new file
-            bool removedEarlierSibling = false;
-            foreach (var removed in nodesToRemoveFromExtracted)
-            {
-                if (removed.SpanStart < node.SpanStart)
-                {
-                    removedEarlierSibling = true;
-                    break;
-                }
-            }
-
-            SyntaxNode extractedDocumentNode = root.RemoveNodes(nodesToRemoveFromExtracted, SyntaxRemoveOptions.KeepUnbalancedDirectives);
-            if (removedEarlierSibling)
-            {
-                extractedDocumentNode = RemoveBlankLineLeftByRemovedSibling(extractedDocumentNode, keptAnnotation);
-            }
+            SyntaxNode extractedDocumentNode = extractedRoot.RemoveNodes(nodesToRemoveFromExtracted, SyntaxRemoveOptions.KeepUnbalancedDirectives);
+            extractedDocumentNode = RemoveBlankLinesLeftByRemovedSiblings(extractedDocumentNode);
 
             Solution updatedSolution = document.Project.Solution.AddDocument(extractedDocumentId, extractedDocumentName, extractedDocumentNode, document.Folders);
 
@@ -153,35 +191,126 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         }
 
         /// <summary>
-        /// Removes a blank line that node removal leaves in front of the type moved to the new file.
+        /// Removes blank lines that node removal leaves in front of each kept declaration whose
+        /// earlier sibling was removed.
         /// </summary>
-        private static SyntaxNode RemoveBlankLineLeftByRemovedSibling(SyntaxNode root, SyntaxAnnotation keptAnnotation)
+        private static SyntaxNode RemoveBlankLinesLeftByRemovedSiblings(SyntaxNode root)
         {
-            var kept = GetAnnotatedNode(root, keptAnnotation);
-            if (kept == null)
+            while (true)
             {
-                return root;
-            }
+                SyntaxNode kept = null;
+                SyntaxAnnotation annotation = null;
+                foreach (var candidate in root.GetAnnotatedNodes(TrimAnnotationKind))
+                {
+                    kept = candidate;
+                    foreach (var candidateAnnotation in candidate.GetAnnotations(TrimAnnotationKind))
+                    {
+                        annotation = candidateAnnotation;
+                        break;
+                    }
 
+                    break;
+                }
+
+                if (kept == null)
+                {
+                    return root;
+                }
+
+                int blankLinesToKeep = 0;
+                int parsed;
+                if (annotation != null && int.TryParse(annotation.Data, out parsed))
+                {
+                    blankLinesToKeep = parsed;
+                }
+
+                var updated = TrimLeadingBlankLines(kept, blankLinesToKeep);
+                if (annotation != null)
+                {
+                    updated = updated.WithoutAnnotations(annotation);
+                }
+
+                root = root.ReplaceNode(kept, updated);
+            }
+        }
+
+        /// <summary>
+        /// Drops leading blank lines down to <paramref name="blankLinesToKeep"/>.
+        /// A missing previous token means the node now starts the file, so a leading end-of-line is a blank line.
+        /// </summary>
+        private static SyntaxNode TrimLeadingBlankLines(SyntaxNode kept, int blankLinesToKeep)
+        {
             var leading = kept.GetLeadingTrivia();
-            if (leading.Count == 0 || !leading[0].IsKind(SyntaxKind.EndOfLineTrivia))
+            int blankLines = CountLeadingBlankLines(leading);
+            if (blankLines <= blankLinesToKeep)
             {
-                return root;
+                return kept;
             }
 
             var previous = kept.GetFirstToken().GetPreviousToken();
-            if (previous.IsKind(SyntaxKind.None) || !EndsWithLineBreak(previous))
+            if (previous.IsKind(SyntaxKind.None))
             {
-                return root;
+                // A leading end-of-line at the start of the file is a blank line, except when it
+                // precedes a preserved directive (see roslyn issue 3999).
+                if (LeadingBlankLinesAreFollowedByDirective(leading))
+                {
+                    return kept;
+                }
+            }
+            else if (!EndsWithLineBreak(previous))
+            {
+                return kept;
             }
 
-            var trimmed = RemoveLeadingBlankLines(leading);
+            var trimmed = RemoveLeadingBlankLines(leading, blankLines - blankLinesToKeep);
             if (trimmed.Count == leading.Count)
             {
-                return root;
+                return kept;
             }
 
-            return root.ReplaceNode(kept, kept.WithLeadingTrivia(trimmed));
+            return kept.WithLeadingTrivia(trimmed);
+        }
+
+        private static bool IsRemovedSibling(SyntaxNode child)
+        {
+            switch (child.Kind())
+            {
+            case SyntaxKind.NamespaceDeclaration:
+            case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.StructDeclaration:
+            case SyntaxKind.InterfaceDeclaration:
+            case SyntaxKind.EnumDeclaration:
+            case SyntaxKind.DelegateDeclaration:
+            case SyntaxKindEx.RecordDeclaration:
+            case SyntaxKindEx.RecordStructDeclaration:
+            case SyntaxKindEx.UnionDeclaration:
+                return true;
+
+            case SyntaxKindEx.FileScopedNamespaceDeclaration:
+                // Only one file-scoped namespace is allowed per syntax tree
+                throw new InvalidOperationException("This location is not reachable");
+
+            default:
+                return false;
+            }
+        }
+
+        private static int IndexOfNode(List<SyntaxNode> nodes, SyntaxNode node)
+        {
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                if (ReferenceEquals(nodes[i], node))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        private static bool ContainsNode(List<SyntaxNode> nodes, SyntaxNode node)
+        {
+            return IndexOfNode(nodes, node) >= 0;
         }
 
         private static bool EndsWithLineBreak(SyntaxToken token)
@@ -204,14 +333,28 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             return false;
         }
 
-        private static SyntaxTriviaList RemoveLeadingBlankLines(SyntaxTriviaList leading)
+        private static bool LeadingBlankLinesAreFollowedByDirective(SyntaxTriviaList leading)
         {
-            int index = 0;
-            while (index < leading.Count)
+            int index;
+            CountRemovedBlankLines(leading, int.MaxValue, out index);
+            return index < leading.Count && leading[index].IsDirective;
+        }
+
+        private static int CountLeadingBlankLines(SyntaxTriviaList leading)
+        {
+            return CountRemovedBlankLines(leading, int.MaxValue, out _);
+        }
+
+        private static int CountRemovedBlankLines(SyntaxTriviaList leading, int blankLinesToRemove, out int index)
+        {
+            index = 0;
+            int removed = 0;
+            while (index < leading.Count && removed < blankLinesToRemove)
             {
                 if (leading[index].IsKind(SyntaxKind.EndOfLineTrivia))
                 {
                     index++;
+                    removed++;
                     continue;
                 }
 
@@ -220,11 +363,20 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                     && leading[index + 1].IsKind(SyntaxKind.EndOfLineTrivia))
                 {
                     index += 2;
+                    removed++;
                     continue;
                 }
 
                 break;
             }
+
+            return removed;
+        }
+
+        private static SyntaxTriviaList RemoveLeadingBlankLines(SyntaxTriviaList leading, int blankLinesToRemove)
+        {
+            int index;
+            CountRemovedBlankLines(leading, blankLinesToRemove, out index);
 
             if (index == 0)
             {
