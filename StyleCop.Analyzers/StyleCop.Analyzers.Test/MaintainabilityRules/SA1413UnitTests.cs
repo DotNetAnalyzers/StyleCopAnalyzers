@@ -522,5 +522,70 @@ class TestClass
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that one Fix All pass adds trailing commas at every nesting level.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3953, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3953")]
+        public async Task VerifyNestedInitializersAreFixedInOnePassAsync()
+        {
+            var testCode = @"
+class TestClass
+{
+    void Foo()
+    {
+        var test = new
+        {
+            MyArray = new[]
+            {
+                new
+                {
+                    MyProp = ""Test""
+                },
+                new
+                {
+                    MyProp = ""asdf""
+                }
+            }
+        };
+    }
+}
+";
+
+            var fixedTestCode = @"
+class TestClass
+{
+    void Foo()
+    {
+        var test = new
+        {
+            MyArray = new[]
+            {
+                new
+                {
+                    MyProp = ""Test"",
+                },
+                new
+                {
+                    MyProp = ""asdf"",
+                },
+            },
+        };
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(8, 13),
+                Diagnostic().WithLocation(12, 21),
+                Diagnostic().WithLocation(14, 17),
+                Diagnostic().WithLocation(16, 21),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
