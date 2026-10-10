@@ -2,6 +2,14 @@ gitignore = true
 root-dir = "."
 throttle = 100
 
+# GitHub frequently rejects automated requests for links that work in browsers.
+ignore-links = [
+    "https://github.com",
+    "https://github.com/*",
+    "http://github.com",
+    "http://github.com/*",
+]
+
 # Microsoft documentation redirects to localized URLs; still check the destinations.
 do-not-warn-for-redirect-to = [
     "https://learn.microsoft.com/*",
