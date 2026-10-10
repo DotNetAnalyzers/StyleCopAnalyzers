@@ -9,7 +9,7 @@ documented below along with how to migrate from them.
 
 | Mechanism | Rule severities | Settings |
 | --- | --- | --- |
-| **.editorconfig** / **.globalconfig** (recommended) | Yes (`dotnet_diagnostic.<ID>.severity`) | All |
+| **.editorconfig** / **.globalconfig** (recommended) | Yes (`dotnet_diagnostic.<ID>.severity`) | All (`variables` requires Roslyn 4.4 or newer) |
 | **stylecop.json** | No | All |
 | Rule set files (`.ruleset`) | Yes | No |
 
@@ -75,12 +75,12 @@ setting are in the sections that follow.
 | Documentation | `documentationRules.documentInterfaces` | `stylecop.documentation.documentInterfaces` | `all`, `exposed`, `none` (or boolean) | `all` |
 | Documentation | `documentationRules.companyName` | `stylecop.documentation.companyName` | text | `PlaceholderCompany` |
 | Documentation | `documentationRules.copyrightText` | `stylecop.documentation.copyrightText` (or `file_header_template`) | text; `\n` and `\r` allowed | `Copyright (c) {companyName}. All rights reserved.` |
-| Documentation | `documentationRules.variables.<name>` | `stylecop.documentation.variables.<name>` | text | none |
+| Documentation | `documentationRules.variables.<name>` | `stylecop.documentation.variables.<name>` (requires Roslyn 4.4 or newer) | text | none |
 | Documentation | `documentationRules.headerDecoration` | `stylecop.documentation.headerDecoration` | text | none |
 | Documentation | `documentationRules.xmlHeader` | `stylecop.documentation.xmlHeader` | boolean | `true` |
 | Documentation | `documentationRules.fileNamingConvention` | `stylecop.documentation.fileNamingConvention` | `stylecop`, `metadata` | `stylecop` |
 | Documentation | `documentationRules.documentationCulture` | `stylecop.documentation.documentationCulture` | culture name | `en-US` |
-| Documentation | `documentationRules.excludeFromPunctuationCheck` | `stylecop.documentation.excludeFromPunctuationCheck` | comma-separated list | empty |
+| Documentation | `documentationRules.excludeFromPunctuationCheck` | `stylecop.documentation.excludeFromPunctuationCheck` | comma-separated list | `seealso` |
 
 > :memo: When a row lists a generic property in parentheses, the StyleCop-specific property takes precedence if both
 > are set. Generic properties are shared with the .NET SDK and IDE, so they are convenient when you already use them.
@@ -129,12 +129,12 @@ stylecop.documentation.documentPrivateFields = false
 stylecop.documentation.documentInterfaces = all                # all | exposed | none
 stylecop.documentation.companyName = PlaceholderCompany
 stylecop.documentation.copyrightText = Copyright (c) {companyName}. All rights reserved.
-stylecop.documentation.variables.myvariable = value
+stylecop.documentation.variables.myvariable = value             # requires Roslyn 4.4 or newer
 stylecop.documentation.headerDecoration =
 stylecop.documentation.xmlHeader = true
 stylecop.documentation.fileNamingConvention = stylecop         # stylecop | metadata
 stylecop.documentation.documentationCulture = en-US
-stylecop.documentation.excludeFromPunctuationCheck =           # comma-separated
+stylecop.documentation.excludeFromPunctuationCheck = seealso   # comma-separated
 ```
 
 > :warning: EditorConfig only treats `#` as a comment at the start of a line. Remove the trailing comments in this
