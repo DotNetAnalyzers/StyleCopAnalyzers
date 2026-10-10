@@ -26,12 +26,18 @@ dotnet docfx docfx.json --warningsAsErrors
 The generated site is written to `_site` (ignored by git). To preview it locally, run
 `dotnet docfx serve _site` and open the URL printed by DocFX.
 
-DocFX also copies the existing status page and any assets under `docs` to `_site/status`.
-The documentation is hosted at the site root, and the rule implementation status page is hosted at
-<https://dotnetanalyzers.github.io/StyleCopAnalyzers/status/index.html>.
-Both are included in the same Pages deployment.
+The rule implementation status is a DocFX page at
+<https://dotnetanalyzers.github.io/StyleCopAnalyzers/RuleStatus.html>.
+`documentation/RuleStatus.md` includes the unframed HTML and script fragment in `docs/status.md`
+using DocFX's `[!INCLUDE]` syntax, so it shares the documentation navigation and theme.
+This page uses DocFX's `landing` layout to give the wide table the full content area while retaining
+the shared header and footer; ordinary documentation pages retain their sidebars.
+Keep the fragment's HTML in a continuous block without blank lines; otherwise Markdown may render
+indented HTML as a code sample. The status table uses DocFX's Bootstrap styles, not a separate theme.
+DocFX copies non-Markdown resources under `docs` to `_site/status`, including the JSON report
+and a redirect from the old `status/index.html` URL.
 
-The status page loads `StyleCop.Analyzers.Status.json` from its own directory rather than AppVeyor.
+The status page loads `status/StyleCop.Analyzers.Status.json` rather than AppVeyor.
 CI generates this report from the Release build and downloads it into `docs` before the DocFX build.
 To preview the status page locally, build the code fixes and generator in the same configuration, then
 generate the report before compiling the documentation:

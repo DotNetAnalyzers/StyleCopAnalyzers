@@ -1,3 +1,5 @@
+order: -1
+items:
 - name: Overview
   href: index.md
 - name: Using the .NET CLI
@@ -8,6 +10,8 @@
   href: EnableConfiguration.md
 - name: Differences from StyleCop Classic
   href: KnownChanges.md
+- name: Rule implementation status
+  href: RuleStatus.md
 - name: Rule areas
   items:
   - name: Special rules

@@ -4,8 +4,42 @@ const path = require("node:path");
 const test = require("node:test");
 const vm = require("node:vm");
 
-const html = fs.readFileSync(path.join(__dirname, "..", "docs", "index.html"), "utf8");
+const html = fs.readFileSync(path.join(__dirname, "..", "docs", "status.md"), "utf8");
 const script = html.match(/<script type="text\/javascript">([\s\S]*?)<\/script>/)[1];
+
+test("embeds the status fragment in DocFX without a second page frame", () => {
+    const page = fs.readFileSync(path.join(__dirname, "..", "documentation", "RuleStatus.md"), "utf8");
+    assert.match(page, /^---\r?\nlayout: landing\r?\ntitle: Rule implementation status\r?\n---/);
+    assert.doesNotMatch(page, /^# /m);
+    assert.doesNotMatch(html, /This page reports the current status/);
+    assert.match(page, /\[!INCLUDE \[Rule status\]\(\.\.\/docs\/status\.md\)\]/);
+    assert.doesNotMatch(html, /<!DOCTYPE|<\/?(?:html|head|body|header|footer|iframe)\b/i);
+    assert.doesNotMatch(html, /bootstrap(?:-theme)?\.min\.css|font-awesome|modernizr/i);
+    assert.doesNotMatch(html, /\r?\n\s*\r?\n/, "Blank lines end Markdown HTML blocks and can turn indented HTML into code");
+    assert.match(html, /table-success/);
+    assert.match(html, /scope="col"/);
+});
+
+test("keeps the old status URL as a redirect to the DocFX page", () => {
+    const redirect = fs.readFileSync(path.join(__dirname, "..", "docs", "index.html"), "utf8");
+    assert.match(redirect, /http-equiv="refresh" content="0; url=\.\.\/RuleStatus\.html"/);
+    assert.match(redirect, /href="\.\.\/RuleStatus\.html"/);
+});
+
+test("links rules to documentation pages in the same site", () => {
+    assert.match(html, /href="{{>Id}}\.html"/);
+});
+
+test("uses DocFX icons with accessible labels for code fix and Fix All status", () => {
+    for (const icon of ["check-circle-fill", "x-circle-fill", "exclamation-circle-fill", "hourglass-split"]) {
+        assert.ok(html.includes(`class="bi bi-${icon}" aria-hidden="true"`));
+    }
+    for (const label of ["Implemented", "Not yet implemented", "Batch fixer", "Custom implementation", "None"]) {
+        assert.ok(html.includes(`<span class="visually-hidden">${label}</span>`));
+        assert.ok(html.includes(`title="${label}"`));
+    }
+    assert.match(html, /Not applicable: {{>NoCodeFixReason}}/);
+});
 
 function loadPage(render = data => JSON.stringify(data)) {
     const elements = new Map();
@@ -59,9 +93,9 @@ function loadPage(render = data => JSON.stringify(data)) {
     };
 }
 
-test("loads the report published alongside the page, with a bounded request", () => {
+test("loads the report from the status resource directory, with a bounded request", () => {
     const page = loadPage();
-    assert.equal(page.request.url, "StyleCop.Analyzers.Status.json");
+    assert.equal(page.request.url, "status/StyleCop.Analyzers.Status.json");
     assert.equal(page.request.timeout, 15000);
 });
 

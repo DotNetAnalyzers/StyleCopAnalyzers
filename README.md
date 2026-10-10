@@ -56,4 +56,4 @@ See [Contributing](CONTRIBUTING.md)
 ## Current status
 
 An up-to-date list of which StyleCop rules are implemented and which have code fixes can be found in the
-[rule implementation status](https://dotnetanalyzers.github.io/StyleCopAnalyzers/status/index.html).
+[rule implementation status](https://dotnetanalyzers.github.io/StyleCopAnalyzers/RuleStatus.html).

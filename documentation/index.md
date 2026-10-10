@@ -11,7 +11,7 @@ StyleCop.Analyzers provides warnings and code fixes for style and consistency ru
 
 ## Rule areas
 
-See [Rule implementation status](../docs/index.html) for which rules and code fixes are implemented.
+See [Rule implementation status](RuleStatus.md) for which rules and code fixes are implemented.
 
 - [Special rules (SA0000-)](SpecialRules.md)
 - [Spacing rules (SA1000-)](SpacingRules.md)
