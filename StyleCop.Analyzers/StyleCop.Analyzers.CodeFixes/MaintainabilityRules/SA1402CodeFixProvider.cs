@@ -71,6 +71,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             var settings = document.Project.AnalyzerOptions.GetStyleCopSettingsInCodeFix(root.SyntaxTree, cancellationToken);
             string extractedDocumentName = FileNameHelpers.GetConventionalFileName(memberDeclarationSyntax, settings.DocumentationRules.FileNamingConvention) + suffix;
 
+            var keptAnnotation = new SyntaxAnnotation("SA1402Kept");
+            root = root.ReplaceNode(node, node.WithAdditionalAnnotations(keptAnnotation));
+            node = GetAnnotatedNode(root, keptAnnotation);
+
             List<SyntaxNode> nodesToRemoveFromExtracted = new List<SyntaxNode>();
             SyntaxNode previous = node;
             for (SyntaxNode current = node.Parent; current != null; previous = current, current = current.Parent)
@@ -107,7 +111,22 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             }
 
             // Add the new file
+            bool removedEarlierSibling = false;
+            foreach (var removed in nodesToRemoveFromExtracted)
+            {
+                if (removed.SpanStart < node.SpanStart)
+                {
+                    removedEarlierSibling = true;
+                    break;
+                }
+            }
+
             SyntaxNode extractedDocumentNode = root.RemoveNodes(nodesToRemoveFromExtracted, SyntaxRemoveOptions.KeepUnbalancedDirectives);
+            if (removedEarlierSibling)
+            {
+                extractedDocumentNode = RemoveBlankLineLeftByRemovedSibling(extractedDocumentNode, keptAnnotation);
+            }
+
             Solution updatedSolution = document.Project.Solution.AddDocument(extractedDocumentId, extractedDocumentName, extractedDocumentNode, document.Folders);
 
             // Make sure to also add the file to linked projects
@@ -121,6 +140,104 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             updatedSolution = updatedSolution.WithDocumentSyntaxRoot(document.Id, root.RemoveNode(node, SyntaxRemoveOptions.KeepUnbalancedDirectives));
 
             return updatedSolution;
+        }
+
+        private static SyntaxNode GetAnnotatedNode(SyntaxNode root, SyntaxAnnotation annotation)
+        {
+            foreach (var annotated in root.GetAnnotatedNodes(annotation))
+            {
+                return annotated;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Removes a blank line that node removal leaves in front of the type moved to the new file.
+        /// </summary>
+        private static SyntaxNode RemoveBlankLineLeftByRemovedSibling(SyntaxNode root, SyntaxAnnotation keptAnnotation)
+        {
+            var kept = GetAnnotatedNode(root, keptAnnotation);
+            if (kept == null)
+            {
+                return root;
+            }
+
+            var leading = kept.GetLeadingTrivia();
+            if (leading.Count == 0 || !leading[0].IsKind(SyntaxKind.EndOfLineTrivia))
+            {
+                return root;
+            }
+
+            var previous = kept.GetFirstToken().GetPreviousToken();
+            if (previous.IsKind(SyntaxKind.None) || !EndsWithLineBreak(previous))
+            {
+                return root;
+            }
+
+            var trimmed = RemoveLeadingBlankLines(leading);
+            if (trimmed.Count == leading.Count)
+            {
+                return root;
+            }
+
+            return root.ReplaceNode(kept, kept.WithLeadingTrivia(trimmed));
+        }
+
+        private static bool EndsWithLineBreak(SyntaxToken token)
+        {
+            var trailing = token.TrailingTrivia;
+            for (int i = trailing.Count - 1; i >= 0; i--)
+            {
+                var trivia = trailing[i];
+                if (trivia.IsKind(SyntaxKind.EndOfLineTrivia) || trivia.IsDirective)
+                {
+                    return true;
+                }
+
+                if (!trivia.IsKind(SyntaxKind.WhitespaceTrivia))
+                {
+                    return false;
+                }
+            }
+
+            return false;
+        }
+
+        private static SyntaxTriviaList RemoveLeadingBlankLines(SyntaxTriviaList leading)
+        {
+            int index = 0;
+            while (index < leading.Count)
+            {
+                if (leading[index].IsKind(SyntaxKind.EndOfLineTrivia))
+                {
+                    index++;
+                    continue;
+                }
+
+                if (leading[index].IsKind(SyntaxKind.WhitespaceTrivia)
+                    && index + 1 < leading.Count
+                    && leading[index + 1].IsKind(SyntaxKind.EndOfLineTrivia))
+                {
+                    index += 2;
+                    continue;
+                }
+
+                break;
+            }
+
+            if (index == 0)
+            {
+                return leading;
+            }
+
+            var kept = new List<SyntaxTrivia>(leading.Count - index);
+            for (int i = index; i < leading.Count; i++)
+            {
+                kept.Add(leading[i]);
+            }
+
+            return SyntaxFactory.TriviaList(kept);
         }
     }
 }
