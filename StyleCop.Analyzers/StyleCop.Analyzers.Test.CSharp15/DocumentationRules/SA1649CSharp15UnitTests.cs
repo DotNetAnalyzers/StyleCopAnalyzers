@@ -5,7 +5,6 @@ namespace StyleCop.Analyzers.Test.CSharp15.DocumentationRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp14.DocumentationRules;
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
@@ -26,7 +25,6 @@ namespace StyleCop.Analyzers.Test.CSharp15.DocumentationRules
             {
                 TestSources = { ("WrongFileName.cs", testCode) },
                 FixedSources = { ("TestUnion.cs", fixedCode) },
-                CompilerDiagnostics = CompilerDiagnostics.None,
             };
 
             test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
@@ -42,7 +40,6 @@ namespace StyleCop.Analyzers.Test.CSharp15.DocumentationRules
             var test = new StyleCopCodeFixVerifier<StyleCop.Analyzers.DocumentationRules.SA1649FileNameMustMatchTypeName, StyleCop.Analyzers.DocumentationRules.SA1649CodeFixProvider>.CSharpTest()
             {
                 TestSources = { ("TestUnion.cs", testCode) },
-                CompilerDiagnostics = CompilerDiagnostics.None,
             };
 
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);

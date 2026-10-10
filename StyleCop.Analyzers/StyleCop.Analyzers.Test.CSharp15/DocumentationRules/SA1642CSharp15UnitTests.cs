@@ -12,9 +12,6 @@ namespace StyleCop.Analyzers.Test.CSharp15.DocumentationRules
         StyleCop.Analyzers.DocumentationRules.SA1642ConstructorSummaryDocumentationMustBeginWithStandardText,
         StyleCop.Analyzers.DocumentationRules.SA1642SA1643CodeFixProvider>;
 
-    // Union declarations are only parsed with the preview language version, which is the default for this test project.
-    // The reference assemblies used by these tests do not define System.Runtime.CompilerServices.IUnion and
-    // UnionAttribute, so union declarations produce CS0518 and CS0656, and compiler diagnostics are therefore ignored.
     public partial class SA1642CSharp15UnitTests : SA1642CSharp14UnitTests
     {
         /// <summary>
@@ -38,6 +35,7 @@ public union Pet(int, string)
     /// <param name=""legs"">The number of legs.</param>
     /// <param name=""name"">The name.</param>
     public Pet(int legs, string name)
+        : this(legs)
     {
     }
 }
@@ -56,17 +54,13 @@ public union Pet(int, string)
     /// <param name=""legs"">The number of legs.</param>
     /// <param name=""name"">The name.</param>
     public Pet(int legs, string name)
+        : this(legs)
     {
     }
 }
 ";
 
-            await new CSharpTest()
-            {
-                TestCode = testCode,
-                FixedCode = fixedCode,
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -91,6 +85,7 @@ public union Result<T>(T, string)
     /// <param name=""value"">The value.</param>
     /// <param name=""message"">The message.</param>
     public Result(T value, string message)
+        : this(value)
     {
     }
 }
@@ -110,17 +105,13 @@ public union Result<T>(T, string)
     /// <param name=""value"">The value.</param>
     /// <param name=""message"">The message.</param>
     public Result(T value, string message)
+        : this(value)
     {
     }
 }
 ";
 
-            await new CSharpTest()
-            {
-                TestCode = testCode,
-                FixedCode = fixedCode,
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -143,16 +134,13 @@ public union Pet(int, string)
     /// <param name=""legs"">The number of legs.</param>
     /// <param name=""name"">The name.</param>
     public Pet(int legs, string name)
+        : this(legs)
     {
     }
 }
 ";
 
-            await new CSharpTest()
-            {
-                TestCode = testCode,
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -195,12 +183,7 @@ public union Pet(int, string)
 }
 ";
 
-            await new CSharpTest()
-            {
-                TestCode = testCode,
-                FixedCode = fixedCode,
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -224,6 +207,7 @@ public union Pet(int, string)
     /// <param name=""legs"">The number of legs.</param>
     /// <param name=""name"">The name.</param>
     public Pet(int legs, string name)
+        : this(legs)
     {
     }
 }
@@ -242,17 +226,13 @@ public union Pet(int, string)
     /// <param name=""legs"">The number of legs.</param>
     /// <param name=""name"">The name.</param>
     public Pet(int legs, string name)
+        : this(legs)
     {
     }
 }
 ";
 
-            await new CSharpTest()
-            {
-                TestCode = testCode,
-                FixedCode = fixedCode,
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

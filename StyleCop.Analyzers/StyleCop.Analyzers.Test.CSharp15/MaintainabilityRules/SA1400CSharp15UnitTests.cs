@@ -12,9 +12,6 @@ namespace StyleCop.Analyzers.Test.CSharp15.MaintainabilityRules
         StyleCop.Analyzers.MaintainabilityRules.SA1400AccessModifierMustBeDeclared,
         StyleCop.Analyzers.MaintainabilityRules.SA1400CodeFixProvider>;
 
-    // Union declarations are only parsed with the preview language version, which is the default for this test project.
-    // The reference assemblies used by these tests do not define System.Runtime.CompilerServices.IUnion and
-    // UnionAttribute, so union declarations produce CS0518 and CS0656, and compiler diagnostics are therefore ignored.
     public partial class SA1400CSharp15UnitTests : SA1400CSharp14UnitTests
     {
         /// <summary>
@@ -58,19 +55,15 @@ public union Animal(int, string)
 }
 ";
 
-            await new CSharpTest()
+            DiagnosticResult[] expected =
             {
-                TestCode = testCode,
-                FixedCode = fixedCode,
-                ExpectedDiagnostics =
-                {
-                    Diagnostic().WithArguments("Pet").WithLocation(0),
-                    Diagnostic().WithArguments("ReadOnlyPet").WithLocation(1),
-                    Diagnostic().WithArguments("NestedPet").WithLocation(2),
-                    Diagnostic().WithArguments("NestedUnion").WithLocation(3),
-                },
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+                Diagnostic().WithArguments("Pet").WithLocation(0),
+                Diagnostic().WithArguments("ReadOnlyPet").WithLocation(1),
+                Diagnostic().WithArguments("NestedPet").WithLocation(2),
+                Diagnostic().WithArguments("NestedUnion").WithLocation(3),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -107,18 +100,14 @@ public union Pet(int, string)
 }
 ";
 
-            await new CSharpTest()
+            DiagnosticResult[] expected =
             {
-                TestCode = testCode,
-                FixedCode = fixedCode,
-                ExpectedDiagnostics =
-                {
-                    Diagnostic().WithArguments("count").WithLocation(0),
-                    Diagnostic().WithArguments("Legs").WithLocation(1),
-                    Diagnostic().WithArguments("Feed").WithLocation(2),
-                },
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+                Diagnostic().WithArguments("count").WithLocation(0),
+                Diagnostic().WithArguments("Legs").WithLocation(1),
+                Diagnostic().WithArguments("Feed").WithLocation(2),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
