@@ -190,10 +190,10 @@
     <value>Initialiseert een waarde welke aangeeft</value>
   </data>
   <data name="ConstructorDocumentationCodeFix" xml:space="preserve">
-    <value>Constructor documentatie genereren</value>
+    <value>Constructordocumentatie genereren</value>
   </data>
   <data name="DestructorDocumentationCodeFix" xml:space="preserve">
-    <value>Destructor documentatie genereren</value>
+    <value>Destructordocumentatie genereren</value>
   </data>
   <data name="InheritdocCodeFix" xml:space="preserve">
     <value>Documentatie overnemen</value>

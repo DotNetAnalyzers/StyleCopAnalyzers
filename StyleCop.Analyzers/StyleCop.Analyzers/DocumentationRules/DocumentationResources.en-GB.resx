@@ -350,15 +350,15 @@
   <data name="SA1649Description"><value>The file name of a C# code file does not match the first type declared in the file.</value></data>
   <data name="SA1649MessageFormat"><value>File name should match first type name</value></data>
   <data name="SA1649Title"><value>File name should match first type name</value></data>
-  <data name="SA1650Description"><value>The element documentation for the element contains one or more spelling mistakes or unrecognized words.</value></data>
+  <data name="SA1650Description"><value>The element documentation for the element contains one or more spelling mistakes or unrecognised words.</value></data>
   <data name="SA1650MessageFormat"><value>TODO: Message format</value></data>
   <data name="SA1650Title"><value>Element documentation should be spelled correctly</value></data>
-  <data name="SA1651CodeFix"><value>Finalize placeholder text</value></data>
+  <data name="SA1651CodeFix"><value>Finalise placeholder text</value></data>
   <data name="SA1651Description"><value>The element documentation contains a &lt;placeholder&gt; element.</value></data>
   <data name="SA1651MessageFormat"><value>Do not use placeholder elements</value></data>
   <data name="SA1651Title"><value>Do not use placeholder elements</value></data>
   <data name="StartingTextReturns"><value>Returns</value></data>
   <data name="StartingTextReturnsWhether"><value>Returns a value indicating whether</value></data>
-  <data name="TaskReturnElementFirstPart"><value>A </value></data>
-  <data name="TaskReturnElementSecondPart"><value> representing the result of the asynchronous operation.</value></data>
+  <data name="TaskReturnElementFirstPart" xml:space="preserve"><value>A </value></data>
+  <data name="TaskReturnElementSecondPart" xml:space="preserve"><value> representing the result of the asynchronous operation.</value></data>
 </root>
