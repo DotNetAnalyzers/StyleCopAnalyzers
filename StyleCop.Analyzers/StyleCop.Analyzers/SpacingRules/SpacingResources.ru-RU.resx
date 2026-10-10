@@ -118,50 +118,40 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="SA1000Description" xml:space="preserve">
-    <value>Неправильно выбран интервал вокруг ключевого слова C#.</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="SA1000MessageFormat" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="SA1000Title" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="SA1001Description" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+    <value>Пробелы вокруг ключевого слова C# расставлены неправильно.</value>
   </data>
   <data name="SA1000MessageFormat" xml:space="preserve">
     <value>За ключевым словом '{0}' должен{1} следовать пробел</value>
   </data>
   <data name="SA1000Title" xml:space="preserve">
-    <value>Ключевые слова должны быть расставлены правильно</value>
+    <value>Пробелы вокруг ключевых слов должны быть расставлены правильно</value>
   </data>
   <data name="SA1001Description" xml:space="preserve">
     <value>В файле кода на языке C# неверно задан пробел вокруг запятой.</value>
   </data>
   <data name="SA1001MessageFormat" xml:space="preserve">
-    <value>Запятые должны{0} {1} пробелами</value>
+    <value>Запятые должны{0} быть {1} пробельными символами</value>
   </data>
   <data name="SA1001Title" xml:space="preserve">
-    <value>Запятые должны быть расставлены правильно</value>
+    <value>Пробелы вокруг запятых должны быть расставлены правильно</value>
   </data>
   <data name="SA1002Description" xml:space="preserve">
     <value>В файле кода на языке C# неправильно задан пробел вокруг точки с запятой.</value>
   </data>
   <data name="SA1002MessageFormat" xml:space="preserve">
-    <value>Точки с запятой должны {0} быть {1} пробелом</value>
+    <value>Точки с запятой должны{0} быть {1} пробелом</value>
   </data>
   <data name="SA1002Title" xml:space="preserve">
-    <value>Точки с запятой должны быть расставлены правильно</value>
+    <value>Пробелы вокруг точек с запятой должны быть расставлены правильно</value>
   </data>
   <data name="SA1003CodeFix" xml:space="preserve">
     <value>Исправить пробелы</value>
   </data>
   <data name="SA1003Description" xml:space="preserve">
-    <value>В файле кода на языке C# неверно задан пробелы вокруг символа оператора.</value>
+    <value>В файле кода на языке C# неправильно расставлены пробелы вокруг символа оператора.</value>
   </data>
   <data name="SA1003MessageFormatFollowedByWhitespace" xml:space="preserve">
-    <value>За оператором '{0}' должен следовать пробел.</value>
+    <value>За оператором '{0}' должен следовать пробельный символ.</value>
   </data>
   <data name="SA1003MessageFormatNotAtEndOfLine" xml:space="preserve">
     <value>Оператор '{0}' не должен появляться в конце строки.</value>
@@ -176,10 +166,10 @@
     <value>Оператору '{0}' не должны предшествовать пробельные символы.</value>
   </data>
   <data name="SA1003MessageFormatPrecededByWhitespace" xml:space="preserve">
-    <value>Оператору '{0}' должен предшествовать пробел.</value>
+    <value>Оператору '{0}' должен предшествовать пробельный символ.</value>
   </data>
   <data name="SA1003Title" xml:space="preserve">
-    <value>Символы должны быть расположены правильно</value>
+    <value>Пробелы вокруг символов должны быть расставлены правильно</value>
   </data>
   <data name="SA1004CodeFix" xml:space="preserve">
     <value>Исправить пробелы</value>
@@ -227,7 +217,7 @@
     <value>Исправить пробелы</value>
   </data>
   <data name="SA1008Description" xml:space="preserve">
-    <value>Открывающая скобка в операторе C# расставлены с неправильно.</value>
+    <value>Пробелы вокруг открывающей круглой скобки в операторе C# расставлены неправильно.</value>
   </data>
   <data name="SA1008MessageNotFollowed" xml:space="preserve">
     <value>За открывающей скобкой не должен следовать пробел.</value>
@@ -239,10 +229,10 @@
     <value>Открывающей скобке должен предшествовать пробел.</value>
   </data>
   <data name="SA1008Title" xml:space="preserve">
-    <value>Открывающая скобка должна быть расположена правильно</value>
+    <value>Пробелы вокруг открывающей круглой скобки должны быть расставлены правильно</value>
   </data>
   <data name="SA1009Description" xml:space="preserve">
-    <value>Закрывающая скобка в операторе C# расположена с неправильно.</value>
+    <value>Пробелы вокруг закрывающей круглой скобки в операторе C# расставлены неправильно.</value>
   </data>
   <data name="SA1009MessageFollowed" xml:space="preserve">
     <value>За закрывающей скобкой должен следовать пробел</value>
@@ -254,10 +244,10 @@
     <value>Закрывающей скобке не должен предшествовать пробел</value>
   </data>
   <data name="SA1009Title" xml:space="preserve">
-    <value>Закрывающая скобка должна быть расположена правильно</value>
+    <value>Пробелы вокруг закрывающей круглой скобки должны быть расставлены правильно</value>
   </data>
   <data name="SA1010Description" xml:space="preserve">
-    <value>Открывающая квадратная скобка в операторе C# расположена не правильно.</value>
+    <value>Пробелы вокруг открывающей квадратной скобки в операторе C# расставлены неправильно.</value>
   </data>
   <data name="SA1010MessageNotFollowed" xml:space="preserve">
     <value>За открывающими квадратными скобками не должен следовать пробел</value>
@@ -266,46 +256,46 @@
     <value>Открывающим квадратным скобкам не должен предшествовать пробел</value>
   </data>
   <data name="SA1010Title" xml:space="preserve">
-    <value>Открывающие квадратные скобки должны быть расставлены правильно</value>
+    <value>Пробелы вокруг открывающих квадратных скобок должны быть расставлены правильно</value>
   </data>
   <data name="SA1011Description" xml:space="preserve">
-    <value>Закрывающая квадратная скобка в операторе C# расположена неправильно.</value>
+    <value>Пробелы вокруг закрывающей квадратной скобки в операторе C# расставлены неправильно.</value>
   </data>
   <data name="SA1011MessageFormat" xml:space="preserve">
-    <value>Закрывающая квадратная скобка должна{0} быть {1} пробел</value>
+    <value>Закрывающая квадратная скобка должна{0} быть {1} пробелом</value>
   </data>
   <data name="SA1011Title" xml:space="preserve">
-    <value>Закрывающие квадратные скобки должны быть расставлены правильно</value>
+    <value>Пробелы вокруг закрывающих квадратных скобок должны быть расставлены правильно</value>
   </data>
   <data name="SA1012Description" xml:space="preserve">
-    <value>Открывающая скобка в элементе C# расположена неправильно.</value>
+    <value>Пробелы вокруг открывающей фигурной скобки в элементе C# расставлены неправильно.</value>
   </data>
   <data name="SA1012MessageFormat" xml:space="preserve">
-    <value>Открывающая скобка должна {0} быть {1} пробел</value>
+    <value>Открывающая фигурная скобка должна{0} быть {1} пробелом</value>
   </data>
   <data name="SA1012Title" xml:space="preserve">
-    <value>Открывающие скобки должны быть расставлены правильно</value>
+    <value>Пробелы вокруг открывающих фигурных скобок должны быть расставлены правильно</value>
   </data>
   <data name="SA1013Description" xml:space="preserve">
-    <value>Закрывающая скобка в элементе C# расположена неправильно.</value>
+    <value>Пробелы вокруг закрывающей фигурной скобки в элементе C# расставлены неправильно.</value>
   </data>
   <data name="SA1013MessageFormat" xml:space="preserve">
-    <value>Закрывающая скобка должна {0} быть {1} пробел</value>
+    <value>Закрывающая фигурная скобка должна{0} быть {1} пробелом</value>
   </data>
   <data name="SA1013Title" xml:space="preserve">
-    <value>Закрывающие скобки должны быть расставлены правильно</value>
+    <value>Пробелы вокруг закрывающих фигурных скобок должны быть расставлены правильно</value>
   </data>
   <data name="SA1014Description" xml:space="preserve">
-    <value>Открывающая скобка обобщенного типа в элементе C# расположена неправильно.</value>
+    <value>Пробелы вокруг открывающей угловой скобки обобщенного типа в элементе C# расставлены неправильно.</value>
   </data>
   <data name="SA1014MessageFormat" xml:space="preserve">
-    <value>Открывающие скобки обобщенного типа не должны {0} пробел</value>
+    <value>Открывающие угловые скобки обобщенного типа не должны быть {0} пробелом</value>
   </data>
   <data name="SA1014Title" xml:space="preserve">
-    <value>Открывающие скобки обобщенного типа должны быть расставлены правильно</value>
+    <value>Пробелы вокруг открывающих угловых скобок обобщенного типа должны быть расставлены правильно</value>
   </data>
   <data name="SA1015Description" xml:space="preserve">
-    <value>Закрывающая скобка обобщенного типа в элементе C# расположена неправильно.</value>
+    <value>Пробелы вокруг закрывающей угловой скобки обобщенного типа в элементе C# расставлены неправильно.</value>
   </data>
   <data name="SA1015MessageFollowed" xml:space="preserve">
     <value>За закрывающей скобкой обобщенного типа должен следовать пробел</value>
@@ -317,40 +307,40 @@
     <value>Закрывающейся скобке обобщенного типа не должен предшествовать пробел</value>
   </data>
   <data name="SA1015Title" xml:space="preserve">
-    <value>Закрывающие скобки обобщенного типа должны быть расставлены правильно</value>
+    <value>Пробелы вокруг закрывающих угловых скобок обобщенного типа должны быть расставлены правильно</value>
   </data>
   <data name="SA1016Description" xml:space="preserve">
-    <value>Открывающая скобка атрибута в элементе C# расставлена неправильно.</value>
+    <value>Пробелы вокруг открывающей скобки атрибута в элементе C# расставлены неправильно.</value>
   </data>
   <data name="SA1016MessageFormat" xml:space="preserve">
     <value>За открывающими скобками атрибутов не должен следовать пробел</value>
   </data>
   <data name="SA1016Title" xml:space="preserve">
-    <value>Открывающие скобки атрибутов должны быть расставлены правильно</value>
+    <value>Пробелы вокруг открывающих скобок атрибутов должны быть расставлены правильно</value>
   </data>
   <data name="SA1017Description" xml:space="preserve">
-    <value>Закрывающая скобка атрибута в элементе C# расположена с неправильно.</value>
+    <value>Пробелы вокруг закрывающей скобки атрибута в элементе C# расставлены неправильно.</value>
   </data>
   <data name="SA1017MessageFormat" xml:space="preserve">
     <value>Закрывающие скобки атрибута не должны предваряться пробелом</value>
   </data>
   <data name="SA1017Title" xml:space="preserve">
-    <value>Закрывающие скобки атрибута должны быть расставлены правильно</value>
+    <value>Пробелы вокруг закрывающих скобок атрибутов должны быть расставлены правильно</value>
   </data>
   <data name="SA1018CodeFix" xml:space="preserve">
     <value>Исправить пробелы</value>
   </data>
   <data name="SA1018Description" xml:space="preserve">
-    <value>Символ nullable типа в элементе C# расположен неправильно.</value>
+    <value>Пробелы вокруг символа типа, допускающего значение null, в элементе C# расставлены неправильно.</value>
   </data>
   <data name="SA1018MessageFormat" xml:space="preserve">
-    <value>Перед символом nullable типа не должен стоять пробел</value>
+    <value>Перед символом типа, допускающего значение null, не должен стоять пробел</value>
   </data>
   <data name="SA1018Title" xml:space="preserve">
-    <value>Символы nullable типа должны быть расставлены правильно</value>
+    <value>Пробелы вокруг символов типов, допускающих значение null, должны быть расставлены правильно</value>
   </data>
   <data name="SA1019Description" xml:space="preserve">
-    <value>В файле кода C# неверно задан пробел вокруг символа доступа к члену.</value>
+    <value>В файле кода C# неправильно расставлены пробелы вокруг символа доступа к члену.</value>
   </data>
   <data name="SA1019MessageNotFollowed" xml:space="preserve">
     <value>За символом доступа к члену '{0}' не должен следовать пробел</value>
@@ -359,58 +349,58 @@
     <value>Символ доступа к члену '{0}' не должен предваряться пробелом</value>
   </data>
   <data name="SA1019Title" xml:space="preserve">
-    <value>Символы доступа к члену должны быть правильно расставлены</value>
+    <value>Пробелы вокруг символов доступа к члену должны быть расставлены правильно</value>
   </data>
   <data name="SA1020Description" xml:space="preserve">
-    <value>Символ инкремента или декремента в элементе C# расположен неправильно.</value>
+    <value>Пробелы вокруг символа инкремента или декремента в элементе C# расставлены неправильно.</value>
   </data>
   <data name="SA1020MessageFormat" xml:space="preserve">
-    <value>{0} '{1}' не должен {2} пробел</value>
+    <value>Символ {0} '{1}' не должен быть {2} пробелом</value>
   </data>
   <data name="SA1020Title" xml:space="preserve">
-    <value>Символы инкремента и декремента должны быть расставлены правильно</value>
+    <value>Пробелы вокруг символов инкремента и декремента должны быть расставлены правильно</value>
   </data>
   <data name="SA1021Description" xml:space="preserve">
-    <value>Отрицательный знак в элементе C# расположен неправильно.</value>
+    <value>Пробелы вокруг знака минус в элементе C# расставлены неправильно.</value>
   </data>
   <data name="SA1021MessageFormat" xml:space="preserve">
-    <value>Отрицательный знак должен {0} быть {1} пробел</value>
+    <value>Знак минус должен{0} быть {1} пробелом</value>
   </data>
   <data name="SA1021Title" xml:space="preserve">
-    <value>Отрицательные знаки должны быть правильно расставлены</value>
+    <value>Пробелы вокруг знаков минус должны быть расставлены правильно</value>
   </data>
   <data name="SA1022Description" xml:space="preserve">
-    <value>Положительный знак в элементе C# расположен неправильно.</value>
+    <value>Пробелы вокруг знака плюс в элементе C# расставлены неправильно.</value>
   </data>
   <data name="SA1022MessageFormat" xml:space="preserve">
-    <value>Положительный знак должен {0} быть {1} пробел</value>
+    <value>Знак плюс должен{0} быть {1} пробелом</value>
   </data>
   <data name="SA1022Title" xml:space="preserve">
-    <value>Положительные знаки должны быть правильно расставлены</value>
+    <value>Пробелы вокруг знаков плюс должны быть расставлены правильно</value>
   </data>
   <data name="SA1023Description" xml:space="preserve">
-    <value>Символ разыменования или символ доступа к элементу C# расположен неправильно.</value>
+    <value>Пробелы вокруг символа разыменования или взятия адреса в элементе C# расставлены неправильно.</value>
   </data>
   <data name="SA1023MessageFollowed" xml:space="preserve">
-    <value>За символом ссылки '*' должен следовать пробел</value>
+    <value>За символом разыменования '*' должен следовать пробел</value>
   </data>
   <data name="SA1023MessageNotAtBeginningOfLine" xml:space="preserve">
-    <value>Символ ссылки '*' не должен появляться в начале строки</value>
+    <value>Символ разыменования '*' не должен появляться в начале строки</value>
   </data>
   <data name="SA1023MessageNotAtEndOfLine" xml:space="preserve">
-    <value>Символ ссылки '*' не должен появляться в конце строки</value>
+    <value>Символ разыменования '*' не должен появляться в конце строки</value>
   </data>
   <data name="SA1023MessageNotFollowed" xml:space="preserve">
-    <value>За символом ссылки '*' не должен следовать пробел</value>
+    <value>За символом разыменования '*' не должен следовать пробел</value>
   </data>
   <data name="SA1023MessageNotPreceded" xml:space="preserve">
-    <value>Символ ссылки '*' не должен предваряться пробелом</value>
+    <value>Символу разыменования '*' не должен предшествовать пробел</value>
   </data>
   <data name="SA1023Title" xml:space="preserve">
-    <value>Между символами ссылок и доступа должны быть правильно расставлены пробелы</value>
+    <value>Пробелы вокруг символов разыменования и взятия адреса должны быть расставлены правильно</value>
   </data>
   <data name="SA1024Description" xml:space="preserve">
-    <value>Двоеточие в элементе C# расставлено неправильно.</value>
+    <value>Пробелы вокруг двоеточия в элементе C# расставлены неправильно.</value>
   </data>
   <data name="SA1024MessageFollowed" xml:space="preserve">
     <value>После двоеточия должен стоять пробел</value>
@@ -422,7 +412,7 @@
     <value>Двоеточию должен предшествовать пробел</value>
   </data>
   <data name="SA1024Title" xml:space="preserve">
-    <value>Двоеточия должны быть расставлены правильно</value>
+    <value>Пробелы вокруг двоеточий должны быть расставлены правильно</value>
   </data>
   <data name="SA1025CodeFix" xml:space="preserve">
     <value>Исправить пробелы</value>
@@ -434,16 +424,16 @@
     <value>Код не должен содержать несколько пробельных символов подряд</value>
   </data>
   <data name="SA1025Title" xml:space="preserve">
-    <value>Код не должен содержать несколько пробельных символов в строке</value>
+    <value>Код не должен содержать несколько пробельных символов подряд</value>
   </data>
   <data name="SA1026Description" xml:space="preserve">
-    <value>Неявно типизированное выделение массива в файле кода C# располагается неправильно.</value>
+    <value>Пробелы в выражении выделения памяти для неявно типизированного массива в файле кода C# расставлены неправильно.</value>
   </data>
   <data name="SA1026MessageFormat" xml:space="preserve">
     <value>За ключевым словом '{0}' не должен следовать пробел или пустая строка</value>
   </data>
   <data name="SA1026Title" xml:space="preserve">
-    <value>Код не должен содержать пробел после ключевого слова new или stackalloc при неявно типизированном выделении массива</value>
+    <value>Код не должен содержать пробел после ключевого слова new или stackalloc при выделении памяти для неявно типизированного массива</value>
   </data>
   <data name="SA1027CodeFix" xml:space="preserve">
     <value>Исправить символы табуляции</value>
@@ -461,7 +451,7 @@
     <value>Удалить пробельные символы в конце строки</value>
   </data>
   <data name="SA1028Description" xml:space="preserve">
-    <value>В конце строки кода не должно быть пробелов.</value>
+    <value>В конце строки кода не должно быть пробельных символов.</value>
   </data>
   <data name="SA1028MessageFormat" xml:space="preserve">
     <value>Код не должен содержать пробельные символы в конце строки</value>

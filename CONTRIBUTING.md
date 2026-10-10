@@ -20,11 +20,32 @@ The documentation site is built from the Markdown files in `documentation` using
 
 ```powershell
 dotnet tool restore
-dotnet docfx docfx.json --warningsAsErrors
+.\build\documentation.ps1
 ```
 
 The generated site is written to `_site` (ignored by git). To preview it locally, run
 `dotnet docfx serve _site` and open the URL printed by DocFX.
+The English edition retains its existing URLs; the Russian edition is under `ru-ru/`.
+The language dropdown in the header shows the current language and switches to the same page
+in another edition. Languages are listed by their native names.
+Each edition has its own navigation and search index. Russian search supports both Russian
+and English terms, so rule identifiers and code terminology remain searchable.
+
+Localized Markdown sources belong in `documentation/<locale>` (for example, `documentation/ru-ru`),
+with the same filenames as the English sources. Keep all editions up to date when changing a page;
+there is no automatic English fallback.
+Each localized sidebar belongs in `documentation/<locale>/toc.yml` and its top navigation in
+`documentation/<locale>/navbar/toc.yml`. Shared header behavior lives in
+`build/docfx/common/public/main.js`, whose shared `locales` list defines each edition's native name,
+URL prefix, language-picker label, and search languages; localized interface labels belong in
+`build/docfx/<locale>/token.json`. All DocFX editions are deployed together in one Pages artifact.
+When adding a language, add its DocFX configuration, wire its build and status-report translation into
+`build/documentation.ps1`, and extend the shared locale list and localization tests.
+The build script also translates the generated status report's rule titles using the Russian
+resources and translates code-fix explanations, while preserving the implementation data and commit metadata.
+It fails if a report entry lacks a translation.
+Localization regression tests run with `node --test build/documentation-localization.test.cjs`
+after building both editions.
 
 The rule implementation status is a DocFX page at
 <https://dotnetanalyzers.github.io/StyleCopAnalyzers/RuleStatus.html>.

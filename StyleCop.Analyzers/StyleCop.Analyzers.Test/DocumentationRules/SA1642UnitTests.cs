@@ -930,6 +930,30 @@ public class TestClass
                 false).ConfigureAwait(false);
         }
 
+        [Theory]
+        [InlineData("class", "класса")]
+        [InlineData("struct", "структуры")]
+        public async Task TestRussianDocumentationCultureIsUsedAsync(string typeKind, string typeKindText)
+        {
+            var settings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""documentationCulture"": ""ru-RU""
+    }
+  }
+}
+";
+
+            await TestConstructorCorrectDocumentationSimpleAsync(
+                settings,
+                typeKind,
+                "public",
+                "Инициализирует новый экземпляр " + typeKindText + " ",
+                string.Empty,
+                false).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Verify that the codefix will work properly with Visual Studio generated documentation headers.
         /// </summary>

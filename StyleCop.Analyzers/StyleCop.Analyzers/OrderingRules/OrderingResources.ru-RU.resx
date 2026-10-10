@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="ElementOrderCodeFix" xml:space="preserve">
+    <value>Исправить порядок элементов</value>
+  </data>
+  <data name="ModifierOrderCodeFix" xml:space="preserve">
+    <value>Исправить порядок модификаторов</value>
+  </data>
+  <data name="SA1200DescriptionInside" xml:space="preserve">
+    <value>Директива using C# расположена вне элемента пространства имен.</value>
+  </data>
+  <data name="SA1200DescriptionOutside" xml:space="preserve">
+    <value>Директива using C# расположена внутри объявления пространства имен.</value>
+  </data>
+  <data name="SA1200MessageFormatInside" xml:space="preserve">
+    <value>Директива using должна располагаться внутри объявления пространства имен</value>
+  </data>
+  <data name="SA1200MessageFormatOutside" xml:space="preserve">
+    <value>Директива using должна располагаться вне объявления пространства имен</value>
+  </data>
+  <data name="SA1200Title" xml:space="preserve">
+    <value>Директивы using должны располагаться правильно</value>
+  </data>
+  <data name="SA1201Description" xml:space="preserve">
+    <value>Элемент в файле кода C# расположен в неправильном порядке относительно других элементов кода.</value>
+  </data>
+  <data name="SA1201MessageFormat" xml:space="preserve">
+    <value>Элемент {0} не должен следовать за элементом {1}</value>
+  </data>
+  <data name="SA1201Title" xml:space="preserve">
+    <value>Элементы должны располагаться в правильном порядке</value>
+  </data>
+  <data name="SA1202Description" xml:space="preserve">
+    <value>Элемент в файле кода C# расположен в неправильном порядке относительно других элементов кода.</value>
+  </data>
+  <data name="SA1202MessageFormat" xml:space="preserve">
+    <value>Члены с модификатором '{0}' должны располагаться перед членами с модификатором '{1}'</value>
+  </data>
+  <data name="SA1202Title" xml:space="preserve">
+    <value>Элементы должны упорядочиваться по уровню доступа</value>
+  </data>
+  <data name="SA1203Description" xml:space="preserve">
+    <value>Константное поле расположено ниже неконстантного поля.</value>
+  </data>
+  <data name="SA1203MessageFormat" xml:space="preserve">
+    <value>Константные поля должны располагаться перед неконстантными полями</value>
+  </data>
+  <data name="SA1203Title" xml:space="preserve">
+    <value>Константы должны располагаться перед полями</value>
+  </data>
+  <data name="SA1204Description" xml:space="preserve">
+    <value>Статический элемент расположен ниже элемента экземпляра.</value>
+  </data>
+  <data name="SA1204MessageFormat" xml:space="preserve">
+    <value>Статические члены должны располагаться перед нестатическими членами</value>
+  </data>
+  <data name="SA1204Title" xml:space="preserve">
+    <value>Статические элементы должны располагаться перед элементами экземпляра</value>
+  </data>
+  <data name="SA1205CodeFix" xml:space="preserve">
+    <value>Добавить модификатор доступа</value>
+  </data>
+  <data name="SA1205Description" xml:space="preserve">
+    <value>Для частичного элемента не определен модификатор доступа.</value>
+  </data>
+  <data name="SA1205MessageFormat" xml:space="preserve">
+    <value>Частичные элементы должны объявлять модификатор доступа</value>
+  </data>
+  <data name="SA1205Title" xml:space="preserve">
+    <value>Частичные элементы должны объявлять уровень доступа</value>
+  </data>
+  <data name="SA1206Description" xml:space="preserve">
+    <value>Ключевые слова в объявлении элемента не следуют стандартному порядку.</value>
+  </data>
+  <data name="SA1206MessageFormat" xml:space="preserve">
+    <value>Модификатор '{0}' должен располагаться перед '{1}'</value>
+  </data>
+  <data name="SA1206Title" xml:space="preserve">
+    <value>Ключевые слова объявления должны следовать установленному порядку</value>
+  </data>
+  <data name="SA1207CodeFix" xml:space="preserve">
+    <value>Разместить ключевое слово 'protected' перед ключевым словом 'internal'</value>
+  </data>
+  <data name="SA1207Description" xml:space="preserve">
+    <value>Ключевое слово '{0}' расположено после ключевого слова '{1}' в объявлении элемента C# с модификаторами {0} {1}.</value>
+  </data>
+  <data name="SA1207MessageFormat" xml:space="preserve">
+    <value>Ключевое слово '{0}' должно располагаться перед '{1}'</value>
+  </data>
+  <data name="SA1207Title" xml:space="preserve">
+    <value>Ключевое слово protected должно располагаться перед internal</value>
+  </data>
+  <data name="SA1208Description" xml:space="preserve">
+    <value>В файле кода C# директива using для члена пространства имен 'System' расположена после директивы using для члена другого пространства имен.</value>
+  </data>
+  <data name="SA1208MessageFormat" xml:space="preserve">
+    <value>Директива using для '{0}' должна располагаться перед директивой для '{1}'</value>
+  </data>
+  <data name="SA1208Title" xml:space="preserve">
+    <value>Директивы using для System должны располагаться перед другими директивами using</value>
+  </data>
+  <data name="SA1209Description" xml:space="preserve">
+    <value>Директива using с псевдонимом расположена перед обычной директивой using.</value>
+  </data>
+  <data name="SA1209MessageFormat" xml:space="preserve">
+    <value>Директивы using с псевдонимами должны располагаться после всех директив using для пространств имен</value>
+  </data>
+  <data name="SA1209Title" xml:space="preserve">
+    <value>Директивы using с псевдонимами должны располагаться после других директив using</value>
+  </data>
+  <data name="SA1210Description" xml:space="preserve">
+    <value>Директивы using в файле кода C# не отсортированы по пространствам имен в алфавитном порядке.</value>
+  </data>
+  <data name="SA1210MessageFormat" xml:space="preserve">
+    <value>Директивы using должны упорядочиваться по пространствам имен в алфавитном порядке</value>
+  </data>
+  <data name="SA1210Title" xml:space="preserve">
+    <value>Директивы using должны упорядочиваться по пространствам имен в алфавитном порядке</value>
+  </data>
+  <data name="SA1211Description" xml:space="preserve">
+    <value>Директивы using с псевдонимами в файле кода C# не отсортированы по именам псевдонимов в алфавитном порядке.</value>
+  </data>
+  <data name="SA1211MessageFormat" xml:space="preserve">
+    <value>Директива using с псевдонимом '{0}' должна располагаться перед директивой using с псевдонимом '{1}'</value>
+  </data>
+  <data name="SA1211Title" xml:space="preserve">
+    <value>Директивы using с псевдонимами должны упорядочиваться по именам псевдонимов в алфавитном порядке</value>
+  </data>
+  <data name="SA1212Description" xml:space="preserve">
+    <value>Метод доступа get расположен после метода доступа set в свойстве или индексаторе.</value>
+  </data>
+  <data name="SA1212MessageFormat" xml:space="preserve">
+    <value>Метод доступа get расположен после метода доступа set в свойстве или индексаторе</value>
+  </data>
+  <data name="SA1212Title" xml:space="preserve">
+    <value>Методы доступа свойства должны следовать установленному порядку</value>
+  </data>
+  <data name="SA1213CodeFix" xml:space="preserve">
+    <value>Исправить порядок методов доступа</value>
+  </data>
+  <data name="SA1213Description" xml:space="preserve">
+    <value>Метод доступа add расположен после метода доступа remove в событии.</value>
+  </data>
+  <data name="SA1213MessageFormat" xml:space="preserve">
+    <value>Методы доступа события должны следовать установленному порядку</value>
+  </data>
+  <data name="SA1213Title" xml:space="preserve">
+    <value>Методы доступа события должны следовать установленному порядку</value>
+  </data>
+  <data name="SA1214Description" xml:space="preserve">
+    <value>Поле readonly расположено ниже поля без модификатора readonly.</value>
+  </data>
+  <data name="SA1214MessageFormat" xml:space="preserve">
+    <value>Поля readonly должны располагаться перед полями без модификатора readonly</value>
+  </data>
+  <data name="SA1214Title" xml:space="preserve">
+    <value>Поля readonly должны располагаться перед полями без модификатора readonly</value>
+  </data>
+  <data name="SA1216Description" xml:space="preserve">
+    <value>Директива using static расположена перед обычной директивой using или после директивы using с псевдонимом.</value>
+  </data>
+  <data name="SA1216MessageFormat" xml:space="preserve">
+    <value>Директивы using static должны располагаться в правильном месте</value>
+  </data>
+  <data name="SA1216Title" xml:space="preserve">
+    <value>Директивы using static должны располагаться в правильном месте</value>
+  </data>
+  <data name="SA1217Description" xml:space="preserve">
+    <value>Все директивы using static должны упорядочиваться в алфавитном порядке.</value>
+  </data>
+  <data name="SA1217MessageFormat" xml:space="preserve">
+    <value>Директива using static для '{0}' должна располагаться после директивы using static для '{1}'</value>
+  </data>
+  <data name="SA1217Title" xml:space="preserve">
+    <value>Директивы using static должны упорядочиваться в алфавитном порядке</value>
+  </data>
+  <data name="UsingCodeFix" xml:space="preserve">
+    <value>Изменить порядок директив using</value>
+  </data>
+</root>

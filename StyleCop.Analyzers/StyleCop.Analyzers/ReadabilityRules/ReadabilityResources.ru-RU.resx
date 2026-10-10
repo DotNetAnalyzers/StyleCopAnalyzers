@@ -139,13 +139,13 @@
     <value>Добавить к ссылке префикс 'this.'</value>
   </data>
   <data name="SA1101Description" xml:space="preserve">
-    <value>Вызов экземпляра-члена локального класса или базового класса не имеет префикса 'this.' в файле кода C#.</value>
+    <value>Вызов члена экземпляра локального или базового класса не имеет префикса 'this.' в файле кода C#.</value>
   </data>
   <data name="SA1101MessageFormat" xml:space="preserve">
-    <value>Префикс локального вызова с this</value>
+    <value>Добавляйте к локальным вызовам префикс this</value>
   </data>
   <data name="SA1101Title" xml:space="preserve">
-    <value>Префикс локального вызова с this</value>
+    <value>Добавляйте к локальным вызовам префикс this</value>
   </data>
   <data name="SA1102CodeFix" xml:space="preserve">
     <value>Удаление разделяющих строк</value>
@@ -234,6 +234,9 @@
   <data name="SA1109Title" xml:space="preserve">
     <value>Блочные операторы не должны содержать встроенных областей #region</value>
   </data>
+  <data name="SA1109MessageFormat" xml:space="preserve">
+    <value />
+  </data>
   <data name="SA1110Description" xml:space="preserve">
     <value>Открывающая круглая скобка или квадратная скобка не размещена в той же строке, что и имя метода/индексатора/атрибута/массива.</value>
   </data>
@@ -295,10 +298,10 @@
     <value>Параметры вызова или объявления метода или индексатора C# занимают несколько строк, но первый параметр не начинается на строке после открывающей скобки.</value>
   </data>
   <data name="SA1116MessageFormat" xml:space="preserve">
-    <value>Параметры должны начинаться в строке следующей сразу после объявления, если параметр занимает несколько строк</value>
+    <value>Если список параметров занимает несколько строк, параметры должны начинаться в строке, следующей сразу после объявления</value>
   </data>
   <data name="SA1116Title" xml:space="preserve">
-    <value>Разделённые параметры должны начинаться в строке следующей сразу после объявления</value>
+    <value>Параметры, разделенные на несколько строк, должны начинаться в строке после объявления</value>
   </data>
   <data name="SA1117Description" xml:space="preserve">
     <value>Параметры вызова или объявления метода или индексатора C# не находятся в одной строке или каждый в отдельной строке.</value>
@@ -376,16 +379,19 @@
     <value>Тип Nullable&lt;T&gt; был определен без использования сокращения C#. Например, Nullable&lt;DateTime&gt; был использован вместо предпочтительного DateTime?</value>
   </data>
   <data name="SA1125MessageFormat" xml:space="preserve">
-    <value>Использовать сокращение для типов nullable</value>
+    <value>Используйте сокращенную запись для типов, допускающих значение null</value>
   </data>
   <data name="SA1125Title" xml:space="preserve">
-    <value>Использовать сокращение для типов nullable</value>
+    <value>Используйте сокращенную запись для типов, допускающих значение null</value>
   </data>
   <data name="SA1126Description" xml:space="preserve">
     <value>Вызов члена не имеет префикса 'this.', 'base.', 'object.' или 'typename.' для указания предполагаемого вызова метода в файле кода C#.</value>
   </data>
   <data name="SA1126Title" xml:space="preserve">
     <value>Правильно указывайте префиксы вызовов</value>
+  </data>
+  <data name="SA1126MessageFormat" xml:space="preserve">
+    <value />
   </data>
   <data name="SA1127CodeFix" xml:space="preserve">
     <value>Поместить каждое ограничение типа в новую строку</value>
@@ -424,7 +430,7 @@
     <value>Не использовать конструктор по умолчанию для типов значений</value>
   </data>
   <data name="SA1130CodeFix" xml:space="preserve">
-    <value>Заменить на лямбда.</value>
+    <value>Заменить на лямбда-выражение.</value>
   </data>
   <data name="SA1130Description" xml:space="preserve">
     <value>Лямбда-выражения более лаконичны и легче читаются, чем анонимные методы, поэтому им следует отдавать предпочтение во всех случаях, когда эти два выражения функционально эквивалентны.</value>
@@ -439,7 +445,7 @@
     <value>Поменять местами операнды</value>
   </data>
   <data name="SA1131Description" xml:space="preserve">
-    <value>При сравнении переменной и литерала, переменная должна располагаться с левой стороны чтобы обеспечить максимальную читабельность.</value>
+    <value>При сравнении переменной и литерала переменная должна располагаться слева, чтобы обеспечить максимальную читабельность.</value>
   </data>
   <data name="SA1131MessageFormat" xml:space="preserve">
     <value>Значения констант должны располагаться в правой части сравнений</value>
@@ -448,7 +454,7 @@
     <value>Используйте удобочитаемые условия</value>
   </data>
   <data name="SA1132CodeFix" xml:space="preserve">
-    <value>Перенесити каждое поле в новую строку</value>
+    <value>Перенести каждое поле в новую строку</value>
   </data>
   <data name="SA1132Description" xml:space="preserve">
     <value>Каждое поле должно быть объявлено в своей собственной строке, чтобы четко видеть каждое поле типа и позволить правильно документировать поведение каждого поля.</value>
@@ -487,16 +493,16 @@
     <value>Указать полную квалификацию директивы using</value>
   </data>
   <data name="SA1135Description" xml:space="preserve">
-    <value>Все директивы using должны быть квалифицироваными.</value>
+    <value>Все директивы using должны иметь полную квалификацию.</value>
   </data>
   <data name="SA1135MessageFormatNamespace" xml:space="preserve">
     <value>Директива using для пространства имен '{0}' должна иметь полную квалификацию</value>
   </data>
   <data name="SA1135MessageFormatType" xml:space="preserve">
-    <value>Директива using для типа '{0}' должна быть квалифицированной</value>
+    <value>Директива using для типа '{0}' должна иметь полную квалификацию</value>
   </data>
   <data name="SA1135Title" xml:space="preserve">
-    <value>Директивы using должны быть квалифицированными</value>
+    <value>Директивы using должны иметь полную квалификацию</value>
   </data>
   <data name="SA1136CodeFix" xml:space="preserve">
     <value>Размещайте значения перечислений в своих собственных строках</value>
