@@ -31,6 +31,21 @@ The documentation is hosted at the site root, and the rule implementation status
 <https://dotnetanalyzers.github.io/StyleCopAnalyzers/status/index.html>.
 Both are included in the same Pages deployment.
 
+The status page loads `StyleCop.Analyzers.Status.json` from its own directory rather than AppVeyor.
+CI generates this report from the Release build and downloads it into `docs` before the DocFX build.
+To preview the status page locally, build the code fixes and generator in the same configuration, then
+generate the report before compiling the documentation:
+
+```powershell
+dotnet build .\StyleCop.Analyzers\StyleCop.Analyzers.CodeFixes -c Release
+dotnet build .\StyleCop.Analyzers\StyleCop.Analyzers.Status.Generator -c Release
+dotnet .\StyleCop.Analyzers\StyleCop.Analyzers.Status.Generator\bin\Release\net10.0\StyleCop.Analyzers.Status.Generator.dll .\StyleCopAnalyzers.sln Release > .\docs\StyleCop.Analyzers.Status.json
+```
+
+The JSON report is an ignored build output. Status page regression tests run with
+`node --test build\status-page.test.cjs`. Pages deployment waits for the documentation, generated-file checks,
+and analyzer tests to succeed, so the displayed status describes a validated build.
+
 When adding a page, link it from `documentation/toc.yml` or an existing rule-area page so it is discoverable.
 The root `toc.yml` defines the short top navigation, while `documentation/toc.yml` defines the left sidebar.
 The sidebar TOC is emitted under `_site/navigation` to keep it separate from the top navigation without

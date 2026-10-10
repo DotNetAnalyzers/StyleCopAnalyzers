@@ -28,6 +28,7 @@ env:
 jobs:
   documentation:
     name: Build documentation
+    needs: [ build, status-page ]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -42,6 +43,12 @@ jobs:
     - name: Restore DocFX
       run: dotnet tool restore
 
+    - name: Download rule status report
+      uses: actions/download-artifact@v8
+      with:
+        name: status-json
+        path: docs
+
     - name: Build documentation
       run: dotnet docfx docfx.json --warningsAsErrors
 
@@ -52,7 +59,7 @@ jobs:
 
   deploy-documentation:
     name: Deploy documentation
-    needs: documentation
+    needs: [ documentation, generated-files, test ]
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -72,6 +79,20 @@ jobs:
     - name: Deploy to GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v5
+
+  status-page:
+    name: Test status page
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v7
+    - name: Setup Node.js
+      uses: actions/setup-node@v6
+      with:
+        node-version: '24'
+    - name: Test status page
+      run: node --test build/status-page.test.cjs
 
   build:
     name: Build ${{ matrix.configuration }}
@@ -204,19 +225,14 @@ jobs:
         if-no-files-found: error
         retention-days: 3
 
-    # Equivalent of AppVeyor's test_script. Best effort: on windows-latest (VS 2022) the generator's old
-    # MSBuildWorkspace currently fails with ReflectionTypeLoadException during MEF composition, which is a
-    # tooling problem in StyleCop.Analyzers.Status.Generator and not a build or test failure.
     - name: Generate rule status report
-      id: status
-      continue-on-error: true
       shell: pwsh
       run: |
-        .\StyleCop.Analyzers\StyleCop.Analyzers.Status.Generator\bin\${{ matrix.configuration }}\net472\StyleCop.Analyzers.Status.Generator.exe .\StyleCopAnalyzers.sln > StyleCop.Analyzers.Status.json
+        dotnet .\StyleCop.Analyzers\StyleCop.Analyzers.Status.Generator\bin\${{ matrix.configuration }}\net10.0\StyleCop.Analyzers.Status.Generator.dll .\StyleCopAnalyzers.sln ${{ matrix.configuration }} > StyleCop.Analyzers.Status.json
         if ($LASTEXITCODE -ne 0) { Remove-Item StyleCop.Analyzers.Status.json -ErrorAction SilentlyContinue; exit $LASTEXITCODE }
 
     - name: Upload rule status report
-      if: matrix.configuration == 'Release' && steps.status.outcome == 'success'
+      if: matrix.configuration == 'Release'
       uses: actions/upload-artifact@v7
       with:
         name: status-json

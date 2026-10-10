@@ -58,6 +58,9 @@
     <div class="container body-content">
     <h2>This page is reporting the current status of <a href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers">StyleCopAnalyzers</a></h2>
 
+    <div id="statusMessage" class="alert alert-info" role="status" aria-live="polite">Loading rule status...</div>
+    <noscript><p class="alert alert-warning">JavaScript is required to display the rule status report.</p></noscript>
+
     <div class="table-responsive">
         <table id="no-more-tables" class="table table-hover table-condensed">
             <thead>
@@ -175,10 +178,42 @@
     </script>
 
     <script type="text/javascript">
-        $.getJSON("https://ci.appveyor.com/api/projects/sharwell/stylecopanalyzers/artifacts/StyleCop.Analyzers.Status.json?branch=master&pr=false&stream=true&job=Configuration:%20Release", function (data) {
-            $("#renderedDiagnostics").html($.templates($("#diagnostics").html()).render(data));
-            $("#renderedCommitInfo").html($.templates($("#commitInfo").html()).render(data.git));
-        });
+        (function () {
+            if (!window.jQuery || !window.jQuery.templates) {
+                var message = document.getElementById("statusMessage");
+                message.className = "alert alert-danger";
+                message.textContent = "The page scripts could not be loaded. Check your connection and reload this page.";
+                return;
+            }
+
+            function showError(message, error) {
+                console.error(message, error);
+                $("#statusMessage").removeClass("alert-info").addClass("alert-danger").text(message).show();
+            }
+
+            $.ajax({
+                url: "StyleCop.Analyzers.Status.json",
+                dataType: "json",
+                timeout: 15000
+            }).done(function (data) {
+                if (!data || !Array.isArray(data.diagnostics) || data.diagnostics.length === 0 || !data.git || !data.git.Sha) {
+                    showError("The rule status report is invalid or empty. Please try again after the next successful build.", data);
+                    return;
+                }
+
+                try {
+                    var diagnostics = $.templates($("#diagnostics").html()).render(data);
+                    var commitInfo = $.templates($("#commitInfo").html()).render(data.git);
+                    $("#renderedDiagnostics").html(diagnostics);
+                    $("#renderedCommitInfo").html(commitInfo);
+                    $("#statusMessage").hide();
+                } catch (error) {
+                    showError("The rule status report is invalid or empty. Please try again after the next successful build.", error);
+                }
+            }).fail(function (request, status, error) {
+                showError("The rule status report could not be loaded. Check your connection and reload this page.", error || status);
+            });
+        })();
     </script>
         <hr />
         <footer></footer>
