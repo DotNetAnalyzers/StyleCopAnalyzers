@@ -96,9 +96,12 @@ diagnostic per location also asserts "no duplicates". When a compiler bug duplic
 
 ## Compiler diagnostics in test code
 
-Snippets should compile. When a preview feature needs runtime types the reference assemblies lack (C# 15 unions
-need `IUnion`/`UnionAttribute`, giving CS0518/CS0656), set `CompilerDiagnostics = CompilerDiagnostics.None` (or
-expect the specific compiler diagnostic) and say why in a comment, as the C# 15 union tests do.
+Snippets should compile. When a preview feature needs runtime types the reference assemblies lack,
+add them to an in-memory assembly that `StyleCopCodeFixVerifier.CSharpTest` adds to the relevant tests
+instead of turning compiler diagnostics off. This is done to prevent tests passing for the wrong reason
+if there are mistakes in the snippets. When the test code is invalid on purpose
+(a misordered `partial` gives CS0267 for example), expect that compiler diagnostic with markup such as `{|CS0267:partial|}`.
+Use `CompilerDiagnostics = CompilerDiagnostics.None` only as a last resort, and say why in a comment.
 
 ## Never
 

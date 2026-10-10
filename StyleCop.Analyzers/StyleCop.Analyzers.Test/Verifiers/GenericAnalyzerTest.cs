@@ -5,8 +5,11 @@ namespace StyleCop.Analyzers.Test.Verifiers
 {
     using System;
     using System.Collections.Immutable;
+    using System.IO;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Testing;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Lightup;
@@ -15,12 +18,17 @@ namespace StyleCop.Analyzers.Test.Verifiers
     {
         private static readonly Lazy<ReferenceAssemblies> LazyReferenceAssemblies;
 
+        private static readonly Lazy<MetadataReference> LazyCSharp15PreviewTypesReference;
+
         private static readonly AnalyzerTest<DefaultVerifier> WorkspaceHelper =
             new CSharpCodeFixTest<EmptyDiagnosticAnalyzer, EmptyCodeFixProvider, DefaultVerifier>();
 
         static GenericAnalyzerTest()
         {
             LazyReferenceAssemblies = new Lazy<ReferenceAssemblies>(CreateDefaultReferenceAssemblies);
+            LazyCSharp15PreviewTypesReference = new Lazy<MetadataReference>(
+                CreateCSharp15PreviewTypesReference,
+                LazyThreadSafetyMode.PublicationOnly); // Used in case the nuget package download fails, so that won't automatically fail all tests
         }
 
         internal static ReferenceAssemblies ReferenceAssemblies
@@ -28,6 +36,15 @@ namespace StyleCop.Analyzers.Test.Verifiers
             get
             {
                 return LazyReferenceAssemblies.Value;
+            }
+        }
+
+        // TODO: Remove when the reference assemblies include the compiler support types for C# 15
+        internal static MetadataReference CSharp15PreviewTypesReference
+        {
+            get
+            {
+                return LazyCSharp15PreviewTypesReference.Value;
             }
         }
 
@@ -93,6 +110,56 @@ namespace StyleCop.Analyzers.Test.Verifiers
             return defaultReferenceAssemblies.AddPackages(ImmutableArray.Create(
                 new PackageIdentity("Microsoft.CodeAnalysis.CSharp", codeAnalysisTestVersion),
                 new PackageIdentity("System.ValueTuple", "4.5.0")));
+        }
+
+        private static MetadataReference CreateCSharp15PreviewTypesReference()
+        {
+            var source = @"
+#nullable enable
+
+namespace System.Runtime.CompilerServices
+{
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false)]
+    public sealed class UnionAttribute : Attribute
+    {
+    }
+
+    public interface IUnion
+    {
+        object? Value { get; }
+    }
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+    public sealed class IsClosedTypeAttribute : Attribute
+    {
+    }
+}
+";
+
+            // NOTE: Using .NET Standard here to work in all tests
+            var netStandardReferences = ReferenceAssemblies.NetStandard.NetStandard20
+                .ResolveAsync(LanguageNames.CSharp, CancellationToken.None)
+                .GetAwaiter()
+                .GetResult();
+
+            var compilation = CSharpCompilation.Create(
+                "StyleCop.Analyzers.Test.CSharp15PreviewTypes",
+                [CSharpSyntaxTree.ParseText(source)],
+                netStandardReferences,
+                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+            using (var stream = new MemoryStream())
+            {
+                var emitResult = compilation.Emit(stream);
+                if (!emitResult.Success)
+                {
+                    throw new InvalidOperationException(
+                        "Failed to compile the synthetic C# 15 preview types assembly: "
+                        + string.Join(Environment.NewLine, emitResult.Diagnostics));
+                }
+
+                return MetadataReference.CreateFromImage(stream.ToArray());
+            }
         }
     }
 }

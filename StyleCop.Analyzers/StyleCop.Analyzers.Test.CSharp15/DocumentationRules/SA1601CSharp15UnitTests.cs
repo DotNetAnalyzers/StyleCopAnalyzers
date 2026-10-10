@@ -11,9 +11,6 @@ namespace StyleCop.Analyzers.Test.CSharp15.DocumentationRules
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<
         StyleCop.Analyzers.DocumentationRules.SA1601PartialElementsMustBeDocumented>;
 
-    // Union declarations are only parsed with the preview language version, which is the default for this test project.
-    // The reference assemblies used by these tests do not define System.Runtime.CompilerServices.IUnion and
-    // UnionAttribute, so union declarations produce CS0518 and CS0656, and compiler diagnostics are therefore ignored.
     public partial class SA1601CSharp15UnitTests : SA1601CSharp14UnitTests
     {
         /// <summary>
@@ -46,12 +43,14 @@ public partial union {|#2:Animal|}
 }
 ";
 
-            await new CSharpTest()
+            DiagnosticResult[] expected =
             {
-                TestCode = testCode,
-                ExpectedDiagnostics = { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1), Diagnostic().WithLocation(2) },
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+                Diagnostic().WithLocation(2),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -77,11 +76,7 @@ public partial union Pet
 }
 ";
 
-            await new CSharpTest()
-            {
-                TestCode = testCode,
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -122,12 +117,13 @@ public partial union Pet
 }
 ";
 
-            await new CSharpTest()
+            DiagnosticResult[] expected =
             {
-                TestCode = testCode,
-                ExpectedDiagnostics = { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1) },
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

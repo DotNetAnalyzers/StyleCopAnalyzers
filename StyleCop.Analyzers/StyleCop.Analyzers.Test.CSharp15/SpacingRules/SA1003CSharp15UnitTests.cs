@@ -13,9 +13,6 @@ namespace StyleCop.Analyzers.Test.CSharp15.SpacingRules
         StyleCop.Analyzers.SpacingRules.SA1003SymbolsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.SA1003CodeFixProvider>;
 
-    // Union declarations are only parsed with the preview language version, which is the default for this test project.
-    // The reference assemblies used by these tests do not define System.Runtime.CompilerServices.IUnion and
-    // UnionAttribute, so union declarations produce CS0518 and CS0656, and compiler diagnostics are therefore ignored.
     public partial class SA1003CSharp15UnitTests : SA1003CSharp14UnitTests
     {
         /// <summary>
@@ -48,17 +45,13 @@ public union Pet(int, string)
 }
 ";
 
-            await new CSharpTest()
+            DiagnosticResult[] expected =
             {
-                TestCode = testCode,
-                FixedCode = fixedCode,
-                ExpectedDiagnostics =
-                {
-                    Diagnostic(DescriptorPrecededByWhitespace).WithLocation(0).WithArguments("+"),
-                    Diagnostic(DescriptorFollowedByWhitespace).WithLocation(0).WithArguments("+"),
-                },
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+                Diagnostic(DescriptorPrecededByWhitespace).WithLocation(0).WithArguments("+"),
+                Diagnostic(DescriptorFollowedByWhitespace).WithLocation(0).WithArguments("+"),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

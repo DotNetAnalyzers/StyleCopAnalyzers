@@ -12,9 +12,6 @@ namespace StyleCop.Analyzers.Test.CSharp15.LayoutRules
         StyleCop.Analyzers.LayoutRules.SA1516ElementsMustBeSeparatedByBlankLine,
         StyleCop.Analyzers.LayoutRules.SA1516CodeFixProvider>;
 
-    // Union declarations are only parsed with the preview language version, which is the default for this test project.
-    // The reference assemblies used by these tests do not define System.Runtime.CompilerServices.IUnion and
-    // UnionAttribute, so union declarations produce CS0518 and CS0656, and compiler diagnostics are therefore ignored.
     public partial class SA1516CSharp15UnitTests : SA1516CSharp14UnitTests
     {
         /// <summary>
@@ -58,17 +55,13 @@ public union Pet(Cat, string)
 }
 ";
 
-            await new CSharpTest()
+            DiagnosticResult[] expected =
             {
-                TestCode = testCode,
-                FixedCode = fixedCode,
-                ExpectedDiagnostics =
-                {
-                    Diagnostic().WithLocation(5, 1),
-                    Diagnostic().WithLocation(10, 1),
-                },
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+                Diagnostic().WithLocation(5, 1),
+                Diagnostic().WithLocation(10, 1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

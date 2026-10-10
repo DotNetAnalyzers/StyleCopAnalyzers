@@ -12,9 +12,6 @@ namespace StyleCop.Analyzers.Test.CSharp15.OrderingRules
         StyleCop.Analyzers.OrderingRules.SA1201ElementsMustAppearInTheCorrectOrder,
         StyleCop.Analyzers.OrderingRules.ElementOrderCodeFixProvider>;
 
-    // Union declarations are only parsed with the preview language version, which is the default for this test project.
-    // The reference assemblies used by these tests do not define System.Runtime.CompilerServices.IUnion and
-    // UnionAttribute, so union declarations produce CS0518 and CS0656, and compiler diagnostics are therefore ignored.
     public partial class SA1201CSharp15UnitTests : SA1201CSharp14UnitTests
     {
         /// <summary>
@@ -43,11 +40,7 @@ namespace TestNamespace
 }
 ";
 
-            await new CSharpTest()
-            {
-                TestCode = testCode,
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -81,13 +74,9 @@ namespace TestNamespace
 }
 ";
 
-            await new CSharpTest()
-            {
-                TestCode = testCode,
-                FixedCode = fixedCode,
-                ExpectedDiagnostics = { Diagnostic().WithLocation(0).WithArguments("A union", "a class") },
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(0).WithArguments("A union", "a class");
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -133,17 +122,13 @@ public class OuterClass
 }
 ";
 
-            await new CSharpTest()
+            DiagnosticResult[] expected =
             {
-                TestCode = testCode,
-                FixedCode = fixedCode,
-                ExpectedDiagnostics =
-                {
-                    Diagnostic().WithLocation(0).WithArguments("A method", "a union"),
-                    Diagnostic().WithLocation(1).WithArguments("A union", "a class"),
-                },
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+                Diagnostic().WithLocation(0).WithArguments("A method", "a union"),
+                Diagnostic().WithLocation(1).WithArguments("A union", "a class"),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -177,13 +162,9 @@ public union Pet(int, string)
 }
 ";
 
-            await new CSharpTest()
-            {
-                TestCode = testCode,
-                FixedCode = fixedCode,
-                ExpectedDiagnostics = { Diagnostic().WithLocation(0).WithArguments("A property", "a method") },
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(0).WithArguments("A property", "a method");
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -5,16 +5,12 @@ namespace StyleCop.Analyzers.Test.CSharp15.OrderingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp14.OrderingRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.OrderingRules.SA1207ProtectedMustComeBeforeInternal,
         StyleCop.Analyzers.OrderingRules.SA1207CodeFixProvider>;
 
-    // Union declarations are only parsed with the preview language version, which is the default for this test project.
-    // The reference assemblies used by these tests do not define System.Runtime.CompilerServices.IUnion and
-    // UnionAttribute, so union declarations produce CS0518 and CS0656, and compiler diagnostics are therefore ignored.
     public partial class SA1207CSharp15UnitTests : SA1207CSharp14UnitTests
     {
         /// <summary>
@@ -40,13 +36,9 @@ public class Outer
 }
 ";
 
-            await new CSharpTest()
-            {
-                TestCode = testCode,
-                FixedCode = fixedCode,
-                ExpectedDiagnostics = { Diagnostic().WithLocation(0).WithArguments("protected", "internal") },
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(0).WithArguments("protected", "internal");
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
