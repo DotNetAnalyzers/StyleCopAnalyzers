@@ -51,6 +51,44 @@ class C
                 CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that comments leading a closing bracket remain on their own line.
+        /// </summary>
+        /// <param name="lineEnding">The line ending used in the source.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        [WorkItem(3296, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3296")]
+        public async Task TestCollectionExpressionClosingBracketAfterLeadingCommentAsync(string lineEnding)
+        {
+            string testCode = @"
+class C
+{
+    private int[] values =
+    [
+        42
+/* comment */[| |]];
+}
+";
+            string fixedCode = @"
+class C
+{
+    private int[] values =
+    [
+        42
+/* comment */
+    ];
+}
+";
+
+            await VerifyCSharpFixAsync(
+                testCode.ReplaceLineEndings(lineEnding),
+                DiagnosticResult.EmptyDiagnosticResults,
+                fixedCode.ReplaceLineEndings(lineEnding),
+                CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         [WorkItem(3904, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3904")]
         public async Task TestSingleLineCollectionExpressionAsync()

@@ -84,7 +84,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
             if ((token.IsKind(SyntaxKind.CloseBraceToken) || token.IsKind(SyntaxKind.CloseBracketToken))
-                && !token.IsFirstInLine())
+                && !token.IsFirstInLine(allowNonWhitespaceTrivia: false))
             {
                 // Only replace whitespace immediately before the token, preserving any preceding comments.
                 var start = token.SpanStart;
