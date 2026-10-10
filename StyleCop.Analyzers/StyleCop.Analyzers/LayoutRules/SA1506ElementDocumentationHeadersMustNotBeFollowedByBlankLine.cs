@@ -45,7 +45,7 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <see cref="SA1506ElementDocumentationHeadersMustNotBeFollowedByBlankLine"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1506";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1506.md";
+        private static readonly string HelpLink = HelpLinkHelper.GetHelpLink(DiagnosticId);
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(LayoutResources.SA1506Title), LayoutResources.ResourceManager, typeof(LayoutResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(LayoutResources.SA1506MessageFormat), LayoutResources.ResourceManager, typeof(LayoutResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(LayoutResources.SA1506Description), LayoutResources.ResourceManager, typeof(LayoutResources));

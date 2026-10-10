@@ -35,7 +35,7 @@ namespace StyleCop.Analyzers.NamingRules
         /// The ID for diagnostics produced by the <see cref="SA1310FieldNamesMustNotContainUnderscore"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1310";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1310.md";
+        private static readonly string HelpLink = HelpLinkHelper.GetHelpLink(DiagnosticId);
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(NamingResources.SA1310Title), NamingResources.ResourceManager, typeof(NamingResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(NamingResources.SA1310MessageFormat), NamingResources.ResourceManager, typeof(NamingResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(NamingResources.SA1310Description), NamingResources.ResourceManager, typeof(NamingResources));

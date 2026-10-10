@@ -65,7 +65,7 @@ namespace StyleCop.Analyzers.SpacingRules
         /// The ID for diagnostics produced by the <see cref="SA1024ColonsMustBeSpacedCorrectly"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1024";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1024.md";
+        private static readonly string HelpLink = HelpLinkHelper.GetHelpLink(DiagnosticId);
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1024Title), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1024Description), SpacingResources.ResourceManager, typeof(SpacingResources));
 

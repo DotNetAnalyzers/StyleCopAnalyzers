@@ -67,15 +67,16 @@ namespace StyleCop.Analyzers.Status.Generator
         /// <param name="pathToSln">The path to the StyleCop.Analayzers solution.</param>
         /// <param name="analyzerProjectName">The project name of the analyzer project.</param>
         /// <param name="codeFixProjectName">The project name of the code fix project.</param>
+        /// <param name="configuration">The configuration of the built analyzer assemblies.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the asynchronous operation.</returns>
-        public static async Task<SolutionReader> CreateAsync(string pathToSln, string analyzerProjectName = "StyleCop.Analyzers", string codeFixProjectName = "StyleCop.Analyzers.CodeFixes")
+        public static async Task<SolutionReader> CreateAsync(string pathToSln, string analyzerProjectName = "StyleCop.Analyzers", string codeFixProjectName = "StyleCop.Analyzers.CodeFixes", string configuration = "Debug")
         {
             SolutionReader reader = new SolutionReader();
 
             reader.SlnPath = pathToSln;
             reader.AnalyzerProjectName = analyzerProjectName;
             reader.CodeFixProjectName = codeFixProjectName;
-            reader.workspace = MSBuildWorkspace.Create();
+            reader.workspace = MSBuildWorkspace.Create(new Dictionary<string, string> { { "Configuration", configuration } });
 
             await reader.InitializeAsync().ConfigureAwait(false);
 

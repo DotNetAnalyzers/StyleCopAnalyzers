@@ -20,6 +20,7 @@
 mono_crash.*
 
 # Build results
+StyleCop.Analyzers.Status.json
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
@@ -489,3 +490,6 @@ $RECYCLE.BIN/
 /build/coverage/
 .nuget/NuGet.exe
 build/nuget/
+
+# DocFX output
+/_site/
