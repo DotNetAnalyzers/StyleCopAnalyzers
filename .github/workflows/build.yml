@@ -26,6 +26,17 @@ env:
   MSBuildEnableWorkloadResolver: false
 
 jobs:
+  markup-links:
+    name: Check markup links
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v7
+
+    - name: Markup Link Checker (mlc)
+      uses: becheran/mlc@b0d0d353e04fcbcfd1d86716103d78a61e5b25dd # v1.2.2
+
   documentation:
     name: Build documentation
     needs: [ build, status-page ]
