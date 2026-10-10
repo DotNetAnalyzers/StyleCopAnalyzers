@@ -117,11 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ConstructorDocumentationCodeFix" xml:space="preserve">
+    <value>Создать документацию для конструктора</value>
+  </data>
+  <data name="DestructorDocumentationCodeFix" xml:space="preserve">
+    <value>Создать документацию деструктора</value>
+  </data>
   <data name="DestructorStandardTextFirstPart" xml:space="preserve">
-    <value>Уничтожает экземпляр класса </value>
+    <value>Выполняет финализацию экземпляра класса </value>
   </data>
   <data name="DestructorStandardTextSecondPart" xml:space="preserve">
     <value />
+  </data>
+  <data name="InheritdocCodeFix" xml:space="preserve">
+    <value>Унаследовать документацию</value>
+  </data>
+  <data name="MethodDocumentationCodeFix" xml:space="preserve">
+    <value>Создать документацию для метода</value>
   </data>
   <data name="NonPrivateConstructorStandardTextFirstPart" xml:space="preserve">
     <value>Инициализирует новый экземпляр {0} </value>
@@ -133,7 +145,7 @@
     <value>Параметр не используется.</value>
   </data>
   <data name="PrivateConstructorStandardTextFirstPart" xml:space="preserve">
-    <value>Предотвращает вызов конструктора по умолчанию для {0} </value>
+    <value>Предотвращает создание экземпляра по умолчанию для {0} </value>
   </data>
   <data name="PrivateConstructorStandardTextSecondPart" xml:space="preserve">
     <value />
@@ -150,6 +162,12 @@
   <data name="StartingTextGetsWhether" xml:space="preserve">
     <value>Возвращает значение, показывающее,</value>
   </data>
+  <data name="StartingTextReturns" xml:space="preserve">
+    <value>Возвращает</value>
+  </data>
+  <data name="StartingTextReturnsWhether" xml:space="preserve">
+    <value>Возвращает значение, показывающее,</value>
+  </data>
   <data name="StartingTextSets" xml:space="preserve">
     <value>Задает</value>
   </data>
@@ -157,10 +175,16 @@
     <value>Задает значение, показывающее,</value>
   </data>
   <data name="StaticConstructorStandardTextFirstPart" xml:space="preserve">
-    <value>Инициализирует статические поля {0} </value>
+    <value>Инициализирует статические члены {0} </value>
   </data>
   <data name="StaticConstructorStandardTextSecondPart" xml:space="preserve">
     <value />
+  </data>
+  <data name="TaskReturnElementFirstPart" xml:space="preserve">
+    <value>Объект </value>
+  </data>
+  <data name="TaskReturnElementSecondPart" xml:space="preserve">
+    <value>, представляющий результат асинхронной операции.</value>
   </data>
   <data name="TypeTextClass" xml:space="preserve">
     <value>класса</value>
@@ -182,5 +206,515 @@
   </data>
   <data name="StartingTextInitializesWhether" xml:space="preserve">
     <value>Инициализирует значение, показывающее,</value>
+  </data>
+  <data name="PropertySummaryStartTextCodeFix" xml:space="preserve">
+    <value>Добавить стандартный текст</value>
+  </data>
+  <data name="SA1600Description" xml:space="preserve">
+    <value>У элемента кода C# отсутствует заголовок документации.</value>
+  </data>
+  <data name="SA1600MessageFormat" xml:space="preserve">
+    <value>Элементы должны быть документированы</value>
+  </data>
+  <data name="SA1600Title" xml:space="preserve">
+    <value>Элементы должны быть документированы</value>
+  </data>
+  <data name="SA1601Description" xml:space="preserve">
+    <value>У частичного элемента C# отсутствует заголовок документации.</value>
+  </data>
+  <data name="SA1601MessageFormat" xml:space="preserve">
+    <value>Частичные элементы должны быть документированы</value>
+  </data>
+  <data name="SA1601Title" xml:space="preserve">
+    <value>Частичные элементы должны быть документированы</value>
+  </data>
+  <data name="SA1602Description" xml:space="preserve">
+    <value>У элемента перечисления C# отсутствует заголовок XML-документации.</value>
+  </data>
+  <data name="SA1602MessageFormat" xml:space="preserve">
+    <value>Элементы перечисления должны быть документированы</value>
+  </data>
+  <data name="SA1602Title" xml:space="preserve">
+    <value>Элементы перечисления должны быть документированы</value>
+  </data>
+  <data name="SA1603Description" xml:space="preserve">
+    <value>XML в заголовке документации элемента C# имеет неправильный формат.</value>
+  </data>
+  <data name="SA1603MessageFormat" xml:space="preserve">
+    <value>Заголовок документации содержит недопустимый XML: {0}</value>
+  </data>
+  <data name="SA1603Title" xml:space="preserve">
+    <value>Документация должна содержать допустимый XML</value>
+  </data>
+  <data name="SA1604Description" xml:space="preserve">
+    <value>В заголовке XML-документации элемента C# отсутствует тег &lt;summary&gt;.</value>
+  </data>
+  <data name="SA1604MessageFormat" xml:space="preserve">
+    <value>Документация элемента должна содержать краткое описание</value>
+  </data>
+  <data name="SA1604Title" xml:space="preserve">
+    <value>Документация элемента должна содержать краткое описание</value>
+  </data>
+  <data name="SA1605Description" xml:space="preserve">
+    <value>Тег &lt;summary&gt; или &lt;content&gt; в заголовке документации элемента кода C# отсутствует или пуст.</value>
+  </data>
+  <data name="SA1605MessageFormat" xml:space="preserve">
+    <value>Документация частичного элемента должна содержать краткое описание</value>
+  </data>
+  <data name="SA1605Title" xml:space="preserve">
+    <value>Документация частичного элемента должна содержать краткое описание</value>
+  </data>
+  <data name="SA1606Description" xml:space="preserve">
+    <value>Тег &lt;summary&gt; в заголовке документации элемента кода C# пуст.</value>
+  </data>
+  <data name="SA1606MessageFormat" xml:space="preserve">
+    <value>Документация элемента должна содержать текст краткого описания</value>
+  </data>
+  <data name="SA1606Title" xml:space="preserve">
+    <value>Документация элемента должна содержать текст краткого описания</value>
+  </data>
+  <data name="SA1607Description" xml:space="preserve">
+    <value>Тег &lt;summary&gt; или &lt;content&gt; в заголовке документации элемента кода C# пуст.</value>
+  </data>
+  <data name="SA1607MessageFormat" xml:space="preserve">
+    <value>Документация частичного элемента должна содержать текст краткого описания</value>
+  </data>
+  <data name="SA1607Title" xml:space="preserve">
+    <value>Документация частичного элемента должна содержать текст краткого описания</value>
+  </data>
+  <data name="SA1608Description" xml:space="preserve">
+    <value>Тег &lt;summary&gt; в заголовке XML-документации элемента содержит текст по умолчанию, созданный Visual Studio при создании элемента.</value>
+  </data>
+  <data name="SA1608MessageFormat" xml:space="preserve">
+    <value>Документация элемента не должна содержать краткое описание по умолчанию</value>
+  </data>
+  <data name="SA1608Title" xml:space="preserve">
+    <value>Документация элемента не должна содержать краткое описание по умолчанию</value>
+  </data>
+  <data name="SA1609Description" xml:space="preserve">
+    <value>Заголовок XML-документации свойства C# не содержит тег &lt;value&gt;.</value>
+  </data>
+  <data name="SA1609MessageFormat" xml:space="preserve">
+    <value>Документация свойства должна содержать описание значения</value>
+  </data>
+  <data name="SA1609SA1610CodeFix" xml:space="preserve">
+    <value>Документировать значение на основе краткого описания</value>
+  </data>
+  <data name="SA1609Title" xml:space="preserve">
+    <value>Документация свойства должна содержать описание значения</value>
+  </data>
+  <data name="SA1610Description" xml:space="preserve">
+    <value>Заголовок XML-документации свойства C# содержит пустой тег &lt;value&gt;.</value>
+  </data>
+  <data name="SA1610MessageFormat" xml:space="preserve">
+    <value>Документация свойства должна содержать текст описания значения</value>
+  </data>
+  <data name="SA1610Title" xml:space="preserve">
+    <value>Документация свойства должна содержать текст описания значения</value>
+  </data>
+  <data name="SA1611Description" xml:space="preserve">
+    <value>У метода, конструктора, делегата или индексатора C# отсутствует документация для одного или нескольких параметров.</value>
+  </data>
+  <data name="SA1611MessageFormat" xml:space="preserve">
+    <value>Отсутствует документация для параметра '{0}'</value>
+  </data>
+  <data name="SA1611Title" xml:space="preserve">
+    <value>Параметры элемента должны быть документированы</value>
+  </data>
+  <data name="SA1612Description" xml:space="preserve">
+    <value>Документация параметров метода, конструктора, делегата или индексатора C# не соответствует фактическим параметрам элемента.</value>
+  </data>
+  <data name="SA1612MissingParamForDocumentationMessageFormat" xml:space="preserve">
+    <value>Параметр '{0}' не существует</value>
+  </data>
+  <data name="SA1612ParamWrongOrderMessageFormat" xml:space="preserve">
+    <value>Документация параметра '{0}' должна находиться на позиции {1}</value>
+  </data>
+  <data name="SA1612Title" xml:space="preserve">
+    <value>Документация параметров элемента должна соответствовать его параметрам</value>
+  </data>
+  <data name="SA1613Description" xml:space="preserve">
+    <value>В теге &lt;param&gt; заголовка документации элемента C# отсутствует атрибут name с именем параметра.</value>
+  </data>
+  <data name="SA1613MessageFormat" xml:space="preserve">
+    <value>Документация параметра элемента должна указывать имя параметра</value>
+  </data>
+  <data name="SA1613Title" xml:space="preserve">
+    <value>Документация параметра элемента должна указывать имя параметра</value>
+  </data>
+  <data name="SA1614Description" xml:space="preserve">
+    <value>Тег &lt;param&gt; в заголовке документации элемента C# пуст.</value>
+  </data>
+  <data name="SA1614MessageFormat" xml:space="preserve">
+    <value>Документация параметра элемента должна содержать текст</value>
+  </data>
+  <data name="SA1614Title" xml:space="preserve">
+    <value>Документация параметра элемента должна содержать текст</value>
+  </data>
+  <data name="SA1615Description" xml:space="preserve">
+    <value>У элемента C# отсутствует документация для возвращаемого значения.</value>
+  </data>
+  <data name="SA1615MessageFormat" xml:space="preserve">
+    <value>Возвращаемое значение элемента должно быть документировано</value>
+  </data>
+  <data name="SA1615SA1616CodeFix" xml:space="preserve">
+    <value>Документировать возвращаемое значение</value>
+  </data>
+  <data name="SA1615Title" xml:space="preserve">
+    <value>Возвращаемое значение элемента должно быть документировано</value>
+  </data>
+  <data name="SA1616Description" xml:space="preserve">
+    <value>Тег &lt;returns&gt; в заголовке документации элемента C# пуст.</value>
+  </data>
+  <data name="SA1616MessageFormat" xml:space="preserve">
+    <value>Документация возвращаемого значения элемента должна содержать текст</value>
+  </data>
+  <data name="SA1616Title" xml:space="preserve">
+    <value>Документация возвращаемого значения элемента должна содержать текст</value>
+  </data>
+  <data name="SA1617CodeFix" xml:space="preserve">
+    <value>Удалить XML-комментарий &lt;returns&gt;</value>
+  </data>
+  <data name="SA1617Description" xml:space="preserve">
+    <value>Элемент кода C# не возвращает значение или возвращает void, но его заголовок документации содержит тег &lt;returns&gt;.</value>
+  </data>
+  <data name="SA1617MessageFormat" xml:space="preserve">
+    <value>Возвращаемое значение void не должно быть документировано</value>
+  </data>
+  <data name="SA1617Title" xml:space="preserve">
+    <value>Возвращаемое значение void не должно быть документировано</value>
+  </data>
+  <data name="SA1618Description" xml:space="preserve">
+    <value>У обобщенного элемента C# отсутствует документация для одного или нескольких параметров типа.</value>
+  </data>
+  <data name="SA1618MessageFormat" xml:space="preserve">
+    <value>Отсутствует документация для параметра типа '{0}'</value>
+  </data>
+  <data name="SA1618Title" xml:space="preserve">
+    <value>Параметры обобщенного типа должны быть документированы</value>
+  </data>
+  <data name="SA1619Description" xml:space="preserve">
+    <value>У обобщенного частичного элемента C# отсутствует документация для одного или нескольких параметров типа, а документация элемента содержит тег &lt;summary&gt;.</value>
+  </data>
+  <data name="SA1619MessageFormat" xml:space="preserve">
+    <value>Отсутствует документация для параметра типа '{0}'</value>
+  </data>
+  <data name="SA1619Title" xml:space="preserve">
+    <value>Параметры обобщенного типа частичного класса должны быть документированы</value>
+  </data>
+  <data name="SA1620Description" xml:space="preserve">
+    <value>Теги &lt;typeparam&gt; в заголовке XML-документации обобщенного элемента C# не соответствуют его параметрам типа.</value>
+  </data>
+  <data name="SA1620MissingMessageFormat" xml:space="preserve">
+    <value>Параметр типа '{0}' не существует.</value>
+  </data>
+  <data name="SA1620Title" xml:space="preserve">
+    <value>Документация параметров обобщенного типа должна соответствовать параметрам типа</value>
+  </data>
+  <data name="SA1620WrongOrderMessageFormat" xml:space="preserve">
+    <value>Документация параметра типа '{0}' должна находиться на позиции {1}.</value>
+  </data>
+  <data name="SA1621Description" xml:space="preserve">
+    <value>В теге &lt;typeparam&gt; заголовка XML-документации обобщенного элемента C# отсутствует атрибут name или этот атрибут пуст.</value>
+  </data>
+  <data name="SA1621MessageFormat" xml:space="preserve">
+    <value>Документация параметра обобщенного типа должна указывать имя параметра.</value>
+  </data>
+  <data name="SA1621Title" xml:space="preserve">
+    <value>Документация параметра обобщенного типа должна указывать имя параметра</value>
+  </data>
+  <data name="SA1622Description" xml:space="preserve">
+    <value>Тег &lt;typeparam&gt; в заголовке XML-документации обобщенного элемента C# пуст.</value>
+  </data>
+  <data name="SA1622MessageFormat" xml:space="preserve">
+    <value>Документация параметра обобщенного типа должна содержать текст.</value>
+  </data>
+  <data name="SA1622Title" xml:space="preserve">
+    <value>Документация параметра обобщенного типа должна содержать текст</value>
+  </data>
+  <data name="SA1623Description" xml:space="preserve">
+    <value>Текст документации в теге &lt;summary&gt; свойства C# не соответствует методам доступа свойства.</value>
+  </data>
+  <data name="SA1623MessageFormat" xml:space="preserve">
+    <value>Текст краткого описания свойства должен начинаться с: '{0}'</value>
+  </data>
+  <data name="SA1623Title" xml:space="preserve">
+    <value>Краткое описание свойства должно соответствовать методам доступа</value>
+  </data>
+  <data name="SA1624Description" xml:space="preserve">
+    <value>Текст документации в теге &lt;summary&gt; свойства C# учитывает все методы доступа свойства, но один из них имеет ограниченный доступ.</value>
+  </data>
+  <data name="SA1624MessageFormat" xml:space="preserve">
+    <value>Поскольку свойство содержит только видимый метод доступа {0}, текст краткого описания должен начинаться с '{1}'.</value>
+  </data>
+  <data name="SA1624Title" xml:space="preserve">
+    <value>Краткое описание свойства не должно учитывать метод с ограниченным доступом</value>
+  </data>
+  <data name="SA1625Description" xml:space="preserve">
+    <value>XML-документация элемента C# содержит две или более одинаковые записи, что указывает на копирование и вставку документации. Иногда это свидетельствует о неверной или некачественной документации.</value>
+  </data>
+  <data name="SA1625MessageFormat" xml:space="preserve">
+    <value>Документация элемента не должна копироваться и вставляться</value>
+  </data>
+  <data name="SA1625Title" xml:space="preserve">
+    <value>Документация элемента не должна копироваться и вставляться</value>
+  </data>
+  <data name="SA1626CodeFix" xml:space="preserve">
+    <value>Преобразовать в однострочный комментарий</value>
+  </data>
+  <data name="SA1626CodeFixStrayComment" xml:space="preserve">
+    <value>Преобразовать в комментарий документации</value>
+  </data>
+  <data name="SA1626Description" xml:space="preserve">
+    <value>Код C# содержит однострочный комментарий, начинающийся с трех косых черт подряд.</value>
+  </data>
+  <data name="SA1626MessageFormat" xml:space="preserve">
+    <value>Однострочные комментарии не должны использовать косые черты в стиле документации</value>
+  </data>
+  <data name="SA1626Title" xml:space="preserve">
+    <value>Однострочные комментарии не должны использовать косые черты в стиле документации</value>
+  </data>
+  <data name="SA1627Description" xml:space="preserve">
+    <value>Заголовок XML-документации элемента кода C# содержит пустой тег.</value>
+  </data>
+  <data name="SA1627MessageFormat" xml:space="preserve">
+    <value>Текст документации в теге '{0}' не должен быть пустым</value>
+  </data>
+  <data name="SA1627Title" xml:space="preserve">
+    <value>Текст документации не должен быть пустым</value>
+  </data>
+  <data name="SA1628Description" xml:space="preserve">
+    <value>Раздел заголовка XML-документации элемента C# не начинается с прописной буквы.</value>
+  </data>
+  <data name="SA1628MessageFormat" xml:space="preserve">
+    <value>TODO: Формат сообщения</value>
+  </data>
+  <data name="SA1628Title" xml:space="preserve">
+    <value>Текст документации должен начинаться с прописной буквы</value>
+  </data>
+  <data name="SA1629CodeFix" xml:space="preserve">
+    <value>Добавить точку</value>
+  </data>
+  <data name="SA1629Description" xml:space="preserve">
+    <value>Раздел заголовка XML-документации элемента C# не заканчивается точкой.</value>
+  </data>
+  <data name="SA1629MessageFormat" xml:space="preserve">
+    <value>Текст документации должен заканчиваться точкой</value>
+  </data>
+  <data name="SA1629Title" xml:space="preserve">
+    <value>Текст документации должен заканчиваться точкой</value>
+  </data>
+  <data name="SA1630Description" xml:space="preserve">
+    <value>Раздел заголовка XML-документации элемента C# не содержит пробельных символов между словами.</value>
+  </data>
+  <data name="SA1630MessageFormat" xml:space="preserve">
+    <value>TODO: Формат сообщения</value>
+  </data>
+  <data name="SA1630Title" xml:space="preserve">
+    <value>Текст документации должен содержать пробельные символы</value>
+  </data>
+  <data name="SA1631Description" xml:space="preserve">
+    <value>Раздел заголовка XML-документации элемента C# содержит недостаточно буквенных символов.</value>
+  </data>
+  <data name="SA1631MessageFormat" xml:space="preserve">
+    <value>TODO: Формат сообщения</value>
+  </data>
+  <data name="SA1631Title" xml:space="preserve">
+    <value>Документация должна соответствовать требуемой доле буквенных символов</value>
+  </data>
+  <data name="SA1632Description" xml:space="preserve">
+    <value>Раздел заголовка XML-документации элемента C# слишком короткий.</value>
+  </data>
+  <data name="SA1632MessageFormat" xml:space="preserve">
+    <value>TODO: Формат сообщения</value>
+  </data>
+  <data name="SA1632Title" xml:space="preserve">
+    <value>Текст документации должен соответствовать минимальной длине</value>
+  </data>
+  <data name="SA1633CodeFix" xml:space="preserve">
+    <value>Добавить заголовок файла</value>
+  </data>
+  <data name="SA1633Description" xml:space="preserve">
+    <value>У файла кода C# отсутствует стандартный заголовок файла.</value>
+  </data>
+  <data name="SA1633MessageFormatMalformed" xml:space="preserve">
+    <value>XML заголовка файла недопустим.</value>
+  </data>
+  <data name="SA1633MessageFormatMissing" xml:space="preserve">
+    <value>Заголовок файла отсутствует или расположен не в начале файла.</value>
+  </data>
+  <data name="SA1633Title" xml:space="preserve">
+    <value>Файл должен содержать заголовок</value>
+  </data>
+  <data name="SA1634Description" xml:space="preserve">
+    <value>В заголовке в начале файла кода C# отсутствует тег авторских прав.</value>
+  </data>
+  <data name="SA1634MessageFormat" xml:space="preserve">
+    <value>Заголовок файла должен содержать тег авторских прав.</value>
+  </data>
+  <data name="SA1634Title" xml:space="preserve">
+    <value>Заголовок файла должен указывать авторские права</value>
+  </data>
+  <data name="SA1635Description" xml:space="preserve">
+    <value>В заголовке в начале файла кода C# отсутствует текст об авторских правах.</value>
+  </data>
+  <data name="SA1635MessageFormat" xml:space="preserve">
+    <value>Заголовок файла должен содержать текст об авторских правах</value>
+  </data>
+  <data name="SA1635Title" xml:space="preserve">
+    <value>Заголовок файла должен содержать текст об авторских правах</value>
+  </data>
+  <data name="SA1636Description" xml:space="preserve">
+    <value>Заголовок в начале файла кода C# не содержит нужного текста об авторских правах.</value>
+  </data>
+  <data name="SA1636MessageFormat" xml:space="preserve">
+    <value>Текст об авторских правах в заголовке файла должен соответствовать тексту об авторских правах в настройках.</value>
+  </data>
+  <data name="SA1636Title" xml:space="preserve">
+    <value>Текст об авторских правах в заголовке файла должен совпадать</value>
+  </data>
+  <data name="SA1637Description" xml:space="preserve">
+    <value>В заголовке в начале файла кода C# отсутствует имя файла.</value>
+  </data>
+  <data name="SA1637MessageFormat" xml:space="preserve">
+    <value>Заголовок файла должен содержать имя файла.</value>
+  </data>
+  <data name="SA1637Title" xml:space="preserve">
+    <value>Заголовок файла должен содержать имя файла</value>
+  </data>
+  <data name="SA1638Description" xml:space="preserve">
+    <value>Атрибут file в теге copyright заголовка в начале файла кода C# не содержит имя файла.</value>
+  </data>
+  <data name="SA1638MessageFormat" xml:space="preserve">
+    <value>Имя файла в документации заголовка должно соответствовать имени файла.</value>
+  </data>
+  <data name="SA1638Title" xml:space="preserve">
+    <value>Имя файла в документации заголовка должно соответствовать имени файла</value>
+  </data>
+  <data name="SA1639Description" xml:space="preserve">
+    <value>Заголовок в начале файла кода C# не содержит заполненный тег summary.</value>
+  </data>
+  <data name="SA1639MessageFormat" xml:space="preserve">
+    <value>Заголовок файла должен содержать краткое описание</value>
+  </data>
+  <data name="SA1639Title" xml:space="preserve">
+    <value>Заголовок файла должен содержать краткое описание</value>
+  </data>
+  <data name="SA1640Description" xml:space="preserve">
+    <value>В заголовке в начале файла кода C# отсутствует название компании.</value>
+  </data>
+  <data name="SA1640MessageFormat" xml:space="preserve">
+    <value>Тег copyright должен содержать непустой атрибут company.</value>
+  </data>
+  <data name="SA1640Title" xml:space="preserve">
+    <value>Заголовок файла должен содержать допустимое название компании</value>
+  </data>
+  <data name="SA1641Description" xml:space="preserve">
+    <value>Заголовок в начале файла кода C# не содержит нужного названия компании.</value>
+  </data>
+  <data name="SA1641MessageFormat" xml:space="preserve">
+    <value>Название компании в заголовке файла должно соответствовать названию компании в настройках.</value>
+  </data>
+  <data name="SA1641Title" xml:space="preserve">
+    <value>Название компании в заголовке файла должно совпадать</value>
+  </data>
+  <data name="SA1642Description" xml:space="preserve">
+    <value>Заголовок XML-документации конструктора C# не содержит нужного текста краткого описания.</value>
+  </data>
+  <data name="SA1642MessageFormat" xml:space="preserve">
+    <value>Краткое описание конструктора должно начинаться со стандартного текста</value>
+  </data>
+  <data name="SA1642SA1643CodeFix" xml:space="preserve">
+    <value>Добавить стандартный текст</value>
+  </data>
+  <data name="SA1642Title" xml:space="preserve">
+    <value>Краткое описание конструктора должно начинаться со стандартного текста</value>
+  </data>
+  <data name="SA1643Description" xml:space="preserve">
+    <value>Заголовок XML-документации финализатора C# не содержит нужного текста краткого описания.</value>
+  </data>
+  <data name="SA1643MessageFormat" xml:space="preserve">
+    <value>Краткое описание деструктора должно начинаться со стандартного текста</value>
+  </data>
+  <data name="SA1643Title" xml:space="preserve">
+    <value>Краткое описание деструктора должно начинаться со стандартного текста</value>
+  </data>
+  <data name="SA1644Description" xml:space="preserve">
+    <value>Раздел заголовка XML-документации элемента C# содержит пустые строки.</value>
+  </data>
+  <data name="SA1644MessageFormat" xml:space="preserve">
+    <value>TODO: Формат сообщения</value>
+  </data>
+  <data name="SA1644Title" xml:space="preserve">
+    <value>Заголовки документации не должны содержать пустые строки</value>
+  </data>
+  <data name="SA1645Description" xml:space="preserve">
+    <value>Подключаемый файл XML-документации не существует.</value>
+  </data>
+  <data name="SA1645MessageFormat" xml:space="preserve">
+    <value>TODO: Формат сообщения</value>
+  </data>
+  <data name="SA1645Title" xml:space="preserve">
+    <value>Подключаемый файл документации не существует</value>
+  </data>
+  <data name="SA1646Description" xml:space="preserve">
+    <value>Ссылка на подключаемую XML-документацию содержит недопустимый путь.</value>
+  </data>
+  <data name="SA1646MessageFormat" xml:space="preserve">
+    <value>TODO: Формат сообщения</value>
+  </data>
+  <data name="SA1646Title" xml:space="preserve">
+    <value>Путь XPath подключаемой документации не существует</value>
+  </data>
+  <data name="SA1647Description" xml:space="preserve">
+    <value>Тег include в заголовке XML-документации не содержит допустимых атрибутов file и path.</value>
+  </data>
+  <data name="SA1647MessageFormat" xml:space="preserve">
+    <value>TODO: Формат сообщения</value>
+  </data>
+  <data name="SA1647Title" xml:space="preserve">
+    <value>Узел include не содержит допустимых атрибутов file и path</value>
+  </data>
+  <data name="SA1648Description" xml:space="preserve">
+    <value>Тег &lt;inheritdoc&gt; использован для элемента, который не наследуется от базового класса и не реализует интерфейс.</value>
+  </data>
+  <data name="SA1648MessageFormat" xml:space="preserve">
+    <value>Тег inheritdoc должен использоваться с наследующим классом</value>
+  </data>
+  <data name="SA1648Title" xml:space="preserve">
+    <value>Тег inheritdoc должен использоваться с наследующим классом</value>
+  </data>
+  <data name="SA1649CodeFix" xml:space="preserve">
+    <value>Переименовать файл в соответствии с именем первого типа</value>
+  </data>
+  <data name="SA1649Description" xml:space="preserve">
+    <value>Имя файла кода C# не соответствует имени первого типа, объявленного в файле.</value>
+  </data>
+  <data name="SA1649MessageFormat" xml:space="preserve">
+    <value>Имя файла должно соответствовать имени первого типа</value>
+  </data>
+  <data name="SA1649Title" xml:space="preserve">
+    <value>Имя файла должно соответствовать имени первого типа</value>
+  </data>
+  <data name="SA1650Description" xml:space="preserve">
+    <value>Документация элемента содержит одну или несколько орфографических ошибок или нераспознанных слов.</value>
+  </data>
+  <data name="SA1650MessageFormat" xml:space="preserve">
+    <value>TODO: Формат сообщения</value>
+  </data>
+  <data name="SA1650Title" xml:space="preserve">
+    <value>Документация элемента не должна содержать орфографических ошибок</value>
+  </data>
+  <data name="SA1651CodeFix" xml:space="preserve">
+    <value>Завершить оформление текста заполнителя</value>
+  </data>
+  <data name="SA1651Description" xml:space="preserve">
+    <value>Документация элемента содержит элемент &lt;placeholder&gt;.</value>
+  </data>
+  <data name="SA1651MessageFormat" xml:space="preserve">
+    <value>Не используйте элементы-заполнители</value>
+  </data>
+  <data name="SA1651Title" xml:space="preserve">
+    <value>Не используйте элементы-заполнители</value>
   </data>
 </root>

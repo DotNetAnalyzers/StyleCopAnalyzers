@@ -9,13 +9,7 @@ namespace StyleCop.Analyzers.Test.CSharp15.MaintainabilityRules
     using StyleCop.Analyzers.Test.CSharp14.MaintainabilityRules;
     using StyleCop.Analyzers.Test.MaintainabilityRules;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.MaintainabilityRules.SA1402FileMayOnlyContainASingleType,
-        StyleCop.Analyzers.MaintainabilityRules.SA1402CodeFixProvider>;
 
-    // Union declarations are only parsed with the preview language version, which is the default for this test project.
-    // The reference assemblies used by these tests do not define System.Runtime.CompilerServices.IUnion and
-    // UnionAttribute, so union declarations produce CS0518 and CS0656, and compiler diagnostics are therefore ignored.
     public partial class SA1402ForStructCSharp15UnitTests : SA1402ForStructCSharp14UnitTests
     {
         /// <summary>
@@ -41,20 +35,9 @@ public union {|#0:Bar|}(int, string);";
                 ("Bar.cs", @"public union Bar(int, string);"),
             };
 
-            var test = new CSharpTest()
-            {
-                TestCode = testCode,
-                Settings = SA1402SettingsConfiguration.ConfigureAsTopLevelType.GetSettings("struct"),
-                ExpectedDiagnostics = { this.Diagnostic().WithLocation(0) },
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            };
-
-            foreach (var fixedSource in fixedSources)
-            {
-                test.FixedSources.Add(fixedSource);
-            }
-
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            var settings = SA1402SettingsConfiguration.ConfigureAsTopLevelType.GetSettings("struct");
+            var expected = this.Diagnostic().WithLocation(0);
+            await this.VerifyCSharpFixAsync(testCode, settings, expected, fixedSources, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -70,12 +53,8 @@ public union {|#0:Bar|}(int, string);";
 }
 public union Bar(int, string);";
 
-            await new CSharpTest()
-            {
-                TestCode = testCode,
-                Settings = SA1402SettingsConfiguration.ConfigureAsNonTopLevelType.GetSettings("struct"),
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            var settings = SA1402SettingsConfiguration.ConfigureAsNonTopLevelType.GetSettings("struct");
+            await this.VerifyCSharpDiagnosticAsync(testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -106,20 +85,9 @@ public union Baz(int, string);
 }"),
             };
 
-            var test = new CSharpTest()
-            {
-                TestCode = testCode,
-                Settings = SA1402SettingsConfiguration.ConfigureAsNonTopLevelType.GetSettings("struct"),
-                ExpectedDiagnostics = { this.Diagnostic().WithLocation(0) },
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            };
-
-            foreach (var fixedSource in fixedSources)
-            {
-                test.FixedSources.Add(fixedSource);
-            }
-
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            var settings = SA1402SettingsConfiguration.ConfigureAsNonTopLevelType.GetSettings("struct");
+            var expected = this.Diagnostic().WithLocation(0);
+            await this.VerifyCSharpFixAsync(testCode, settings, expected, fixedSources, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

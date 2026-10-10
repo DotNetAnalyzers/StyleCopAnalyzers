@@ -26,6 +26,17 @@ env:
   MSBuildEnableWorkloadResolver: false
 
 jobs:
+  markup-links:
+    name: Check markup links
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v7
+
+    - name: Markup Link Checker (mlc)
+      uses: becheran/mlc@b0d0d353e04fcbcfd1d86716103d78a61e5b25dd # v1.2.2
+
   documentation:
     name: Build documentation
     needs: [ build, status-page ]
@@ -43,6 +54,11 @@ jobs:
     - name: Restore DocFX
       run: dotnet tool restore
 
+    - name: Setup Node.js
+      uses: actions/setup-node@v6
+      with:
+        node-version: '24'
+
     - name: Download rule status report
       uses: actions/download-artifact@v8
       with:
@@ -50,7 +66,11 @@ jobs:
         path: docs
 
     - name: Build documentation
-      run: dotnet docfx docfx.json --warningsAsErrors
+      shell: pwsh
+      run: ./build/documentation.ps1
+
+    - name: Test documentation localization
+      run: node --test build/documentation-localization.test.cjs
 
     - name: Upload Pages artifact
       uses: actions/upload-pages-artifact@v5

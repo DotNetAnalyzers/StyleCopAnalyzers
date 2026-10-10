@@ -1,0 +1,239 @@
+order: -1
+items:
+- name: Обзор
+  href: index.md
+- name: Использование .NET CLI
+  href: DotNetCli.md
+- name: Настройка
+  href: Configuration.md
+- name: Включение настройки
+  href: EnableConfiguration.md
+- name: Отличия от StyleCop Classic
+  href: KnownChanges.md
+- name: Категории правил
+  items:
+  - name: Специальные правила
+    href: SpecialRules.md
+    items:
+    - { name: SA0001, href: SA0001.md }
+    - { name: SA0002, href: SA0002.md }
+  - name: Правила расстановки пробелов
+    href: SpacingRules.md
+    items:
+    - { name: SA1000, href: SA1000.md }
+    - { name: SA1001, href: SA1001.md }
+    - { name: SA1002, href: SA1002.md }
+    - { name: SA1003, href: SA1003.md }
+    - { name: SA1004, href: SA1004.md }
+    - { name: SA1005, href: SA1005.md }
+    - { name: SA1006, href: SA1006.md }
+    - { name: SA1007, href: SA1007.md }
+    - { name: SA1008, href: SA1008.md }
+    - { name: SA1009, href: SA1009.md }
+    - { name: SA1010, href: SA1010.md }
+    - { name: SA1011, href: SA1011.md }
+    - { name: SA1012, href: SA1012.md }
+    - { name: SA1013, href: SA1013.md }
+    - { name: SA1014, href: SA1014.md }
+    - { name: SA1015, href: SA1015.md }
+    - { name: SA1016, href: SA1016.md }
+    - { name: SA1017, href: SA1017.md }
+    - { name: SA1018, href: SA1018.md }
+    - { name: SA1019, href: SA1019.md }
+    - { name: SA1020, href: SA1020.md }
+    - { name: SA1021, href: SA1021.md }
+    - { name: SA1022, href: SA1022.md }
+    - { name: SA1023, href: SA1023.md }
+    - { name: SA1024, href: SA1024.md }
+    - { name: SA1025, href: SA1025.md }
+    - { name: SA1026, href: SA1026.md }
+    - { name: SA1027, href: SA1027.md }
+    - { name: SA1028, href: SA1028.md }
+  - name: Правила удобочитаемости
+    href: ReadabilityRules.md
+    items:
+    - { name: SA1100, href: SA1100.md }
+    - { name: SA1101, href: SA1101.md }
+    - { name: SA1102, href: SA1102.md }
+    - { name: SA1103, href: SA1103.md }
+    - { name: SA1104, href: SA1104.md }
+    - { name: SA1105, href: SA1105.md }
+    - { name: SA1106, href: SA1106.md }
+    - { name: SA1107, href: SA1107.md }
+    - { name: SA1108, href: SA1108.md }
+    - { name: SA1109, href: SA1109.md }
+    - { name: SA1110, href: SA1110.md }
+    - { name: SA1111, href: SA1111.md }
+    - { name: SA1112, href: SA1112.md }
+    - { name: SA1113, href: SA1113.md }
+    - { name: SA1114, href: SA1114.md }
+    - { name: SA1115, href: SA1115.md }
+    - { name: SA1116, href: SA1116.md }
+    - { name: SA1117, href: SA1117.md }
+    - { name: SA1118, href: SA1118.md }
+    - { name: SA1119, href: SA1119.md }
+    - { name: SA1120, href: SA1120.md }
+    - { name: SA1121, href: SA1121.md }
+    - { name: SA1122, href: SA1122.md }
+    - { name: SA1123, href: SA1123.md }
+    - { name: SA1124, href: SA1124.md }
+    - { name: SA1125, href: SA1125.md }
+    - { name: SA1126, href: SA1126.md }
+    - { name: SA1127, href: SA1127.md }
+    - { name: SA1128, href: SA1128.md }
+    - { name: SA1129, href: SA1129.md }
+    - { name: SA1130, href: SA1130.md }
+    - { name: SA1131, href: SA1131.md }
+    - { name: SA1132, href: SA1132.md }
+    - { name: SA1133, href: SA1133.md }
+    - { name: SA1134, href: SA1134.md }
+    - { name: SA1135, href: SA1135.md }
+    - { name: SA1136, href: SA1136.md }
+    - { name: SA1137, href: SA1137.md }
+    - { name: SA1139, href: SA1139.md }
+    - { name: SA1141, href: SA1141.md }
+    - { name: SA1142, href: SA1142.md }
+  - name: Правила порядка элементов
+    href: OrderingRules.md
+    items:
+    - { name: SA1200, href: SA1200.md }
+    - { name: SA1201, href: SA1201.md }
+    - { name: SA1202, href: SA1202.md }
+    - { name: SA1203, href: SA1203.md }
+    - { name: SA1204, href: SA1204.md }
+    - { name: SA1205, href: SA1205.md }
+    - { name: SA1206, href: SA1206.md }
+    - { name: SA1207, href: SA1207.md }
+    - { name: SA1208, href: SA1208.md }
+    - { name: SA1209, href: SA1209.md }
+    - { name: SA1210, href: SA1210.md }
+    - { name: SA1211, href: SA1211.md }
+    - { name: SA1212, href: SA1212.md }
+    - { name: SA1213, href: SA1213.md }
+    - { name: SA1214, href: SA1214.md }
+    - { name: SA1215, href: SA1215.md }
+    - { name: SA1216, href: SA1216.md }
+    - { name: SA1217, href: SA1217.md }
+  - name: Правила именования
+    href: NamingRules.md
+    items:
+    - { name: SA1300, href: SA1300.md }
+    - { name: SA1301, href: SA1301.md }
+    - { name: SA1302, href: SA1302.md }
+    - { name: SA1303, href: SA1303.md }
+    - { name: SA1304, href: SA1304.md }
+    - { name: SA1305, href: SA1305.md }
+    - { name: SA1306, href: SA1306.md }
+    - { name: SA1307, href: SA1307.md }
+    - { name: SA1308, href: SA1308.md }
+    - { name: SA1309, href: SA1309.md }
+    - { name: SA1310, href: SA1310.md }
+    - { name: SA1311, href: SA1311.md }
+    - { name: SA1312, href: SA1312.md }
+    - { name: SA1313, href: SA1313.md }
+    - { name: SA1314, href: SA1314.md }
+    - { name: SA1316, href: SA1316.md }
+  - name: Правила сопровождаемости
+    href: MaintainabilityRules.md
+    items:
+    - { name: SA1400, href: SA1400.md }
+    - { name: SA1401, href: SA1401.md }
+    - { name: SA1402, href: SA1402.md }
+    - { name: SA1403, href: SA1403.md }
+    - { name: SA1404, href: SA1404.md }
+    - { name: SA1405, href: SA1405.md }
+    - { name: SA1406, href: SA1406.md }
+    - { name: SA1407, href: SA1407.md }
+    - { name: SA1408, href: SA1408.md }
+    - { name: SA1409, href: SA1409.md }
+    - { name: SA1410, href: SA1410.md }
+    - { name: SA1411, href: SA1411.md }
+    - { name: SA1412, href: SA1412.md }
+    - { name: SA1413, href: SA1413.md }
+    - { name: SA1414, href: SA1414.md }
+  - name: Правила оформления
+    href: LayoutRules.md
+    items:
+    - { name: SA1500, href: SA1500.md }
+    - { name: SA1501, href: SA1501.md }
+    - { name: SA1502, href: SA1502.md }
+    - { name: SA1503, href: SA1503.md }
+    - { name: SA1504, href: SA1504.md }
+    - { name: SA1505, href: SA1505.md }
+    - { name: SA1506, href: SA1506.md }
+    - { name: SA1507, href: SA1507.md }
+    - { name: SA1508, href: SA1508.md }
+    - { name: SA1509, href: SA1509.md }
+    - { name: SA1510, href: SA1510.md }
+    - { name: SA1511, href: SA1511.md }
+    - { name: SA1512, href: SA1512.md }
+    - { name: SA1513, href: SA1513.md }
+    - { name: SA1514, href: SA1514.md }
+    - { name: SA1515, href: SA1515.md }
+    - { name: SA1516, href: SA1516.md }
+    - { name: SA1517, href: SA1517.md }
+    - { name: SA1518, href: SA1518.md }
+    - { name: SA1519, href: SA1519.md }
+    - { name: SA1520, href: SA1520.md }
+  - name: Правила документирования
+    href: DocumentationRules.md
+    items:
+    - { name: SA1600, href: SA1600.md }
+    - { name: SA1601, href: SA1601.md }
+    - { name: SA1602, href: SA1602.md }
+    - { name: SA1603, href: SA1603.md }
+    - { name: SA1604, href: SA1604.md }
+    - { name: SA1605, href: SA1605.md }
+    - { name: SA1606, href: SA1606.md }
+    - { name: SA1607, href: SA1607.md }
+    - { name: SA1608, href: SA1608.md }
+    - { name: SA1609, href: SA1609.md }
+    - { name: SA1610, href: SA1610.md }
+    - { name: SA1611, href: SA1611.md }
+    - { name: SA1612, href: SA1612.md }
+    - { name: SA1613, href: SA1613.md }
+    - { name: SA1614, href: SA1614.md }
+    - { name: SA1615, href: SA1615.md }
+    - { name: SA1616, href: SA1616.md }
+    - { name: SA1617, href: SA1617.md }
+    - { name: SA1618, href: SA1618.md }
+    - { name: SA1619, href: SA1619.md }
+    - { name: SA1620, href: SA1620.md }
+    - { name: SA1621, href: SA1621.md }
+    - { name: SA1622, href: SA1622.md }
+    - { name: SA1623, href: SA1623.md }
+    - { name: SA1624, href: SA1624.md }
+    - { name: SA1625, href: SA1625.md }
+    - { name: SA1626, href: SA1626.md }
+    - { name: SA1627, href: SA1627.md }
+    - { name: SA1628, href: SA1628.md }
+    - { name: SA1629, href: SA1629.md }
+    - { name: SA1630, href: SA1630.md }
+    - { name: SA1631, href: SA1631.md }
+    - { name: SA1632, href: SA1632.md }
+    - { name: SA1633, href: SA1633.md }
+    - { name: SA1634, href: SA1634.md }
+    - { name: SA1635, href: SA1635.md }
+    - { name: SA1636, href: SA1636.md }
+    - { name: SA1637, href: SA1637.md }
+    - { name: SA1638, href: SA1638.md }
+    - { name: SA1639, href: SA1639.md }
+    - { name: SA1640, href: SA1640.md }
+    - { name: SA1641, href: SA1641.md }
+    - { name: SA1642, href: SA1642.md }
+    - { name: SA1643, href: SA1643.md }
+    - { name: SA1644, href: SA1644.md }
+    - { name: SA1645, href: SA1645.md }
+    - { name: SA1646, href: SA1646.md }
+    - { name: SA1647, href: SA1647.md }
+    - { name: SA1648, href: SA1648.md }
+    - { name: SA1649, href: SA1649.md }
+    - { name: SA1650, href: SA1650.md }
+    - { name: SA1651, href: SA1651.md }
+    - { name: SA1652, href: SA1652.md }
+  - name: Альтернативные правила
+    href: AlternativeRules.md
+    items:
+    - { name: SX1101, href: SX1101.md }
+    - { name: SX1309, href: SX1309.md }
+    - { name: SX1309S, href: SX1309S.md }

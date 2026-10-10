@@ -49,6 +49,61 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 ";
 
         /// <summary>
+        /// Verifies that Unicode escapes in type identifiers are evaluated when matching file names.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3907, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3907")]
+        public async Task VerifyUnicodeEscapeFileNameAsync()
+        {
+            var testCode = @"class Name\u0065 { }";
+            await VerifyCSharpDiagnosticAsync("Namee.cs", testCode, testSettings: null, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+
+            var expectedDiagnostic = Diagnostic().WithLocation(0);
+            await VerifyCSharpFixAsync("Name.cs", @"class {|#0:Name\u0065|} { }", testSettings: null, expectedDiagnostic, "Namee.cs", testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that escaped type identifiers use their value for matching and fixing file names.
+        /// </summary>
+        /// <param name="typeKeyword">The type keyword to use during the test.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [MemberData(nameof(CommonMemberData.AllTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        [WorkItem(3907, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3907")]
+        public async Task VerifyEscapedIdentifierFileNameAsync(string typeKeyword)
+        {
+            foreach (var identifier in new[] { @"Name\u0065", @"Name\U00000065", "@Namee", "Namee" })
+            {
+                var testCode = GetTypeDeclaration(typeKeyword, identifier);
+                await VerifyCSharpDiagnosticAsync("Namee.cs", testCode, testSettings: null, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+
+                var markedCode = GetTypeDeclaration(typeKeyword, identifier, diagnosticKey: 0);
+                await VerifyCSharpFixAsync("Name.cs", markedCode, testSettings: null, Diagnostic().WithLocation(0), "Namee.cs", testCode, CancellationToken.None).ConfigureAwait(false);
+            }
+        }
+
+        /// <summary>
+        /// Verifies that escaped generic identifiers match both conventional and simple file names.
+        /// </summary>
+        /// <param name="typeKeyword">The type keyword to use during the test.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [MemberData(nameof(CommonMemberData.GenericTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        [WorkItem(3907, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3907")]
+        public async Task VerifyEscapedGenericIdentifierFileNameAsync(string typeKeyword)
+        {
+            var testCode = GetGenericTypeDeclaration(typeKeyword, @"Name\u0065", new[] { @"\u0054" });
+            await VerifyCSharpDiagnosticAsync("Namee.cs", testCode, StyleCopSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync("Namee{T}.cs", testCode, StyleCopSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync("Namee`1.cs", testCode, MetadataSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+
+            var markedCode = GetGenericTypeDeclaration(typeKeyword, @"Name\u0065", new[] { @"\u0054" }, diagnosticKey: 0);
+            await VerifyCSharpFixAsync("Name.cs", markedCode, StyleCopSettings, Diagnostic().WithLocation(0), "Namee{T}.cs", testCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync("Namee.cs", markedCode, MetadataSettings, Diagnostic().WithLocation(0), "Namee`1.cs", testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that a wrong file name is correctly reported.
         /// </summary>
         /// <param name="typeKeyword">The type keyword to use during the test.</param>

@@ -81,12 +81,12 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 string suffix;
                 var fileName = FileNameHelpers.GetFileNameAndSuffix(context.Tree.FilePath, out suffix);
-                var expectedFileName = FileNameHelpers.GetConventionalFileName(firstTypeDeclaration, settings.DocumentationRules.FileNamingConvention);
+                var expectedFileName = FileNameHelpers.GetConventionalFileNameWithDecodedIdentifier(firstTypeDeclaration, settings.DocumentationRules.FileNamingConvention);
 
                 if (string.Compare(fileName, expectedFileName, StringComparison.OrdinalIgnoreCase) != 0)
                 {
                     if (settings.DocumentationRules.FileNamingConvention == FileNamingConvention.StyleCop
-                        && string.Compare(fileName, FileNameHelpers.GetSimpleFileName(firstTypeDeclaration), StringComparison.OrdinalIgnoreCase) == 0)
+                        && string.Compare(fileName, FileNameHelpers.GetIdentifierValueText(firstTypeDeclaration), StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         return;
                     }

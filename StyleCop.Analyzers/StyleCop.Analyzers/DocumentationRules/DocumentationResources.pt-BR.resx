@@ -183,4 +183,52 @@
   <data name="StartingTextInitializesWhether" xml:space="preserve">
     <value>Inicializa um valor que indica se</value>
   </data>
+  <data name="ConstructorDocumentationCodeFix" xml:space="preserve">
+    <value>Gerar documentação do construtor</value>
+  </data>
+  <data name="DestructorDocumentationCodeFix" xml:space="preserve">
+    <value>Gerar documentação do destrutor</value>
+  </data>
+  <data name="InheritdocCodeFix" xml:space="preserve">
+    <value>Herdar documentação</value>
+  </data>
+  <data name="MethodDocumentationCodeFix" xml:space="preserve">
+    <value>Gerar documentação do método</value>
+  </data>
+  <data name="PropertySummaryStartTextCodeFix" xml:space="preserve">
+    <value>Adicionar texto padrão</value>
+  </data>
+  <data name="SA1609SA1610CodeFix" xml:space="preserve">
+    <value>Documentar o valor a partir do resumo</value>
+  </data>
+  <data name="SA1615SA1616CodeFix" xml:space="preserve">
+    <value>Documentar o valor retornado</value>
+  </data>
+  <data name="SA1617CodeFix" xml:space="preserve">
+    <value>Remover o comentário XML &lt;returns&gt;</value>
+  </data>
+  <data name="SA1626CodeFix" xml:space="preserve">
+    <value>Converter em comentário de linha</value>
+  </data>
+  <data name="SA1626CodeFixStrayComment" xml:space="preserve">
+    <value>Converter em comentário de documentação</value>
+  </data>
+  <data name="SA1629CodeFix" xml:space="preserve">
+    <value>Adicionar ponto final</value>
+  </data>
+  <data name="SA1633CodeFix" xml:space="preserve">
+    <value>Adicionar cabeçalho do arquivo</value>
+  </data>
+  <data name="SA1649CodeFix" xml:space="preserve">
+    <value>Renomear o arquivo para corresponder ao nome do primeiro tipo</value>
+  </data>
+  <data name="SA1651CodeFix" xml:space="preserve">
+    <value>Concluir o texto do espaço reservado</value>
+  </data>
+  <data name="StartingTextReturns" xml:space="preserve">
+    <value>Retorna</value>
+  </data>
+  <data name="StartingTextReturnsWhether" xml:space="preserve">
+    <value>Retorna um valor que indica se</value>
+  </data>
 </root>

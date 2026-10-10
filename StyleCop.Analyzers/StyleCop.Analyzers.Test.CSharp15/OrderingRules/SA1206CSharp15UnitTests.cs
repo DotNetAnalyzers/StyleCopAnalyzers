@@ -77,19 +77,13 @@ partial class Outer
 }
 ";
 
-            await new CSharpTest()
+            DiagnosticResult[] expected =
             {
-                TestCode = testCode,
-                FixedCode = fixedCode,
-                ExpectedDiagnostics =
-                {
-                    Diagnostic().WithLocation(0).WithArguments("public", "closed"),
-                    Diagnostic().WithLocation(1).WithArguments("private", "closed"),
-                },
+                Diagnostic().WithLocation(0).WithArguments("public", "closed"),
+                Diagnostic().WithLocation(1).WithArguments("private", "closed"),
+            };
 
-                // The reference assemblies don't define IsClosedTypeAttribute yet.
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -160,21 +154,15 @@ public struct Layout
 }
 ";
 
-            await new CSharpTest()
+            DiagnosticResult[] expected =
             {
-                TestCode = testCode,
-                FixedCode = fixedCode,
-                ExpectedDiagnostics =
-                {
-                    Diagnostic().WithLocation(0).WithArguments("public", "safe"),
-                    Diagnostic().WithLocation(3).WithArguments("static", "safe"),
-                    Diagnostic().WithLocation(1).WithArguments("static", "safe"),
-                    Diagnostic().WithLocation(2).WithArguments("public", "safe"),
-                },
+                Diagnostic().WithLocation(0).WithArguments("public", "safe"),
+                Diagnostic().WithLocation(3).WithArguments("static", "safe"),
+                Diagnostic().WithLocation(1).WithArguments("static", "safe"),
+                Diagnostic().WithLocation(2).WithArguments("public", "safe"),
+            };
 
-                // The safe modifier is still a preview feature and its rules depend on compiler feature flags.
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -186,8 +174,6 @@ public struct Layout
         [WorkItem(4182, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4182")]
         public async Task TestUnionDeclarationAsync()
         {
-            // The reference assemblies used by these tests do not define System.Runtime.CompilerServices.IUnion and
-            // UnionAttribute, so union declarations produce CS0518 and CS0656, and compiler diagnostics are ignored.
             var testCode = @"
 readonly {|#0:public|} union Pet(int, string)
 {
@@ -198,7 +184,7 @@ public readonly partial union Animal(int, string);
 
 public class Outer
 {
-    partial {|#2:internal|} union NestedPet(int, string);
+    {|CS0267:partial|} {|#2:internal|} union NestedPet(int, string);
 }
 ";
 
@@ -216,18 +202,14 @@ public class Outer
 }
 ";
 
-            await new CSharpTest()
+            DiagnosticResult[] expected =
             {
-                TestCode = testCode,
-                FixedCode = fixedCode,
-                ExpectedDiagnostics =
-                {
-                    Diagnostic().WithLocation(0).WithArguments("public", "readonly"),
-                    Diagnostic().WithLocation(1).WithArguments("public", "static"),
-                    Diagnostic().WithLocation(2).WithArguments("internal", "partial"),
-                },
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+                Diagnostic().WithLocation(0).WithArguments("public", "readonly"),
+                Diagnostic().WithLocation(1).WithArguments("public", "static"),
+                Diagnostic().WithLocation(2).WithArguments("internal", "partial"),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

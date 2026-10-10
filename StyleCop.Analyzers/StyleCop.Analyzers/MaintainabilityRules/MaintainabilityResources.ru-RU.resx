@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="SA1119CodeFix" xml:space="preserve">
+    <value>Удалить круглые скобки</value>
+  </data>
+  <data name="SA1119Description" xml:space="preserve">
+    <value>Оператор C# содержит ненужные круглые скобки, которые следует удалить.</value>
+  </data>
+  <data name="SA1119MessageFormat" xml:space="preserve">
+    <value>Оператор не должен содержать ненужные круглые скобки</value>
+  </data>
+  <data name="SA1119Title" xml:space="preserve">
+    <value>Оператор не должен содержать ненужные круглые скобки</value>
+  </data>
+  <data name="SA1400CodeFix" xml:space="preserve">
+    <value>Объявить уровень доступа</value>
+  </data>
+  <data name="SA1400Description" xml:space="preserve">
+    <value>Модификатор доступа для элемента C# не указан явно.</value>
+  </data>
+  <data name="SA1400MessageFormat" xml:space="preserve">
+    <value>Элемент '{0}' должен объявлять модификатор доступа</value>
+  </data>
+  <data name="SA1400Title" xml:space="preserve">
+    <value>Модификатор доступа должен быть объявлен</value>
+  </data>
+  <data name="SA1401Description" xml:space="preserve">
+    <value>Поле в классе C# имеет модификатор доступа, отличный от private.</value>
+  </data>
+  <data name="SA1401MessageFormat" xml:space="preserve">
+    <value>Поле должно иметь модификатор private</value>
+  </data>
+  <data name="SA1401Title" xml:space="preserve">
+    <value>Поля должны иметь модификатор private</value>
+  </data>
+  <data name="SA1402CodeFix" xml:space="preserve">
+    <value>Переместить тип в новый файл</value>
+  </data>
+  <data name="SA1402Description" xml:space="preserve">
+    <value>Файл кода C# содержит более одного уникального типа.</value>
+  </data>
+  <data name="SA1402MessageFormat" xml:space="preserve">
+    <value>Файл может содержать только один тип</value>
+  </data>
+  <data name="SA1402Title" xml:space="preserve">
+    <value>Файл может содержать только один тип</value>
+  </data>
+  <data name="SA1403Description" xml:space="preserve">
+    <value>Файл кода C# содержит более одного пространства имен.</value>
+  </data>
+  <data name="SA1403MessageFormat" xml:space="preserve">
+    <value>Файл может содержать только одно пространство имен</value>
+  </data>
+  <data name="SA1403Title" xml:space="preserve">
+    <value>Файл может содержать только одно пространство имен</value>
+  </data>
+  <data name="SA1404CodeFix" xml:space="preserve">
+    <value>Исправить обоснование</value>
+  </data>
+  <data name="SA1404Description" xml:space="preserve">
+    <value>Атрибут SuppressMessage для анализа кода не содержит обоснования.</value>
+  </data>
+  <data name="SA1404MessageFormat" xml:space="preserve">
+    <value>Подавление сообщения анализа кода должно иметь обоснование</value>
+  </data>
+  <data name="SA1404Title" xml:space="preserve">
+    <value>Подавление сообщения анализа кода должно иметь обоснование</value>
+  </data>
+  <data name="SA1405Description" xml:space="preserve">
+    <value>Вызов Debug.Assert в коде C# не содержит поясняющего сообщения.</value>
+  </data>
+  <data name="SA1405MessageFormat" xml:space="preserve">
+    <value>Вызов Debug.Assert должен содержать текст сообщения</value>
+  </data>
+  <data name="SA1405Title" xml:space="preserve">
+    <value>Вызов Debug.Assert должен содержать текст сообщения</value>
+  </data>
+  <data name="SA1406Description" xml:space="preserve">
+    <value>Вызов Debug.Fail в коде C# не содержит поясняющего сообщения.</value>
+  </data>
+  <data name="SA1406MessageFormat" xml:space="preserve">
+    <value>Вызов Debug.Fail должен содержать текст сообщения</value>
+  </data>
+  <data name="SA1406Title" xml:space="preserve">
+    <value>Вызов Debug.Fail должен содержать текст сообщения</value>
+  </data>
+  <data name="SA1407Description" xml:space="preserve">
+    <value>Оператор C# содержит сложное арифметическое выражение, в котором отсутствуют круглые скобки вокруг операций.</value>
+  </data>
+  <data name="SA1407MessageFormat" xml:space="preserve">
+    <value>Арифметические выражения должны явно указывать приоритет операций</value>
+  </data>
+  <data name="SA1407SA1408CodeFix" xml:space="preserve">
+    <value>Добавить круглые скобки</value>
+  </data>
+  <data name="SA1407Title" xml:space="preserve">
+    <value>Арифметические выражения должны явно указывать приоритет операций</value>
+  </data>
+  <data name="SA1408Description" xml:space="preserve">
+    <value>Оператор C# содержит сложное условное выражение, в котором отсутствуют круглые скобки вокруг операций.</value>
+  </data>
+  <data name="SA1408MessageFormat" xml:space="preserve">
+    <value>Условные выражения должны явно указывать приоритет операций</value>
+  </data>
+  <data name="SA1408Title" xml:space="preserve">
+    <value>Условные выражения должны явно указывать приоритет операций</value>
+  </data>
+  <data name="SA1409Description" xml:space="preserve">
+    <value>Файл C# содержит ненужный код, который можно удалить, не изменяя общую логику кода.</value>
+  </data>
+  <data name="SA1409MessageFormat" xml:space="preserve">
+    <value>TODO: Формат сообщения</value>
+  </data>
+  <data name="SA1409Title" xml:space="preserve">
+    <value>Удалите ненужный код</value>
+  </data>
+  <data name="SA1410Description" xml:space="preserve">
+    <value>Анонимный метод C# не принимает параметров, но оператор по-прежнему содержит круглые скобки.</value>
+  </data>
+  <data name="SA1410MessageFormat" xml:space="preserve">
+    <value>Удалите круглые скобки делегата, когда это возможно</value>
+  </data>
+  <data name="SA1410SA1411CodeFix" xml:space="preserve">
+    <value>Удалить круглые скобки</value>
+  </data>
+  <data name="SA1410Title" xml:space="preserve">
+    <value>Удалите круглые скобки делегата, когда это возможно</value>
+  </data>
+  <data name="SA1411Description" xml:space="preserve">
+    <value>TODO.</value>
+  </data>
+  <data name="SA1411MessageFormat" xml:space="preserve">
+    <value>Конструктор атрибута не должен содержать ненужные круглые скобки</value>
+  </data>
+  <data name="SA1411Title" xml:space="preserve">
+    <value>Конструктор атрибута не должен содержать ненужные круглые скобки</value>
+  </data>
+  <data name="SA1412CodeFix" xml:space="preserve">
+    <value>Изменить кодировку с '{0}' на UTF-8 с меткой порядка байтов</value>
+  </data>
+  <data name="SA1412Description" xml:space="preserve">
+    <value>Исходные файлы должны сохраняться в кодировке UTF-8 с меткой порядка байтов.</value>
+  </data>
+  <data name="SA1412MessageFormat" xml:space="preserve">
+    <value>Сохраняйте файлы в кодировке UTF-8 с меткой порядка байтов</value>
+  </data>
+  <data name="SA1412Title" xml:space="preserve">
+    <value>Сохраняйте файлы в кодировке UTF-8 с меткой порядка байтов</value>
+  </data>
+  <data name="SA1413CodeFix" xml:space="preserve">
+    <value>Добавить завершающую запятую</value>
+  </data>
+  <data name="SA1413Description" xml:space="preserve">
+    <value>Многострочный инициализатор, перечисление, выражение switch или шаблон свойства в файле кода C# должны содержать запятую в последней строке.</value>
+  </data>
+  <data name="SA1413MessageFormat" xml:space="preserve">
+    <value>Используйте завершающую запятую в многострочных инициализаторах и списках</value>
+  </data>
+  <data name="SA1413Title" xml:space="preserve">
+    <value>Используйте завершающую запятую в многострочных инициализаторах и списках</value>
+  </data>
+  <data name="SA1414Description" xml:space="preserve">
+    <value>Типы кортежей в объявлениях членов должны явно задавать имена элементов кортежа.</value>
+  </data>
+  <data name="SA1414MessageFormat" xml:space="preserve">
+    <value>Типы кортежей в сигнатурах должны содержать имена элементов</value>
+  </data>
+  <data name="SA1414Title" xml:space="preserve">
+    <value>Типы кортежей в сигнатурах должны содержать имена элементов</value>
+  </data>
+</root>

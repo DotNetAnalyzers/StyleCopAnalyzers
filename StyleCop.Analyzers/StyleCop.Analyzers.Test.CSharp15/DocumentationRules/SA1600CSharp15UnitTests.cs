@@ -12,9 +12,6 @@ namespace StyleCop.Analyzers.Test.CSharp15.DocumentationRules
         StyleCop.Analyzers.DocumentationRules.SA1600ElementsMustBeDocumented,
         StyleCop.Analyzers.DocumentationRules.SA1600CodeFixProvider>;
 
-    // Union declarations are only parsed with the preview language version, which is the default for this test project.
-    // The reference assemblies used by these tests do not define System.Runtime.CompilerServices.IUnion and
-    // UnionAttribute, so union declarations produce CS0518 and CS0656, and compiler diagnostics are therefore ignored.
     public partial class SA1600CSharp15UnitTests : SA1600CSharp14UnitTests
     {
         /// <summary>
@@ -49,7 +46,6 @@ public class Outer
             {
                 TestCode = testCode,
                 ExpectedDiagnostics = { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1) },
-                CompilerDiagnostics = CompilerDiagnostics.None,
                 DisabledDiagnostics = { "CS1591" },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
@@ -74,7 +70,6 @@ public partial union Pet
             await new CSharpTest()
             {
                 TestCode = testCode,
-                CompilerDiagnostics = CompilerDiagnostics.None,
                 DisabledDiagnostics = { "CS1591" },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
@@ -123,7 +118,6 @@ public union Pet(int, string)
                     Diagnostic().WithLocation(3),
                     Diagnostic().WithLocation(4),
                 },
-                CompilerDiagnostics = CompilerDiagnostics.None,
                 DisabledDiagnostics = { "CS1591" },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }

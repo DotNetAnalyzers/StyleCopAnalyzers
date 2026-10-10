@@ -11,6 +11,11 @@ namespace StyleCop.Analyzers.Test.CSharp11.DocumentationRules
 
     public partial class SA1600CSharp11UnitTests : SA1600CSharp10UnitTests
     {
+        protected override DiagnosticResult[] GetExpectedRecordParameterDiagnostics(int location)
+        {
+            return new[] { Diagnostic().WithLocation(location) };
+        }
+
         protected override DiagnosticResult[] GetExpectedResultTestTypeWithPrimaryConstructorWithoutDocumentation()
         {
             return new[]

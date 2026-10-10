@@ -11,6 +11,9 @@
         "src": "documentation",
         "files": [
           "**/*.md"
+        ],
+        "exclude": [
+          "*-*/**"
         ]
       },
       {
@@ -36,12 +39,14 @@
     "dest": "_site",
     "template": [
       "default",
-      "modern"
+      "modern",
+      "build/docfx/common"
     ],
     "globalMetadata": {
       "_appName": "StyleCop.Analyzers",
       "_appTitle": "StyleCop.Analyzers documentation",
       "_enableSearch": true,
+      "_lang": "en",
       "_gitContribute": {
         "branch": "master"
       }

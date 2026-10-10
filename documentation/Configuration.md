@@ -231,7 +231,7 @@ The following properties are used in **stylecop.json** to configure basic indent
 
 When using an **.editorconfig** file to configure StyleCop Analyzers, the basic indentation settings (`indent_size`, `tab_width` and `indent_style`) as described at editorconfig.org can be used.
 > :bulb: When working in Visual Studio, the IDE will not automatically adjust editor settings according to the values in
-> **stylecop.json**. To provide this functionality, we recommend using the **.editorconfig** file instead. Users of the [EditorConfig](https://visualstudiogallery.msdn.microsoft.com/c8bccfe2-650c-4b42-bc5c-845e21f96328)
+> **stylecop.json**. To provide this functionality, we recommend using the **.editorconfig** file instead. Users of the [EditorConfig](https://marketplace.visualstudio.com/items?itemName=EditorConfigTeam.EditorConfig)
 > extension for Visual Studio will not need to update their C# indentation settings in order to match your project style.
 
 ## Spacing Rules

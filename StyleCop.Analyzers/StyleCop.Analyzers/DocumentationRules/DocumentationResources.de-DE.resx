@@ -183,4 +183,52 @@
   <data name="StartingTextInitializesWhether" xml:space="preserve">
     <value>Initialisiert einen Wert, der angibt, ob</value>
   </data>
+  <data name="ConstructorDocumentationCodeFix" xml:space="preserve">
+    <value>Konstruktor-Dokumentation generieren</value>
+  </data>
+  <data name="DestructorDocumentationCodeFix" xml:space="preserve">
+    <value>Destruktor-Dokumentation generieren</value>
+  </data>
+  <data name="InheritdocCodeFix" xml:space="preserve">
+    <value>Dokumentation erben</value>
+  </data>
+  <data name="MethodDocumentationCodeFix" xml:space="preserve">
+    <value>Methodendokumentation generieren</value>
+  </data>
+  <data name="PropertySummaryStartTextCodeFix" xml:space="preserve">
+    <value>Standardtext hinzufügen</value>
+  </data>
+  <data name="SA1609SA1610CodeFix" xml:space="preserve">
+    <value>Wert aus der Zusammenfassung dokumentieren</value>
+  </data>
+  <data name="SA1615SA1616CodeFix" xml:space="preserve">
+    <value>Rückgabewert dokumentieren</value>
+  </data>
+  <data name="SA1617CodeFix" xml:space="preserve">
+    <value>XML-Kommentar &lt;returns&gt; entfernen</value>
+  </data>
+  <data name="SA1626CodeFix" xml:space="preserve">
+    <value>In Zeilenkommentar umwandeln</value>
+  </data>
+  <data name="SA1626CodeFixStrayComment" xml:space="preserve">
+    <value>In Dokumentationskommentar umwandeln</value>
+  </data>
+  <data name="SA1629CodeFix" xml:space="preserve">
+    <value>Punkt hinzufügen</value>
+  </data>
+  <data name="SA1633CodeFix" xml:space="preserve">
+    <value>Dateikopf hinzufügen</value>
+  </data>
+  <data name="SA1649CodeFix" xml:space="preserve">
+    <value>Datei in den Namen des ersten Typs umbenennen</value>
+  </data>
+  <data name="SA1651CodeFix" xml:space="preserve">
+    <value>Platzhaltertext vervollständigen</value>
+  </data>
+  <data name="StartingTextReturns" xml:space="preserve">
+    <value>Gibt zurück</value>
+  </data>
+  <data name="StartingTextReturnsWhether" xml:space="preserve">
+    <value>Gibt einen Wert zurück, der angibt, ob</value>
+  </data>
 </root>

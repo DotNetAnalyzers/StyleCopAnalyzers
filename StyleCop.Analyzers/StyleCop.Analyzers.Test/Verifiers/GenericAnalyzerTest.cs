@@ -5,11 +5,13 @@ namespace StyleCop.Analyzers.Test.Verifiers
 {
     using System;
     using System.Collections.Immutable;
+    using System.IO;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Testing;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Lightup;
+    using StyleCop.Analyzers.Test.Helpers;
 
     internal static class GenericAnalyzerTest
     {
@@ -51,9 +53,16 @@ namespace StyleCop.Analyzers.Test.Verifiers
 
             // Use appropriate default reference assemblies per the support matrix:
             // https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/configure-language-version
-            // C# 13 ships with .NET 9 and C# 14 with .NET 10.
+            // C# 13 ships with .NET 9, C# 14 with .NET 10, and C# 15 with .NET 11.
             ReferenceAssemblies defaultReferenceAssemblies;
-            if (LightupHelpers.SupportsCSharp14)
+            if (TestLanguageVersion.SupportsCSharp15)
+            {
+                defaultReferenceAssemblies = new ReferenceAssemblies(
+                    "net11.0",
+                    new PackageIdentity("Microsoft.NETCore.App.Ref", "11.0.0-rc.1.26425.128"),
+                    Path.Combine("ref", "net11.0"));
+            }
+            else if (LightupHelpers.SupportsCSharp14)
             {
                 defaultReferenceAssemblies = ReferenceAssemblies.Net.Net100;
             }
