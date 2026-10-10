@@ -1,0 +1,68 @@
+name: TUnit performance experiment
+
+on:
+  push:
+    branches: [aarnott-test-performance-experiments]
+    paths:
+    - .github/workflows/test-performance-tunit.yml
+    - build/test-performance/**
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  TESTINGPLATFORM_TELEMETRY_OPTOUT: '1'
+  MSBuildEnableWorkloadResolver: false
+  NUGET_PLUGIN_HANDSHAKE_TIMEOUT_IN_SECONDS: 20
+  NUGET_PLUGIN_REQUEST_TIMEOUT_IN_SECONDS: 20
+
+jobs:
+  measure:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+    - name: Configure line endings
+      run: git config --global core.autocrlf true
+    - uses: actions/checkout@v7
+      with:
+        fetch-depth: 0
+    - uses: actions/setup-dotnet@v6
+      with:
+        global-json-file: global.json
+    - name: Build original Release tests
+      shell: pwsh
+      run: |
+        New-Item -ItemType Directory -Force results | Out-Null
+        $timer = [Diagnostics.Stopwatch]::StartNew()
+        dotnet build .\StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp15 -c Release -f net472 -m:1 -v:minimal
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        $timer.Elapsed.TotalSeconds | Set-Content results\original-build-seconds.txt
+    - name: Generate TUnit entry points without changing test bodies
+      shell: pwsh
+      run: |
+        dotnet build .\build\test-performance\Generate -c Release -m:1 -p:BuildProjectReferences=false -v:minimal
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        .\build\test-performance\Generate\bin\Release\net472\Generate.exe .\build\test-performance\TUnit\GeneratedTests.cs
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        Copy-Item .\build\test-performance\TUnit\GeneratedTests.cs.cases.tsv results
+    - name: Measure additional TUnit build cost
+      shell: pwsh
+      run: |
+        $timer = [Diagnostics.Stopwatch]::StartNew()
+        dotnet build .\build\test-performance\TUnit -c Release -m:1 -p:BuildProjectReferences=false -v:minimal
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        $timer.Elapsed.TotalSeconds | Set-Content results\tunit-build-seconds.txt
+    - name: Measure complete TUnit suite without coverage
+      shell: pwsh
+      run: |
+        .\build\test-performance.ps1 -Runner .\build\test-performance\TUnit\bin\Release\net472\TestPerformance.TUnit.exe `
+          -Framework TUnit -ThreadCounts default,2,4,8 -Repetitions 3 -ExpectedTests 9752 -OutputDirectory results
+    - uses: actions/upload-artifact@v7
+      if: always()
+      with:
+        name: test-performance-tunit
+        path: results
+        if-no-files-found: error

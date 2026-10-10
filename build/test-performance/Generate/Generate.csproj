@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net472</TargetFramework>
+    <LangVersion>14</LangVersion>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp15\StyleCop.Analyzers.Test.CSharp15.csproj" />
+  </ItemGroup>
+</Project>

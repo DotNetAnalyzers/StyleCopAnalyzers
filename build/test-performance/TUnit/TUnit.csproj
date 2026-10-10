@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>TestPerformance.TUnit</AssemblyName>
+    <TargetFramework>net472</TargetFramework>
+    <LangVersion>14</LangVersion>
+    <Nullable>enable</Nullable>
+    <TUnitAssertionsImplicitUsings>false</TUnitAssertionsImplicitUsings>
+    <TUnitImplicitUsings>false</TUnitImplicitUsings>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="TUnit" Version="1.73.19" />
+    <ProjectReference Include="..\..\..\StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp15\StyleCop.Analyzers.Test.CSharp15.csproj" />
+  </ItemGroup>
+  <Target Name="RequireGeneratedTests" BeforeTargets="CoreCompile">
+    <Error Condition="!Exists('$(MSBuildProjectDirectory)\GeneratedTests.cs')"
+           Text="Run the Generate executable with build\test-performance\TUnit\GeneratedTests.cs as its argument before building." />
+  </Target>
+</Project>

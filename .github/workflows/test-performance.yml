@@ -1,8 +1,6 @@
 name: Test performance experiment
 
 on:
-  push:
-    branches: [aarnott-test-performance-experiments]
   workflow_dispatch:
     inputs:
       repetitions:

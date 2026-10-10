@@ -1,0 +1,4 @@
+**/bin/
+**/obj/
+TUnit/GeneratedTests.cs
+TUnit/GeneratedTests.cs.cases.tsv
