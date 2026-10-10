@@ -18,7 +18,7 @@ Use all three sources and reconcile them. Each one has missed something the othe
 
 1. What's new: `https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-N` (each heading has an
    anchor; the sub-issue links to it).
-2. Roslyn's [Language Feature Status](https://github.com/dotnet/roslyn/blob/main/docs/Language%20Feature%20Status.md)
+2. Roslyn's [Language Feature Status](https://raw.githubusercontent.com/dotnet/roslyn/main/docs/Language%20Feature%20Status.md)
    (features merged into the compiler for the version, including ones the docs don't cover yet).
 3. csharplang proposals: `https://github.com/dotnet/csharplang/tree/main/proposals/csharp-N.0` (exact syntax and
    grammar; read these to write probe snippets).

@@ -21,7 +21,7 @@ StyleCop Analyzers можно настроить несколькими неза
 Наборы правил анализа кода традиционно использовались для настройки большинства диагностических анализаторов в Visual Studio.
 Сведения о создании и изменении таких файлов приведены в документации [Использование наборов правил для группировки правил анализа кода](https://docs.microsoft.com/visualstudio/code-quality/using-rule-sets-to-group-code-analysis-rules) на docs.microsoft.com.
 
-Пример файла набора правил с конфигурацией StyleCop Analyzers по умолчанию доступен по адресу <https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/StyleCop.Analyzers/StyleCop.Analyzers.CodeFixes/rulesets/StyleCopAnalyzersDefault.ruleset>.
+Пример файла набора правил с конфигурацией StyleCop Analyzers по умолчанию доступен по адресу <https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers.CodeFixes/rulesets/StyleCopAnalyzersDefault.ruleset>.
 
 <a id="getting-started-with-stylecopjson"></a>
 
