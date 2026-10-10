@@ -6,8 +6,10 @@
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
+    using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -165,7 +167,8 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
 
                 BaseTypeDeclarationSyntax declaration = (BaseTypeDeclarationSyntax)context.Node;
-                if (declaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                bool isRecord = declaration.IsKind(SyntaxKindEx.RecordDeclaration) || declaration.IsKind(SyntaxKindEx.RecordStructDeclaration);
+                if (!isRecord && declaration.Modifiers.Any(SyntaxKind.PartialKeyword))
                 {
                     // Handled by SA1601
                     return;
@@ -173,7 +176,19 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
                 Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
-                if (NeedsComment(settings.DocumentationRules, declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
+                bool needsComment = NeedsComment(settings.DocumentationRules, declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility);
+                if (isRecord)
+                {
+                    HandleRecordParameters(context, (TypeDeclarationSyntax)declaration, needsComment);
+                }
+
+                if (declaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                {
+                    // The type documentation is handled by SA1601. Record parameters are checked above.
+                    return;
+                }
+
+                if (needsComment)
                 {
                     if (!XmlCommentHelper.HasDocumentation(declaration))
                     {
@@ -419,6 +434,72 @@ namespace StyleCop.Analyzers.DocumentationRules
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
                         }
+                    }
+                }
+            }
+
+            private static void HandleRecordParameters(SyntaxNodeAnalysisContext context, TypeDeclarationSyntax typeDeclaration, bool needsComment)
+            {
+                var parameterList = typeDeclaration.ParameterList();
+                if (!needsComment || parameterList == null || parameterList.Parameters.Count == 0)
+                {
+                    return;
+                }
+
+                var documentation = typeDeclaration.GetDocumentationCommentTriviaSyntax();
+                if (documentation?.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag) != null)
+                {
+                    return;
+                }
+
+                var documentedParameters = new HashSet<string>(StringComparer.Ordinal);
+                if (documentation != null)
+                {
+                    XElement completeDocumentation = null;
+                    if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag) != null)
+                    {
+                        var declaredSymbol = context.SemanticModel.GetDeclaredSymbol(typeDeclaration, context.CancellationToken);
+                        if (declaredSymbol != null)
+                        {
+                            var rawDocumentation = declaredSymbol.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
+                            completeDocumentation = XElement.Parse(rawDocumentation ?? "<doc></doc>", LoadOptions.None);
+                        }
+                    }
+
+                    if (completeDocumentation != null)
+                    {
+                        if (completeDocumentation.Elements(XmlCommentHelper.InheritdocXmlTag).Any())
+                        {
+                            return;
+                        }
+
+                        foreach (var element in completeDocumentation.Elements(XmlCommentHelper.ParamXmlTag))
+                        {
+                            var name = element.Attribute("name");
+                            if (name != null)
+                            {
+                                documentedParameters.Add(name.Value);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (var element in documentation.Content.GetXmlElements(XmlCommentHelper.ParamXmlTag))
+                        {
+                            var name = XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>(element);
+                            if (name != null)
+                            {
+                                documentedParameters.Add(name.Identifier.Identifier.ValueText);
+                            }
+                        }
+                    }
+                }
+
+                foreach (var parameter in parameterList.Parameters)
+                {
+                    if (!documentedParameters.Contains(parameter.Identifier.ValueText))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, parameter.Identifier.GetLocation()));
                     }
                 }
             }

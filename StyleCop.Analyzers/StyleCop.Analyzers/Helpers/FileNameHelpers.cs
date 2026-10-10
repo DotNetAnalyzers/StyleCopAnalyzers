@@ -31,11 +31,33 @@ namespace StyleCop.Analyzers.Helpers
 
         internal static string GetConventionalFileName(MemberDeclarationSyntax declaration, FileNamingConvention convention)
         {
+            return GetConventionalFileName(declaration, convention, GetSimpleFileName(declaration));
+        }
+
+        internal static string GetConventionalFileNameWithDecodedIdentifier(MemberDeclarationSyntax declaration, FileNamingConvention convention)
+        {
+            return GetConventionalFileName(declaration, convention, GetIdentifierValueText(declaration));
+        }
+
+        internal static string GetSimpleFileName(MemberDeclarationSyntax memberDeclaration)
+        {
+            return NamedTypeHelpers.GetNameOrIdentifier(memberDeclaration);
+        }
+
+        internal static string GetIdentifierValueText(MemberDeclarationSyntax memberDeclaration)
+        {
+            var identifier = (memberDeclaration as BaseTypeDeclarationSyntax)?.Identifier
+                ?? ((DelegateDeclarationSyntax)memberDeclaration).Identifier;
+            return identifier.ValueText;
+        }
+
+        private static string GetConventionalFileName(MemberDeclarationSyntax declaration, FileNamingConvention convention, string simpleFileName)
+        {
             if (declaration is TypeDeclarationSyntax typeDeclaration)
             {
                 if (typeDeclaration.TypeParameterList == null)
                 {
-                    return GetSimpleFileName(typeDeclaration);
+                    return simpleFileName;
                 }
 
                 switch (convention)
@@ -51,7 +73,7 @@ namespace StyleCop.Analyzers.Helpers
             {
                 if (delegateDeclaration.TypeParameterList == null)
                 {
-                    return GetSimpleFileName(delegateDeclaration);
+                    return simpleFileName;
                 }
 
                 switch (convention)
@@ -64,13 +86,7 @@ namespace StyleCop.Analyzers.Helpers
                 }
             }
 
-            return GetSimpleFileName(declaration);
-        }
-
-        internal static string GetSimpleFileName(MemberDeclarationSyntax memberDeclaration)
-        {
-            var nameOrIdentifier = NamedTypeHelpers.GetNameOrIdentifier(memberDeclaration);
-            return nameOrIdentifier;
+            return simpleFileName;
         }
 
         private static string GetMetadataFileName(TypeDeclarationSyntax typeDeclaration)
