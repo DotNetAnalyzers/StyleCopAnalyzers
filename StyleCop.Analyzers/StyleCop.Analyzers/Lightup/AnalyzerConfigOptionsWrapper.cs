@@ -15,12 +15,16 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<StringComparer> KeyComparerAccessor;
         private static readonly TryGetValueAccessor<object, string, string> TryGetValueAccessor;
 
+        private static readonly string[] EmptyKeys = new string[0];
+        private static readonly System.Reflection.PropertyInfo KeysProperty;
+
         private readonly object node;
 
         static AnalyzerConfigOptionsWrapper()
         {
             WrappedType = WrapperHelper.GetWrappedType(typeof(AnalyzerConfigOptionsWrapper));
 
+            KeysProperty = WrappedType is null ? null : System.Reflection.RuntimeReflectionExtensions.GetRuntimeProperty(WrappedType, "Keys");
             KeyComparerAccessor = LightupHelpers.CreateStaticPropertyAccessor<StringComparer>(WrappedType, nameof(KeyComparer));
             TryGetValueAccessor = LightupHelpers.CreateTryGetValueAccessor<object, string, string>(WrappedType, typeof(string), nameof(TryGetValue));
         }
@@ -62,6 +66,28 @@ namespace StyleCop.Analyzers.Lightup
         public static bool IsInstance(object obj)
         {
             return obj != null && LightupHelpers.CanWrapObject(obj, WrappedType);
+        }
+
+        /// <summary>
+        /// Gets the keys defined in the options, or an empty collection when the compiler does not support
+        /// enumerating them.
+        /// </summary>
+        /// <returns>The keys defined in the options.</returns>
+        public System.Collections.Generic.IEnumerable<string> GetKeys()
+        {
+            if (this.node is null || KeysProperty is null)
+            {
+                return EmptyKeys;
+            }
+
+            try
+            {
+                return KeysProperty.GetValue(this.node) as System.Collections.Generic.IEnumerable<string> ?? EmptyKeys;
+            }
+            catch (System.Reflection.TargetInvocationException)
+            {
+                return EmptyKeys;
+            }
         }
 
         public bool TryGetValue(string key, out string value)

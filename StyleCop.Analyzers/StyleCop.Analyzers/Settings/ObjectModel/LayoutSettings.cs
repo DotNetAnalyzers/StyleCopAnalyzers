@@ -68,6 +68,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                 }
             }
 
+            newlineAtEndOfFile ??= AnalyzerConfigHelper.TryGetEnumValue<OptionSetting>(analyzerConfigOptions, "stylecop.layout.newlineAtEndOfFile");
             newlineAtEndOfFile ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "insert_final_newline") switch
             {
                 true => OptionSetting.Require,

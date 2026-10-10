@@ -1,20 +1,122 @@
 ﻿# Configuring StyleCop Analyzers
 
-StyleCop Analyzers can be configured using multiple separate mechanisms:
+StyleCop Analyzers has two kinds of configuration: **which rules run and how severe they are**, and **settings** that
+fine-tune individual rules (for example the company name used in file headers).
 
-1. Code analysis rule set files
+**Recommendation:** use an **.editorconfig** file, or a **.globalconfig** file, for both. Every setting can be set
+there, so one file is enough. **stylecop.json** and rule set files continue to work for existing projects, and are
+documented below along with how to migrate from them.
 
-   * Enable and disable individual rules
-   * Configure the severity of violations reported by individual rules
+| Mechanism | Rule severities | Settings |
+| --- | --- | --- |
+| **.editorconfig** / **.globalconfig** (recommended) | Yes (`dotnet_diagnostic.<ID>.severity`) | All |
+| **stylecop.json** | No | All |
+| Rule set files (`.ruleset`) | Yes | No |
 
-2. **stylecop.json**
+If the same setting appears in both **stylecop.json** and an **.editorconfig**/**.globalconfig** file, the value from
+**stylecop.json** is used.
 
-   * Specify project-specific text, such as the name of the company and the structure to use for copyright headers
-   * Fine-tune the behavior of certain rules
+## Unified configuration with .editorconfig or .globalconfig
 
-3. **.editorconfig**
+```ini
+# .editorconfig (or .globalconfig, without the [*.cs] section header and with `is_global = true` at the top)
+root = true
 
-   * Can be used in place of rule set files and **stylecop.json**
+[*.cs]
+# Rule severities
+dotnet_diagnostic.SA1633.severity = none
+dotnet_diagnostic.SA1309.severity = none
+
+# Settings
+stylecop.documentation.companyName = Contoso
+csharp_using_directive_placement = outside_namespace
+```
+
+* Rule severity uses the standard `dotnet_diagnostic.<rule ID>.severity` property (`error`, `warning`, `suggestion`,
+  `silent`, `none`). See [Configure code analyzers](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/configuration-files).
+* **.editorconfig** files apply per source file, using their section headers (such as `[*.cs]`) and folder hierarchy.
+* **.globalconfig** is picked up automatically when it is named exactly **.globalconfig** and is located in or above the
+  project folder. Other file names require adding the file to the `GlobalAnalyzerConfigFiles` MSBuild item. Global
+  configuration files have no section headers: write `is_global = true` at the top, then the properties.
+* There is no default template to copy. Choose only the severities and settings you want to change; the defaults are
+  documented in the sections below. The list of all rules and their default severities is at
+  [README.md](../README.md#current-status) and in each rule's page.
+* SA0001 cannot be disabled through **.editorconfig** (a Roslyn limitation). Use a rule set file or `NoWarn`.
+* Property names are case-insensitive. Boolean values are `true` or `false`, and `unset` ignores a value set in a parent file.
+
+## Settings reference
+
+This table lists every setting, how to set it in each mechanism, the allowed values, and the default. Details for each
+setting are in the sections that follow.
+
+| Section | **stylecop.json** (`settings` object) | **.editorconfig** / **.globalconfig** | Values | Default |
+| --- | --- | --- | --- | --- |
+| Indentation | `indentation.indentationSize` | `indent_size` | integer | `4` |
+| Indentation | `indentation.tabSize` | `tab_width` | integer | `4` |
+| Indentation | `indentation.useTabs` | `indent_style` | `true`/`false` ⇄ `tab`/`space` | `false` / `space` |
+| Readability | `readabilityRules.allowBuiltInTypeAliases` | `stylecop.readability.allowBuiltInTypeAliases` | boolean | `false` |
+| Ordering | `orderingRules.elementOrder` | `stylecop.ordering.elementOrder` | list of `kind`, `accessibility`, `constant`, `static`, `readonly` | `kind, accessibility, constant, static, readonly` |
+| Ordering | `orderingRules.systemUsingDirectivesFirst` | `dotnet_sort_system_directives_first` | boolean | `true` |
+| Ordering | `orderingRules.usingDirectivesPlacement` | `stylecop.ordering.usingDirectivesPlacement` (or `csharp_using_directive_placement`) | `insideNamespace`, `outsideNamespace`, `preserve` ⇄ `inside_namespace`, `outside_namespace` | `insideNamespace` |
+| Ordering | `orderingRules.blankLinesBetweenUsingGroups` | `stylecop.ordering.blankLinesBetweenUsingGroups` (or `dotnet_separate_import_directive_groups`) | `allow`, `require`, `omit` ⇄ `false`, `true` | `allow` |
+| Naming | `namingRules.allowCommonHungarianPrefixes` | `stylecop.naming.allowCommonHungarianPrefixes` | boolean | `true` |
+| Naming | `namingRules.allowedHungarianPrefixes` | `stylecop.naming.allowedHungarianPrefixes` | comma-separated list | empty |
+| Naming | `namingRules.allowedNamespaceComponents` | `stylecop.naming.allowedNamespaceComponents` | comma-separated list | empty |
+| Naming | `namingRules.includeInferredTupleElementNames` | `stylecop.naming.includeInferredTupleElementNames` | boolean | `false` |
+| Naming | `namingRules.tupleElementNameCasing` | `stylecop.naming.tupleElementNameCasing` | `camelCase`, `pascalCase` | `pascalCase` |
+| Maintainability | `maintainabilityRules.topLevelTypes` | `stylecop.maintainability.topLevelTypes` | list of `class`, `interface`, `struct`, `enum`, `delegate` | `class` |
+| Layout | `layoutRules.newlineAtEndOfFile` | `stylecop.layout.newlineAtEndOfFile` (or `insert_final_newline`) | `allow`, `require`, `omit` ⇄ `true`, `false` | `allow` |
+| Layout | `layoutRules.allowConsecutiveUsings` | `stylecop.layout.allowConsecutiveUsings` | boolean | `true` |
+| Layout | `layoutRules.allowDoWhileOnClosingBrace` | `stylecop.layout.allowDoWhileOnClosingBrace` | boolean | `false` |
+| Documentation | `documentationRules.documentExposedElements` | `stylecop.documentation.documentExposedElements` | boolean | `true` |
+| Documentation | `documentationRules.documentInternalElements` | `stylecop.documentation.documentInternalElements` | boolean | `true` |
+| Documentation | `documentationRules.documentPrivateElements` | `stylecop.documentation.documentPrivateElements` | boolean | `false` |
+| Documentation | `documentationRules.documentPrivateFields` | `stylecop.documentation.documentPrivateFields` | boolean | `false` |
+| Documentation | `documentationRules.documentInterfaces` | `stylecop.documentation.documentInterfaces` | `all`, `exposed`, `none` (or boolean) | `all` |
+| Documentation | `documentationRules.companyName` | `stylecop.documentation.companyName` | text | `PlaceholderCompany` |
+| Documentation | `documentationRules.copyrightText` | `stylecop.documentation.copyrightText` (or `file_header_template`) | text; `\n` and `\r` allowed | `Copyright (c) {companyName}. All rights reserved.` |
+| Documentation | `documentationRules.variables.<name>` | `stylecop.documentation.variables.<name>` | text | none |
+| Documentation | `documentationRules.headerDecoration` | `stylecop.documentation.headerDecoration` | text | none |
+| Documentation | `documentationRules.xmlHeader` | `stylecop.documentation.xmlHeader` | boolean | `true` |
+| Documentation | `documentationRules.fileNamingConvention` | `stylecop.documentation.fileNamingConvention` | `stylecop`, `metadata` | `stylecop` |
+| Documentation | `documentationRules.documentationCulture` | `stylecop.documentation.documentationCulture` | culture name | `en-US` |
+| Documentation | `documentationRules.excludeFromPunctuationCheck` | `stylecop.documentation.excludeFromPunctuationCheck` | comma-separated list | empty |
+
+> :memo: When a row lists a generic property in parentheses, the StyleCop-specific property takes precedence if both
+> are set. Generic properties are shared with the .NET SDK and IDE, so they are convenient when you already use them.
+
+## Migrating from stylecop.json
+
+1. Create an **.editorconfig** (or **.globalconfig**) and add each setting using the *Settings reference* table above.
+   The JSON path `documentationRules.companyName` becomes `stylecop.documentation.companyName`; in general, JSON
+   `<section>Rules.<name>` becomes `stylecop.<section>.<name>`, with the exceptions of `indentation` (uses `indent_size`,
+   `tab_width`, `indent_style`) and the generic properties listed above.
+2. Convert arrays to comma-separated lists, for example `["a", "b"]` becomes `a, b`.
+3. Convert each entry of `variables` to a `stylecop.documentation.variables.<name>` property. Variable names in
+   **.editorconfig** are lowercase when compared, so the `{name}` reference in `copyrightText` matches regardless of case.
+4. Delete **stylecop.json** (and the `AdditionalFiles` entry for it, if any). While both exist, **stylecop.json**
+   values win.
+
+> :warning: Reading `variables` from **.editorconfig** needs a compiler that exposes the configured keys (Roslyn 4.4 /
+> Visual Studio 2022 17.4 or newer). Keep `variables` in **stylecop.json** if you must support older compilers.
+
+## Migrating from rule set files
+
+Each rule set entry converts to a severity property:
+
+| Rule set action | .editorconfig |
+| --- | --- |
+| `Action="None"` | `dotnet_diagnostic.SA1000.severity = none` |
+| `Action="Hidden"` | `dotnet_diagnostic.SA1000.severity = silent` |
+| `Action="Info"` | `dotnet_diagnostic.SA1000.severity = suggestion` |
+| `Action="Warning"` | `dotnet_diagnostic.SA1000.severity = warning` |
+| `Action="Error"` | `dotnet_diagnostic.SA1000.severity = error` |
+
+Tools such as `dotnet format` and Visual Studio can also generate these entries for you from a rule set.
+
+The legacy mechanisms are described in the rest of this document.
+
+## Rule sets
 
 Code analysis rule sets have been the standard way to configure most diagnostic analyzers within Visual Studio. Information about creating and customizing these files can be found in the [Using Rule Sets to Group Code Analysis Rules](https://docs.microsoft.com/visualstudio/code-quality/using-rule-sets-to-group-code-analysis-rules) documentation on docs.microsoft.com.
 
@@ -204,7 +306,11 @@ rules remain enforced.
 }
 ```
 
-> :bulb: This property can currently not be set in an **.editorconfig** file.
+> :bulb: This property can also be set in an **.editorconfig** file:
+>
+> ```ini
+> stylecop.ordering.elementOrder = kind, accessibility, constant, static, readonly
+> ```
 
 ### Using Directives
 
@@ -230,6 +336,15 @@ dotnet_sort_system_directives_first = true
 csharp_using_directive_placement = inside_namespace
 dotnet_separate_import_directive_groups = true
 ```
+
+> :memo: The generic properties cannot express every value: `csharp_using_directive_placement` has no `preserve`, and
+> `dotnet_separate_import_directive_groups` has no `omit`. Use the StyleCop specific properties for those; they take
+> precedence over the generic ones:
+>
+> ```ini
+> stylecop.ordering.usingDirectivesPlacement = preserve
+> stylecop.ordering.blankLinesBetweenUsingGroups = omit
+> ```
 
 #### Using Directives Placement
 
@@ -444,7 +559,10 @@ according to rule SA1402. The following types are supported:
 * `enum`
 * `delegate`
 
-> :bulb: This property can currently not be set in an **.editorconfig** file.
+When using an **.editorconfig** file to configure StyleCop Analyzers, the following property can be used (comma-separated, using the same names as above):
+```ini
+stylecop.maintainability.topLevelTypes = class
+```
 
 ## Layout Rules
 
@@ -469,9 +587,13 @@ The following properties are used in **stylecop.json** to configure layout rules
 
 When using an **.editorconfig** file to configure StyleCop Analyzers, the newline setting (`insert_final_newline`) as described at editorconfig.org can be used, and the following additional properties:
 ```ini
+stylecop.layout.newlineAtEndOfFile = allow
 stylecop.layout.allowConsecutiveUsings = true
 stylecop.layout.allowDoWhileOnClosingBrace = false
 ```
+
+> :memo: `insert_final_newline = true` maps to `"require"` and `false` maps to `"omit"`. Neither can express `"allow"`,
+> so use `stylecop.layout.newlineAtEndOfFile` for that. The StyleCop specific property takes precedence.
 
 ### Lines at End of File
 
@@ -535,7 +657,9 @@ stylecop.documentation.headerDecoration = -----------------
 
 > :memo: Instead of `stylecop.documentation.copyrightText` the `file_header_template` property as described in [IDE0073 (Require file header)](https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0073) can be used. However the StyleCop specific property will take precedence.
 
-> :bulb: The `variables` property can currently not be set in an **.editorconfig** file.
+> :bulb: Variables can be set in an **.editorconfig** file with `stylecop.documentation.variables.<name> = <value>`.
+> EditorConfig lowercases property names, so `<name>` is matched case-insensitively. This requires a compiler version
+> that exposes the list of configured keys (Roslyn 4.4 / Visual Studio 2022 17.4 or newer).
 
 #### Configuring Copyright Text
 

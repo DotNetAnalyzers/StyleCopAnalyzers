@@ -95,7 +95,10 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                 }
             }
 
+            elementOrder ??= AnalyzerConfigHelper.TryGetEnumListValue<OrderingTrait>(analyzerConfigOptions, "stylecop.ordering.elementOrder")?.ToBuilder();
             systemUsingDirectivesFirst ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "dotnet_sort_system_directives_first");
+            usingDirectivesPlacement ??= AnalyzerConfigHelper.TryGetEnumValue<UsingDirectivesPlacement>(analyzerConfigOptions, "stylecop.ordering.usingDirectivesPlacement");
+            blankLinesBetweenUsingGroups ??= AnalyzerConfigHelper.TryGetEnumValue<OptionSetting>(analyzerConfigOptions, "stylecop.ordering.blankLinesBetweenUsingGroups");
             usingDirectivesPlacement ??= AnalyzerConfigHelper.TryGetStringValueAndNotification(analyzerConfigOptions, "csharp_using_directive_placement") switch
             {
                 ("inside_namespace", _) => UsingDirectivesPlacement.InsideNamespace,

@@ -71,6 +71,50 @@ stylecop.unrecognizedValue = 3
         }
 
         [Fact]
+        public async Task VerifyStyleCopOnlySettingsFromEditorConfigAsync()
+        {
+            var settings = @"root = true
+
+[*]
+stylecop.ordering.elementOrder = kind, constant, bogus, accessibility
+stylecop.ordering.usingDirectivesPlacement = preserve
+stylecop.ordering.blankLinesBetweenUsingGroups = omit
+stylecop.maintainability.topLevelTypes = class, interface
+stylecop.layout.newlineAtEndOfFile = allow
+insert_final_newline = true
+";
+            var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+
+            Assert.Equal(new[] { OrderingTrait.Kind, OrderingTrait.Constant, OrderingTrait.Accessibility }, styleCopSettings.OrderingRules.ElementOrder);
+            Assert.Equal(UsingDirectivesPlacement.Preserve, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
+            Assert.Equal(OptionSetting.Omit, styleCopSettings.OrderingRules.BlankLinesBetweenUsingGroups);
+            Assert.Equal(new[] { TopLevelType.Class, TopLevelType.Interface }, styleCopSettings.MaintainabilityRules.TopLevelTypes);
+            Assert.Equal(OptionSetting.Allow, styleCopSettings.LayoutRules.NewlineAtEndOfFile);
+        }
+
+        [Fact]
+        public async Task VerifyInvalidStyleCopOnlySettingsFromEditorConfigAreIgnoredAsync()
+        {
+            var settings = @"root = true
+
+[*]
+stylecop.ordering.usingDirectivesPlacement = 1
+stylecop.ordering.blankLinesBetweenUsingGroups = sometimes
+stylecop.layout.newlineAtEndOfFile = unset
+";
+            var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+
+            Assert.Equal(UsingDirectivesPlacement.InsideNamespace, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
+            Assert.Equal(OptionSetting.Allow, styleCopSettings.OrderingRules.BlankLinesBetweenUsingGroups);
+            Assert.Equal(OptionSetting.Allow, styleCopSettings.LayoutRules.NewlineAtEndOfFile);
+            Assert.Equal(new[] { TopLevelType.Class }, styleCopSettings.MaintainabilityRules.TopLevelTypes);
+        }
+
+        [Fact]
         public async Task VerifyFileHeaderTemplateFromEditorConfigAsync()
         {
             var settings = @"root = true
@@ -200,7 +244,7 @@ csharp_using_directive_placement = {placement}
         protected virtual AnalyzerConfigOptionsProvider CreateAnalyzerConfigOptionsProvider(AnalyzerConfigSet analyzerConfigSet)
             => new TestAnalyzerConfigOptionsProvider(analyzerConfigSet);
 
-        private async Task<SyntaxTreeAnalysisContext> CreateAnalysisContextFromEditorConfigAsync(string editorConfig)
+        protected async Task<SyntaxTreeAnalysisContext> CreateAnalysisContextFromEditorConfigAsync(string editorConfig)
         {
             var projectId = ProjectId.CreateNewId();
             var documentId = DocumentId.CreateNewId(projectId);

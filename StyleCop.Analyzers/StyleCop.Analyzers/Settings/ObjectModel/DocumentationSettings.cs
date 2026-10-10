@@ -239,6 +239,24 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             }
 
             documentExposedElements ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.documentExposedElements");
+            if (variables is null)
+            {
+                const string variablesPrefix = "stylecop.documentation.variables.";
+                foreach (var key in analyzerConfigOptions.GetKeys())
+                {
+                    if (key.StartsWith(variablesPrefix, System.StringComparison.OrdinalIgnoreCase))
+                    {
+                        string name = key.Substring(variablesPrefix.Length);
+                        string value = AnalyzerConfigHelper.TryGetMultiLineStringValue(analyzerConfigOptions, key);
+                        if (value != null && IsValidVariableName(name))
+                        {
+                            variables ??= ImmutableDictionary.CreateBuilder<string, string>();
+                            variables[name] = value;
+                        }
+                    }
+                }
+            }
+
             documentInternalElements ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.documentInternalElements");
             documentPrivateElements ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "stylecop.documentation.documentPrivateElements");
             documentInterfaces ??= TryGetDocumentInterfacesValue(analyzerConfigOptions);
@@ -426,7 +444,8 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
                 default:
                     string value;
-                    if (this.Variables.TryGetValue(key, out value))
+                    if (this.Variables.TryGetValue(key, out value)
+                        || this.Variables.TryGetValue(key.ToLowerInvariant(), out value))
                     {
                         return value;
                     }

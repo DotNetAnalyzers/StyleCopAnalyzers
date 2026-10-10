@@ -60,6 +60,8 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                 }
             }
 
+            topLevelTypes ??= AnalyzerConfigHelper.TryGetEnumListValue<TopLevelType>(analyzerConfigOptions, "stylecop.maintainability.topLevelTypes")?.ToBuilder();
+
             this.topLevelTypes = topLevelTypes?.ToImmutable() ?? ImmutableArray<TopLevelType>.Empty;
         }
 
