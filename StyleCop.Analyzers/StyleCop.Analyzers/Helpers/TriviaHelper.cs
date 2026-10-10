@@ -345,56 +345,89 @@ namespace StyleCop.Analyzers.Helpers
         }
 
         /// <summary>
-        /// Strips all leading blank lines from the given token.
+        /// Strips leading blank lines from the given token. A documentation comment belongs to the
+        /// token, so a blank line above that comment is removed and the comment itself is preserved.
         /// </summary>
         /// <param name="token">The token to strip.</param>
         /// <returns>A new token without leading blank lines.</returns>
         internal static SyntaxToken WithoutLeadingBlankLines(this SyntaxToken token)
         {
             var triviaList = token.LeadingTrivia;
-            var leadingWhitespaceStart = triviaList.Count - 1;
-
-            // skip leading whitespace in front of the while keyword
-            while ((leadingWhitespaceStart > 0) && triviaList[leadingWhitespaceStart - 1].IsKind(SyntaxKind.WhitespaceTrivia))
+            if (triviaList.Count == 0)
             {
-                leadingWhitespaceStart--;
+                return token;
             }
 
-            var blankLinesStart = leadingWhitespaceStart - 1;
-            var done = false;
-            while (!done && (blankLinesStart >= 0))
+            int index = triviaList.Count - 1;
+            while (index >= 0 && triviaList[index].IsKind(SyntaxKind.WhitespaceTrivia))
             {
-                switch (triviaList[blankLinesStart].Kind())
+                index--;
+            }
+
+            var keep = new bool[triviaList.Count];
+            for (int i = index + 1; i < triviaList.Count; i++)
+            {
+                keep[i] = true;
+            }
+
+            while (index >= 0)
+            {
+                var trivia = triviaList[index];
+                if (trivia.IsKind(SyntaxKind.WhitespaceTrivia) || trivia.IsKind(SyntaxKind.EndOfLineTrivia))
                 {
-                case SyntaxKind.WhitespaceTrivia:
-                case SyntaxKind.EndOfLineTrivia:
-                    blankLinesStart--;
-                    break;
+                    index--;
+                    continue;
+                }
 
-                case SyntaxKind.IfDirectiveTrivia:
-                case SyntaxKind.ElifDirectiveTrivia:
-                case SyntaxKind.ElseDirectiveTrivia:
-                case SyntaxKind.EndIfDirectiveTrivia:
-                    // directives include an embedded end of line
-                    blankLinesStart++;
-                    done = true;
-                    break;
-
-                default:
-                    // include the first end of line (as it is part of the non blank line trivia)
-                    while (!triviaList[blankLinesStart].HasBuiltinEndLine())
+                if (trivia.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia))
+                {
+                    // The comment carries its own end of line. Keep it and its indent, and keep
+                    // looking so blank lines above the comment are removed.
+                    int commentEnd = index + 1;
+                    while (index > 0 && triviaList[index - 1].IsKind(SyntaxKind.WhitespaceTrivia))
                     {
-                        blankLinesStart++;
+                        index--;
                     }
 
-                    blankLinesStart++;
-                    done = true;
-                    break;
+                    for (int i = index; i < commentEnd; i++)
+                    {
+                        keep[i] = true;
+                    }
+
+                    index--;
+                    continue;
+                }
+
+                // Keep this trivia, the end of line that belongs to it, and everything before it.
+                int end = index;
+                while (end < triviaList.Count && !triviaList[end].HasBuiltinEndLine())
+                {
+                    end++;
+                }
+
+                if (end < triviaList.Count)
+                {
+                    end++;
+                }
+
+                for (int i = 0; i < end; i++)
+                {
+                    keep[i] = true;
+                }
+
+                break;
+            }
+
+            var kept = new List<SyntaxTrivia>(triviaList.Count);
+            for (int i = 0; i < triviaList.Count; i++)
+            {
+                if (keep[i])
+                {
+                    kept.Add(triviaList[i]);
                 }
             }
 
-            var newLeadingTrivia = SyntaxFactory.TriviaList(triviaList.Take(blankLinesStart).Concat(triviaList.Skip(leadingWhitespaceStart)));
-            return token.WithLeadingTrivia(newLeadingTrivia);
+            return token.WithLeadingTrivia(SyntaxFactory.TriviaList(kept));
         }
 
         internal static bool HasBuiltinEndLine(this SyntaxTrivia trivia)
