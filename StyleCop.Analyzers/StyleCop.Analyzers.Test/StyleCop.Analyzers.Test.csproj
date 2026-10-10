@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFrameworks>net10.0</TargetFrameworks>
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">$(TargetFrameworks);net472</TargetFrameworks>
     <EnforceExtendedAnalyzerRules>false</EnforceExtendedAnalyzerRules>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -35,14 +35,13 @@
       Microsoft.Bcl.AsyncInterfaces 9.0.0) get the binding redirects needed to download reference assemblies.
     -->
     <PackageReference Include="NuGet.Resolver" Version="7.0.3" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
     <!-- Exclude Microsoft.Composition which is only needed for .NET Framework execution -->
     <PackageReference Include="Microsoft.Composition" Version="1.0.31" ExcludeAssets="all" />
-
-    <!-- Make sure Windows-1252 is available for testing -->
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>

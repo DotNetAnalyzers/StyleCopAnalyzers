@@ -35,15 +35,15 @@ Check the csproj files for current versions; this table is from Oct 2026.
 
 ## Running tests locally
 
-Both target frameworks build on Windows (`net6.0` and `net472`); on Linux and macOS only `net6.0` builds, and
-running it needs the .NET 6 runtime in addition to the SDK in `global.json`.
+Both target frameworks build on Windows (`net10.0` and `net472`); on Linux and macOS only `net10.0` builds.
+Use the SDK in `global.json`, which also supplies the .NET 10 runtime.
 
 ```bash
 # one rule, one project
 dotnet build StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp15 -c Debug
-dotnet test StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp15 --no-build -f net6.0 --filter "FullyQualifiedName~SA1201"
+dotnet test StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp15 --no-build -f net10.0 --filter "FullyQualifiedName~SA1201"
 # lowest project for the same rule
-dotnet test StyleCop.Analyzers/StyleCop.Analyzers.Test --no-build -f net6.0 --filter "FullyQualifiedName~SA1201"
+dotnet test StyleCop.Analyzers/StyleCop.Analyzers.Test --no-build -f net10.0 --filter "FullyQualifiedName~SA1201"
 ```
 
 - A test project build compiles every earlier project too. Building the C# 6 project and the newest one is
@@ -52,21 +52,30 @@ dotnet test StyleCop.Analyzers/StyleCop.Analyzers.Test --no-build -f net6.0 --fi
 - A build rewrites files under `Lightup/.generated`; on Linux they then look modified only because of line
   endings. Don't commit them unless you meant to regenerate (`lightup-and-roslyn-versions`).
 
-## Linux results versus Windows CI
+## Cross-platform line endings and CI
 
-On Linux, hundreds of code-fix tests fail in every project only because a fix inserts CRLF where the test
-source has LF (`Iterative code fix application` and similar diffs; SA1516, SA1127, SA1500/SA1501, SA1514, SA1027
-...). Windows CI (with `core.autocrlf true`) is the authority. Locally, **compare failing test sets**, never
-totals:
+CI builds on Windows and runs all ten compiler versions in Debug and Release on Linux using `net10.0`.
+The Windows builds still compile `net472`, but CI does not execute that target.
+`.gitattributes` forces CRLF for test C# sources on every platform, and the code-fix verifier explicitly
+sets Roslyn's newline option to CRLF. This keeps fixtures deterministic without relaxing code-fix assertions.
+Tests for other newline sequences supply them
+explicitly. An existing checkout may need unchanged test sources refreshed after an attribute change;
+preserve local edits, or use a fresh checkout.
+
+If investigating a regression, **compare failing test sets**, never totals:
 
 ```bash
-dotnet test <project> --no-build -f net6.0 --filter "$FILTER" 2>&1 | sed -nE 's/^\s+Failed ([^ ]+).*/\1/p' | sort > after.txt
+dotnet test <project> --no-build -f net10.0 --filter "$FILTER" 2>&1 | sed -nE 's/^\s+Failed ([^ ]+).*/\1/p' | sort > after.txt
 # same command on a master worktree -> before.txt
 comm -13 before.txt after.txt      # new failures: each one must be explained
 ```
 
-Read every new failure's message before calling it line-ending noise. If it isn't purely `\r\n` vs `\n`, it's
-real (a C# 6 partial-method difference was misread this way once and broke CI).
+Read every new failure's message. A newline mismatch is a failure to fix, not permission to skip a test
+or weaken its assertion. Other platform/runtime differences are real too (a C# 6 partial-method difference
+was once misread as line-ending noise).
+
+CI uses manifest-pinned `coverlet.console` around `dotnet vstest` and produces TRX test results and
+Cobertura coverage. ReportGenerator merges Debug coverage on Linux and needs the .NET 8 runtime.
 
 ## What adequate coverage means
 
@@ -110,4 +119,4 @@ Use `CompilerDiagnostics = CompilerDiagnostics.None` only as a last resort, and 
   wrong, change it in its own commit and explain why in the PR (#4071's SA1208/SA1217 expectations were wrong
   and were corrected with an explanation).
 - Never mark tests as Windows-only or Linux-only to hide line-ending failures.
-- Never rely on local Linux totals as proof; CI's 10 Windows test jobs (Debug and Release) are the gate.
+- Never rely on local totals as proof; CI's ten compiler versions in Debug and Release are the gate.
