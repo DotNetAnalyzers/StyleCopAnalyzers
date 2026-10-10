@@ -24,7 +24,8 @@ for ($iteration = 1; $iteration -le $Repetitions; $iteration++) {
         $directory = Join-Path $using:destination "cs$_"
         & $using:script -Runner $using:Runner -LanguageVersions $_ -ThreadCounts default `
             -Repetitions 1 -OutputDirectory $directory
-    } -ThrottleLimit $MaxProcesses -ErrorAction Stop
+    } -ThrottleLimit $MaxProcesses -ErrorVariable parallelErrors
+    if ($parallelErrors.Count -ne 0) { throw "A test process failed: $($parallelErrors -join [Environment]::NewLine)" }
     $timer.Stop()
     $measurements = @(foreach ($version in $LanguageVersions) {
         Import-Csv (Join-Path $destination "cs$version\measurements.csv")
