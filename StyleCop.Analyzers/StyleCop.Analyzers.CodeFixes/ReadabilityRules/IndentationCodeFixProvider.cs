@@ -13,6 +13,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.Options;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
 
@@ -47,18 +49,18 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+            var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
 
             TextChange textChange;
-            if (!TryGetTextChange(diagnostic, syntaxRoot, out textChange))
+            if (!TryGetTextChange(diagnostic, syntaxRoot, text, document.Project.Solution.Workspace.Options, out textChange))
             {
                 return document;
             }
 
-            var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
             return document.WithText(text.WithChanges(textChange));
         }
 
-        private static bool TryGetTextChange(Diagnostic diagnostic, SyntaxNode syntaxRoot, out TextChange textChange)
+        private static bool TryGetTextChange(Diagnostic diagnostic, SyntaxNode syntaxRoot, SourceText text, OptionSet options, out TextChange textChange)
         {
             string replacement;
             if (!diagnostic.Properties.TryGetValue(SA1137ElementsShouldHaveTheSameIndentation.ExpectedIndentationKey, out replacement))
@@ -78,6 +80,22 @@ namespace StyleCop.Analyzers.ReadabilityRules
             else
             {
                 originalSpan = trivia.Span;
+            }
+
+            var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
+            if ((token.IsKind(SyntaxKind.CloseBraceToken) || token.IsKind(SyntaxKind.CloseBracketToken))
+                && !token.IsFirstInLine())
+            {
+                // Only replace whitespace immediately before the token, preserving any preceding comments.
+                var start = token.SpanStart;
+                var lineStart = text.Lines.GetLineFromPosition(start).Start;
+                while (start > lineStart && char.IsWhiteSpace(text[start - 1]))
+                {
+                    start--;
+                }
+
+                originalSpan = TextSpan.FromBounds(start, token.SpanStart);
+                replacement = FormattingHelper.GetEndOfLineForCodeFix(token, text, options).ToFullString() + replacement;
             }
 
             textChange = new TextChange(originalSpan, replacement);
@@ -100,6 +118,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
 
                 var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+                var text = await document.GetTextAsync().ConfigureAwait(false);
 
                 List<TextChange> changes = new List<TextChange>();
 
@@ -108,7 +127,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     // Some compilers report the same diagnostic twice for positional records and in files with
                     // top-level statements (https://github.com/dotnet/roslyn/issues/53136 and
                     // https://github.com/dotnet/roslyn/issues/58561), and overlapping text changes are not allowed.
-                    if (TryGetTextChange(diagnostic, syntaxRoot, out var textChange) && !changes.Contains(textChange))
+                    if (TryGetTextChange(diagnostic, syntaxRoot, text, document.Project.Solution.Workspace.Options, out var textChange) && !changes.Contains(textChange))
                     {
                         changes.Add(textChange);
                     }
@@ -116,7 +135,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 changes.Sort((left, right) => left.Span.Start.CompareTo(right.Span.Start));
 
-                var text = await document.GetTextAsync().ConfigureAwait(false);
                 return await document.WithText(text.WithChanges(changes)).GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
             }
         }

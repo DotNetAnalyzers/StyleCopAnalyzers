@@ -2024,6 +2024,55 @@ public class TestClass
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that an inline closing brace is moved to its own line without losing comments.
+        /// </summary>
+        /// <param name="trivia">The trivia preceding the closing brace.</param>
+        /// <param name="lineEnding">The line ending used in the source.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData("", "\n")]
+        [InlineData(" ", "\n")]
+        [InlineData(" ", "\r\n")]
+        [InlineData("\t", "\n")]
+        [InlineData(" /* comment */ ", "\n")]
+        [InlineData(" /* comment */ ", "\r\n")]
+        [WorkItem(3296, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3296")]
+        public async Task VerifyInlineInitializerClosingBraceAsync(string trivia, string lineEnding)
+        {
+            var testCode = @"
+class C
+{
+    void M()
+    {
+        int[] _;
+        _ = new[]
+        {
+            42" + trivia + @"{|#0:}|};
+    }
+}
+";
+            var fixedCode = @"
+class C
+{
+    void M()
+    {
+        int[] _;
+        _ = new[]
+        {
+            42" + trivia.TrimEnd() + @"
+        };
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(
+                testCode.ReplaceLineEndings(lineEnding),
+                Diagnostic().WithLocation(0),
+                fixedCode.ReplaceLineEndings(lineEnding),
+                CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         [WorkItem(2774, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2774")]
         public async Task VerifyThatBraceOnSameLineAsOtherCodeAsync()

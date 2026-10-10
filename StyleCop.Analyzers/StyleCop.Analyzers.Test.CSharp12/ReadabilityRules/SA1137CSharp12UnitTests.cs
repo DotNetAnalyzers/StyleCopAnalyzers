@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.Test.CSharp12.ReadabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp11.ReadabilityRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1137ElementsShouldHaveTheSameIndentation,
@@ -14,6 +15,42 @@ namespace StyleCop.Analyzers.Test.CSharp12.ReadabilityRules
 
     public partial class SA1137CSharp12UnitTests : SA1137CSharp11UnitTests
     {
+        /// <summary>
+        /// Verifies that inline closing brackets use the same fix as inline closing braces.
+        /// </summary>
+        /// <param name="lineEnding">The line ending used in the source.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        [WorkItem(3296, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3296")]
+        public async Task TestInlineCollectionExpressionClosingBracketAsync(string lineEnding)
+        {
+            string testCode = @"
+class C
+{
+    private int[] values =
+    [
+        42 /* comment */ {|#0:]|};
+}
+";
+            string fixedCode = @"
+class C
+{
+    private int[] values =
+    [
+        42 /* comment */
+    ];
+}
+";
+
+            await VerifyCSharpFixAsync(
+                testCode.ReplaceLineEndings(lineEnding),
+                Diagnostic().WithLocation(0),
+                fixedCode.ReplaceLineEndings(lineEnding),
+                CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         [WorkItem(3904, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3904")]
         public async Task TestSingleLineCollectionExpressionAsync()
