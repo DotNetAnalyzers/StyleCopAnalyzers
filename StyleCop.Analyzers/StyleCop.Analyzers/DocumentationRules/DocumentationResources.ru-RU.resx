@@ -183,4 +183,52 @@
   <data name="StartingTextInitializesWhether" xml:space="preserve">
     <value>Инициализирует значение, показывающее,</value>
   </data>
+  <data name="ConstructorDocumentationCodeFix" xml:space="preserve">
+    <value>Создать документацию конструктора</value>
+  </data>
+  <data name="DestructorDocumentationCodeFix" xml:space="preserve">
+    <value>Создать документацию деструктора</value>
+  </data>
+  <data name="InheritdocCodeFix" xml:space="preserve">
+    <value>Унаследовать документацию</value>
+  </data>
+  <data name="MethodDocumentationCodeFix" xml:space="preserve">
+    <value>Создать документацию метода</value>
+  </data>
+  <data name="PropertySummaryStartTextCodeFix" xml:space="preserve">
+    <value>Добавить стандартный текст</value>
+  </data>
+  <data name="SA1609SA1610CodeFix" xml:space="preserve">
+    <value>Документировать значение из сводки</value>
+  </data>
+  <data name="SA1615SA1616CodeFix" xml:space="preserve">
+    <value>Документировать возвращаемое значение</value>
+  </data>
+  <data name="SA1617CodeFix" xml:space="preserve">
+    <value>Удалить XML-комментарий &lt;returns&gt;</value>
+  </data>
+  <data name="SA1626CodeFix" xml:space="preserve">
+    <value>Преобразовать в комментарий строки</value>
+  </data>
+  <data name="SA1626CodeFixStrayComment" xml:space="preserve">
+    <value>Преобразовать в комментарий документации</value>
+  </data>
+  <data name="SA1629CodeFix" xml:space="preserve">
+    <value>Добавить точку</value>
+  </data>
+  <data name="SA1633CodeFix" xml:space="preserve">
+    <value>Добавить заголовок файла</value>
+  </data>
+  <data name="SA1649CodeFix" xml:space="preserve">
+    <value>Переименовать файл в соответствии с именем первого типа</value>
+  </data>
+  <data name="SA1651CodeFix" xml:space="preserve">
+    <value>Завершить текст заполнителя</value>
+  </data>
+  <data name="StartingTextReturns" xml:space="preserve">
+    <value>Возвращает</value>
+  </data>
+  <data name="StartingTextReturnsWhether" xml:space="preserve">
+    <value>Возвращает значение, указывающее, выполняется ли</value>
+  </data>
 </root>
