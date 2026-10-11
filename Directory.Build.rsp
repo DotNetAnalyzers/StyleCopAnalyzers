@@ -1,1 +1,2 @@
+# AnnotatorBuildTask does not support parallel builds; keep MSBuild execution serial.
 /m:1
