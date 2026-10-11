@@ -17,11 +17,14 @@ You can also help by filing issues, participating in discussions and doing code 
 The full solution builds with the .NET SDK on Windows and Linux:
 
 ```powershell
-dotnet restore StyleCopAnalyzers.sln --configfile NuGet.config
-dotnet build StyleCopAnalyzers.sln --no-restore -c Release -maxcpucount:1
+dotnet restore StyleCopAnalyzers.sln
+dotnet build StyleCopAnalyzers.sln --no-restore -c Release @Directory.Build.rsp
 ```
 
-Keep builds serial: the reference assembly annotator task does not support parallel builds.
+`Directory.Build.rsp` sets `/m:1` because the reference assembly annotator task does not support
+parallel builds. MSBuild discovers this file automatically, but `dotnet build` overrides it
+with its own parallel-build switch. Pass `@Directory.Build.rsp` explicitly as shown above to
+keep SDK builds serial too.
 The GitHub workflow builds Debug and Release on Linux. The legacy `StyleCopTester` utility
 can be compiled on Linux using reference assemblies, but running it still requires Windows
 and .NET Framework because it uses WPF.

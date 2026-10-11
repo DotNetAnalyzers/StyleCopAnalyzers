@@ -137,13 +137,13 @@ jobs:
     - name: Restore NuGet packages
       env:
         NUGET_PACKAGES: ${{ runner.temp }}/nuget-packages
-      run: dotnet restore StyleCopAnalyzers.sln --configfile NuGet.config
+      run: dotnet restore StyleCopAnalyzers.sln
 
-    # No /m: AnnotatorBuildTask doesn't support parallel builds (same as Azure Pipelines).
+    # Directory.Build.rsp keeps project builds serial for AnnotatorBuildTask.
     - name: Build solution
       env:
         NUGET_PACKAGES: ${{ runner.temp }}/nuget-packages
-      run: dotnet build StyleCopAnalyzers.sln --no-restore -c ${{ matrix.configuration }} -maxcpucount:1 -p:PathMap="${{ github.workspace }}=/_/" -v:minimal -bl:msbuild.binlog
+      run: dotnet build StyleCopAnalyzers.sln --no-restore -c ${{ matrix.configuration }} @Directory.Build.rsp -p:PathMap="${{ github.workspace }}=/_/" -v:minimal -bl:msbuild.binlog
 
     - name: Upload build log
       if: failure()
@@ -281,7 +281,7 @@ jobs:
     - name: Build StyleCop.Analyzers (runs the source generators)
       env:
         NUGET_PACKAGES: ${{ runner.temp }}/nuget-packages
-      run: dotnet build StyleCop.Analyzers/StyleCop.Analyzers/StyleCop.Analyzers.csproj -c Debug --no-incremental -maxcpucount:1
+      run: dotnet build StyleCop.Analyzers/StyleCop.Analyzers/StyleCop.Analyzers.csproj -c Debug --no-incremental @Directory.Build.rsp
 
     # The generators write CRLF (and the resx generator writes mixed line endings on Linux) while the repository stores
     # LF. These files have the 'text' attribute, so git normalizes line endings before comparing: only real content
