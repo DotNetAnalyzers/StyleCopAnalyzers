@@ -62,22 +62,9 @@ Checklist:
       project references every earlier one). Keep `net10.0` plus `net472` on Windows.
 - [ ] `Properties/AssemblyInfo.cs` for the new project, and `InternalsVisibleTo("StyleCop.Analyzers.Test.CSharpN, PublicKey=...")`
       in all three of `StyleCop.Analyzers`, `StyleCop.Analyzers.CodeFixes` and `StyleCop.Analyzers.Test`.
-- [ ] One stub per test class of the previous project. Stubs must keep the UTF-8 BOM (SA1412) and the file
-      header. The private analyzer `SP0001` ("Expected test class '{0}' was not found") lists every missing
-      stub when you build, and the `GeneratePartCodeRefactoringProvider` refactoring creates one in the IDE.
-      A bash equivalent:
-
-  ```bash
-  N=16; M=$((N-1)); P=StyleCop.Analyzers
-  for f in $(cd $P/StyleCop.Analyzers.Test.CSharp$M && find . -name "*CSharp${M}UnitTests.cs"); do
-    dir=$(dirname "$f" | sed 's#^\./##'); [ "$dir" = . ] && dir=
-    old=$(basename "$f" .cs); new=${old/CSharp$M/CSharp$N}
-    ns=StyleCop.Analyzers.Test.CSharp$N${dir:+.${dir//\//.}}; base=StyleCop.Analyzers.Test.CSharp$M${dir:+.${dir//\//.}}
-    mkdir -p "$P/StyleCop.Analyzers.Test.CSharp$N/$dir"
-    printf '\xEF\xBB\xBF// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.\n// Licensed under the MIT License. See LICENSE in the project root for license information.\n\nnamespace %s\n{\n    using %s;\n\n    public partial class %s : %s\n    {\n    }\n}\n' \
-      "$ns" "$base" "$new" "$old" > "$P/StyleCop.Analyzers.Test.CSharp$N/$dir/$new.cs"
-  done
-  ```
+- [ ] The `PrivateCodeFixes` analyzer reference wires in `DerivedTestGenerator`, which generates the derived test
+      class for each test class in the previous project. Do not add empty checked-in wrapper files; declare a
+      `CSharpN` partial test class in source only when that version adds or overrides tests.
 
   Don't put `CSharpM` in the name of a non-test helper type in the previous project: the derived-test
   generator subclasses every type whose name contains that string.
