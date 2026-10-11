@@ -64,6 +64,13 @@ Debug Cobertura reports using `reportgenerator`. `dotnet tool restore` restores 
 tools along with DocFX; ReportGenerator also needs the .NET 8 runtime. Test-result
 artifacts contain VSTest TRX reports.
 
+### Fix All providers
+
+Code fixes which batch individual fixes use `CustomFixAllProviders.BatchFixer`, which delegates to
+Roslyn's `WellKnownFixAllProviders.BatchFixer`. The implementation comes from the compiler host, so
+regression tests must exercise both the oldest supported compiler and the newest one. Rules with a
+specialized document-based or rule-specific Fix All provider retain that provider.
+
 ## Building documentation
 
 The documentation site is built from the Markdown files in `documentation` using

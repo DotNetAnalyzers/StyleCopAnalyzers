@@ -9,7 +9,7 @@ namespace StyleCop.Analyzers.Helpers
     using Microsoft.CodeAnalysis.CodeFixes;
 
     /// <summary>
-    /// Contains custom implementations of <see cref="FixAllProvider"/>.
+    /// Provides the shared <see cref="FixAllProvider"/> used by individual code fixes.
     /// </summary>
     internal static class CustomFixAllProviders
     {
@@ -19,6 +19,7 @@ namespace StyleCop.Analyzers.Helpers
         /// computes fixes in parallel and then merges all the non-conflicting fixes into a single fix all code action.
         /// This fixer supports fixes for the following fix all scopes:
         /// <see cref="FixAllScope.Document"/>, <see cref="FixAllScope.Project"/> and <see cref="FixAllScope.Solution"/>.
+        /// Additional scopes may be supported by newer compiler hosts.
         /// </summary>
         /// <remarks>
         /// <para>The batch fix all provider only batches operations (i.e. <see cref="CodeActionOperation"/>) of type
@@ -28,6 +29,6 @@ namespace StyleCop.Analyzers.Helpers
         /// <value>
         /// The default batch fix all provider.
         /// </value>
-        public static FixAllProvider BatchFixer => CustomBatchFixAllProvider.Instance;
+        public static FixAllProvider BatchFixer => WellKnownFixAllProviders.BatchFixer;
     }
 }

@@ -25,7 +25,6 @@ namespace StyleCop.Analyzers.Test.Verifiers
     using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.Test.Helpers;
-    using Xunit;
 
     internal static class StyleCopCodeFixVerifier<TAnalyzer, TCodeFix>
         where TAnalyzer : DiagnosticAnalyzer, new()
@@ -336,13 +335,6 @@ namespace StyleCop.Analyzers.Test.Verifiers
                 }
 
                 return parseOptions;
-            }
-
-            protected override IEnumerable<CodeFixProvider> GetCodeFixProviders()
-            {
-                var codeFixProvider = new TCodeFix();
-                Assert.NotSame(WellKnownFixAllProviders.BatchFixer, codeFixProvider.GetFixAllProvider());
-                return new[] { codeFixProvider };
             }
 
             private void UpdateGlobalAnalyzerConfig()

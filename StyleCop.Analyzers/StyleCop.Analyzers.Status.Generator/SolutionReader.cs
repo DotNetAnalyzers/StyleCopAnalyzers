@@ -38,7 +38,6 @@ namespace StyleCop.Analyzers.Status.Generator
         private Compilation analyzerCompilation;
         private Compilation codeFixCompilation;
         private ITypeSymbol booleanType;
-        private Type batchFixerType;
 
         private SolutionReader()
         {
@@ -195,8 +194,6 @@ namespace StyleCop.Analyzers.Status.Generator
             this.noCodeFixAttributeTypeSymbol = this.analyzerCompilation.GetTypeByMetadataName("StyleCop.Analyzers.NoCodeFixAttribute");
             this.diagnosticAnalyzerTypeSymbol = this.analyzerCompilation.GetTypeByMetadataName(typeof(DiagnosticAnalyzer).FullName);
 
-            this.batchFixerType = this.codeFixAssembly.GetType("StyleCop.Analyzers.Helpers.CustomBatchFixAllProvider");
-
             this.InitializeCodeFixTypes();
         }
 
@@ -349,7 +346,7 @@ namespace StyleCop.Analyzers.Status.Generator
             }
             else
             {
-                return fixAllProvider.GetType() == this.batchFixerType;
+                return fixAllProvider == WellKnownFixAllProviders.BatchFixer;
             }
         }
 
