@@ -414,7 +414,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             string encodedFilename = new XAttribute("t", fileName).ToString().Substring(2).Trim('"');
             string encodedCompanyName = new XAttribute("t", settings.DocumentationRules.CompanyName).ToString().Substring(2).Trim('"');
-            string encodedCopyrightText = new XText(copyrightText).ToString();
+
+            // XML serialization uses the host's newline sequence, not the document's.
+            string encodedCopyrightText = new XText(copyrightText).ToString().Replace("\r\n", "\n").Replace("\n", newLineText);
 
             string copyrightString =
                 $"{prefixWithLeadingSpaces} <copyright file=\"{encodedFilename}\" company=\"{encodedCompanyName}\">" + newLineText

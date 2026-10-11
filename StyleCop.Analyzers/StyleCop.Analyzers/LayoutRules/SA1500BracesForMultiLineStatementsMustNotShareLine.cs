@@ -64,7 +64,7 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <see cref="SA1500BracesForMultiLineStatementsMustNotShareLine"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1500";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1500.md";
+        private static readonly string HelpLink = HelpLinkHelper.GetHelpLink(DiagnosticId);
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(LayoutResources.SA1500Title), LayoutResources.ResourceManager, typeof(LayoutResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(LayoutResources.SA1500MessageFormat), LayoutResources.ResourceManager, typeof(LayoutResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(LayoutResources.SA1500Description), LayoutResources.ResourceManager, typeof(LayoutResources));
@@ -96,6 +96,7 @@ namespace StyleCop.Analyzers.LayoutRules
             {
                 context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
                 context.RegisterSyntaxNodeAction(BaseTypeDeclarationAction, SyntaxKinds.BaseTypeDeclaration);
+                context.RegisterSyntaxNodeAction(BaseTypeDeclarationAction, SyntaxKindEx.ExtensionBlockDeclaration);
                 context.RegisterSyntaxNodeAction(AccessorListAction, SyntaxKind.AccessorList);
                 context.RegisterSyntaxNodeAction(BlockAction, SyntaxKind.Block);
                 context.RegisterSyntaxNodeAction(SwitchStatementAction, SyntaxKind.SwitchStatement);
@@ -305,6 +306,12 @@ namespace StyleCop.Analyzers.LayoutRules
 
                 case SyntaxKind.EqualsToken when token.Parent.IsKind(SyntaxKind.AccessorList):
                     // the close brace of an accessor list is followed by a property initializer
+                    return;
+
+                case SyntaxKind.CloseBraceToken when nextToken.Parent.IsKind(SyntaxKind.Interpolation):
+                case SyntaxKind.ColonToken when nextToken.Parent.IsKind(SyntaxKind.InterpolationFormatClause):
+                    // the close brace ends the expression of an interpolation, which can span multiple lines in a
+                    // verbatim interpolated string, and from C# 11 in any interpolated string
                     return;
 
                 case SyntaxKind.EndOfFileToken:

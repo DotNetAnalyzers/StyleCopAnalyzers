@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Test
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Testing;
-    using Microsoft.CodeAnalysis.Testing.Verifiers;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
 
     public class AnalyzerConfigurationUnitTests
@@ -57,12 +57,12 @@ namespace StyleCop.Analyzers.Test
                     continue;
                 }
 
-                string expected = $"https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/{diagnostic.Id}.md";
+                string expected = HelpLinkHelper.GetHelpLink(diagnostic.Id);
                 Assert.Equal(expected, diagnostic.HelpLinkUri);
             }
         }
 
-        private class CSharpTest : CodeFixTest<XUnitVerifier>
+        private class CSharpTest : CodeFixTest<DefaultVerifier>
         {
             private readonly Type analyzerType;
 

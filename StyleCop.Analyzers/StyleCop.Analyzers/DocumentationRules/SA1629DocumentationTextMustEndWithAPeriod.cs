@@ -57,7 +57,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         internal const string ReplaceCharKey = "CharToReplace";
 
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1629.md";
+        private static readonly string HelpLink = HelpLinkHelper.GetHelpLink(DiagnosticId);
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1629Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1629MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1629Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
@@ -96,8 +96,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 var textWithoutTrailingWhitespace = node.Value.TrimEnd(' ', '\r', '\n');
                 if (!string.IsNullOrEmpty(textWithoutTrailingWhitespace))
                 {
-                    if (!textWithoutTrailingWhitespace.EndsWith(".", StringComparison.Ordinal)
-                        && !textWithoutTrailingWhitespace.EndsWith(".)", StringComparison.Ordinal))
+                    if (!EndsWithPeriod(textWithoutTrailingWhitespace))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, diagnosticLocations[0], NoCodeFixProperties));
 
@@ -207,10 +206,37 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static bool IsMissingRequiredPeriod(string textWithoutTrailingWhitespace, bool startingWithFinalParagraph)
         {
-            return !textWithoutTrailingWhitespace.EndsWith(".", StringComparison.Ordinal)
-                && !textWithoutTrailingWhitespace.EndsWith(".)", StringComparison.Ordinal)
+            return !EndsWithPeriod(textWithoutTrailingWhitespace)
                 && (startingWithFinalParagraph || !textWithoutTrailingWhitespace.EndsWith(":", StringComparison.Ordinal))
                 && !textWithoutTrailingWhitespace.EndsWith("-or-", StringComparison.Ordinal);
+        }
+
+        /// <summary>
+        /// Determines whether the text ends with a period, optionally followed by closing quotation marks and then an
+        /// optional closing parenthesis. For example, <c>.</c>, <c>.)</c>, <c>."</c>, <c>.'</c>, <c>.”</c>,
+        /// <c>.’”</c>, and <c>.")</c> are all accepted.
+        /// </summary>
+        /// <param name="text">The text, without trailing whitespace.</param>
+        /// <returns><see langword="true"/> if the text ends with a period; otherwise, <see langword="false"/>.</returns>
+        private static bool EndsWithPeriod(string text)
+        {
+            int end = text.Length;
+            if (end > 0 && text[end - 1] == ')')
+            {
+                end--;
+            }
+
+            while (end > 0 && IsClosingQuote(text[end - 1]))
+            {
+                end--;
+            }
+
+            return end > 0 && text[end - 1] == '.';
+
+            static bool IsClosingQuote(char c)
+            {
+                return c == '"' || c == '\'' || c == '\u2019' || c == '\u201D';
+            }
         }
     }
 }

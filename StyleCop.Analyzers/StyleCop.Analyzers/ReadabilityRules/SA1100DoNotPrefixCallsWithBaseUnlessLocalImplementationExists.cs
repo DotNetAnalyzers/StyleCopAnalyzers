@@ -60,7 +60,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <see cref="SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1100";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1100.md";
+        private static readonly string HelpLink = HelpLinkHelper.GetHelpLink(DiagnosticId);
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1100Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1100MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1100Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));

@@ -8,6 +8,8 @@ namespace StyleCop.Analyzers.Test.CSharp11.DocumentationRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp10.DocumentationRules;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<
+        StyleCop.Analyzers.DocumentationRules.SA1648InheritDocMustBeUsedWithInheritingClass>;
 
     public partial class SA1648CSharp11UnitTests : SA1648CSharp10UnitTests
     {
@@ -43,6 +45,14 @@ public class TestClass : TestInterface
 }}";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected override DiagnosticResult[] GetExpectedResultTestTypeWithPrimaryConstructorWithInvalidInheritDoc()
+        {
+            return new[]
+            {
+                Diagnostic().WithLocation(0),
+            };
         }
     }
 }

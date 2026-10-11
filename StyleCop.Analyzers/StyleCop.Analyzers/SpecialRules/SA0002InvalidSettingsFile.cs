@@ -23,15 +23,17 @@ namespace StyleCop.Analyzers.SpecialRules
         /// The ID for diagnostics produced by the <see cref="SA0002InvalidSettingsFile"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA0002";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA0002.md";
+        private static readonly string HelpLink = HelpLinkHelper.GetHelpLink(DiagnosticId);
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpecialResources.SA0002Title), SpecialResources.ResourceManager, typeof(SpecialResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpecialResources.SA0002MessageFormat), SpecialResources.ResourceManager, typeof(SpecialResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpecialResources.SA0002Description), SpecialResources.ResourceManager, typeof(SpecialResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable RS1033 // Define diagnostic description correctly (Description ends with formatted exception text)
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpecialRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink, customTags: new[] { "CompilationEnd" });
 #pragma warning restore RS1033 // Define diagnostic description correctly
+#pragma warning restore IDE0079 // Remove unnecessary suppression
 
         private static readonly Action<CompilationAnalysisContext> CompilationAction = HandleCompilation;
 

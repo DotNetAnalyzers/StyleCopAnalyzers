@@ -3,9 +3,19 @@
 
 namespace StyleCop.Analyzers.Test.CSharp11.DocumentationRules
 {
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp10.DocumentationRules;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<
+        StyleCop.Analyzers.DocumentationRules.SA1618GenericTypeParametersMustBeDocumented>;
 
     public partial class SA1618CSharp11UnitTests : SA1618CSharp10UnitTests
     {
+        protected override DiagnosticResult[] GetExpectedResultTestGenericTypeWithPrimaryConstructorWithoutTypeParameterDocumentation()
+        {
+            return new[]
+            {
+                Diagnostic().WithLocation(0).WithArguments("T"),
+            };
+        }
     }
 }

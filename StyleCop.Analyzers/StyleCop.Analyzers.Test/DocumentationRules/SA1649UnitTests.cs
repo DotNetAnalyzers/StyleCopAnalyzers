@@ -5,9 +5,16 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
+    using System.Collections.Immutable;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CodeActions;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Host.Mef;
     using Microsoft.CodeAnalysis.Testing;
+    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Test.Helpers;
     using StyleCop.Analyzers.Test.Verifiers;
@@ -19,6 +26,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     /// </summary>
     public class SA1649UnitTests
     {
+        protected const string MisnamedDocumentSource = "namespace TestNamespace\r\n{\r\n    public class TestType\r\n    {\r\n    }\r\n}\r\n";
+
         protected const string MetadataSettings = @"
 {
   ""settings"": {
@@ -38,6 +47,61 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
   }
 }
 ";
+
+        /// <summary>
+        /// Verifies that Unicode escapes in type identifiers are evaluated when matching file names.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3907, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3907")]
+        public async Task VerifyUnicodeEscapeFileNameAsync()
+        {
+            var testCode = @"class Name\u0065 { }";
+            await VerifyCSharpDiagnosticAsync("Namee.cs", testCode, testSettings: null, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+
+            var expectedDiagnostic = Diagnostic().WithLocation(0);
+            await VerifyCSharpFixAsync("Name.cs", @"class {|#0:Name\u0065|} { }", testSettings: null, expectedDiagnostic, "Namee.cs", testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that escaped type identifiers use their value for matching and fixing file names.
+        /// </summary>
+        /// <param name="typeKeyword">The type keyword to use during the test.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [MemberData(nameof(CommonMemberData.AllTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        [WorkItem(3907, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3907")]
+        public async Task VerifyEscapedIdentifierFileNameAsync(string typeKeyword)
+        {
+            foreach (var identifier in new[] { @"Name\u0065", @"Name\U00000065", "@Namee", "Namee" })
+            {
+                var testCode = GetTypeDeclaration(typeKeyword, identifier);
+                await VerifyCSharpDiagnosticAsync("Namee.cs", testCode, testSettings: null, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+
+                var markedCode = GetTypeDeclaration(typeKeyword, identifier, diagnosticKey: 0);
+                await VerifyCSharpFixAsync("Name.cs", markedCode, testSettings: null, Diagnostic().WithLocation(0), "Namee.cs", testCode, CancellationToken.None).ConfigureAwait(false);
+            }
+        }
+
+        /// <summary>
+        /// Verifies that escaped generic identifiers match both conventional and simple file names.
+        /// </summary>
+        /// <param name="typeKeyword">The type keyword to use during the test.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [MemberData(nameof(CommonMemberData.GenericTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        [WorkItem(3907, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3907")]
+        public async Task VerifyEscapedGenericIdentifierFileNameAsync(string typeKeyword)
+        {
+            var testCode = GetGenericTypeDeclaration(typeKeyword, @"Name\u0065", new[] { @"\u0054" });
+            await VerifyCSharpDiagnosticAsync("Namee.cs", testCode, StyleCopSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync("Namee{T}.cs", testCode, StyleCopSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync("Namee`1.cs", testCode, MetadataSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+
+            var markedCode = GetGenericTypeDeclaration(typeKeyword, @"Name\u0065", new[] { @"\u0054" }, diagnosticKey: 0);
+            await VerifyCSharpFixAsync("Name.cs", markedCode, StyleCopSettings, Diagnostic().WithLocation(0), "Namee{T}.cs", testCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync("Namee.cs", markedCode, MetadataSettings, Diagnostic().WithLocation(0), "Namee`1.cs", testCode, CancellationToken.None).ConfigureAwait(false);
+        }
 
         /// <summary>
         /// Verifies that a wrong file name is correctly reported.
@@ -487,6 +551,105 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await VerifyCSharpDiagnosticAsync("Class1.cs", testCode, testSettings: null, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(1693, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1693")]
+        [WorkItem(3866, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3866")]
+        public async Task VerifyWithLinkedFileAsync()
+        {
+            var testCode = "public class [|Type1|] { }";
+
+            await new StyleCopCodeFixVerifier<SA1649FileNameMustMatchTypeName, SA1649CodeFixProvider>.CSharpTest()
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        ("0/TestFile.cs", testCode),
+                    },
+                    AdditionalProjects =
+                    {
+                        ["Project2"] =
+                        {
+                            Sources =
+                            {
+                                ("0/TestFile.cs", testCode),
+                            },
+                        },
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        ("0/Type1.cs", testCode),
+                    },
+                    AdditionalProjects =
+                    {
+                        ["Project2"] =
+                        {
+                            Sources =
+                            {
+                                ("0/Type1.cs", testCode),
+                            },
+                        },
+                    },
+                },
+
+                // The test framework's suppression check inserts '#pragma warning disable SA1649' only into the
+                // primary project's sources and re-runs the analyzer; additional projects are left unchanged. Since
+                // both projects contain a document with the same path (which is what links them), the framework
+                // treats the Project2 diagnostic as belonging to a primary-project source file and expects it to be
+                // suppressed, but Project2's copy has no pragma, so the diagnostic is still reported. See
+                // AnalyzerTest<TVerifier>.VerifySuppressionDiagnosticsAsync and IsInSourceFile in
+                // Microsoft.CodeAnalysis.Testing. The other SA1649 tests still cover the suppression check.
+                TestBehaviors = TestBehaviors.SkipSuppressionCheck,
+            }.RunAsync().ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2277, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2277")]
+        public async Task VerifyCodeFixWhenHostCannotRenameDocumentAsync()
+        {
+            // When the host cannot apply document info changes, the code fix must not rename the document in place, and
+            // instead falls back to removing it and adding a new document with the expected name.
+            using (var workspace = new NoDocumentInfoChangesWorkspace())
+            {
+                var (originalId, fixedSolution) = await ApplyCodeFixToMisnamedDocumentAsync(workspace).ConfigureAwait(false);
+
+                var fixedDocument = Assert.Single(Assert.Single(fixedSolution.Projects).Documents);
+                Assert.NotEqual(originalId, fixedDocument.Id);
+                Assert.Equal("TestType.cs", fixedDocument.Name);
+                Assert.Equal(MisnamedDocumentSource, (await fixedDocument.GetTextAsync(CancellationToken.None).ConfigureAwait(false)).ToString());
+            }
+        }
+
+        protected static async Task<(DocumentId originalId, Solution fixedSolution)> ApplyCodeFixToMisnamedDocumentAsync(Workspace workspace)
+        {
+            // The code fix asks the workspace of the solution whether it can apply document info changes, so the
+            // solution does not need to be applied to the workspace.
+            var projectId = ProjectId.CreateNewId();
+            var documentId = DocumentId.CreateNewId(projectId);
+            var solution = workspace.CurrentSolution
+                .AddProject(projectId, "TestProject", "TestProject", LanguageNames.CSharp)
+                .AddDocument(documentId, "WrongFileName.cs", SourceText.From(MisnamedDocumentSource), filePath: "0/WrongFileName.cs");
+            var document = solution.GetDocument(documentId);
+
+            var compilation = await document.Project.GetCompilationAsync(CancellationToken.None).ConfigureAwait(false);
+            var diagnostics = await compilation
+                .WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new SA1649FileNameMustMatchTypeName()))
+                .GetAnalyzerDiagnosticsAsync(CancellationToken.None)
+                .ConfigureAwait(false);
+            var diagnostic = Assert.Single(diagnostics, d => d.Id == SA1649FileNameMustMatchTypeName.DiagnosticId);
+
+            var actions = ImmutableArray.CreateBuilder<CodeAction>();
+            var context = new CodeFixContext(document, diagnostic, (action, ignored) => actions.Add(action), CancellationToken.None);
+            await new SA1649CodeFixProvider().RegisterCodeFixesAsync(context).ConfigureAwait(false);
+
+            var operations = await Assert.Single(actions).GetOperationsAsync(CancellationToken.None).ConfigureAwait(false);
+            var applyChangesOperation = Assert.IsType<ApplyChangesOperation>(Assert.Single(operations));
+            return (document.Id, applyChangesOperation.ChangedSolution);
+        }
+
         protected static string GetTypeDeclaration(string typeKind, string typeName, int? diagnosticKey = null)
         {
             if (diagnosticKey is not null)
@@ -549,6 +712,23 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 
             test.ExpectedDiagnostics.AddRange(expected);
             return test.RunAsync(cancellationToken);
+        }
+
+        /// <summary>
+        /// A workspace which, like some hosts, cannot apply document info changes such as renaming a document in place.
+        /// </summary>
+        private sealed class NoDocumentInfoChangesWorkspace : Workspace
+        {
+            public NoDocumentInfoChangesWorkspace()
+                : base(MefHostServices.DefaultHost, "Test")
+            {
+            }
+
+            public override bool CanApplyChange(ApplyChangesKind feature)
+            {
+                // ApplyChangesKind.ChangeDocumentInfo is not available in every Roslyn version this test runs with
+                return feature.ToString() != "ChangeDocumentInfo";
+            }
         }
     }
 }

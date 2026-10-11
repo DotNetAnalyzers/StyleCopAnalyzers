@@ -27,10 +27,12 @@ namespace StyleCop.Analyzers.Lightup
         public IOperation WrappedOperation => this.operation;
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public ITypeSymbol MatchedType => MatchedTypeAccessor(this.WrappedOperation);
+
         public static explicit operator ITypePatternOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(ITypePatternOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public ITypeSymbol InputType => ((IPatternOperationWrapper)this).InputType;
         public ITypeSymbol NarrowedType => ((IPatternOperationWrapper)this).NarrowedType;
+
         public static explicit operator ITypePatternOperationWrapper(IPatternOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IPatternOperationWrapper(ITypePatternOperationWrapper wrapper) => IPatternOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static ITypePatternOperationWrapper FromOperation(IOperation operation)

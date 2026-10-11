@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Probe harness for language-version audits and issue triage. It is not part of StyleCopAnalyzers.sln.
+    Build StyleCop.Analyzers.CodeFixes (Debug) first. Usage is in Program.cs and in the csharp-language-version-audit
+    skill. Set the RoslynVersion property to probe with another compiler, for example a dotnet-tools feed build.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <RoslynVersion Condition="'$(RoslynVersion)' == ''">5.9.0</RoslynVersion>
+    <RepoRoot>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)', '..', '..', '..', '..', '..'))</RepoRoot>
+    <ProbeConfiguration Condition="'$(ProbeConfiguration)' == ''">Debug</ProbeConfiguration>
+    <ProbeBin Condition="'$(ProbeBin)' == ''">$(RepoRoot)StyleCop.Analyzers/StyleCop.Analyzers.CodeFixes/bin/$(ProbeConfiguration)/netstandard1.1</ProbeBin>
+    <!-- RS1035: banned analyzer APIs (this is a console app, not an analyzer). RSEXPERIMENTAL006: preview syntax APIs. -->
+    <NoWarn>$(NoWarn);RS1035;CS8019;RSEXPERIMENTAL006</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="$(RoslynVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="StyleCop.Analyzers" HintPath="$(ProbeBin)/StyleCop.Analyzers.dll" />
+    <Reference Include="StyleCop.Analyzers.CodeFixes" HintPath="$(ProbeBin)/StyleCop.Analyzers.CodeFixes.dll" />
+  </ItemGroup>
+
+</Project>

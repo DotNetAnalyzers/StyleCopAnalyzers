@@ -69,6 +69,17 @@ namespace StyleCop.Analyzers.Test.OrderingRules
                     yield return new object[] { "internal partial record struct" };
                     yield return new object[] { "record struct" };
                 }
+
+                if (LightupHelpers.SupportsCSharp11)
+                {
+                    yield return new object[] { "file partial class" };
+                    yield return new object[] { "file partial struct" };
+                    yield return new object[] { "file static partial class" };
+                    yield return new object[] { "file sealed partial class" };
+                    yield return new object[] { "file partial interface" };
+                    yield return new object[] { "file partial record" };
+                    yield return new object[] { "file partial record struct" };
+                }
             }
         }
 

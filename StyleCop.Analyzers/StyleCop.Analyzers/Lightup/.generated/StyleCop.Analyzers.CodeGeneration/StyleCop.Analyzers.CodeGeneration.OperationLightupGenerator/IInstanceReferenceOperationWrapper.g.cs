@@ -25,6 +25,7 @@ namespace StyleCop.Analyzers.Lightup
         public IOperation WrappedOperation => this.operation;
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public object ReferenceKind => throw new NotImplementedException("Property 'IInstanceReferenceOperation.ReferenceKind' has unsupported type 'InstanceReferenceKind'");
+
         public static explicit operator IInstanceReferenceOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IInstanceReferenceOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IInstanceReferenceOperationWrapper FromOperation(IOperation operation)

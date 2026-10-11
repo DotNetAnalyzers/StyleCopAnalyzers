@@ -17,15 +17,15 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// <summary>
     /// Analyzer for all file header related diagnostics.
     /// </summary>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1633.md">SA1633 File should have header</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1634.md">SA1634 File header should show copyright</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1635.md">SA1635 File header should have copyright text</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1636.md">SA1636 File header copyright text should match</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1637.md">SA1637 File header should contain file name</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1638.md">SA1638 File header file name documentation should match file name</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1639.md">SA1639 File header should have summary</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1640.md">SA1640 File header should have valid company text</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1641.md">SA1641 File header company name text should match</seealso>
+    /// <seealso href="https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1633.html">SA1633 File should have header</seealso>
+    /// <seealso href="https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1634.html">SA1634 File header should show copyright</seealso>
+    /// <seealso href="https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1635.html">SA1635 File header should have copyright text</seealso>
+    /// <seealso href="https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1636.html">SA1636 File header copyright text should match</seealso>
+    /// <seealso href="https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1637.html">SA1637 File header should contain file name</seealso>
+    /// <seealso href="https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1638.html">SA1638 File header file name documentation should match file name</seealso>
+    /// <seealso href="https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1639.html">SA1639 File header should have summary</seealso>
+    /// <seealso href="https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1640.html">SA1640 File header should have valid company text</seealso>
+    /// <seealso href="https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1641.html">SA1641 File header company name text should match</seealso>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class FileHeaderAnalyzers : DiagnosticAnalyzer
     {
@@ -43,47 +43,47 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly LocalizableString SA1633MessageFormatMissing = new LocalizableResourceString(nameof(DocumentationResources.SA1633MessageFormatMissing), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString SA1633MessageFormatMalformed = new LocalizableResourceString(nameof(DocumentationResources.SA1633MessageFormatMalformed), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString SA1633Description = new LocalizableResourceString(nameof(DocumentationResources.SA1633Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
-        private static readonly string SA1633HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1633.md";
+        private static readonly string SA1633HelpLink = HelpLinkHelper.GetHelpLink(SA1633Identifier);
 
         private static readonly LocalizableString SA1634Title = new LocalizableResourceString(nameof(DocumentationResources.SA1634Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString SA1634MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1634MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString SA1634Description = new LocalizableResourceString(nameof(DocumentationResources.SA1634Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
-        private static readonly string SA1634HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1634.md";
+        private static readonly string SA1634HelpLink = HelpLinkHelper.GetHelpLink(SA1634Identifier);
 
         private static readonly LocalizableString SA1635Title = new LocalizableResourceString(nameof(DocumentationResources.SA1635Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString SA1635MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1635MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString SA1635Description = new LocalizableResourceString(nameof(DocumentationResources.SA1635Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
-        private static readonly string SA1635HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1635.md";
+        private static readonly string SA1635HelpLink = HelpLinkHelper.GetHelpLink(SA1635Identifier);
 
         private static readonly LocalizableString SA1636Title = new LocalizableResourceString(nameof(DocumentationResources.SA1636Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString SA1636MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1636MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString SA1636Description = new LocalizableResourceString(nameof(DocumentationResources.SA1636Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
-        private static readonly string SA1636HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1636.md";
+        private static readonly string SA1636HelpLink = HelpLinkHelper.GetHelpLink(SA1636Identifier);
 
         private static readonly LocalizableString SA1637Title = new LocalizableResourceString(nameof(DocumentationResources.SA1637Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString SA1637MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1637MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString SA1637Description = new LocalizableResourceString(nameof(DocumentationResources.SA1637Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
-        private static readonly string SA1637HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1637.md";
+        private static readonly string SA1637HelpLink = HelpLinkHelper.GetHelpLink(SA1637Identifier);
 
         private static readonly LocalizableString SA1638Title = new LocalizableResourceString(nameof(DocumentationResources.SA1638Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString SA1638MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1638MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString SA1638Description = new LocalizableResourceString(nameof(DocumentationResources.SA1638Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
-        private static readonly string SA1638HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1638.md";
+        private static readonly string SA1638HelpLink = HelpLinkHelper.GetHelpLink(SA1638Identifier);
 
         private static readonly LocalizableString SA1639Title = new LocalizableResourceString(nameof(DocumentationResources.SA1639Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString SA1639MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1639MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString SA1639Description = new LocalizableResourceString(nameof(DocumentationResources.SA1639Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
-        private static readonly string SA1639HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1639.md";
+        private static readonly string SA1639HelpLink = HelpLinkHelper.GetHelpLink(SA1639Identifier);
 
         private static readonly LocalizableString SA1640Title = new LocalizableResourceString(nameof(DocumentationResources.SA1640Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString SA1640MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1640MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString SA1640Description = new LocalizableResourceString(nameof(DocumentationResources.SA1640Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
-        private static readonly string SA1640HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1640.md";
+        private static readonly string SA1640HelpLink = HelpLinkHelper.GetHelpLink(SA1640Identifier);
 
         private static readonly LocalizableString SA1641Title = new LocalizableResourceString(nameof(DocumentationResources.SA1641Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString SA1641MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1641MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString SA1641Description = new LocalizableResourceString(nameof(DocumentationResources.SA1641Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
-        private static readonly string SA1641HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1641.md";
+        private static readonly string SA1641HelpLink = HelpLinkHelper.GetHelpLink(SA1641Identifier);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
 

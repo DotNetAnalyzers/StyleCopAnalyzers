@@ -90,6 +90,8 @@ namespace StyleCop.Analyzers.NamingRules
         public static string @SA1311MessageFormat => GetResourceString("SA1311MessageFormat")!;
         /// <summary>Static readonly fields should begin with upper-case letter</summary>
         public static string @SA1311Title => GetResourceString("SA1311Title")!;
+        /// <summary>Replace with discard</summary>
+        public static string @SA1312CodeFix => GetResourceString("SA1312CodeFix")!;
         /// <summary>The name of a variable in C# does not begin with a lower-case letter.</summary>
         public static string @SA1312Description => GetResourceString("SA1312Description")!;
         /// <summary>Variable '{0}' should begin with lower-case letter</summary>

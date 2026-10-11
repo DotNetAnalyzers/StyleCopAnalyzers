@@ -30,10 +30,12 @@ namespace StyleCop.Analyzers.Lightup
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public IOperation MinimumValue => MinimumValueAccessor(this.WrappedOperation);
         public IOperation MaximumValue => MaximumValueAccessor(this.WrappedOperation);
+
         public static explicit operator IRangeCaseClauseOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IRangeCaseClauseOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public object CaseKind => ((ICaseClauseOperationWrapper)this).CaseKind;
         public ILabelSymbol Label => ((ICaseClauseOperationWrapper)this).Label;
+
         public static explicit operator IRangeCaseClauseOperationWrapper(ICaseClauseOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator ICaseClauseOperationWrapper(IRangeCaseClauseOperationWrapper wrapper) => ICaseClauseOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IRangeCaseClauseOperationWrapper FromOperation(IOperation operation)

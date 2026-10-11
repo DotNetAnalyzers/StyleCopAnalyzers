@@ -406,6 +406,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         public static string @TypeTextClass => GetResourceString("TypeTextClass")!;
         /// <summary>struct</summary>
         public static string @TypeTextStruct => GetResourceString("TypeTextStruct")!;
+        /// <summary>union</summary>
+        public static string @TypeTextUnion => GetResourceString("TypeTextUnion")!;
         /// <summary>Gets or initializes a value indicating whether</summary>
         public static string @StartingTextGetsOrInitializesWhether => GetResourceString("StartingTextGetsOrInitializesWhether")!;
         /// <summary>Initializes</summary>

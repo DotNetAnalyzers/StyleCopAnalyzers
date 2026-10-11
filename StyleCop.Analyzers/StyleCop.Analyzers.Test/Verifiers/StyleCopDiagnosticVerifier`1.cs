@@ -12,17 +12,16 @@ namespace StyleCop.Analyzers.Test.Verifiers
     using Microsoft.CodeAnalysis.CSharp.Testing;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Testing;
-    using Microsoft.CodeAnalysis.Testing.Verifiers;
-    using StyleCop.Analyzers.Lightup;
+    using StyleCop.Analyzers.Test.Helpers;
 
     internal static class StyleCopDiagnosticVerifier<TAnalyzer>
         where TAnalyzer : DiagnosticAnalyzer, new()
     {
         internal static DiagnosticResult Diagnostic()
-            => CSharpCodeFixVerifier<TAnalyzer, EmptyCodeFixProvider, XUnitVerifier>.Diagnostic();
+            => CSharpCodeFixVerifier<TAnalyzer, EmptyCodeFixProvider, DefaultVerifier>.Diagnostic();
 
         internal static DiagnosticResult Diagnostic(string diagnosticId)
-            => CSharpCodeFixVerifier<TAnalyzer, EmptyCodeFixProvider, XUnitVerifier>.Diagnostic(diagnosticId);
+            => CSharpCodeFixVerifier<TAnalyzer, EmptyCodeFixProvider, DefaultVerifier>.Diagnostic(diagnosticId);
 
         internal static DiagnosticResult Diagnostic(DiagnosticDescriptor descriptor)
             => new DiagnosticResult(descriptor);
@@ -65,7 +64,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
 
             public CSharpTest(LanguageVersion? languageVersion)
             {
-                this.LanguageVersion = languageVersion ?? this.GetDefaultLanguageVersion();
+                this.LanguageVersion = languageVersion ?? TestLanguageVersion.Default;
             }
 
             private LanguageVersion? LanguageVersion { get; }
@@ -79,12 +78,6 @@ namespace StyleCop.Analyzers.Test.Verifiers
                 }
 
                 return parseOptions;
-            }
-
-            // NOTE: If needed, this method can be temporarily updated to default to a preview version
-            private LanguageVersion? GetDefaultLanguageVersion()
-            {
-                return null;
             }
         }
     }

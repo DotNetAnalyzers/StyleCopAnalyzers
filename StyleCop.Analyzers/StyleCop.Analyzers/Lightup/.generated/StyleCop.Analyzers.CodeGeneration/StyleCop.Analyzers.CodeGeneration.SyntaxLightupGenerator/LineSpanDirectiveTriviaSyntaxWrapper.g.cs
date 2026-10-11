@@ -14,10 +14,12 @@ namespace StyleCop.Analyzers.Lightup
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.LineSpanDirectiveTriviaSyntax";
         private static readonly Type WrappedType;
 
+        private static readonly Func<DirectiveTriviaSyntax, SyntaxToken> LineKeywordAccessor;
         private static readonly Func<DirectiveTriviaSyntax, CSharpSyntaxNode> StartAccessor;
         private static readonly Func<DirectiveTriviaSyntax, SyntaxToken> MinusTokenAccessor;
         private static readonly Func<DirectiveTriviaSyntax, CSharpSyntaxNode> EndAccessor;
         private static readonly Func<DirectiveTriviaSyntax, SyntaxToken> CharacterOffsetAccessor;
+        private static readonly Func<DirectiveTriviaSyntax, SyntaxToken> FileAccessor;
         private static readonly Func<DirectiveTriviaSyntax, SyntaxToken, DirectiveTriviaSyntax> WithHashTokenAccessor;
         private static readonly Func<DirectiveTriviaSyntax, SyntaxToken, DirectiveTriviaSyntax> WithLineKeywordAccessor;
         private static readonly Func<DirectiveTriviaSyntax, CSharpSyntaxNode, DirectiveTriviaSyntax> WithStartAccessor;
@@ -33,10 +35,12 @@ namespace StyleCop.Analyzers.Lightup
         static LineSpanDirectiveTriviaSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(LineSpanDirectiveTriviaSyntaxWrapper));
+            LineKeywordAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<DirectiveTriviaSyntax, SyntaxToken>(WrappedType, nameof(LineKeyword));
             StartAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<DirectiveTriviaSyntax, CSharpSyntaxNode>(WrappedType, nameof(Start));
             MinusTokenAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<DirectiveTriviaSyntax, SyntaxToken>(WrappedType, nameof(MinusToken));
             EndAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<DirectiveTriviaSyntax, CSharpSyntaxNode>(WrappedType, nameof(End));
             CharacterOffsetAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<DirectiveTriviaSyntax, SyntaxToken>(WrappedType, nameof(CharacterOffset));
+            FileAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<DirectiveTriviaSyntax, SyntaxToken>(WrappedType, nameof(File));
             WithHashTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<DirectiveTriviaSyntax, SyntaxToken>(WrappedType, nameof(HashToken));
             WithLineKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<DirectiveTriviaSyntax, SyntaxToken>(WrappedType, nameof(LineKeyword));
             WithStartAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<DirectiveTriviaSyntax, CSharpSyntaxNode>(WrappedType, nameof(Start));
@@ -55,6 +59,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public DirectiveTriviaSyntax SyntaxNode => this.node;
 
+
         public SyntaxToken HashToken
         {
             get
@@ -67,7 +72,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ((LineOrSpanDirectiveTriviaSyntaxWrapper)this).LineKeyword;
+                return LineKeywordAccessor(this.SyntaxNode);
             }
         }
 
@@ -107,7 +112,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ((LineOrSpanDirectiveTriviaSyntaxWrapper)this).File;
+                return FileAccessor(this.SyntaxNode);
             }
         }
 

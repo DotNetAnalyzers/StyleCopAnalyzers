@@ -31,6 +31,7 @@ namespace StyleCop.Analyzers.Lightup
         public object OperatorKind => throw new NotImplementedException("Property 'ITupleBinaryOperation.OperatorKind' has unsupported type 'BinaryOperatorKind'");
         public IOperation LeftOperand => LeftOperandAccessor(this.WrappedOperation);
         public IOperation RightOperand => RightOperandAccessor(this.WrappedOperation);
+
         public static explicit operator ITupleBinaryOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(ITupleBinaryOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static ITupleBinaryOperationWrapper FromOperation(IOperation operation)

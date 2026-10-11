@@ -50,7 +50,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// The ID for diagnostics produced by the <see cref="SA1413UseTrailingCommasInMultiLineInitializers"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1413";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1413.md";
+        private static readonly string HelpLink = HelpLinkHelper.GetHelpLink(DiagnosticId);
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(MaintainabilityResources.SA1413Title), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(MaintainabilityResources.SA1413MessageFormat), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(MaintainabilityResources.SA1413Description), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
@@ -63,6 +63,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         private static readonly Action<SyntaxNodeAnalysisContext> HandleEnumDeclarationAction = HandleEnumDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> HandleSwitchExpressionAction = HandleSwitchExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> HandlePropertyPatternClauseAction = HandlePropertyPatternClause;
+        private static readonly Action<SyntaxNodeAnalysisContext> HandleCollectionExpressionAction = HandleCollectionExpression;
 
         private static readonly ImmutableArray<SyntaxKind> ObjectInitializerKinds =
             ImmutableArray.Create(SyntaxKind.ObjectInitializerExpression, SyntaxKind.ArrayInitializerExpression, SyntaxKind.CollectionInitializerExpression, SyntaxKindEx.WithInitializerExpression);
@@ -82,6 +83,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             context.RegisterSyntaxNodeAction(HandleEnumDeclarationAction, SyntaxKind.EnumDeclaration);
             context.RegisterSyntaxNodeAction(HandleSwitchExpressionAction, SyntaxKindEx.SwitchExpression);
             context.RegisterSyntaxNodeAction(HandlePropertyPatternClauseAction, SyntaxKindEx.PropertyPatternClause);
+            context.RegisterSyntaxNodeAction(HandleCollectionExpressionAction, SyntaxKindEx.CollectionExpression);
         }
 
         private static void HandleEnumDeclaration(SyntaxNodeAnalysisContext context)
@@ -152,6 +154,20 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             if (propertyPatternClause.Subpatterns.SeparatorCount < propertyPatternClause.Subpatterns.Count)
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, propertyPatternClause.Subpatterns.Last().SyntaxNode.GetLocation()));
+            }
+        }
+
+        private static void HandleCollectionExpression(SyntaxNodeAnalysisContext context)
+        {
+            var collectionExpression = (CollectionExpressionSyntaxWrapper)context.Node;
+            if (collectionExpression.SyntaxNode == null || !collectionExpression.SyntaxNode.SpansMultipleLines())
+            {
+                return;
+            }
+
+            if (collectionExpression.Elements.SeparatorCount < collectionExpression.Elements.Count)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, collectionExpression.Elements.Last().SyntaxNode.GetLocation()));
             }
         }
     }

@@ -83,15 +83,13 @@ namespace StyleCop.Analyzers.Helpers
 
         internal static string GetNameOrIdentifier(MemberDeclarationSyntax member)
         {
+            if (member is TypeDeclarationSyntax typeDeclaration)
+            {
+                return typeDeclaration.Identifier.Text;
+            }
+
             switch (member.Kind())
             {
-            case SyntaxKind.ClassDeclaration:
-            case SyntaxKind.InterfaceDeclaration:
-            case SyntaxKind.StructDeclaration:
-            case SyntaxKindEx.RecordDeclaration:
-            case SyntaxKindEx.RecordStructDeclaration:
-                return ((TypeDeclarationSyntax)member).Identifier.Text;
-
             case SyntaxKind.EnumDeclaration:
                 return ((EnumDeclarationSyntax)member).Identifier.Text;
 

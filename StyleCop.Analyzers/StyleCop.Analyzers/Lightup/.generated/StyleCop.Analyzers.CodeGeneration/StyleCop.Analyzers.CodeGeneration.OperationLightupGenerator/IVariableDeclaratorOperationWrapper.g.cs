@@ -33,6 +33,7 @@ namespace StyleCop.Analyzers.Lightup
         public ILocalSymbol Symbol => SymbolAccessor(this.WrappedOperation);
         public IVariableInitializerOperationWrapper Initializer => IVariableInitializerOperationWrapper.FromOperation(InitializerAccessor(this.WrappedOperation));
         public ImmutableArray<IOperation> IgnoredArguments => IgnoredArgumentsAccessor(this.WrappedOperation);
+
         public static explicit operator IVariableDeclaratorOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IVariableDeclaratorOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IVariableDeclaratorOperationWrapper FromOperation(IOperation operation)

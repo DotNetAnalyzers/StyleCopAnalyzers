@@ -27,6 +27,7 @@ namespace StyleCop.Analyzers.Lightup
         public IOperation WrappedOperation => this.operation;
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public IMethodSymbol Symbol => SymbolAccessor(this.WrappedOperation);
+
         public static explicit operator IFlowAnonymousFunctionOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IFlowAnonymousFunctionOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IFlowAnonymousFunctionOperationWrapper FromOperation(IOperation operation)

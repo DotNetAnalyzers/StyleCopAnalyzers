@@ -44,9 +44,9 @@ namespace StyleCop.Analyzers.Test.Lightup
         {
             get
             {
-                foreach (var field in typeof(MethodKindEx).GetTypeInfo().DeclaredFields)
+                foreach (var fieldInfo in typeof(MethodKindEx).GetTypeInfo().DeclaredFields)
                 {
-                    yield return new object[] { field.Name, (MethodKind)field.GetRawConstantValue() };
+                    yield return new object[] { fieldInfo.Name, (MethodKind)fieldInfo.GetRawConstantValue() };
                 }
             }
         }

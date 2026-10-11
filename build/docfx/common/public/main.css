@@ -1,0 +1,17 @@
+.language-picker > .dropdown-toggle {
+    min-height: 2.75rem;
+}
+
+.language-picker .dropdown-menu {
+    max-height: min(24rem, 70vh);
+    max-width: calc(100vw - 2rem);
+    overflow-y: auto;
+}
+
+.language-picker .dropdown-item {
+    min-height: 2.75rem;
+    display: flex;
+    align-items: center;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}

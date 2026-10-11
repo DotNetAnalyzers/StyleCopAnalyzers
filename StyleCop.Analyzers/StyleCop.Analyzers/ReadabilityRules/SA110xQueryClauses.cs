@@ -18,10 +18,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// <summary>
     /// This analyzer will analyze several diagnostics related to query expressions.
     /// </summary>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1102.md">SA1102 Query clause should follow previous clause</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1103.md">SA1103 Query clauses should be on separate lines or all on one line</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1104.md">SA1104 Query clause should begin on new line when previous clause spans multiple lines</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1105.md">SA1105 Query clauses spanning multiple lines should begin on own line</seealso>
+    /// <seealso href="https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1102.html">SA1102 Query clause should follow previous clause</seealso>
+    /// <seealso href="https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1103.html">SA1103 Query clauses should be on separate lines or all on one line</seealso>
+    /// <seealso href="https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1104.html">SA1104 Query clause should begin on new line when previous clause spans multiple lines</seealso>
+    /// <seealso href="https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1105.html">SA1105 Query clauses spanning multiple lines should begin on own line</seealso>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SA110xQueryClauses : DiagnosticAnalyzer
     {
@@ -33,22 +33,22 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly LocalizableString SA1102Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1102Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString SA1102MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1102MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString SA1102Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1102Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string SA1102HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1102.md";
+        private static readonly string SA1102HelpLink = HelpLinkHelper.GetHelpLink(SA1102Identifier);
 
         private static readonly LocalizableString SA1103Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1103Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString SA1103MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1103MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString SA1103Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1103Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string SA1103HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1103.md";
+        private static readonly string SA1103HelpLink = HelpLinkHelper.GetHelpLink(SA1103Identifier);
 
         private static readonly LocalizableString SA1104Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1104Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString SA1104MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1104MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString SA1104Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1104Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string SA1104HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1104.md";
+        private static readonly string SA1104HelpLink = HelpLinkHelper.GetHelpLink(SA1104Identifier);
 
         private static readonly LocalizableString SA1105Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1105Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString SA1105MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1105MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString SA1105Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1105Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string SA1105HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1105.md";
+        private static readonly string SA1105HelpLink = HelpLinkHelper.GetHelpLink(SA1105Identifier);
 
         private static readonly Action<SyntaxNodeAnalysisContext> QueryExpressionAction = HandleQueryExpression;
 

@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="SA1500CodeFix" xml:space="preserve">
+    <value>Выровнять фигурные скобки</value>
+  </data>
+  <data name="SA1500Description" xml:space="preserve">
+    <value>Открывающая или закрывающая фигурная скобка в операторе, элементе или выражении C# не расположена в отдельной строке.</value>
+  </data>
+  <data name="SA1500MessageFormat" xml:space="preserve">
+    <value>Фигурные скобки многострочных операторов должны располагаться в отдельных строках</value>
+  </data>
+  <data name="SA1500Title" xml:space="preserve">
+    <value>Фигурные скобки многострочных операторов должны располагаться в отдельных строках</value>
+  </data>
+  <data name="SA1501CodeFix" xml:space="preserve">
+    <value>Развернуть однострочный блок</value>
+  </data>
+  <data name="SA1501CodeFixAll" xml:space="preserve">
+    <value>Развернуть все однострочные блоки</value>
+  </data>
+  <data name="SA1501Description" xml:space="preserve">
+    <value>Оператор C#, содержащий открывающую и закрывающую фигурные скобки, целиком записан в одной строке.</value>
+  </data>
+  <data name="SA1501MessageFormat" xml:space="preserve">
+    <value>Оператор не должен располагаться в одной строке</value>
+  </data>
+  <data name="SA1501Title" xml:space="preserve">
+    <value>Оператор не должен располагаться в одной строке</value>
+  </data>
+  <data name="SA1502CodeFix" xml:space="preserve">
+    <value>Развернуть элемент</value>
+  </data>
+  <data name="SA1502Description" xml:space="preserve">
+    <value>Элемент C#, содержащий открывающую и закрывающую фигурные скобки, целиком записан в одной строке.</value>
+  </data>
+  <data name="SA1502MessageFormat" xml:space="preserve">
+    <value>Элемент не должен располагаться в одной строке</value>
+  </data>
+  <data name="SA1502Title" xml:space="preserve">
+    <value>Элемент не должен располагаться в одной строке</value>
+  </data>
+  <data name="SA1503CodeFix" xml:space="preserve">
+    <value>Заключить в фигурные скобки</value>
+  </data>
+  <data name="SA1503Description" xml:space="preserve">
+    <value>В операторе C# отсутствуют открывающая и закрывающая фигурные скобки.</value>
+  </data>
+  <data name="SA1503MessageFormat" xml:space="preserve">
+    <value>Фигурные скобки не должны пропускаться</value>
+  </data>
+  <data name="SA1503Title" xml:space="preserve">
+    <value>Фигурные скобки не должны пропускаться</value>
+  </data>
+  <data name="SA1504CodeFixMultipleLines" xml:space="preserve">
+    <value>Переформатировать методы доступа в многострочном стиле</value>
+  </data>
+  <data name="SA1504CodeFixSingleLine" xml:space="preserve">
+    <value>Переформатировать методы доступа в однострочном стиле</value>
+  </data>
+  <data name="SA1504Description" xml:space="preserve">
+    <value>В свойстве, индексаторе или событии C# хотя бы один метод доступа записан в одной строке и хотя бы один — в нескольких строках.</value>
+  </data>
+  <data name="SA1504MessageFormat" xml:space="preserve">
+    <value>Все методы доступа должны быть либо однострочными, либо многострочными</value>
+  </data>
+  <data name="SA1504Title" xml:space="preserve">
+    <value>Все методы доступа должны быть либо однострочными, либо многострочными</value>
+  </data>
+  <data name="SA1505CodeFix" xml:space="preserve">
+    <value>Удалить пустые строки после этой фигурной скобки</value>
+  </data>
+  <data name="SA1505Description" xml:space="preserve">
+    <value>За открывающей фигурной скобкой в элементе, операторе или выражении C# следует пустая строка.</value>
+  </data>
+  <data name="SA1505MessageFormat" xml:space="preserve">
+    <value>За открывающей фигурной скобкой не должна следовать пустая строка</value>
+  </data>
+  <data name="SA1505Title" xml:space="preserve">
+    <value>За открывающими фигурными скобками не должна следовать пустая строка</value>
+  </data>
+  <data name="SA1506CodeFix" xml:space="preserve">
+    <value>Удалить пустые строки после заголовка документации</value>
+  </data>
+  <data name="SA1506Description" xml:space="preserve">
+    <value>За заголовком документации над элементом C# следует пустая строка.</value>
+  </data>
+  <data name="SA1506MessageFormat" xml:space="preserve">
+    <value>За заголовками документации элементов не должна следовать пустая строка</value>
+  </data>
+  <data name="SA1506Title" xml:space="preserve">
+    <value>За заголовками документации элементов не должна следовать пустая строка</value>
+  </data>
+  <data name="SA1507CodeFix" xml:space="preserve">
+    <value>Удалить повторяющиеся пустые строки</value>
+  </data>
+  <data name="SA1507Description" xml:space="preserve">
+    <value>Код C# содержит несколько пустых строк подряд.</value>
+  </data>
+  <data name="SA1507MessageFormat" xml:space="preserve">
+    <value>Код не должен содержать несколько пустых строк подряд</value>
+  </data>
+  <data name="SA1507Title" xml:space="preserve">
+    <value>Код не должен содержать несколько пустых строк подряд</value>
+  </data>
+  <data name="SA1508CodeFix" xml:space="preserve">
+    <value>Удалить пустые строки перед этой фигурной скобкой</value>
+  </data>
+  <data name="SA1508Description" xml:space="preserve">
+    <value>Перед закрывающей фигурной скобкой в элементе, операторе или выражении C# расположена пустая строка.</value>
+  </data>
+  <data name="SA1508MessageFormat" xml:space="preserve">
+    <value>Перед закрывающей фигурной скобкой не должна располагаться пустая строка</value>
+  </data>
+  <data name="SA1508Title" xml:space="preserve">
+    <value>Перед закрывающими фигурными скобками не должна располагаться пустая строка</value>
+  </data>
+  <data name="SA1509CodeFix" xml:space="preserve">
+    <value>Удалить пустые строки перед этой фигурной скобкой</value>
+  </data>
+  <data name="SA1509Description" xml:space="preserve">
+    <value>Перед открывающей фигурной скобкой в элементе, операторе или выражении C# расположена пустая строка.</value>
+  </data>
+  <data name="SA1509MessageFormat" xml:space="preserve">
+    <value>Перед открывающими фигурными скобками не должна располагаться пустая строка</value>
+  </data>
+  <data name="SA1509Title" xml:space="preserve">
+    <value>Перед открывающими фигурными скобками не должна располагаться пустая строка</value>
+  </data>
+  <data name="SA1510CodeFix" xml:space="preserve">
+    <value>Удалить пустую строку перед связанным оператором</value>
+  </data>
+  <data name="SA1510Description" xml:space="preserve">
+    <value>Связанные операторы C# разделены пустой строкой.</value>
+  </data>
+  <data name="SA1510MessageFormat" xml:space="preserve">
+    <value>Перед оператором '{0}' не должна располагаться пустая строка</value>
+  </data>
+  <data name="SA1510Title" xml:space="preserve">
+    <value>Перед связанными блоками операторов не должна располагаться пустая строка</value>
+  </data>
+  <data name="SA1511CodeFix" xml:space="preserve">
+    <value>Удалить пустую строку перед while</value>
+  </data>
+  <data name="SA1511Description" xml:space="preserve">
+    <value>Завершающая часть while оператора do-while отделена от оператора пустой строкой.</value>
+  </data>
+  <data name="SA1511MessageFormat" xml:space="preserve">
+    <value>Перед завершающей частью while оператора do-while не должна располагаться пустая строка</value>
+  </data>
+  <data name="SA1511Title" xml:space="preserve">
+    <value>Перед завершающей частью while оператора do-while не должна располагаться пустая строка</value>
+  </data>
+  <data name="SA1512CodeFix" xml:space="preserve">
+    <value>Удалить пустую строку после комментария</value>
+  </data>
+  <data name="SA1512Description" xml:space="preserve">
+    <value>За однострочным комментарием в коде C# следует пустая строка.</value>
+  </data>
+  <data name="SA1512MessageFormat" xml:space="preserve">
+    <value>За однострочными комментариями не должна следовать пустая строка</value>
+  </data>
+  <data name="SA1512Title" xml:space="preserve">
+    <value>За однострочными комментариями не должна следовать пустая строка</value>
+  </data>
+  <data name="SA1513CodeFix" xml:space="preserve">
+    <value>Вставить пустую строку после фигурной скобки</value>
+  </data>
+  <data name="SA1513Description" xml:space="preserve">
+    <value>За закрывающей фигурной скобкой в элементе, операторе или выражении C# не следует пустая строка.</value>
+  </data>
+  <data name="SA1513MessageFormat" xml:space="preserve">
+    <value>За закрывающей фигурной скобкой должна следовать пустая строка</value>
+  </data>
+  <data name="SA1513Title" xml:space="preserve">
+    <value>За закрывающей фигурной скобкой должна следовать пустая строка</value>
+  </data>
+  <data name="SA1514CodeFix" xml:space="preserve">
+    <value>Вставить пустую строку перед заголовком документации</value>
+  </data>
+  <data name="SA1514Description" xml:space="preserve">
+    <value>Перед заголовком документации над элементом C# отсутствует пустая строка.</value>
+  </data>
+  <data name="SA1514MessageFormat" xml:space="preserve">
+    <value>Перед заголовком документации элемента должна располагаться пустая строка</value>
+  </data>
+  <data name="SA1514Title" xml:space="preserve">
+    <value>Перед заголовком документации элемента должна располагаться пустая строка</value>
+  </data>
+  <data name="SA1515CodeFix" xml:space="preserve">
+    <value>Вставить пустую строку перед комментарием</value>
+  </data>
+  <data name="SA1515Description" xml:space="preserve">
+    <value>Перед однострочным комментарием в коде C# отсутствует пустая строка.</value>
+  </data>
+  <data name="SA1515MessageFormat" xml:space="preserve">
+    <value>Перед однострочным комментарием должна располагаться пустая строка</value>
+  </data>
+  <data name="SA1515Title" xml:space="preserve">
+    <value>Перед однострочным комментарием должна располагаться пустая строка</value>
+  </data>
+  <data name="SA1516CodeFixAll" xml:space="preserve">
+    <value>Исправить пустые строки</value>
+  </data>
+  <data name="SA1516CodeFixInsert" xml:space="preserve">
+    <value>Вставить новую строку</value>
+  </data>
+  <data name="SA1516CodeFixRemove" xml:space="preserve">
+    <value>Удалить пустую строку</value>
+  </data>
+  <data name="SA1516Description" xml:space="preserve">
+    <value>Соседние элементы C# не разделены пустой строкой.</value>
+  </data>
+  <data name="SA1516DescriptionOmit" xml:space="preserve">
+    <value>Соседние директивы using не должны разделяться пустой строкой.</value>
+  </data>
+  <data name="SA1516DescriptionRequire" xml:space="preserve">
+    <value>Соседние директивы using должны разделяться пустой строкой.</value>
+  </data>
+  <data name="SA1516MessageFormat" xml:space="preserve">
+    <value>Элементы должны разделяться пустой строкой</value>
+  </data>
+  <data name="SA1516MessageFormatOmit" xml:space="preserve">
+    <value>Директивы using не должны разделяться пустой строкой</value>
+  </data>
+  <data name="SA1516MessageFormatRequire" xml:space="preserve">
+    <value>Директивы using должны разделяться пустой строкой</value>
+  </data>
+  <data name="SA1516Title" xml:space="preserve">
+    <value>Элементы должны разделяться пустой строкой</value>
+  </data>
+  <data name="SA1517CodeFix" xml:space="preserve">
+    <value>Удалить пустые строки в начале файла</value>
+  </data>
+  <data name="SA1517Description" xml:space="preserve">
+    <value>В начале файла кода имеются пустые строки.</value>
+  </data>
+  <data name="SA1517MessageFormat" xml:space="preserve">
+    <value>Код не должен содержать пустые строки в начале файла</value>
+  </data>
+  <data name="SA1517Title" xml:space="preserve">
+    <value>Код не должен содержать пустые строки в начале файла</value>
+  </data>
+  <data name="SA1518CodeFix" xml:space="preserve">
+    <value>Исправить пробельные символы в конце файла</value>
+  </data>
+  <data name="SA1518DescriptionAllow" xml:space="preserve">
+    <value>Код не должен содержать пустые строки в конце файла.</value>
+  </data>
+  <data name="SA1518DescriptionOmit" xml:space="preserve">
+    <value>Файл не должен заканчиваться символом новой строки.</value>
+  </data>
+  <data name="SA1518DescriptionRequire" xml:space="preserve">
+    <value>Файл должен заканчиваться ровно одним символом новой строки.</value>
+  </data>
+  <data name="SA1518MessageFormatAllow" xml:space="preserve">
+    <value>Код не должен содержать пустые строки в конце файла</value>
+  </data>
+  <data name="SA1518MessageFormatOmit" xml:space="preserve">
+    <value>Файл не должен заканчиваться символом новой строки</value>
+  </data>
+  <data name="SA1518MessageFormatRequire" xml:space="preserve">
+    <value>Файл должен заканчиваться ровно одним символом новой строки</value>
+  </data>
+  <data name="SA1518Title" xml:space="preserve">
+    <value>Правильно используйте символы новой строки в конце файла</value>
+  </data>
+  <data name="SA1519Description" xml:space="preserve">
+    <value>В многострочном операторе C# отсутствуют открывающая и закрывающая фигурные скобки.</value>
+  </data>
+  <data name="SA1519MessageFormat" xml:space="preserve">
+    <value>Фигурные скобки многострочного вложенного оператора не должны пропускаться</value>
+  </data>
+  <data name="SA1519Title" xml:space="preserve">
+    <value>Фигурные скобки многострочного вложенного оператора не должны пропускаться</value>
+  </data>
+  <data name="SA1520Description" xml:space="preserve">
+    <value>В связанной конструкции if/else if/else открывающие и закрывающие фигурные скобки указаны для одних ветвей, но пропущены для других.</value>
+  </data>
+  <data name="SA1520MessageFormat" xml:space="preserve">
+    <value>Используйте фигурные скобки последовательно</value>
+  </data>
+  <data name="SA1520Title" xml:space="preserve">
+    <value>Используйте фигурные скобки последовательно</value>
+  </data>
+</root>

@@ -385,6 +385,60 @@ public class Foo
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that an attribute on its own line does not make a single-line accessor count as multi-line.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3434, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3434")]
+        public async Task TestAttributeOnSingleLineAccessorDoesNotReportAsync()
+        {
+            var testCode = @"
+public class ClassName
+{
+    public string InitialTargets
+    {
+        [System.Diagnostics.DebuggerStepThrough]
+        get { return this.initialTargets; }
+
+        set { this.initialTargets = value; }
+    }
+
+    private string initialTargets;
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an attribute on a single-line accessor does not hide a multi-line accessor.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3434, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3434")]
+        public async Task TestAttributeDoesNotHideMultiLineAccessorAsync()
+        {
+            var testCode = @"
+public class ClassName
+{
+    public string InitialTargets
+    {
+        [System.Diagnostics.DebuggerStepThrough]
+        {|#0:get|} { return this.initialTargets; }
+
+        set
+        {
+            this.initialTargets = value;
+        }
+    }
+
+    private string initialTargets;
+}";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected virtual DiagnosticResult[] GetExpectedResultAccessorWithoutBody()
         {
             return new DiagnosticResult[]

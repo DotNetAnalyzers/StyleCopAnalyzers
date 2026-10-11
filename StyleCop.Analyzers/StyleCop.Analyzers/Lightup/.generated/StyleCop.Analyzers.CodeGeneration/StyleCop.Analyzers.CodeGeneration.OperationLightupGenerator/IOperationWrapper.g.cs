@@ -41,6 +41,7 @@ namespace StyleCop.Analyzers.Lightup
         public string Language => LanguageAccessor(this.WrappedOperation);
         public bool IsImplicit => IsImplicitAccessor(this.WrappedOperation);
         public SemanticModel SemanticModel => SemanticModelAccessor(this.WrappedOperation);
+
         public static IOperationWrapper FromOperation(IOperation operation)
         {
             if (operation == null)

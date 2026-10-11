@@ -1,0 +1,55 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
+  "build": {
+    "content": [
+      {
+        "src": "documentation/ru-ru/navbar",
+        "files": [
+          "toc.yml"
+        ]
+      },
+      {
+        "src": "documentation/ru-ru",
+        "files": [
+          "*.md"
+        ]
+      },
+      {
+        "src": "documentation/ru-ru",
+        "files": [
+          "toc.yml"
+        ],
+        "dest": "navigation"
+      }
+    ],
+    "resource": [
+      {
+        "src": "docs",
+        "files": [
+          "**/*"
+        ],
+        "exclude": [
+          "**/*.md"
+        ],
+        "dest": "status"
+      }
+    ],
+    "dest": "_site/ru-ru",
+    "template": [
+      "default",
+      "modern",
+      "build/docfx/common",
+      "build/docfx/ru-ru"
+    ],
+    "globalMetadata": {
+      "_appName": "StyleCop.Analyzers",
+      "_appTitle": "Документация StyleCop.Analyzers",
+      "_appFooter": "Создано с помощью <a href=\"https://dotnet.github.io/docfx\">DocFX</a>",
+      "_enableSearch": true,
+      "_lang": "ru",
+      "_gitContribute": {
+        "branch": "master"
+      }
+    }
+  }
+}

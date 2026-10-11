@@ -16,6 +16,39 @@ namespace StyleCop.Analyzers.Test.CSharp10.ReadabilityRules
 
     public partial class SA1129CSharp10UnitTests : SA1129CSharp9UnitTests
     {
+        /// <summary>
+        /// Verifies that <c>new S()</c> is reported for a struct with field initializers and only a parameterized
+        /// constructor. The field initializers only run in the declared constructor, so <c>new S()</c> creates the
+        /// default value.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3980, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3980")]
+        public async Task VerifyStructWithFieldInitializerAndParameterizedConstructorAsync()
+        {
+            var testCode = @"struct S
+{
+    private int x = 1;
+
+    public S(int x) { this.x = x; }
+
+    internal static S F() => [|new S()|];
+}
+";
+
+            var fixedCode = @"struct S
+{
+    private int x = 1;
+
+    public S(int x) { this.x = x; }
+
+    internal static S F() => default(S);
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         [WorkItem(3430, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3430")]
         public async Task VerifyParameterlessStructConstructorAsync()

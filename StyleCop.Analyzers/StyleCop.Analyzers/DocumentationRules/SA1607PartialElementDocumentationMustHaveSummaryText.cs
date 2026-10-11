@@ -24,7 +24,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// <para>A violation of this rule occurs when the documentation header for a partial element (an element with the
     /// partial attribute) contains an empty <c>&lt;summary&gt;</c> tag or <c>&lt;content&gt;</c> tag which does not
     /// contain a description of the element. In C# the following types of elements can be attributed with the partial
-    /// attribute: classes, methods.</para>
+    /// attribute: classes, methods, properties, indexers.</para>
     ///
     /// <para>When documentation is provided on more than one part of the partial class, the documentation for the two
     /// classes may be merged together to form a single source of documentation. For example, consider the following two
@@ -75,7 +75,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1607";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1607.md";
+        private static readonly string HelpLink = HelpLinkHelper.GetHelpLink(DiagnosticId);
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1607Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1607MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1607Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));

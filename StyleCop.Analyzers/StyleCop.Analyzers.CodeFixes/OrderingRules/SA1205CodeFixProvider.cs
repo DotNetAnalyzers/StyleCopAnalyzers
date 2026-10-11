@@ -117,6 +117,8 @@ namespace StyleCop.Analyzers.OrderingRules
             case SyntaxKindEx.RecordDeclaration:
             case SyntaxKindEx.RecordStructDeclaration:
                 return ((RecordDeclarationSyntaxWrapper)node).WithModifiers(modifiers);
+            case SyntaxKindEx.UnionDeclaration:
+                return ((UnionDeclarationSyntaxWrapper)node).WithModifiers(modifiers);
             }
 
             return node;
@@ -137,6 +139,8 @@ namespace StyleCop.Analyzers.OrderingRules
             case SyntaxKindEx.RecordDeclaration:
             case SyntaxKindEx.RecordStructDeclaration:
                 return ((RecordDeclarationSyntaxWrapper)node).WithKeyword(keyword);
+            case SyntaxKindEx.UnionDeclaration:
+                return ((UnionDeclarationSyntaxWrapper)node).WithKeyword(keyword);
             }
 
             return node;

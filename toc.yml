@@ -1,0 +1,6 @@
+- name: Documentation
+  href: documentation/
+- name: Rule status
+  href: documentation/RuleStatus.md
+- name: GitHub
+  href: https://github.com/DotNetAnalyzers/StyleCopAnalyzers

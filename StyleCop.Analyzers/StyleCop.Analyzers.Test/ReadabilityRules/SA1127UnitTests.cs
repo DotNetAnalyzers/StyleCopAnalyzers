@@ -353,5 +353,21 @@ class Foo<T, R>
             var expected = Diagnostic().WithLocation(2, 17);
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Theory]
+        [MemberData(nameof(CommonMemberData.TypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
+        [WorkItem(3979, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3979")]
+        public async Task TestViolationWithTypeDeclarationKeywordAsync(string keyword)
+        {
+            var testCode = $@"
+{keyword} Foo<T> [|where T : class|] {{ }}";
+
+            var fixedCode = $@"
+{keyword} Foo<T>
+    where T : class
+{{ }}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

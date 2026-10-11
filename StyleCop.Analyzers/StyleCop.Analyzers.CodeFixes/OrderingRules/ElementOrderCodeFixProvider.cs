@@ -80,9 +80,9 @@ namespace StyleCop.Analyzers.OrderingRules
             var parentDeclaration = memberDeclaration.Parent;
             var memberToMove = new MemberOrderHelper(memberDeclaration, elementOrder);
 
-            if (parentDeclaration is TypeDeclarationSyntax)
+            if (parentDeclaration is TypeDeclarationSyntax syntax)
             {
-                return HandleTypeDeclaration(memberToMove, (TypeDeclarationSyntax)parentDeclaration, elementOrder, syntaxRoot, indentationSettings);
+                return HandleTypeDeclaration(memberToMove, syntax, elementOrder, syntaxRoot, indentationSettings);
             }
 
             if (BaseNamespaceDeclarationSyntaxWrapper.IsInstance(parentDeclaration))
@@ -90,9 +90,9 @@ namespace StyleCop.Analyzers.OrderingRules
                 return HandleBaseNamespaceDeclaration(memberToMove, (BaseNamespaceDeclarationSyntaxWrapper)parentDeclaration, elementOrder, syntaxRoot, indentationSettings);
             }
 
-            if (parentDeclaration is CompilationUnitSyntax)
+            if (parentDeclaration is CompilationUnitSyntax syntax1)
             {
-                return HandleCompilationUnitDeclaration(memberToMove, (CompilationUnitSyntax)parentDeclaration, elementOrder, syntaxRoot, indentationSettings);
+                return HandleCompilationUnitDeclaration(memberToMove, syntax1, elementOrder, syntaxRoot, indentationSettings);
             }
 
             return syntaxRoot;

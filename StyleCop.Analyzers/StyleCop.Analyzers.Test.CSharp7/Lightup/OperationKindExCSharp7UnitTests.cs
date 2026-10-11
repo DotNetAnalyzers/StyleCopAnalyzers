@@ -61,9 +61,9 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
         {
             get
             {
-                foreach (var field in typeof(OperationKindEx).GetTypeInfo().DeclaredFields)
+                foreach (var fieldInfo in typeof(OperationKindEx).GetTypeInfo().DeclaredFields)
                 {
-                    yield return new object[] { field.Name, (OperationKind)field.GetRawConstantValue() };
+                    yield return new object[] { fieldInfo.Name, (OperationKind)fieldInfo.GetRawConstantValue() };
                 }
             }
         }

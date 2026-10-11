@@ -25,7 +25,7 @@ namespace StyleCop.Analyzers.Status.Generator
     /// </summary>
     public class SolutionReader
     {
-        private static readonly Regex DiagnosticPathRegex = new Regex(@"(?<type>[A-Za-z]+)Rules\\(?<name>[A-Za-z0-9]+)\.cs$");
+        private static readonly Regex DiagnosticPathRegex = new Regex(@"(?<type>[A-Za-z]+)Rules[\\/](?<name>[A-Za-z0-9]+)\.cs$");
         private INamedTypeSymbol diagnosticAnalyzerTypeSymbol;
         private INamedTypeSymbol noCodeFixAttributeTypeSymbol;
 
@@ -38,7 +38,6 @@ namespace StyleCop.Analyzers.Status.Generator
         private Compilation analyzerCompilation;
         private Compilation codeFixCompilation;
         private ITypeSymbol booleanType;
-        private Type batchFixerType;
 
         private SolutionReader()
         {
@@ -67,15 +66,16 @@ namespace StyleCop.Analyzers.Status.Generator
         /// <param name="pathToSln">The path to the StyleCop.Analayzers solution.</param>
         /// <param name="analyzerProjectName">The project name of the analyzer project.</param>
         /// <param name="codeFixProjectName">The project name of the code fix project.</param>
+        /// <param name="configuration">The configuration of the built analyzer assemblies.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the asynchronous operation.</returns>
-        public static async Task<SolutionReader> CreateAsync(string pathToSln, string analyzerProjectName = "StyleCop.Analyzers", string codeFixProjectName = "StyleCop.Analyzers.CodeFixes")
+        public static async Task<SolutionReader> CreateAsync(string pathToSln, string analyzerProjectName = "StyleCop.Analyzers", string codeFixProjectName = "StyleCop.Analyzers.CodeFixes", string configuration = "Debug")
         {
             SolutionReader reader = new SolutionReader();
 
             reader.SlnPath = pathToSln;
             reader.AnalyzerProjectName = analyzerProjectName;
             reader.CodeFixProjectName = codeFixProjectName;
-            reader.workspace = MSBuildWorkspace.Create();
+            reader.workspace = MSBuildWorkspace.Create(new Dictionary<string, string> { { "Configuration", configuration } });
 
             await reader.InitializeAsync().ConfigureAwait(false);
 
@@ -193,8 +193,6 @@ namespace StyleCop.Analyzers.Status.Generator
 
             this.noCodeFixAttributeTypeSymbol = this.analyzerCompilation.GetTypeByMetadataName("StyleCop.Analyzers.NoCodeFixAttribute");
             this.diagnosticAnalyzerTypeSymbol = this.analyzerCompilation.GetTypeByMetadataName(typeof(DiagnosticAnalyzer).FullName);
-
-            this.batchFixerType = this.codeFixAssembly.GetType("StyleCop.Analyzers.Helpers.CustomBatchFixAllProvider");
 
             this.InitializeCodeFixTypes();
         }
@@ -348,7 +346,7 @@ namespace StyleCop.Analyzers.Status.Generator
             }
             else
             {
-                return fixAllProvider.GetType() == this.batchFixerType;
+                return fixAllProvider == WellKnownFixAllProviders.BatchFixer;
             }
         }
 

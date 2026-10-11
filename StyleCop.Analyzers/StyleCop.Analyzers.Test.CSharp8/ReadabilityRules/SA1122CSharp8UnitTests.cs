@@ -92,5 +92,35 @@ public class TestClass
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that an empty interpolated verbatim string written with the <c>@$</c> prefix order, which C# 8
+        /// first allowed, is reported and fixed, while one with any content is not.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestEmptyInterpolatedVerbatimStringAsync()
+        {
+            var testCode = @"public class Foo
+{
+    public void Bar(string value)
+    {
+        var test = [|@$""""|];
+        var test2 = @$""text"";
+        var test3 = @$""{value}"";
+    }
+}";
+            var fixedCode = @"public class Foo
+{
+    public void Bar(string value)
+    {
+        var test = string.Empty;
+        var test2 = @$""text"";
+        var test3 = @$""{value}"";
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

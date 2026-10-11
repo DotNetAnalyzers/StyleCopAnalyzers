@@ -51,5 +51,66 @@ class C
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that the spacing of interpolation braces in raw interpolated strings is checked.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3993, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3993")]
+        public async Task TestRawInterpolatedStringAsync()
+        {
+            var testCode = @"
+class C
+{
+    string M(int x) => $""""""a {|#0:{|} x} b"""""";
+}
+";
+
+            var fixedCode = @"
+class C
+{
+    string M(int x) => $""""""a {x} b"""""";
+}
+";
+
+            var expected = Diagnostic().WithLocation(0).WithArguments(" not", "followed");
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the spacing of a multi-character opening interpolation brace in a raw interpolated string
+        /// literal with multiple <c>$</c> characters is checked.
+        /// Markup is disabled because <c>$$</c> is the position marker of the test markup syntax.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3993, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3993")]
+        public async Task TestRawInterpolatedStringWithMultipleDollarSignsAsync()
+        {
+            var testCode = @"
+class C
+{
+    string M(int x) => $$""""""a {{ x}} b"""""";
+}
+";
+
+            var fixedCode = @"
+class C
+{
+    string M(int x) => $$""""""a {{x}} b"""""";
+}
+";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                TestState = { MarkupHandling = MarkupMode.None },
+                FixedState = { MarkupHandling = MarkupMode.None },
+                ExpectedDiagnostics = { Diagnostic().WithLocation(4, 31).WithArguments(" not", "followed") },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

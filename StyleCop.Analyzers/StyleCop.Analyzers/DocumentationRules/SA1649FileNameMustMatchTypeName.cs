@@ -35,7 +35,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// </summary>
         internal const string ExpectedFileNameKey = "ExpectedFileName";
 
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1649.md";
+        private static readonly string HelpLink = HelpLinkHelper.GetHelpLink(DiagnosticId);
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1649Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1649MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1649Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
@@ -81,12 +81,12 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 string suffix;
                 var fileName = FileNameHelpers.GetFileNameAndSuffix(context.Tree.FilePath, out suffix);
-                var expectedFileName = FileNameHelpers.GetConventionalFileName(firstTypeDeclaration, settings.DocumentationRules.FileNamingConvention);
+                var expectedFileName = FileNameHelpers.GetConventionalFileNameWithDecodedIdentifier(firstTypeDeclaration, settings.DocumentationRules.FileNamingConvention);
 
                 if (string.Compare(fileName, expectedFileName, StringComparison.OrdinalIgnoreCase) != 0)
                 {
                     if (settings.DocumentationRules.FileNamingConvention == FileNamingConvention.StyleCop
-                        && string.Compare(fileName, FileNameHelpers.GetSimpleFileName(firstTypeDeclaration), StringComparison.OrdinalIgnoreCase) == 0)
+                        && string.Compare(fileName, FileNameHelpers.GetIdentifierValueText(firstTypeDeclaration), StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         return;
                     }
@@ -105,6 +105,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 // Prefer to find the first type which is a true TypeDeclarationSyntax
                 MemberDeclarationSyntax firstTypeDeclaration = root.DescendantNodes(descendIntoChildren: node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration) || node.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration))
                     .OfType<TypeDeclarationSyntax>()
+                    .Where(HasName)
                     .FirstOrDefault();
 
                 // If no TypeDeclarationSyntax is found, expand the search to any type declaration as long as only one
@@ -112,6 +113,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 var expandedTypeDeclarations = root.DescendantNodes(descendIntoChildren: node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration) || node.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration))
                     .OfType<MemberDeclarationSyntax>()
                     .Where(node => node is BaseTypeDeclarationSyntax || node.IsKind(SyntaxKind.DelegateDeclaration))
+                    .Where(HasName)
                     .ToList();
                 if (expandedTypeDeclarations.Count == 1)
                 {
@@ -119,6 +121,14 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
 
                 return firstTypeDeclaration;
+            }
+
+            private static bool HasName(MemberDeclarationSyntax node)
+            {
+                // A C# 14 extension block is a type declaration without an identifier, so there is no type name for
+                // the file name to match.
+                return !(node is BaseTypeDeclarationSyntax typeDeclaration)
+                    || !typeDeclaration.Identifier.IsKind(SyntaxKind.None);
             }
         }
     }

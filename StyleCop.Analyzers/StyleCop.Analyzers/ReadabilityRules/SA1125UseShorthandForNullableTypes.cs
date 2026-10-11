@@ -11,6 +11,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The <see cref="Nullable{T}"/> type has been defined not using the C# shorthand. For example,
@@ -28,7 +29,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// The ID for diagnostics produced by the <see cref="SA1125UseShorthandForNullableTypes"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1125";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1125.md";
+        private static readonly string HelpLink = HelpLinkHelper.GetHelpLink(DiagnosticId);
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1125Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1125MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1125Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
@@ -77,8 +78,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
-            // The shorthand syntax is not available in using directives (covers standard, alias, and static)
-            if (genericNameSyntax.FirstAncestorOrSelf<UsingDirectiveSyntax>() != null)
+            // The shorthand syntax is not available in standard and static using directives. Using alias directives
+            // accept it from C# 12 (using N = int?;).
+            var usingDirective = genericNameSyntax.FirstAncestorOrSelf<UsingDirectiveSyntax>();
+            if (usingDirective != null
+                && (usingDirective.Alias == null || !context.SupportsUsingAliasToAnyType()))
             {
                 return;
             }

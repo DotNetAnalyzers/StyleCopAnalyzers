@@ -24,7 +24,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// allowed to be preceded by whitespace when it follows an operator symbol within an expression.</para>
     ///
     /// <para>An opening parenthesis should not be followed by whitespace, unless it is the last character on the
-    /// line.</para>
+    /// line or the whitespace is followed by a comment.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SA1008OpeningParenthesisMustBeSpacedCorrectly : DiagnosticAnalyzer
@@ -33,7 +33,7 @@ namespace StyleCop.Analyzers.SpacingRules
         /// The ID for diagnostics produced by the <see cref="SA1008OpeningParenthesisMustBeSpacedCorrectly"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1008";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1008.md";
+        private static readonly string HelpLink = HelpLinkHelper.GetHelpLink(DiagnosticId);
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1008Title), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1008Description), SpacingResources.ResourceManager, typeof(SpacingResources));
 
@@ -94,6 +94,12 @@ namespace StyleCop.Analyzers.SpacingRules
         {
             if (token.IsMissing)
             {
+                return;
+            }
+
+            if (token.Parent.IsKind(SyntaxKindEx.LineDirectivePosition))
+            {
+                // #line span directives are primarily used in generated code
                 return;
             }
 
@@ -291,6 +297,14 @@ namespace StyleCop.Analyzers.SpacingRules
 
             if (token.IsFollowedByWhitespace())
             {
+                var trailingTrivia = token.TrailingTrivia;
+                if (trailingTrivia.Count > 1
+                    && (trailingTrivia[1].IsKind(SyntaxKind.SingleLineCommentTrivia)
+                        || trailingTrivia[1].IsKind(SyntaxKind.MultiLineCommentTrivia)))
+                {
+                    return;
+                }
+
                 context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowed, token.GetLocation(), TokenSpacingProperties.RemoveFollowingPreserveLayout));
             }
         }

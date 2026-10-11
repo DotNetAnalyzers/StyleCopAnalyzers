@@ -33,7 +33,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// The ID for diagnostics produced by the <see cref="SA1134AttributesMustNotShareLine"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1134";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1134.md";
+        private static readonly string HelpLink = HelpLinkHelper.GetHelpLink(DiagnosticId);
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1134Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1134MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1134Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
@@ -65,6 +65,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
             if (attributeList.Parent.IsKind(SyntaxKind.Parameter) || attributeList.Parent.IsKind(SyntaxKind.TypeParameter))
             {
                 // no analysis required for parameters or type (generic) parameters
+                return;
+            }
+
+            if (attributeList.Parent.IsKind(SyntaxKind.ParenthesizedLambdaExpression) || attributeList.Parent.IsKind(SyntaxKind.SimpleLambdaExpression))
+            {
+                // no analysis required for attributes on lambda expressions, which are part of an expression
                 return;
             }
 

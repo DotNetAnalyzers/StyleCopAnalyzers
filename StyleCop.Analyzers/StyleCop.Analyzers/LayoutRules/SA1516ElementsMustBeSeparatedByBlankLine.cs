@@ -74,7 +74,7 @@ namespace StyleCop.Analyzers.LayoutRules
         internal const string RemoveBlankLinesValue = "RemoveBlankLines";
         internal const string InsertBlankLineValue = "InsertBlankLine";
 
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1516.md";
+        private static readonly string HelpLink = HelpLinkHelper.GetHelpLink(DiagnosticId);
 
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(LayoutResources.SA1516Title), LayoutResources.ResourceManager, typeof(LayoutResources));
 
@@ -129,6 +129,7 @@ namespace StyleCop.Analyzers.LayoutRules
             context.RegisterCompilationStartAction(context =>
             {
                 context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
+                context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKindEx.ExtensionBlockDeclaration);
                 context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
                 context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
                 context.RegisterSyntaxNodeAction(FileScopedNamespaceDeclarationAction, SyntaxKindEx.FileScopedNamespaceDeclaration);

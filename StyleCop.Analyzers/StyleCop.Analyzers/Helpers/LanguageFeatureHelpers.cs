@@ -21,7 +21,9 @@ namespace StyleCop.Analyzers.Helpers
         /// </summary>
         /// <param name="context">The analysis context that will be checked.</param>
         /// <returns>True if tuples are supported by the compiler.</returns>
+#pragma warning disable IDE0079 // Remove unnecessary suppression
         [SuppressMessage("MicrosoftCodeAnalysisPerformance", "RS1012:Start action has no registered actions", Justification = "This is not a start action method.")]
+#pragma warning restore IDE0079 // Remove unnecessary suppression
         internal static bool SupportsTuples(this CompilationStartAnalysisContext context)
         {
             return context.Compilation is CSharpCompilation { LanguageVersion: >= LanguageVersionEx.CSharp7 };
@@ -58,6 +60,19 @@ namespace StyleCop.Analyzers.Helpers
         {
             var csharpParseOptions = context.Node.SyntaxTree.Options as CSharpParseOptions;
             return (csharpParseOptions != null) && (csharpParseOptions.LanguageVersion >= LanguageVersionEx.CSharp7_1);
+        }
+
+        /// <summary>
+        /// Checks if using alias directives can refer to any type (C# 12). From C# 12, the target of a using alias can be
+        /// written with a built-in type keyword (<c>using I32 = int;</c>) or as a nullable value type
+        /// (<c>using N = int?;</c>).
+        /// </summary>
+        /// <param name="context">The analysis context that will be checked.</param>
+        /// <returns>True if using aliases to any type are supported for the analyzed syntax tree.</returns>
+        internal static bool SupportsUsingAliasToAnyType(this SyntaxNodeAnalysisContext context)
+        {
+            var csharpParseOptions = context.Node.SyntaxTree.Options as CSharpParseOptions;
+            return (csharpParseOptions != null) && (csharpParseOptions.LanguageVersion >= LanguageVersionEx.CSharp12);
         }
 
         internal static bool SupportsNativeSizedIntegers(this Compilation compilation)

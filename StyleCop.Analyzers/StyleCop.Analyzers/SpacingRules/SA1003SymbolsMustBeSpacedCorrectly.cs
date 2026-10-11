@@ -60,7 +60,7 @@ namespace StyleCop.Analyzers.SpacingRules
         internal const string RemoveEndOfLineTag = "RemoveEndOfLine";
         internal const string RemoveEndOfLineWithTrailingSpaceTag = "RemoveEndOfLineWithTrailingSpace";
 
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1003.md";
+        private static readonly string HelpLink = HelpLinkHelper.GetHelpLink(DiagnosticId);
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1003Title), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString MessageFormatNotFollowedByComment = new LocalizableResourceString(nameof(SpacingResources.SA1003MessageFormatNotFollowedByComment), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString MessageFormatPrecededByWhitespace = new LocalizableResourceString(nameof(SpacingResources.SA1003MessageFormatPrecededByWhitespace), SpacingResources.ResourceManager, typeof(SpacingResources));
@@ -373,6 +373,7 @@ namespace StyleCop.Analyzers.SpacingRules
             case SyntaxKind.CommaToken:
             case SyntaxKind.DotToken:
             case SyntaxKind.MinusGreaterThanToken:
+            case SyntaxKind.OpenParenToken:
                 mustHaveTrailingWhitespace = false;
                 break;
 
@@ -393,9 +394,35 @@ namespace StyleCop.Analyzers.SpacingRules
                 break;
             }
 
-            // If the next token is a close brace token we are in an anonymous object creation or an initialization.
-            // Then we allow a new line
-            bool allowEndOfLine = followingToken.IsKind(SyntaxKind.CloseBraceToken);
+            // Determine if the operator is allowed at the end of a line
+            bool allowEndOfLine;
+            if (followingToken.IsKind(SyntaxKind.CloseBraceToken))
+            {
+                // If the next token is a close brace token we are in an anonymous object creation or an initialization.
+                // Then we allow a new line
+                allowEndOfLine = true;
+            }
+            else if (followingToken.IsKind(SyntaxKind.DotToken) && followingToken.IsFirstInLine())
+            {
+                // Allow null forgiving operator at end of line when followed by member access on the next line
+                allowEndOfLine = true;
+            }
+            else if (followingToken.IsKind(SyntaxKind.ColonToken) &&
+                     followingToken.Parent is ConditionalExpressionSyntax &&
+                     followingToken.IsFirstInLine())
+            {
+                // Allow null forgiving operator at end of line when followed by colon in conditional expression on the next line
+                allowEndOfLine = true;
+            }
+            else if (followingToken.IsKind(SyntaxKind.OpenParenToken) && followingToken.IsFirstInLine())
+            {
+                // Allow null forgiving operator at end of line when followed by delegate invocation on the next line
+                allowEndOfLine = true;
+            }
+            else
+            {
+                allowEndOfLine = false;
+            }
 
             CheckToken(context, unaryExpression.OperatorToken, false, allowEndOfLine, mustHaveTrailingWhitespace);
         }

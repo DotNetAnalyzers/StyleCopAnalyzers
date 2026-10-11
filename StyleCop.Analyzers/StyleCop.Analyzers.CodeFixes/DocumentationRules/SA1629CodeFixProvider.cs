@@ -86,7 +86,13 @@ namespace StyleCop.Analyzers.DocumentationRules
                 var changes = new List<TextChange>();
                 foreach (var diagnostic in diagnostics)
                 {
-                    changes.Add(GetTextChange(diagnostic));
+                    // Some compilers report the same diagnostic twice for positional records
+                    // (https://github.com/dotnet/roslyn/issues/53136), and the period must only be added once.
+                    var textChange = GetTextChange(diagnostic);
+                    if (!changes.Contains(textChange))
+                    {
+                        changes.Add(textChange);
+                    }
                 }
 
                 changes.Sort((left, right) => left.Span.Start.CompareTo(right.Span.Start));

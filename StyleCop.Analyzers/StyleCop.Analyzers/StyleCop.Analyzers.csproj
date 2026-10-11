@@ -5,7 +5,23 @@
     <TargetFramework>netstandard1.1</TargetFramework>
     <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
     <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
+
+    <!--
+      netstandard1.1 is intentional: it keeps the analyzers loadable by Roslyn 1.2+ hosts (Visual Studio 2015 Update 2
+      and later). Silence the .NET SDK's NETSDK1215 "not recommended" warning for that deliberate choice.
+    -->
+    <CheckNotRecommendedTargetFramework>false</CheckNotRecommendedTargetFramework>
     <PackageId>StyleCop.Analyzers.NewIdRequiredDueToNuGetBug</PackageId>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <!--
+      Embed the portable PDB in the shipped assembly. Analyzers are loaded by the compiler and the IDE, not by the
+      user's application, so a separate symbol package is rarely found. With the PDB inside the DLL, stack traces
+      from analyzer hosts include file and line information, and a debugger finds the symbols without a symbol
+      server. Debug builds keep a separate portable PDB (see Directory.Build.props), which code coverage uses.
+    -->
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
 
   <PropertyGroup>

@@ -37,9 +37,15 @@ namespace StyleCop.Analyzers.Status.Generator
             }
 
             MSBuildLocator.RegisterDefaults();
-            SolutionReader reader = SolutionReader.CreateAsync(args[0]).Result;
+            SolutionReader reader = SolutionReader.CreateAsync(args[0], configuration: args.Length > 1 ? args[1] : "Debug").Result;
 
             var diagnostics = reader.GetDiagnosticsAsync().Result;
+
+            if (diagnostics.Count == 0)
+            {
+                Console.Error.WriteLine("No diagnostics were found. Refusing to publish an empty status report.");
+                return 1;
+            }
 
             diagnostics = diagnostics.Sort((a, b) => a.Id.CompareTo(b.Id));
 

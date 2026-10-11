@@ -30,6 +30,7 @@ namespace StyleCop.Analyzers.Lightup
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public ILabelSymbol Label => LabelAccessor(this.WrappedOperation);
         public IOperation Operation => OperationAccessor(this.WrappedOperation);
+
         public static explicit operator ILabeledOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(ILabeledOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static ILabeledOperationWrapper FromOperation(IOperation operation)

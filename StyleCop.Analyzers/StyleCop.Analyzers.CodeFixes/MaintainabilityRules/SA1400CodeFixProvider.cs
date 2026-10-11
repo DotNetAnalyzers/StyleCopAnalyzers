@@ -90,6 +90,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 updatedDeclarationNode = HandleRecordDeclaration((RecordDeclarationSyntaxWrapper)declarationNode);
                 break;
 
+            case SyntaxKindEx.UnionDeclaration:
+                updatedDeclarationNode = HandleUnionDeclaration((UnionDeclarationSyntaxWrapper)declarationNode);
+                break;
+
             case SyntaxKind.DelegateDeclaration:
                 updatedDeclarationNode = HandleDelegateDeclaration((DelegateDeclarationSyntax)declarationNode);
                 break;
@@ -203,6 +207,23 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         }
 
         private static SyntaxNode HandleRecordDeclaration(RecordDeclarationSyntaxWrapper node)
+        {
+            SyntaxToken triviaToken = node.Keyword;
+            if (triviaToken.IsMissing)
+            {
+                return null;
+            }
+
+            SyntaxKind defaultVisibility = IsNestedType(node) ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword;
+            SyntaxTokenList modifiers = DeclarationModifiersHelper.AddModifier(node.Modifiers, ref triviaToken, defaultVisibility);
+            return node
+                .WithKeyword(triviaToken)
+                .WithModifiers(modifiers)
+                .SyntaxNode
+                .WithoutFormatting();
+        }
+
+        private static SyntaxNode HandleUnionDeclaration(UnionDeclarationSyntaxWrapper node)
         {
             SyntaxToken triviaToken = node.Keyword;
             if (triviaToken.IsMissing)
@@ -382,6 +403,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 case SyntaxKind.StructDeclaration:
                 case SyntaxKindEx.RecordDeclaration:
                 case SyntaxKindEx.RecordStructDeclaration:
+                case SyntaxKindEx.UnionDeclaration:
                 case SyntaxKind.DelegateDeclaration:
                 case SyntaxKind.EventDeclaration:
                 case SyntaxKind.EventFieldDeclaration:

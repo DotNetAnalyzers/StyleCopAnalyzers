@@ -39,10 +39,12 @@ namespace StyleCop.Analyzers.Lightup
         public ImmutableArray<IOperation> DeconstructionSubpatterns => DeconstructionSubpatternsAccessor(this.WrappedOperation);
         public ImmutableArray<IOperation> PropertySubpatterns => PropertySubpatternsAccessor(this.WrappedOperation);
         public ISymbol DeclaredSymbol => DeclaredSymbolAccessor(this.WrappedOperation);
+
         public static explicit operator IRecursivePatternOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IRecursivePatternOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public ITypeSymbol InputType => ((IPatternOperationWrapper)this).InputType;
         public ITypeSymbol NarrowedType => ((IPatternOperationWrapper)this).NarrowedType;
+
         public static explicit operator IRecursivePatternOperationWrapper(IPatternOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IPatternOperationWrapper(IRecursivePatternOperationWrapper wrapper) => IPatternOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IRecursivePatternOperationWrapper FromOperation(IOperation operation)

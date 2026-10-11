@@ -3,10 +3,6 @@
 
 #nullable disable
 
-// Several test methods in this file use the same member data, but in some cases the test does not use all of the
-// supported parameters. See https://github.com/xunit/xunit/issues/1556.
-#pragma warning disable xUnit1026 // Theory methods should use all of their parameters
-
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System;
@@ -515,7 +511,7 @@ public class Foo
         [Theory]
         [InlineData("\n")]
         [InlineData("\r\n")]
-        public async Task TestMissleadingUsingAsync(string lineEnding)
+        public virtual async Task TestMissleadingUsingAsync(string lineEnding)
         {
             string oldSource = @"namespace Foo
 {
@@ -546,7 +542,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestUsingNameChangeAsync()
+        public virtual async Task TestUsingNameChangeAsync()
         {
             string oldSource = @"namespace Foo
 {
@@ -576,7 +572,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestMissleadingUsingAllowAliasesAsync()
+        public virtual async Task TestMissleadingUsingAllowAliasesAsync()
         {
             string oldSource = @"namespace Foo
 {
@@ -607,7 +603,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestUsingNameChangeAllowAliasesAsync()
+        public virtual async Task TestUsingNameChangeAllowAliasesAsync()
         {
             string testSource = @"namespace Foo
 {

@@ -297,6 +297,45 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
 
         [Fact]
+        [WorkItem(3428, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3428")]
+        public async Task TestPrefixUnaryOperatorAfterCommentAsync()
+        {
+            string test = @"namespace Namespace
+{
+    class Type
+    {
+        void Foo(int a, int b)
+        {
+            Foo(/* a */ {|#0:" + this.Sign + @"|}1, 2);
+            int x = (int) /* cast */ {|#1:" + this.Sign + @"|}3;
+        }
+    }
+}
+";
+
+            string fixedTest = @"namespace Namespace
+{
+    class Type
+    {
+        void Foo(int a, int b)
+        {
+            Foo(/* a */" + this.Sign + @"1, 2);
+            int x = (int) /* cast */" + this.Sign + @"3;
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.Diagnostic().WithArguments(" not", "preceded").WithLocation(0),
+                this.Diagnostic().WithArguments(" not", "preceded").WithLocation(1),
+            };
+
+            await this.VerifyCSharpFixAsync(test, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestPrefixUnaryOperatorInParenthesesAsync()
         {
             string testFormat = @"namespace Namespace

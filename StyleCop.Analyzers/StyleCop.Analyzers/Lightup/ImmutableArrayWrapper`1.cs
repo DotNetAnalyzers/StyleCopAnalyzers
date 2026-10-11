@@ -75,11 +75,15 @@ namespace StyleCop.Analyzers.Lightup
                 this.current = default!;
             }
 
+#pragma warning disable IDE0251 // Make member 'readonly'
             public T Current => this.current;
+#pragma warning restore IDE0251 // Make member 'readonly'
 
             object IEnumerator.Current => this.Current!;
 
+#pragma warning disable IDE0251 // Make member 'readonly'
             public override bool Equals(object obj)
+#pragma warning restore IDE0251 // Make member 'readonly'
             {
                 Enumerator? otherOpt = obj as Enumerator?;
                 if (!otherOpt.HasValue)
@@ -92,7 +96,9 @@ namespace StyleCop.Analyzers.Lightup
                     && other.index == this.index;
             }
 
+#pragma warning disable IDE0251 // Make member 'readonly'
             public override int GetHashCode()
+#pragma warning restore IDE0251 // Make member 'readonly'
             {
                 if (this.wrapper == null)
                 {
@@ -102,7 +108,9 @@ namespace StyleCop.Analyzers.Lightup
                 return this.wrapper.GetHashCode() ^ this.index;
             }
 
+#pragma warning disable IDE0251 // Make member 'readonly'
             public void Dispose()
+#pragma warning restore IDE0251 // Make member 'readonly'
             {
             }
 

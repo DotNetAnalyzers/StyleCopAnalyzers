@@ -122,5 +122,155 @@ public static class TestClass
             var expected = Diagnostic().WithLocation(0).WithArguments("A field", "an extension");
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(4023, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4023")]
+        public async Task TestPropertyAfterMethodInExtensionBlockAsync()
+        {
+            var testCode = @"
+public static class TestClass
+{
+    extension(string source)
+    {
+        public int GetLength() => source.Length;
+
+        public int {|#0:Length2|} => source.Length;
+    }
+}
+";
+
+            var fixedCode = @"
+public static class TestClass
+{
+    extension(string source)
+    {
+        public int Length2 => source.Length;
+
+        public int GetLength() => source.Length;
+    }
+}
+";
+
+            var expected = Diagnostic().WithLocation(0).WithArguments("A property", "a method");
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(4023, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4023")]
+        public async Task TestOperatorAfterMethodInExtensionBlockAsync()
+        {
+            var testCode = @"
+public static class TestClass
+{
+    extension(string source)
+    {
+        public int GetLength() => source.Length;
+
+        {|#0:public static string operator +(string left, int right) => left;|}
+    }
+}
+";
+
+            var fixedCode = @"
+public static class TestClass
+{
+    extension(string source)
+    {
+        public static string operator +(string left, int right) => left;
+
+        public int GetLength() => source.Length;
+    }
+}
+";
+
+            var expected = Diagnostic().WithLocation(0).WithArguments("An operator", "a method");
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(4023, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4023")]
+        public async Task TestExtensionBlockMembersCorrectOrderAsync()
+        {
+            var testCode = @"
+public static class TestClass
+{
+    extension(string source)
+    {
+        public int Length2 => source.Length;
+
+        public static string operator +(string left, int right) => left;
+
+        public int GetLength() => source.Length;
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(4030, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4030")]
+        public async Task TestInstanceCompoundAssignmentOperatorAfterStaticOperatorAsync()
+        {
+            string testCode = @"
+public class TestClass
+{
+    public int Value;
+
+    public static TestClass operator +(TestClass a, int b)
+    {
+        return a;
+    }
+
+    public void operator +=(int x)
+    {
+        this.Value += x;
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(4030, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4030")]
+        public async Task TestInstanceCompoundAssignmentOperatorAfterMethodAsync()
+        {
+            string testCode = @"
+public class TestClass
+{
+    public int Value;
+
+    public void TestMethod()
+    {
+    }
+
+    {|#0:public void operator +=(int x)
+    {
+        this.Value += x;
+    }|}
+}
+";
+
+            string fixedCode = @"
+public class TestClass
+{
+    public int Value;
+
+    public void operator +=(int x)
+    {
+        this.Value += x;
+    }
+
+    public void TestMethod()
+    {
+    }
+}
+";
+
+            var expected = Diagnostic().WithLocation(0).WithArguments("An operator", "a method");
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

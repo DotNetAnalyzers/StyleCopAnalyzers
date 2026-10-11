@@ -73,11 +73,8 @@ namespace TestNamespace
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var importScopes = semanticModel.GetImportScopes(syntaxTree.Length, cancellationToken);
 
-            var result = importScopes.FirstOrDefault(scope => scope.Aliases.Length == numberOfAliasSymbols);
-            if (result == null)
-            {
-                throw new InvalidOperationException("Could not create an import scope with the expected number of alias symbols.");
-            }
+            var result = importScopes.FirstOrDefault(scope => scope.Aliases.Length == numberOfAliasSymbols)
+                ?? throw new InvalidOperationException("Could not create an import scope with the expected number of alias symbols.");
 
             return result;
         }

@@ -22,9 +22,9 @@ namespace StyleCop.Analyzers.SpacingRules
     /// <strong>fixed</strong>, <strong>for</strong>, <strong>foreach</strong>, <strong>from</strong>,
     /// <strong>group</strong>, <strong>if</strong>, <strong>in</strong>, <strong>into</strong>, <strong>join</strong>,
     /// <strong>let</strong>, <strong>lock</strong>, <strong>orderby</strong>, <strong>out</strong>,
-    /// <strong>ref</strong>, <strong>return</strong>, <strong>select</strong>, <strong>switch</strong>,
-    /// <strong>throw</strong>, <strong>using</strong>, <strong>var</strong>, <strong>where</strong>,
-    /// <strong>while</strong>, <strong>yield</strong>.</para>
+    /// <strong>ref</strong>, <strong>return</strong>, <strong>scoped</strong>, <strong>select</strong>,
+    /// <strong>switch</strong>, <strong>throw</strong>, <strong>using</strong>, <strong>var</strong>,
+    /// <strong>where</strong>, <strong>while</strong>, <strong>yield</strong>.</para>
     ///
     /// <para>The following keywords should not be followed by any space: <strong>checked</strong>,
     /// <strong>default</strong>, <strong>sizeof</strong>, <strong>typeof</strong>, <strong>unchecked</strong>.</para>
@@ -40,7 +40,7 @@ namespace StyleCop.Analyzers.SpacingRules
         /// The ID for diagnostics produced by the <see cref="SA1000KeywordsMustBeSpacedCorrectly"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1000";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1000.md";
+        private static readonly string HelpLink = HelpLinkHelper.GetHelpLink(DiagnosticId);
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1000Title), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpacingResources.SA1000MessageFormat), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1000Description), SpacingResources.ResourceManager, typeof(SpacingResources));
@@ -115,6 +115,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 case SyntaxKind.OrderByKeyword:
                 case SyntaxKind.OutKeyword:
                 case SyntaxKind.RefKeyword:
+                case SyntaxKindEx.ScopedKeyword:
                 case SyntaxKind.SelectKeyword:
                 case SyntaxKind.SwitchKeyword:
                 case SyntaxKind.UsingKeyword:

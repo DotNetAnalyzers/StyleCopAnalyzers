@@ -33,6 +33,7 @@ namespace StyleCop.Analyzers.Lightup
         public IOperation ValueOperand => ValueOperandAccessor(this.WrappedOperation);
         public ITypeSymbol TypeOperand => TypeOperandAccessor(this.WrappedOperation);
         public bool IsNegated => IsNegatedAccessor(this.WrappedOperation);
+
         public static explicit operator IIsTypeOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IIsTypeOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IIsTypeOperationWrapper FromOperation(IOperation operation)

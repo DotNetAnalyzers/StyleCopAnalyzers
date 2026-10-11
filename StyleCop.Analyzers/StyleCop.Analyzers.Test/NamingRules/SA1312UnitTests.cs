@@ -510,6 +510,39 @@ public class TypeName
         }
 
         [Fact]
+        [WorkItem(3057, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3057")]
+        public async Task TestUnderscoreOnlyNamesInForEachStatementAsync()
+        {
+            var testCode = @"public class TypeName
+{
+    public int MethodName(int[] values)
+    {
+        int count = 0;
+        foreach (var _ in values)
+        {
+            foreach (var __ in values)
+            {
+                count++;
+            }
+        }
+
+        foreach (var {|#0:_A|} in values)
+        {
+        }
+
+        return count;
+    }
+}";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithArguments("_A").WithLocation(0),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestUnderscoreOnlyNamesDoNotTriggerCodeFixAsync()
         {
             var testCode = @"public class TypeName

@@ -35,7 +35,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// The ID for diagnostics produced by the <see cref="SA1611ElementParametersMustBeDocumented"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1611";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1611.md";
+        private static readonly string HelpLink = HelpLinkHelper.GetHelpLink(DiagnosticId);
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1611Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1611MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1611Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
@@ -68,6 +68,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
+            if (node.IsKind(SyntaxKindEx.UnionDeclaration))
+            {
+                // The parameter list of a union declares its case types, which have no names to document.
+                return;
+            }
+
             var parameterList = GetParameters(node);
             if (parameterList == null)
             {
@@ -95,6 +101,12 @@ namespace StyleCop.Analyzers.DocumentationRules
             if (node.IsKind(SyntaxKindEx.RecordDeclaration) || node.IsKind(SyntaxKindEx.RecordStructDeclaration))
             {
                 // Record parameters are covered by SA1600 instead.
+                return;
+            }
+
+            if (node.IsKind(SyntaxKindEx.UnionDeclaration))
+            {
+                // The parameter list of a union declares its case types, which have no names to document.
                 return;
             }
 

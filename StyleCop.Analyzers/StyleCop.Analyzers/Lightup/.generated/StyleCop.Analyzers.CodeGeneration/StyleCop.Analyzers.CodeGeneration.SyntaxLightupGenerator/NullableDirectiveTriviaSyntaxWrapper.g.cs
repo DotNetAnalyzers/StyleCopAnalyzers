@@ -47,6 +47,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public DirectiveTriviaSyntax SyntaxNode => this.node;
 
+
         public SyntaxToken HashToken
         {
             get

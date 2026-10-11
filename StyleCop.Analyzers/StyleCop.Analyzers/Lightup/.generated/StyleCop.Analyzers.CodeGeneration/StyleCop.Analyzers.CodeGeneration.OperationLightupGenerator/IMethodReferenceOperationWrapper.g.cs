@@ -30,10 +30,12 @@ namespace StyleCop.Analyzers.Lightup
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public IMethodSymbol Method => MethodAccessor(this.WrappedOperation);
         public bool IsVirtual => IsVirtualAccessor(this.WrappedOperation);
+
         public static explicit operator IMethodReferenceOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IMethodReferenceOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public IOperation Instance => ((IMemberReferenceOperationWrapper)this).Instance;
         public ISymbol Member => ((IMemberReferenceOperationWrapper)this).Member;
+
         public static explicit operator IMethodReferenceOperationWrapper(IMemberReferenceOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IMemberReferenceOperationWrapper(IMethodReferenceOperationWrapper wrapper) => IMemberReferenceOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IMethodReferenceOperationWrapper FromOperation(IOperation operation)

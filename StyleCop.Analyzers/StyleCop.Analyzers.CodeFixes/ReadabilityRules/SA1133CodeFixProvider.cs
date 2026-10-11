@@ -81,20 +81,42 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var newAttributeLists = new List<AttributeListSyntax>();
 
+            // Attributes on a lambda expression are part of an expression, so keep them on the same line
+            bool separateWithSpace = attributeList.Parent.IsKind(SyntaxKind.ParenthesizedLambdaExpression)
+                || attributeList.Parent.IsKind(SyntaxKind.SimpleLambdaExpression);
+
             for (var i = 0; i < attributeList.Attributes.Count; i++)
             {
                 var newAttributes = SyntaxFactory.SingletonSeparatedList(
                     attributeList.Attributes[i].WithLeadingTrivia(
                         attributeList.Attributes[i].GetLeadingTrivia().WithoutLeadingWhitespace()));
-                var newAttributeList = SyntaxFactory.AttributeList(attributeList.Target, newAttributes);
+                var newAttributeList = separateWithSpace
+                    ? SyntaxFactory.AttributeList(attributeList.OpenBracketToken.WithoutTrivia(), attributeList.Target, newAttributes, attributeList.CloseBracketToken.WithoutTrivia())
+                    : SyntaxFactory.AttributeList(attributeList.Target, newAttributes);
 
-                newAttributeList = (i == 0)
-                    ? newAttributeList.WithLeadingTrivia(attributeList.GetLeadingTrivia())
-                    : newAttributeList.WithLeadingTrivia(indentationTrivia);
+                if (i == 0)
+                {
+                    newAttributeList = newAttributeList.WithLeadingTrivia(attributeList.GetLeadingTrivia());
+                }
+                else
+                {
+                    newAttributeList = separateWithSpace
+                        ? newAttributeList.WithLeadingTrivia(SyntaxFactory.TriviaList())
+                        : newAttributeList.WithLeadingTrivia(indentationTrivia);
+                }
 
-                newAttributeList = (i == (attributeList.Attributes.Count - 1))
-                    ? newAttributeList.WithTrailingTrivia(attributeList.GetTrailingTrivia())
-                    : newAttributeList.WithTrailingTrivia(FormattingHelper.GetEndOfLineForCodeFix(attributeList.CloseBracketToken, sourceText, options));
+                if (i == (attributeList.Attributes.Count - 1))
+                {
+                    newAttributeList = newAttributeList.WithTrailingTrivia(attributeList.GetTrailingTrivia());
+                }
+                else if (separateWithSpace)
+                {
+                    newAttributeList = newAttributeList.WithTrailingTrivia(SyntaxFactory.Space);
+                }
+                else
+                {
+                    newAttributeList = newAttributeList.WithTrailingTrivia(FormattingHelper.GetEndOfLineForCodeFix(attributeList.CloseBracketToken, sourceText, options));
+                }
 
                 newAttributeLists.Add(newAttributeList);
             }

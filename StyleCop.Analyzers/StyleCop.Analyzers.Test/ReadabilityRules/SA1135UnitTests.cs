@@ -472,5 +472,44 @@ namespace System.Threading
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3884, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3884")]
+        public async Task TestAliasInsideConstructedTypeAsync()
+        {
+            var testCode = @"
+using Tasks = System.Threading.Tasks;
+
+namespace TestStuff
+{
+    using T1 = Tasks.Task;
+    using T2 = System.ValueTuple<Tasks.Task, int>;
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3884, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3884")]
+        public async Task TestUnqualifiedTypeWithAliasQualifierInsideAsync()
+        {
+            var testCode = @"
+using System;
+using Tasks = System.Threading.Tasks;
+
+namespace TestStuff
+{
+    {|#0:using T2 = ValueTuple<Tasks::Task, int>;|}
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorType).WithLocation(0).WithArguments("System.ValueTuple<System.Threading.Tasks.Task, int>"),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

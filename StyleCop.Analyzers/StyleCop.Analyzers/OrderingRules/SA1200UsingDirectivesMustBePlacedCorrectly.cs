@@ -161,7 +161,7 @@ namespace StyleCop.Analyzers.OrderingRules
         /// </summary>
         public const string DiagnosticId = "SA1200";
 
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1200.md";
+        private static readonly string HelpLink = HelpLinkHelper.GetHelpLink(DiagnosticId);
 
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(OrderingResources.SA1200Title), OrderingResources.ResourceManager, typeof(OrderingResources));
 
@@ -224,6 +224,9 @@ namespace StyleCop.Analyzers.OrderingRules
                 case SyntaxKind.InterfaceDeclaration:
                 case SyntaxKind.EnumDeclaration:
                 case SyntaxKind.StructDeclaration:
+                case SyntaxKindEx.RecordDeclaration:
+                case SyntaxKindEx.RecordStructDeclaration:
+                case SyntaxKindEx.UnionDeclaration:
                 case SyntaxKind.DelegateDeclaration:
                     // Suppress SA1200 if file contains a type in the global namespace
                     return;
@@ -278,9 +281,11 @@ namespace StyleCop.Analyzers.OrderingRules
             foreach (UsingDirectiveSyntax directive in syntax.Usings)
             {
                 // Using directive should appear outside a namespace declaration
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
                 context.ReportDiagnostic(Diagnostic.Create(DescriptorOutside, directive.GetLocation()));
 #pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
+#pragma warning restore IDE0079 // Remove unnecessary suppression
             }
         }
     }

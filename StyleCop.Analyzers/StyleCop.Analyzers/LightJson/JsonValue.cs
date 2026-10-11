@@ -151,7 +151,7 @@ namespace LightJson
         /// Gets the type of this JsonValue.
         /// </summary>
         /// <value>The type of this JsonValue.</value>
-        public JsonValueType Type
+        public readonly JsonValueType Type
         {
             get
             {
@@ -163,7 +163,7 @@ namespace LightJson
         /// Gets a value indicating whether this JsonValue is Null.
         /// </summary>
         /// <value>A value indicating whether this JsonValue is Null.</value>
-        public bool IsNull
+        public readonly bool IsNull
         {
             get
             {
@@ -175,7 +175,7 @@ namespace LightJson
         /// Gets a value indicating whether this JsonValue is a Boolean.
         /// </summary>
         /// <value>A value indicating whether this JsonValue is a Boolean.</value>
-        public bool IsBoolean
+        public readonly bool IsBoolean
         {
             get
             {
@@ -187,7 +187,7 @@ namespace LightJson
         /// Gets a value indicating whether this JsonValue is an Integer.
         /// </summary>
         /// <value>A value indicating whether this JsonValue is an Integer.</value>
-        public bool IsInteger
+        public readonly bool IsInteger
         {
             get
             {
@@ -205,7 +205,7 @@ namespace LightJson
         /// Gets a value indicating whether this JsonValue is a Number.
         /// </summary>
         /// <value>A value indicating whether this JsonValue is a Number.</value>
-        public bool IsNumber
+        public readonly bool IsNumber
         {
             get
             {
@@ -217,7 +217,7 @@ namespace LightJson
         /// Gets a value indicating whether this JsonValue is a String.
         /// </summary>
         /// <value>A value indicating whether this JsonValue is a String.</value>
-        public bool IsString
+        public readonly bool IsString
         {
             get
             {
@@ -229,7 +229,7 @@ namespace LightJson
         /// Gets a value indicating whether this JsonValue is a JsonObject.
         /// </summary>
         /// <value>A value indicating whether this JsonValue is a JsonObject.</value>
-        public bool IsJsonObject
+        public readonly bool IsJsonObject
         {
             get
             {
@@ -241,7 +241,7 @@ namespace LightJson
         /// Gets a value indicating whether this JsonValue is a JsonArray.
         /// </summary>
         /// <value>A value indicating whether this JsonValue is a JsonArray.</value>
-        public bool IsJsonArray
+        public readonly bool IsJsonArray
         {
             get
             {
@@ -253,7 +253,7 @@ namespace LightJson
         /// Gets a value indicating whether this JsonValue represents a DateTime.
         /// </summary>
         /// <value>A value indicating whether this JsonValue represents a DateTime.</value>
-        public bool IsDateTime
+        public readonly bool IsDateTime
         {
             get
             {
@@ -265,7 +265,7 @@ namespace LightJson
         /// Gets a value indicating whether this value is true or false.
         /// </summary>
         /// <value>This value as a Boolean type.</value>
-        public bool AsBoolean
+        public readonly bool AsBoolean
         {
             get
             {
@@ -294,7 +294,7 @@ namespace LightJson
         /// Gets this value as an Integer type.
         /// </summary>
         /// <value>This value as an Integer type.</value>
-        public int AsInteger
+        public readonly int AsInteger
         {
             get
             {
@@ -319,7 +319,7 @@ namespace LightJson
         /// Gets this value as a Number type.
         /// </summary>
         /// <value>This value as a Number type.</value>
-        public double AsNumber
+        public readonly double AsNumber
         {
             get
             {
@@ -354,7 +354,7 @@ namespace LightJson
         /// Gets this value as a String type.
         /// </summary>
         /// <value>This value as a String type.</value>
-        public string AsString
+        public readonly string AsString
         {
             get
             {
@@ -381,7 +381,7 @@ namespace LightJson
         /// Gets this value as an JsonObject.
         /// </summary>
         /// <value>This value as an JsonObject.</value>
-        public JsonObject AsJsonObject
+        public readonly JsonObject AsJsonObject
         {
             get
             {
@@ -395,7 +395,7 @@ namespace LightJson
         /// Gets this value as an JsonArray.
         /// </summary>
         /// <value>This value as an JsonArray.</value>
-        public JsonArray AsJsonArray
+        public readonly JsonArray AsJsonArray
         {
             get
             {
@@ -409,7 +409,7 @@ namespace LightJson
         /// Gets this value as a system.DateTime.
         /// </summary>
         /// <value>This value as a system.DateTime.</value>
-        public DateTime? AsDateTime
+        public readonly DateTime? AsDateTime
         {
             get
             {
@@ -430,7 +430,7 @@ namespace LightJson
         /// Gets this (inner) value as a System.object.
         /// </summary>
         /// <value>This (inner) value as a System.object.</value>
-        public object AsObject
+        public readonly object AsObject
         {
             get
             {
@@ -458,7 +458,7 @@ namespace LightJson
         /// <exception cref="System.InvalidOperationException">
         /// Thrown when this JsonValue is not a JsonObject.
         /// </exception>
-        public JsonValue this[string key]
+        public readonly JsonValue this[string key]
         {
             get
             {
@@ -492,7 +492,7 @@ namespace LightJson
         /// <exception cref="InvalidOperationException">
         /// Thrown when this <see cref="JsonValue"/> is not a <see cref="JsonArray"/>.
         /// </exception>
-        public JsonValue this[int index]
+        public readonly JsonValue this[int index]
         {
             get
             {
@@ -813,7 +813,7 @@ namespace LightJson
         }
 
         /// <inheritdoc/>
-        public override bool Equals(object obj)
+        public override readonly bool Equals(object obj)
         {
             if (obj == null)
             {
@@ -832,7 +832,7 @@ namespace LightJson
         }
 
         /// <inheritdoc/>
-        public override int GetHashCode()
+        public override readonly int GetHashCode()
         {
             if (this.IsNull)
             {

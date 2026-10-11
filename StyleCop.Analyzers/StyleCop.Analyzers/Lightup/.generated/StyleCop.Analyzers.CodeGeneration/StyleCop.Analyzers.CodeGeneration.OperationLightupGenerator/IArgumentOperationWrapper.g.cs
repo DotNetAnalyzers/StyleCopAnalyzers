@@ -33,6 +33,7 @@ namespace StyleCop.Analyzers.Lightup
         public IOperation Value => ValueAccessor(this.WrappedOperation);
         public object InConversion => throw new NotImplementedException("Property 'IArgumentOperation.InConversion' has unsupported type 'CommonConversion'");
         public object OutConversion => throw new NotImplementedException("Property 'IArgumentOperation.OutConversion' has unsupported type 'CommonConversion'");
+
         public static explicit operator IArgumentOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IArgumentOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IArgumentOperationWrapper FromOperation(IOperation operation)

@@ -37,7 +37,7 @@ internal sealed class GeneratePartCodeRefactoringProvider
                     return context.Document.Project.Solution;
                 }
 
-                var firstUsing = namespaceDeclaration.Usings.FirstOrDefault()?.Name.ToString();
+                var firstUsing = namespaceDeclaration.Usings.FirstOrDefault()?.Name?.ToString();
 
                 var namespaceName = namespaceDeclaration.Name.ToString();
                 var subNamespace = namespaceName;

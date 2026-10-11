@@ -35,7 +35,7 @@ namespace StyleCop.Analyzers.NamingRules
         /// <see cref="SA1304NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1304";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1304.md";
+        private static readonly string HelpLink = HelpLinkHelper.GetHelpLink(DiagnosticId);
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(NamingResources.SA1304Title), NamingResources.ResourceManager, typeof(NamingResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(NamingResources.SA1304MessageFormat), NamingResources.ResourceManager, typeof(NamingResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(NamingResources.SA1304Description), NamingResources.ResourceManager, typeof(NamingResources));
@@ -80,10 +80,10 @@ namespace StyleCop.Analyzers.NamingRules
                 return;
             }
 
-            if (!syntax.Modifiers.Any(SyntaxKind.InternalKeyword))
+            if (syntax.Modifiers.Any(SyntaxKind.PublicKeyword)
+                || syntax.Modifiers.Any(SyntaxKind.InternalKeyword))
             {
-                // SA1307 is taken precedence here. SA1307 should be reported if the field is accessible.
-                // So if SA1307 is enabled this diagnostic will only be reported for internal fields.
+                // SA1307 takes precedence for public and internal fields, including protected internal fields.
                 if (!context.IsAnalyzerSuppressed(SA1307AccessibleFieldsMustBeginWithUpperCaseLetter.Descriptor))
                 {
                     return;

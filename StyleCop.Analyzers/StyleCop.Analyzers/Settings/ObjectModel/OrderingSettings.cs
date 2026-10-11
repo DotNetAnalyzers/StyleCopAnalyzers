@@ -59,58 +59,26 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <strong>stylecop.json</strong> does not provide values.</param>
         protected internal OrderingSettings(JsonObject orderingSettingsObject, AnalyzerConfigOptionsWrapper analyzerConfigOptions)
         {
-            ImmutableArray<OrderingTrait>.Builder elementOrder = null;
-            bool? systemUsingDirectivesFirst = null;
-            UsingDirectivesPlacement? usingDirectivesPlacement = null;
-            OptionSetting? blankLinesBetweenUsingGroups = null;
+            var reader = new SettingsReader(orderingSettingsObject, analyzerConfigOptions);
 
-            foreach (var kvp in orderingSettingsObject)
-            {
-                switch (kvp.Key)
+            var usingDirectivesPlacement = reader.GetEnum<UsingDirectivesPlacement>(
+                "usingDirectivesPlacement",
+                "stylecop.ordering.usingDirectivesPlacement",
+                "csharp_using_directive_placement",
+                value => value switch
                 {
-                case "elementOrder":
-                    kvp.AssertIsArray();
-                    elementOrder = ImmutableArray.CreateBuilder<OrderingTrait>();
-                    foreach (var value in kvp.Value.AsJsonArray)
-                    {
-                        elementOrder.Add(value.ToEnumValue<OrderingTrait>(kvp.Key));
-                    }
+                    "inside_namespace" => UsingDirectivesPlacement.InsideNamespace,
+                    "outside_namespace" => UsingDirectivesPlacement.OutsideNamespace,
+                    _ => null,
+                });
+            var blankLinesBetweenUsingGroups = reader.GetEnum<OptionSetting>(
+                "blankLinesBetweenUsingGroups",
+                "stylecop.ordering.blankLinesBetweenUsingGroups",
+                "dotnet_separate_import_directive_groups",
+                value => bool.TryParse(value, out var separate) ? (separate ? OptionSetting.Require : OptionSetting.Allow) : null);
 
-                    break;
-
-                case "systemUsingDirectivesFirst":
-                    systemUsingDirectivesFirst = kvp.ToBooleanValue();
-                    break;
-
-                case "usingDirectivesPlacement":
-                    usingDirectivesPlacement = kvp.ToEnumValue<UsingDirectivesPlacement>();
-                    break;
-
-                case "blankLinesBetweenUsingGroups":
-                    blankLinesBetweenUsingGroups = kvp.ToEnumValue<OptionSetting>();
-                    break;
-
-                default:
-                    break;
-                }
-            }
-
-            systemUsingDirectivesFirst ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "dotnet_sort_system_directives_first");
-            usingDirectivesPlacement ??= AnalyzerConfigHelper.TryGetStringValueAndNotification(analyzerConfigOptions, "csharp_using_directive_placement") switch
-            {
-                ("inside_namespace", _) => UsingDirectivesPlacement.InsideNamespace,
-                ("outside_namespace", _) => UsingDirectivesPlacement.OutsideNamespace,
-                _ => null,
-            };
-            blankLinesBetweenUsingGroups ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "dotnet_separate_import_directive_groups") switch
-            {
-                true => OptionSetting.Require,
-                false => OptionSetting.Allow,
-                _ => null,
-            };
-
-            this.elementOrder = elementOrder?.ToImmutable() ?? ImmutableArray<OrderingTrait>.Empty;
-            this.systemUsingDirectivesFirst = systemUsingDirectivesFirst.GetValueOrDefault(true);
+            this.elementOrder = reader.GetEnumList<OrderingTrait>("elementOrder", "stylecop.ordering.elementOrder") ?? ImmutableArray<OrderingTrait>.Empty;
+            this.systemUsingDirectivesFirst = reader.GetBoolean("systemUsingDirectivesFirst", "dotnet_sort_system_directives_first").GetValueOrDefault(true);
             this.usingDirectivesPlacement = usingDirectivesPlacement.GetValueOrDefault(UsingDirectivesPlacement.InsideNamespace);
             this.blankLinesBetweenUsingGroups = blankLinesBetweenUsingGroups.GetValueOrDefault(OptionSetting.Allow);
         }

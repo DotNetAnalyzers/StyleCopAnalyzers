@@ -30,6 +30,7 @@ namespace StyleCop.Analyzers.Lightup
         public ITypeSymbol Type => this.WrappedOperation.Type;
         public IOperation ArrayReference => ArrayReferenceAccessor(this.WrappedOperation);
         public ImmutableArray<IOperation> Indices => IndicesAccessor(this.WrappedOperation);
+
         public static explicit operator IArrayElementReferenceOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IArrayElementReferenceOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static IArrayElementReferenceOperationWrapper FromOperation(IOperation operation)

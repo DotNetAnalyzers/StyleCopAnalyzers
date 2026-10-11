@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1601PartialElementsMustBeDocumented>;
@@ -144,6 +145,130 @@ public partial class TypeName
 
             // The same situation is allowed if 'documentPrivateElements' is false (the default)
             await VerifyCSharpDiagnosticAsync(testCode, testSettings: null, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPartialMethodImplementationWithoutDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Some Documentation
+/// </summary>
+public partial class TypeName
+{
+    /// <summary>
+    /// Some Documentation
+    /// </summary>
+    partial void MemberName();
+}
+
+/// <summary>
+/// Some Documentation
+/// </summary>
+public partial class TypeName
+{
+    partial void MemberName()
+    {
+    }
+}";
+
+            // The defining declaration is documented, which is enough for the partial method
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPartialMethodDefinitionWithoutDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Some Documentation
+/// </summary>
+public partial class TypeName
+{
+    partial void MemberName();
+}
+
+/// <summary>
+/// Some Documentation
+/// </summary>
+public partial class TypeName
+{
+    /// <summary>
+    /// Some Documentation
+    /// </summary>
+    partial void MemberName()
+    {
+    }
+}";
+
+            // The implementing declaration is documented, which is enough for the partial method
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPartialMethodWithoutAnyDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Some Documentation
+/// </summary>
+public partial class TypeName
+{
+    partial void {|#0:MemberName|}();
+}
+
+/// <summary>
+/// Some Documentation
+/// </summary>
+public partial class TypeName
+{
+    partial void {|#1:MemberName|}()
+    {
+    }
+}";
+
+            // Roslyn 1.x does not run syntax node actions on the implementing declaration of a partial method, so only
+            // the defining declaration is reported there.
+            DiagnosticResult[] expected = LightupHelpers.SupportsCSharp7
+                ? new[] { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1) }
+                : new[] { Diagnostic().WithLocation(0) };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPartialMethodImplementationWithEmptyDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Some Documentation
+/// </summary>
+public partial class TypeName
+{
+    partial void {|#0:MemberName|}();
+}
+
+/// <summary>
+/// Some Documentation
+/// </summary>
+public partial class TypeName
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    partial void {|#1:MemberName|}()
+    {
+    }
+}";
+
+            // Empty documentation on one part does not count as documenting the partial method
+            // Roslyn 1.x does not run syntax node actions on the implementing declaration of a partial method, so only
+            // the defining declaration is reported there.
+            DiagnosticResult[] expected = LightupHelpers.SupportsCSharp7
+                ? new[] { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1) }
+                : new[] { Diagnostic().WithLocation(0) };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]

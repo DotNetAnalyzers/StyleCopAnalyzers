@@ -32,7 +32,7 @@ namespace StyleCop.Analyzers.NamingRules
         /// </summary>
         internal const string ExpectedTupleElementNameKey = "ExpectedTupleElementName";
 
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1316.md";
+        private static readonly string HelpLink = HelpLinkHelper.GetHelpLink(DiagnosticId);
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(NamingResources.SA1316Title), NamingResources.ResourceManager, typeof(NamingResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(NamingResources.SA1316MessageFormat), NamingResources.ResourceManager, typeof(NamingResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(NamingResources.SA1316Description), NamingResources.ResourceManager, typeof(NamingResources));
@@ -77,23 +77,30 @@ namespace StyleCop.Analyzers.NamingRules
 
         private static void HandleTupleExpressionAction(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
-            if (!context.SupportsInferredTupleElementNames())
+            if (!context.SupportsTuples())
             {
                 return;
             }
 
-            if (!settings.NamingRules.IncludeInferredTupleElementNames)
-            {
-                return;
-            }
+            bool includeInferredNames = settings.NamingRules.IncludeInferredTupleElementNames
+                && context.SupportsInferredTupleElementNames();
 
             var tupleExpression = (TupleExpressionSyntaxWrapper)context.Node;
             foreach (var argument in tupleExpression.Arguments)
             {
-                var inferredMemberName = SyntaxFactsEx.TryGetInferredMemberName(argument.NameColon?.Name ?? argument.Expression);
-                if (inferredMemberName != null)
+                if (argument.NameColon != null)
                 {
-                    CheckName(context, settings, tupleElement: null, inferredMemberName, argument.Expression.GetLocation(), false);
+                    // Explicit element names are always checked, and can be fixed.
+                    var name = argument.NameColon.Name.Identifier;
+                    CheckName(context, settings, tupleElement: null, name.ValueText, name.GetLocation(), true);
+                }
+                else if (includeInferredNames)
+                {
+                    var inferredMemberName = SyntaxFactsEx.TryGetInferredMemberName(argument.Expression);
+                    if (inferredMemberName != null)
+                    {
+                        CheckName(context, settings, tupleElement: null, inferredMemberName, argument.Expression.GetLocation(), false);
+                    }
                 }
             }
         }

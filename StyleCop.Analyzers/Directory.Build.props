@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <LangVersion>10</LangVersion>
+    <LangVersion>14</LangVersion>
     <Nullable>enable</Nullable>
     <WarningLevel>99</WarningLevel>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
@@ -22,8 +22,12 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <DebugType Condition="'$(Configuration)' == 'Debug'">full</DebugType>
-    <DebugType Condition="'$(Configuration)' != 'Debug'">portable</DebugType>
+    <!--
+      Debug builds used Windows PDBs for OpenCover, which is no longer used. Coverlet rewrites Windows PDBs through the
+      native diasymreader COM writer, which crashes on modern .NET (AccessViolationException in
+      ISymUnmanagedWriter2.Close), but handles portable PDBs in managed code.
+    -->
+    <DebugType>portable</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
@@ -52,8 +56,8 @@
     <PackageReference Include="AsyncUsageAnalyzers" Version="1.0.0-alpha003" PrivateAssets="all" />
     <PackageReference Include="DotNetAnalyzers.DocumentationAnalyzers" Version="1.0.0-beta.46" PrivateAssets="all" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeStyle" Version="4.0.1" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="5.9.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeStyle" Version="5.9.0" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
@@ -62,7 +66,7 @@
 
   <!-- C# Compiler -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.Net.Compilers.Toolset" Version="4.0.1" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Net.Compilers.Toolset" Version="5.9.0" PrivateAssets="all" />
   </ItemGroup>
 
   <!-- Public API -->

@@ -3,9 +3,19 @@
 
 namespace StyleCop.Analyzers.Test.CSharp11.DocumentationRules
 {
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp10.DocumentationRules;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<
+        StyleCop.Analyzers.DocumentationRules.SA1625ElementDocumentationMustNotBeCopiedAndPasted>;
 
     public partial class SA1625CSharp11UnitTests : SA1625CSharp10UnitTests
     {
+        protected override DiagnosticResult[] GetExpectedResultTestPrimaryConstructorParametersWithCopiedDocumentation()
+        {
+            return new[]
+            {
+                Diagnostic().WithLocation(0),
+            };
+        }
     }
 }

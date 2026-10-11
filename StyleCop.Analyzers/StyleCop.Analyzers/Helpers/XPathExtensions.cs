@@ -28,13 +28,7 @@ namespace StyleCop.Analyzers.Helpers
 
         private static Type GetTypeFromEither(string contractName, string desktopName)
         {
-            var type = TryGetType(contractName);
-
-            if (type == null)
-            {
-                type = TryGetType(desktopName);
-            }
-
+            var type = TryGetType(contractName) ?? TryGetType(desktopName);
             return type;
         }
 

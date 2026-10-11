@@ -7,6 +7,7 @@
     <authors>Sam Harwell et. al.</authors>
     <owners>Sam Harwell</owners>
     <license type="expression">MIT</license>
+    <readme>README.md</readme>
     <projectUrl>https://github.com/DotNetAnalyzers/StyleCopAnalyzers</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>An implementation of StyleCop's rules using Roslyn analyzers and code fixes</description>
@@ -20,14 +21,13 @@
     <!-- Additional Files -->
     <file src="..\..\LICENSE" />
     <file src="..\..\THIRD-PARTY-NOTICES.txt" />
+    <file src="PackageReadme.md" target="README.md" />
 
-    <!-- Binaries and symbols -->
+    <!-- Binaries (the PDBs are embedded in the DLLs) -->
     <file src="bin\$Configuration$\netstandard1.1\StyleCop.Analyzers.dll" target="analyzers\dotnet\cs" />
     <file src="bin\$Configuration$\netstandard1.1\**\StyleCop.Analyzers.resources.dll" target="analyzers\dotnet\cs" />
-    <file src="bin\$Configuration$\netstandard1.1\StyleCop.Analyzers.pdb" target="analyzers\dotnet\cs" />
     <file src="bin\$Configuration$\netstandard1.1\StyleCop.Analyzers.CodeFixes.dll" target="analyzers\dotnet\cs" />
     <file src="bin\$Configuration$\netstandard1.1\**\StyleCop.Analyzers.CodeFixes.resources.dll" target="analyzers\dotnet\cs" />
-    <file src="bin\$Configuration$\netstandard1.1\StyleCop.Analyzers.CodeFixes.pdb" target="analyzers\dotnet\cs" />
 
 	<!-- Rulesets -->
 	<file src="rulesets\StyleCopAnalyzersDefault.ruleset" target="rulesets\" />
@@ -35,10 +35,6 @@
     <!-- Scripts -->
     <file src="tools\install.ps1" target="tools\" />
     <file src="tools\uninstall.ps1" target="tools\" />
-
-    <!-- Source code -->
-    <file src="..\StyleCop.Analyzers\**\*.cs" exclude="..\StyleCop.Analyzers\obj\**\*.cs;..\StyleCop.Analyzers\Lightup\.generated\**\*.cs" target="src"/>
-    <file src="**\*.cs" exclude="obj\**\*.cs;Properties\AssemblyInfo.cs" target="src"/>
 
   </files>
 </package>

@@ -13,10 +13,8 @@ namespace StyleCop.Analyzers.Test.Verifiers
     using Microsoft.CodeAnalysis.CSharp.Testing;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Testing;
-    using Microsoft.CodeAnalysis.Testing.Verifiers;
     using StyleCop.Analyzers.SpacingRules;
     using Xunit;
-    using Xunit.Sdk;
     using static StyleCopDiagnosticVerifier<StyleCop.Analyzers.SpacingRules.SA1002SemicolonsMustBeSpacedCorrectly>;
 
     /// <summary>
@@ -38,7 +36,7 @@ class ClassName
 ";
 
             var expected = Diagnostic();
-            var ex = await Assert.ThrowsAnyAsync<XunitException>(
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
                 async () =>
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -101,7 +99,7 @@ class ClassName
             // By failing to include a location, the verified thinks we're only trying to verify a project diagnostic.
             DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "followed");
 
-            var ex = await Assert.ThrowsAnyAsync<XunitException>(
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
                 async () =>
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -117,13 +115,9 @@ class ClassName
                 + $"Actual diagnostic:{Environment.NewLine}"
                 + $"    // /0/Test0.cs(7,33): warning SA1002: Semicolons should be followed by a space{Environment.NewLine}"
                 + $"VerifyCS.Diagnostic().WithSpan(7, 33, 7, 34).WithArguments(\"\", \"followed\"),{Environment.NewLine}"
-                + $"{Environment.NewLine}"
-                + $"{Environment.NewLine}"
-                + $"Assert.Equal() Failure{Environment.NewLine}"
-                + $"Expected: None{Environment.NewLine}"
-                + $"Actual:   SourceFile(/0/Test0.cs[102..103))";
+                + $"{Environment.NewLine}";
 
-            new XUnitVerifier().EqualOrDiff(expectedMessage, ex.Message);
+            new DefaultVerifier().EqualOrDiff(expectedMessage, ex.Message);
         }
 
         [Fact]
@@ -140,7 +134,7 @@ class ClassName
 }
 ";
 
-            var ex = await Assert.ThrowsAnyAsync<XunitException>(
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
                 async () =>
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -162,10 +156,10 @@ class ClassName
 }
 ";
 
-            var ex = await Assert.ThrowsAnyAsync<XunitException>(
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
                 async () =>
                 {
-                    await CSharpCodeFixVerifier<ErrorThrowingAnalyzer, EmptyCodeFixProvider, XUnitVerifier>.VerifyAnalyzerAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
+                    await CSharpCodeFixVerifier<ErrorThrowingAnalyzer, EmptyCodeFixProvider, DefaultVerifier>.VerifyAnalyzerAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
                 }).ConfigureAwait(false);
             Assert.StartsWith($"Context: Diagnostics of test state{Environment.NewLine}Mismatch between number of diagnostics returned, expected \"0\" actual \"1\"", ex.Message);
             Assert.Contains("error AD0001", ex.Message);
@@ -187,7 +181,7 @@ class ClassName
 
             DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 33);
 
-            var ex = await Assert.ThrowsAnyAsync<XunitException>(
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
                 async () =>
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -213,7 +207,7 @@ class ClassName
 
             DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "followed").WithLocation(8, 33);
 
-            var ex = await Assert.ThrowsAnyAsync<XunitException>(
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
                 async () =>
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -239,7 +233,7 @@ class ClassName
             var descriptor = new DiagnosticDescriptor("SA9999", "Title", "Message", "Category", DiagnosticSeverity.Warning, isEnabledByDefault: true);
             DiagnosticResult expected = Diagnostic(descriptor).WithLocation(7, 33);
 
-            var ex = await Assert.ThrowsAnyAsync<XunitException>(
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
                 async () =>
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -263,7 +257,7 @@ class ClassName
 
             DiagnosticResult expected = Diagnostic().WithLocation(7, 33).WithSeverity(DiagnosticSeverity.Error);
 
-            var ex = await Assert.ThrowsAnyAsync<XunitException>(
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
                 async () =>
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -287,7 +281,7 @@ class ClassName
 
             DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "followed").WithLocation(8, 33);
 
-            var ex = await Assert.ThrowsAnyAsync<XunitException>(
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
                 async () =>
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -316,7 +310,7 @@ class ClassName
                 Diagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 34),
             };
 
-            var ex = await Assert.ThrowsAnyAsync<XunitException>(
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
                 async () =>
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -340,7 +334,7 @@ class ClassName
 
             DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 34);
 
-            var ex = await Assert.ThrowsAnyAsync<XunitException>(
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
                 async () =>
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -364,7 +358,7 @@ class ClassName
 
             DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "followed").WithSpan(7, 33, 7, 35);
 
-            var ex = await Assert.ThrowsAnyAsync<XunitException>(
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
                 async () =>
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -388,7 +382,7 @@ class ClassName
 
             DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "bogus argument").WithLocation(7, 33);
 
-            var ex = await Assert.ThrowsAnyAsync<XunitException>(
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
                 async () =>
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -412,7 +406,7 @@ class ClassName
 
             DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "bogus argument").WithLocation(7, 33).WithLocation(8, 34);
 
-            var ex = await Assert.ThrowsAnyAsync<XunitException>(
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
                 async () =>
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

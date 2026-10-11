@@ -16,13 +16,17 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind ManagedKeyword = (SyntaxKind)8445;
         public const SyntaxKind UnmanagedKeyword = (SyntaxKind)8446;
         public const SyntaxKind RequiredKeyword = (SyntaxKind)8447;
+        public const SyntaxKind ScopedKeyword = (SyntaxKind)8448;
         public const SyntaxKind FileKeyword = (SyntaxKind)8449;
+        public const SyntaxKind ClosedKeyword = (SyntaxKind)8453;
+        public const SyntaxKind SafeKeyword = (SyntaxKind)8454;
         public const SyntaxKind NullableKeyword = (SyntaxKind)8486;
         public const SyntaxKind EnableKeyword = (SyntaxKind)8487;
         public const SyntaxKind WarningsKeyword = (SyntaxKind)8488;
         public const SyntaxKind AnnotationsKeyword = (SyntaxKind)8489;
         public const SyntaxKind VarKeyword = (SyntaxKind)8490;
         public const SyntaxKind UnderscoreToken = (SyntaxKind)8491;
+        public const SyntaxKind MultiLineRawStringLiteralToken = (SyntaxKind)8519;
         public const SyntaxKind ConflictMarkerTrivia = (SyntaxKind)8564;
         public const SyntaxKind IsPatternExpression = (SyntaxKind)8657;
         public const SyntaxKind RangeExpression = (SyntaxKind)8658;
@@ -80,7 +84,9 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind FunctionPointerUnmanagedCallingConventionList = (SyntaxKind)9066;
         public const SyntaxKind RecordStructDeclaration = (SyntaxKind)9068;
         public const SyntaxKind ExpressionColon = (SyntaxKind)9069;
+        public const SyntaxKind LineDirectivePosition = (SyntaxKind)9070;
         public const SyntaxKind CollectionExpression = (SyntaxKind)9076;
         public const SyntaxKind ExtensionBlockDeclaration = (SyntaxKind)9079;
+        public const SyntaxKind UnionDeclaration = (SyntaxKind)9082;
     }
 }

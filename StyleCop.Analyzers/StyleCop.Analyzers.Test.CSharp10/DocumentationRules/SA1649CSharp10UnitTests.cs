@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp10.DocumentationRules
 {
     using System.Threading;
@@ -46,6 +44,20 @@ public delegate void IgnoredDelegate();
 
             var expectedDiagnostic = Diagnostic().WithLocation(0);
             await VerifyCSharpFixAsync("TestType2.cs", testCode, StyleCopSettings, expectedDiagnostic, "TestType.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3992, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3992")]
+        public async Task VerifyMappedLineDirectiveDoesNotChangeFileNameCheckAsync()
+        {
+            var testCode = @"#line 1 ""DifferentName.cs""
+public class {|#0:NotMatching|}
+{
+}
+#line default";
+
+            var expectedDiagnostic = Diagnostic().WithLocation(0);
+            await VerifyCSharpDiagnosticAsync("ActualFile.cs", testCode, testSettings: null, new[] { expectedDiagnostic }, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

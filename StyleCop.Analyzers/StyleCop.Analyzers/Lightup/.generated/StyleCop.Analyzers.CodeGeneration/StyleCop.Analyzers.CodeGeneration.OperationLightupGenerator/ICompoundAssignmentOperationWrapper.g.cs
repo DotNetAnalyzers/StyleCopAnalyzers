@@ -36,10 +36,12 @@ namespace StyleCop.Analyzers.Lightup
         public bool IsLifted => IsLiftedAccessor(this.WrappedOperation);
         public bool IsChecked => IsCheckedAccessor(this.WrappedOperation);
         public IMethodSymbol OperatorMethod => OperatorMethodAccessor(this.WrappedOperation);
+
         public static explicit operator ICompoundAssignmentOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(ICompoundAssignmentOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public IOperation Target => ((IAssignmentOperationWrapper)this).Target;
         public IOperation Value => ((IAssignmentOperationWrapper)this).Value;
+
         public static explicit operator ICompoundAssignmentOperationWrapper(IAssignmentOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IAssignmentOperationWrapper(ICompoundAssignmentOperationWrapper wrapper) => IAssignmentOperationWrapper.FromUpcast(wrapper.WrappedOperation);
         public static ICompoundAssignmentOperationWrapper FromOperation(IOperation operation)
