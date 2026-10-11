@@ -134,11 +134,10 @@ jobs:
       with:
         global-json-file: global.json
 
-    # Directory.Build.rsp keeps project builds serial for AnnotatorBuildTask.
     - name: Build solution
       env:
         NUGET_PACKAGES: ${{ runner.temp }}/nuget-packages
-      run: dotnet build -c ${{ matrix.configuration }} @Directory.Build.rsp -p:PathMap="${{ github.workspace }}=/_/" -v:minimal -bl:msbuild.binlog
+      run: dotnet build -c ${{ matrix.configuration }} -maxcpucount:1 -p:PathMap="${{ github.workspace }}=/_/" -v:minimal -bl:msbuild.binlog
 
     - name: Upload build log
       if: failure()
@@ -276,7 +275,7 @@ jobs:
     - name: Build StyleCop.Analyzers (runs the source generators)
       env:
         NUGET_PACKAGES: ${{ runner.temp }}/nuget-packages
-      run: dotnet build StyleCop.Analyzers/StyleCop.Analyzers/StyleCop.Analyzers.csproj -c Debug --no-incremental @Directory.Build.rsp
+      run: dotnet build StyleCop.Analyzers/StyleCop.Analyzers/StyleCop.Analyzers.csproj -c Debug --no-incremental -maxcpucount:1
 
     # The generators write CRLF (and the resx generator writes mixed line endings on Linux) while the repository stores
     # LF. These files have the 'text' attribute, so git normalizes line endings before comparing: only real content
@@ -300,7 +299,7 @@ jobs:
         Write-Host 'the StyleCop.Analyzers.CodeGeneration generators and the *.resx files. To regenerate them, run from the repo root:'
         Write-Host ''
         Write-Host "  git rm -r -q $path"
-        Write-Host '  dotnet build StyleCop.Analyzers/StyleCop.Analyzers/StyleCop.Analyzers.csproj --no-incremental'
+        Write-Host '  dotnet build StyleCop.Analyzers/StyleCop.Analyzers/StyleCop.Analyzers.csproj --no-incremental -maxcpucount:1'
         Write-Host "  git add -A $path"
         Write-Host ''
         Write-Host 'and commit the result. See CONTRIBUTING.md.'

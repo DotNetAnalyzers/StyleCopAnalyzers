@@ -17,13 +17,11 @@ You can also help by filing issues, participating in discussions and doing code 
 The full solution builds with the .NET SDK on Windows and Linux:
 
 ```powershell
-dotnet build -c Release @Directory.Build.rsp
+dotnet build -c Release -maxcpucount:1
 ```
 
-`Directory.Build.rsp` sets `/m:1` because the reference assembly annotator task does not support
-parallel builds. MSBuild discovers this file automatically, but `dotnet build` overrides it
-with its own parallel-build switch. Pass `@Directory.Build.rsp` explicitly as shown above to
-keep SDK builds serial too.
+The reference assembly annotator task does not support parallel builds, so pass
+`-maxcpucount:1` to keep SDK builds serial.
 The GitHub workflow builds Debug and Release on Linux. The legacy `StyleCopTester` utility
 can be compiled on Linux using reference assemblies, but running it still requires Windows
 and .NET Framework because it uses WPF.
@@ -157,7 +155,7 @@ regenerate them from the root of the repo and commit the result:
 
 ```
 git rm -r -q StyleCop.Analyzers/StyleCop.Analyzers/Lightup/.generated
-dotnet build StyleCop.Analyzers/StyleCop.Analyzers/StyleCop.Analyzers.csproj --no-incremental
+dotnet build StyleCop.Analyzers/StyleCop.Analyzers/StyleCop.Analyzers.csproj --no-incremental -maxcpucount:1
 git add -A StyleCop.Analyzers/StyleCop.Analyzers/Lightup/.generated
 ```
 
