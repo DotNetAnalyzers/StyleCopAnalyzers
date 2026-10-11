@@ -6,6 +6,7 @@
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
+    using System.Collections.Generic;
 
     internal readonly struct AnalyzerConfigOptionsWrapper
     {
@@ -15,12 +16,16 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<StringComparer> KeyComparerAccessor;
         private static readonly TryGetValueAccessor<object, string, string> TryGetValueAccessor;
 
+        private static readonly string[] EmptyKeys = new string[0];
+        private static readonly Func<object, IEnumerable<string>> KeysAccessor;
+
         private readonly object node;
 
         static AnalyzerConfigOptionsWrapper()
         {
             WrappedType = WrapperHelper.GetWrappedType(typeof(AnalyzerConfigOptionsWrapper));
 
+            KeysAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<object, IEnumerable<string>>(WrappedType, "Keys");
             KeyComparerAccessor = LightupHelpers.CreateStaticPropertyAccessor<StringComparer>(WrappedType, nameof(KeyComparer));
             TryGetValueAccessor = LightupHelpers.CreateTryGetValueAccessor<object, string, string>(WrappedType, typeof(string), nameof(TryGetValue));
         }
@@ -62,6 +67,29 @@ namespace StyleCop.Analyzers.Lightup
         public static bool IsInstance(object obj)
         {
             return obj != null && LightupHelpers.CanWrapObject(obj, WrappedType);
+        }
+
+        /// <summary>
+        /// Gets the keys defined in the options, or an empty collection when the compiler does not support
+        /// enumerating them (including hosts that don't implement `Keys`).
+        /// </summary>
+        /// <returns>The keys defined in the options.</returns>
+        public IEnumerable<string> GetKeys()
+        {
+            if (this.node is null)
+            {
+                return EmptyKeys;
+            }
+
+            try
+            {
+                return KeysAccessor(this.node) ?? EmptyKeys;
+            }
+            catch (NotImplementedException)
+            {
+                // The base AnalyzerConfigOptions.Keys throws when a host doesn't override it.
+                return EmptyKeys;
+            }
         }
 
         public bool TryGetValue(string key, out string value)
