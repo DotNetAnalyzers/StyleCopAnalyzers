@@ -134,16 +134,11 @@ jobs:
       with:
         global-json-file: global.json
 
-    - name: Restore NuGet packages
-      env:
-        NUGET_PACKAGES: ${{ runner.temp }}/nuget-packages
-      run: dotnet restore StyleCopAnalyzers.sln
-
     # Directory.Build.rsp keeps project builds serial for AnnotatorBuildTask.
     - name: Build solution
       env:
         NUGET_PACKAGES: ${{ runner.temp }}/nuget-packages
-      run: dotnet build StyleCopAnalyzers.sln --no-restore -c ${{ matrix.configuration }} @Directory.Build.rsp -p:PathMap="${{ github.workspace }}=/_/" -v:minimal -bl:msbuild.binlog
+      run: dotnet build -c ${{ matrix.configuration }} @Directory.Build.rsp -p:PathMap="${{ github.workspace }}=/_/" -v:minimal -bl:msbuild.binlog
 
     - name: Upload build log
       if: failure()

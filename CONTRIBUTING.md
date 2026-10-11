@@ -17,8 +17,7 @@ You can also help by filing issues, participating in discussions and doing code 
 The full solution builds with the .NET SDK on Windows and Linux:
 
 ```powershell
-dotnet restore StyleCopAnalyzers.sln
-dotnet build StyleCopAnalyzers.sln --no-restore -c Release @Directory.Build.rsp
+dotnet build -c Release @Directory.Build.rsp
 ```
 
 `Directory.Build.rsp` sets `/m:1` because the reference assembly annotator task does not support
