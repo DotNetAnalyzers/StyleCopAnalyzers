@@ -131,7 +131,7 @@ generate the report before compiling the documentation:
 ```powershell
 dotnet build .\StyleCop.Analyzers\StyleCop.Analyzers.CodeFixes -c Release
 dotnet build .\StyleCop.Analyzers\StyleCop.Analyzers.Status.Generator -c Release
-dotnet .\StyleCop.Analyzers\StyleCop.Analyzers.Status.Generator\bin\Release\net10.0\StyleCop.Analyzers.Status.Generator.dll .\StyleCopAnalyzers.sln Release > .\docs\StyleCop.Analyzers.Status.json
+dotnet .\StyleCop.Analyzers\StyleCop.Analyzers.Status.Generator\bin\Release\net10.0\StyleCop.Analyzers.Status.Generator.dll .\StyleCopAnalyzers.slnx Release > .\docs\StyleCop.Analyzers.Status.json
 ```
 
 The JSON report is an ignored build output. Status page regression tests run with

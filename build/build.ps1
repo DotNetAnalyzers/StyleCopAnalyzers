@@ -7,7 +7,7 @@ param (
 )
 
 # build the solution
-$SolutionPath = Resolve-Path "$PSScriptRoot\..\StyleCopAnalyzers.sln"
+$SolutionPath = Resolve-Path "$PSScriptRoot\..\StyleCopAnalyzers.slnx"
 
 If ($Debug) {
 	$BuildConfig = 'Debug'

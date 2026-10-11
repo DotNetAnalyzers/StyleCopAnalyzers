@@ -67,7 +67,7 @@ If any answer is "yes, more work", measure before proposing it.
   StyleCopTester.exe /editperf:Program /edititer:20 path\to\Large.sln   # incremental "editing" simulation
   ```
 
-  Compare master and your branch on the same large solution (this repo's own `StyleCopAnalyzers.sln` works),
+  Compare master and your branch on the same large solution (this repo's own `StyleCopAnalyzers.slnx` works),
   several runs each, same machine, nothing else running.
 - **Memory**: for caches or shared arrays, report allocation and working-set numbers, not only time. That was
   the follow-up requested for #4106's token-walk change ("the shared token arrays ... live for the

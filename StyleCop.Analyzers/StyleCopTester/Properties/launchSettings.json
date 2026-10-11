@@ -1,15 +1,15 @@
 {
   "profiles": {
-    "StyleCopAnalyzers.sln /stats": {
+    "StyleCopAnalyzers.slnx /stats": {
       "commandName": "Project",
-      "commandLineArgs": "..\\..\\StyleCopAnalyzers.sln /stats",
+      "commandLineArgs": "..\\..\\StyleCopAnalyzers.slnx /stats",
       "workingDirectory": "$(MSBuildProjectDirectory)",
       "environmentVariables": {
       }
     },
-    "StyleCopAnalyzers.sln /stats /editperf": {
+    "StyleCopAnalyzers.slnx /stats /editperf": {
       "commandName": "Project",
-      "commandLineArgs": "..\\..\\StyleCopAnalyzers.sln /stats /editperf",
+      "commandLineArgs": "..\\..\\StyleCopAnalyzers.slnx /stats /editperf",
       "workingDirectory": "$(MSBuildProjectDirectory)",
       "environmentVariables": {
       }
