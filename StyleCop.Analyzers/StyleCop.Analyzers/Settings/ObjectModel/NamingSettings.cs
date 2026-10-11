@@ -44,10 +44,10 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                 "tupleElementNameCasing",
                 kvp => kvp.ToEnumValue<TupleElementNameCase>(),
                 "stylecop.naming.tupleElementNameCasing",
-                value => value switch
+                value => value.ToLowerInvariant() switch
                 {
-                    "camelCase" => TupleElementNameCase.CamelCase,
-                    "pascalCase" => TupleElementNameCase.PascalCase,
+                    "camelcase" => TupleElementNameCase.CamelCase,
+                    "pascalcase" => TupleElementNameCase.PascalCase,
                     _ => null,
                 }).GetValueOrDefault(TupleElementNameCase.PascalCase);
         }

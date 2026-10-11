@@ -50,9 +50,9 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         private readonly string headerDecoration;
 
         /// <summary>
-        /// This is the backing field for the <see cref="Variables"/> property.
+        /// The reader used to lazily read the <see cref="Variables"/> from <strong>.editorconfig</strong>.
         /// </summary>
-        private readonly ImmutableDictionary<string, string> variables;
+        private readonly SettingsReader reader;
 
         /// <summary>
         /// This is the backing field for the <see cref="XmlHeader"/> property.
@@ -110,6 +110,12 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         private string copyrightTextCache;
 
         /// <summary>
+        /// This is the backing field for the <see cref="Variables"/> property. It is computed on first use when the
+        /// variables come from <strong>.editorconfig</strong>.
+        /// </summary>
+        private ImmutableDictionary<string, string> variables;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="DocumentationSettings"/> class during JSON deserialization.
         /// </summary>
         protected internal DocumentationSettings()
@@ -156,13 +162,14 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.companyName = reader.GetString("companyName", "stylecop.documentation.companyName") ?? DefaultCompanyName;
             this.copyrightText = reader.GetMultiLineString("copyrightText", "stylecop.documentation.copyrightText", "file_header_template") ?? DefaultCopyrightText;
             this.headerDecoration = reader.GetString("headerDecoration", "stylecop.documentation.headerDecoration") ?? string.Empty;
-            this.variables = reader.GetStringMap("variables", "stylecop.documentation.variables.", IsValidVariableName) ?? ImmutableDictionary<string, string>.Empty;
+            this.reader = reader;
+            this.variables = reader.GetJsonStringMap("variables", IsValidVariableName);
             this.xmlHeader = reader.GetBoolean("xmlHeader", "stylecop.documentation.xmlHeader").GetValueOrDefault(true);
             this.fileNamingConvention = reader.GetMapped<FileNamingConvention>(
                 "fileNamingConvention",
                 kvp => kvp.ToEnumValue<FileNamingConvention>(),
                 "stylecop.documentation.fileNamingConvention",
-                value => value switch
+                value => value.ToLowerInvariant() switch
                 {
                     "stylecop" => FileNamingConvention.StyleCop,
                     "metadata" => FileNamingConvention.Metadata,
@@ -193,7 +200,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         {
             get
             {
-                return this.variables;
+                return this.variables ??= this.reader.GetEditorConfigStringMap("stylecop.documentation.variables.", IsValidVariableName) ?? ImmutableDictionary<string, string>.Empty;
             }
         }
 
@@ -317,8 +324,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
                 default:
                     string value;
-                    if (this.Variables.TryGetValue(key, out value)
-                        || this.Variables.TryGetValue(key.ToLowerInvariant(), out value))
+                    if (this.Variables.TryGetValue(key, out value))
                     {
                         return value;
                     }

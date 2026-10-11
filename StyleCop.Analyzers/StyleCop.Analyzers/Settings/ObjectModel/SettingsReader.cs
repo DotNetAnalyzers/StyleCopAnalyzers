@@ -79,6 +79,19 @@ internal readonly struct SettingsReader
         return AnalyzerConfigHelper.TryGetEnumValue<T>(this.options, editorConfigKey);
     }
 
+    public T? GetEnum<T>(string jsonKey, string editorConfigKey, string fallbackEditorConfigKey, Func<string, T?> fromFallback)
+        where T : struct, Enum
+    {
+        var result = this.GetEnum<T>(jsonKey, editorConfigKey);
+        if (result is not null)
+        {
+            return result;
+        }
+
+        var fallback = AnalyzerConfigHelper.TryGetStringValueAndNotification(this.options, fallbackEditorConfigKey);
+        return fallback is { } pair ? fromFallback(pair.Key) : null;
+    }
+
     public T? GetMapped<T>(string jsonKey, Func<KeyValuePair<string, JsonValue>, T> fromJson, string editorConfigKey, Func<string, T?> fromEditorConfig)
         where T : struct
     {
@@ -150,31 +163,42 @@ internal readonly struct SettingsReader
     }
 
     /// <summary>
-    /// Reads a set of named values: a JSON object, or <strong>.editorconfig</strong> keys of the form
-    /// <c>&lt;prefix&gt;&lt;name&gt;</c>.
+    /// Reads a set of named values from a <strong>stylecop.json</strong> object.
     /// </summary>
     /// <param name="jsonKey">The key in the <strong>stylecop.json</strong> section.</param>
-    /// <param name="editorConfigPrefix">The <strong>.editorconfig</strong> key prefix, including the trailing dot.</param>
     /// <param name="isValidName">Determines whether a name is accepted; other names are skipped.</param>
-    /// <returns>The named values, or <see langword="null"/> if no source provides any.</returns>
-    public ImmutableDictionary<string, string> GetStringMap(string jsonKey, string editorConfigPrefix, Func<string, bool> isValidName)
+    /// <returns>The named values, or <see langword="null"/> if <strong>stylecop.json</strong> doesn't provide them.</returns>
+    public ImmutableDictionary<string, string> GetJsonStringMap(string jsonKey, Func<string, bool> isValidName)
     {
-        ImmutableDictionary<string, string>.Builder map = null;
-        if (this.TryGetJson(jsonKey, out var kvp))
+        if (!this.TryGetJson(jsonKey, out var kvp))
         {
-            kvp.AssertIsObject();
-            map = ImmutableDictionary.CreateBuilder<string, string>();
-            foreach (var child in kvp.Value.AsJsonObject)
-            {
-                if (isValidName(child.Key))
-                {
-                    map.Add(child.Key, child.ToStringValue());
-                }
-            }
-
-            return map.ToImmutable();
+            return null;
         }
 
+        kvp.AssertIsObject();
+        var map = ImmutableDictionary.CreateBuilder<string, string>();
+        foreach (var child in kvp.Value.AsJsonObject)
+        {
+            if (isValidName(child.Key))
+            {
+                map.Add(child.Key, child.ToStringValue());
+            }
+        }
+
+        return map.ToImmutable();
+    }
+
+    /// <summary>
+    /// Reads a set of named values from <strong>.editorconfig</strong> keys of the form
+    /// <c>&lt;prefix&gt;&lt;name&gt;</c>. Enumerating the keys is comparatively expensive, so call this only when
+    /// the values are needed. Names are matched case-insensitively because EditorConfig lowercases keys.
+    /// </summary>
+    /// <param name="editorConfigPrefix">The <strong>.editorconfig</strong> key prefix, including the trailing dot.</param>
+    /// <param name="isValidName">Determines whether a name is accepted; other names are skipped.</param>
+    /// <returns>The named values, or <see langword="null"/> if there are none.</returns>
+    public ImmutableDictionary<string, string> GetEditorConfigStringMap(string editorConfigPrefix, Func<string, bool> isValidName)
+    {
+        ImmutableDictionary<string, string>.Builder map = null;
         foreach (var key in this.options.GetKeys())
         {
             if (!key.StartsWith(editorConfigPrefix, StringComparison.OrdinalIgnoreCase))
@@ -186,7 +210,7 @@ internal readonly struct SettingsReader
             var value = AnalyzerConfigHelper.TryGetMultiLineStringValue(this.options, key);
             if (value is not null && isValidName(name))
             {
-                map ??= ImmutableDictionary.CreateBuilder<string, string>();
+                map ??= ImmutableDictionary.CreateBuilder<string, string>(StringComparer.OrdinalIgnoreCase);
                 map[name] = value;
             }
         }

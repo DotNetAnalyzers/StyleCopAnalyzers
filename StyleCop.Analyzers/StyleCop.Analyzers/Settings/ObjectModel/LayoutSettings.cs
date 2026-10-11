@@ -45,13 +45,11 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         {
             var reader = new SettingsReader(layoutSettingsObject, analyzerConfigOptions);
 
-            var newlineAtEndOfFile = reader.GetEnum<OptionSetting>("newlineAtEndOfFile", "stylecop.layout.newlineAtEndOfFile");
-            newlineAtEndOfFile ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "insert_final_newline") switch
-            {
-                true => OptionSetting.Require,
-                false => OptionSetting.Omit,
-                _ => null,
-            };
+            var newlineAtEndOfFile = reader.GetEnum<OptionSetting>(
+                "newlineAtEndOfFile",
+                "stylecop.layout.newlineAtEndOfFile",
+                "insert_final_newline",
+                value => bool.TryParse(value, out var required) ? (required ? OptionSetting.Require : OptionSetting.Omit) : null);
 
             this.newlineAtEndOfFile = newlineAtEndOfFile.GetValueOrDefault(OptionSetting.Allow);
             this.allowConsecutiveUsings = reader.GetBoolean("allowConsecutiveUsings", "stylecop.layout.allowConsecutiveUsings").GetValueOrDefault(true);

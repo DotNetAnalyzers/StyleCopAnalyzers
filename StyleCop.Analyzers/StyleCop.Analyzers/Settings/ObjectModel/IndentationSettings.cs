@@ -51,7 +51,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                 "useTabs",
                 kvp => kvp.ToBooleanValue(),
                 "indent_style",
-                value => value switch
+                value => value.ToLowerInvariant() switch
                 {
                     "tab" => true,
                     "space" => false,

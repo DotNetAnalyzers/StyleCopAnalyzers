@@ -126,6 +126,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         {
             if (!string.IsNullOrEmpty(value)
                 && !char.IsDigit(value[0])
+                && value.IndexOf(',') < 0
                 && System.Enum.TryParse<T>(value, ignoreCase: true, out var parsed)
                 && System.Enum.IsDefined(typeof(T), parsed))
             {

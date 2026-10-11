@@ -149,8 +149,10 @@ stylecop.documentation.documentationCulture = en-US
 stylecop.documentation.excludeFromPunctuationCheck = seealso   # comma-separated
 ```
 
-> :warning: EditorConfig считает `#` комментарием только в начале строки. Перед использованием строки удалите из этого
-> шаблона комментарии в конце строк; иначе они станут частью значения.
+> :warning: Значение не может содержать `#` или `;`: компилятор считает комментарием всё от любого из этих символов до
+> конца строки. Это важно для таких значений, как `copyrightText`, `headerDecoration` (например, `#####`) и
+> переменные; если эти символы нужны, задайте такой параметр в **stylecop.json**. Поэтому комментарии в конце строк в
+> этом шаблоне можно оставлять.
 
 <a id="migrating-from-stylecopjson"></a>
 
@@ -164,7 +166,9 @@ stylecop.documentation.excludeFromPunctuationCheck = seealso   # comma-separated
 3. Преобразуйте каждый элемент `variables` в свойство `stylecop.documentation.variables.<name>`. Имена переменных в
    **.editorconfig** при сравнении приводятся к нижнему регистру, поэтому ссылка `{name}` в `copyrightText` совпадает
    независимо от регистра.
-4. Удалите **stylecop.json** (и соответствующий элемент `AdditionalFiles`, если он есть). Пока существуют оба файла,
+4. Переменные не объединяются: если **stylecop.json** задаёт какие-либо `variables`, свойства
+   `stylecop.documentation.variables.*` игнорируются.
+5. Удалите **stylecop.json** (и соответствующий элемент `AdditionalFiles`, если он есть). Пока существуют оба файла,
    значения из **stylecop.json** имеют приоритет.
 
 > :warning: Чтение `variables` из **.editorconfig** требует компилятора, предоставляющего список заданных ключей

@@ -61,20 +61,21 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         {
             var reader = new SettingsReader(orderingSettingsObject, analyzerConfigOptions);
 
-            var usingDirectivesPlacement = reader.GetEnum<UsingDirectivesPlacement>("usingDirectivesPlacement", "stylecop.ordering.usingDirectivesPlacement");
-            var blankLinesBetweenUsingGroups = reader.GetEnum<OptionSetting>("blankLinesBetweenUsingGroups", "stylecop.ordering.blankLinesBetweenUsingGroups");
-            usingDirectivesPlacement ??= AnalyzerConfigHelper.TryGetStringValueAndNotification(analyzerConfigOptions, "csharp_using_directive_placement") switch
-            {
-                ("inside_namespace", _) => UsingDirectivesPlacement.InsideNamespace,
-                ("outside_namespace", _) => UsingDirectivesPlacement.OutsideNamespace,
-                _ => null,
-            };
-            blankLinesBetweenUsingGroups ??= AnalyzerConfigHelper.TryGetBooleanValue(analyzerConfigOptions, "dotnet_separate_import_directive_groups") switch
-            {
-                true => OptionSetting.Require,
-                false => OptionSetting.Allow,
-                _ => null,
-            };
+            var usingDirectivesPlacement = reader.GetEnum<UsingDirectivesPlacement>(
+                "usingDirectivesPlacement",
+                "stylecop.ordering.usingDirectivesPlacement",
+                "csharp_using_directive_placement",
+                value => value switch
+                {
+                    "inside_namespace" => UsingDirectivesPlacement.InsideNamespace,
+                    "outside_namespace" => UsingDirectivesPlacement.OutsideNamespace,
+                    _ => null,
+                });
+            var blankLinesBetweenUsingGroups = reader.GetEnum<OptionSetting>(
+                "blankLinesBetweenUsingGroups",
+                "stylecop.ordering.blankLinesBetweenUsingGroups",
+                "dotnet_separate_import_directive_groups",
+                value => bool.TryParse(value, out var separate) ? (separate ? OptionSetting.Require : OptionSetting.Allow) : null);
 
             this.elementOrder = reader.GetEnumList<OrderingTrait>("elementOrder", "stylecop.ordering.elementOrder") ?? ImmutableArray<OrderingTrait>.Empty;
             this.systemUsingDirectivesFirst = reader.GetBoolean("systemUsingDirectivesFirst", "dotnet_sort_system_directives_first").GetValueOrDefault(true);

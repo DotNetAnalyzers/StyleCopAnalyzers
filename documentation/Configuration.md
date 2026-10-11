@@ -137,8 +137,10 @@ stylecop.documentation.documentationCulture = en-US
 stylecop.documentation.excludeFromPunctuationCheck = seealso   # comma-separated
 ```
 
-> :warning: EditorConfig only treats `#` as a comment at the start of a line. Remove the trailing comments in this
-> template before using a line; they would otherwise become part of the value.
+> :warning: A value cannot contain `#` or `;`: the compiler treats everything from either character to the end of the
+> line as a comment. This matters for values such as `copyrightText`, `headerDecoration` (for example `#####`) and
+> variables; if you need those characters, use **stylecop.json** for that setting. The trailing comments in this template
+> are therefore safe to leave in place.
 
 ## Migrating from stylecop.json
 
@@ -149,7 +151,9 @@ stylecop.documentation.excludeFromPunctuationCheck = seealso   # comma-separated
 2. Convert arrays to comma-separated lists, for example `["a", "b"]` becomes `a, b`.
 3. Convert each entry of `variables` to a `stylecop.documentation.variables.<name>` property. Variable names in
    **.editorconfig** are lowercase when compared, so the `{name}` reference in `copyrightText` matches regardless of case.
-4. Delete **stylecop.json** (and the `AdditionalFiles` entry for it, if any). While both exist, **stylecop.json**
+4. Variables are not merged: if **stylecop.json** defines any `variables`, the `stylecop.documentation.variables.*`
+   properties are ignored.
+5. Delete **stylecop.json** (and the `AdditionalFiles` entry for it, if any). While both exist, **stylecop.json**
    values win.
 
 > :warning: Reading `variables` from **.editorconfig** needs a compiler that exposes the configured keys (Roslyn 4.4 /

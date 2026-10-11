@@ -131,6 +131,46 @@ file_header_template = From generic key
 
             Assert.Equal("JsonCompany", styleCopSettings.DocumentationRules.CompanyName);
             Assert.False(styleCopSettings.LayoutRules.AllowConsecutiveUsings);
+            Assert.Equal("From generic key", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
+        }
+
+        [Fact]
+        public async Task VerifyEditorConfigValuesAreCaseInsensitiveAndRejectCombinedEnumValuesAsync()
+        {
+            var settings = @"root = true
+
+[*]
+indent_style = TAB
+stylecop.naming.tupleElementNameCasing = CamelCase
+stylecop.documentation.fileNamingConvention = Metadata
+stylecop.ordering.usingDirectivesPlacement = OutsideNamespace
+stylecop.layout.newlineAtEndOfFile = allow, require
+";
+            var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+
+            Assert.True(styleCopSettings.Indentation.UseTabs);
+            Assert.Equal(TupleElementNameCase.CamelCase, styleCopSettings.NamingRules.TupleElementNameCasing);
+            Assert.Equal(FileNamingConvention.Metadata, styleCopSettings.DocumentationRules.FileNamingConvention);
+            Assert.Equal(UsingDirectivesPlacement.OutsideNamespace, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
+            Assert.Equal(OptionSetting.Allow, styleCopSettings.LayoutRules.NewlineAtEndOfFile);
+        }
+
+        [Fact]
+        public async Task VerifyEditorConfigTrailingCommentsAreStrippedFromValuesAsync()
+        {
+            var settings = @"root = true
+
+[*]
+stylecop.documentation.companyName = Contoso # a comment
+stylecop.documentation.headerDecoration = -----
+";
+            var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+
+            Assert.Equal("Contoso", styleCopSettings.DocumentationRules.CompanyName);
         }
 
         [Fact]
