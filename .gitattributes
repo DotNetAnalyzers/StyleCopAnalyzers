@@ -18,6 +18,17 @@ LICENSE text
 # Tests that exercise other line endings supply them explicitly.
 StyleCop.Analyzers/StyleCop.Analyzers.Test*/**/*.cs text eol=crlf
 
+# Preserve the existing Windows-built package's text payload on every build host.
+LICENSE text eol=crlf
+THIRD-PARTY-NOTICES.txt text eol=crlf
+StyleCop.Analyzers/StyleCop.Analyzers.CodeFixes/PackageReadme.md text eol=crlf
+StyleCop.Analyzers/StyleCop.Analyzers.CodeFixes/rulesets/*.ruleset text eol=crlf
+StyleCop.Analyzers/StyleCop.Analyzers.CodeFixes/tools/*.ps1 text eol=crlf
+# Multiline resource values and verbatim C# literals are part of the shipped payload.
+StyleCop.Analyzers/StyleCop.Analyzers/**/*.resx text eol=crlf
+StyleCop.Analyzers/StyleCop.Analyzers/**/*.cs text eol=crlf
+StyleCop.Analyzers/StyleCop.Analyzers.CodeFixes/**/*.cs text eol=crlf
+
 # Certainly binary files
 *.png binary
 *.ico binary

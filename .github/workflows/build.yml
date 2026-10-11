@@ -116,7 +116,7 @@ jobs:
 
   build:
     name: Build ${{ matrix.configuration }}
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 60
     strategy:
       fail-fast: false
@@ -124,10 +124,6 @@ jobs:
         configuration: [ Debug, Release ]
 
     steps:
-    # Must run before checkout so the working tree gets the same line endings as AppVeyor.
-    - name: Configure git line endings
-      run: git config --global core.autocrlf true
-
     - name: Checkout
       uses: actions/checkout@v7
       with:
@@ -138,25 +134,16 @@ jobs:
       with:
         global-json-file: global.json
 
-    - name: Setup NuGet
-      uses: nuget/setup-nuget@v4
-      with:
-        nuget-version: '6.0.6' # matches Azure Pipelines
-
-    # Packages go to the work drive; the system drive of the runner is slow.
     - name: Restore NuGet packages
       env:
         NUGET_PACKAGES: ${{ runner.temp }}/nuget-packages
-      run: nuget restore StyleCopAnalyzers.sln -ConfigFile NuGet.config
-
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v3
+      run: dotnet restore StyleCopAnalyzers.sln --configfile NuGet.config
 
     # No /m: AnnotatorBuildTask doesn't support parallel builds (same as Azure Pipelines).
     - name: Build solution
       env:
         NUGET_PACKAGES: ${{ runner.temp }}/nuget-packages
-      run: msbuild StyleCopAnalyzers.sln /p:Configuration=${{ matrix.configuration }} /p:Platform="Any CPU" /p:PathMap="${{ github.workspace }}=/_/" /v:minimal /bl:msbuild.binlog
+      run: dotnet build StyleCopAnalyzers.sln --no-restore -c ${{ matrix.configuration }} -maxcpucount:1 -p:PathMap="${{ github.workspace }}=/_/" -v:minimal -bl:msbuild.binlog
 
     - name: Upload build log
       if: failure()
@@ -248,7 +235,7 @@ jobs:
     - name: Generate rule status report
       shell: pwsh
       run: |
-        dotnet .\StyleCop.Analyzers\StyleCop.Analyzers.Status.Generator\bin\${{ matrix.configuration }}\net10.0\StyleCop.Analyzers.Status.Generator.dll .\StyleCopAnalyzers.sln ${{ matrix.configuration }} > StyleCop.Analyzers.Status.json
+        dotnet ./StyleCop.Analyzers/StyleCop.Analyzers.Status.Generator/bin/${{ matrix.configuration }}/net10.0/StyleCop.Analyzers.Status.Generator.dll ./StyleCopAnalyzers.sln ${{ matrix.configuration }} > StyleCop.Analyzers.Status.json
         if ($LASTEXITCODE -ne 0) { Remove-Item StyleCop.Analyzers.Status.json -ErrorAction SilentlyContinue; exit $LASTEXITCODE }
 
     - name: Upload rule status report
@@ -324,7 +311,7 @@ jobs:
         Write-Host 'and commit the result. See CONTRIBUTING.md.'
         exit 1
 
-  # Run the Windows-built net10.0 assemblies on Linux through VSTest, instrumented by coverlet.
+  # Run the net10.0 assemblies on Linux through VSTest, instrumented by coverlet.
   test:
     name: Test C# ${{ matrix.langVersion }} ${{ matrix.configuration }}
     needs: build
@@ -399,7 +386,7 @@ jobs:
         $target_dll = "../StyleCop.Analyzers/${{ matrix.project }}/bin/${{ matrix.configuration }}/${{ matrix.framework }}/${{ matrix.project }}.dll"
         if (-not (Test-Path $target_dll)) { throw "Test assembly not found at $target_dll" }
         $coverage_output = "$report_folder/coverage.StyleCopAnalyzers.CSharp${{ matrix.langVersion }}.cobertura.xml"
-        # Windows-built PDBs use the stable /_/ root; resolve it to the Linux checkout for instrumentation and reporting.
+        # PDBs use the stable /_/ root; resolve it to this job's checkout for instrumentation and reporting.
         $root = (Resolve-Path ..).Path
         $mapping = "$report_folder/SourceRootsMapping"
         Set-Content -Path $mapping -Value "${root}/StyleCopAnalyzers.sln|${root}/=/_/"

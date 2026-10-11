@@ -9,15 +9,38 @@ You can also help by filing issues, participating in discussions and doing code 
 
 ## Building prerequisites
 
-* The latest version of Visual Studio 2026 (Community Edition or higher) is required for building this repository. Version 18.9 is the minimum, because the build uses the Roslyn 5.9 compiler and analyzers.
+* Visual Studio is optional. For IDE builds on Windows, use Visual Studio 2026 (Community Edition or higher),
+  version 18.9 or newer, because the build uses the Roslyn 5.9 compiler and analyzers.
 * The version of the [.NET SDK](https://dotnet.microsoft.com/download/dotnet) as specified in the global.json file at the root of this repo.
   Use the init script at the root of the repo to conveniently acquire and install the right version.
 
+The full solution builds with the .NET SDK on Windows and Linux:
+
+```powershell
+dotnet restore StyleCopAnalyzers.sln --configfile NuGet.config
+dotnet build StyleCopAnalyzers.sln --no-restore -c Release -maxcpucount:1
+```
+
+Keep builds serial: the reference assembly annotator task does not support parallel builds.
+The GitHub workflow builds Debug and Release on Linux. The legacy `StyleCopTester` utility
+can be compiled on Linux using reference assemblies, but running it still requires Windows
+and .NET Framework because it uses WPF.
+
+The shipped analyzers and code fixes still target `netstandard1.1` on both build hosts.
+The package contains compiler-loaded assemblies under `analyzers/dotnet/cs`, not separate
+`lib/net472` or `lib/net10.0` assets. Test framework selection does not change its target
+frameworks, dependencies, or supported analyzer hosts.
+
+`.gitattributes` fixes the line endings of packaged text assets to CRLF, preserving the existing
+Windows-built payload even when the rest of the source checkout uses LF. It also fixes resource
+and shipped C# source line endings so multiline localized values and verbatim string literals
+remain identical across hosts.
+
 ## Running analyzer tests
 
-The GitHub Build workflow builds on Windows and runs all C# 6 through C# 15 test assemblies
-in Debug and Release on Linux using their `net10.0` target. Windows builds also compile
-the `net472` target, but the Linux matrix does not execute .NET Framework tests.
+The GitHub Build workflow builds and runs all C# 6 through C# 15 test assemblies
+in Debug and Release on Linux using their `net10.0` target. Local Windows builds also compile
+the `net472` target, but the Linux workflow does not build or execute .NET Framework tests.
 To run tests locally on either platform, install the SDK from `global.json` and the
 .NET 10 runtime, then run (replace the project and configuration as needed):
 
