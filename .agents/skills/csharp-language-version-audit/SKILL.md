@@ -59,7 +59,7 @@ Checklist:
 
 - [ ] `StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharpN/StyleCop.Analyzers.Test.CSharpN.csproj`: copy N-1,
       bump `Microsoft.CodeAnalysis.CSharp.Workspaces`, add a `ProjectReference` to the N-1 test project (each
-      project references every earlier one). Keep `net6.0` plus `net472` on Windows.
+      project references every earlier one). Keep `net10.0` plus `net472` on Windows.
 - [ ] `Properties/AssemblyInfo.cs` for the new project, and `InternalsVisibleTo("StyleCop.Analyzers.Test.CSharpN, PublicKey=...")`
       in all three of `StyleCop.Analyzers`, `StyleCop.Analyzers.CodeFixes` and `StyleCop.Analyzers.Test`.
 - [ ] One stub per test class of the previous project. Stubs must keep the UTF-8 BOM (SA1412) and the file

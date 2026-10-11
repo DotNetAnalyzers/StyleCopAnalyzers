@@ -42,6 +42,40 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         private bool useNoXmlMultiLineHeaderTestSettings;
 
         /// <summary>
+        /// Verifies that XML escaping preserves document line endings in a multiline copyright.
+        /// </summary>
+        /// <param name="lineEnding">The document line ending.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        public async Task TestMultilineCopyrightPreservesLineEndingsAsync(string lineEnding)
+        {
+            this.useMultiLineHeaderTestSettings = true;
+            var testCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Wrong copyright.
+// </copyright>
+
+namespace Bar
+{
+}
+".ReplaceLineEndings(lineEnding);
+            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// copyright (c) FooCorp. All rights reserved.
+//
+// Line #3
+// </copyright>
+
+namespace Bar
+{
+}
+".ReplaceLineEndings(lineEnding);
+
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(1, 4);
+            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that a file header with a copyright message that is different than in the settings will produce the expected diagnostic message.
         /// </summary>
         /// <param name="lineEnding">The line ending to use in the test code.</param>

@@ -2,6 +2,20 @@
   "version": 1,
   "isRoot": true,
   "tools": {
+    "coverlet.console": {
+      "version": "10.1.0",
+      "commands": [
+        "coverlet"
+      ],
+      "rollForward": false
+    },
+    "dotnet-reportgenerator-globaltool": {
+      "version": "5.2.0",
+      "commands": [
+        "reportgenerator"
+      ],
+      "rollForward": false
+    },
     "docfx": {
       "version": "2.81.0",
       "commands": [

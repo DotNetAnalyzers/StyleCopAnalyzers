@@ -156,7 +156,7 @@ jobs:
     - name: Build solution
       env:
         NUGET_PACKAGES: ${{ runner.temp }}/nuget-packages
-      run: msbuild StyleCopAnalyzers.sln /p:Configuration=${{ matrix.configuration }} /p:Platform="Any CPU" /v:minimal /bl:msbuild.binlog
+      run: msbuild StyleCopAnalyzers.sln /p:Configuration=${{ matrix.configuration }} /p:Platform="Any CPU" /p:PathMap="${{ github.workspace }}=/_/" /v:minimal /bl:msbuild.binlog
 
     - name: Upload build log
       if: failure()
@@ -178,70 +178,70 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs6-${{ matrix.configuration }}
-        path: StyleCop.Analyzers/StyleCop.Analyzers.Test/bin/${{ matrix.configuration }}/net472
+        path: StyleCop.Analyzers/StyleCop.Analyzers.Test/bin/${{ matrix.configuration }}/net10.0
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 7)
       uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs7-${{ matrix.configuration }}
-        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp7/bin/${{ matrix.configuration }}/net472
+        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp7/bin/${{ matrix.configuration }}/net10.0
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 8)
       uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs8-${{ matrix.configuration }}
-        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp8/bin/${{ matrix.configuration }}/net472
+        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp8/bin/${{ matrix.configuration }}/net10.0
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 9)
       uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs9-${{ matrix.configuration }}
-        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp9/bin/${{ matrix.configuration }}/net472
+        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp9/bin/${{ matrix.configuration }}/net10.0
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 10)
       uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs10-${{ matrix.configuration }}
-        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp10/bin/${{ matrix.configuration }}/net472
+        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp10/bin/${{ matrix.configuration }}/net10.0
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 11)
       uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs11-${{ matrix.configuration }}
-        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp11/bin/${{ matrix.configuration }}/net472
+        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp11/bin/${{ matrix.configuration }}/net10.0
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 12)
       uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs12-${{ matrix.configuration }}
-        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp12/bin/${{ matrix.configuration }}/net472
+        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp12/bin/${{ matrix.configuration }}/net10.0
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 13)
       uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs13-${{ matrix.configuration }}
-        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp13/bin/${{ matrix.configuration }}/net472
+        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp13/bin/${{ matrix.configuration }}/net10.0
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 14)
       uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs14-${{ matrix.configuration }}
-        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp14/bin/${{ matrix.configuration }}/net472
+        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp14/bin/${{ matrix.configuration }}/net10.0
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 15)
       uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs15-${{ matrix.configuration }}
-        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp15/bin/${{ matrix.configuration }}/net472
+        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp15/bin/${{ matrix.configuration }}/net10.0
         if-no-files-found: error
         retention-days: 3
 
@@ -324,11 +324,11 @@ jobs:
         Write-Host 'and commit the result. See CONTRIBUTING.md.'
         exit 1
 
-  # Mirrors build/test.yml: each language version runs its test assembly under xunit.console.x86 + coverlet.
+  # Run the Windows-built net10.0 assemblies on Linux through VSTest, instrumented by coverlet.
   test:
     name: Test C# ${{ matrix.langVersion }} ${{ matrix.configuration }}
     needs: build
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 45
     strategy:
       fail-fast: false
@@ -337,54 +337,48 @@ jobs:
         langVersion: [ '6', '7', '8', '9', '10', '11', '12', '13', '14', '15' ]
         include:
         - langVersion: '6'
-          framework: net472
+          framework: net10.0
           project: StyleCop.Analyzers.Test
         - langVersion: '7'
-          framework: net472
+          framework: net10.0
           project: StyleCop.Analyzers.Test.CSharp7
         - langVersion: '8'
-          framework: net472
+          framework: net10.0
           project: StyleCop.Analyzers.Test.CSharp8
         - langVersion: '9'
-          framework: net472
+          framework: net10.0
           project: StyleCop.Analyzers.Test.CSharp9
         - langVersion: '10'
-          framework: net472
+          framework: net10.0
           project: StyleCop.Analyzers.Test.CSharp10
         - langVersion: '11'
-          framework: net472
+          framework: net10.0
           project: StyleCop.Analyzers.Test.CSharp11
         - langVersion: '12'
-          framework: net472
+          framework: net10.0
           project: StyleCop.Analyzers.Test.CSharp12
         - langVersion: '13'
-          framework: net472
+          framework: net10.0
           project: StyleCop.Analyzers.Test.CSharp13
         - langVersion: '14'
-          framework: net472
+          framework: net10.0
           project: StyleCop.Analyzers.Test.CSharp14
         - langVersion: '15'
-          framework: net472
+          framework: net10.0
           project: StyleCop.Analyzers.Test.CSharp15
 
     steps:
     - name: Checkout
       uses: actions/checkout@v7
 
-    - name: Setup NuGet
-      uses: nuget/setup-nuget@v4
-      with:
-        nuget-version: '6.0.6'
-
-    # Provides the .NET 10 runtime for coverlet.console.
+    # Provides the SDK/VSTest and .NET 10 runtime for coverlet.console.
     - name: Setup .NET SDK (from global.json)
       uses: actions/setup-dotnet@v6
       with:
         global-json-file: global.json
 
-    # .nuget/packages.config provides xunit.runner.console and coverlet.console (same change as #4104).
-    - name: Restore test tools (xunit.runner.console, coverlet.console)
-      run: nuget restore .nuget/packages.config -PackagesDirectory packages -ConfigFile NuGet.config
+    - name: Restore .NET tools
+      run: dotnet tool restore
 
     - name: Download test binaries
       uses: actions/download-artifact@v8
@@ -392,47 +386,47 @@ jobs:
         name: test-bin-cs${{ matrix.langVersion }}-${{ matrix.configuration }}
         path: StyleCop.Analyzers/${{ matrix.project }}/bin/${{ matrix.configuration }}/${{ matrix.framework }}
 
-    # xunit.console.x86 wrapped by coverlet.console, which writes a Cobertura report. The tests allocate heavily on every
-    # core, and the workstation GC is the bottleneck; .NET Framework turns server GC on from COMPlus_BuildFlavor (it
-    # ignores COMPlus_gcServer).
+    # The tests allocate heavily on every core; use server GC in the .NET test host.
     - name: Run tests
       env:
-        COMPlus_BuildFlavor: SVR
-        COMPlus_gcConcurrent: 0
+        DOTNET_gcServer: 1
+        DOTNET_gcConcurrent: 0
       working-directory: build
       shell: pwsh
       run: |
-        $packageConfig = [xml](Get-Content ..\.nuget\packages.config)
-        $coverlet_version = $packageConfig.SelectSingleNode('/packages/package[@id="coverlet.console"]').version
-        $xunitrunner_version = $packageConfig.SelectSingleNode('/packages/package[@id="xunit.runner.console"]').version
-
-        $packages_folder = '..\packages'
-        $coverlet_console = "$packages_folder\coverlet.console.$coverlet_version\tools\net10.0\any\coverlet.console.dll"
-        $xunit_runner_console = "$packages_folder\xunit.runner.console.$xunitrunner_version\tools\${{ matrix.framework }}\xunit.console.x86.exe"
-        $report_folder = '.\coverage'
+        $report_folder = './coverage'
         New-Item -ItemType Directory -Force -Path $report_folder | Out-Null
-        $target_dll = "..\StyleCop.Analyzers\${{ matrix.project }}\bin\${{ matrix.configuration }}\${{ matrix.framework }}\${{ matrix.project }}.dll"
-        if (-not (Test-Path $coverlet_console)) { throw "coverlet.console not found at $coverlet_console" }
-        if (-not (Test-Path $xunit_runner_console)) { throw "xunit console not found at $xunit_runner_console" }
+        $target_dll = "../StyleCop.Analyzers/${{ matrix.project }}/bin/${{ matrix.configuration }}/${{ matrix.framework }}/${{ matrix.project }}.dll"
         if (-not (Test-Path $target_dll)) { throw "Test assembly not found at $target_dll" }
-        $coverage_output = "$report_folder\coverage.StyleCopAnalyzers.CSharp${{ matrix.langVersion }}.cobertura.xml"
+        $coverage_output = "$report_folder/coverage.StyleCopAnalyzers.CSharp${{ matrix.langVersion }}.cobertura.xml"
+        # Windows-built PDBs use the stable /_/ root; resolve it to the Linux checkout for instrumentation and reporting.
+        $root = (Resolve-Path ..).Path
+        $mapping = "$report_folder/SourceRootsMapping"
+        Set-Content -Path $mapping -Value "${root}/StyleCopAnalyzers.sln|${root}/=/_/"
         # Trailing separator makes coverlet write coverage.cobertura.xml into the folder.
         # The scope matches the old OpenCover setup (-filter:"+[StyleCop*]*"), which also covered the test assembly
         # under test and did not see source generator output. File globs need "**/" to match at any depth.
-        dotnet $coverlet_console `
+        dotnet coverlet `
           $target_dll `
-          --target "$xunit_runner_console" `
-          --targetargs "`"$target_dll`" -noshadow -xml StyleCopAnalyzers.CSharp${{ matrix.langVersion }}.xunit.xml" `
+          --target "dotnet" `
+          --targetargs "vstest `"$target_dll`" --logger:trx;LogFileName=StyleCopAnalyzers.CSharp${{ matrix.langVersion }}.trx --ResultsDirectory:." `
           --format "cobertura" `
           --output "$report_folder/" `
           --include "[StyleCop*]*" `
           --include-test-assembly `
+          --source-mapping-file $mapping `
           --exclude-by-attribute "System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" `
           --exclude-by-file "**/*Designer.cs" `
           --exclude-by-file "**/.generated/**"
         if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
         $generated = Get-ChildItem -Path $report_folder -Filter "*.cobertura.xml" -File | Select-Object -First 1
         if (-not $generated) { throw "coverlet did not produce a Cobertura report in $report_folder" }
+        $report = [xml](Get-Content -Raw $generated.FullName)
+        foreach ($module in @('StyleCop.Analyzers', 'StyleCop.Analyzers.CodeFixes', '${{ matrix.project }}')) {
+          if (-not $report.SelectSingleNode("/coverage/packages/package[@name='$module']/classes/class")) {
+            throw "coverlet produced no coverage for $module"
+          }
+        }
         Move-Item -Force $generated.FullName $coverage_output
 
     - name: Upload test results
@@ -440,7 +434,7 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         name: test-results-cs${{ matrix.langVersion }}-${{ matrix.configuration }}
-        path: build/*.xunit.xml
+        path: build/*.trx
         if-no-files-found: warn
 
     - name: Upload code coverage
@@ -457,7 +451,7 @@ jobs:
     name: Merge code coverage
     needs: test
     if: ${{ !cancelled() }}
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
       contents: read
@@ -466,13 +460,18 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v7
 
-    - name: Setup NuGet
-      uses: nuget/setup-nuget@v4
+    - name: Setup .NET SDK (from global.json)
+      uses: actions/setup-dotnet@v6
       with:
-        nuget-version: '6.0.6'
+        global-json-file: global.json
+
+    - name: Setup reporting runtime
+      uses: actions/setup-dotnet@v6
+      with:
+        dotnet-version: '8.0.x'
 
     - name: Restore ReportGenerator
-      run: nuget restore .nuget/packages.config -PackagesDirectory packages -ConfigFile NuGet.config
+      run: dotnet tool restore
 
     - name: Download coverage results
       uses: actions/download-artifact@v8
@@ -483,10 +482,7 @@ jobs:
     - name: Merge coverage
       shell: pwsh
       run: |
-        $packageConfig = [xml](Get-Content .\.nuget\packages.config)
-        $reportgenerator_version = $packageConfig.SelectSingleNode('/packages/package[@id="ReportGenerator"]').version
-        $report_generator = ".\packages\ReportGenerator.$reportgenerator_version\tools\net47\ReportGenerator.exe"
-        &$report_generator -targetdir:coverage-final -reporttypes:"Cobertura;HtmlSummary" "-reports:coverage/*/coverage.*.cobertura.xml"
+        dotnet reportgenerator -targetdir:coverage-final -reporttypes:"Cobertura;HtmlSummary" "-reports:coverage/*/coverage.*.cobertura.xml"
         exit $LASTEXITCODE
 
     - name: Upload merged coverage

@@ -2,13 +2,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFrameworks>net10.0</TargetFrameworks>
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">$(TargetFrameworks);net472</TargetFrameworks>
     <EnforceExtendedAnalyzerRules>false</EnforceExtendedAnalyzerRules>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
-    <!-- Roslyn 5.x depends on 9.0.0+ System.* packages, which warn on net6.0 (only used for local Linux testing) -->
-    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
     <!-- Roslyn marks the syntax APIs for C# 15 preview features (such as UnionDeclarationSyntax) as experimental, and
          these tests exist to exercise exactly those APIs. -->
     <NoWarn>$(NoWarn);RSEXPERIMENTAL006</NoWarn>

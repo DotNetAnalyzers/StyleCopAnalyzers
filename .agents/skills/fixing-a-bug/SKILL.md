@@ -65,7 +65,7 @@ Run it on master and read the failure:
 
 ```bash
 dotnet build StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp11 -c Debug
-dotnet test StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp11 --no-build -f net6.0 \
+dotnet test StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp11 --no-build -f net10.0 \
   --filter "FullyQualifiedName~SA1013"
 ```
 

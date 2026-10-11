@@ -13,6 +13,34 @@ You can also help by filing issues, participating in discussions and doing code 
 * The version of the [.NET SDK](https://dotnet.microsoft.com/download/dotnet) as specified in the global.json file at the root of this repo.
   Use the init script at the root of the repo to conveniently acquire and install the right version.
 
+## Running analyzer tests
+
+The GitHub Build workflow builds on Windows and runs all C# 6 through C# 15 test assemblies
+in Debug and Release on Linux using their `net10.0` target. Windows builds also compile
+the `net472` target, but the Linux matrix does not execute .NET Framework tests.
+To run tests locally on either platform, install the SDK from `global.json` and the
+.NET 10 runtime, then run (replace the project and configuration as needed):
+
+```powershell
+dotnet build .\StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp15 -c Debug
+dotnet test .\StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp15 --no-build -c Debug -f net10.0
+```
+
+Use forward slashes in these paths when running from a Linux shell. Add
+`--filter "FullyQualifiedName~SA1201"` to select one rule.
+Each newer compiler's test project also runs the tests inherited from earlier projects.
+
+`.gitattributes` checks out test C# sources with CRLF on every platform so multiline
+source/expected-output literals match the verifier's explicit CRLF formatting option. Assertions still compare
+the exact output; tests for other newline sequences supply them explicitly.
+After changing these attributes in an existing checkout, refresh unchanged test sources
+(or use a fresh checkout) before rebuilding. Preserve any local edits.
+
+CI instruments tests with the manifest-pinned `coverlet.console` tool and merges the
+Debug Cobertura reports using `reportgenerator`. `dotnet tool restore` restores these
+tools along with DocFX; ReportGenerator also needs the .NET 8 runtime. Test-result
+artifacts contain VSTest TRX reports.
+
 ## Building documentation
 
 The documentation site is built from the Markdown files in `documentation` using

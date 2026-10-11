@@ -14,6 +14,10 @@ LICENSE text
 *.sln text
 *.csproj text
 
+# Multiline test literals must match Roslyn's CRLF formatting defaults on every host.
+# Tests that exercise other line endings supply them explicitly.
+StyleCop.Analyzers/StyleCop.Analyzers.Test*/**/*.cs text eol=crlf
+
 # Certainly binary files
 *.png binary
 *.ico binary
