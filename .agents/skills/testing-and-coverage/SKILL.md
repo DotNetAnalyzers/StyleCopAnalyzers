@@ -54,8 +54,8 @@ dotnet test StyleCop.Analyzers/StyleCop.Analyzers.Test --no-build -f net10.0 --f
 
 ## Cross-platform line endings and CI
 
-CI builds on Windows and runs all ten compiler versions in Debug and Release on Linux using `net10.0`.
-The Windows builds still compile `net472`, but CI does not execute that target.
+CI builds and runs all ten compiler versions in Debug and Release on Linux using `net10.0`.
+Local Windows builds still compile `net472`, but CI does not build or execute that test target.
 `.gitattributes` forces CRLF for test C# sources on every platform, and the code-fix verifier explicitly
 sets Roslyn's newline option to CRLF. This keeps fixtures deterministic without relaxing code-fix assertions.
 Tests for other newline sequences supply them
