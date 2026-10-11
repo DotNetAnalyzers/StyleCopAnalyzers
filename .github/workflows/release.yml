@@ -2,9 +2,11 @@
 #
 # Flow: tag a master commit (`nbgv tag`), create a draft GitHub release for that tag, and publish it once the
 # Build workflow has passed for that exact commit. This workflow then:
-#   1. finds the successful Build run (push to master) for the tagged commit and takes its nuget-packages artifact.
+#   1. finds the successful Build run (push to master or the matching servicing branch) for the tagged commit and takes
+#      its nuget-packages artifact.
 #      Rebuilding from the tag would not work: Nerdbank.GitVersioning only produces public (no -g<sha>) versions on
-#      refs/heads/master (version.json publicReleaseRefSpec), and reusing the CI output ships exactly what was tested;
+#      refs/heads/master or refs/heads/vX.Y (version.json publicReleaseRefSpec), and reusing the CI output ships
+#      exactly what was tested;
 #   2. after approval in the 'release' environment, exchanges a GitHub OIDC token for a short-lived nuget.org API key
 #      (NuGet/login) and pushes the package;
 #   3. attaches the package to the GitHub release.
@@ -69,14 +71,19 @@ jobs:
         }
         Write-Output "Tag $env:TAG is commit $sha"
 
-        # Only a push to master produces public release versions (version.json publicReleaseRefSpec).
-        $runs = @(gh run list -R $env:GITHUB_REPOSITORY --workflow build.yml --commit $sha --branch master `
-          --event push --status success --limit 1 --json databaseId | ConvertFrom-Json)
+        # Only a push to master or the matching servicing branch produces public release versions
+        # (version.json publicReleaseRefSpec).
+        $version = $env:TAG -replace '^v', ''
+        $versionParts = $version -split '[.-]'
+        $servicingBranch = "v$($versionParts[0]).$($versionParts[1])"
+        $runs = @(gh run list -R $env:GITHUB_REPOSITORY --workflow build.yml --commit $sha `
+          --event push --status success --limit 20 --json databaseId,headBranch | ConvertFrom-Json |
+          Where-Object { $_.headBranch -in @('master', $servicingBranch) })
         if ($runs.Count -eq 0) {
-          Write-Error "No successful Build run (push to master) found for $sha. Wait for CI on master to pass for this commit, then re-run this workflow."
+          Write-Error "No successful Build run (push to master or $servicingBranch) found for $sha. Wait for CI on the release branch to pass for this commit, then re-run this workflow."
         }
         $runId = $runs[0].databaseId
-        Write-Output "Using Build run $env:GITHUB_SERVER_URL/$env:GITHUB_REPOSITORY/actions/runs/$runId"
+        Write-Output "Using $($runs[0].headBranch) Build run $env:GITHUB_SERVER_URL/$env:GITHUB_REPOSITORY/actions/runs/$runId"
 
         gh run download $runId -R $env:GITHUB_REPOSITORY --name nuget-packages --dir packages
         Get-ChildItem packages

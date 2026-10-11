@@ -9,7 +9,7 @@
   },
   "publicReleaseRefSpec": [
     "^refs/heads/master$",
-    "^refs/heads/v\\d+(?:\\.\\d+)?$"
+    "^refs/heads/v\\d+\\.\\d+$"
   ],
   "release": {
     "tagName": "{version}"
