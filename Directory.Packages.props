@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <SharedMicrosoftCodeAnalysisAnalyzersVersion>3.11.0-beta1.24052.1</SharedMicrosoftCodeAnalysisAnalyzersVersion>
+    <SharedRoslynVersion>5.9.0</SharedRoslynVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageVersion Include="AsyncUsageAnalyzers" Version="1.0.0-alpha003" />
+    <PackageVersion Include="DotNetAnalyzers.DocumentationAnalyzers" Version="1.0.0-beta.59" />
+    <PackageVersion Include="LibGit2Sharp" Version="0.31.0" />
+    <PackageVersion Include="Microsoft.Build.Locator" Version="1.7.8" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="5.9.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Common" Version="$(SharedRoslynVersion)" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="$(SharedRoslynVersion)" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.CodeFix.Testing" Version="1.1.4" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.CodeStyle" Version="$(SharedRoslynVersion)" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="$(SharedRoslynVersion)" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="$(SharedMicrosoftCodeAnalysisAnalyzersVersion)" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.ResxSourceGenerator" Version="$(SharedMicrosoftCodeAnalysisAnalyzersVersion)" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="$(SharedRoslynVersion)" />
+    <PackageVersion Include="Microsoft.Composition" Version="1.0.31" />
+    <PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="$(SharedRoslynVersion)" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
+    <PackageVersion Include="Nerdbank.GitVersioning" Version="3.10.94" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageVersion Include="NuGet.Resolver" Version="7.0.3" />
+    <PackageVersion Include="Nullable" Version="1.3.1" />
+    <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
+    <PackageVersion Include="System.Net.Http" Version="4.3.4" />
+    <PackageVersion Include="System.Text.RegularExpressions" Version="4.3.1" />
+    <PackageVersion Include="TunnelVisionLabs.LanguageTypes.SourceGenerator" Version="0.1.20-beta" />
+    <PackageVersion Include="TunnelVisionLabs.ReferenceAssemblyAnnotator" Version="1.0.0-alpha.160" />
+    <PackageVersion Include="xunit" Version="2.4.2" />
+    <PackageVersion Include="Xunit.Combinatorial" Version="1.4.1" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.1" />
+  </ItemGroup>
+
+  <!-- Keep shipping compiler-host compatibility pins separate from test and tool versions. -->
+  <Import Project="$(MSBuildThisFileDirectory)Directory.Packages.Analyzers.props"
+          Condition="'$(IsAnalyzerCompatibilityProject)' == 'true'" />
+</Project>

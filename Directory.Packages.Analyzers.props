@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <!-- Shipped analyzers and code fixes support Roslyn 1.2+ hosts (Visual Studio 2015 Update 2 and later).
+       These pins must not follow the newer Roslyn versions used by tests and build tools.
+       Leave transitive pinning disabled to preserve the original dependency resolution. -->
+  <PropertyGroup>
+    <RoslynVersionForAnalyzers>1.2.1</RoslynVersionForAnalyzers>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Update="Microsoft.CodeAnalysis.Common" Version="$(RoslynVersionForAnalyzers)" />
+    <PackageVersion Update="Microsoft.CodeAnalysis.CSharp" Version="$(RoslynVersionForAnalyzers)" />
+    <PackageVersion Update="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="$(RoslynVersionForAnalyzers)" />
+  </ItemGroup>
+</Project>

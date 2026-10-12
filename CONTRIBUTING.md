@@ -31,6 +31,19 @@ The package contains compiler-loaded assemblies under `analyzers/dotnet/cs`, not
 `lib/net472` or `lib/net10.0` assets. Test framework selection does not change its target
 frameworks, dependencies, or supported analyzer hosts.
 
+Shared package versions are managed centrally in `Directory.Packages.props`.
+Project-specific exceptions use `VersionOverride` locally, including each C# test generation's
+compiler version and the legacy `StyleCopTester` dependencies.
+`Directory.Packages.Analyzers.props` separately pins the shipped analyzers and code fixes to Roslyn
+1.2.1 for compiler-host compatibility; do not upgrade these pins with the build tools.
+Transitive pinning is not enabled, preserving the existing dependency resolution.
+The language-audit probe uses the central tool version by default and still accepts
+`-p:RoslynVersion=<version>` to test another compiler.
+`NuGet.config` maps normal packages to nuget.org, Roslyn compiler packages to nuget.org or
+dotnet-tools, and the Public API analyzer and resource source generator to nuget.org or dotnet9.
+The legacy dotnet5 and dotnet8 sources have no mappings; add a specific mapping if a future
+dependency needs one of those feeds.
+
 `.gitattributes` fixes the line endings of packaged text assets to CRLF, preserving the existing
 Windows-built payload even when the rest of the source checkout uses LF. It also fixes resource
 and shipped C# source line endings so multiline localized values and verbatim string literals
