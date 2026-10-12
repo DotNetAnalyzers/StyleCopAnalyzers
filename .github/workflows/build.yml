@@ -367,6 +367,10 @@ jobs:
         name: test-bin-cs${{ matrix.langVersion }}-${{ matrix.configuration }}
         path: StyleCop.Analyzers/${{ matrix.project }}/bin/${{ matrix.configuration }}/${{ matrix.framework }}
 
+    - name: Make test app host executable
+      shell: bash
+      run: chmod +x "StyleCop.Analyzers/${{ matrix.project }}/bin/${{ matrix.configuration }}/${{ matrix.framework }}/${{ matrix.project }}"
+
     # The tests allocate heavily on every core; use server GC in the .NET test host.
     - name: Run tests
       env:
