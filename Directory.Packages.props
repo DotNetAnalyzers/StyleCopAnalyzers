@@ -2,7 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <SharedMicrosoftCodeAnalysisAnalyzersVersion>3.11.0-beta1.24052.1</SharedMicrosoftCodeAnalysisAnalyzersVersion>
+    <SharedMicrosoftCodeAnalysisAnalyzersVersion>3.11.0-beta1.26226.5</SharedMicrosoftCodeAnalysisAnalyzersVersion>
     <SharedRoslynVersion>5.9.0</SharedRoslynVersion>
   </PropertyGroup>
 
