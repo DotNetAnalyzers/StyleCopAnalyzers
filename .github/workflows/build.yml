@@ -2,10 +2,11 @@ name: Build
 
 on:
   push:
-    branches: [ master ]
-    tags-ignore: [ '**' ]
+    branches:
+    - master
+    - 'v*.*'
+    - validate/*
   pull_request:
-    branches: [ master ]
   workflow_dispatch:
 
 permissions:
@@ -146,12 +147,12 @@ jobs:
         name: build-logs-${{ matrix.configuration }}
         path: msbuild.binlog
 
-    - name: Upload NuGet packages
+    - name: Upload NuGet package
       if: matrix.configuration == 'Release'
       uses: actions/upload-artifact@v7
       with:
         name: nuget-packages
-        path: StyleCop.Analyzers/StyleCop.Analyzers.CodeFixes/bin/Release/*.nupkg
+        path: StyleCop.Analyzers/StyleCop.Analyzers.CodeFixes/bin/Release/StyleCop.Analyzers.*.nupkg
         if-no-files-found: error
 
     # Test binaries for each language version, consumed by the test jobs below.

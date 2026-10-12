@@ -1,0 +1,228 @@
+# Publishes a release to nuget.org with nuget.org Trusted Publishing (GitHub OIDC, no stored API key).
+#
+# Flow: tag a master commit (`nbgv tag`), create a draft GitHub release for that tag, and publish it once the
+# Build workflow has passed for that exact commit. This workflow then:
+#   1. finds the successful Build run (push to master or the matching servicing branch) for the tagged commit and takes
+#      its nuget-packages artifact.
+#      Rebuilding from the tag would not work: Nerdbank.GitVersioning only produces public (no -g<sha>) versions on
+#      refs/heads/master or refs/heads/vX.Y (version.json publicReleaseRefSpec), and reusing the CI output ships
+#      exactly what was tested;
+#   2. after approval in the 'release' environment, exchanges a GitHub OIDC token for a short-lived nuget.org API key
+#      (NuGet/login) and pushes the package;
+#   3. attaches the package to the GitHub release.
+#
+# One-time setup (see the PR that added this file): a nuget.org trusted publishing policy for this repository,
+# workflow file 'release.yml' and environment 'release'; a 'release' GitHub environment with required reviewers; and
+# the NUGET_USER repository variable (the nuget.org account that owns the policy).
+name: Release
+
+on:
+  release:
+    types: [ published ]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to publish, e.g. 1.2.0-beta.770
+        required: true
+        type: string
+
+permissions: {}
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  prepare:
+    name: Collect packages from CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      actions: read # find the Build run and download its artifact
+      contents: read # resolve the tag
+    outputs:
+      tag: ${{ steps.find.outputs.tag }}
+      version: ${{ steps.validate.outputs.version }}
+    steps:
+    - name: Find the CI build of the tagged commit
+      id: find
+      env:
+        GH_TOKEN: ${{ github.token }}
+        TAG: ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.tag }}
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = 'Stop'
+        $PSNativeCommandUseErrorActionPreference = $true
+
+        if ($env:TAG -notmatch '^v?[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$') {
+          Write-Error "'$env:TAG' does not look like a release tag (expected e.g. 1.2.0-beta.770)."
+        }
+
+        # Resolve the tag to a commit, peeling annotated tags.
+        $ref = gh api "repos/$env:GITHUB_REPOSITORY/git/ref/tags/$env:TAG" | ConvertFrom-Json
+        $sha = $ref.object.sha
+        if ($ref.object.type -eq 'tag') {
+          $tag = gh api "repos/$env:GITHUB_REPOSITORY/git/tags/$sha" | ConvertFrom-Json
+          $sha = $tag.object.sha
+        }
+        Write-Output "Tag $env:TAG is commit $sha"
+
+        # Only a push to master or the matching servicing branch produces public release versions
+        # (version.json publicReleaseRefSpec).
+        $version = $env:TAG -replace '^v', ''
+        $versionParts = $version -split '[.-]'
+        $servicingBranch = "v$($versionParts[0]).$($versionParts[1])"
+        $runs = @(gh run list -R $env:GITHUB_REPOSITORY --workflow build.yml --commit $sha `
+          --event push --status success --limit 20 --json databaseId,headBranch | ConvertFrom-Json |
+          Where-Object { $_.headBranch -in @('master', $servicingBranch) })
+        if ($runs.Count -eq 0) {
+          Write-Error "No successful Build run (push to master or $servicingBranch) found for $sha. Wait for CI on the release branch to pass for this commit, then re-run this workflow."
+        }
+        $runId = $runs[0].databaseId
+        Write-Output "Using $($runs[0].headBranch) Build run $env:GITHUB_SERVER_URL/$env:GITHUB_REPOSITORY/actions/runs/$runId"
+
+        gh run download $runId -R $env:GITHUB_REPOSITORY --name nuget-packages --dir packages
+        Get-ChildItem packages
+
+        @(
+          "tag=$env:TAG"
+          "sha=$sha"
+          "run-id=$runId"
+        ) | Add-Content -Path $env:GITHUB_OUTPUT
+
+    # A tag identifies a commit, but does not prove that commit produced a public package with the same version.
+    # Check the artifact before the publish job performs the irreversible nuget.org push.
+    - name: Validate package
+      id: validate
+      env:
+        TAG: ${{ steps.find.outputs.tag }}
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = 'Stop'
+
+        $version = $env:TAG -replace '^v', ''
+        $packages = @(Get-ChildItem packages -Filter *.nupkg |
+          Where-Object Name -NotLike *.symbols.nupkg)
+        if ($packages.Count -ne 1) {
+          Write-Error "Expected one package, found $($packages.Count): $($packages.Name -join ', ')."
+        }
+
+        Add-Type -AssemblyName System.IO.Compression.FileSystem
+        $archive = [System.IO.Compression.ZipFile]::OpenRead($packages[0].FullName)
+        try {
+          $nuspecs = @($archive.Entries |
+            Where-Object { $_.FullName -notlike '*/*' -and $_.Name -like '*.nuspec' })
+          if ($nuspecs.Count -ne 1) {
+            Write-Error "Expected one root nuspec in $($packages[0].Name), found $($nuspecs.Count)."
+          }
+
+          $reader = [System.IO.StreamReader]::new($nuspecs[0].Open())
+          try {
+            [xml]$nuspec = $reader.ReadToEnd()
+          }
+          finally {
+            $reader.Dispose()
+          }
+        }
+        finally {
+          $archive.Dispose()
+        }
+
+        $packageId = $nuspec.package.metadata.id
+        $packageVersion = $nuspec.package.metadata.version
+        Write-Output "$($packages[0].Name): $packageId $packageVersion"
+
+        if ($packageVersion -match '[.-]g[0-9a-f]+$') {
+          Write-Error "$packageId $packageVersion is not a public release version."
+        }
+        if ($packageId -ne 'StyleCop.Analyzers' -or $packageVersion -ne $version) {
+          Write-Error "Expected StyleCop.Analyzers $version, found $packageId $packageVersion."
+        }
+
+        "version=$version" | Add-Content -Path $env:GITHUB_OUTPUT
+
+    - name: Upload release packages
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+      with:
+        name: release-packages
+        path: packages/*.nupkg
+        if-no-files-found: error
+
+  publish:
+    name: Push to nuget.org
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: release
+      url: https://www.nuget.org/packages/StyleCop.Analyzers/${{ needs.prepare.outputs.version }}
+    permissions:
+      id-token: write # nuget.org trusted publishing (OIDC)
+    steps:
+    - name: Download release packages
+      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+      with:
+        name: release-packages
+        path: packages
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+      with:
+        dotnet-version: 10.0.x
+
+    # Request the key right before pushing: it is valid for one hour.
+    - name: NuGet login (OIDC to short-lived API key)
+      id: login
+      uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
+      with:
+        user: ${{ vars.NUGET_USER }}
+
+    # --skip-duplicate makes re-running this workflow safe.
+    - name: Push package
+      working-directory: packages
+      env:
+        NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = 'Stop'
+        $PSNativeCommandUseErrorActionPreference = $true
+
+        $package = Get-ChildItem -Filter StyleCop.Analyzers.*.nupkg
+        dotnet nuget push $package.FullName --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate --no-symbols
+
+  attach:
+    name: Attach packages to the GitHub release
+    needs: [ prepare, publish ]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write # upload release assets
+    steps:
+    - name: Download release packages
+      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+      with:
+        name: release-packages
+        path: packages
+
+    - name: Upload release assets
+      env:
+        GH_TOKEN: ${{ github.token }}
+        TAG: ${{ needs.prepare.outputs.tag }}
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = 'Stop'
+        $PSNativeCommandUseErrorActionPreference = $false
+
+        gh release view $env:TAG -R $env:GITHUB_REPOSITORY *> $null
+        if ($LASTEXITCODE -ne 0) {
+          Write-Output "::warning::No GitHub release exists for $env:TAG, so no assets were attached."
+          exit 0
+        }
+
+        $PSNativeCommandUseErrorActionPreference = $true
+        $packages = (Get-ChildItem packages -Filter *.nupkg).FullName
+        gh release upload $env:TAG $packages -R $env:GITHUB_REPOSITORY --clobber
