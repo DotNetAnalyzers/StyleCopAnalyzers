@@ -17,6 +17,11 @@
         "Microsoft.CodeAnalysis.CSharp.Workspaces"
       ],
       "enabled": false
+    },
+    {
+      "description": "Cap the runner at the latest version verified with explicit dependencies and runtime files in derived test projects.",
+      "matchPackageNames": ["xunit.runner.visualstudio"],
+      "allowedVersions": "<=4.0.1"
     }
   ]
 }

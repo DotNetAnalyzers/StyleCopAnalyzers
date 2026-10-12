@@ -2,13 +2,13 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <SharedMicrosoftCodeAnalysisAnalyzersVersion>3.11.0-beta1.26226.5</SharedMicrosoftCodeAnalysisAnalyzersVersion>
     <SharedRoslynVersion>5.9.0</SharedRoslynVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageVersion Include="AsyncUsageAnalyzers" Version="1.0.0-alpha003" />
     <PackageVersion Include="DotNetAnalyzers.DocumentationAnalyzers" Version="1.0.0-beta.59" />
+    <PackageVersion Include="DiffPlex" Version="1.7.2" />
     <PackageVersion Include="LibGit2Sharp" Version="0.32.0" />
     <PackageVersion Include="Microsoft.Build.Locator" Version="1.11.2" />
     <PackageVersion Include="Microsoft.Build.Framework" Version="18.0.2" />
@@ -18,8 +18,8 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.CodeFix.Testing" Version="1.1.4" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.CodeStyle" Version="$(SharedRoslynVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="$(SharedRoslynVersion)" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="$(SharedMicrosoftCodeAnalysisAnalyzersVersion)" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.ResxSourceGenerator" Version="$(SharedMicrosoftCodeAnalysisAnalyzersVersion)" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="5.6.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.ResxSourceGenerator" Version="5.0.0-1.25277.114" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="$(SharedRoslynVersion)" />
     <PackageVersion Include="Microsoft.Composition" Version="1.0.31" />
     <PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="$(SharedRoslynVersion)" />
