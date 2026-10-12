@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Status.Generator
     using System;
     using System.IO;
     using System.Linq;
+    using System.Threading.Tasks;
     using LibGit2Sharp;
     using Microsoft.Build.Locator;
     using Newtonsoft.Json;
@@ -22,7 +23,7 @@ namespace StyleCop.Analyzers.Status.Generator
         /// </summary>
         /// <param name="args">The command line parameters.</param>
         /// <returns>Zero if the tool completes successfully; otherwise, a non-zero error code.</returns>
-        internal static int Main(string[] args)
+        internal static async Task<int> Main(string[] args)
         {
             if (args.Length < 1)
             {
@@ -37,13 +38,13 @@ namespace StyleCop.Analyzers.Status.Generator
             }
 
             MSBuildLocator.RegisterDefaults();
-            SolutionReader reader = SolutionReader.CreateAsync(args[0], configuration: args.Length > 1 ? args[1] : "Debug").Result;
+            SolutionReader reader = await SolutionReader.CreateAsync(args[0], configuration: args.Length > 1 ? args[1] : "Debug").ConfigureAwait(false);
 
-            var diagnostics = reader.GetDiagnosticsAsync().Result;
+            var diagnostics = await reader.GetDiagnosticsAsync().ConfigureAwait(false);
 
             if (diagnostics.Count == 0)
             {
-                Console.Error.WriteLine("No diagnostics were found. Refusing to publish an empty status report.");
+                await Console.Error.WriteLineAsync("No diagnostics were found. Refusing to publish an empty status report.").ConfigureAwait(false);
                 return 1;
             }
 
@@ -70,7 +71,7 @@ namespace StyleCop.Analyzers.Status.Generator
                     },
                 };
 
-                Console.WriteLine(JsonConvert.SerializeObject(output, Formatting.Indented));
+                await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(output, Formatting.Indented)).ConfigureAwait(false);
             }
 
             return 0;

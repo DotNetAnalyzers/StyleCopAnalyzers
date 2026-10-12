@@ -35,6 +35,7 @@ namespace StyleCopTester
     {
         private static void Main(string[] args)
         {
+#pragma warning disable VSTHRD002 // This legacy tester synchronously bridges its WPF dispatcher.
             CancellationTokenSource cts = new CancellationTokenSource();
             Console.CancelKeyPress +=
                 (sender, e) =>
@@ -56,15 +57,19 @@ namespace StyleCopTester
 
                 DispatcherFrame dispatcherFrame = new DispatcherFrame();
                 Task mainTask = MainAsync(args, cts.Token);
-                mainTask.ContinueWith(task => dispatcherFrame.Continue = false);
+                Task dispatcherFrameContinuation = mainTask.ContinueWith(
+                    task => dispatcherFrame.Continue = false,
+                    TaskScheduler.Default);
 
                 Dispatcher.PushFrame(dispatcherFrame);
+                dispatcherFrameContinuation.GetAwaiter().GetResult();
                 mainTask.GetAwaiter().GetResult();
             }
             finally
             {
                 SynchronizationContext.SetSynchronizationContext(previousContext);
             }
+#pragma warning restore VSTHRD002
         }
 
         private static async Task MainAsync(string[] args, CancellationToken cancellationToken)
@@ -81,7 +86,7 @@ namespace StyleCopTester
                 {
                     if (!args.Contains("/fixall"))
                     {
-                        Console.Error.WriteLine("Error: /apply can only be used with /fixall");
+                        await Console.Error.WriteLineAsync("Error: /apply can only be used with /fixall").ConfigureAwait(true);
                         return;
                     }
                 }
@@ -315,7 +320,7 @@ namespace StyleCopTester
 
         private static async Task TestFixAllAsync(Stopwatch stopwatch, Solution solution, ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>> diagnostics, bool applyChanges, CancellationToken cancellationToken)
         {
-            Console.WriteLine("Calculating fixes");
+            await Console.Out.WriteLineAsync("Calculating fixes").ConfigureAwait(true);
 
             var codeFixers = GetAllCodeFixers().SelectMany(x => x.Value).Distinct();
 
@@ -326,32 +331,32 @@ namespace StyleCopTester
                 equivalenceGroups.AddRange(await CodeFixEquivalenceGroup.CreateAsync(codeFixer, diagnostics, solution, cancellationToken).ConfigureAwait(true));
             }
 
-            Console.WriteLine($"Found {equivalenceGroups.Count} equivalence groups.");
+            await Console.Out.WriteLineAsync($"Found {equivalenceGroups.Count} equivalence groups.").ConfigureAwait(true);
             if (applyChanges && equivalenceGroups.Count > 1)
             {
-                Console.Error.WriteLine("/apply can only be used with a single equivalence group.");
+                await Console.Error.WriteLineAsync("/apply can only be used with a single equivalence group.").ConfigureAwait(true);
                 return;
             }
 
-            Console.WriteLine("Calculating changes");
+            await Console.Out.WriteLineAsync("Calculating changes").ConfigureAwait(true);
 
             foreach (var fix in equivalenceGroups)
             {
                 try
                 {
                     stopwatch.Restart();
-                    Console.WriteLine($"Calculating fix for {fix.CodeFixEquivalenceKey} using {fix.FixAllProvider} for {fix.NumberOfDiagnostics} instances.");
+                    await Console.Out.WriteLineAsync($"Calculating fix for {fix.CodeFixEquivalenceKey} using {fix.FixAllProvider} for {fix.NumberOfDiagnostics} instances.").ConfigureAwait(true);
                     var operations = await fix.GetOperationsAsync(cancellationToken).ConfigureAwait(true);
                     if (applyChanges)
                     {
                         var applyOperations = operations.OfType<ApplyChangesOperation>().ToList();
                         if (applyOperations.Count > 1)
                         {
-                            Console.Error.WriteLine("/apply can only apply a single code action operation.");
+                            await Console.Error.WriteLineAsync("/apply can only apply a single code action operation.").ConfigureAwait(true);
                         }
                         else if (applyOperations.Count == 0)
                         {
-                            Console.WriteLine("No changes were found to apply.");
+                            await Console.Out.WriteLineAsync("No changes were found to apply.").ConfigureAwait(true);
                         }
                         else
                         {
