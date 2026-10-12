@@ -58,7 +58,7 @@ If any answer is "yes, more work", measure before proposing it.
 
 ## Measuring
 
-- **StyleCopTester** (`StyleCop.Analyzers/StyleCopTester`, `net46`, Windows) loads a solution with
+- **StyleCopTester** (`tools/StyleCopTester`, `net46`, Windows) loads a solution with
   MSBuildWorkspace and runs the analyzers, printing the elapsed time:
 
   ```

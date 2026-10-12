@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+    <!-- Identify shipping assemblies before Directory.Packages.props imports their compiler-host compatibility pins. -->
+    <IsAnalyzerCompatibilityProject>true</IsAnalyzerCompatibilityProject>
+  </PropertyGroup>
+
+  <Import Project="$([MSBuild]::GetPathOfFileAbove($(MSBuildThisFile), $(MSBuildThisFileDirectory)..))" />
+</Project>

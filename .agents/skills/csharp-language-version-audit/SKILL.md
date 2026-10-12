@@ -57,7 +57,7 @@ newer compiler and language version. Model the change on the C# 15 project (comm
 
 Checklist:
 
-- [ ] `StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharpN/StyleCop.Analyzers.Test.CSharpN.csproj`: copy N-1,
+- [ ] `test/StyleCop.Analyzers.Test.CSharpN/StyleCop.Analyzers.Test.CSharpN.csproj`: copy N-1,
       bump `Microsoft.CodeAnalysis.CSharp.Workspaces`, add a `ProjectReference` to the N-1 test project (each
       project references every earlier one). Keep `net10.0` plus `net472` on Windows.
 - [ ] `Properties/AssemblyInfo.cs` for the new project, and `InternalsVisibleTo("StyleCop.Analyzers.Test.CSharpN, PublicKey=...")`
@@ -105,7 +105,7 @@ of them (and optionally the first code fix for each diagnostic) on each snippet 
 compiler errors, analyzer exceptions (AD0001), and fix results.
 
 ```bash
-dotnet build StyleCop.Analyzers/StyleCop.Analyzers.CodeFixes/StyleCop.Analyzers.CodeFixes.csproj -c Debug
+dotnet build src/StyleCop.Analyzers.CodeFixes/StyleCop.Analyzers.CodeFixes.csproj -c Debug
 dotnet run --project .agents/skills/csharp-language-version-audit/scripts/probe -- --fix --lang preview snippets/
 # probe with another compiler, for example a dotnet-tools feed build:
 dotnet run --project .agents/skills/csharp-language-version-audit/scripts/probe -p:RoslynVersion=5.10.0-1.26477.9 -- snippets/

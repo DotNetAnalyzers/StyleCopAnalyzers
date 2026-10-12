@@ -6,7 +6,7 @@ try {
     $localizedReportPath = 'docs\StyleCop.Analyzers.Status.ru-RU.json'
     if (Test-Path $reportPath) {
         $titles = @{}
-        Get-ChildItem 'StyleCop.Analyzers\StyleCop.Analyzers' -Recurse -Filter '*.ru-RU.resx' | ForEach-Object {
+        Get-ChildItem 'src\StyleCop.Analyzers' -Recurse -Filter '*.ru-RU.resx' | ForEach-Object {
             [xml]$resources = Get-Content $_.FullName -Raw
             foreach ($entry in $resources.SelectNodes('/root/data')) {
                 $key = $entry.GetAttribute('name')

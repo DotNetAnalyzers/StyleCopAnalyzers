@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <!-- Each language-version project runs from its own test output, so its test and runtime dependencies must be direct. -->
+  <PropertyGroup Condition="$(MSBuildProjectName.StartsWith('StyleCop.Analyzers.Test.CSharp'))">
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <ItemGroup Condition="$(MSBuildProjectName.StartsWith('StyleCop.Analyzers.Test.CSharp'))">
+    <PackageReference Include="DiffPlex" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Each inherited test project needs the v3 entry point; keep the existing VSTest/coverlet pipeline. -->
+    <PackageReference Include="Microsoft.NET.Test.Sdk" PrivateAssets="all" />
+    <PackageReference Include="xunit.v3.mtp-off" />
+  </ItemGroup>
+
+  <Import Project="$([MSBuild]::GetPathOfFileAbove($(MSBuildThisFile), $(MSBuildThisFileDirectory)..))" />
+</Project>

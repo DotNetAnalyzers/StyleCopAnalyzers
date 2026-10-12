@@ -1,0 +1,3 @@
+# Multiline test literals must match Roslyn's CRLF formatting defaults on every host.
+# Tests that exercise other line endings supply them explicitly.
+StyleCop.Analyzers.Test*/**/*.cs text eol=crlf

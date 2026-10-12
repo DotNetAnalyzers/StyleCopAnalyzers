@@ -29,7 +29,7 @@ Product code can never reference a newer Roslyn API directly. Tests use newer co
    exactly like the
    Roslyn API, so a generated wrapper can replace them later.
 
-Never hand-edit anything under `StyleCop.Analyzers/StyleCop.Analyzers/Lightup/.generated`.
+Never hand-edit anything under `src/StyleCop.Analyzers/Lightup/.generated`.
 
 ## Language version checks
 
@@ -51,7 +51,7 @@ Needed when a feature adds node types or properties that a rule must read and a 
 
 1. Take `src/Compilers/CSharp/Portable/Syntax/Syntax.xml` from dotnet/roslyn **at the commit of the
    Microsoft.CodeAnalysis.CSharp package you test with** (the commit is in the package's nuspec `repository`
-   element), and copy it verbatim over `StyleCop.Analyzers/StyleCop.Analyzers/Lightup/Syntax.xml`.
+   element), and copy it verbatim over `src/StyleCop.Analyzers/Lightup/Syntax.xml`.
    #4124 did this for 5.9.0 (dotnet/roslyn@35d9211b8).
 2. Regenerate (below), build with zero warnings, and run the Lightup tests in every test project
    (`--filter "FullyQualifiedName~Lightup"`). Each new wrapper needs `VerifyThatWrapperClassIsPresent` coverage.
@@ -66,9 +66,9 @@ message, code fix title or localized string), an edited `Syntax.xml`/`OperationI
 generator update. Regenerate from the repo root:
 
 ```bash
-git rm -r -q StyleCop.Analyzers/StyleCop.Analyzers/Lightup/.generated
-dotnet build StyleCop.Analyzers/StyleCop.Analyzers/StyleCop.Analyzers.csproj --no-incremental
-git add -A StyleCop.Analyzers/StyleCop.Analyzers/Lightup/.generated
+git rm -r -q src/StyleCop.Analyzers/Lightup/.generated
+dotnet build src/StyleCop.Analyzers/StyleCop.Analyzers.csproj --no-incremental
+git add -A src/StyleCop.Analyzers/Lightup/.generated
 git diff --cached --stat   # only the files you expected
 ```
 
@@ -79,10 +79,10 @@ attribute is clean and those files must not be committed. Never `git add -A` the
 Run the same check CI runs before pushing:
 
 ```bash
-git rm -r -q StyleCop.Analyzers/StyleCop.Analyzers/Lightup/.generated
-dotnet build StyleCop.Analyzers/StyleCop.Analyzers/StyleCop.Analyzers.csproj -c Debug --no-incremental -maxcpucount:1
-git -c core.safecrlf=false add --all --intent-to-add -- StyleCop.Analyzers/StyleCop.Analyzers/Lightup/.generated
-git -c core.safecrlf=false diff HEAD --exit-code --stat -- StyleCop.Analyzers/StyleCop.Analyzers/Lightup/.generated
+git rm -r -q src/StyleCop.Analyzers/Lightup/.generated
+dotnet build src/StyleCop.Analyzers/StyleCop.Analyzers.csproj -c Debug --no-incremental -maxcpucount:1
+git -c core.safecrlf=false add --all --intent-to-add -- src/StyleCop.Analyzers/Lightup/.generated
+git -c core.safecrlf=false diff HEAD --exit-code --stat -- src/StyleCop.Analyzers/Lightup/.generated
 ```
 
 Exit code 0 means up to date. Then restore your index (`git reset -q`) if you don't intend to commit.
