@@ -3,6 +3,9 @@
 
 #nullable disable
 
+// Async approach not available in Parallel.ForEach nor a valid option when blocking WPF pumps, nor is it important for this program.
+#pragma warning disable VSTHRD002
+
 namespace StyleCopTester
 {
     using System;
@@ -35,7 +38,6 @@ namespace StyleCopTester
     {
         private static void Main(string[] args)
         {
-#pragma warning disable VSTHRD002 // This legacy tester synchronously bridges its WPF dispatcher.
             CancellationTokenSource cts = new CancellationTokenSource();
             Console.CancelKeyPress +=
                 (sender, e) =>
@@ -69,7 +71,6 @@ namespace StyleCopTester
             {
                 SynchronizationContext.SetSynchronizationContext(previousContext);
             }
-#pragma warning restore VSTHRD002
         }
 
         private static async Task MainAsync(string[] args, CancellationToken cancellationToken)
