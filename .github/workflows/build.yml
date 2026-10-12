@@ -152,7 +152,7 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         name: nuget-packages
-        path: StyleCop.Analyzers/StyleCop.Analyzers.CodeFixes/bin/Release/StyleCop.Analyzers.*.nupkg
+        path: src/StyleCop.Analyzers.CodeFixes/bin/Release/StyleCop.Analyzers.*.nupkg
         if-no-files-found: error
 
     # Test binaries for each language version, consumed by the test jobs below.
@@ -160,77 +160,77 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs6-${{ matrix.configuration }}
-        path: StyleCop.Analyzers/StyleCop.Analyzers.Test/bin/${{ matrix.configuration }}/net10.0
+        path: test/StyleCop.Analyzers.Test/bin/${{ matrix.configuration }}/net10.0
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 7)
       uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs7-${{ matrix.configuration }}
-        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp7/bin/${{ matrix.configuration }}/net10.0
+        path: test/StyleCop.Analyzers.Test.CSharp7/bin/${{ matrix.configuration }}/net10.0
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 8)
       uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs8-${{ matrix.configuration }}
-        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp8/bin/${{ matrix.configuration }}/net10.0
+        path: test/StyleCop.Analyzers.Test.CSharp8/bin/${{ matrix.configuration }}/net10.0
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 9)
       uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs9-${{ matrix.configuration }}
-        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp9/bin/${{ matrix.configuration }}/net10.0
+        path: test/StyleCop.Analyzers.Test.CSharp9/bin/${{ matrix.configuration }}/net10.0
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 10)
       uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs10-${{ matrix.configuration }}
-        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp10/bin/${{ matrix.configuration }}/net10.0
+        path: test/StyleCop.Analyzers.Test.CSharp10/bin/${{ matrix.configuration }}/net10.0
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 11)
       uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs11-${{ matrix.configuration }}
-        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp11/bin/${{ matrix.configuration }}/net10.0
+        path: test/StyleCop.Analyzers.Test.CSharp11/bin/${{ matrix.configuration }}/net10.0
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 12)
       uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs12-${{ matrix.configuration }}
-        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp12/bin/${{ matrix.configuration }}/net10.0
+        path: test/StyleCop.Analyzers.Test.CSharp12/bin/${{ matrix.configuration }}/net10.0
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 13)
       uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs13-${{ matrix.configuration }}
-        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp13/bin/${{ matrix.configuration }}/net10.0
+        path: test/StyleCop.Analyzers.Test.CSharp13/bin/${{ matrix.configuration }}/net10.0
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 14)
       uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs14-${{ matrix.configuration }}
-        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp14/bin/${{ matrix.configuration }}/net10.0
+        path: test/StyleCop.Analyzers.Test.CSharp14/bin/${{ matrix.configuration }}/net10.0
         if-no-files-found: error
         retention-days: 3
     - name: Upload test binaries (C# 15)
       uses: actions/upload-artifact@v7
       with:
         name: test-bin-cs15-${{ matrix.configuration }}
-        path: StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp15/bin/${{ matrix.configuration }}/net10.0
+        path: test/StyleCop.Analyzers.Test.CSharp15/bin/${{ matrix.configuration }}/net10.0
         if-no-files-found: error
         retention-days: 3
 
     - name: Generate rule status report
       shell: pwsh
       run: |
-        dotnet ./StyleCop.Analyzers/StyleCop.Analyzers.Status.Generator/bin/${{ matrix.configuration }}/net10.0/StyleCop.Analyzers.Status.Generator.dll ./StyleCopAnalyzers.slnx ${{ matrix.configuration }} > StyleCop.Analyzers.Status.json
+        dotnet ./tools/StyleCop.Analyzers.Status.Generator/bin/${{ matrix.configuration }}/net10.0/StyleCop.Analyzers.Status.Generator.dll ./StyleCopAnalyzers.slnx ${{ matrix.configuration }} > StyleCop.Analyzers.Status.json
         if ($LASTEXITCODE -ne 0) { Remove-Item StyleCop.Analyzers.Status.json -ErrorAction SilentlyContinue; exit $LASTEXITCODE }
 
     - name: Upload rule status report
@@ -241,7 +241,7 @@ jobs:
         path: StyleCop.Analyzers.Status.json
         if-no-files-found: error
 
-  # The lightup wrappers and resx accessors under StyleCop.Analyzers/Lightup/.generated are written by source
+  # The lightup wrappers and resx accessors under src/StyleCop.Analyzers/Lightup/.generated are written by source
   # generators during the build (EmitCompilerGeneratedFiles) and checked in for review. Fail if they are stale.
   # Runs on Windows (with core.autocrlf, like the build job) and Linux, so line ending handling is covered on both.
   generated-files:
@@ -271,12 +271,12 @@ jobs:
     # Deleting the checked-in copies first means outputs the generators no longer produce show up as deletions.
     - name: Delete checked-in generated files
       shell: pwsh
-      run: Remove-Item -Recurse -Force StyleCop.Analyzers/StyleCop.Analyzers/Lightup/.generated
+      run: Remove-Item -Recurse -Force src/StyleCop.Analyzers/Lightup/.generated
 
     - name: Build StyleCop.Analyzers (runs the source generators)
       env:
         NUGET_PACKAGES: ${{ runner.temp }}/nuget-packages
-      run: dotnet build StyleCop.Analyzers/StyleCop.Analyzers/StyleCop.Analyzers.csproj -c Debug --no-incremental -maxcpucount:1
+      run: dotnet build src/StyleCop.Analyzers/StyleCop.Analyzers.csproj -c Debug --no-incremental -maxcpucount:1
 
     # The generators write CRLF (and the resx generator writes mixed line endings on Linux) while the repository stores
     # LF. These files have the 'text' attribute, so git normalizes line endings before comparing: only real content
@@ -284,7 +284,7 @@ jobs:
     - name: Check generated files are up to date
       shell: pwsh
       run: |
-        $path = 'StyleCop.Analyzers/StyleCop.Analyzers/Lightup/.generated'
+        $path = 'src/StyleCop.Analyzers/Lightup/.generated'
         # Intent-to-add makes new (untracked) outputs show up in the diff alongside modified and deleted files.
         git -c core.safecrlf=false add --all --intent-to-add -- $path
         git -c core.safecrlf=false diff HEAD --exit-code --stat -- $path
@@ -300,7 +300,7 @@ jobs:
         Write-Host 'the StyleCop.Analyzers.CodeGeneration generators and the *.resx files. To regenerate them, run from the repo root:'
         Write-Host ''
         Write-Host "  git rm -r -q $path"
-        Write-Host '  dotnet build StyleCop.Analyzers/StyleCop.Analyzers/StyleCop.Analyzers.csproj --no-incremental -maxcpucount:1'
+        Write-Host '  dotnet build src/StyleCop.Analyzers/StyleCop.Analyzers.csproj --no-incremental -maxcpucount:1'
         Write-Host "  git add -A $path"
         Write-Host ''
         Write-Host 'and commit the result. See CONTRIBUTING.md.'
@@ -366,11 +366,11 @@ jobs:
       uses: actions/download-artifact@v8
       with:
         name: test-bin-cs${{ matrix.langVersion }}-${{ matrix.configuration }}
-        path: StyleCop.Analyzers/${{ matrix.project }}/bin/${{ matrix.configuration }}/${{ matrix.framework }}
+        path: test/${{ matrix.project }}/bin/${{ matrix.configuration }}/${{ matrix.framework }}
 
     - name: Make test app host executable
       shell: bash
-      run: chmod +x "StyleCop.Analyzers/${{ matrix.project }}/bin/${{ matrix.configuration }}/${{ matrix.framework }}/${{ matrix.project }}"
+      run: chmod +x "test/${{ matrix.project }}/bin/${{ matrix.configuration }}/${{ matrix.framework }}/${{ matrix.project }}"
 
     # The tests allocate heavily on every core; use server GC in the .NET test host.
     - name: Run tests
@@ -382,7 +382,7 @@ jobs:
       run: |
         $report_folder = './coverage'
         New-Item -ItemType Directory -Force -Path $report_folder | Out-Null
-        $target_dll = "../StyleCop.Analyzers/${{ matrix.project }}/bin/${{ matrix.configuration }}/${{ matrix.framework }}/${{ matrix.project }}.dll"
+        $target_dll = "../test/${{ matrix.project }}/bin/${{ matrix.configuration }}/${{ matrix.framework }}/${{ matrix.project }}.dll"
         if (-not (Test-Path $target_dll)) { throw "Test assembly not found at $target_dll" }
         $coverage_output = "$report_folder/coverage.StyleCopAnalyzers.CSharp${{ matrix.langVersion }}.cobertura.xml"
         # PDBs use the stable /_/ root; resolve it to this job's checkout for instrumentation and reporting.

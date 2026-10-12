@@ -43,10 +43,10 @@ Use the SDK in `global.json`, which also supplies the .NET 10 runtime.
 
 ```bash
 # one rule, one project
-dotnet build StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp15 -c Debug
-dotnet test StyleCop.Analyzers/StyleCop.Analyzers.Test.CSharp15 --no-build -f net10.0 --filter "FullyQualifiedName~SA1201"
+dotnet build test/StyleCop.Analyzers.Test.CSharp15 -c Debug
+dotnet test test/StyleCop.Analyzers.Test.CSharp15 --no-build -f net10.0 --filter "FullyQualifiedName~SA1201"
 # lowest project for the same rule
-dotnet test StyleCop.Analyzers/StyleCop.Analyzers.Test --no-build -f net10.0 --filter "FullyQualifiedName~SA1201"
+dotnet test test/StyleCop.Analyzers.Test --no-build -f net10.0 --filter "FullyQualifiedName~SA1201"
 ```
 
 - A test project build compiles every earlier project too. Building the C# 6 project and the newest one is

@@ -8,7 +8,7 @@ coverage:
     patch:
       default: false
   fixes:
-    - "build/StyleCop.Analyzers/::StyleCop.Analyzers/"
+    - "build/src/::src/"
 
 comment:
   layout: "diff"
@@ -16,9 +16,9 @@ comment:
 flags:
   production:
     paths:
-      - StyleCop.Analyzers/StyleCop.Analyzers/
-      - StyleCop.Analyzers/StyleCop.Analyzers.CodeFixes/
+      - src/StyleCop.Analyzers/
+      - src/StyleCop.Analyzers.CodeFixes/
   test:
     paths:
-      - StyleCop.Analyzers/StyleCop.Analyzers.Test/
-      - StyleCop.Analyzers/StyleCopTester/
+      - test/StyleCop.Analyzers.Test/
+      - tools/StyleCopTester/

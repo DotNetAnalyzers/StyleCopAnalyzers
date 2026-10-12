@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net10.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">$(TargetFrameworks);net472</TargetFrameworks>
+    <EnforceExtendedAnalyzerRules>false</EnforceExtendedAnalyzerRules>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <CodeAnalysisRuleSet>..\..\StyleCop.Analyzers.Internal.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\build\keys\TestingKey.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" VersionOverride="1.3.2" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeFix.Testing" />
+    <PackageReference Include="Xunit.Combinatorial" />
+    <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+    <!--
+      The testing library references NuGet.* without compile assets, so on .NET Framework those assemblies (and their
+      System.Text.Json/Microsoft.Bcl.AsyncInterfaces dependencies) are invisible to binding redirect generation. Reference
+      NuGet.Resolver directly so test projects that use newer dependencies (e.g. Roslyn 5.0 with
+      Microsoft.Bcl.AsyncInterfaces 9.0.0) get the binding redirects needed to download reference assemblies.
+    -->
+    <PackageReference Include="NuGet.Resolver" />
+    <PackageReference Include="System.Net.Http" />
+    <PackageReference Include="System.Text.RegularExpressions" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <!-- Exclude Microsoft.Composition which is only needed for .NET Framework execution -->
+    <PackageReference Include="Microsoft.Composition" ExcludeAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\StyleCop.Analyzers.CodeFixes\StyleCop.Analyzers.CodeFixes.csproj" />
+    <ProjectReference Include="..\..\src\StyleCop.Analyzers\StyleCop.Analyzers.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="xunit.runner.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

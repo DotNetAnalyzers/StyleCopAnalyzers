@@ -1,0 +1,14 @@
+# Preserve the existing Windows-built package's text payload on every build host.
+StyleCop.Analyzers.CodeFixes/PackageReadme.md text eol=crlf
+StyleCop.Analyzers.CodeFixes/rulesets/*.ruleset text eol=crlf
+StyleCop.Analyzers.CodeFixes/tools/*.ps1 text eol=crlf
+
+# Multiline resource values and verbatim C# literals are part of the shipped payload.
+StyleCop.Analyzers/**/*.resx text eol=crlf
+StyleCop.Analyzers/**/*.cs text eol=crlf
+StyleCop.Analyzers.CodeFixes/**/*.cs text eol=crlf
+
+# Checked-in output of the lightup and resx source generators (EmitCompilerGeneratedFiles in StyleCop.Analyzers.csproj).
+# The generators write CRLF (and the resx generator writes mixed line endings on Linux), while the repository stores
+# these files with LF like all other text files.
+StyleCop.Analyzers/Lightup/.generated/** text eol=crlf

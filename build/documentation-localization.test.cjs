@@ -28,7 +28,7 @@ test("the two sidebars cover the same pages", () => {
 });
 
 test("Russian resources have exactly the neutral keys and preserve format placeholders", () => {
-    const directory = path.join(root, "StyleCop.Analyzers", "StyleCop.Analyzers");
+    const directory = path.join(root, "src", "StyleCop.Analyzers");
     const resources = text => {
         text = text.replace(/<!--[\s\S]*?-->/g, "");
         const entries = Array.from(text.matchAll(/<data\s+name="([^"]+)"[^>]*>([\s\S]*?)<\/data>/g),
@@ -38,8 +38,8 @@ test("Russian resources have exactly the neutral keys and preserve format placeh
     };
     for (const folder of fs.readdirSync(directory, { withFileTypes: true }).filter(entry => entry.isDirectory())) {
         for (const file of fs.readdirSync(path.join(directory, folder.name)).filter(file => /^[^.]+\.resx$/.test(file))) {
-            const neutral = resources(read("StyleCop.Analyzers", "StyleCop.Analyzers", folder.name, file));
-            const translated = resources(read("StyleCop.Analyzers", "StyleCop.Analyzers", folder.name,
+            const neutral = resources(read("src", "StyleCop.Analyzers", folder.name, file));
+            const translated = resources(read("src", "StyleCop.Analyzers", folder.name,
                 file.replace(".resx", ".ru-RU.resx")));
             assert.deepEqual(Array.from(translated.keys()).sort(), Array.from(neutral.keys()).sort(), file);
             for (const [name, value] of neutral) {
