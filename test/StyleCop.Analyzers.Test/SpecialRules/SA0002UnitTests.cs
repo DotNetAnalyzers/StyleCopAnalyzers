@@ -363,7 +363,9 @@ namespace NamespaceName { }
                     // Run additional validation here with access to a Compilation
                     (solution, projectId) =>
                     {
+#pragma warning disable VSTHRD002 // async approach not available in this context.
                         var compilation = solution.GetProject(projectId).GetCompilationAsync(CancellationToken.None).GetAwaiter().GetResult();
+#pragma warning restore VSTHRD002 // async approach not available in this context.
 
                         var analysisContext = new AnalysisContextMissingOptions();
                         var analyzer = new SA0002InvalidSettingsFile();
