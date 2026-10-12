@@ -2,7 +2,7 @@ $NuGet = '..\..\.nuget\NuGet.exe'
 &$NuGet update -Self -Verbosity quiet
 
 # Make sure the project binaries are up-to-date
-&$NuGet restore ..\..\StyleCopAnalyzers.sln
+&$NuGet restore ..\..\StyleCopAnalyzers.slnx
 Push-Location
 cd ..\..\build
 .\build.ps1 -Incremental

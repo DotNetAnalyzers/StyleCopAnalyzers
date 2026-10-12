@@ -229,7 +229,7 @@ jobs:
     - name: Generate rule status report
       shell: pwsh
       run: |
-        dotnet ./StyleCop.Analyzers/StyleCop.Analyzers.Status.Generator/bin/${{ matrix.configuration }}/net10.0/StyleCop.Analyzers.Status.Generator.dll ./StyleCopAnalyzers.sln ${{ matrix.configuration }} > StyleCop.Analyzers.Status.json
+        dotnet ./StyleCop.Analyzers/StyleCop.Analyzers.Status.Generator/bin/${{ matrix.configuration }}/net10.0/StyleCop.Analyzers.Status.Generator.dll ./StyleCopAnalyzers.slnx ${{ matrix.configuration }} > StyleCop.Analyzers.Status.json
         if ($LASTEXITCODE -ne 0) { Remove-Item StyleCop.Analyzers.Status.json -ErrorAction SilentlyContinue; exit $LASTEXITCODE }
 
     - name: Upload rule status report
@@ -383,7 +383,7 @@ jobs:
         # PDBs use the stable /_/ root; resolve it to this job's checkout for instrumentation and reporting.
         $root = (Resolve-Path ..).Path
         $mapping = "$report_folder/SourceRootsMapping"
-        Set-Content -Path $mapping -Value "${root}/StyleCopAnalyzers.sln|${root}/=/_/"
+        Set-Content -Path $mapping -Value "${root}/StyleCopAnalyzers.slnx|${root}/=/_/"
         # Trailing separator makes coverlet write coverage.cobertura.xml into the folder.
         # The scope matches the old OpenCover setup (-filter:"+[StyleCop*]*"), which also covered the test assembly
         # under test and did not see source generator output. File globs need "**/" to match at any depth.

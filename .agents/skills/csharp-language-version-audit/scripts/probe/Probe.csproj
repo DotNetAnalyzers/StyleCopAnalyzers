@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <!--
-    Probe harness for language-version audits and issue triage. It is not part of StyleCopAnalyzers.sln.
+    Probe harness for language-version audits and issue triage. It is not part of StyleCopAnalyzers.slnx.
     Build StyleCop.Analyzers.CodeFixes (Debug) first. Usage is in Program.cs and in the csharp-language-version-audit
     skill. Set the RoslynVersion property to probe with another compiler, for example a dotnet-tools feed build.
   -->

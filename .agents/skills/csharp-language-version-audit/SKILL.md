@@ -68,7 +68,7 @@ Checklist:
 
   Don't put `CSharpM` in the name of a non-test helper type in the previous project: the derived-test
   generator subclasses every type whose name contains that string.
-- [ ] `StyleCopAnalyzers.sln` entry.
+- [ ] `StyleCopAnalyzers.slnx` entry.
 - [ ] `Lightup/LanguageVersionEx.cs`: `CSharpN = (LanguageVersion)N00`. `Lightup/LightupHelpers.cs`:
       `SupportsCSharpN` (checks `Enum.GetNames(typeof(LanguageVersion))`).
 - [ ] `GenericAnalyzerTest.CreateDefaultReferenceAssemblies`: if the Roslyn major version is new, add it to the
