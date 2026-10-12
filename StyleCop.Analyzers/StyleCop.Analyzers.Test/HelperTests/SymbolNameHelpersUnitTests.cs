@@ -26,16 +26,18 @@ namespace StyleCop.Analyzers.Test.HelperTests
 
         private Solution testSolution;
 
-        public async Task InitializeAsync()
+        public async ValueTask InitializeAsync()
         {
             var compilationOptions = this.GetCompilationOptions();
             this.testSolution = await CreateTestSolutionAsync(compilationOptions).ConfigureAwait(false);
         }
 
-        public Task DisposeAsync()
+#pragma warning disable AvoidAsyncSuffix // IAsyncDisposable requires this name and returns ValueTask.
+        public ValueTask DisposeAsync()
         {
-            return Task.FromResult(true);
+            return default;
         }
+#pragma warning restore AvoidAsyncSuffix
 
         /// <summary>
         /// Verify the workings of <see cref="SymbolNameHelpers.ToQualifiedString(ISymbol, NameSyntax)"/>

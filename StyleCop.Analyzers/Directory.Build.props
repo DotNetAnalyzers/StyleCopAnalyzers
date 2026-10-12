@@ -23,13 +23,22 @@
 
   <ItemGroup Condition="$([System.String]::Copy('$(MSBuildProjectName)').StartsWith('StyleCop.Analyzers.Test.CSharp'))">
     <PackageReference Include="DiffPlex" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" PrivateAssets="all" />
   </ItemGroup>
 
   <PropertyGroup Condition="'$(BuildingInsideVisualStudio)' != 'true'">
     <!-- Ideally this is always enabled, but that tends to hurt developer productivity -->
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
+
+  <PropertyGroup Condition="$(MSBuildProjectName.StartsWith('StyleCop.Analyzers.Test'))">
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup Condition="$(MSBuildProjectName.StartsWith('StyleCop.Analyzers.Test'))">
+    <!-- Each inherited test project needs the v3 entry point; keep the existing VSTest/coverlet pipeline. -->
+    <PackageReference Include="Microsoft.NET.Test.Sdk" PrivateAssets="all" />
+    <PackageReference Include="xunit.v3.mtp-off" />
+  </ItemGroup>
 
   <PropertyGroup>
     <!--
