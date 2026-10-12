@@ -8,6 +8,7 @@
   <ItemGroup>
     <PackageVersion Include="AsyncUsageAnalyzers" Version="1.0.0-alpha003" />
     <PackageVersion Include="DotNetAnalyzers.DocumentationAnalyzers" Version="1.0.0-beta.59" />
+    <PackageVersion Include="DiffPlex" Version="1.7.2" />
     <PackageVersion Include="LibGit2Sharp" Version="0.32.0" />
     <PackageVersion Include="Microsoft.Build.Locator" Version="1.11.2" />
     <PackageVersion Include="Microsoft.Build.Framework" Version="18.0.2" />
@@ -34,7 +35,7 @@
     <PackageVersion Include="TunnelVisionLabs.ReferenceAssemblyAnnotator" Version="1.0.0-alpha.160" />
     <PackageVersion Include="xunit" Version="2.4.2" />
     <PackageVersion Include="Xunit.Combinatorial" Version="1.7.31" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.1" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.1" />
   </ItemGroup>
 
   <!-- Keep shipping compiler-host compatibility pins separate from test and tool versions. -->
