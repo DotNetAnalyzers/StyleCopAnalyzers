@@ -16,6 +16,16 @@
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
   </PropertyGroup>
 
+  <!-- Each language-version project runs from its own test output, so its test and runtime dependencies must be direct. -->
+  <PropertyGroup Condition="$([System.String]::Copy('$(MSBuildProjectName)').StartsWith('StyleCop.Analyzers.Test.CSharp'))">
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <ItemGroup Condition="$([System.String]::Copy('$(MSBuildProjectName)').StartsWith('StyleCop.Analyzers.Test.CSharp'))">
+    <PackageReference Include="DiffPlex" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" PrivateAssets="all" />
+  </ItemGroup>
+
   <PropertyGroup Condition="'$(BuildingInsideVisualStudio)' != 'true'">
     <!-- Ideally this is always enabled, but that tends to hurt developer productivity -->
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>

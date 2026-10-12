@@ -19,9 +19,9 @@
       "enabled": false
     },
     {
-      "description": "Keep the runner at the last CI-verified version; later tested versions omit DiffPlex from derived test outputs.",
+      "description": "Cap the runner at the latest version verified with explicit dependencies and runtime files in derived test projects.",
       "matchPackageNames": ["xunit.runner.visualstudio"],
-      "allowedVersions": "<=2.4.1"
+      "allowedVersions": "<=4.0.1"
     }
   ]
 }
