@@ -55,7 +55,7 @@ jobs:
       run: dotnet tool restore
 
     - name: Setup Node.js
-      uses: actions/setup-node@v6
+      uses: actions/setup-node@v7
       with:
         node-version: '24'
 
@@ -108,7 +108,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v7
     - name: Setup Node.js
-      uses: actions/setup-node@v6
+      uses: actions/setup-node@v7
       with:
         node-version: '24'
     - name: Test status page
