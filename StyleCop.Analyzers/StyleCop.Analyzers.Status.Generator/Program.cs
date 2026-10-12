@@ -44,7 +44,7 @@ namespace StyleCop.Analyzers.Status.Generator
 
             if (diagnostics.Count == 0)
             {
-                Console.Error.WriteLine("No diagnostics were found. Refusing to publish an empty status report.");
+                await Console.Error.WriteLineAsync("No diagnostics were found. Refusing to publish an empty status report.").ConfigureAwait(false);
                 return 1;
             }
 
@@ -71,7 +71,7 @@ namespace StyleCop.Analyzers.Status.Generator
                     },
                 };
 
-                Console.WriteLine(JsonConvert.SerializeObject(output, Formatting.Indented));
+                await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(output, Formatting.Indented)).ConfigureAwait(false);
             }
 
             return 0;
