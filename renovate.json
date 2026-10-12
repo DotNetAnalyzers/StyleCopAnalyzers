@@ -17,6 +17,11 @@
         "Microsoft.CodeAnalysis.CSharp.Workspaces"
       ],
       "enabled": false
+    },
+    {
+      "description": "Keep the runner at the last CI-verified version; later tested versions omit DiffPlex from derived test outputs.",
+      "matchPackageNames": ["xunit.runner.visualstudio"],
+      "allowedVersions": "<=2.4.1"
     }
   ]
 }
