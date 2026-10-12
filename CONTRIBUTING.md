@@ -66,6 +66,12 @@ Use forward slashes in these paths when running from a Linux shell. Add
 `--filter "FullyQualifiedName~SA1201"` to select one rule.
 Each newer compiler's test project also runs the tests inherited from earlier projects.
 
+Tests use xUnit v3 and Xunit.Combinatorial v2. Xunit.Combinatorial v2 depends on xUnit v3;
+it cannot be used with the `xunit` v2 package. Every test project is an executable and directly
+references `xunit.v3.mtp-off` so the v3 entry point is generated, including for projects
+which inherit their tests. The MTP-off package preserves the VSTest adapter and Coverlet workflow.
+The same tests continue to target `net10.0` and, on Windows, `net472`.
+
 `.gitattributes` checks out test C# sources with CRLF on every platform so multiline
 source/expected-output literals match the verifier's explicit CRLF formatting option. Assertions still compare
 the exact output; tests for other newline sequences supply them explicitly.

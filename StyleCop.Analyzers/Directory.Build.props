@@ -21,6 +21,16 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
+  <PropertyGroup Condition="$(MSBuildProjectName.StartsWith('StyleCop.Analyzers.Test'))">
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup Condition="$(MSBuildProjectName.StartsWith('StyleCop.Analyzers.Test'))">
+    <!-- Each inherited test project needs the v3 entry point; keep the existing VSTest/coverlet pipeline. -->
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit.v3.mtp-off" />
+  </ItemGroup>
+
   <PropertyGroup>
     <!--
       Debug builds used Windows PDBs for OpenCover, which is no longer used. Coverlet rewrites Windows PDBs through the

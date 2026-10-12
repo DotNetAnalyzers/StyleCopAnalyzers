@@ -30,7 +30,10 @@ Check the csproj files for current versions; this table is from Oct 2026.
   Microsoft.CodeAnalysis.Testing 1.1.4 with the framework-neutral `DefaultVerifier`. Don't add test-framework
   specific verifier packages (the xUnit flavor was discontinued after 1.1.2). Assertion failures surface as
   `InvalidOperationException` with the library's message.
-- Tests are xUnit 2 `[Fact]`/`[Theory]`. Shared data: `Helpers/CommonMemberData.cs`. Settings: pass a
+- Tests are xUnit v3 `[Fact]`/`[Theory]`, with Xunit.Combinatorial v2. Every test project directly references
+  `xunit.v3.mtp-off` and `Microsoft.NET.Test.Sdk` through `Directory.Build.props`, generates an executable
+  entry point, and uses the VSTest adapter (not Microsoft.Testing.Platform). Shared data:
+  `Helpers/CommonMemberData.cs`. Settings: pass a
   `stylecop.json` string through the verifier overloads that take `settings`.
 
 ## Running tests locally

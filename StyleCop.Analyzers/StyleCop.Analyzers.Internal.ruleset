@@ -8,6 +8,9 @@
   </Rules>
   <Rules AnalyzerId="xunit.analyzers" RuleNamespace="xunit.analyzers">
     <Rule Id="xUnit1004" Action="Info" />
+    <!-- Preserve the shared verifier's ConfigureAwait(false) and explicit CancellationToken.None conventions. -->
+    <Rule Id="xUnit1030" Action="None" />
+    <Rule Id="xUnit1051" Action="None" />
   </Rules>
   <Rules AnalyzerId="Microsoft.CodeAnalysis.Analyzers" RuleNamespace="Microsoft.CodeAnalysis.Analyzers">
     <Rule Id="RS1001" Action="None" /> <!-- Missing diagnostic analyzer attribute -->
