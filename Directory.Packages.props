@@ -2,14 +2,14 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <SharedMicrosoftCodeAnalysisAnalyzersVersion>3.11.0-beta1.24052.1</SharedMicrosoftCodeAnalysisAnalyzersVersion>
+    <SharedMicrosoftCodeAnalysisAnalyzersVersion>3.11.0-beta1.26226.5</SharedMicrosoftCodeAnalysisAnalyzersVersion>
     <SharedRoslynVersion>5.9.0</SharedRoslynVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageVersion Include="AsyncUsageAnalyzers" Version="1.0.0-alpha003" />
     <PackageVersion Include="DotNetAnalyzers.DocumentationAnalyzers" Version="1.0.0-beta.59" />
-    <PackageVersion Include="LibGit2Sharp" Version="0.31.0" />
+    <PackageVersion Include="LibGit2Sharp" Version="0.32.0" />
     <PackageVersion Include="Microsoft.Build.Locator" Version="1.11.2" />
     <PackageVersion Include="Microsoft.Build.Framework" Version="18.0.2" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="5.9.0" />
