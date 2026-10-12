@@ -19,6 +19,11 @@
       "enabled": false
     },
     {
+      "description": "Microsoft.Build.Framework and its Microsoft.NET.StringTools dependency drop .NET 10 support in 18.10 and later; restrict updates until we target .NET 11.",
+      "matchPackageNames": ["Microsoft.Build.Framework", "Microsoft.NET.StringTools"],
+      "allowedVersions": "<18.10"
+    },
+    {
       "description": "Cap the runner at the latest version verified with explicit dependencies and runtime files in derived test projects.",
       "matchPackageNames": ["xunit.runner.visualstudio"],
       "allowedVersions": "<=4.0.1"
