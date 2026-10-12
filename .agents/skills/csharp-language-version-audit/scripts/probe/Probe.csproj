@@ -11,7 +11,7 @@
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <IsPackable>false</IsPackable>
-    <RoslynVersion Condition="'$(RoslynVersion)' == ''">5.9.0</RoslynVersion>
+    <RoslynVersion Condition="'$(RoslynVersion)' == ''">$(SharedRoslynVersion)</RoslynVersion>
     <RepoRoot>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)', '..', '..', '..', '..', '..'))</RepoRoot>
     <ProbeConfiguration Condition="'$(ProbeConfiguration)' == ''">Debug</ProbeConfiguration>
     <ProbeBin Condition="'$(ProbeBin)' == ''">$(RepoRoot)StyleCop.Analyzers/StyleCop.Analyzers.CodeFixes/bin/$(ProbeConfiguration)/netstandard1.1</ProbeBin>
@@ -20,7 +20,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="$(RoslynVersion)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" VersionOverride="$(RoslynVersion)" />
   </ItemGroup>
 
   <ItemGroup>

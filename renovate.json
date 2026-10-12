@@ -6,11 +6,15 @@
   "packageRules": [
     {
       "description": "Roslyn compiler and workspace versions are intentionally pinned for compatibility and language-version testing.",
+      "matchJsonata": ["sharedVariableName='RoslynVersionForAnalyzers'"],
+      "enabled": false
+    },
+    {
+      "description": "Roslyn compiler and workspace versions set via literal VersionOverride values in the language-version test projects are intentionally pinned.",
+      "matchManagers": ["nuget"],
+      "matchFileNames": ["**/StyleCop.Analyzers.Test*.csproj"],
       "matchPackageNames": [
-        "Microsoft.CodeAnalysis.Common",
-        "Microsoft.CodeAnalysis.CSharp",
-        "Microsoft.CodeAnalysis.CSharp.Workspaces",
-        "Microsoft.CodeAnalysis.Workspaces.*"
+        "Microsoft.CodeAnalysis.CSharp.Workspaces"
       ],
       "enabled": false
     }
