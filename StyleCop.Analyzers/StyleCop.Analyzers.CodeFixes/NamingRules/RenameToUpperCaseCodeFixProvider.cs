@@ -72,7 +72,7 @@ namespace StyleCop.Analyzers.NamingRules
                 if (BaseNamespaceDeclarationSyntaxWrapper.IsInstance(memberSyntax))
                 {
                     // namespaces are not symbols. So we are just renaming the namespace
-                    Task<Document> RenameNamespace(CancellationToken cancellationToken)
+                    Task<Document> RenameNamespaceAsync(CancellationToken cancellationToken)
                     {
                         IdentifierNameSyntax identifierSyntax = (IdentifierNameSyntax)token.Parent;
 
@@ -85,7 +85,7 @@ namespace StyleCop.Analyzers.NamingRules
                     context.RegisterCodeFix(
                         CodeAction.Create(
                             string.Format(NamingResources.RenameToCodeFix, newName),
-                            (Func<CancellationToken, Task<Document>>)RenameNamespace,
+                            (Func<CancellationToken, Task<Document>>)RenameNamespaceAsync,
                             nameof(RenameToUpperCaseCodeFixProvider) + "_" + diagnostic.Id),
                         diagnostic);
                 }

@@ -26,6 +26,8 @@ namespace StyleCopTester
     using File = System.IO.File;
     using Path = System.IO.Path;
 
+#pragma warning disable VSTHRD002, VSTHRD103 // This legacy tester synchronously bridges its WPF dispatcher and writes console output.
+
     /// <summary>
     /// StyleCopTester is a tool that will analyze a solution, find diagnostics in it and will print out the number of
     /// diagnostics it could find. This is useful to easily test performance without having the overhead of visual
@@ -56,9 +58,12 @@ namespace StyleCopTester
 
                 DispatcherFrame dispatcherFrame = new DispatcherFrame();
                 Task mainTask = MainAsync(args, cts.Token);
-                mainTask.ContinueWith(task => dispatcherFrame.Continue = false);
+                Task dispatcherFrameContinuation = mainTask.ContinueWith(
+                    task => dispatcherFrame.Continue = false,
+                    TaskScheduler.Default);
 
                 Dispatcher.PushFrame(dispatcherFrame);
+                dispatcherFrameContinuation.GetAwaiter().GetResult();
                 mainTask.GetAwaiter().GetResult();
             }
             finally
@@ -621,4 +626,6 @@ namespace StyleCopTester
             }
         }
     }
+
+#pragma warning restore VSTHRD002, VSTHRD103
 }

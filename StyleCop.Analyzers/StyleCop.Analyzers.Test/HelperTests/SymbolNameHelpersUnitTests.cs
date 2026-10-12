@@ -32,12 +32,10 @@ namespace StyleCop.Analyzers.Test.HelperTests
             this.testSolution = await CreateTestSolutionAsync(compilationOptions).ConfigureAwait(false);
         }
 
-#pragma warning disable AvoidAsyncSuffix // IAsyncDisposable requires this name and returns ValueTask.
         public ValueTask DisposeAsync()
         {
             return default;
         }
-#pragma warning restore AvoidAsyncSuffix
 
         /// <summary>
         /// Verify the workings of <see cref="SymbolNameHelpers.ToQualifiedString(ISymbol, NameSyntax)"/>
