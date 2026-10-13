@@ -378,6 +378,10 @@ namespace StyleCop.Analyzers.SpacingRules
                 mustHaveTrailingWhitespace = false;
                 break;
 
+            case SyntaxKind.OpenBracketToken:
+                mustHaveTrailingWhitespace = !isNullForgivingExpression;
+                break;
+
             case SyntaxKind.QuestionToken:
                 mustHaveTrailingWhitespace = !(followingToken.Parent is ConditionalAccessExpressionSyntax);
                 break;

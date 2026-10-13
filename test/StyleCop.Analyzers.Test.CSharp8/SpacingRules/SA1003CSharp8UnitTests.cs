@@ -466,5 +466,34 @@ namespace TestNamespace
                 Diagnostic(DescriptorFollowedByWhitespace).WithLocation(1).WithArguments("!"),
                 CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that null-forgiving operators are adjacent to element access expressions.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(4266, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4266")]
+        public async Task TestNullForgivingOperatorBeforeElementAccessAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        private string[]? _list;
+        private string[]? _array;
+
+        public string TestMethod()
+        {
+            var listItem = _list![0];
+            var arrayItem = _array![0];
+            return listItem + arrayItem;
+        }
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
