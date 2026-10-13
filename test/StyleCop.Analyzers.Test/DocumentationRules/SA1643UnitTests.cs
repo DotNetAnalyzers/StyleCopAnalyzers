@@ -91,6 +91,28 @@ public class TestClass
         }
 
         /// <summary>
+        /// Verifies that a destructor with the correct summary text from included documentation will not produce any diagnostics when the type is inside a namespace.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2984, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2984")]
+        public async Task TestDestructorWithValidSummaryInIncludedDocsInNamespaceAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        /// <include file='ValidSummary.xml' path='/TestClass/Destructor/*'/>
+        ~TestClass() { }
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that a destructor with the missing summary tag from included documentation will not produce any diagnostics.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>

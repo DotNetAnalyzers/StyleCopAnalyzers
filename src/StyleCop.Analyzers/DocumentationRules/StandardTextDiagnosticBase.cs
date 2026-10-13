@@ -200,9 +200,17 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return false;
             }
 
+            SemanticModel semanticModel = context.SemanticModel;
+            INamedTypeSymbol expectedSymbol = semanticModel.GetDeclaredSymbol(constructorDeclarationSyntax.Parent, context.CancellationToken) as INamedTypeSymbol;
+
+            // Expanded includes carry the qualified documentation ID, which a lookup by simple name cannot find
+            if (expectedSymbol != null && string.Equals(crefAttribute.Value, expectedSymbol.GetDocumentationCommentId(), StringComparison.Ordinal))
+            {
+                return true;
+            }
+
             var typeName = crefAttribute.Value.Split(':').Last();
 
-            SemanticModel semanticModel = context.SemanticModel;
             var foundSymbols = semanticModel.LookupNamespacesAndTypes(constructorDeclarationSyntax.SpanStart, name: typeName);
             if (foundSymbols.Length != 1)
             {
@@ -214,7 +222,6 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return false;
             }
 
-            INamedTypeSymbol expectedSymbol = semanticModel.GetDeclaredSymbol(constructorDeclarationSyntax.Parent, context.CancellationToken) as INamedTypeSymbol;
             return Equals(actualSymbol.OriginalDefinition, expectedSymbol);
         }
 
