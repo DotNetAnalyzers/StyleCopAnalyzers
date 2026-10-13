@@ -20,7 +20,7 @@ using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
 public partial class SA1134CSharp7UnitTests : SA1134UnitTests
 {
     /// <summary>
-    /// Verifies that attributes on auto-property accessors do not produce diagnostics.
+    /// Verifies that attributes on single-line auto-property accessors do not produce diagnostics.
     /// </summary>
     /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
     [Fact]
@@ -31,6 +31,31 @@ public partial class SA1134CSharp7UnitTests : SA1134UnitTests
 
 public class TestClass
 {
+    public bool DisableCaching { [UsedImplicitly] get; [UsedImplicitly] set; }
+}
+
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+public sealed class UsedImplicitlyAttribute : Attribute
+{
+}
+";
+
+        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Verifies that attributes on single-line auto-property accessors with property attributes do not produce diagnostics.
+    /// </summary>
+    /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+    [Fact]
+    [WorkItem(3728, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3728")]
+    public async Task VerifyAttributesOnSingleLineAutoPropertyAccessorsWithPropertyAttributesDoNotProduceDiagnosticAsync()
+    {
+        var testCode = @"using System;
+
+public class TestClass
+{
+    [Obsolete]
     public bool DisableCaching { [UsedImplicitly] get; [UsedImplicitly] set; }
 }
 

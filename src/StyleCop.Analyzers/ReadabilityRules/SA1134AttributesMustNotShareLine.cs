@@ -81,8 +81,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 && accessorDeclaration.ExpressionBody() == null
                 && accessorDeclaration.Parent?.Parent is PropertyDeclarationSyntax)
             {
-                // Attributes on auto-property accessors are part of the property declaration.
-                return;
+                var accessorList = (AccessorListSyntax)accessorDeclaration.Parent;
+                if (!accessorList.OpenBraceToken.IsMissing
+                    && !accessorList.CloseBraceToken.IsMissing
+                    && accessorList.OpenBraceToken.GetLine() == accessorList.CloseBraceToken.GetLine())
+                {
+                    // Attributes on single-line auto-property accessors are part of the property declaration.
+                    return;
+                }
             }
 
             var attributeListLineSpan = attributeList.GetLineSpan();

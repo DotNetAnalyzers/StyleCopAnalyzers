@@ -77,9 +77,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var attributeListSyntax = (AttributeListSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
 
-            // use the containing type to determine the indentation level, anything else is less reliable.
-            var containingType = attributeListSyntax.Parent?.Parent;
-            var indentationSteps = (containingType != null) ? IndentationHelper.GetIndentationSteps(settings.Indentation, containingType) + 1 : 0;
+            var indentationSteps = GetIndentationSteps(settings, attributeListSyntax);
             var indentationTrivia = IndentationHelper.GenerateWhitespaceTrivia(settings.Indentation, indentationSteps);
 
             if (diagnostic.Properties.ContainsKey(SA1134AttributesMustNotShareLine.FixWithNewLineBeforeKey))
@@ -105,6 +103,46 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 var newLeadingTrivia = nextToken.LeadingTrivia.Insert(0, indentationTrivia);
                 tokensToReplace[nextToken] = nextToken.WithLeadingTrivia(newLeadingTrivia);
             }
+        }
+
+        private static int GetIndentationSteps(StyleCopSettings settings, AttributeListSyntax attributeListSyntax)
+        {
+            if (attributeListSyntax.Parent is AccessorDeclarationSyntax)
+            {
+                var containingType = attributeListSyntax.FirstAncestorOrSelf<BaseTypeDeclarationSyntax>();
+                if (containingType != null)
+                {
+                    return IndentationHelper.GetIndentationSteps(settings.Indentation, containingType) + 2;
+                }
+
+                return (attributeListSyntax.Parent?.Parent != null)
+                    ? IndentationHelper.GetIndentationSteps(settings.Indentation, attributeListSyntax.Parent.Parent) + 1
+                    : 0;
+            }
+
+            var parent = attributeListSyntax.Parent;
+            if (parent is BaseTypeDeclarationSyntax typeDeclaration)
+            {
+                var outerType = typeDeclaration.Parent?.FirstAncestorOrSelf<BaseTypeDeclarationSyntax>();
+                if (outerType != null)
+                {
+                    return IndentationHelper.GetIndentationSteps(settings.Indentation, outerType) + 1;
+                }
+
+                var namespaceDeclaration = typeDeclaration.Parent?.FirstAncestorOrSelf<NamespaceDeclarationSyntax>();
+                if (namespaceDeclaration != null)
+                {
+                    return IndentationHelper.GetIndentationSteps(settings.Indentation, namespaceDeclaration) + 1;
+                }
+
+                return 0;
+            }
+
+            // use the containing type to determine the indentation level, anything else is less reliable.
+            var containingNode = parent?.Parent;
+            return (containingNode != null)
+                ? IndentationHelper.GetIndentationSteps(settings.Indentation, containingNode) + 1
+                : 0;
         }
 
         private class FixAll : DocumentBasedFixAllProvider

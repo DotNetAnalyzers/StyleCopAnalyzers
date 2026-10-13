@@ -490,5 +490,462 @@ namespace TestNamespace
 
             await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that attributes on auto-property accessors in multi-line properties produce diagnostics and are fixed properly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(1938, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1938")]
+        public async Task VerifyAttributesOnAutoPropertyAccessorsInMultiLinePropertiesAsync()
+        {
+            var testCode = @"using System;
+
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public int Bar
+        {
+            {|#0:[|}UsedImplicitly] get;
+            set;
+        }
+
+        public object Baz
+        {
+            get;
+            {|#1:[|}UsedImplicitly] set;
+        }
+    }
+}
+
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class UsedImplicitlyAttribute : Attribute
+{
+}
+";
+
+            var fixedTestCode = @"using System;
+
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public int Bar
+        {
+            [UsedImplicitly]
+            get;
+            set;
+        }
+
+        public object Baz
+        {
+            get;
+            [UsedImplicitly]
+            set;
+        }
+    }
+}
+
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class UsedImplicitlyAttribute : Attribute
+{
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that attributes on auto-property accessors with K&amp;R braces produce diagnostics and are fixed properly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(1938, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1938")]
+        public async Task VerifyAttributesOnAutoPropertyAccessorsWithKnRBracesAsync()
+        {
+            var testCode = @"using System;
+
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public int Bar {
+            {|#0:[|}UsedImplicitly] get;
+            set;
+        }
+    }
+}
+
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class UsedImplicitlyAttribute : Attribute
+{
+}
+";
+
+            var fixedTestCode = @"using System;
+
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public int Bar {
+            [UsedImplicitly]
+            get;
+            set;
+        }
+    }
+}
+
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class UsedImplicitlyAttribute : Attribute
+{
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that multiple attributes on an auto-property accessor produce diagnostics and are fixed properly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(1938, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1938")]
+        public async Task VerifyMultipleAttributesOnAutoPropertyAccessorAsync()
+        {
+            var testCode = @"using System;
+
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public int Bar
+        {
+            [First] {|#0:[|}Second] get;
+            set;
+        }
+    }
+}
+
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class FirstAttribute : Attribute
+{
+}
+
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class SecondAttribute : Attribute
+{
+}
+";
+
+            var fixedTestCode = @"using System;
+
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public int Bar
+        {
+            [First]
+            [Second]
+            get;
+            set;
+        }
+    }
+}
+
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class FirstAttribute : Attribute
+{
+}
+
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class SecondAttribute : Attribute
+{
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that attributes on auto-property accessors in nested classes produce diagnostics and are fixed with correct indentation.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(1938, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1938")]
+        public async Task VerifyAttributesOnAutoPropertyAccessorsInNestedClassAsync()
+        {
+            var testCode = @"using System;
+
+namespace TestNamespace
+{
+    public class OuterClass
+    {
+        public class InnerClass
+        {
+            public int Bar
+            {
+                {|#0:[|}UsedImplicitly] get;
+                set;
+            }
+        }
+    }
+}
+
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class UsedImplicitlyAttribute : Attribute
+{
+}
+";
+
+            var fixedTestCode = @"using System;
+
+namespace TestNamespace
+{
+    public class OuterClass
+    {
+        public class InnerClass
+        {
+            public int Bar
+            {
+                [UsedImplicitly]
+                get;
+                set;
+            }
+        }
+    }
+}
+
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class UsedImplicitlyAttribute : Attribute
+{
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that attributes on auto-property accessors in top-level classes produce diagnostics and are fixed with correct indentation.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(1938, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1938")]
+        public async Task VerifyAttributesOnAutoPropertyAccessorsInTopLevelClassAsync()
+        {
+            var testCode = @"using System;
+
+public class TopLevelClass
+{
+    public int Bar
+    {
+        {|#0:[|}UsedImplicitly] get;
+        set;
+    }
+}
+
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class UsedImplicitlyAttribute : Attribute
+{
+}
+";
+
+            var fixedTestCode = @"using System;
+
+public class TopLevelClass
+{
+    public int Bar
+    {
+        [UsedImplicitly]
+        get;
+        set;
+    }
+}
+
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class UsedImplicitlyAttribute : Attribute
+{
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that attributes on auto-property accessors in interfaces produce diagnostics and are fixed with correct indentation.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(1938, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1938")]
+        public async Task VerifyAttributesOnAutoPropertyAccessorsInInterfaceAsync()
+        {
+            var testCode = @"using System;
+
+namespace TestNamespace
+{
+    public interface ITestInterface
+    {
+        int Bar
+        {
+            {|#0:[|}UsedImplicitly] get;
+            set;
+        }
+    }
+}
+
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class UsedImplicitlyAttribute : Attribute
+{
+}
+";
+
+            var fixedTestCode = @"using System;
+
+namespace TestNamespace
+{
+    public interface ITestInterface
+    {
+        int Bar
+        {
+            [UsedImplicitly]
+            get;
+            set;
+        }
+    }
+}
+
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class UsedImplicitlyAttribute : Attribute
+{
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that attributes on non-auto property accessors in multi-line properties produce diagnostics and are fixed properly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyAttributesOnNonAutoPropertyAccessorsCodeFixAsync()
+        {
+            var testCode = @"using System;
+
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        private int value;
+
+        public int DisableCaching
+        {
+            {|#0:[|}UsedImplicitly] get
+            {
+                return this.value;
+            }
+        }
+
+        public int DisableCachingSet
+        {
+            get
+            {
+                return this.value;
+            }
+
+            {|#1:[|}UsedImplicitly] set
+            {
+                this.value = value;
+            }
+        }
+    }
+}
+
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class UsedImplicitlyAttribute : Attribute
+{
+}
+";
+
+            var fixedTestCode = @"using System;
+
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        private int value;
+
+        public int DisableCaching
+        {
+            [UsedImplicitly]
+            get
+            {
+                return this.value;
+            }
+        }
+
+        public int DisableCachingSet
+        {
+            get
+            {
+                return this.value;
+            }
+
+            [UsedImplicitly]
+            set
+            {
+                this.value = value;
+            }
+        }
+    }
+}
+
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class UsedImplicitlyAttribute : Attribute
+{
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
