@@ -19,6 +19,171 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     /// </summary>
     public class SA1604UnitTests
     {
+        /// <summary>
+        /// Verifies that an excluded public class does not require a summary by default.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        [Fact]
+        [WorkItem(3094, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3094")]
+        public async Task TestExcludedClassWithoutSummaryAsync()
+        {
+            var testCode = @"/// <exclude/>
+public class Class1 { }";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that excluded declarations follow private documentation settings.
+        /// </summary>
+        /// <param name="declaration">The declaration to test.</param>
+        /// <param name="documentPrivate">Whether private declarations require documentation.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        [Theory]
+        [CombinatorialData]
+        [WorkItem(3094, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3094")]
+        public async Task TestExcludedDeclarationAsync(
+            [CombinatorialValues(
+                "public class {|#0:NestedClass|} { }",
+                "public struct {|#0:Struct1|} { }",
+                "public interface {|#0:Interface1|} { }",
+                "public enum {|#0:Enum1|} { }",
+                "public delegate void {|#0:Delegate1|}();",
+                "public void {|#0:Method1|}() { }",
+                "public {|#0:Class1|}() { }",
+                "public int {|#0:Property1|} { get; set; }",
+                "public int {|#0:this|}[int index] => index;",
+                "public int {|#0:Field1|}, {|#1:Field2|};",
+                "public event System.Action {|#0:Event1|}, {|#1:Event2|};",
+                "public event System.Action {|#0:Event1|} { add { } remove { } }")] string declaration,
+            bool documentPrivate)
+        {
+            var testCode = @"public class Class1
+{
+    /// <exclude/>
+    " + declaration + @"
+}";
+            var test = new StyleCopDiagnosticVerifier<SA1604ElementDocumentationMustHaveSummary>.CSharpTest
+            {
+                TestCode = testCode,
+                Settings = @"{
+    ""settings"": {
+        ""documentationRules"": {
+            ""documentPrivateElements"": " + (documentPrivate ? "true" : "false") + @",
+            ""documentPrivateFields"": " + (documentPrivate ? "true" : "false") + @"
+        }
+    }
+}",
+            };
+
+            if (documentPrivate)
+            {
+                test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
+                if (declaration.Contains("{|#1:"))
+                {
+                    test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(1));
+                }
+            }
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that only a top-level exclude tag relaxes the summary requirement.
+        /// </summary>
+        /// <param name="documentation">The documentation to test.</param>
+        /// <param name="expectDiagnostic">Whether a summary is still required.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData("<exclude></exclude>", false)]
+        [InlineData("<remarks><exclude/></remarks>", true)]
+        [InlineData("<Exclude/>", true)]
+        [InlineData("<remarks/>", true)]
+        [InlineData("<exclude/><summary>Summary.</summary>", false)]
+        [WorkItem(3094, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3094")]
+        public async Task TestExcludeTagWithoutSummaryAsync(string documentation, bool expectDiagnostic)
+        {
+            var testCode = "/// " + documentation + @"
+public class {|#0:Class1|} { }";
+            var expected = expectDiagnostic ? new[] { Diagnostic().WithLocation(0) } : DiagnosticResult.EmptyDiagnosticResults;
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that excluded fields use the private-field setting independently of other private elements.
+        /// </summary>
+        /// <param name="documentPrivateElements">Whether private elements require documentation.</param>
+        /// <param name="documentPrivateFields">Whether private fields require documentation.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        [Theory]
+        [CombinatorialData]
+        [WorkItem(3094, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3094")]
+        public async Task TestExcludedFieldSettingsAsync(bool documentPrivateElements, bool documentPrivateFields)
+        {
+            var test = new StyleCopDiagnosticVerifier<SA1604ElementDocumentationMustHaveSummary>.CSharpTest
+            {
+                TestCode = @"public class Class1
+{
+    /// <exclude/>
+    public int {|#0:Field1|};
+
+    /// <exclude/>
+    public int {|#1:Property1|} { get; set; }
+}",
+                Settings = @"{
+    ""settings"": {
+        ""documentationRules"": {
+            ""documentPrivateElements"": " + (documentPrivateElements ? "true" : "false") + @",
+            ""documentPrivateFields"": " + (documentPrivateFields ? "true" : "false") + @"
+        }
+    }
+}",
+            };
+
+            if (documentPrivateFields)
+            {
+                test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
+            }
+
+            if (documentPrivateElements)
+            {
+                test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(1));
+            }
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that exclude tags in included documentation follow private documentation settings.
+        /// </summary>
+        /// <param name="documentPrivate">Whether private declarations require documentation.</param>
+        /// <param name="hasSummary">Whether the included documentation contains a summary.</param>
+        /// <param name="inlineExclude">Whether the exclude tag appears outside the included documentation.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        [Theory]
+        [CombinatorialData]
+        [WorkItem(3094, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3094")]
+        public async Task TestIncludedExcludedDocumentationAsync(bool documentPrivate, bool hasSummary, bool inlineExclude)
+        {
+            var test = new StyleCopDiagnosticVerifier<SA1604ElementDocumentationMustHaveSummary>.CSharpTest
+            {
+                TestCode = (inlineExclude ? "/// <exclude/>\r\n" : string.Empty) + @"/// <include file='Excluded.xml' path='/doc/*'/>
+public class {|#0:Class1|} { }",
+                Settings = @"{ ""settings"": { ""documentationRules"": { ""documentPrivateElements"": " + (documentPrivate ? "true" : "false") + @" } } }",
+                XmlReferences =
+                {
+                    { "Excluded.xml", "<doc>" + (inlineExclude ? string.Empty : "<exclude/>") + (hasSummary ? "<summary>Summary.</summary>" : string.Empty) + "</doc>" },
+                },
+            };
+
+            if (documentPrivate && !hasSummary)
+            {
+                test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
+            }
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Theory]
         [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestTypeNoDocumentationAsync(string typeName)
