@@ -3,5 +3,5 @@ Pravidla, která poskytují speciální funkce, jako jsou řešení problémů, 
 
 Identifikátor | Název | Popis
 -----------|------|-------------
-[SA0001](SA0001.md) | XmlCommentAnalysisDisabled | Všechna diagnostika komentářů XML dokumentace byla zakázána kvůli aktuální konfiguraci projektu.
+[SA0001](SA0001.md) | XmlCommentAnalysisDisabled | Diagnostické zprávy pro komentáře dokumentace mohou chybět nebo být nesprávné a opravy kódu pro všechny diagnostické zprávy mohou fungovat nesprávně ve zdrojových souborech obsahujících jakékoli komentáře dokumentace.
 [SA0002](SA0002.md) | InvalidSettingsFile | Soubor nastavení **stylecop.json** se nepodařilo načíst kvůli chybě deserializace.
