@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -43,6 +44,106 @@ namespace StyleCop.Analyzers.Test.NamingRules
 }";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that renaming a field preserves references when an out variable has the new name.
+        /// </summary>
+        /// <param name="isStatic">Whether the field is static.</param>
+        /// <param name="localName">The name of the out variable.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData(false, "documentIndex")]
+        [InlineData(true, "documentIndex")]
+        [InlineData(false, "index")]
+        [InlineData(true, "index")]
+        [WorkItem(2939, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2939")]
+        public async Task TestFieldRenameWithOutVariableCollisionAsync(bool isStatic, string localName)
+        {
+            var localDeclaration = LightupHelpers.SupportsCSharp7 ? string.Empty : "        int " + localName + ";\r\n";
+            var outArgument = (LightupHelpers.SupportsCSharp7 ? "out int " : "out ") + localName;
+            var fieldModifier = isStatic ? "static " : string.Empty;
+            var receiver = localName == "documentIndex" ? (isStatic ? "PdbWriter." : "this.") : string.Empty;
+            var testCode = @"using System.Collections.Generic;
+
+public class PdbWriter
+{
+    private " + fieldModifier + @"Dictionary<string, int> {|#0:_documentIndex|} = new Dictionary<string, int>();
+
+    public int GetDocumentIndex(string document)
+    {
+" + localDeclaration + @"        if (_documentIndex.TryGetValue(document, " + outArgument + @"))
+        {
+            return " + localName + @";
+        }
+
+        return -1;
+    }
+}";
+            var fixedCode = @"using System.Collections.Generic;
+
+public class PdbWriter
+{
+    private " + fieldModifier + @"Dictionary<string, int> documentIndex = new Dictionary<string, int>();
+
+    public int GetDocumentIndex(string document)
+    {
+" + localDeclaration + @"        if (" + receiver + @"documentIndex.TryGetValue(document, " + outArgument + @"))
+        {
+            return " + localName + @";
+        }
+
+        return -1;
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithArguments("_documentIndex").WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that collisions in another partial declaration are qualified without changing comments or existing receivers.
+        /// </summary>
+        /// <param name="isStatic">Whether the field is static.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        [WorkItem(2939, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2939")]
+        public async Task TestFieldRenameWithCollisionInAnotherDocumentAsync(bool isStatic)
+        {
+            var fieldModifier = isStatic ? "static " : string.Empty;
+            var receiver = isStatic ? "PdbWriter<T>." : "this.";
+            var declaration = @"using System.Collections.Generic;
+
+public partial class PdbWriter<T>
+{
+    private " + fieldModifier + @"Dictionary<T, int> {|#0:_documentIndex|} = new Dictionary<T, int>();
+}";
+            var references = @"public partial class PdbWriter<T>
+{
+    public int GetDocumentIndex(T documentIndex)
+    {
+        int result;
+        if (_documentIndex /* field */ .TryGetValue(documentIndex, out result))
+        {
+            return result;
+        }
+
+        return " + receiver + @"_documentIndex.Count;
+    }
+}";
+            var fixedDeclaration = declaration.Replace("{|#0:_documentIndex|}", "documentIndex");
+            var fixedReferences = references
+                .Replace("if (_documentIndex", "if (" + receiver + "documentIndex")
+                .Replace(receiver + "_documentIndex.Count", receiver + "documentIndex.Count");
+            var test = new CSharpTest();
+            test.TestState.Sources.Add(declaration);
+            test.TestState.Sources.Add(references);
+            test.FixedState.Sources.Add(fixedDeclaration);
+            test.FixedState.Sources.Add(fixedReferences);
+            test.ExpectedDiagnostics.Add(Diagnostic().WithArguments("_documentIndex").WithLocation(0));
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
