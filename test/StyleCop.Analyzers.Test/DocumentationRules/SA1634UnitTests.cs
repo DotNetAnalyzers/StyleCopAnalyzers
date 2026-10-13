@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
@@ -15,6 +16,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     /// </summary>
     public class SA1634UnitTests : FileHeaderTestBase
     {
+        private bool disableCopyrightTagRequiredRule;
+
         private string? multiLineSettings;
 
         /// <summary>
@@ -50,6 +53,37 @@ namespace Bar
 ".ReplaceLineEndings(lineEnding);
 
             var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1634Descriptor).WithLocation(0);
+            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that other header checks remain active when the copyright-tag rule is disabled.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2915, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2915")]
+        public async Task TestOtherHeaderRulesWhenCopyrightTagRequirementIsDisabledAsync()
+        {
+            this.disableCopyrightTagRequiredRule = true;
+
+            var testCode = @"// {|#0:<copyright|} file=""wrongfile.cs"" company=""FooCorp"">
+//   Copyright (c) FooCorp. All rights reserved.
+// </copyright>
+
+namespace Bar
+{
+}
+";
+            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright (c) FooCorp. All rights reserved.
+// </copyright>
+
+namespace Bar
+{
+}
+";
+
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1638Descriptor).WithLocation(0);
             await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -347,6 +381,17 @@ namespace Bar
         protected override string GetSettings()
         {
             return this.multiLineSettings ?? base.GetSettings();
+        }
+
+        protected override IEnumerable<string> GetDisabledDiagnostics()
+        {
+            var disabledDiagnostics = new List<string>(base.GetDisabledDiagnostics());
+            if (this.disableCopyrightTagRequiredRule)
+            {
+                disabledDiagnostics.Add(FileHeaderAnalyzers.SA1634Descriptor.Id);
+            }
+
+            return disabledDiagnostics;
         }
     }
 }

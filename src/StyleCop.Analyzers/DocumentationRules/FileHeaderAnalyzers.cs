@@ -182,12 +182,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             var compilation = context.Compilation;
-
-            // Disabling SA1633 will disable all other header related diagnostics.
-            if (!compilation.IsAnalyzerSuppressed(SA1633DescriptorMissing))
-            {
-                context.RegisterSyntaxTreeAction((ctx, settings) => Analyzer.HandleSyntaxTree(ctx, settings, compilation));
-            }
+            context.RegisterSyntaxTreeAction((ctx, settings) => Analyzer.HandleSyntaxTree(ctx, settings, compilation));
         }
 
         private static class Analyzer
@@ -207,20 +202,25 @@ namespace StyleCop.Analyzers.DocumentationRules
                     var fileHeader = FileHeaderHelpers.ParseXmlFileHeader(root);
                     if (fileHeader.IsMissing)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(SA1633DescriptorMissing, fileHeader.GetLocation(context.Tree)));
+                        if (!compilation.IsAnalyzerSuppressed(SA1633DescriptorMissing))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(SA1633DescriptorMissing, fileHeader.GetLocation(context.Tree)));
+                        }
+
                         return;
                     }
 
                     if (fileHeader.IsMalformed)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(SA1633DescriptorMalformed, fileHeader.GetLocation(context.Tree)));
+                        if (!compilation.IsAnalyzerSuppressed(SA1633DescriptorMissing))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(SA1633DescriptorMalformed, fileHeader.GetLocation(context.Tree)));
+                        }
+
                         return;
                     }
 
-                    if (!compilation.IsAnalyzerSuppressed(SA1634Descriptor))
-                    {
-                        CheckCopyrightHeader(context, settings.DocumentationRules, compilation, fileHeader);
-                    }
+                    CheckCopyrightHeader(context, settings.DocumentationRules, compilation, fileHeader);
 
                     if (!compilation.IsAnalyzerSuppressed(SA1639Descriptor))
                     {
@@ -232,23 +232,26 @@ namespace StyleCop.Analyzers.DocumentationRules
                     var fileHeader = FileHeaderHelpers.ParseFileHeader(root);
                     if (fileHeader.IsMissing)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(SA1633DescriptorMissing, fileHeader.GetLocation(context.Tree)));
+                        if (!compilation.IsAnalyzerSuppressed(SA1633DescriptorMissing))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(SA1633DescriptorMissing, fileHeader.GetLocation(context.Tree)));
+                        }
+
                         return;
                     }
 
-                    if (!compilation.IsAnalyzerSuppressed(SA1635Descriptor))
+                    if (string.IsNullOrWhiteSpace(fileHeader.CopyrightText))
                     {
-                        if (string.IsNullOrWhiteSpace(fileHeader.CopyrightText))
+                        if (!compilation.IsAnalyzerSuppressed(SA1635Descriptor))
                         {
                             context.ReportDiagnostic(Diagnostic.Create(SA1635Descriptor, fileHeader.GetLocation(context.Tree)));
-                            return;
                         }
 
-                        if (compilation.IsAnalyzerSuppressed(SA1636Descriptor))
-                        {
-                            return;
-                        }
+                        return;
+                    }
 
+                    if (!compilation.IsAnalyzerSuppressed(SA1636Descriptor))
+                    {
                         if (!CompareCopyrightText(context, settings.DocumentationRules, fileHeader.CopyrightText))
                         {
                             context.ReportDiagnostic(Diagnostic.Create(SA1636Descriptor, fileHeader.GetLocation(context.Tree)));
@@ -263,24 +266,17 @@ namespace StyleCop.Analyzers.DocumentationRules
                 var copyrightElement = fileHeader.GetElement("copyright");
                 if (copyrightElement == null)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(SA1634Descriptor, fileHeader.GetLocation(context.Tree)));
+                    if (!compilation.IsAnalyzerSuppressed(SA1634Descriptor))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(SA1634Descriptor, fileHeader.GetLocation(context.Tree)));
+                    }
+
                     return;
                 }
 
-                if (!compilation.IsAnalyzerSuppressed(SA1637Descriptor))
-                {
-                    CheckFile(context, compilation, fileHeader, copyrightElement);
-                }
-
-                if (!compilation.IsAnalyzerSuppressed(SA1640Descriptor))
-                {
-                    CheckCompanyName(context, documentationSettings, compilation, fileHeader, copyrightElement);
-                }
-
-                if (!compilation.IsAnalyzerSuppressed(SA1635Descriptor))
-                {
-                    CheckCopyrightText(context, documentationSettings, compilation, fileHeader, copyrightElement);
-                }
+                CheckFile(context, compilation, fileHeader, copyrightElement);
+                CheckCompanyName(context, documentationSettings, compilation, fileHeader, copyrightElement);
+                CheckCopyrightText(context, documentationSettings, compilation, fileHeader, copyrightElement);
             }
 
             private static void CheckFile(SyntaxTreeAnalysisContext context, Compilation compilation, XmlFileHeader fileHeader, XElement copyrightElement)
@@ -288,8 +284,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 var fileAttribute = copyrightElement.Attribute("file");
                 if (fileAttribute == null)
                 {
-                    var location = fileHeader.GetElementLocation(context.Tree, copyrightElement);
-                    context.ReportDiagnostic(Diagnostic.Create(SA1637Descriptor, location));
+                    if (!compilation.IsAnalyzerSuppressed(SA1637Descriptor))
+                    {
+                        var location = fileHeader.GetElementLocation(context.Tree, copyrightElement);
+                        context.ReportDiagnostic(Diagnostic.Create(SA1637Descriptor, location));
+                    }
+
                     return;
                 }
 
@@ -311,8 +311,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 var copyrightText = copyrightElement.Value;
                 if (string.IsNullOrWhiteSpace(copyrightText))
                 {
-                    var location = fileHeader.GetElementLocation(context.Tree, copyrightElement);
-                    context.ReportDiagnostic(Diagnostic.Create(SA1635Descriptor, location));
+                    if (!compilation.IsAnalyzerSuppressed(SA1635Descriptor))
+                    {
+                        var location = fileHeader.GetElementLocation(context.Tree, copyrightElement);
+                        context.ReportDiagnostic(Diagnostic.Create(SA1635Descriptor, location));
+                    }
+
                     return;
                 }
 
@@ -342,8 +346,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 var companyName = copyrightElement.Attribute("company")?.Value;
                 if (string.IsNullOrWhiteSpace(companyName))
                 {
-                    var location = fileHeader.GetElementLocation(context.Tree, copyrightElement);
-                    context.ReportDiagnostic(Diagnostic.Create(SA1640Descriptor, location));
+                    if (!compilation.IsAnalyzerSuppressed(SA1640Descriptor))
+                    {
+                        var location = fileHeader.GetElementLocation(context.Tree, copyrightElement);
+                        context.ReportDiagnostic(Diagnostic.Create(SA1640Descriptor, location));
+                    }
+
                     return;
                 }
 

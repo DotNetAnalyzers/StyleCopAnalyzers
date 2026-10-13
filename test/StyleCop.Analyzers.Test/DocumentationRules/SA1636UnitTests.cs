@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
@@ -40,6 +41,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 
         private bool useMultiLineHeaderTestSettings;
         private bool useNoXmlMultiLineHeaderTestSettings;
+        private bool disableCopyrightTextRequiredRule;
 
         /// <summary>
         /// Verifies that XML escaping preserves document line endings in a multiline copyright.
@@ -104,6 +106,56 @@ namespace Bar
 
             var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(0);
             await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that copyright text is compared when the required-text rule is disabled.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2915, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2915")]
+        public async Task TestFileHeaderWithDifferentCopyrightMessageWhenTextIsOptionalAsync()
+        {
+            this.disableCopyrightTextRequiredRule = true;
+
+            var testCode = @"// {|#0:<copyright|} file=""Test0.cs"" company=""FooCorp"">
+//   My custom copyright message.
+// </copyright>
+
+namespace Bar
+{
+}
+";
+            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright (c) FooCorp. All rights reserved.
+// </copyright>
+
+namespace Bar
+{
+}
+";
+
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(0);
+            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that absent optional copyright text is not reported as a mismatch.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestFileHeaderWithoutOptionalCopyrightTextAsync()
+        {
+            this.disableCopyrightTextRequiredRule = true;
+
+            var testCode = @"// <copyright file=""Test0.cs"" company=""FooCorp""></copyright>
+
+namespace Bar
+{
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -540,6 +592,17 @@ namespace Bar
             }
 
             return base.GetSettings();
+        }
+
+        protected override IEnumerable<string> GetDisabledDiagnostics()
+        {
+            var disabledDiagnostics = new List<string>(base.GetDisabledDiagnostics());
+            if (this.disableCopyrightTextRequiredRule)
+            {
+                disabledDiagnostics.Add(FileHeaderAnalyzers.SA1635Descriptor.Id);
+            }
+
+            return disabledDiagnostics;
         }
     }
 }

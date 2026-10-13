@@ -3,8 +3,10 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
@@ -25,6 +27,10 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
   }
 }
 ";
+
+        private bool disableFileHeaderRequiredRule;
+
+        private bool disableFileNameRequiredRule;
 
         private bool useDecoratedXmlMultiLineHeaderTestSettings;
 
@@ -57,6 +63,106 @@ namespace Bar
 
             var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1638Descriptor).WithLocation(0);
             await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a mismatching file attribute is checked even when the attribute is optional.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2915, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2915")]
+        public async Task TestCopyrightElementWithMismatchingFileAttributeWhenFileAttributeIsOptionalAsync()
+        {
+            this.disableFileNameRequiredRule = true;
+
+            var testCode = @"// {|#0:<copyright|} file=""wrongfile.cs"" company=""FooCorp"">
+//   Copyright (c) FooCorp. All rights reserved.
+// </copyright>
+
+namespace Bar
+{
+}
+";
+            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright (c) FooCorp. All rights reserved.
+// </copyright>
+
+namespace Bar
+{
+}
+";
+
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1638Descriptor).WithLocation(0);
+            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an absent optional file attribute is not reported when the required-attribute rule is disabled.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestCopyrightElementWithoutOptionalFileAttributeAsync()
+        {
+            this.disableFileNameRequiredRule = true;
+
+            var testCode = @"// <copyright company=""FooCorp"">
+//   Copyright (c) FooCorp. All rights reserved.
+// </copyright>
+
+namespace Bar
+{
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that disabling the required-header rule leaves checks active for a present header.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2915, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2915")]
+        public async Task TestCopyrightElementWithMismatchingFileAttributeWhenFileHeaderIsOptionalAsync()
+        {
+            this.disableFileHeaderRequiredRule = true;
+
+            var testCode = @"// {|#0:<copyright|} file=""wrongfile.cs"" company=""FooCorp"">
+//   Copyright (c) FooCorp. All rights reserved.
+// </copyright>
+
+namespace Bar
+{
+}
+";
+            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright (c) FooCorp. All rights reserved.
+// </copyright>
+
+namespace Bar
+{
+}
+";
+
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1638Descriptor).WithLocation(0);
+            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that disabling the required-header rule leaves files without a header quiet.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestMissingFileHeaderWhenFileHeaderIsOptionalAsync()
+        {
+            this.disableFileHeaderRequiredRule = true;
+
+            var testCode = @"namespace Bar
+{
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -102,6 +208,22 @@ namespace Bar
             }
 
             return base.GetSettings();
+        }
+
+        protected override IEnumerable<string> GetDisabledDiagnostics()
+        {
+            var disabledDiagnostics = new List<string>(base.GetDisabledDiagnostics());
+            if (this.disableFileHeaderRequiredRule)
+            {
+                disabledDiagnostics.Add(FileHeaderAnalyzers.SA1633DescriptorMissing.Id);
+            }
+
+            if (this.disableFileNameRequiredRule)
+            {
+                disabledDiagnostics.Add(FileHeaderAnalyzers.SA1637Descriptor.Id);
+            }
+
+            return disabledDiagnostics;
         }
     }
 }
