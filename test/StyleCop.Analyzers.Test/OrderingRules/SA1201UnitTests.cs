@@ -395,6 +395,219 @@ public enum OtherEnum { A }
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that reordering does not change conditional compilation boundaries.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(1588, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1588")]
+        public async Task TestConditionalCompilationBoundaryAsync()
+        {
+            string testCode = @"namespace ClassLibrary1
+{
+    public class Class1
+    {
+        public void Method1()
+        {
+        }
+
+#if true
+        public string Property1 { get; }
+#endif
+    }
+}
+";
+
+            var expected = Diagnostic().WithLocation(10, 23).WithArguments("A property", "a method");
+            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that directives on preceding members also prevent unsafe reordering.
+        /// </summary>
+        /// <param name="members">The members preceding the property.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("#if true\r\n    public void Method1() { }\r\n")]
+        [InlineData("#if true\r\n    public void Method1() { }\r\n#endif\r\n")]
+        [InlineData("    public void Method1() { }\r\n#if true\r\n    public void Method2() { }\r\n#endif\r\n    public void Method3() { }\r\n")]
+        [InlineData("    public void Method1()\r\n    {\r\n#if true\r\n#endif\r\n    }\r\n")]
+        [InlineData("#region Methods\r\n    public void Method1() { }\r\n#endregion\r\n")]
+        [InlineData("#pragma warning disable CS0168\r\n    public void Method1() { }\r\n#pragma warning restore CS0168\r\n")]
+        [WorkItem(1588, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1588")]
+        public async Task TestDirectivesOnPrecedingMembersAsync(string members)
+        {
+            string testCode = "public class Class1\r\n{\r\n"
+                + members
+                + "    public string Property1 { get; }\r\n"
+                + (members.Contains("#if") && !members.Contains("#endif") ? "#endif\r\n" : string.Empty)
+                + "}\r\n";
+
+            var expected = Diagnostic().WithLocation(members.Count(c => c == '\n') + 3, 19).WithArguments("A property", "a method");
+            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that directive boundaries are preserved at file and namespace scope.
+        /// </summary>
+        /// <param name="inNamespace">Whether to place the declarations in a namespace.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        [WorkItem(1588, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1588")]
+        public async Task TestDirectiveBoundaryAtFileOrNamespaceScopeAsync(bool inNamespace)
+        {
+            string testCode = @"public class Class1 { }
+#if true
+public enum Enum1 { }
+#endif
+";
+            if (inNamespace)
+            {
+                testCode = "namespace Namespace1\r\n{\r\n" + testCode + "}\r\n";
+            }
+
+            var expected = Diagnostic().WithLocation(inNamespace ? 5 : 3, 13).WithArguments("An enum", "a class");
+            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that unrelated directives do not prevent safe reordering.
+        /// </summary>
+        /// <param name="condition">The conditional compilation condition.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("true")]
+        [InlineData("false")]
+        [WorkItem(1588, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1588")]
+        public async Task TestReorderWithinDirectiveBoundaryAsync(string condition)
+        {
+            string testCode = $@"public class Class1
+{{
+#if {condition}
+    public int Field1;
+#endif
+    public int Field2;
+    public void Method1() {{ }}
+    public string Property1 {{ get; }}
+}}
+";
+            string fixedCode = $@"public class Class1
+{{
+#if {condition}
+    public int Field1;
+#endif
+    public int Field2;
+    public string Property1 {{ get; }}
+    public void Method1() {{ }}
+}}
+";
+
+            var expected = Diagnostic().WithLocation(8, 19).WithArguments("A property", "a method");
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that safe reordering within an active conditional block remains available.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(1588, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1588")]
+        public async Task TestReorderInsideConditionalBlockAsync()
+        {
+            string testCode = @"public class Class1
+{
+#if true
+    public int Field1;
+    public void Method1() { }
+    public string Property1 { get; }
+#endif
+}
+";
+            string fixedCode = @"public class Class1
+{
+#if true
+    public int Field1;
+    public string Property1 { get; }
+    public void Method1() { }
+#endif
+}
+";
+
+            var expected = Diagnostic().WithLocation(6, 19).WithArguments("A property", "a method");
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that inactive conditional members do not produce ordering violations.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(1588, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1588")]
+        public async Task TestInactiveConditionalMemberAsync()
+        {
+            string testCode = @"public class Class1
+{
+    public void Method1() { }
+#if false
+    public string Property1 { get; }
+#endif
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that Fix All leaves unsafe moves unchanged while applying safe moves.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(1588, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1588")]
+        public async Task TestFixAllPreservesDirectiveBoundariesAsync()
+        {
+            string testCode = @"public class Class1
+{
+    public void Method1() { }
+#if true
+    public string Property1 { get; }
+#endif
+}
+
+public class Class2
+{
+    public void Method2() { }
+    public string Property2 { get; }
+}
+";
+            string fixedCode = @"public class Class1
+{
+    public void Method1() { }
+#if true
+    public string Property1 { get; }
+#endif
+}
+
+public class Class2
+{
+    public string Property2 { get; }
+    public void Method2() { }
+}
+";
+
+            var remaining = Diagnostic().WithLocation(5, 19).WithArguments("A property", "a method");
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+            };
+            test.ExpectedDiagnostics.Add(remaining);
+            test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(12, 19).WithArguments("A property", "a method"));
+            test.RemainingDiagnostics.Add(remaining);
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestIncompleteMemberAsync()
         {

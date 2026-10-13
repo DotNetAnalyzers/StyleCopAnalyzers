@@ -39,6 +39,28 @@ public class Foo
             await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that readonly ordering does not move fields across conditional directives.
+        /// </summary>
+        /// <param name="conditionalReadonlyField">Whether the readonly field is conditional.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        [WorkItem(1588, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1588")]
+        public async Task TestCodeFixWithConditionalBoundaryAsync(bool conditionalReadonlyField)
+        {
+            string testCode = "public class Foo\r\n{\r\n"
+                + (conditionalReadonlyField ? string.Empty : "#if true\r\n")
+                + "    public int field;\r\n"
+                + (conditionalReadonlyField ? "#if true\r\n" : "#endif\r\n")
+                + "    public readonly int {|#0:readonlyField|};\r\n"
+                + (conditionalReadonlyField ? "#endif\r\n" : string.Empty)
+                + "}\r\n";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestValidOrderingAsync()
         {

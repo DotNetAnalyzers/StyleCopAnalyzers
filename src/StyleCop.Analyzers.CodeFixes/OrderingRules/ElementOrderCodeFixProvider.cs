@@ -157,6 +157,11 @@ namespace StyleCop.Analyzers.OrderingRules
             IndentationSettings indentationSettings,
             Dictionary<string, ImmutableHashSet<string>> fieldDependencies)
         {
+            if (memberOrder.Member.ContainsDirectives)
+            {
+                return syntaxRoot;
+            }
+
             var memberIndex = members.IndexOf(memberOrder.Member);
             MemberOrderHelper target = default;
 
@@ -171,6 +176,11 @@ namespace StyleCop.Analyzers.OrderingRules
                 var orderHelper = new MemberOrderHelper(members[i], elementOrder);
                 if (orderHelper.Priority < memberOrder.Priority)
                 {
+                    if (members[i].ContainsDirectives)
+                    {
+                        return syntaxRoot;
+                    }
+
                     target = orderHelper;
                 }
                 else
