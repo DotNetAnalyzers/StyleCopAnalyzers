@@ -141,8 +141,8 @@ namespace StyleCop.Analyzers.OrderingRules
         {
             var handledMembers = new List<MemberInfo>();
             bool hasExcusedMembers = false;
-            Dictionary<FieldDeclarationSyntax, ImmutableHashSet<FieldDeclarationSyntax>> fieldDependencies = null;
-            Dictionary<FieldDeclarationSyntax, AccessLevel> fieldAccessLevels = null;
+            Dictionary<string, ImmutableHashSet<string>> fieldDependencies = null;
+            Dictionary<string, FieldVariableInfo> fieldVariableInfos = null;
 
             foreach (var member in members)
             {
@@ -225,11 +225,24 @@ namespace StyleCop.Analyzers.OrderingRules
                             {
                                 if (fieldDependencies == null)
                                 {
-                                    fieldAccessLevels = new Dictionary<FieldDeclarationSyntax, AccessLevel>();
-                                    fieldDependencies = ComputeFieldDependencies(context, members, fieldAccessLevels);
+                                    fieldVariableInfos = new Dictionary<string, FieldVariableInfo>();
+                                    foreach (var m in members)
+                                    {
+                                        if (m is FieldDeclarationSyntax f)
+                                        {
+                                            var access = MemberOrderHelper.GetAccessLevelForOrdering(f, f.GetModifiers());
+                                            var spanStart = f.SpanStart;
+                                            foreach (var v in f.Declaration.Variables)
+                                            {
+                                                fieldVariableInfos[v.Identifier.ValueText] = new FieldVariableInfo(access, spanStart);
+                                            }
+                                        }
+                                    }
+
+                                    fieldDependencies = FieldDependencyHelper.ComputeFieldDependencies(context.SemanticModel, members, context.CancellationToken);
                                 }
 
-                                isExcused = IsRequiredToAppearAfter(currentField, previousField, previousInfo.AccessLevel, fieldDependencies, fieldAccessLevels);
+                                isExcused = IsRequiredToAppearAfter(currentField, previousField, previousInfo.AccessLevel, fieldDependencies, fieldVariableInfos);
                             }
 
                             if (isExcused)
@@ -261,219 +274,50 @@ namespace StyleCop.Analyzers.OrderingRules
             FieldDeclarationSyntax currentField,
             FieldDeclarationSyntax precedingField,
             AccessLevel precedingAccessLevel,
-            Dictionary<FieldDeclarationSyntax, ImmutableHashSet<FieldDeclarationSyntax>> fieldDependencies,
-            Dictionary<FieldDeclarationSyntax, AccessLevel> fieldAccessLevels)
+            Dictionary<string, ImmutableHashSet<string>> fieldDependencies,
+            Dictionary<string, FieldVariableInfo> variableInfos)
         {
-            if (!fieldDependencies.TryGetValue(currentField, out var currentDeps) || currentDeps.IsEmpty)
+            if (fieldDependencies == null || fieldDependencies.Count == 0)
             {
                 return false;
             }
 
-            if (currentDeps.Contains(precedingField))
+            if (FieldDependencyHelper.DependsOn(currentField, precedingField, fieldDependencies))
             {
                 return true;
             }
 
-            foreach (var dep in currentDeps)
+            foreach (var variable in currentField.Declaration.Variables)
             {
-                if (fieldAccessLevels.TryGetValue(dep, out var depAccess) && precedingAccessLevel > depAccess)
+                if (fieldDependencies.TryGetValue(variable.Identifier.ValueText, out var deps))
                 {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private static Dictionary<FieldDeclarationSyntax, ImmutableHashSet<FieldDeclarationSyntax>> ComputeFieldDependencies(
-            SyntaxNodeAnalysisContext context,
-            SyntaxList<MemberDeclarationSyntax> members,
-            Dictionary<FieldDeclarationSyntax, AccessLevel> fieldAccessLevels)
-        {
-            var fieldDeclarations = new List<FieldDeclarationSyntax>();
-            var fieldNames = new HashSet<string>();
-
-            foreach (var member in members)
-            {
-                if (member is FieldDeclarationSyntax field)
-                {
-                    fieldDeclarations.Add(field);
-                    var modifiers = field.GetModifiers();
-                    fieldAccessLevels[field] = MemberOrderHelper.GetAccessLevelForOrdering(field, modifiers);
-
-                    foreach (var variable in field.Declaration.Variables)
+                    foreach (var dep in deps)
                     {
-                        fieldNames.Add(variable.Identifier.ValueText);
-                    }
-                }
-            }
-
-            if (fieldDeclarations.Count < 2 || fieldNames.Count == 0)
-            {
-                return new Dictionary<FieldDeclarationSyntax, ImmutableHashSet<FieldDeclarationSyntax>>();
-            }
-
-            var fieldsWithCandidateInitializers = new List<FieldDeclarationSyntax>();
-            foreach (var field in fieldDeclarations)
-            {
-                bool hasCandidate = false;
-                foreach (var variable in field.Declaration.Variables)
-                {
-                    if (variable.Initializer != null && HasCandidateIdentifier(variable.Initializer.Value, fieldNames))
-                    {
-                        hasCandidate = true;
-                        break;
-                    }
-                }
-
-                if (hasCandidate)
-                {
-                    fieldsWithCandidateInitializers.Add(field);
-                }
-            }
-
-            if (fieldsWithCandidateInitializers.Count == 0)
-            {
-                return new Dictionary<FieldDeclarationSyntax, ImmutableHashSet<FieldDeclarationSyntax>>();
-            }
-
-            var fieldSymbolMap = new Dictionary<ISymbol, FieldDeclarationSyntax>();
-            INamedTypeSymbol enclosingType = null;
-
-            foreach (var field in fieldDeclarations)
-            {
-                foreach (var variable in field.Declaration.Variables)
-                {
-                    var fieldSymbol = context.SemanticModel.GetDeclaredSymbol(variable, context.CancellationToken);
-                    if (fieldSymbol != null)
-                    {
-                        fieldSymbolMap[fieldSymbol] = field;
-                        enclosingType ??= fieldSymbol.ContainingType;
-                    }
-                }
-            }
-
-            if (enclosingType == null)
-            {
-                return new Dictionary<FieldDeclarationSyntax, ImmutableHashSet<FieldDeclarationSyntax>>();
-            }
-
-            var directDependencies = new Dictionary<FieldDeclarationSyntax, HashSet<FieldDeclarationSyntax>>();
-
-            foreach (var field in fieldsWithCandidateInitializers)
-            {
-                HashSet<FieldDeclarationSyntax> deps = null;
-
-                foreach (var variable in field.Declaration.Variables)
-                {
-                    if (variable.Initializer == null)
-                    {
-                        continue;
-                    }
-
-                    foreach (var node in variable.Initializer.Value.DescendantNodesAndSelf())
-                    {
-                        if (node is IdentifierNameSyntax identifierName
-                            && fieldNames.Contains(identifierName.Identifier.ValueText)
-                            && !IsInNameof(identifierName))
+                        if (variableInfos.TryGetValue(dep, out var depInfo))
                         {
-                            var symbolInfo = context.SemanticModel.GetSymbolInfo(identifierName, context.CancellationToken);
-                            var symbol = symbolInfo.Symbol;
-
-                            if (symbol is IFieldSymbol fieldSymbol
-                                && !fieldSymbol.IsConst
-                                && Equals(fieldSymbol.ContainingType?.OriginalDefinition, enclosingType.OriginalDefinition))
+                            if (precedingField.SpanStart < depInfo.SpanStart && precedingAccessLevel >= depInfo.AccessLevel)
                             {
-                                if (fieldSymbolMap.TryGetValue(fieldSymbol, out var targetField) && targetField != field)
-                                {
-                                    deps ??= new HashSet<FieldDeclarationSyntax>();
-                                    deps.Add(targetField);
-                                }
+                                return true;
                             }
                         }
                     }
                 }
-
-                if (deps != null)
-                {
-                    directDependencies[field] = deps;
-                }
-            }
-
-            if (directDependencies.Count == 0)
-            {
-                return new Dictionary<FieldDeclarationSyntax, ImmutableHashSet<FieldDeclarationSyntax>>();
-            }
-
-            var result = new Dictionary<FieldDeclarationSyntax, ImmutableHashSet<FieldDeclarationSyntax>>();
-
-            foreach (var kvp in directDependencies)
-            {
-                var field = kvp.Key;
-                var transitiveDeps = new HashSet<FieldDeclarationSyntax>();
-                var queue = new Queue<FieldDeclarationSyntax>(kvp.Value);
-
-                while (queue.Count > 0)
-                {
-                    var current = queue.Dequeue();
-                    if (transitiveDeps.Add(current))
-                    {
-                        if (directDependencies.TryGetValue(current, out var nextDeps))
-                        {
-                            foreach (var next in nextDeps)
-                            {
-                                if (!transitiveDeps.Contains(next))
-                                {
-                                    queue.Enqueue(next);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                result[field] = transitiveDeps.ToImmutableHashSet();
-            }
-
-            return result;
-        }
-
-        private static bool HasCandidateIdentifier(SyntaxNode expression, HashSet<string> fieldNames)
-        {
-            foreach (var node in expression.DescendantNodesAndSelf())
-            {
-                if (node is IdentifierNameSyntax id && fieldNames.Contains(id.Identifier.ValueText))
-                {
-                    return true;
-                }
             }
 
             return false;
         }
 
-        private static bool IsInNameof(SyntaxNode node)
+        private readonly struct FieldVariableInfo
         {
-            for (SyntaxNode current = node.Parent; current != null; current = current.Parent)
+            public FieldVariableInfo(AccessLevel accessLevel, int spanStart)
             {
-                if (current is InvocationExpressionSyntax invocation)
-                {
-                    if (invocation.Expression is IdentifierNameSyntax nameSyntax
-                        && nameSyntax.Identifier.ValueText == "nameof")
-                    {
-                        return true;
-                    }
-
-                    break;
-                }
-
-                if (current is ExpressionSyntax || current is ArgumentSyntax || current is ArgumentListSyntax)
-                {
-                    continue;
-                }
-
-                break;
+                this.AccessLevel = accessLevel;
+                this.SpanStart = spanStart;
             }
 
-            return false;
+            public AccessLevel AccessLevel { get; }
+
+            public int SpanStart { get; }
         }
 
         private readonly struct MemberInfo
