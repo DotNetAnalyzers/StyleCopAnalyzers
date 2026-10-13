@@ -16,6 +16,29 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 
     public class SA1214UnitTests
     {
+        /// <summary>
+        /// Verifies that ordering readonly and writable fields preserves region boundaries.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2112, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2112")]
+        public async Task TestCodeFixWithRegionsAroundFieldsAsync()
+        {
+            var testCode = @"
+public class Foo
+{
+    #region Writable fields
+    public int field;
+    #endregion
+
+    #region Readonly fields
+    public readonly int {|#0:readonlyField|};
+    #endregion
+}";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestValidOrderingAsync()
         {

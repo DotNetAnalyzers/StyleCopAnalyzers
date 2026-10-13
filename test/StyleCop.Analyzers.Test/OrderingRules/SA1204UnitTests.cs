@@ -21,6 +21,29 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     public class SA1204UnitTests
     {
         /// <summary>
+        /// Verifies that ordering static and instance methods preserves region boundaries.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2112, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2112")]
+        public async Task TestCodeFixWithRegionsAroundMethodsAsync()
+        {
+            var testCode = @"
+public class Foo
+{
+    #region Instance methods
+    public void InstanceMethod() { }
+    #endregion
+
+    #region Static methods
+    public static void {|#0:StaticMethod|}() { }
+    #endregion
+}";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that the analyzer will properly handle valid ordering.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
