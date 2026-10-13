@@ -83,19 +83,19 @@ namespace StyleCop.Analyzers.SpacingRules
             case SyntaxKind.PreDecrementExpression:
                 if (token.HasTrailingTrivia)
                 {
-                    string symbolName;
+                    LocalizableString symbolName;
                     if (token.IsKind(SyntaxKind.MinusMinusToken))
                     {
-                        symbolName = "Decrement";
+                        symbolName = SpacingDiagnosticArguments.Decrement;
                     }
                     else
                     {
-                        symbolName = "Increment";
+                        symbolName = SpacingDiagnosticArguments.Increment;
                     }
 
                     // {Increment|Decrement} symbol '{++|--}' should not be {followed} by a space.
                     var properties = TokenSpacingProperties.RemoveFollowing;
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, symbolName, token.Text, "followed"));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, symbolName, token.Text, SpacingDiagnosticArguments.Followed));
                 }
 
                 break;
@@ -105,19 +105,19 @@ namespace StyleCop.Analyzers.SpacingRules
                 SyntaxToken previousToken = token.GetPreviousToken();
                 if (!previousToken.IsMissing && previousToken.HasTrailingTrivia)
                 {
-                    string symbolName;
+                    LocalizableString symbolName;
                     if (token.IsKind(SyntaxKind.MinusMinusToken))
                     {
-                        symbolName = "Decrement";
+                        symbolName = SpacingDiagnosticArguments.Decrement;
                     }
                     else
                     {
-                        symbolName = "Increment";
+                        symbolName = SpacingDiagnosticArguments.Increment;
                     }
 
                     // {Increment|Decrement} symbol '{++|--}' should not be {preceded} by a space.
                     var properties = TokenSpacingProperties.RemovePreceding;
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, symbolName, token.Text, "preceded"));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, symbolName, token.Text, SpacingDiagnosticArguments.Preceded));
                 }
 
                 break;

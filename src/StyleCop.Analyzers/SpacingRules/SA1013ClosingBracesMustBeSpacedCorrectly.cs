@@ -85,7 +85,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 {
                     // Closing brace should{ not} be {preceded} by a space.
                     var properties = TokenSpacingProperties.RemovePreceding;
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, " not", "preceded"));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, SpacingDiagnosticArguments.Not, SpacingDiagnosticArguments.Preceded));
                 }
 
                 return;
@@ -118,14 +118,14 @@ namespace StyleCop.Analyzers.SpacingRules
             {
                 // Closing brace should{} be {preceded} by a space.
                 var properties = TokenSpacingProperties.InsertPreceding;
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, string.Empty, "preceded"));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, string.Empty, SpacingDiagnosticArguments.Preceded));
             }
 
             if (!lastInLine && !precedesSpecialCharacter && !followedBySpace)
             {
                 // Closing brace should{} be {followed} by a space.
                 var properties = TokenSpacingProperties.InsertFollowing;
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, string.Empty, "followed"));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, string.Empty, SpacingDiagnosticArguments.Followed));
             }
         }
     }

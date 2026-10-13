@@ -1,0 +1,183 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="SA1119CodeFix" xml:space="preserve">
+    <value>删除圆括号</value>
+  </data>
+  <data name="SA1119Description" xml:space="preserve">
+    <value>C# 语句包含不必要的圆括号，应将其删除。</value>
+  </data>
+  <data name="SA1119MessageFormat" xml:space="preserve">
+    <value>语句不应使用不必要的圆括号</value>
+  </data>
+  <data name="SA1119Title" xml:space="preserve">
+    <value>语句不应使用不必要的圆括号</value>
+  </data>
+  <data name="SA1400CodeFix" xml:space="preserve">
+    <value>声明访问级别</value>
+  </data>
+  <data name="SA1400Description" xml:space="preserve">
+    <value>C# 元素未显式定义访问修饰符。</value>
+  </data>
+  <data name="SA1400MessageFormat" xml:space="preserve">
+    <value>元素“{0}”应声明访问修饰符</value>
+  </data>
+  <data name="SA1400Title" xml:space="preserve">
+    <value>应声明访问修饰符</value>
+  </data>
+  <data name="SA1401Description" xml:space="preserve">
+    <value>C# 类中的字段使用了 private 以外的访问修饰符。</value>
+  </data>
+  <data name="SA1401MessageFormat" xml:space="preserve">
+    <value>字段应为私有字段</value>
+  </data>
+  <data name="SA1401Title" xml:space="preserve">
+    <value>字段应为私有字段</value>
+  </data>
+  <data name="SA1402CodeFix" xml:space="preserve">
+    <value>将类型移到新文件</value>
+  </data>
+  <data name="SA1402Description" xml:space="preserve">
+    <value>C# 代码文件包含多个不同的类型。</value>
+  </data>
+  <data name="SA1402MessageFormat" xml:space="preserve">
+    <value>文件只能包含一个类型</value>
+  </data>
+  <data name="SA1402Title" xml:space="preserve">
+    <value>文件只能包含一个类型</value>
+  </data>
+  <data name="SA1403Description" xml:space="preserve">
+    <value>C# 代码文件包含多个命名空间。</value>
+  </data>
+  <data name="SA1403MessageFormat" xml:space="preserve">
+    <value>文件只能包含一个命名空间</value>
+  </data>
+  <data name="SA1403Title" xml:space="preserve">
+    <value>文件只能包含一个命名空间</value>
+  </data>
+  <data name="SA1404CodeFix" xml:space="preserve">
+    <value>修正理由</value>
+  </data>
+  <data name="SA1404Description" xml:space="preserve">
+    <value>代码分析的 SuppressMessage 特性未包含理由。</value>
+  </data>
+  <data name="SA1404MessageFormat" xml:space="preserve">
+    <value>抑制代码分析诊断时应提供理由</value>
+  </data>
+  <data name="SA1404Title" xml:space="preserve">
+    <value>抑制代码分析诊断时应提供理由</value>
+  </data>
+  <data name="SA1405Description" xml:space="preserve">
+    <value>C# 代码中对 Debug.Assert 的调用未包含说明性消息。</value>
+  </data>
+  <data name="SA1405MessageFormat" xml:space="preserve">
+    <value>Debug.Assert 应提供消息文本</value>
+  </data>
+  <data name="SA1405Title" xml:space="preserve">
+    <value>Debug.Assert 应提供消息文本</value>
+  </data>
+  <data name="SA1406Description" xml:space="preserve">
+    <value>C# 代码中对 Debug.Fail 的调用未包含说明性消息。</value>
+  </data>
+  <data name="SA1406MessageFormat" xml:space="preserve">
+    <value>Debug.Fail 应提供消息文本</value>
+  </data>
+  <data name="SA1406Title" xml:space="preserve">
+    <value>Debug.Fail 应提供消息文本</value>
+  </data>
+  <data name="SA1407Description" xml:space="preserve">
+    <value>C# 语句中的复杂算术表达式省略了运算符周围的圆括号。</value>
+  </data>
+  <data name="SA1407MessageFormat" xml:space="preserve">
+    <value>算术表达式应明确运算优先级</value>
+  </data>
+  <data name="SA1407SA1408CodeFix" xml:space="preserve">
+    <value>添加圆括号</value>
+  </data>
+  <data name="SA1407Title" xml:space="preserve">
+    <value>算术表达式应明确运算优先级</value>
+  </data>
+  <data name="SA1408Description" xml:space="preserve">
+    <value>C# 语句中的复杂条件表达式省略了运算符周围的圆括号。</value>
+  </data>
+  <data name="SA1408MessageFormat" xml:space="preserve">
+    <value>条件表达式应明确运算优先级</value>
+  </data>
+  <data name="SA1408Title" xml:space="preserve">
+    <value>条件表达式应明确运算优先级</value>
+  </data>
+  <data name="SA1409Description" xml:space="preserve">
+    <value>C# 文件包含不必要的代码，删除这些代码不会改变代码的整体逻辑。</value>
+  </data>
+  <data name="SA1409MessageFormat" xml:space="preserve">
+    <value>待办：消息格式</value>
+  </data>
+  <data name="SA1409Title" xml:space="preserve">
+    <value>删除不必要的代码</value>
+  </data>
+  <data name="SA1410Description" xml:space="preserve">
+    <value>C# 匿名方法的调用不包含任何方法参数，但语句仍包含圆括号。</value>
+  </data>
+  <data name="SA1410MessageFormat" xml:space="preserve">
+    <value>在可行时删除委托的圆括号</value>
+  </data>
+  <data name="SA1410SA1411CodeFix" xml:space="preserve">
+    <value>删除圆括号</value>
+  </data>
+  <data name="SA1410Title" xml:space="preserve">
+    <value>在可行时删除委托的圆括号</value>
+  </data>
+  <data name="SA1411Description" xml:space="preserve">
+    <value>待办。</value>
+  </data>
+  <data name="SA1411MessageFormat" xml:space="preserve">
+    <value>特性构造函数不应使用不必要的圆括号</value>
+  </data>
+  <data name="SA1411Title" xml:space="preserve">
+    <value>特性构造函数不应使用不必要的圆括号</value>
+  </data>
+  <data name="SA1412CodeFix" xml:space="preserve">
+    <value>将编码从“{0}”更改为带字节顺序标记的 UTF-8</value>
+  </data>
+  <data name="SA1412Description" xml:space="preserve">
+    <value>源文件应使用带字节顺序标记的 UTF-8 编码保存。</value>
+  </data>
+  <data name="SA1412MessageFormat" xml:space="preserve">
+    <value>使用带字节顺序标记的 UTF-8 保存文件</value>
+  </data>
+  <data name="SA1412Title" xml:space="preserve">
+    <value>使用带字节顺序标记的 UTF-8 保存文件</value>
+  </data>
+  <data name="SA1413CodeFix" xml:space="preserve">
+    <value>添加尾随逗号</value>
+  </data>
+  <data name="SA1413Description" xml:space="preserve">
+    <value>C# 代码文件中的多行初始值设定项、枚举、switch 表达式或属性模式应在最后一行使用逗号。</value>
+  </data>
+  <data name="SA1413MessageFormat" xml:space="preserve">
+    <value>在多行初始值设定项和列表中使用尾随逗号</value>
+  </data>
+  <data name="SA1413Title" xml:space="preserve">
+    <value>在多行初始值设定项和列表中使用尾随逗号</value>
+  </data>
+  <data name="SA1414Description" xml:space="preserve">
+    <value>成员声明中的元组类型应显式命名其元组元素。</value>
+  </data>
+  <data name="SA1414MessageFormat" xml:space="preserve">
+    <value>签名中的元组类型应具有元素名称</value>
+  </data>
+  <data name="SA1414Title" xml:space="preserve">
+    <value>签名中的元组类型应具有元素名称</value>
+  </data>
+</root>
