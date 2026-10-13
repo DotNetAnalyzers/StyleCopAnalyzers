@@ -94,6 +94,13 @@ public class TestClass
             + 2;
         var decrementedValue = GetCounter().Value--
             + 2;
+        var postfixValues = new[]
+        {
+            GetCounter().Value++
+            ,
+            GetCounter().Value--
+            ,
+        };
     }
 
     private Counter GetCounter() => new Counter();
