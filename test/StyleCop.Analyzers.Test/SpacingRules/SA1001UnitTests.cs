@@ -81,6 +81,43 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
 
         [Fact]
+        public async Task TestCommaAfterPostfixIncrementAtEndOfLineAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var value = 0;
+        var values = new[]
+        {
+            value++
+            {|#0:,|} value
+        };
+    }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var value = 0;
+        var values = new[]
+        {
+            value++,
+            value
+        };
+    }
+}
+";
+
+            DiagnosticResult expected = Diagnostic().WithArguments(" not", "preceded").WithLocation(0);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestCommentBeforeFirstCommaInLineAsync()
         {
             string testStatement = $"f(a // comment{Environment.NewLine}, b);";

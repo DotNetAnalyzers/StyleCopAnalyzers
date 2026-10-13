@@ -79,6 +79,43 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
 
         /// <summary>
+        /// Verifies that postfix increment and decrement operators may end a line before the next token.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestPostfixIncrementAndDecrementAtEndOfLineAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var incrementedValue = GetCounter().Value++
+            + 2;
+        var decrementedValue = GetCounter().Value--
+            + 2;
+        var postfixValues = new[]
+        {
+            GetCounter().Value++
+            ,
+            GetCounter().Value--
+            ,
+        };
+    }
+
+    private Counter GetCounter() => new Counter();
+
+    private class Counter
+    {
+        public int Value;
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that Invalid unary expressions produce the correct diagnostics and code fixes.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
@@ -106,25 +143,21 @@ v1;
 
         var v9_1 = new
         {
-            Property = v1++
-,
+            Property = v1++,
         };
         var v9_2 = new
         {
-            Property = v1--
-,
+            Property = v1--,
         };
         var v9_3 = new int[]
         {
             v1++,
-            v1++
-,
+            v1++,
         };
         var v9_4 = new int[]
         {
             v1--,
-            v1--
-,
+            v1--,
         };
     }
 }
@@ -183,10 +216,6 @@ v1;
                     Diagnostic(DescriptorNotFollowedByComment).WithLocation(15, 18).WithArguments("~"),
                     Diagnostic(DescriptorNotPrecededByWhitespace).WithLocation(17, 20).WithArguments("(byte)"),
                     Diagnostic(DescriptorNotPrecededByWhitespace).WithLocation(18, 22).WithArguments("~"),
-                    Diagnostic(DescriptorNotAtEndOfLine).WithLocation(22, 26).WithArguments("++"),
-                    Diagnostic(DescriptorNotAtEndOfLine).WithLocation(27, 26).WithArguments("--"),
-                    Diagnostic(DescriptorNotAtEndOfLine).WithLocation(33, 15).WithArguments("++"),
-                    Diagnostic(DescriptorNotAtEndOfLine).WithLocation(39, 15).WithArguments("--"),
                 },
                 RemainingDiagnostics =
                 {

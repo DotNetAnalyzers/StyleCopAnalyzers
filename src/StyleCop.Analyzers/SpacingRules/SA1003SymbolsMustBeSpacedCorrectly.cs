@@ -363,6 +363,7 @@ namespace StyleCop.Analyzers.SpacingRules
         {
             var unaryExpression = (PostfixUnaryExpressionSyntax)context.Node;
             var followingToken = unaryExpression.OperatorToken.GetNextToken();
+            var isNullForgivingExpression = unaryExpression.IsKind(SyntaxKindEx.SuppressNullableWarningExpression);
 
             bool mustHaveTrailingWhitespace;
             switch (followingToken.Kind())
@@ -375,6 +376,10 @@ namespace StyleCop.Analyzers.SpacingRules
             case SyntaxKind.MinusGreaterThanToken:
             case SyntaxKind.OpenParenToken:
                 mustHaveTrailingWhitespace = false;
+                break;
+
+            case SyntaxKind.OpenBracketToken:
+                mustHaveTrailingWhitespace = !isNullForgivingExpression;
                 break;
 
             case SyntaxKind.QuestionToken:
@@ -396,7 +401,17 @@ namespace StyleCop.Analyzers.SpacingRules
 
             // Determine if the operator is allowed at the end of a line
             bool allowEndOfLine;
-            if (followingToken.IsKind(SyntaxKind.CloseBraceToken))
+            if (isNullForgivingExpression)
+            {
+                allowEndOfLine = true;
+            }
+            else if ((unaryExpression.IsKind(SyntaxKind.PostIncrementExpression) || unaryExpression.IsKind(SyntaxKind.PostDecrementExpression))
+                && followingToken.IsFirstInLine())
+            {
+                // Allow postfix increment and decrement operators to end a line when the next token begins a new line.
+                allowEndOfLine = true;
+            }
+            else if (followingToken.IsKind(SyntaxKind.CloseBraceToken))
             {
                 // If the next token is a close brace token we are in an anonymous object creation or an initialization.
                 // Then we allow a new line
@@ -424,7 +439,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 allowEndOfLine = false;
             }
 
-            CheckToken(context, unaryExpression.OperatorToken, false, allowEndOfLine, mustHaveTrailingWhitespace);
+            CheckToken(context, unaryExpression.OperatorToken, false, allowEndOfLine, mustHaveTrailingWhitespace, allowTrailingComment: isNullForgivingExpression);
         }
 
         private static void HandleAssignmentExpression(SyntaxNodeAnalysisContext context)
@@ -477,12 +492,12 @@ namespace StyleCop.Analyzers.SpacingRules
             CheckToken(context, switchExpressionArm.EqualsGreaterThanToken, true, true, true);
         }
 
-        private static void CheckToken(SyntaxNodeAnalysisContext context, SyntaxToken token, bool withLeadingWhitespace, bool allowAtEndOfLine, bool withTrailingWhitespace, string tokenText = null)
+        private static void CheckToken(SyntaxNodeAnalysisContext context, SyntaxToken token, bool withLeadingWhitespace, bool allowAtEndOfLine, bool withTrailingWhitespace, string tokenText = null, bool allowTrailingComment = false)
         {
             tokenText = tokenText ?? token.Text;
 
             CheckTokenLeadingWhitespace(context, token, withLeadingWhitespace, tokenText);
-            CheckTokenTrailingWhitespace(context, token, allowAtEndOfLine, withTrailingWhitespace, tokenText);
+            CheckTokenTrailingWhitespace(context, token, allowAtEndOfLine, withTrailingWhitespace, tokenText, allowTrailingComment);
         }
 
         private static void CheckTokenLeadingWhitespace(SyntaxNodeAnalysisContext context, SyntaxToken token, bool withLeadingWhitespace, string tokenText = null)
@@ -516,7 +531,7 @@ namespace StyleCop.Analyzers.SpacingRules
             }
         }
 
-        private static void CheckTokenTrailingWhitespace(SyntaxNodeAnalysisContext context, SyntaxToken token, bool allowAtEndOfLine, bool withTrailingWhitespace, string tokenText = null)
+        private static void CheckTokenTrailingWhitespace(SyntaxNodeAnalysisContext context, SyntaxToken token, bool allowAtEndOfLine, bool withTrailingWhitespace, string tokenText = null, bool allowTrailingComment = false)
         {
             tokenText = tokenText ?? token.Text;
 
@@ -534,6 +549,13 @@ namespace StyleCop.Analyzers.SpacingRules
                 }
 
                 context.ReportDiagnostic(Diagnostic.Create(DescriptorNotAtEndOfLine, token.GetLocation(), properties, tokenText));
+                return;
+            }
+
+            if (allowTrailingComment
+                && !withTrailingWhitespace
+                && followingTriviaList.Any(SyntaxKind.SingleLineCommentTrivia))
+            {
                 return;
             }
 

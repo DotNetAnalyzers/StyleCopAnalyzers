@@ -421,5 +421,79 @@ namespace TestNamespace
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(4264, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4264")]
+        public async Task TestNullForgivingOperatorAtEndOfMultilineArgumentListAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            Print(
+                para1: null!,
+                para2: null!,
+                para3: null! // trailing comment
+            );
+
+            Print(
+                para1: null!,
+                para2: null!,
+                para3: null!
+            );
+
+            var stillValid = GetValue()!
+                + ""suffix"";
+
+            var missingWhitespace = GetValue(){|#1:!|}/*block comment*/ // trailing comment
+                + ""suffix"";
+        }
+
+        private void Print(string para1, string para2, string para3)
+        {
+        }
+
+        private string? GetValue() => null;
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(
+                testCode,
+                Diagnostic(DescriptorFollowedByWhitespace).WithLocation(1).WithArguments("!"),
+                CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that null-forgiving operators are adjacent to element access expressions.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(4266, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4266")]
+        public async Task TestNullForgivingOperatorBeforeElementAccessAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        private string[]? _list;
+        private string[]? _array;
+
+        public string TestMethod()
+        {
+            var listItem = _list![0];
+            var arrayItem = _array![0];
+            return listItem + arrayItem;
+        }
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
