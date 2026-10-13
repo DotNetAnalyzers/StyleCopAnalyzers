@@ -78,35 +78,7 @@ public class DerivedClass : IntermediateClass
 }
 ";
 
-            var fixedCode = @"
-public class BaseType
-{
-}
-
-public class DerivedType : BaseType
-{
-}
-
-public class BaseClass
-{
-    protected virtual BaseType Create() => new BaseType();
-}
-
-public class IntermediateClass : BaseClass
-{
-    protected override DerivedType Create() => new DerivedType();
-}
-
-public class DerivedClass : IntermediateClass
-{
-    public BaseType CreateThroughBase()
-    {
-        return this.Create();
-    }
-}
-";
-
-            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

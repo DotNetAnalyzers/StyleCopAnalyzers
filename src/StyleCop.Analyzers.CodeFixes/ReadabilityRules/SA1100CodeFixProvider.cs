@@ -39,10 +39,18 @@ namespace StyleCop.Analyzers.ReadabilityRules
         }
 
         /// <inheritdoc/>
-        public override Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
+                var node = GetBaseExpressionNode(root, diagnostic.Location.SourceSpan);
+                if (!CanReplaceBaseWithThis(node, semanticModel, context.CancellationToken))
+                {
+                    continue;
+                }
+
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         ReadabilityResources.SA1100CodeFix,
@@ -50,8 +58,24 @@ namespace StyleCop.Analyzers.ReadabilityRules
                         nameof(SA1100CodeFixProvider)),
                     diagnostic);
             }
+        }
 
-            return SpecializedTasks.CompletedTask;
+        private static bool CanReplaceBaseWithThis(BaseExpressionSyntax node, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            var symbol = semanticModel.GetSymbolInfo(node.Parent, cancellationToken).Symbol;
+            if (symbol == null)
+            {
+                return false;
+            }
+
+            if (symbol.IsSealed || (!symbol.IsVirtual && !symbol.IsOverride))
+            {
+                return true;
+            }
+
+            // A subclass can override the member even when the current class does not.
+            var enclosingSymbol = semanticModel.GetEnclosingSymbol(node.SpanStart, cancellationToken);
+            return enclosingSymbol?.ContainingType?.IsSealed == true;
         }
 
         private static BaseExpressionSyntax GetBaseExpressionNode(SyntaxNode root, TextSpan sourceSpan)
@@ -88,15 +112,22 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return null;
                 }
 
-                var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+                var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var semanticModel = await document.GetSemanticModelAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
 
                 List<BaseExpressionSyntax> nodesToReplace = new List<BaseExpressionSyntax>(diagnostics.Length);
                 foreach (var diagnostic in diagnostics)
                 {
-                    nodesToReplace.Add(GetBaseExpressionNode(syntaxRoot, diagnostic.Location.SourceSpan));
+                    var node = GetBaseExpressionNode(syntaxRoot, diagnostic.Location.SourceSpan);
+                    if (CanReplaceBaseWithThis(node, semanticModel, fixAllContext.CancellationToken))
+                    {
+                        nodesToReplace.Add(node);
+                    }
                 }
 
-                return syntaxRoot.ReplaceNodes(nodesToReplace, (originalNode, rewrittenNode) => RewriteBaseAsThis(rewrittenNode));
+                return nodesToReplace.Count == 0
+                    ? null
+                    : syntaxRoot.ReplaceNodes(nodesToReplace, (originalNode, rewrittenNode) => RewriteBaseAsThis(rewrittenNode));
             }
         }
     }
