@@ -16,6 +16,160 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
     public class SA1100UnitTests
     {
+        /// <summary>
+        /// Verifies that changing a base call does not introduce recursive virtual dispatch through a subclass.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2938, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2938")]
+        public async Task TestSubclassOverrideCallsIntermediateHelperAsync()
+        {
+            var testCode = @"
+class A : B
+{
+    public override void DoSomething()
+    {
+        OtherMethod();
+    }
+}
+
+class B : C
+{
+    public void OtherMethod()
+    {
+        {|#0:base|}.DoSomething();
+    }
+}
+
+class C
+{
+    public virtual void DoSomething()
+    {
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that virtual dispatch is preserved for inherited overrides of each supported member kind.
+        /// </summary>
+        /// <param name="sealedType">Whether the receiver type is sealed.</param>
+        /// <param name="sealedMember">Whether the inherited override is sealed.</param>
+        /// <param name="member">The member declaration.</param>
+        /// <param name="alternateUse">Whether to use a method group, setter, or event removal.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [CombinatorialData]
+        [WorkItem(2938, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2938")]
+        public async Task TestInheritedOverrideFixSafetyAsync(
+            bool sealedType,
+            bool sealedMember,
+            [CombinatorialValues(
+                "void M() { }",
+                "int P { get { return 0; } set { } }",
+                "int this[int i] { get { return 0; } set { } }",
+                "event System.Action E { add { } remove { } }")] string member,
+            [CombinatorialValues(false, true)] bool alternateUse)
+        {
+            string use;
+            if (member.StartsWith("void"))
+            {
+                use = alternateUse ? "System.Action action = RECEIVER.M;" : "RECEIVER.M();";
+            }
+            else if (member.StartsWith("int P"))
+            {
+                use = alternateUse ? "RECEIVER.P = 1;" : "var value = RECEIVER.P;";
+            }
+            else if (member.StartsWith("int this"))
+            {
+                use = alternateUse ? "RECEIVER[0] = 1;" : "var value = RECEIVER[0];";
+            }
+            else
+            {
+                use = alternateUse ? "RECEIVER.E -= () => { };" : "RECEIVER.E += () => { };";
+            }
+
+            var testCode = @"
+class C
+{
+    public virtual MEMBER
+}
+
+class B : C
+{
+    public OVERRIDE MEMBER
+}
+
+TYPE class A : B
+{
+    public void Helper()
+    {
+        USE
+    }
+}"
+                .Replace("MEMBER", member)
+                .Replace("OVERRIDE", sealedMember ? "sealed override" : "override")
+                .Replace("TYPE", sealedType ? "sealed" : string.Empty)
+                .Replace("USE", use.Replace("RECEIVER", "{|#0:base|}"));
+
+            var fixedCode = sealedType || sealedMember ? testCode.Replace("{|#0:base|}", "this") : testCode;
+            if (member.StartsWith("void") && alternateUse)
+            {
+                // The analyzer does not report method groups.
+                testCode = testCode.Replace("{|#0:base|}", "base");
+                await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
+                return;
+            }
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that Fix All changes safe calls without changing virtual dispatch or losing comments.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2938, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2938")]
+        public async Task TestFixAllPreservesUnsafeVirtualCallsAsync()
+        {
+            var testCode = @"
+class C
+{
+    public virtual void VirtualMethod() { }
+    public void Method() { }
+}
+
+class B : C
+{
+    public void Helper()
+    {
+        {|#0:base|} /* keep virtual dispatch */ .VirtualMethod();
+        {|#1:base|} /* keep this comment */ .Method();
+        {|#2:base|}.Method();
+    }
+}";
+
+            var fixedCode = testCode.Replace("{|#1:base|}", "this").Replace("{|#2:base|}", "this");
+            var unsafeDocument = @"
+class D : C
+{
+    public void Helper()
+    {
+        {|#3:base|}.VirtualMethod();
+    }
+}";
+
+            var test = new CSharpTest
+            {
+                TestSources = { testCode, unsafeDocument },
+                FixedSources = { fixedCode, unsafeDocument },
+                ExpectedDiagnostics = { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1), Diagnostic().WithLocation(2), Diagnostic().WithLocation(3) },
+                RemainingDiagnostics = { Diagnostic().WithLocation(0), Diagnostic().WithLocation(3) },
+            };
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Theory]
         [InlineData("\n")]
         [InlineData("\r\n")]
@@ -40,23 +194,7 @@ public class FooChild : Foo
 
             DiagnosticResult expected = Diagnostic().WithLocation(0);
 
-            var fixedTest = @"
-public class Foo
-{
-    protected virtual void Bar()
-    {
-
-    }
-}
-
-public class FooChild : Foo
-{
-    protected void Baz()
-    {
-        this.Bar();
-    }
-}".ReplaceLineEndings(lineEnding);
-            await VerifyCSharpFixAsync(testCode, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -225,23 +363,7 @@ public class FooChild : Foo
 
             DiagnosticResult expected = Diagnostic().WithLocation(14, 17);
 
-            var fixedTest = @"
-public class Foo
-{
-    protected virtual string Bar
-    {
-        get;set;
-    }
-}
-
-public class FooChild : Foo
-{
-    protected void Baz()
-    {
-        var s = this.Bar;
-    }
-}";
-            await VerifyCSharpFixAsync(testCode, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -461,27 +583,7 @@ public class FooChild : Foo
 }";
             DiagnosticResult expected = Diagnostic().WithLocation(14, 9);
 
-            var fixedTest = @"
-public class Foo
-{
-    protected virtual void Bar()
-    {
-
-    }
-}
-
-public class FooChild : Foo
-{
-    protected void Baz()
-    {
-        this.Bar();
-    }
-    protected void Bar(string param)
-    {
-
-    }
-}";
-            await VerifyCSharpFixAsync(testCode, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -509,27 +611,7 @@ public class FooChild : Foo
 }";
             DiagnosticResult expected = Diagnostic().WithLocation(14, 9);
 
-            var fixedTest = @"
-public class Foo
-{
-    protected virtual void Bar(string s, int i)
-    {
-
-    }
-}
-
-public class FooChild : Foo
-{
-    protected void Baz()
-    {
-        this.Bar(string.Empty, 5);
-    }
-    protected void Bar(ref string s, int i)
-    {
-
-    }
-}";
-            await VerifyCSharpFixAsync(testCode, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -557,27 +639,7 @@ public class FooChild : Foo
 }";
             DiagnosticResult expected = Diagnostic().WithLocation(14, 9);
 
-            var fixedTest = @"
-public class Foo
-{
-    protected virtual void Bar(string s, int i)
-    {
-
-    }
-}
-
-public class FooChild : Foo
-{
-    protected  void Baz()
-    {
-        this.Bar(string.Empty, 5);
-    }
-    protected void Bar(out string s, int i)
-    {
-        s = string.Empty;
-    }
-}";
-            await VerifyCSharpFixAsync(testCode, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -605,27 +667,7 @@ public class FooChild : Foo
 }";
             DiagnosticResult expected = Diagnostic().WithLocation(14, 9);
 
-            var fixedTest = @"
-public class Foo
-{
-    protected virtual void Bar(string s, int i)
-    {
-
-    }
-}
-
-public class FooChild : Foo
-{
-    protected  void Baz()
-    {
-        this.Bar(string.Empty, 5);
-    }
-    protected void Bar(int i, string s)
-    {
-
-    }
-}";
-            await VerifyCSharpFixAsync(testCode, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -886,33 +928,7 @@ public class FooChild : Foo
                     Diagnostic().WithLocation(24, 9),
                 };
 
-            var fixedTest = @"
-public class Foo
-{
-    protected virtual void Bar()
-    {
-
-    }
-
-    protected virtual void Bar2()
-    {
-
-    }
-}
-
-public class FooChild : Foo
-{
-    protected void Baz()
-    {
-        this.Bar();
-    }
-
-    protected void Baz2()
-    {
-        this.Bar2();
-    }
-}";
-            await VerifyCSharpFixAsync(testCode, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -939,25 +955,7 @@ public class FooChild : Foo
 
             DiagnosticResult expected = Diagnostic().WithLocation(14, 9);
 
-            var fixedTest = @"
-public class Foo
-{
-    protected virtual void Bar()
-    {
-
-    }
-}
-
-public class FooChild : Foo
-{
-    protected void Baz()
-    {
-        this
-
-        .Bar();
-    }
-}";
-            await VerifyCSharpFixAsync(testCode, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -979,20 +977,7 @@ public class Foo
 
             DiagnosticResult expected = Diagnostic().WithLocation(7, 17);
 
-            var fixedTest = @"
-public class Foo
-{
-    protected void Baz()
-    {
-        #if true
-                this
-        #else
-            this
-        #endif
-        .ToString();
-    }
-}";
-            await VerifyCSharpFixAsync(testCode, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]

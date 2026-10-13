@@ -17,6 +17,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
@@ -46,24 +47,18 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             foreach (Diagnostic diagnostic in context.Diagnostics)
             {
-                var memberDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<MemberDeclarationSyntax>();
-                if (memberDeclaration?.Parent?.ContainsDirectives == true)
+                var transformedDocument = await GetTransformedDocumentAsync(context.Document, diagnostic, context.CancellationToken).ConfigureAwait(false);
+                if (transformedDocument == context.Document)
                 {
-                    var transformedDocument = await GetTransformedDocumentAsync(context.Document, diagnostic, context.CancellationToken).ConfigureAwait(false);
-                    var transformedRoot = await transformedDocument.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-                    if (transformedRoot == syntaxRoot)
-                    {
-                        continue;
-                    }
+                    continue;
                 }
 
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         OrderingResources.ElementOrderCodeFix,
-                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
+                        cancellationToken => Task.FromResult(transformedDocument),
                         nameof(ElementOrderCodeFixProvider)),
                     diagnostic);
             }
@@ -82,9 +77,13 @@ namespace StyleCop.Analyzers.OrderingRules
             }
 
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-            syntaxRoot = UpdateSyntaxRoot(memberDeclaration, elementOrder, syntaxRoot, settings.Indentation, semanticModel, cancellationToken);
+            var updatedRoot = UpdateSyntaxRoot(memberDeclaration, elementOrder, syntaxRoot, settings.Indentation, semanticModel, cancellationToken);
+            if (updatedRoot == syntaxRoot)
+            {
+                return document;
+            }
 
-            return document.WithSyntaxRoot(syntaxRoot);
+            return document.WithSyntaxRoot(updatedRoot);
         }
 
         private static SyntaxNode UpdateSyntaxRoot(
@@ -190,7 +189,19 @@ namespace StyleCop.Analyzers.OrderingRules
                 }
             }
 
-            return target.Member != null ? MoveMember(syntaxRoot, memberOrder.Member, target.Member, indentationSettings) : syntaxRoot;
+            if (target.Member == null)
+            {
+                return syntaxRoot;
+            }
+
+            // Region directives cannot safely move with individual members across a region boundary.
+            var span = TextSpan.FromBounds(target.Member.FullSpan.Start, memberOrder.Member.FullSpan.End);
+            if (syntaxRoot.DescendantTrivia(span).Any(trivia => trivia.IsKind(SyntaxKind.RegionDirectiveTrivia) || trivia.IsKind(SyntaxKind.EndRegionDirectiveTrivia)))
+            {
+                return syntaxRoot;
+            }
+
+            return MoveMember(syntaxRoot, memberOrder.Member, target.Member, indentationSettings);
         }
 
         private static string GetTypeKey(TypeDeclarationSyntax typeDeclaration)

@@ -46,6 +46,59 @@ public class FooClass { }
             await VerifyCSharpDiagnosticAsync("namespace OuterNamespace { " + testCode + " }", DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that ordering types preserves region boundaries at compilation-unit and namespace scope.
+        /// </summary>
+        /// <param name="inNamespace">Whether the types are declared inside a namespace.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        [WorkItem(2112, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2112")]
+        public async Task TestCodeFixWithRegionsAtOuterScopeAsync(bool inNamespace)
+        {
+            var testCode = @"
+#region Classes
+public class Foo { }
+#endregion
+
+#region Structs
+public struct {|#0:Bar|} { }
+#endregion
+";
+            if (inNamespace)
+            {
+                testCode = "namespace OuterNamespace\r\n{\r\n" + testCode + "}\r\n";
+            }
+
+            var expected = Diagnostic().WithLocation(0).WithArguments("A struct", "a class");
+            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that ordering non-field members preserves region boundaries.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2112, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2112")]
+        public async Task TestCodeFixWithRegionsAroundNonFieldMembersAsync()
+        {
+            var testCode = @"
+public class Foo
+{
+    #region Methods
+    public void Method() { }
+    #endregion
+
+    #region Properties
+    public int {|#0:Property|} { get; set; }
+    #endregion
+}";
+
+            var expected = Diagnostic().WithLocation(0).WithArguments("A property", "a method");
+            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestOuterOrderWrongOrderAsync()
         {

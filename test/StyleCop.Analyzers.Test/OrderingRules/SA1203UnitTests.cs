@@ -134,6 +134,152 @@ public struct Foo
             await VerifyCSharpFixAsync(testCode, firstDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that reordering fields does not break separate regions.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2112, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2112")]
+        public async Task TestCodeFixWithSeparateRegionsAsync()
+        {
+            var testCode = @"
+    public class MyClass
+    {
+        #region region 1
+        public int field1;
+        #endregion
+
+        #region region 2
+        public const int {|#0:Const|} = 1;
+        #endregion
+    }
+";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a member carrying a region boundary cannot be reordered.
+        /// </summary>
+        /// <param name="fieldRegion">Whether region directives surround the field.</param>
+        /// <param name="constantRegion">Whether region directives surround the constant.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData(true, false)]
+        [InlineData(false, true)]
+        [WorkItem(2112, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2112")]
+        public async Task TestCodeFixWithRegionBoundaryAsync(bool fieldRegion, bool constantRegion)
+        {
+            var testCode = @"
+public class Foo
+{
+" + (fieldRegion ? "    #region Fields\r\n" : string.Empty) + @"
+    public int field;
+" + (fieldRegion ? "    #endregion\r\n" : string.Empty)
+                + (constantRegion ? "    #region Constants\r\n" : string.Empty) + @"
+    public const int {|#0:Constant|} = 1;
+" + (constantRegion ? "    #endregion\r\n" : string.Empty) + @"
+}";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that reordering the first member of a region does not move its opening directive.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2112, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2112")]
+        public async Task TestCodeFixWithFirstMemberOfRegionAsync()
+        {
+            var testCode = @"
+public class Foo
+{
+    #region Members
+    public int field;
+    public const int {|#0:Constant|} = 1;
+    #endregion
+}";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that fields can still be reordered without crossing a region boundary.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2112, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2112")]
+        public async Task TestCodeFixWithinRegionAsync()
+        {
+            var testCode = @"
+public class Foo
+{
+    #region Members
+    public const int Before = 0;
+    public int field;
+    public const int {|#0:Constant|} = 1;
+    #endregion
+}";
+            var fixedCode = @"
+public class Foo
+{
+    #region Members
+    public const int Before = 0;
+    public const int Constant = 1;
+    public int field;
+    #endregion
+}";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that Fix All preserves unsafe regions while fixing other types in the document.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2112, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2112")]
+        public async Task TestCodeFixWithRegionsAndOtherTypeAsync()
+        {
+            var regionType = @"
+public class MyClass
+{
+    #region region 1
+    public int field1;
+    #endregion
+
+    #region region 2
+    public const int {|#0:Const|} = 1;
+    #endregion
+}
+";
+            var testCode = regionType + @"
+public class Foo
+{
+    public int field;
+    public const int {|#1:Constant|} = 1;
+}";
+            var fixedCode = regionType + @"
+public class Foo
+{
+    public const int Constant = 1;
+    public int field;
+}";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(0),
+                    Diagnostic().WithLocation(1),
+                },
+                FixedCode = fixedCode,
+                RemainingDiagnostics = { Diagnostic().WithLocation(0) },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestSecondConstAfterNonConstAsync()
         {
