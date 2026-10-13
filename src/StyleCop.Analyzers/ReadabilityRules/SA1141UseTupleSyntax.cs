@@ -70,12 +70,133 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             var expressionType = context.Compilation.GetTypeByMetadataName("System.Linq.Expressions.Expression`1");
 
-            context.RegisterSyntaxNodeAction(context => HandleObjectCreationExpression(context, expressionType), SyntaxKind.ObjectCreationExpression);
-            context.RegisterSyntaxNodeAction(context => HandleInvocationExpression(context, expressionType), SyntaxKind.InvocationExpression);
+            if (LightupHelpers.SupportsIOperation)
+            {
+                var valueTupleType = context.Compilation.GetTypeByMetadataName("System.ValueTuple");
+                context.RegisterOperationAction(context => HandleInvocationOperation(context, valueTupleType, expressionType), OperationKindEx.Invocation);
+                context.RegisterOperationAction(
+                    context => HandleTypeOperation(context, expressionType),
+                    OperationKindEx.ObjectCreation,
+                    OperationKindEx.DefaultValue,
+                    OperationKindEx.Conversion);
+            }
+            else
+            {
+                context.RegisterSyntaxNodeAction(context => HandleObjectCreationExpression(context, expressionType), SyntaxKind.ObjectCreationExpression);
+                context.RegisterSyntaxNodeAction(context => HandleInvocationExpression(context, expressionType), SyntaxKind.InvocationExpression);
+                context.RegisterSyntaxNodeAction(context => HandleDefaultExpression(context, expressionType), SyntaxKind.DefaultExpression);
+                context.RegisterSyntaxNodeAction(context => HandleCastExpression(context, expressionType), SyntaxKind.CastExpression);
+            }
+        }
 
-            context.RegisterSyntaxNodeAction(context => HandleDefaultExpression(context, expressionType), SyntaxKind.DefaultExpression);
+        private static void HandleInvocationOperation(OperationAnalysisContext context, INamedTypeSymbol valueTupleType, INamedTypeSymbol expressionType)
+        {
+            if (context.Operation.Syntax is not InvocationExpressionSyntax invocationExpression
+                || invocationExpression.ArgumentList.Arguments.Count < 2
+                || invocationExpression.Expression is not MemberAccessExpressionSyntax memberAccessExpression
+                || !memberAccessExpression.IsKind(SyntaxKind.SimpleMemberAccessExpression)
+                || memberAccessExpression.Name.Identifier.ValueText != "Create")
+            {
+                return;
+            }
 
-            context.RegisterSyntaxNodeAction(context => HandleCastExpression(context, expressionType), SyntaxKind.CastExpression);
+            var invocation = IInvocationOperationWrapper.FromOperation(context.Operation);
+            if (Equals(invocation.TargetMethod.ContainingType, valueTupleType)
+                && !IsInExpressionTree(context.Operation, expressionType))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, memberAccessExpression.GetLocation()));
+            }
+        }
+
+        private static void HandleTypeOperation(OperationAnalysisContext context, INamedTypeSymbol expressionType)
+        {
+            var operation = IOperationWrapper.FromOperation(context.Operation);
+            if (operation.IsImplicit)
+            {
+                return;
+            }
+
+            switch (operation.Syntax)
+            {
+            case ObjectCreationExpressionSyntax objectCreation:
+                CheckOperationType(context, expressionType, objectCreation.Type, operation.Type, objectCreation.GetLocation());
+                break;
+
+            case DefaultExpressionSyntax defaultExpression:
+                CheckOperationType(context, expressionType, defaultExpression.Type, operation.Type);
+                break;
+
+            case CastExpressionSyntax castExpression:
+                CheckOperationType(context, expressionType, castExpression.Type, operation.Type);
+                break;
+            }
+        }
+
+        private static void CheckOperationType(OperationAnalysisContext context, INamedTypeSymbol expressionType, TypeSyntax syntax, ITypeSymbol type, Location reportLocation = null)
+        {
+            if (type is not INamedTypeSymbol namedType)
+            {
+                return;
+            }
+
+            switch (syntax.Kind())
+            {
+            case SyntaxKind.QualifiedName:
+                CheckOperationType(context, expressionType, ((QualifiedNameSyntax)syntax).Right, type, reportLocation ?? syntax.GetLocation());
+                break;
+
+            case SyntaxKindEx.TupleType:
+                var elements = ((TupleTypeSyntaxWrapper)syntax).Elements;
+                var fields = namedType.TupleElements();
+                for (var i = 0; i < elements.Count && i < fields.Length; i++)
+                {
+                    CheckOperationType(context, expressionType, elements[i].Type, fields[i].Type, reportLocation);
+                }
+
+                break;
+
+            case SyntaxKind.GenericName:
+                var genericName = (GenericNameSyntax)syntax;
+                if (genericName.Identifier.ValueText == "ValueTuple"
+                    && namedType.IsTupleType()
+                    && namedType.TupleElements().Length > 1
+                    && !IsInExpressionTree(context.Operation, expressionType))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, reportLocation ?? syntax.GetLocation()));
+                    return;
+                }
+
+                var arguments = genericName.TypeArgumentList.Arguments;
+
+                // Older compilers expose tuple type arguments only on the underlying ValueTuple type.
+                var typeArguments = (namedType.TupleUnderlyingType() ?? namedType).TypeArguments;
+                for (var i = 0; i < arguments.Count && i < typeArguments.Length; i++)
+                {
+                    CheckOperationType(context, expressionType, arguments[i], typeArguments[i]);
+                }
+
+                break;
+            }
+        }
+
+        private static bool IsInExpressionTree(IOperation operation, INamedTypeSymbol expressionType)
+        {
+            if (expressionType is null)
+            {
+                return false;
+            }
+
+            for (var current = IOperationWrapper.FromOperation(operation); current.WrappedOperation != null; current = IOperationWrapper.FromOperation(current.Parent))
+            {
+                if (current.Kind == OperationKindEx.Conversion
+                    && Equals(current.Type?.OriginalDefinition, expressionType)
+                    && IConversionOperationWrapper.FromOperation(current.WrappedOperation).Operand.Kind == OperationKindEx.AnonymousFunction)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
