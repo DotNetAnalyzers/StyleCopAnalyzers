@@ -147,6 +147,64 @@ public partial class PdbWriter<T>
         }
 
         [Fact]
+        [WorkItem(2939, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2939")]
+        public async Task TestFieldRenameInObjectInitializerAsync()
+        {
+            var testCode = @"public class C
+{
+    private int {|#0:_value|};
+
+    public C Create(int value)
+    {
+        return new C { _value = _value + value };
+    }
+}";
+            var fixedCode = @"public class C
+{
+    private int value;
+
+    public C Create(int value)
+    {
+        return new C { value = this.value + value };
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithArguments("_value").WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2939, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2939")]
+        public async Task TestInheritedStaticFieldRenameWithCollisionAsync()
+        {
+            var testCode = @"public class Base<T>
+{
+    protected static int {|#0:_value|};
+}
+
+public class Derived : Base<int>
+{
+    public int GetValue(int value)
+    {
+        return _value + value;
+    }
+}";
+            var fixedCode = @"public class Base<T>
+{
+    protected static int value;
+}
+
+public class Derived : Base<int>
+{
+    public int GetValue(int value)
+    {
+        return Base<int>.value + value;
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithArguments("_value").WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestFieldStartingAnUnderscorePlacedInsideNativeMethodsClassAsync()
         {
             var testCode = @"public class FooNativeMethods

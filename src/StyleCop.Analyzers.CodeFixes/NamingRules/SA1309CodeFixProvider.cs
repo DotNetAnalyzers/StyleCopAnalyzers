@@ -91,21 +91,28 @@ namespace StyleCop.Analyzers.NamingRules
                     .OfType<IdentifierNameSyntax>()
                     .Where(identifier => !(identifier.Parent is MemberAccessExpressionSyntax memberAccess && memberAccess.Name == identifier)
                         && !(identifier.Parent is MemberBindingExpressionSyntax)
+                        && !(identifier.Parent is AssignmentExpressionSyntax assignment
+                            && assignment.Left == identifier
+                            && assignment.Parent is InitializerExpressionSyntax)
                         && referenceModel.LookupSymbols(identifier.SpanStart, name: newName)
                             .Any(symbol => symbol.Kind == SymbolKind.Local || symbol.Kind == SymbolKind.Parameter))
                     .ToImmutableArray();
 
                 // Qualify before renaming: older rename engines miss conflicts with inline out variables.
                 var generator = SyntaxGenerator.GetGenerator(reference);
-                var receiver = field.IsStatic
-                    ? ((ExpressionSyntax)generator.TypeExpression(field.ContainingType)).WithAdditionalAnnotations(Simplifier.Annotation)
-                    : SyntaxFactory.ThisExpression();
                 referenceRoot = referenceRoot.ReplaceNodes(
                     identifiers,
-                    (original, rewritten) => SyntaxFactory.MemberAccessExpression(
-                        SyntaxKind.SimpleMemberAccessExpression,
-                        receiver,
-                        rewritten.WithoutTrivia()).WithTriviaFrom(original));
+                    (original, rewritten) =>
+                    {
+                        var referencedField = (IFieldSymbol)referenceModel.GetSymbolInfo(original, cancellationToken).Symbol;
+                        var receiver = referencedField.IsStatic
+                            ? ((ExpressionSyntax)generator.TypeExpression(referencedField.ContainingType)).WithAdditionalAnnotations(Simplifier.Annotation)
+                            : SyntaxFactory.ThisExpression();
+                        return SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            receiver,
+                            rewritten.WithoutTrivia()).WithTriviaFrom(original);
+                    });
                 solution = solution.WithDocumentSyntaxRoot(reference.Id, referenceRoot);
             }
 
