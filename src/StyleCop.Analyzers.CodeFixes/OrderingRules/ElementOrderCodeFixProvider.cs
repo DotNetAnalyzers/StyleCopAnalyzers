@@ -44,10 +44,22 @@ namespace StyleCop.Analyzers.OrderingRules
         }
 
         /// <inheritdoc/>
-        public override Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             foreach (Diagnostic diagnostic in context.Diagnostics)
             {
+                var memberDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<MemberDeclarationSyntax>();
+                if (memberDeclaration?.Parent?.ContainsDirectives == true)
+                {
+                    var transformedDocument = await GetTransformedDocumentAsync(context.Document, diagnostic, context.CancellationToken).ConfigureAwait(false);
+                    var transformedRoot = await transformedDocument.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+                    if (transformedRoot == syntaxRoot)
+                    {
+                        continue;
+                    }
+                }
+
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         OrderingResources.ElementOrderCodeFix,
@@ -55,8 +67,6 @@ namespace StyleCop.Analyzers.OrderingRules
                         nameof(ElementOrderCodeFixProvider)),
                     diagnostic);
             }
-
-            return SpecializedTasks.CompletedTask;
         }
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
@@ -148,6 +158,11 @@ namespace StyleCop.Analyzers.OrderingRules
             IndentationSettings indentationSettings,
             Dictionary<string, ImmutableHashSet<string>> fieldDependencies)
         {
+            if (memberOrder.Member.ContainsDirectives)
+            {
+                return syntaxRoot;
+            }
+
             var memberIndex = members.IndexOf(memberOrder.Member);
             MemberOrderHelper target = default;
 
@@ -162,6 +177,11 @@ namespace StyleCop.Analyzers.OrderingRules
                 var orderHelper = new MemberOrderHelper(members[i], elementOrder);
                 if (orderHelper.Priority < memberOrder.Priority)
                 {
+                    if (members[i].ContainsDirectives)
+                    {
+                        return syntaxRoot;
+                    }
+
                     target = orderHelper;
                 }
                 else
