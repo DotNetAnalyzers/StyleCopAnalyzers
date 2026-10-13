@@ -202,16 +202,16 @@
     <value>Debug.Fail should provide message text</value>
   </data>
   <data name="SA1407Description" xml:space="preserve">
-    <value>A C# statement contains a complex arithmetic expression which omits parenthesis around operators.</value>
+    <value>A C# statement contains a complex expression with arithmetic, bitwise, or shift operators which omits parentheses to make precedence explicit.</value>
   </data>
   <data name="SA1407MessageFormat" xml:space="preserve">
-    <value>Arithmetic expressions should declare precedence</value>
+    <value>Arithmetic, bitwise, and shift expressions should declare precedence</value>
   </data>
   <data name="SA1407SA1408CodeFix" xml:space="preserve">
     <value>Add parentheses</value>
   </data>
   <data name="SA1407Title" xml:space="preserve">
-    <value>Arithmetic expressions should declare precedence</value>
+    <value>Arithmetic, bitwise, and shift expressions should declare precedence</value>
   </data>
   <data name="SA1408Description" xml:space="preserve">
     <value>A C# statement contains a complex conditional expression which omits parenthesis around operators.</value>
