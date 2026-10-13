@@ -116,19 +116,19 @@ namespace StyleCop.Analyzers.SpacingRules
                 if (!followsSpecialCharacter && !precededBySpace)
                 {
                     // Negative sign should{} be {preceded} by a space.
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.InsertPreceding, string.Empty, "preceded"));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.InsertPreceding, string.Empty, SpacingDiagnosticArguments.Preceded));
                 }
                 else if (followsSpecialCharacter && precededBySpace)
                 {
                     // Negative sign should{ not} be {preceded} by a space.
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemoveImmediatePreceding, " not", "preceded"));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemoveImmediatePreceding, SpacingDiagnosticArguments.Not, SpacingDiagnosticArguments.Preceded));
                 }
             }
 
             if (lastInLine || followedBySpace)
             {
                 // Negative sign should{ not} be {followed} by a space.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemoveFollowing, " not", "followed"));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemoveFollowing, SpacingDiagnosticArguments.Not, SpacingDiagnosticArguments.Followed));
             }
         }
     }
