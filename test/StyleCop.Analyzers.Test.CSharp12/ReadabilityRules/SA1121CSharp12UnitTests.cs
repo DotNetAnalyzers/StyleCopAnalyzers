@@ -195,6 +195,46 @@ public class TestClass
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestFixAllBeforeCSharp12SkipsAliasTargetAsync()
+        {
+            string testCode = @"
+using MyInt = {|#0:System.Int32|};
+
+public class TestClass
+{
+    private {|#1:System.Int32|} value;
+    private MyInt aliasValue;
+}
+";
+
+            string fixedCode = @"
+using MyInt = {|#2:System.Int32|};
+
+public class TestClass
+{
+    private int value;
+    private MyInt aliasValue;
+}
+";
+
+            DiagnosticResult[] expectedDiagnostics =
+            {
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+            };
+
+            var test = new CSharpTest(LanguageVersion.CSharp11)
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+            };
+
+            test.ExpectedDiagnostics.AddRange(expectedDiagnostics);
+            test.RemainingDiagnostics.Add(Diagnostic().WithLocation(2));
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
         // C# 12 allows the target of a using alias directive to be replaced with a built-in type keyword.
 
         /// <inheritdoc/>

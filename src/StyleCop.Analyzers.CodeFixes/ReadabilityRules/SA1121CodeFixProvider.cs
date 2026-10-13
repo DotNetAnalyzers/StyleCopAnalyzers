@@ -44,7 +44,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (IsUnsupportedUsingAliasTarget(context, diagnostic))
+                if (IsUnsupportedUsingAliasTarget(context.Document, diagnostic))
                 {
                     continue;
                 }
@@ -60,9 +60,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
             return SpecializedTasks.CompletedTask;
         }
 
-        private static bool IsUnsupportedUsingAliasTarget(CodeFixContext context, Diagnostic diagnostic)
+        private static bool IsUnsupportedUsingAliasTarget(Document document, Diagnostic diagnostic)
         {
-            if (context.Document.Project.ParseOptions is not CSharpParseOptions parseOptions
+            if (document.Project.ParseOptions is not CSharpParseOptions parseOptions
                 || parseOptions.LanguageVersion >= LanguageVersionEx.CSharp12
                 || diagnostic.Location.SourceTree == null)
             {
@@ -154,9 +154,19 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 List<SyntaxNode> nodesToReplace = new List<SyntaxNode>(diagnostics.Length);
                 foreach (var diagnostic in diagnostics)
                 {
+                    if (IsUnsupportedUsingAliasTarget(document, diagnostic))
+                    {
+                        continue;
+                    }
+
                     var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
 
                     nodesToReplace.Add(node);
+                }
+
+                if (nodesToReplace.Count == 0)
+                {
+                    return null;
                 }
 
                 return syntaxRoot.ReplaceNodes(nodesToReplace, (originalNode, rewrittenNode) => ComputeReplacement(semanticModel, originalNode, fixAllContext.CancellationToken));

@@ -46,28 +46,20 @@ namespace StyleCop.Analyzers.Test.CSharp10.ReadabilityRules
         [Fact]
         public virtual async Task TestUsingNameChangeInFileScopedNamespaceAsync()
         {
-            string oldSource = @"namespace Foo;
+            string testSource = @"namespace Foo;
 
-using MyInt = System.UInt32;
+using MyInt = {|#0:System.UInt32|};
 class Bar
 {
-{|#0:MyInt|} value = 3;
-}
-";
-            string newSource = @"namespace Foo;
-
-using MyInt = System.UInt32;
-class Bar
-{
-uint value = 3;
+MyInt value = 3;
 }
 ";
 
             await new CSharpTest
             {
-                TestCode = oldSource,
+                TestCode = testSource,
                 ExpectedDiagnostics = { Diagnostic().WithLocation(0) },
-                FixedCode = newSource,
+                FixedCode = testSource,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
