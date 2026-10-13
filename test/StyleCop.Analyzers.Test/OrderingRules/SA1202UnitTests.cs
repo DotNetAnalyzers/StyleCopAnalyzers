@@ -21,6 +21,30 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     public class SA1202UnitTests
     {
         /// <summary>
+        /// Verifies that ordering methods by accessibility preserves region boundaries.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2112, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2112")]
+        public async Task TestCodeFixWithRegionsAroundMethodsAsync()
+        {
+            var testCode = @"
+public class Foo
+{
+    #region Private methods
+    private void PrivateMethod() { }
+    #endregion
+
+    #region Public methods
+    public void {|#0:PublicMethod|}() { }
+    #endregion
+}";
+
+            var expected = Diagnostic().WithLocation(0).WithArguments("public", "private");
+            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that the analyzer will properly handle valid access level ordering.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
