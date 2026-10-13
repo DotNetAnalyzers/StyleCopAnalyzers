@@ -44,6 +44,28 @@ public class Foo
         }
 
         /// <summary>
+        /// Verifies that static ordering does not move methods across conditional directives.
+        /// </summary>
+        /// <param name="conditionalStaticMethod">Whether the static method is conditional.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        [WorkItem(1588, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1588")]
+        public async Task TestCodeFixWithConditionalBoundaryAsync(bool conditionalStaticMethod)
+        {
+            string testCode = "public class Foo\r\n{\r\n"
+                + (conditionalStaticMethod ? string.Empty : "#if true\r\n")
+                + "    public void InstanceMethod() { }\r\n"
+                + (conditionalStaticMethod ? "#if true\r\n" : "#endif\r\n")
+                + "    public static void {|#0:StaticMethod|}() { }\r\n"
+                + (conditionalStaticMethod ? "#endif\r\n" : string.Empty)
+                + "}\r\n";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that the analyzer will properly handle valid ordering.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>

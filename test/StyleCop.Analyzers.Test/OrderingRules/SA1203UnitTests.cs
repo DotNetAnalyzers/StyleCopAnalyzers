@@ -159,6 +159,28 @@ public struct Foo
         }
 
         /// <summary>
+        /// Verifies that constant ordering does not move fields across conditional directives.
+        /// </summary>
+        /// <param name="conditionalConstant">Whether the constant is conditional.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        [WorkItem(1588, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1588")]
+        public async Task TestCodeFixWithConditionalBoundaryAsync(bool conditionalConstant)
+        {
+            string testCode = "public class Foo\r\n{\r\n"
+                + (conditionalConstant ? string.Empty : "#if true\r\n")
+                + "    public int field;\r\n"
+                + (conditionalConstant ? "#if true\r\n" : "#endif\r\n")
+                + "    public const int {|#0:Constant|} = 1;\r\n"
+                + (conditionalConstant ? "#endif\r\n" : string.Empty)
+                + "}\r\n";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that a member carrying a region boundary cannot be reordered.
         /// </summary>
         /// <param name="fieldRegion">Whether region directives surround the field.</param>
