@@ -421,5 +421,80 @@ namespace TestNamespace
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(4264, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4264")]
+        public async Task TestNullForgivingOperatorAtEndOfMultilineArgumentListAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            Print(
+                para1: null!,
+                para2: null!,
+                para3: null! // trailing comment
+            );
+
+            Print(
+                para1: null!,
+                para2: null!,
+                para3: null!
+            );
+
+            var stillValid = GetValue()!
+                + ""suffix"";
+        }
+
+        private void Print(string para1, string para2, string para3)
+        {
+        }
+
+        private string? GetValue() => null;
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(
+                testCode,
+                DiagnosticResult.EmptyDiagnosticResults,
+                CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(4264, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4264")]
+        public async Task TestPostfixIncrementAndDecrementAtEndOfLineAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            var incrementedValue = GetCounter().Value++
+                + 2;
+            var decrementedValue = GetCounter().Value--
+                + 2;
+        }
+
+        private Counter GetCounter() => new Counter();
+
+        private class Counter
+        {
+            public int Value;
+        }
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(
+                testCode,
+                DiagnosticResult.EmptyDiagnosticResults,
+                CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
