@@ -1156,7 +1156,16 @@ public partial class TestClass
 }
 ";
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                NumberOfIncrementalIterations = 2,
+                NumberOfFixAllIterations = 1,
+            };
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -1234,6 +1243,77 @@ internal class Class2
 ";
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3808, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3808")]
+        public async Task TestIndependentEqualAccessFieldBeforeDependencyAsync()
+        {
+            var testCode = @"internal class Program
+{
+    private static int x = 0;
+    private static int a = 1;
+    public static int b = a;
+}
+";
+
+            // When x (private) appears before a (private), and b depends on a, b is excused relative to x
+            // because b cannot appear before x without appearing before its dependency a.
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3808, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3808")]
+        public async Task TestCodeFixDoesNotMoveFieldAcrossDependentFieldAsync()
+        {
+            var testCode = @"internal class Program
+{
+    private static int a = 1;
+    public static int {|#0:b|} = 2;
+    public static int c = a + b;
+}
+";
+
+            var expected = Diagnostic().WithLocation(0).WithArguments("public", "private");
+            var fixedCode = @"internal class Program
+{
+    public static int b = 2;
+    private static int a = 1;
+    public static int c = a + b;
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3808, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3808")]
+        public async Task TestNameofDoesNotCreateDependencyAsync()
+        {
+            var testCode = @"internal class Program
+{
+    private static int a = 1;
+    public static string {|#0:b|} = nameof(a);
+}
+";
+
+            var expected = Diagnostic().WithLocation(0).WithArguments("public", "private");
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3808, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3808")]
+        public async Task TestStaticAndInstanceFieldsDoNotExcuseOrderAsync()
+        {
+            var testCode = @"internal class Program
+{
+    private int a = 1;
+    public static int {|#0:b|} = new Program().a;
+}
+";
+
+            var expected = Diagnostic().WithLocation(0).WithArguments("public", "private");
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

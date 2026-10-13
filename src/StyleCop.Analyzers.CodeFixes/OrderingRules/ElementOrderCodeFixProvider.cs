@@ -153,7 +153,8 @@ namespace StyleCop.Analyzers.OrderingRules
 
             for (var i = memberIndex - 1; i >= 0; --i)
             {
-                if (FieldDependencyHelper.DependsOn(memberOrder.Member, members[i], fieldDependencies))
+                if (FieldDependencyHelper.DependsOn(memberOrder.Member, members[i], fieldDependencies)
+                    || FieldDependencyHelper.DependsOn(members[i], memberOrder.Member, fieldDependencies))
                 {
                     break;
                 }

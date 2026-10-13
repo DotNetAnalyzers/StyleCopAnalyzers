@@ -140,7 +140,6 @@ namespace StyleCop.Analyzers.OrderingRules
         private static void HandleMemberList(SyntaxNodeAnalysisContext context, ImmutableArray<OrderingTrait> elementOrder, int accessibilityIndex, SyntaxList<MemberDeclarationSyntax> members)
         {
             var handledMembers = new List<MemberInfo>();
-            bool hasExcusedMembers = false;
             Dictionary<string, ImmutableHashSet<string>> fieldDependencies = null;
             Dictionary<string, FieldVariableInfo> fieldVariableInfos = null;
 
@@ -166,6 +165,8 @@ namespace StyleCop.Analyzers.OrderingRules
 
                 if (handledMembers.Count > 0)
                 {
+                    bool hasExcusedMemberForCurrent = false;
+
                     for (int i = handledMembers.Count - 1; i >= 0; i--)
                     {
                         var previousInfo = handledMembers[i];
@@ -247,7 +248,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
                             if (isExcused)
                             {
-                                hasExcusedMembers = true;
+                                hasExcusedMemberForCurrent = true;
                                 continue;
                             }
 
@@ -259,7 +260,7 @@ namespace StyleCop.Analyzers.OrderingRules
                                     AccessLevelHelper.GetName(previousInfo.AccessLevel)));
                             break;
                         }
-                        else if (!hasExcusedMembers)
+                        else if (!hasExcusedMemberForCurrent)
                         {
                             break;
                         }

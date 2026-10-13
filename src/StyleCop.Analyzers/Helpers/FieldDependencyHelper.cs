@@ -111,6 +111,7 @@ internal static class FieldDependencyHelper
 
                         if (symbol is IFieldSymbol fieldSymbol
                             && !fieldSymbol.IsConst
+                            && fieldSymbol.IsStatic == field.Modifiers.Any(SyntaxKind.StaticKeyword)
                             && Equals(fieldSymbol.ContainingType?.OriginalDefinition, enclosingType.OriginalDefinition))
                         {
                             if (fieldSymbolMap.TryGetValue(fieldSymbol, out var targetVarName) && targetVarName != currentVarName)
@@ -202,7 +203,9 @@ internal static class FieldDependencyHelper
     {
         foreach (var node in expression.DescendantNodesAndSelf())
         {
-            if (node is IdentifierNameSyntax id && fieldNames.Contains(id.Identifier.ValueText))
+            if (node is IdentifierNameSyntax id
+                && fieldNames.Contains(id.Identifier.ValueText)
+                && !IsInNameof(id))
             {
                 return true;
             }
