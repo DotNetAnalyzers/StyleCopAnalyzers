@@ -279,6 +279,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return;
                 }
 
+                if (settings.ReadabilityRules.AllowBuiltInTypeAliases
+                    && usingDirective?.Alias != null
+                    && !IsBuiltInTypeName(usingDirective.Alias.Name.Identifier.ValueText, this.supportsNativeSizedIntegers))
+                {
+                    return;
+                }
+
                 SyntaxNode locationNode = identifierNameSyntax;
                 if (identifierNameSyntax.Parent is QualifiedNameSyntax)
                 {
@@ -317,6 +324,34 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 // directives still require a namespace or type name. The alias name itself is never a type reference.
                 return usingDirective.Alias != null
                     && !usingDirective.Alias.Span.Contains(identifierNameSyntax.Span);
+            }
+
+            private static bool IsBuiltInTypeName(string name, bool supportsNativeSizedIntegers)
+            {
+                switch (name)
+                {
+                case nameof(Boolean):
+                case nameof(Byte):
+                case nameof(Char):
+                case nameof(Decimal):
+                case nameof(Double):
+                case nameof(Int16):
+                case nameof(Int32):
+                case nameof(Int64):
+                case nameof(Object):
+                case nameof(SByte):
+                case nameof(Single):
+                case nameof(String):
+                case nameof(UInt16):
+                case nameof(UInt32):
+                case nameof(UInt64):
+                    return true;
+                case nameof(IntPtr):
+                case nameof(UIntPtr):
+                    return supportsNativeSizedIntegers;
+                default:
+                    return false;
+                }
             }
 
             private static bool IsNameInNameOfExpression(IdentifierNameSyntax identifierNameSyntax)

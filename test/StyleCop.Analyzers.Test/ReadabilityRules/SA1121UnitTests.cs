@@ -585,7 +585,7 @@ public class TestClass
         {
             string testSource = @"namespace Foo
 {
-  using MyInt = {|#0:System.UInt32|};
+  using MyInt = System.UInt32;
   class Bar
   {
     MyInt value = 3;
@@ -593,7 +593,7 @@ public class TestClass
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testSource, AllowBuiltInTypeAliasesSettings, new[] { Diagnostic().WithLocation(0) }, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testSource, AllowBuiltInTypeAliasesSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]

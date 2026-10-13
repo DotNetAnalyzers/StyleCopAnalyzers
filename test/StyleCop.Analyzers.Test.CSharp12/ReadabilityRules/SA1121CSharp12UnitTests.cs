@@ -143,33 +143,18 @@ public class TestClass
         [WorkItem(4011, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4011")]
         public async Task TestUsingAliasTargetWithAllowBuiltInTypeAliasesAsync()
         {
-            // allowBuiltInTypeAliases allows referring to a built-in type through an alias (MyInt), but the alias target
-            // itself is a direct reference to System.UInt32.
+            // A named alias to a built-in type is allowed when allowBuiltInTypeAliases is enabled.
             string testCode = @"
-using MyInt = {|#0:System.UInt32|};
+using MyInt = System.UInt32;
 
 public class TestClass
 {
     private MyInt value;
+    private {|#0:System.Int32|} field;
 }
 ";
 
-            string fixedCode = @"
-using MyInt = uint;
-
-public class TestClass
-{
-    private MyInt value;
-}
-";
-
-            await new CSharpTest
-            {
-                TestCode = testCode,
-                ExpectedDiagnostics = { Diagnostic().WithLocation(0) },
-                FixedCode = fixedCode,
-                Settings = AllowBuiltInTypeAliasesSettingsJson,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, AllowBuiltInTypeAliasesSettingsJson, new[] { Diagnostic().WithLocation(0) }, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -202,7 +187,12 @@ public class TestClass
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp11, testCode, Diagnostic().WithLocation(0), CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest(LanguageVersion.CSharp11)
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics = { Diagnostic().WithLocation(0) },
+                FixedCode = testCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         // C# 12 allows the target of a using alias directive to be replaced with a built-in type keyword.
@@ -311,16 +301,7 @@ public class TestClass
         {
             string testSource = @"namespace Foo
 {
-  using MyInt = {|#0:System.UInt32|};
-  class Bar
-  {
-    MyInt value = 3;
-  }
-}
-";
-            string fixedSource = @"namespace Foo
-{
-  using MyInt = uint;
+  using MyInt = System.UInt32;
   class Bar
   {
     MyInt value = 3;
@@ -331,8 +312,6 @@ public class TestClass
             await new CSharpTest
             {
                 TestCode = testSource,
-                ExpectedDiagnostics = { Diagnostic().WithLocation(0) },
-                FixedCode = fixedSource,
                 Settings = AllowBuiltInTypeAliasesSettingsJson,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
