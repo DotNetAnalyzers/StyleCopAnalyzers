@@ -145,6 +145,102 @@ namespace TestNamespace
         }
 
         /// <summary>
+        /// Verifies that multiple attributes on the same line for top-level type declarations will produce the expected diagnostic and be fixed with zero indentation.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyMultipleAttributesOnSameLineForTopLevelTypeDeclarationAsync()
+        {
+            var testCode = @"using System;
+
+[Serializable]{|#0:[|}Obsolete]
+public class TopLevelTest
+{
+}
+
+{|#1:[|}Obsolete] public class TopLevelTest2
+{
+}
+";
+
+            var fixedTestCode = @"using System;
+
+[Serializable]
+[Obsolete]
+public class TopLevelTest
+{
+}
+
+[Obsolete]
+public class TopLevelTest2
+{
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that multiple attributes on the same line for nested type declarations will produce the expected diagnostic and be fixed with correct indentation.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyMultipleAttributesOnSameLineForNestedTypeDeclarationAsync()
+        {
+            var testCode = @"using System;
+
+namespace TestNamespace
+{
+    public class OuterClass
+    {
+        [Serializable]{|#0:[|}Obsolete]
+        public class NestedClass
+        {
+        }
+
+        {|#1:[|}Obsolete] public class NestedClass2
+        {
+        }
+    }
+}
+";
+
+            var fixedTestCode = @"using System;
+
+namespace TestNamespace
+{
+    public class OuterClass
+    {
+        [Serializable]
+        [Obsolete]
+        public class NestedClass
+        {
+        }
+
+        [Obsolete]
+        public class NestedClass2
+        {
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that multiple attributes on the same line for assembly level will produce the expected diagnostic.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
