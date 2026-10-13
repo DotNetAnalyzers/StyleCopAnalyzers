@@ -350,7 +350,7 @@ namespace StyleCop.Analyzers.LayoutRules
                     .WithKeyword(keyword)
                     .WithExpressionBody(null)
                     .WithSemicolonToken(default(SyntaxToken))
-                    .WithBody(ReformatBodyAsMultipleLines(body, indentation, indentationStatements));
+                    .WithBody(ReformatBodyAsMultipleLines(body, indentation, indentationStatements, preserveSingleLineComments: true));
             }
 
             return newAccessor;
@@ -381,7 +381,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 statement = SyntaxFactory.ExpressionStatement(expression);
             }
 
-            return statement.WithTrailingTrivia(ReformatTriviaListNoTrailingSpace(accessor.SemicolonToken.TrailingTrivia));
+            return statement.WithTrailingTrivia(ReformatTriviaListPreservingSingleLineCommentsNoTrailingSpace(accessor.SemicolonToken.TrailingTrivia));
         }
 
         private static SyntaxTokenList ReformatModifiersAsMultipleLines(SyntaxTokenList modifiers, SyntaxTrivia indentation)
@@ -412,7 +412,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 .WithTrailingTrivia(newTrailingTrivia);
         }
 
-        private static BlockSyntax ReformatBodyAsMultipleLines(BlockSyntax body, SyntaxTrivia indentation, SyntaxTrivia indentationStatements)
+        private static BlockSyntax ReformatBodyAsMultipleLines(BlockSyntax body, SyntaxTrivia indentation, SyntaxTrivia indentationStatements, bool preserveSingleLineComments = false)
         {
             SyntaxTriviaList reformattedOpenBraceTrailingTrivia;
             SyntaxTriviaList reformattedCloseBraceLeadingTrivia;
@@ -424,9 +424,12 @@ namespace StyleCop.Analyzers.LayoutRules
 
                 foreach (var statement in body.Statements)
                 {
+                    var reformattedTrailingTrivia = preserveSingleLineComments
+                        ? ReformatTriviaListPreservingSingleLineCommentsNoTrailingSpace(statement.GetTrailingTrivia())
+                        : ReformatTriviaListNoTrailingSpace(statement.GetTrailingTrivia());
                     var reformattedStatement = statement
                         .WithLeadingTrivia(ReformatTriviaListNoLeadingSpace(statement.GetLeadingTrivia()).Insert(0, indentationStatements))
-                        .WithTrailingTrivia(ReformatTriviaListNoTrailingSpace(statement.GetTrailingTrivia()).Add(SyntaxFactory.CarriageReturnLineFeed));
+                        .WithTrailingTrivia(reformattedTrailingTrivia.Add(SyntaxFactory.CarriageReturnLineFeed));
                     statements.Add(reformattedStatement);
                 }
 
@@ -472,6 +475,11 @@ namespace StyleCop.Analyzers.LayoutRules
         private static SyntaxTriviaList ReformatTriviaListNoTrailingSpace(IReadOnlyList<SyntaxTrivia> triviaList)
         {
             return SyntaxFactory.TriviaList(triviaList.Where(t => t.IsKind(SyntaxKind.MultiLineCommentTrivia)).SelectMany(ExpandComment));
+        }
+
+        private static SyntaxTriviaList ReformatTriviaListPreservingSingleLineCommentsNoTrailingSpace(IReadOnlyList<SyntaxTrivia> triviaList)
+        {
+            return SyntaxFactory.TriviaList(triviaList.Where(t => t.IsKind(SyntaxKind.MultiLineCommentTrivia) || t.IsKind(SyntaxKind.SingleLineCommentTrivia)).SelectMany(ExpandComment));
         }
 
         private static SyntaxTriviaList ReformatTriviaListNoLeadingSpace(IReadOnlyList<SyntaxTrivia> triviaList)
