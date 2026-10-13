@@ -7,13 +7,16 @@ namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Globalization;
     using System.Linq;
+    using System.Text;
     using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A base class for diagnostics <see cref="SA1642ConstructorSummaryDocumentationMustBeginWithStandardText"/> and <see cref="SA1643DestructorSummaryDocumentationMustBeginWithStandardText"/> to share common code.
@@ -61,8 +64,11 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <param name="firstTextPart">The first part of the standard text.</param>
         /// <param name="secondTextPart">The second part of the standard text.</param>
         /// <param name="diagnosticDescriptor">The diagnostic to report for violations, or <see langword="null"/> to not report violations.</param>
+        /// <param name="allowLangwordStandardText"><see langword="true"/> to accept supported <c>see langword</c> tags in the standard text.</param>
+        /// <param name="documentationCulture">The culture used to look up the localized text for the <see langword="static"/> keyword.</param>
+        /// <param name="typeKindText">The localized text for the declared type kind, or <see langword="null"/> if it is not accepted.</param>
         /// <returns>A <see cref="MatchResult"/> describing the result of the analysis.</returns>
-        protected static MatchResult HandleDeclaration(SyntaxNodeAnalysisContext context, string firstTextPart, string secondTextPart, DiagnosticDescriptor diagnosticDescriptor)
+        protected static MatchResult HandleDeclaration(SyntaxNodeAnalysisContext context, string firstTextPart, string secondTextPart, DiagnosticDescriptor diagnosticDescriptor, bool allowLangwordStandardText = false, CultureInfo documentationCulture = null, string typeKindText = null)
         {
             var declarationSyntax = (BaseMethodDeclarationSyntax)context.Node;
             var documentationStructure = declarationSyntax.GetDocumentationCommentTriviaSyntax();
@@ -111,6 +117,14 @@ namespace StyleCop.Analyzers.DocumentationRules
                         }
                     }
                 }
+
+                if (allowLangwordStandardText
+                    && ContainsLangwordSee(summaryNodes)
+                    && TextPartsMatch(firstTextPart, secondTextPart, summaryNodes, declarationSyntax, documentationCulture, typeKindText, out var includedClassReferencePart)
+                    && SeeTagIsCorrect(context, includedClassReferencePart, declarationSyntax))
+                {
+                    return MatchResult.FoundMatch;
+                }
             }
             else
             {
@@ -145,21 +159,36 @@ namespace StyleCop.Analyzers.DocumentationRules
                 // Check if the summary content could be a correct standard text
                 if (summaryElement.Content.Count >= 3)
                 {
+                    XmlEmptyElementSyntax classReferencePart = null;
+
                     // Standard text has the form <part1><see><part2>
                     if (summaryElement.Content[0] is XmlTextSyntax firstTextPartSyntax
-                        && summaryElement.Content[1] is XmlEmptyElementSyntax classReferencePart
+                        && summaryElement.Content[1] is XmlEmptyElementSyntax simpleClassReferencePart
                         && summaryElement.Content[2] is XmlTextSyntax secondTextPartSyntax)
                     {
                         if (TextPartsMatch(firstTextPart, secondTextPart, firstTextPartSyntax, secondTextPartSyntax))
                         {
-                            if (SeeTagIsCorrect(context, classReferencePart, declarationSyntax))
-                            {
-                                // We found a correct standard text
-                                return MatchResult.FoundMatch;
-                            }
-
-                            diagnosticLocation = classReferencePart.GetLocation();
+                            classReferencePart = simpleClassReferencePart;
                         }
+                    }
+
+                    if (allowLangwordStandardText
+                        && classReferencePart == null
+                        && ContainsLangwordSee(summaryElement.Content)
+                        && TextPartsMatch(firstTextPart, secondTextPart, summaryElement.Content, declarationSyntax, documentationCulture, typeKindText, out var langwordClassReferencePart))
+                    {
+                        classReferencePart = langwordClassReferencePart;
+                    }
+
+                    if (classReferencePart != null)
+                    {
+                        if (SeeTagIsCorrect(context, classReferencePart, declarationSyntax))
+                        {
+                            // We found a correct standard text
+                            return MatchResult.FoundMatch;
+                        }
+
+                        diagnosticLocation = classReferencePart.GetLocation();
                     }
                 }
             }
@@ -223,6 +252,163 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             return Equals(actualSymbol.OriginalDefinition, expectedSymbol);
+        }
+
+        private static bool ContainsLangwordSee(SyntaxList<XmlNodeSyntax> content)
+        {
+            // Standard text can contain a keyword tag before the cref, after it, or in both positions.
+            for (int i = 1; i < content.Count && i <= 5; i += 2)
+            {
+                if (content[i] is XmlEmptyElementSyntax emptyElement
+                    && emptyElement.Name.ToString() == XmlCommentHelper.SeeXmlTag
+                    && XmlCommentHelper.GetFirstAttributeOrDefault<XmlTextAttributeSyntax>(emptyElement) is XmlTextAttributeSyntax langwordAttribute
+                    && langwordAttribute.Name.ToString() == "langword")
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool ContainsLangwordSee(System.Collections.Generic.List<XNode> content)
+        {
+            // Keep the include check bounded to the same prefix positions as the syntax-based check.
+            for (int i = 1; i < content.Count && i <= 5; i += 2)
+            {
+                if (content[i] is XElement element
+                    && element.Name == XmlCommentHelper.SeeXmlTag
+                    && element.Attribute("langword") != null)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool TextPartsMatch(string firstText, string secondText, SyntaxList<XmlNodeSyntax> content, BaseMethodDeclarationSyntax declarationSyntax, CultureInfo documentationCulture, string typeKindText, out XmlEmptyElementSyntax classReferencePart)
+        {
+            var firstTextPart = new StringBuilder();
+            var secondTextPart = new StringBuilder();
+            var currentTextPart = firstTextPart;
+            classReferencePart = null;
+
+            foreach (var node in content)
+            {
+                if (node is XmlTextSyntax text)
+                {
+                    currentTextPart.Append(XmlCommentHelper.GetText(text, normalizeWhitespace: true));
+                }
+                else if (node is XmlEmptyElementSyntax emptyElement
+                    && emptyElement.Name.ToString() == XmlCommentHelper.SeeXmlTag)
+                {
+                    if (classReferencePart == null
+                        && XmlCommentHelper.GetFirstAttributeOrDefault<XmlCrefAttributeSyntax>(emptyElement) is XmlCrefAttributeSyntax)
+                    {
+                        classReferencePart = emptyElement;
+                        currentTextPart = secondTextPart;
+                    }
+                    else if (XmlCommentHelper.GetFirstAttributeOrDefault<XmlTextAttributeSyntax>(emptyElement) is XmlTextAttributeSyntax langwordAttribute
+                        && langwordAttribute.Name.ToString() == "langword"
+                        && langwordAttribute.TextTokens.Count == 1
+                        && GetStandardTextForLangword(langwordAttribute.TextTokens[0].ValueText, declarationSyntax.Parent, documentationCulture, typeKindText) is string standardText)
+                    {
+                        currentTextPart.Append(standardText);
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+
+                if (classReferencePart != null && secondTextPart.Length >= secondText.Length)
+                {
+                    break;
+                }
+            }
+
+            return classReferencePart != null
+                && string.Equals(firstText, firstTextPart.ToString().TrimStart(), StringComparison.Ordinal)
+                && secondTextPart.ToString().StartsWith(secondText, StringComparison.Ordinal);
+        }
+
+        private static bool TextPartsMatch(string firstText, string secondText, System.Collections.Generic.List<XNode> content, BaseMethodDeclarationSyntax declarationSyntax, CultureInfo documentationCulture, string typeKindText, out XElement classReferencePart)
+        {
+            var firstTextPart = new StringBuilder();
+            var secondTextPart = new StringBuilder();
+            var currentTextPart = firstTextPart;
+            classReferencePart = null;
+
+            foreach (var node in content)
+            {
+                if (node is XText text)
+                {
+                    currentTextPart.Append(text.Value);
+                }
+                else if (node is XElement element && element.Name == XmlCommentHelper.SeeXmlTag)
+                {
+                    if (classReferencePart == null && element.Attribute(XmlCommentHelper.CrefArgumentName) != null)
+                    {
+                        classReferencePart = element;
+                        currentTextPart = secondTextPart;
+                    }
+                    else if (element.Attribute("langword") is XAttribute langwordAttribute
+                        && GetStandardTextForLangword(langwordAttribute.Value, declarationSyntax.Parent, documentationCulture, typeKindText) is string standardText)
+                    {
+                        currentTextPart.Append(standardText);
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+
+                if (classReferencePart != null && secondTextPart.Length >= secondText.Length)
+                {
+                    break;
+                }
+            }
+
+            return classReferencePart != null
+                && string.Equals(firstText, firstTextPart.ToString().TrimStart(), StringComparison.Ordinal)
+                && secondTextPart.ToString().StartsWith(secondText, StringComparison.Ordinal);
+        }
+
+        private static string GetStandardTextForLangword(string langword, SyntaxNode typeDeclaration, CultureInfo documentationCulture, string typeKindText)
+        {
+            if (langword == "static" && documentationCulture != null)
+            {
+                return DocumentationResources.ResourceManager.GetString(nameof(DocumentationResources.StaticConstructorKeywordText), documentationCulture);
+            }
+
+            if (langword == "class"
+                && (typeDeclaration.IsKind(SyntaxKind.ClassDeclaration) || typeDeclaration.IsKind(SyntaxKindEx.RecordDeclaration)))
+            {
+                return typeKindText;
+            }
+
+            if (langword == "struct"
+                && (typeDeclaration.IsKind(SyntaxKind.StructDeclaration) || typeDeclaration.IsKind(SyntaxKindEx.RecordStructDeclaration)))
+            {
+                return typeKindText;
+            }
+
+            if (langword == "record"
+                && (typeDeclaration.IsKind(SyntaxKindEx.RecordDeclaration) || typeDeclaration.IsKind(SyntaxKindEx.RecordStructDeclaration)))
+            {
+                return typeKindText;
+            }
+
+            return null;
         }
 
         private static bool TextPartsMatch(string firstText, string secondText, XmlTextSyntax firstTextPart, XmlTextSyntax secondTextPart)

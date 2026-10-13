@@ -156,6 +156,9 @@
   <data name="StartingTextSetsWhether" xml:space="preserve">
     <value>Nastaví hodnotu udávající, zda</value>
   </data>
+  <data name="StaticConstructorKeywordText" xml:space="preserve">
+    <value>statické</value>
+  </data>
   <data name="StaticConstructorStandardTextFirstPart" xml:space="preserve">
     <value>Inicializuje statické členy {0} </value>
   </data>

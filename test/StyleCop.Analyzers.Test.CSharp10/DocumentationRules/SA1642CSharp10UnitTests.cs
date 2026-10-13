@@ -14,6 +14,26 @@ namespace StyleCop.Analyzers.Test.CSharp10.DocumentationRules
 
     public partial class SA1642CSharp10UnitTests : SA1642CSharp9UnitTests
     {
+        /// <summary>
+        /// Verifies that record struct type kinds may be written as a langword see tag.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2144, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2144")]
+        public async Task TestStaticConstructorRecordStructLangwordDocumentationAsync()
+        {
+            var testCode = @"public record struct TestRecord
+{
+    /// <summary>
+    /// Initializes static members of the <see cref=""TestRecord""/> <see langword=""record""/>.
+    /// </summary>
+    static TestRecord() { }
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         [WorkItem(3980, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3980")]
         public async Task TestParameterlessStructConstructorAsync()

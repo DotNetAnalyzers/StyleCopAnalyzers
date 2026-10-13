@@ -240,6 +240,160 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
                 false).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that the static constructor standard text can use a langword see tag.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2144, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2144")]
+        public async Task TestStaticConstructorCorrectLangwordDocumentationAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    /// <summary>
+    /// Initializes <see langword=""static""/> members of the <see cref=""TestClass""/> class.
+    /// </summary>
+    static TestClass() { }
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the static constructor type kind may be written as a langword see tag.
+        /// </summary>
+        /// <param name="typeKind">The declared type kind.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [WorkItem(2144, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2144")]
+        public async Task TestStaticConstructorCorrectTypeKindLangwordDocumentationAsync(string typeKind)
+        {
+            var testCode = $@"public {typeKind} TestClass
+{{
+    /// <summary>
+    /// Initializes static members of the <see cref=""TestClass""/> <see langword=""{typeKind}""/>.
+    /// </summary>
+    static TestClass() {{ }}
+}}
+";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the static constructor langword text follows the configured documentation culture.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2144, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2144")]
+        public async Task TestStaticConstructorLangwordDocumentationWithCultureAsync()
+        {
+            var settings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""documentationCulture"": ""de-DE""
+    }
+  }
+}
+";
+            var testCode = @"public class TestClass
+{
+    /// <summary>
+    /// Initialisiert <see langword=""static""/> Member der <see cref=""TestClass""/> <see langword=""class""/>.
+    /// </summary>
+    static TestClass() { }
+}
+";
+
+            var test = CreateTest(settings, DiagnosticResult.EmptyDiagnosticResults);
+            test.TestCode = testCode;
+            test.FixedCode = testCode;
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("Prevents a default instance of the <see cref=\"TestClass\"/> <see langword=\"class\"/> from being created.")]
+        [InlineData("Initializes a new instance of the <see cref=\"TestClass\"/> <see langword=\"class\"/>")]
+        [WorkItem(2144, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2144")]
+        public async Task TestPrivateConstructorLangwordDocumentationAsync(string summary)
+        {
+            var testCode = $@"public class TestClass
+{{
+    /// <summary>
+    /// {summary}
+    /// </summary>
+    private TestClass() {{ }}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that <see langword="new"/> is not accepted as a tagged prose word.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2144, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2144")]
+        public async Task TestInstanceConstructorNewLangwordIsNotStandardDocumentationAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    /// <summary>
+    /// Initializes a <see langword=""new""/> instance of the <see cref=""TestClass""/> class.
+    /// </summary>
+    public TestClass() { }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, new[] { Diagnostic().WithLocation(3, 9) }, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that langword markup does not bypass constructor type-reference validation.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2144, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2144")]
+        public async Task TestStaticConstructorLangwordDocumentationWithWrongCrefAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    /// <summary>
+    /// Initializes <see langword=""static""/> members of the <see cref=""WrongClass""/> class.
+    /// </summary>
+    static TestClass() { }
+}
+public class WrongClass
+{
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, new[] { Diagnostic().WithLocation(4, 61) }, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the static constructor standard text can use a langword see tag in included documentation.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2144, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2144")]
+        public async Task TestStaticConstructorCorrectLangwordDocumentationInIncludedDocsAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    /// <include file='ValidStaticLangwordSummary.xml' path='/TestClass/TestClass/*'/>
+    static TestClass() { }
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Theory]
         [MemberData(nameof(CommonMemberData.DataTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestStaticConstructorCorrectDocumentationGenericAsync(string typeKind)
@@ -1409,6 +1563,13 @@ public class B
   </TestClass>
 </TestClass>
 ";
+            string contentValidStaticLangwordSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <TestClass>
+    <summary>Initializes <see langword=""static""/> members of the <see cref=""TestClass""/> class.</summary>
+  </TestClass>
+</TestClass>
+";
             string contentMissingSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <TestClass>
   <TestClass>
@@ -1456,6 +1617,7 @@ public class B
                 XmlReferences =
                 {
                     { "ValidSummary.xml", contentValidSummary },
+                    { "ValidStaticLangwordSummary.xml", contentValidStaticLangwordSummary },
                     { "MissingSummary.xml", contentMissingSummary },
                     { "EmptySummary.xml", contentEmptySummary },
                     { "InvalidSummary.xml", contentInvalidSummary },

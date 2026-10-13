@@ -156,6 +156,9 @@
   <data name="StartingTextSetsWhether" xml:space="preserve">
     <value>Ustawia wartość wskazującą czy</value>
   </data>
+  <data name="StaticConstructorKeywordText" xml:space="preserve">
+    <value>statyczne</value>
+  </data>
   <data name="StaticConstructorStandardTextFirstPart" xml:space="preserve">
     <value>Inicjalizuje statyczne składowe {0} </value>
   </data>

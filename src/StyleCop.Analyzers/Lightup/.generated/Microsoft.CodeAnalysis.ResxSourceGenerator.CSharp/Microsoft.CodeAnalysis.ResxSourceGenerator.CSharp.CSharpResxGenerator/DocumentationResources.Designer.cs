@@ -392,6 +392,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         public static string @StartingTextSets => GetResourceString("StartingTextSets")!;
         /// <summary>Sets a value indicating whether</summary>
         public static string @StartingTextSetsWhether => GetResourceString("StartingTextSetsWhether")!;
+        /// <summary>static</summary>
+        public static string @StaticConstructorKeywordText => GetResourceString("StaticConstructorKeywordText")!;
         /// <summary>Initializes static members of the</summary>
         public static string @StaticConstructorStandardTextFirstPart => GetResourceString("StaticConstructorStandardTextFirstPart")!;
         /// <summary>{0}</summary>

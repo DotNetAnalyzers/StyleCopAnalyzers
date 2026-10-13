@@ -161,7 +161,10 @@ namespace StyleCop.Analyzers.DocumentationRules
                     context,
                     string.Format(resourceManager.GetString(nameof(DocumentationResources.StaticConstructorStandardTextFirstPart), culture), typeKindText),
                     string.Format(resourceManager.GetString(nameof(DocumentationResources.StaticConstructorStandardTextSecondPart), culture), typeKindText),
-                    Descriptor);
+                    Descriptor,
+                    allowLangwordStandardText: true,
+                    documentationCulture: culture,
+                    typeKindText: typeKindText);
             }
             else if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword))
             {
@@ -171,7 +174,9 @@ namespace StyleCop.Analyzers.DocumentationRules
                     string.Format(
                         resourceManager.GetString(nameof(DocumentationResources.PrivateConstructorStandardTextSecondPart), culture),
                         typeKindText),
-                    null);
+                    null,
+                    allowLangwordStandardText: true,
+                    typeKindText: typeKindText);
 
                 if (privateConstructorMatch == MatchResult.FoundMatch)
                 {
@@ -187,7 +192,9 @@ namespace StyleCop.Analyzers.DocumentationRules
                     string.Format(
                         resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextSecondPart), culture),
                         typeKindText),
-                    Descriptor);
+                    Descriptor,
+                    allowLangwordStandardText: true,
+                    typeKindText: typeKindText);
             }
             else
             {
@@ -199,7 +206,9 @@ namespace StyleCop.Analyzers.DocumentationRules
                     string.Format(
                         resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextSecondPart), culture),
                         typeKindText),
-                    Descriptor);
+                    Descriptor,
+                    allowLangwordStandardText: true,
+                    typeKindText: typeKindText);
             }
         }
     }
