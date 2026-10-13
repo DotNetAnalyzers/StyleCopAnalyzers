@@ -1,6 +1,7 @@
 const locales = [
-    { lang: "en", label: "English", prefix: "", searchLanguages: ["en"], languageLabel: "Language" },
-    { lang: "ru", label: "Русский", prefix: "ru-ru/", searchLanguages: ["en", "ru"], languageLabel: "Язык" },
+    { lang: "en", label: "English", prefix: "", searchLanguages: ["en"], languageLabel: "Language", anchorLabel: "Anchor" },
+    { lang: "ru", label: "Русский", prefix: "ru-ru/", searchLanguages: ["en", "ru"], languageLabel: "Язык", anchorLabel: "Ссылка на раздел" },
+    { lang: "cs", label: "Čeština", prefix: "cs-cz/", searchLanguages: ["en", "cs"], languageLabel: "Jazyk", anchorLabel: "Odkaz na oddíl" },
 ];
 const currentLocale = locales.find(locale => locale.lang === document.documentElement.lang);
 if (!currentLocale) {
@@ -10,10 +11,25 @@ if (!currentLocale) {
 export default {
     lunrLanguages: currentLocale.searchLanguages,
     anchors: {
-        ariaLabel: document.documentElement.lang === "ru" ? "Ссылка на раздел" : "Anchor",
+        ariaLabel: currentLocale.anchorLabel,
     },
     start: () => {
-        const russian = document.documentElement.lang === "ru";
+        const localizedLabels = {
+            ru: {
+                "Toggle navigation": "Открыть или скрыть меню",
+                "Search": "Поиск",
+                "Close": "Закрыть",
+                "Show table of contents": "Показать содержание",
+                toc: "Содержание",
+            },
+            cs: {
+                "Toggle navigation": "Přepnout navigaci",
+                "Search": "Hledat",
+                "Close": "Zavřít",
+                "Show table of contents": "Zobrazit obsah",
+                toc: "Obsah",
+            },
+        }[currentLocale.lang];
         const root = new URL(document.querySelector('meta[name="docfx:rel"]').content || "./", window.location.href);
         const siteRoot = new URL("../".repeat(currentLocale.prefix.split("/").filter(Boolean).length) || "./", root);
         const page = window.location.pathname.slice(root.pathname.length) || "index.html";
@@ -52,22 +68,16 @@ export default {
         languages.append(toggle);
         languages.append(menu);
         document.getElementById("navpanel").append(languages);
-        if (russian) {
+        if (localizedLabels) {
             // These labels are not exposed through DocFX's token.json.
-            const labels = {
-                "Toggle navigation": "Открыть или скрыть меню",
-                "Search": "Поиск",
-                "Close": "Закрыть",
-                "Show table of contents": "Показать содержание",
-            };
             for (const element of document.querySelectorAll("[aria-label]")) {
-                const translated = labels[element.getAttribute("aria-label")];
+                const translated = localizedLabels[element.getAttribute("aria-label")];
                 if (translated) {
                     element.setAttribute("aria-label", translated);
                 }
             }
 
-            document.getElementById("tocOffcanvasLabel")?.replaceChildren("Содержание");
+            document.getElementById("tocOffcanvasLabel")?.replaceChildren(localizedLabels.toc);
         }
     },
 };

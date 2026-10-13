@@ -25,6 +25,46 @@ test("every English page has a Russian translation with the same code examples",
 test("the two sidebars cover the same pages", () => {
     const hrefs = text => Array.from(text.matchAll(/href:\s*([^\s}]+)/g), match => match[1]);
     assert.deepEqual(hrefs(read("documentation", "ru-ru", "toc.yml")), hrefs(read("documentation", "toc.yml")));
+    assert.deepEqual(hrefs(read("documentation", "cs-cz", "toc.yml")), hrefs(read("documentation", "toc.yml")));
+});
+
+test("the Czech sidebar uses Czech labels in both source and compiled navigation", () => {
+    const labels = [
+        "Přehled",
+        "Použití .NET CLI",
+        "Konfigurace",
+        "Povolení konfigurace",
+        "Rozdíly oproti StyleCop Classic",
+        "Oblasti pravidel",
+        "Speciální pravidla",
+        "Pravidla pro mezery",
+        "Pravidla čitelnosti",
+        "Pravidla uspořádání",
+        "Pravidla pojmenování",
+        "Pravidla udržovatelnosti",
+        "Pravidla rozložení",
+        "Pravidla dokumentace",
+        "Alternativní pravidla",
+    ];
+    const sourceLabels = Array.from(read("documentation", "cs-cz", "toc.yml")
+        .matchAll(/^\s*- name: (.+)\r?$/gm), match => match[1]);
+    assert.deepEqual(sourceLabels, labels);
+    const html = read("_site", "cs-cz", "navigation", "toc.html")
+        .replace(/&#(\d+);/g, (_, value) => String.fromCodePoint(Number(value)));
+    for (const label of labels) {
+        assert.ok(html.includes(`>${label}</a>`), `Missing compiled Czech sidebar label: ${label}`);
+    }
+});
+
+test("the Czech edition is included in the DocFX build and shared locale picker", () => {
+    const configPath = path.join(root, "docfx.cs-cz.json");
+    assert.ok(fs.existsSync(configPath), "Missing Czech DocFX build configuration");
+    assert.match(read("build", "documentation.ps1"), /docfx\.cs-cz\.json/);
+    assert.match(read("build", "docfx", "common", "public", "main.js"), /lang: "cs"/);
+    assert.match(read("documentation", "cs-cz", "RuleStatus.md"), /status\.cs-cz\.md/);
+    assert.ok(fs.existsSync(path.join(root, "docs", "status.cs-CZ.md")), "Missing Czech status page fragment");
+    assert.ok(fs.existsSync(path.join(root, "build", "docfx", "cs-cz", "token.json")), "Missing Czech DocFX tokens");
+    assert.ok(fs.existsSync(path.join(root, "documentation", "cs-cz", "navbar", "toc.yml")), "Missing Czech top navigation");
 });
 
 test("Russian resources have exactly the neutral keys and preserve format placeholders", () => {
@@ -88,11 +128,11 @@ function loadHeader(lang, url, relativeRoot, extraLocales = []) {
 test("language links preserve the page and the GitHub Pages project prefix", () => {
     for (const site of ["http://localhost:8080/", "https://dotnetanalyzers.github.io/StyleCopAnalyzers/"]) {
         for (const file of ["index.html", "SA1000.html", "RuleStatus.html"]) {
-            for (const lang of ["en", "ru"]) {
-                const prefix = lang === "ru" ? "ru-ru/" : "";
+            for (const [lang, prefix] of [["en", ""], ["ru", "ru-ru/"], ["cs", "cs-cz/"]]) {
                 const { links, options, toggle } = loadHeader(lang, `${site}${prefix}${file}#heading`, "");
                 assert.equal(links[0].href, `${site}${file}`);
                 assert.equal(links[1].href, `${site}ru-ru/${file}`);
+                assert.equal(links[2].href, `${site}cs-cz/${file}`);
                 const current = links.find(link => link.lang === lang);
                 assert.equal(current.attributes["aria-current"], "true");
                 assert.equal(current.hreflang, lang);
@@ -100,7 +140,8 @@ test("language links preserve the page and the GitHub Pages project prefix", () 
                 assert.equal(toggle.tag, "button");
                 assert.equal(toggle.attributes["data-bs-toggle"], "dropdown");
                 assert.equal(toggle.attributes["aria-expanded"], "false");
-                assert.deepEqual(Array.from(options.lunrLanguages), lang === "ru" ? ["en", "ru"] : ["en"]);
+                assert.deepEqual(Array.from(options.lunrLanguages),
+                    lang === "ru" ? ["en", "ru"] : lang === "cs" ? ["en", "cs"] : ["en"]);
             }
         }
     }
@@ -119,18 +160,23 @@ test("the shared locale list supports additional languages without adding header
     const { links, picker, toggle, options } = loadHeader("fr",
         "https://dotnetanalyzers.github.io/StyleCopAnalyzers/fr-fr/KnownChanges.html", "", extraLocales);
     assert.equal(picker.children.length, 2);
-    assert.equal(links.length, 5);
+    assert.equal(links.length, 6);
     assert.equal(toggle.textContent, "Français");
     assert.equal(toggle.attributes["aria-label"], "Langue: Français");
     assert.deepEqual(Array.from(options.lunrLanguages), ["en", "fr"]);
-    for (const [index, prefix] of ["", "ru-ru/", "fr-fr/", "de-de/", "ja-jp/"].entries()) {
+    for (const [index, prefix] of ["", "ru-ru/", "cs-cz/", "fr-fr/", "de-de/", "ja-jp/"].entries()) {
         assert.equal(links[index].href, `https://dotnetanalyzers.github.io/StyleCopAnalyzers/${prefix}KnownChanges.html`);
     }
     assert.throws(() => loadHeader("unknown", "http://localhost:8080/index.html", ""), /No documentation locale configured/);
+
+    const czech = loadHeader("cs", "http://localhost:8080/cs-cz/SA1000.html", "../");
+    assert.equal(czech.toggle.textContent, "Čeština");
+    assert.equal(czech.toggle.attributes["aria-label"], "Jazyk: Čeština");
+    assert.equal(czech.options.anchors.ariaLabel, "Odkaz na oddíl");
 });
 
-test("both builds produce every page with separate search indexes and correct page languages", () => {
-    for (const [prefix, lang] of [["", "en"], ["ru-ru", "ru"]]) {
+test("all builds produce every page with separate search indexes and correct page languages", () => {
+    for (const [prefix, lang] of [["", "en"], ["ru-ru", "ru"], ["cs-cz", "cs"]]) {
         for (const page of pages) {
             const html = read("_site", prefix, page.replace(".md", ".html"));
             assert.match(html, new RegExp(`<html lang="${lang}">`), page);
@@ -144,6 +190,7 @@ test("both builds produce every page with separate search indexes and correct pa
         assert.ok(index["SA1000.html"]);
         assert.ok(index["SA1652.html"]);
         assert.equal(Object.keys(index).some(key => key.startsWith("ru-ru/")), false);
+        assert.equal(Object.keys(index).some(key => key.startsWith("cs-cz/")), false);
     }
 
     const russian = read("_site", "ru-ru", "SA1000.html");
@@ -152,6 +199,22 @@ test("both builds produce every page with separate search indexes and correct pa
         assert.match(russian, /Изменить эту страницу/);
     }
     assert.match(russian, /name="loc:inThisArticle" content="В этой статье"/);
+    const czech = read("_site", "cs-cz", "SA1000.html");
+    assert.match(czech, /<html lang="cs">/);
+    assert.match(czech, /name="loc:inThisArticle" content="V tomto čl(?:&#225;|á)nku"/);
+});
+
+test("the Czech status page embeds its localized fragment and requests its localized report", () => {
+    const page = read("documentation", "cs-cz", "RuleStatus.md");
+    const fragment = read("docs", "status.cs-cz.md");
+    const html = read("_site", "cs-cz", "RuleStatus.html");
+    assert.match(page, /\.\.\/\.\.\/docs\/status\.cs-cz\.md/);
+    assert.match(fragment, /url: "status\/StyleCop\.Analyzers\.Status\.cs-CZ\.json"/);
+    assert.match(fragment, /Sestava stavu pravidel je neplatná nebo prázdná/);
+    assert.doesNotMatch(fragment, /<!DOCTYPE|<\/?(?:html|head|body|header|footer|iframe)\b/i);
+    assert.doesNotMatch(fragment, /\r?\n\s*\r?\n/);
+    assert.match(html, /Načítá se stav pravidel/);
+    assert.match(html, /StyleCop\.Analyzers\.Status\.cs-CZ\.json/);
 });
 
 test("Russian configuration preserves the English section bookmarks used by rule pages", () => {
