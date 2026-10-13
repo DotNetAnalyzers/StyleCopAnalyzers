@@ -9,9 +9,11 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System.Linq;
     using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// The XML header documentation for a C# element is missing a <c>&lt;summary&gt;</c> tag.
@@ -42,7 +44,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, bool needsComment, DocumentationCommentTriviaSyntax documentation, XmlNodeSyntax syntax, XElement completeDocumentation, Location[] diagnosticLocations)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, DocumentationCommentTriviaSyntax documentation, XmlNodeSyntax syntax, XElement completeDocumentation, Location[] diagnosticLocations)
         {
             if (!needsComment)
             {
@@ -76,6 +78,16 @@ namespace StyleCop.Analyzers.DocumentationRules
                     // Ignore nodes with an <inheritdoc/> tag.
                     return;
                 }
+            }
+
+            bool documentPrivate = context.Node.IsKind(SyntaxKind.FieldDeclaration)
+                ? settings.DocumentationRules.DocumentPrivateFields
+                : settings.DocumentationRules.DocumentPrivateElements;
+            if (!documentPrivate
+                && (documentation.Content.GetFirstXmlElement(XmlCommentHelper.ExcludeXmlTag) != null
+                    || (completeDocumentation != null && completeDocumentation.Elements(XmlCommentHelper.ExcludeXmlTag).Any())))
+            {
+                return;
             }
 
             foreach (var location in diagnosticLocations)
