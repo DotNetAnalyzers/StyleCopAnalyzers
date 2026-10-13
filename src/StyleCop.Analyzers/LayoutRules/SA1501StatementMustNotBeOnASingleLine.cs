@@ -109,6 +109,12 @@ namespace StyleCop.Analyzers.LayoutRules
 
                 if (openBraceLineNumber == closeBraceLineNumber)
                 {
+                    if (block.Statements.Count == 0 &&
+                        (block.Parent.IsKind(SyntaxKind.CatchClause) || block.Parent.IsKind(SyntaxKind.FinallyClause)))
+                    {
+                        return;
+                    }
+
                     switch (block.Parent.Kind())
                     {
                     case SyntaxKind.AnonymousMethodExpression:
