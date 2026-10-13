@@ -1950,6 +1950,134 @@ Z = 0,
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that malformed array initializer braces are aligned with the containing expression.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Fact]
+        [WorkItem(2854, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2854")]
+        public async Task VerifyMalformedArrayInitializerIndentationAsync()
+        {
+            var testCode = @"
+    class C
+    {
+        void M()
+        {
+            var xs = new[]
+{
+                    1,
+{|#0:                |}};
+        }
+    }
+";
+            var fixedCode = @"
+    class C
+    {
+        void M()
+        {
+            var xs = new[]
+            {
+                1,
+            };
+        }
+    }
+";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that aligning array initializers preserves trivia and honors indentation settings.
+        /// </summary>
+        /// <param name="declaration">The array declaration.</param>
+        /// <param name="useTabs">Whether indentation uses tabs.</param>
+        /// <param name="lineEnding">The line ending used in the source.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Theory]
+        [CombinatorialData]
+        [WorkItem(2854, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2854")]
+        public async Task VerifyMalformedArrayInitializerTriviaAsync(
+            [CombinatorialValues("var xs = new[]", "var xs = new int[]", "int[] xs =")] string declaration,
+            bool useTabs,
+            [CombinatorialValues("\n", "\r\n")] string lineEnding)
+        {
+            var indentation = useTabs ? "\t" : "  ";
+            var testCode = $@"
+class C
+{{
+{indentation}void M()
+{indentation}{{
+{indentation}{indentation}{declaration} // array
+{{ // opening
+{indentation}{indentation}{indentation}{indentation}1, // first
+
+{{|#0:{indentation}|}}2, 3, // shared line
+{{|#1:{indentation}{indentation}{indentation}{indentation}|}}}}; // closing
+{indentation}}}
+}}
+";
+            var fixedCode = $@"
+class C
+{{
+{indentation}void M()
+{indentation}{{
+{indentation}{indentation}{declaration} // array
+{indentation}{indentation}{{ // opening
+{indentation}{indentation}{indentation}1, // first
+
+{indentation}{indentation}{indentation}2, 3, // shared line
+{indentation}{indentation}}}; // closing
+{indentation}}}
+}}
+";
+            var test = new CSharpTest
+            {
+                TestCode = testCode.ReplaceLineEndings(lineEnding),
+                FixedCode = fixedCode.ReplaceLineEndings(lineEnding),
+                IndentationSize = 2,
+                TabSize = 2,
+                UseTabs = useTabs,
+            };
+            test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
+            test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(1));
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a zero-indentation expression retains its opening brace as the indentation anchor.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Fact]
+        [WorkItem(2854, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2854")]
+        public async Task VerifyZeroIndentationArrayInitializerAsync()
+        {
+            var testCode = @"
+class C
+{
+    void M()
+    {
+var xs = new[]
+{
+    1,
+{|#0:        |}};
+    }
+}
+";
+            var fixedCode = @"
+class C
+{
+    void M()
+    {
+var xs = new[]
+{
+    1,
+};
+    }
+}
+";
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         [WorkItem(2747, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2747")]
         public async Task VerifyInitializerBracesAreCheckedAndFixedAsync()
