@@ -16,18 +16,21 @@ namespace StyleCop.Analyzers.Test.CSharp9.DocumentationRules
         /// <summary>
         /// Verifies that record class type kinds may be written as a langword see tag.
         /// </summary>
+        /// <param name="typeKind">The tagged type kind.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
+        [Theory]
+        [InlineData("class")]
+        [InlineData("record")]
         [WorkItem(2144, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2144")]
-        public async Task TestStaticConstructorRecordLangwordDocumentationAsync()
+        public async Task TestStaticConstructorRecordClassTypeKindLangwordDocumentationAsync(string typeKind)
         {
-            var testCode = @"public record TestRecord
-{
+            var testCode = $@"public record TestRecord
+{{
     /// <summary>
-    /// Initializes static members of the <see cref=""TestRecord""/> <see langword=""record""/>.
+    /// Initializes static members of the <see cref=""TestRecord""/> <see langword=""{typeKind}""/>.
     /// </summary>
-    static TestRecord() { }
-}
+    static TestRecord() {{ }}
+}}
 ";
 
             await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
