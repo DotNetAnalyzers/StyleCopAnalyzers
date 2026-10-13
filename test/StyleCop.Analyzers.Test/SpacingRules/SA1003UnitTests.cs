@@ -1263,5 +1263,51 @@ public class MyType : MyBaseType
 
             await VerifyCSharpFixAsync(testCode, settings, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that a single-line comment before a constructor initializer is preserved by the code fix.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2613, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2613")]
+        public async Task TestConstructorInitializerWithCommentBeforeColonAsync()
+        {
+            var testCode = @"public class MyBaseType
+{
+    public MyBaseType()
+    {
+    }
+}
+
+public class MyType : MyBaseType
+{
+    public MyType()
+    // note
+    {|#0::|}
+        base()
+    {
+    }
+}
+";
+            var fixedCode = @"public class MyBaseType
+{
+    public MyBaseType()
+    {
+    }
+}
+
+public class MyType : MyBaseType
+{
+    public MyType()
+    // note
+    : base()
+    {
+    }
+}
+";
+            var expected = Diagnostic(DescriptorNotAtEndOfLine).WithLocation(0).WithArguments(":");
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

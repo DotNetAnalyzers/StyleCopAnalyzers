@@ -93,31 +93,40 @@ namespace StyleCop.Analyzers.SpacingRules
                 if (token.Parent is ConstructorInitializerSyntax constructorInitializer
                     && constructorInitializer.ColonToken == token)
                 {
-                    var constructorPrecedingToken = token.GetPreviousToken();
-                    var initializerIndentation = SyntaxFactory.TriviaList();
-                    var endOfLineTrivia = SyntaxFactory.TriviaList();
-                    foreach (var trivia in followingToken.LeadingTrivia)
+                    if (token.LeadingTrivia.Any(SyntaxKind.SingleLineCommentTrivia))
                     {
-                        if (trivia.IsKind(SyntaxKind.WhitespaceTrivia))
+                        replacements[token] = token
+                            .WithTrailingTrivia(token.TrailingTrivia.WithoutTrailingWhitespace().Add(SyntaxFactory.Space));
+                    }
+                    else
+                    {
+                        var constructorPrecedingToken = token.GetPreviousToken();
+                        var initializerIndentation = SyntaxFactory.TriviaList();
+                        var endOfLineTrivia = SyntaxFactory.TriviaList();
+                        foreach (var trivia in followingToken.LeadingTrivia)
                         {
-                            initializerIndentation = initializerIndentation.Add(trivia);
+                            if (trivia.IsKind(SyntaxKind.WhitespaceTrivia))
+                            {
+                                initializerIndentation = initializerIndentation.Add(trivia);
+                            }
                         }
+
+                        foreach (var trivia in token.TrailingTrivia)
+                        {
+                            if (trivia.IsKind(SyntaxKind.EndOfLineTrivia))
+                            {
+                                endOfLineTrivia = endOfLineTrivia.Add(trivia);
+                            }
+                        }
+
+                        replacements[constructorPrecedingToken] = constructorPrecedingToken.WithTrailingTrivia(
+                            constructorPrecedingToken.TrailingTrivia.WithoutTrailingWhitespace().AddRange(endOfLineTrivia));
+                        replacements[token] = token
+                            .WithLeadingTrivia(
+                                token.LeadingTrivia.WithoutLeadingWhitespace().WithoutTrailingWhitespace().AddRange(initializerIndentation))
+                            .WithTrailingTrivia(token.TrailingTrivia.WithoutTrailingWhitespace().Add(SyntaxFactory.Space));
                     }
 
-                    foreach (var trivia in token.TrailingTrivia)
-                    {
-                        if (trivia.IsKind(SyntaxKind.EndOfLineTrivia))
-                        {
-                            endOfLineTrivia = endOfLineTrivia.Add(trivia);
-                        }
-                    }
-
-                    replacements[constructorPrecedingToken] = constructorPrecedingToken.WithTrailingTrivia(
-                        constructorPrecedingToken.TrailingTrivia.WithoutTrailingWhitespace().AddRange(endOfLineTrivia));
-                    replacements[token] = token
-                        .WithLeadingTrivia(
-                            token.LeadingTrivia.WithoutLeadingWhitespace().WithoutTrailingWhitespace().AddRange(initializerIndentation))
-                        .WithTrailingTrivia(token.TrailingTrivia.WithoutTrailingWhitespace().Add(SyntaxFactory.Space));
                     replacements[followingToken] = followingToken.WithLeadingTrivia(followingToken.LeadingTrivia.WithoutLeadingWhitespace());
                 }
                 else if (diagnostic.Properties[SA1003SymbolsMustBeSpacedCorrectly.CodeFixAction]
