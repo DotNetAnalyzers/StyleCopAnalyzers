@@ -80,16 +80,28 @@ test("the Czech sidebar uses Czech labels in both source and compiled navigation
     }
 });
 
-test("Czech pages retain complete English fallback paragraphs instead of malformed partial translations", () => {
-    for (const file of [
-        "SA1101.md", "SA1120.md", "SA1123.md", "SA1124.md", "SA1125.md", "SA1126.md",
-        "SA1127.md", "SA1128.md", "SA1130.md", "SA1131.md", "SX1101.md",
-    ]) {
+test("Czech rule descriptions are fully translated or use complete English fallback paragraphs", () => {
+    const translations = new Map([
+        ["SA1101.md", "K porušení tohoto pravidla dochází, když kód obsahuje volání člena instance místní třídy nebo základní třídy bez předpony `this.`. Výjimkou je případ, kdy existuje místní přepsání člena základní třídy a kód má v úmyslu volat přímo člena základní třídy, čímž místní přepsání obejde. V takovém případě lze místo `this.` použít předponu `base.`."],
+        ["SA1120.md", "K porušení tohoto pravidla dochází, když kód obsahuje komentář C#, který neobsahuje žádný text."],
+        ["SA1123.md", "K porušení tohoto pravidla dochází, když je oblast umístěna uvnitř těla prvku kódu. V mnoha editorech, včetně Visual Studia, bude oblast ve výchozím nastavení sbalená a její obsah skrytý. Skrývat kód uvnitř těla prvku je obecně nevhodné, protože to může při pozdější údržbě vést ke špatným rozhodnutím."],
+        ["SA1124.md", "K porušení tohoto pravidla dochází, když je oblast umístěna kdekoli v kódu. V mnoha editorech, včetně Visual Studia, bude oblast ve výchozím nastavení sbalená a její obsah skrytý. Skrývat kód je obecně nevhodné, protože to může při pozdější údržbě vést ke špatným rozhodnutím."],
+        ["SA1125.md", "K porušení tohoto pravidla dochází, když je typ Nullable definován bez použití zkráceného zápisu jazyka C#."],
+        ["SA1126.md", "K porušení tohoto pravidla dochází, když kód obsahuje volání člena bez správné předpony."],
+        ["SA1127.md", "K porušení tohoto pravidla dochází, když kód obsahuje jednu nebo více klauzulí `where` s omezeními obecných typů na stejném řádku jako samotná deklarace typu nebo metody."],
+        ["SA1128.md", "K porušení tohoto pravidla dochází, když je inicializátor konstruktoru v kódu zčásti nebo zcela na stejném řádku jako deklarace konstruktoru."],
+        ["SA1130.md", "K porušení tohoto pravidla dochází, když kód obsahuje anonymní metodu používající „starý“ zápis `delegate (parameters) { }`."],
+        ["SA1131.md", "K porušení tohoto pravidla dochází, když kód obsahuje porovnání literálu nebo konstantní hodnoty s hodnotou proměnné a proměnná se ve výrazu nachází na pravé straně."],
+        ["SX1101.md", "K porušení tohoto pravidla dochází, když kód obsahuje volání člena instance místní třídy nebo základní třídy s předponou `this.`. Výjimkou je případ, kdy název parametru metody koliduje s identifikátorem za předponou `this.`; v takovém případě se porušení nehlásí. Toto pravidlo je ve výchozím nastavení zakázáno. Pokud jej povolíte, měli byste zakázat pravidlo [SA1101](SA1101.md)."],
+    ]);
+    for (const [file, translation] of translations) {
         const english = read("documentation", file).replaceAll("\r\n", "\n");
         const czech = read("documentation", "cs-cz", file).replaceAll("\r\n", "\n");
         const paragraph = english.match(/^A violation of this rule occurs whenever[\s\S]*?(?=\n\n|$)/m)?.[0];
         assert.ok(paragraph, `${file}: missing neutral fallback paragraph`);
-        assert.ok(czech.includes(paragraph), `${file}: preserve the complete English fallback paragraph`);
+        const normalize = text => text.replace(/\s+/g, " ");
+        assert.ok(normalize(czech).includes(normalize(paragraph)) || normalize(czech).includes(normalize(translation)),
+            `${file}: use a complete English fallback or the complete Czech translation`);
     }
 });
 

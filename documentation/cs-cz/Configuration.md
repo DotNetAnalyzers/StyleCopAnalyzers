@@ -19,15 +19,15 @@ hodnota z **stylecop.json**.
 ## Jednotná konfigurace pomocí .editorconfig nebo .globalconfig
 
 ```ini
-# .editorconfig (or .globalconfig, without the [*.cs] section header and with `is_global = true` at the top)
+# .editorconfig (nebo .globalconfig bez záhlaví oddílu [*.cs] a s `is_global = true` na začátku)
 root = true
 
 [*.cs]
-# Rule severities
+# Závažnosti pravidel
 dotnet_diagnostic.SA1633.severity = none
 dotnet_diagnostic.SA1309.severity = none
 
-# Settings
+# Nastavení
 stylecop.documentation.companyName = Contoso
 csharp_using_directive_placement = outside_namespace
 ```
@@ -51,77 +51,77 @@ nastavení jsou v následujících oddílech.
 
 | Oddíl | **stylecop.json** (objekt `settings`) | **.editorconfig** / **.globalconfig** | Hodnoty | Výchozí hodnota |
 | --- | --- | --- | --- | --- |
-| Indentation | `indentation.indentationSize` | `indent_size` | integer | `4` |
-| Indentation | `indentation.tabSize` | `tab_width` | integer | `4` |
-| Indentation | `indentation.useTabs` | `indent_style` | `true`/`false` ⇄ `tab`/`space` | `false` / `space` |
-| Readability | `readabilityRules.allowBuiltInTypeAliases` | `stylecop.readability.allowBuiltInTypeAliases` | boolean | `false` |
-| Ordering | `orderingRules.elementOrder` | `stylecop.ordering.elementOrder` | list of `kind`, `accessibility`, `constant`, `static`, `readonly` | `kind, accessibility, constant, static, readonly` |
-| Ordering | `orderingRules.systemUsingDirectivesFirst` | `dotnet_sort_system_directives_first` | boolean | `true` |
-| Ordering | `orderingRules.usingDirectivesPlacement` | `stylecop.ordering.usingDirectivesPlacement` (or `csharp_using_directive_placement`) | `insideNamespace`, `outsideNamespace`, `preserve` ⇄ `inside_namespace`, `outside_namespace` | `insideNamespace` |
-| Ordering | `orderingRules.blankLinesBetweenUsingGroups` | `stylecop.ordering.blankLinesBetweenUsingGroups` (or `dotnet_separate_import_directive_groups`) | `allow`, `require`, `omit` ⇄ `false`, `true` | `allow` |
-| Naming | `namingRules.allowCommonHungarianPrefixes` | `stylecop.naming.allowCommonHungarianPrefixes` | boolean | `true` |
-| Naming | `namingRules.allowedHungarianPrefixes` | `stylecop.naming.allowedHungarianPrefixes` | comma-separated list | empty |
-| Naming | `namingRules.allowedNamespaceComponents` | `stylecop.naming.allowedNamespaceComponents` | comma-separated list | empty |
-| Naming | `namingRules.includeInferredTupleElementNames` | `stylecop.naming.includeInferredTupleElementNames` | boolean | `false` |
-| Naming | `namingRules.tupleElementNameCasing` | `stylecop.naming.tupleElementNameCasing` | `camelCase`, `pascalCase` | `pascalCase` |
-| Maintainability | `maintainabilityRules.topLevelTypes` | `stylecop.maintainability.topLevelTypes` | list of `class`, `interface`, `struct`, `enum`, `delegate` | `class` |
-| Layout | `layoutRules.newlineAtEndOfFile` | `stylecop.layout.newlineAtEndOfFile` (or `insert_final_newline`) | `allow`, `require`, `omit` ⇄ `true`, `false` | `allow` |
-| Layout | `layoutRules.allowConsecutiveUsings` | `stylecop.layout.allowConsecutiveUsings` | boolean | `true` |
-| Layout | `layoutRules.allowDoWhileOnClosingBrace` | `stylecop.layout.allowDoWhileOnClosingBrace` | boolean | `false` |
-| Documentation | `documentationRules.documentExposedElements` | `stylecop.documentation.documentExposedElements` | boolean | `true` |
-| Documentation | `documentationRules.documentInternalElements` | `stylecop.documentation.documentInternalElements` | boolean | `true` |
-| Documentation | `documentationRules.documentPrivateElements` | `stylecop.documentation.documentPrivateElements` | boolean | `false` |
-| Documentation | `documentationRules.documentPrivateFields` | `stylecop.documentation.documentPrivateFields` | boolean | `false` |
-| Documentation | `documentationRules.documentInterfaces` | `stylecop.documentation.documentInterfaces` | `all`, `exposed`, `none` (or boolean) | `all` |
-| Documentation | `documentationRules.companyName` | `stylecop.documentation.companyName` | text | `PlaceholderCompany` |
-| Documentation | `documentationRules.copyrightText` | `stylecop.documentation.copyrightText` (or `file_header_template`) | text; `\n` and `\r` allowed | `Copyright (c) {companyName}. All rights reserved.` |
-| Documentation | `documentationRules.variables.<name>` | `stylecop.documentation.variables.<name>` (requires Roslyn 4.4 or newer) | text | none |
-| Documentation | `documentationRules.headerDecoration` | `stylecop.documentation.headerDecoration` | text | none |
-| Documentation | `documentationRules.xmlHeader` | `stylecop.documentation.xmlHeader` | boolean | `true` |
-| Documentation | `documentationRules.fileNamingConvention` | `stylecop.documentation.fileNamingConvention` | `stylecop`, `metadata` | `stylecop` |
-| Documentation | `documentationRules.documentationCulture` | `stylecop.documentation.documentationCulture` | culture name | `en-US` |
-| Documentation | `documentationRules.excludeFromPunctuationCheck` | `stylecop.documentation.excludeFromPunctuationCheck` | comma-separated list | `seealso` |
+| Odsazení | `indentation.indentationSize` | `indent_size` | celé číslo | `4` |
+| Odsazení | `indentation.tabSize` | `tab_width` | celé číslo | `4` |
+| Odsazení | `indentation.useTabs` | `indent_style` | `true`/`false` ⇄ `tab`/`space` | `false` / `space` |
+| Čitelnost | `readabilityRules.allowBuiltInTypeAliases` | `stylecop.readability.allowBuiltInTypeAliases` | logická hodnota | `false` |
+| Řazení | `orderingRules.elementOrder` | `stylecop.ordering.elementOrder` | seznam položek `kind`, `accessibility`, `constant`, `static`, `readonly` | `kind, accessibility, constant, static, readonly` |
+| Řazení | `orderingRules.systemUsingDirectivesFirst` | `dotnet_sort_system_directives_first` | logická hodnota | `true` |
+| Řazení | `orderingRules.usingDirectivesPlacement` | `stylecop.ordering.usingDirectivesPlacement` (nebo `csharp_using_directive_placement`) | `insideNamespace`, `outsideNamespace`, `preserve` ⇄ `inside_namespace`, `outside_namespace` | `insideNamespace` |
+| Řazení | `orderingRules.blankLinesBetweenUsingGroups` | `stylecop.ordering.blankLinesBetweenUsingGroups` (nebo `dotnet_separate_import_directive_groups`) | `allow`, `require`, `omit` ⇄ `false`, `true` | `allow` |
+| Pojmenování | `namingRules.allowCommonHungarianPrefixes` | `stylecop.naming.allowCommonHungarianPrefixes` | logická hodnota | `true` |
+| Pojmenování | `namingRules.allowedHungarianPrefixes` | `stylecop.naming.allowedHungarianPrefixes` | seznam oddělený čárkami | prázdný |
+| Pojmenování | `namingRules.allowedNamespaceComponents` | `stylecop.naming.allowedNamespaceComponents` | seznam oddělený čárkami | prázdný |
+| Pojmenování | `namingRules.includeInferredTupleElementNames` | `stylecop.naming.includeInferredTupleElementNames` | logická hodnota | `false` |
+| Pojmenování | `namingRules.tupleElementNameCasing` | `stylecop.naming.tupleElementNameCasing` | `camelCase`, `pascalCase` | `pascalCase` |
+| Udržovatelnost | `maintainabilityRules.topLevelTypes` | `stylecop.maintainability.topLevelTypes` | seznam typů `class`, `interface`, `struct`, `enum`, `delegate` | `class` |
+| Rozložení | `layoutRules.newlineAtEndOfFile` | `stylecop.layout.newlineAtEndOfFile` (nebo `insert_final_newline`) | `allow`, `require`, `omit` ⇄ `true`, `false` | `allow` |
+| Rozložení | `layoutRules.allowConsecutiveUsings` | `stylecop.layout.allowConsecutiveUsings` | logická hodnota | `true` |
+| Rozložení | `layoutRules.allowDoWhileOnClosingBrace` | `stylecop.layout.allowDoWhileOnClosingBrace` | logická hodnota | `false` |
+| Dokumentace | `documentationRules.documentExposedElements` | `stylecop.documentation.documentExposedElements` | logická hodnota | `true` |
+| Dokumentace | `documentationRules.documentInternalElements` | `stylecop.documentation.documentInternalElements` | logická hodnota | `true` |
+| Dokumentace | `documentationRules.documentPrivateElements` | `stylecop.documentation.documentPrivateElements` | logická hodnota | `false` |
+| Dokumentace | `documentationRules.documentPrivateFields` | `stylecop.documentation.documentPrivateFields` | logická hodnota | `false` |
+| Dokumentace | `documentationRules.documentInterfaces` | `stylecop.documentation.documentInterfaces` | `all`, `exposed`, `none` (nebo logická hodnota) | `all` |
+| Dokumentace | `documentationRules.companyName` | `stylecop.documentation.companyName` | text | `PlaceholderCompany` |
+| Dokumentace | `documentationRules.copyrightText` | `stylecop.documentation.copyrightText` (nebo `file_header_template`) | text; povoleno `\n` a `\r` | `Copyright (c) {companyName}. All rights reserved.` |
+| Dokumentace | `documentationRules.variables.<name>` | `stylecop.documentation.variables.<name>` (vyžaduje Roslyn 4.4 nebo novější) | text | žádná |
+| Dokumentace | `documentationRules.headerDecoration` | `stylecop.documentation.headerDecoration` | text | žádná |
+| Dokumentace | `documentationRules.xmlHeader` | `stylecop.documentation.xmlHeader` | logická hodnota | `true` |
+| Dokumentace | `documentationRules.fileNamingConvention` | `stylecop.documentation.fileNamingConvention` | `stylecop`, `metadata` | `stylecop` |
+| Dokumentace | `documentationRules.documentationCulture` | `stylecop.documentation.documentationCulture` | název jazykové verze | `en-US` |
+| Dokumentace | `documentationRules.excludeFromPunctuationCheck` | `stylecop.documentation.excludeFromPunctuationCheck` | seznam oddělený čárkami | `seealso` |
 
-> :memo: When a row lists a generic property in parentheses, the StyleCop-specific property takes precedence if both
-> are set. Generic properties are shared with the .NET SDK and IDE, so they are convenient when you already use them.
+> :memo: Pokud řádek uvádí v závorkách obecnou vlastnost, má při současném nastavení obou vlastností přednost vlastnost
+> specifická pro StyleCop. Obecné vlastnosti sdílí .NET SDK i IDE, proto jsou praktické, pokud je již používáte.
 
-### Okomenovaná šablona
+### Komentovaná šablona
 
 Editory nenabízejí doplňování klíčů `stylecop.*`, proto tato šablona uvádí všechna nastavení s výchozími hodnotami. Zkopírujte
 pouze řádky, které chcete změnit; nezměněné výchozí hodnoty není nutné uvádět.
 
 ```ini
 [*.cs]
-# Indentation
+# Odsazení
 indent_size = 4
 tab_width = 4
 indent_style = space                      # tab | space
 
-# Readability
+# Čitelnost
 stylecop.readability.allowBuiltInTypeAliases = false
 
-# Ordering
+# Řazení
 stylecop.ordering.elementOrder = kind, accessibility, constant, static, readonly
 dotnet_sort_system_directives_first = true
 stylecop.ordering.usingDirectivesPlacement = insideNamespace   # insideNamespace | outsideNamespace | preserve
 stylecop.ordering.blankLinesBetweenUsingGroups = allow         # allow | require | omit
 
-# Naming
+# Pojmenování
 stylecop.naming.allowCommonHungarianPrefixes = true
-stylecop.naming.allowedHungarianPrefixes =                     # comma-separated
-stylecop.naming.allowedNamespaceComponents =                   # comma-separated
+stylecop.naming.allowedHungarianPrefixes =                     # seznam oddělený čárkami
+stylecop.naming.allowedNamespaceComponents =                   # seznam oddělený čárkami
 stylecop.naming.includeInferredTupleElementNames = false
 stylecop.naming.tupleElementNameCasing = pascalCase            # camelCase | pascalCase
 
-# Maintainability
+# Udržovatelnost
 stylecop.maintainability.topLevelTypes = class                 # class, interface, struct, enum, delegate
 
-# Layout
+# Rozložení
 stylecop.layout.newlineAtEndOfFile = allow                     # allow | require | omit
 stylecop.layout.allowConsecutiveUsings = true
 stylecop.layout.allowDoWhileOnClosingBrace = false
 
-# Documentation
+# Dokumentace
 stylecop.documentation.documentExposedElements = true
 stylecop.documentation.documentInternalElements = true
 stylecop.documentation.documentPrivateElements = false
@@ -129,35 +129,37 @@ stylecop.documentation.documentPrivateFields = false
 stylecop.documentation.documentInterfaces = all                # all | exposed | none
 stylecop.documentation.companyName = PlaceholderCompany
 stylecop.documentation.copyrightText = Copyright (c) {companyName}. All rights reserved.
-stylecop.documentation.variables.myvariable = value             # requires Roslyn 4.4 or newer
+stylecop.documentation.variables.myvariable = value             # vyžaduje Roslyn 4.4 nebo novější
 stylecop.documentation.headerDecoration =
 stylecop.documentation.xmlHeader = true
 stylecop.documentation.fileNamingConvention = stylecop         # stylecop | metadata
 stylecop.documentation.documentationCulture = en-US
-stylecop.documentation.excludeFromPunctuationCheck = seealso   # comma-separated
+stylecop.documentation.excludeFromPunctuationCheck = seealso   # seznam oddělený čárkami
 ```
 
-> :warning: A value cannot contain `#` or `;`: the compiler treats everything from either character to the end of the
-> line as a comment. This matters for values such as `copyrightText`, `headerDecoration` (for example `#####`) and
-> variables; if you need those characters, use **stylecop.json** for that setting. The trailing comments in this template
-> are therefore safe to leave in place.
+> :warning: Hodnota nesmí obsahovat `#` ani `;`: kompilátor považuje vše od kteréhokoli z těchto znaků do konce řádku
+> za komentář. To je důležité u hodnot, jako jsou `copyrightText`, `headerDecoration` (například `#####`) a
+> proměnné. Pokud tyto znaky potřebujete, použijte pro dané nastavení **stylecop.json**. Koncové komentáře v této šabloně
+> proto můžete bezpečně ponechat.
 
 ## Přechod ze stylecop.json
 
-1. Create an **.editorconfig** (or **.globalconfig**) and add each setting using the *Settings reference* table above.
-   The JSON path `documentationRules.companyName` becomes `stylecop.documentation.companyName`; in general, JSON
-   `<section>Rules.<name>` becomes `stylecop.<section>.<name>`, with the exceptions of `indentation` (uses `indent_size`,
-   `tab_width`, `indent_style`) and the generic properties listed above.
-2. Convert arrays to comma-separated lists, for example `["a", "b"]` becomes `a, b`.
-3. Convert each entry of `variables` to a `stylecop.documentation.variables.<name>` property. Variable names in
-   **.editorconfig** are lowercase when compared, so the `{name}` reference in `copyrightText` matches regardless of case.
-4. Variables are not merged: if **stylecop.json** defines any `variables`, the `stylecop.documentation.variables.*`
-   properties are ignored.
-5. Delete **stylecop.json** (and the `AdditionalFiles` entry for it, if any). While both exist, **stylecop.json**
-   values win.
+1. Vytvořte soubor **.editorconfig** (nebo **.globalconfig**) a přidejte do něj každé nastavení podle výše uvedené tabulky
+   *Reference nastavení*. Cesta JSON `documentationRules.companyName` se převede na `stylecop.documentation.companyName`;
+   obecně se `<section>Rules.<name>` převede na `stylecop.<section>.<name>`, s výjimkou `indentation` (používá
+   `indent_size`, `tab_width`, `indent_style`) a výše uvedených obecných vlastností.
+2. Převeďte pole na seznamy oddělené čárkami, například `["a", "b"]` na `a, b`.
+3. Převeďte každou položku `variables` na vlastnost `stylecop.documentation.variables.<name>`. Názvy proměnných se
+   v **.editorconfig** porovnávají jako malá písmena, takže odkaz `{name}` v `copyrightText` se shoduje bez ohledu na
+   velikost písmen.
+4. Proměnné se neslučují: pokud **stylecop.json** definuje nějaké položky `variables`, vlastnosti
+   `stylecop.documentation.variables.*` se ignorují.
+5. Odstraňte **stylecop.json** (a případnou položku `AdditionalFiles`, která na něj odkazuje). Pokud jsou přítomny oba
+   soubory, mají přednost hodnoty z **stylecop.json**.
 
-> :warning: Reading `variables` from **.editorconfig** needs a compiler that exposes the configured keys (Roslyn 4.4 /
-> Visual Studio 2022 17.4 or newer). Keep `variables` in **stylecop.json** if you must support older compilers.
+> :warning: Čtení položek `variables` ze souboru **.editorconfig** vyžaduje kompilátor, který zpřístupňuje nakonfigurované
+> klíče (Roslyn 4.4 / Visual Studio 2022 17.4 nebo novější). Pokud potřebujete podporovat starší kompilátory, ponechte
+> položky `variables` v souboru **stylecop.json**.
 
 ## Přechod ze souborů sad pravidel
 
@@ -177,19 +179,19 @@ Starší mechanismy jsou popsané ve zbývající části dokumentu.
 
 ## Sady pravidel
 
-Code analysis rule sets have been the standard way to configure most diagnostic analyzers within Visual Studio. Information about creating and customizing these files can be found in the [Using Rule Sets to Group Code Analysis Rules](https://docs.microsoft.com/visualstudio/code-quality/using-rule-sets-to-group-code-analysis-rules) documentation on docs.microsoft.com.
+Sady pravidel pro analýzu kódu jsou standardním způsobem konfigurace většiny diagnostických analyzátorů v prostředí Visual Studio. Informace o vytváření a přizpůsobování těchto souborů najdete v dokumentaci [Použití sad pravidel ke sdružování pravidel analýzy kódu](https://docs.microsoft.com/visualstudio/code-quality/using-rule-sets-to-group-code-analysis-rules) na webu docs.microsoft.com.
 
-An example rule set file containing the default StyleCop Analyzers configuration is available at <https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/src/StyleCop.Analyzers.CodeFixes/rulesets/StyleCopAnalyzersDefault.ruleset>.
+Ukázkový soubor sady pravidel obsahující výchozí konfiguraci StyleCop Analyzers je dostupný na adrese <https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/src/StyleCop.Analyzers.CodeFixes/rulesets/StyleCopAnalyzersDefault.ruleset>.
 
 ## Začínáme se souborem **stylecop.json**
 
-The easiest way to add a **stylecop.json** configuration file to a new project is using a code fix provided by the project. To invoke the code fix, open any file where SA1633 is reported¹ and press Ctrl+. to bring up the Quick Fix menu. From the menu, select **Add StyleCop settings file to the project**.
+Nejjednodušší způsob, jak přidat do nového projektu konfigurační soubor **stylecop.json**, je použít opravu kódu poskytovanou projektem. Spusťte ji otevřením libovolného souboru, ve kterém se hlásí SA1633¹, a stisknutím kláves Ctrl+. otevřete nabídku Rychlé opravy. V nabídce vyberte **Přidat do projektu soubor nastavení StyleCop**.
 
-The dot file naming convention is also supported, which makes it possible to name the configuration file **.stylecop.json**.
+Podporována je také konvence názvů souborů začínajících tečkou, takže konfigurační soubor lze pojmenovat **.stylecop.json**.
 
-### JSON Schema for IntelliSense
+### Schéma JSON pro IntelliSense
 
-A JSON schema is available for **stylecop.json**. By including a reference in **stylecop.json** to this schema, Visual Studio will offer IntelliSense functionality (code completion, quick info, etc.) while editing this file. The schema may be configured by adding the following top-level property in **stylecop.json**:
+Pro soubor **stylecop.json** je k dispozici schéma JSON. Pokud do souboru **stylecop.json** přidáte odkaz na toto schéma, Visual Studio při jeho úpravách nabídne funkce IntelliSense (doplňování kódu, rychlé informace apod.). Schéma lze nastavit přidáním následující vlastnosti nejvyšší úrovně do souboru **stylecop.json**:
 
 ```json
 {
@@ -197,14 +199,16 @@ A JSON schema is available for **stylecop.json**. By including a reference in **
 }
 ```
 
-> :bulb: The code fix described previously automatically configures **stylecop.json** to reference the schema.
-> If the schema appears to be out-of-date in Visual Studio, right click anywhere in the **stylecop.json** document and then select **Reload Schemas**.
+> :bulb: Výše popsaná oprava kódu automaticky nastaví odkaz na schéma v souboru **stylecop.json**.
+> Pokud se schéma ve Visual Studiu jeví jako zastaralé, klikněte pravým tlačítkem kamkoli do dokumentu **stylecop.json**
+> a vyberte **Znovu načíst schémata**.
 
-### Source Control
+### Správa zdrojového kódu
 
-For best results, **stylecop.json** should be included in source control. This will automatically propagate the expected settings to all team members working on the project.
+Nejlepších výsledků dosáhnete, když do správy zdrojového kódu zahrnete soubor **stylecop.json**. Očekávaná nastavení se tak automaticky zpřístupní všem členům týmu pracujícím na projektu.
 
-> :warning: If you are working in Git, make sure your **.gitignore** file *does not* contain the following line. This line should be removed if present.
+> :warning: Pokud používáte Git, ujistěte se, že soubor **.gitignore** *neobsahuje* následující řádek. Pokud jej obsahuje,
+> odstraňte jej.
 >
 > ```
 > [Ss]tyle[Cc]op.*
@@ -212,7 +216,7 @@ For best results, **stylecop.json** should be included in source control. This w
 
 ## Odsazení
 
-This section describes the indentation rules which can be configured in **stylecop.json** or **.editorconfig**. Each of the described properties can be configured in the `indentation` object of the **stylecop.json** file, which is shown in the following sample.
+Tato část popisuje pravidla odsazení, která lze konfigurovat v souborech **stylecop.json** nebo **.editorconfig**. Každou popsanou vlastnost lze nastavit v objektu `indentation` souboru **stylecop.json**, jak ukazuje následující příklad.
 
 ```json
 {
@@ -223,24 +227,25 @@ This section describes the indentation rules which can be configured in **stylec
 }
 ```
 
-### Basic Indentation
+### Základní odsazení
 
-The following properties are used in **stylecop.json** to configure basic indentation in StyleCop Analyzers.
+Následující vlastnosti slouží ke konfiguraci základního odsazení StyleCop Analyzers v souboru **stylecop.json**.
 
-| Property | Default Value | Minimum Version | Summary |
+| Vlastnost | Výchozí hodnota | Minimální verze | Popis |
 | --- | --- | --- | --- |
-| `indentationSize` | **4** | 1.1.0 | The number of columns to use for each indentation of code. Depending on the `useTabs` and `tabSize` settings, this will be filled with tabs and/or spaces. |
-| `tabSize` | **4** | 1.1.0 | The width of a hard tab character in source code. This value is used when converting between tabs and spaces. |
-| `useTabs` | **false** | 1.1.0 | **true** to indent using hard tabs; otherwise, **false** to indent using spaces |
+| `indentationSize` | **4** | 1.1.0 | Počet sloupců použitý pro každou úroveň odsazení kódu. Podle nastavení `useTabs` a `tabSize` se každá úroveň odsazení vytvoří pomocí tabulátorů nebo mezer. |
+| `tabSize` | **4** | 1.1.0 | Šířka znaku tabulátoru ve zdrojovém kódu. Tato hodnota se používá při převodu mezi tabulátory a mezerami. |
+| `useTabs` | **false** | 1.1.0 | **true** pro odsazování tabulátory; jinak **false** pro odsazování mezerami |
 
-When using an **.editorconfig** file to configure StyleCop Analyzers, the basic indentation settings (`indent_size`, `tab_width` and `indent_style`) as described at editorconfig.org can be used.
-> :bulb: When working in Visual Studio, the IDE will not automatically adjust editor settings according to the values in
-> **stylecop.json**. To provide this functionality, we recommend using the **.editorconfig** file instead. Users of the [EditorConfig](https://marketplace.visualstudio.com/items?itemName=EditorConfigTeam.EditorConfig)
-> extension for Visual Studio will not need to update their C# indentation settings in order to match your project style.
+Při konfiguraci StyleCop Analyzers pomocí souboru **.editorconfig** lze použít základní nastavení odsazení
+(`indent_size`, `tab_width` a `indent_style`) popsaná na webu editorconfig.org.
+> :bulb: Při práci ve Visual Studiu IDE automaticky neupraví nastavení editoru podle hodnot v souboru **stylecop.json**.
+> Tuto funkci zajistíte použitím souboru **.editorconfig**. Uživatelé rozšíření [EditorConfig](https://marketplace.visualstudio.com/items?itemName=EditorConfigTeam.EditorConfig)
+> pro Visual Studio pak nebudou muset měnit nastavení odsazení C#, aby odpovídalo stylu projektu.
 
-## Spacing Rules
+## Pravidla mezer
 
-This section describes the features of spacing rules which can be configured in **stylecop.json** or **.editorconfig**. Each of the described properties are configured in the `spacingRules` object of the **stylecop.json** file, which is shown in the following sample.
+Tato část popisuje funkce pravidel mezer, které lze konfigurovat v souborech **stylecop.json** nebo **.editorconfig**. Všechny popsané vlastnosti se nastavují v objektu `spacingRules` souboru **stylecop.json**, jak ukazuje následující příklad.
 
 ```json
 {
@@ -251,11 +256,11 @@ This section describes the features of spacing rules which can be configured in 
 }
 ```
 
-> Currently there are no configurable settings for spacing rules.
+> Pro pravidla mezer nejsou v současnosti k dispozici žádná konfigurovatelná nastavení.
 
-## Readability Rules
+## Pravidla čitelnosti
 
-This section describes the features of readability rules which can be configured in **stylecop.json** or **.editorconfig**. Each of the described properties are configured in the `readabilityRules` object of the **stylecop.json** file, which is shown in the following sample.
+Tato část popisuje funkce pravidel čitelnosti, které lze konfigurovat v souborech **stylecop.json** nebo **.editorconfig**. Všechny popsané vlastnosti se nastavují v objektu `readabilityRules` souboru **stylecop.json**, jak ukazuje následující příklad.
 
 ```json
 {
@@ -266,15 +271,15 @@ This section describes the features of readability rules which can be configured
 }
 ```
 
-### Aliases for Built-In Types
+### Aliasy předdefinovaných typů
 
-The following property is used in **stylecop.json** to configure aliases for built-in types.
+Následující vlastnost slouží ke konfiguraci aliasů předdefinovaných typů v souboru **stylecop.json**.
 
-| Property | Default Value | Minimum Version | Summary |
+| Vlastnost | Výchozí hodnota | Minimální verze | Popis |
 | --- | --- | --- | --- |
-| `allowBuiltInTypeAliases` | **false** | 1.1.0-beta007 | Specifies whether aliases are allowed for built-in types. |
+| `allowBuiltInTypeAliases` | **false** | 1.1.0-beta007 | Určuje, zda jsou povoleny aliasy předdefinovaných typů. |
 
-By default, SA1121 reports a diagnostic on the declaration of a named alias to a built-in type:
+Ve výchozím nastavení SA1121 hlásí diagnostiku u deklarace pojmenovaného aliasu předdefinovaného typu:
 
 ```csharp
 using HRESULT = System.Int32; // SA1121
@@ -282,16 +287,16 @@ using HRESULT = System.Int32; // SA1121
 HRESULT hr = SomeNativeOperation();
 ```
 
-The `allowBuiltInTypeAliases` configuration property can be set to `true` to allow named aliases to built-in types while continuing to report diagnostics for direct references to metadata type names, such as `Int32`. Aliases that use a built-in metadata type name themselves (for example, `using Int32 = System.UInt32;`) are still reported.
+Konfigurační vlastnost `allowBuiltInTypeAliases` lze nastavit na `true`, aby se povolily pojmenované aliasy předdefinovaných typů a současně se nadále hlásily diagnostiky pro přímé odkazy na názvy typů metadat, například `Int32`. Diagnostika se nadále hlásí u aliasů, jejichž název sám odpovídá názvu předdefinovaného typu v metadatech (například `using Int32 = System.UInt32;`).
 
-When using an **.editorconfig** file to configure StyleCop Analyzers, the following property can be used:
+Při konfiguraci StyleCop Analyzers pomocí souboru **.editorconfig** lze použít následující vlastnost:
 ```ini
 stylecop.readability.allowBuiltInTypeAliases = true
 ```
 
-## Ordering Rules
+## Pravidla řazení
 
-This section describes the features of ordering rules which can be configured in **stylecop.json** or **.editorconfig**. Each of the described properties are configured in the `orderingRules` object of the **stylecop.json** file, which is shown in the following sample.
+Tato část popisuje funkce pravidel řazení, které lze konfigurovat v souborech **stylecop.json** nebo **.editorconfig**. Všechny popsané vlastnosti se nastavují v objektu `orderingRules` souboru **stylecop.json**, jak ukazuje následující příklad.
 
 ```json
 {
@@ -302,32 +307,30 @@ This section describes the features of ordering rules which can be configured in
 }
 ```
 
-### Element Order
+### Pořadí prvků
 
-The following properties are used in **stylecop.json** to configure element ordering in StyleCop Analyzers.
+Následující vlastnosti slouží ke konfiguraci řazení prvků StyleCop Analyzers v souboru **stylecop.json**.
 
-| Property | Default Value | Minimum Version | Summary |
+| Vlastnost | Výchozí hodnota | Minimální verze | Popis |
 | --- | --- | --- | --- |
-| `elementOrder` | `[ "kind", "accessibility", "constant", "static", "readonly" ]` | 1.0.0 | Specifies the traits used for ordering elements within a document, along with their precedence |
+| `elementOrder` | `[ "kind", "accessibility", "constant", "static", "readonly" ]` | 1.0.0 | Určuje vlastnosti používané k řazení prvků v dokumentu a jejich vzájemnou prioritu |
 
-The `elementOrder` property is an array of element traits. The ordering rules (SA1201, SA1202, SA1203, SA1204, SA1214,
-and SA1215) evaluate these traits in the order they are defined to identify ordering problems, and the code fix uses
-this property when reordering code elements. Any traits which are omitted from the array are ignored. The following
-traits are supported:
+Vlastnost `elementOrder` je pole vlastností prvků. Pravidla řazení (SA1201, SA1202, SA1203, SA1204, SA1214 a SA1215)
+vyhodnocují tyto vlastnosti v uvedeném pořadí, aby určily problémy s řazením. Oprava kódu tuto vlastnost používá při
+změně pořadí prvků kódu. Vynechané vlastnosti se ignorují. Podporovány jsou tyto vlastnosti:
 
-* `kind`: Elements are ordered according to their kind (see [SA1201](SA1201.md) for this predefined order)
-* `accessibility`: Elements are ordered according to their declared accessibility (see [SA1202](SA1202.md) for this
-  predefined order)
-* `constant`: Constant elements are ordered before non-constant elements
-* `static`: Static elements are ordered before non-static elements
-* `readonly`: Readonly elements are ordered before non-readonly elements
+* `kind`: Prvky se řadí podle druhu (předdefinované pořadí najdete v [SA1201](SA1201.md)).
+* `accessibility`: Prvky se řadí podle deklarované přístupnosti (předdefinované pořadí najdete v [SA1202](SA1202.md)).
+* `constant`: Konstantní prvky se řadí před nekonstantní.
+* `static`: Statické prvky se řadí před nestatické.
+* `readonly`: Prvky pouze pro čtení se řadí před ostatní prvky.
 
-This configuration property allows for a wide variety of ordering configurations, as shown in the following examples.
+Tato konfigurační vlastnost umožňuje řadu různých nastavení řazení, jak ukazují následující příklady.
 
-#### Example: All Constants First
+#### Příklad: nejprve všechny konstanty
 
-The following example shows a customized element order where *all* constant fields are placed before non-constant
-fields, regardless of accessibility.
+Následující příklad ukazuje vlastní pořadí prvků, ve kterém jsou *všechna* konstantní pole před nekonstantními poli
+bez ohledu na jejich přístupnost.
 
 ```json
 {
@@ -345,10 +348,10 @@ fields, regardless of accessibility.
 }
 ```
 
-#### Example: Ignore Accessibility
+#### Příklad: ignorování přístupnosti
 
-The following example shows a customized element order where element accessibility is simply ignored, but other ordering
-rules remain enforced.
+Následující příklad ukazuje vlastní pořadí prvků, které ignoruje přístupnost prvků, ale ostatní pravidla řazení nadále
+uplatňuje.
 
 ```json
 {
@@ -365,124 +368,122 @@ rules remain enforced.
 }
 ```
 
-> :bulb: This property can also be set in an **.editorconfig** file:
+> :bulb: Tuto vlastnost lze nastavit také v souboru **.editorconfig**:
 >
 > ```ini
 > stylecop.ordering.elementOrder = kind, accessibility, constant, static, readonly
 > ```
 
-### Using Directives
+<a id="using-directives"></a>
+### Direktivy using
 
-The following properties are used in **stylecop.json** to configure using directives in StyleCop Analyzers.
+Následující vlastnosti slouží ke konfiguraci direktiv `using` v StyleCop Analyzers v souboru **stylecop.json**.
 
-| Property | Default Value | Minimum Version | Summary |
+| Vlastnost | Výchozí hodnota | Minimální verze | Popis |
 | --- | --- | --- | --- |
-| `systemUsingDirectivesFirst` | true | 1.0.0 | Specifies whether `System` using directives are placed before other using directives |
-| `usingDirectivesPlacement` | `"insideNamespace"` | 1.0.0 | Specifies the desired placement of using directives |
-| `blankLinesBetweenUsingGroups` | `"allow"` | 1.1.0 | Specifies is blank lines are required to separate groups of using statements |
+| `systemUsingDirectivesFirst` | true | 1.0.0 | Určuje, zda se direktivy `using` pro `System` umisťují před ostatní direktivy `using`. |
+| `usingDirectivesPlacement` | `"insideNamespace"` | 1.0.0 | Určuje požadované umístění direktiv `using`. |
+| `blankLinesBetweenUsingGroups` | `"allow"` | 1.1.0 | Určuje, zda jsou k oddělení skupin direktiv `using` vyžadovány prázdné řádky. |
 
-`systemUsingDirectivesFirst` affects the following rules and their code fixes:
+Vlastnost `systemUsingDirectivesFirst` ovlivňuje následující pravidla a jejich opravy kódu:
 
-* [SA1208](SA1208.md) only reports `System` using directives placed after other using directives when this property is `true`.
-* [SA1210](SA1210.md) sorts `System` namespaces ahead of other namespaces when this property is `true`, and sorts all
-  namespaces together alphabetically when it is `false`.
-* [SA1217](SA1217.md) sorts `using static` directives for `System` types ahead of other `using static` directives when
-  this property is `true`, and sorts them all together alphabetically when it is `false`.
+* [SA1208](SA1208.md) hlásí direktivy `using` pro `System` umístěné za ostatními direktivami `using` pouze tehdy, když je tato vlastnost nastavena na `true`.
+* [SA1210](SA1210.md) řadí obory názvů `System` před ostatní obory názvů, pokud je tato vlastnost nastavena na `true`; při hodnotě `false` řadí všechny obory názvů společně podle abecedy.
+* [SA1217](SA1217.md) řadí direktivy `using static` pro typy `System` před ostatní direktivy `using static`, pokud je tato vlastnost nastavena na `true`; při hodnotě `false` je řadí společně podle abecedy.
 
-When using an **.editorconfig** file to configure StyleCop Analyzers, the respective properties for [formatting .NET/C#](https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/formatting-rules) can be used:
+Při konfiguraci StyleCop Analyzers pomocí souboru **.editorconfig** lze použít odpovídající vlastnosti pro
+[formátování .NET/C#](https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/formatting-rules):
 ```ini
 dotnet_sort_system_directives_first = true
 csharp_using_directive_placement = inside_namespace
 dotnet_separate_import_directive_groups = true
 ```
 
-> :memo: The generic properties cannot express every value: `csharp_using_directive_placement` has no `preserve`, and
-> `dotnet_separate_import_directive_groups` has no `omit`. Use the StyleCop specific properties for those; they take
-> precedence over the generic ones:
+> :memo: Obecné vlastnosti neumí vyjádřit všechny hodnoty: `csharp_using_directive_placement` nemá hodnotu `preserve` a
+> `dotnet_separate_import_directive_groups` nemá hodnotu `omit`. V těchto případech použijte vlastnosti specifické pro
+> StyleCop; mají před obecnými vlastnostmi přednost:
 >
 > ```ini
 > stylecop.ordering.usingDirectivesPlacement = preserve
 > stylecop.ordering.blankLinesBetweenUsingGroups = omit
 > ```
 
-#### Using Directives Placement
+#### Umístění direktiv using
 
-The `usingDirectivesPlacement` property affects the behavior of the following rules which report incorrectly placed
-using directives.
+Vlastnost `usingDirectivesPlacement` ovlivňuje chování následujících pravidel, která hlásí nesprávně umístěné direktivy
+`using`.
 
 * [SA1200 Using directives should be placed correctly](SA1200.md)
 
-> :warning: Use of certain features, including but not limited to preprocessor directives, may cause the using
-> directives code fix to not relocate using directives automatically. If SA1200 is still reported after applying the Fix
-> All operation for using directives, the remaining cases will need to be resolved manually.
+> :warning: Použití některých funkcí, například direktiv preprocesoru, může zabránit opravě kódu pro direktivy `using`
+> v jejich automatickém přesunutí. Pokud se SA1200 hlásí i po použití operace Opravit vše pro direktivy `using`, bude
+> nutné zbývající případy vyřešit ručně.
 
-This property has three allowed values, which are described as follows.
+Tato vlastnost má tři povolené hodnoty:
 
 ##### `"insideNamespace"`
 
-In this mode, using directives should be placed *inside* of namespace declarations. This is the default mode, and
-adheres to the original SA1200 behavior from StyleCop Classic.
+V tomto režimu se direktivy `using` mají umisťovat *dovnitř* deklarací oborů názvů. Jde o výchozí režim, který
+odpovídá původnímu chování SA1200 ve StyleCop Classic.
 
-* SA1200 reports using directives which are located outside of a namespace declaration (a few exceptions exist for cases
-  where this is required)
-* Using directives code fix moves using directives inside of namespace declarations where possible
+* SA1200 hlásí direktivy `using` umístěné mimo deklaraci oboru názvů (existuje několik výjimek, kdy je to nutné).
+* Oprava kódu pro direktivy `using` je přesune dovnitř deklarací oborů názvů, pokud je to možné.
 
 ##### `"outsideNamespace"`
 
-In this mode, using directives should be placed *outside* of namespace declarations.
+V tomto režimu se direktivy `using` mají umisťovat *mimo* deklarace oborů názvů.
 
-* SA1200 reports using directives which are located inside of a namespace declaration
-* Using directives code fix moves using directives outside of namespace declarations where possible
+* SA1200 hlásí direktivy `using` umístěné uvnitř deklarace oboru názvů.
+* Oprava kódu pro direktivy `using` je přesune mimo deklarace oborů názvů, pokud je to možné.
 
 ##### `"preserve"`
 
-In this mode, using directives may be placed inside or outside of namespaces.
+V tomto režimu lze direktivy `using` umisťovat dovnitř i mimo obory názvů.
 
-* SA1200 does not report any violations
-* Using directives code fix may reorder using directives, but does not relocate them
+* SA1200 nehlásí žádná porušení.
+* Oprava kódu pro direktivy `using` je může seřadit, ale nepřesouvá je.
 
-#### Blank Lines Between Groups
-The `blankLinesBetweenUsingGroups` property affects the behavior of the following rules which report the presence / absence
-of blanks lines between groups of using directives.
+#### Prázdné řádky mezi skupinami
+Vlastnost `blankLinesBetweenUsingGroups` ovlivňuje chování následujících pravidel, která hlásí přítomnost či
+nepřítomnost prázdných řádků mezi skupinami direktiv `using`.
 
 * [SA1516 Elements should be separated by blank line](SA1516.md)
 
-Using directives can grouped based on the purpose of the using directive.
-StyleCop Analyzers recognizes the following using directive group types:
+Direktivy `using` lze seskupovat podle jejich účelu. StyleCop Analyzers rozpoznává následující typy skupin direktiv `using`:
 
-- System using directives (only when `systemUsingDirectivesFirst` is true)
-- Normal using directives
-- Static using directives
-- Alias using directives
+- Direktivy `using` pro System (pouze pokud je `systemUsingDirectivesFirst` nastaveno na `true`)
+- Běžné direktivy `using`
+- Statické direktivy `using`
+- Direktivy aliasů `using`
 
-This property has three allowed values, which are described as follows.
+Tato vlastnost má tři povolené hodnoty:
 
 ##### `"allow"`
 
-In this mode, a blank line between groups for using directives is *optional*.
+V tomto režimu je prázdný řádek mezi skupinami direktiv `using` *volitelný*.
 
-* No diagnostic will be produced.
-* Using directives code fix will not insert blank lines.
+* Nebude hlášena žádná diagnostika.
+* Oprava kódu pro direktivy `using` nebude vkládat prázdné řádky.
 
 ##### `"require"`
 
-In this mode, a blank line between groups for using directives is *mandatory*.
+V tomto režimu je prázdný řádek mezi skupinami direktiv `using` *povinný*.
 
-* SA1516 reports missing blank lines between using directive groups.
-* Using directives code fix will insert blank lines.
-* SA1516 code fix will add a missing blank line.
+* SA1516 hlásí chybějící prázdné řádky mezi skupinami direktiv `using`.
+* Oprava kódu pro direktivy `using` bude vkládat prázdné řádky.
+* Oprava kódu SA1516 přidá chybějící prázdný řádek.
 
 ##### `"omit"`
 
-In this mode, a blank line between groups for using directives is *not allowed*.
+V tomto režimu není prázdný řádek mezi skupinami direktiv `using` *povolen*.
 
-* SA1516 reports blank lines between using directive groups.
-* Using directives code fix will not insert blank lines.
-* SA1516 code fix will remove blank lines between using directive groups.
+* SA1516 hlásí prázdné řádky mezi skupinami direktiv `using`.
+* Oprava kódu pro direktivy `using` nebude vkládat prázdné řádky.
+* Oprava kódu SA1516 odstraní prázdné řádky mezi skupinami direktiv `using`.
 
-## Naming Rules
+## Pravidla pojmenování
 
-This section describes the features of naming rules which can be configured in **stylecop.json** or **.editorconfig**. Each of the described properties are configured in the `namingRules` object of the **stylecop.json** file, which is shown in the following sample.
+Tato část popisuje funkce pravidel pojmenování, které lze konfigurovat v souborech **stylecop.json** nebo **.editorconfig**. Všechny popsané vlastnosti se nastavují v objektu `namingRules` souboru **stylecop.json**, jak ukazuje následující příklad.
 
 ```json
 {
@@ -493,16 +494,16 @@ This section describes the features of naming rules which can be configured in *
 }
 ```
 
-### Hungarian Notation
+### Maďarská notace
 
-The following properties are used in **stylecop.json** to configure allowable Hungarian notation prefixes in StyleCop Analyzers.
+Následující vlastnosti slouží ke konfiguraci povolených předpon maďarské notace v StyleCop Analyzers v souboru **stylecop.json**.
 
-| Property | Default Value | Minimum Version | Summary |
+| Vlastnost | Výchozí hodnota | Minimální verze | Popis |
 | --- | --- | --- | --- |
-| `allowCommonHungarianPrefixes` | **true** | 1.0.0 | Specifies whether common non-Hungarian notation prefixes should be allowed. When true, the two-letter words 'as', 'at', 'by', 'do', 'go', 'if', 'in', 'is', 'it', 'no', 'of', 'on', 'or', and 'to' are allowed to appear as prefixes for variable names. |
-| `allowedHungarianPrefixes` | `[ ]` | 1.0.0 | Specifies additional prefixes which are allowed to be used in variable names. See the example below for more information. |
+| `allowCommonHungarianPrefixes` | **true** | 1.0.0 | Určuje, zda se mají povolit běžné předpony, které nejsou maďarskou notací. Je-li hodnota `true`, lze jako předpony názvů proměnných použít dvoupísmenná slova 'as', 'at', 'by', 'do', 'go', 'if', 'in', 'is', 'it', 'no', 'of', 'on', 'or' a 'to'. |
+| `allowedHungarianPrefixes` | `[ ]` | 1.0.0 | Určuje další předpony povolené v názvech proměnných. Další informace najdete v následujícím příkladu. |
 
-The following example shows a settings file which allows the common prefixes as well as the custom prefixes 'md' and 'cd'.
+Následující příklad ukazuje soubor nastavení, který povoluje běžné předpony i vlastní předpony 'md' a 'cd'.
 
 ```json
 {
@@ -517,21 +518,21 @@ The following example shows a settings file which allows the common prefixes as 
 }
 ```
 
-When using an **.editorconfig** file to configure StyleCop Analyzers, the following properties can be used:
+Při konfiguraci StyleCop Analyzers pomocí souboru **.editorconfig** lze použít následující vlastnosti:
 ```ini
 stylecop.naming.allowCommonHungarianPrefixes = true
 stylecop.naming.allowedHungarianPrefixes = cd, md
 ```
 
-### Namespace Components
+### Části oboru názvů
 
-The following property is used in **stylecop.json** to configure allowable namespace components (e.g. ones that start with a lowercase letter).
+Následující vlastnost slouží ke konfiguraci povolených částí oboru názvů (například těch, které začínají malým písmenem) v souboru **stylecop.json**.
 
-| Property | Default Value | Minimum Version | Summary |
+| Vlastnost | Výchozí hodnota | Minimální verze | Popis |
 | --- | --- | --- | --- |
-| `allowedNamespaceComponents` | `[ ]` | 1.2.0 | Specifies namespace components that are allowed to be used. See the example below for more information. |
+| `allowedNamespaceComponents` | `[ ]` | 1.2.0 | Určuje povolené části oboru názvů. Další informace najdete v následujícím příkladu. |
 
-The following example shows a settings file which allows namespace components such as `eBay` or `Apple.iPod`.
+Následující příklad ukazuje soubor nastavení, který povoluje části oboru názvů, jako jsou `eBay` nebo `Apple.iPod`.
 
 ```json
 {
@@ -546,21 +547,21 @@ The following example shows a settings file which allows namespace components su
 }
 ```
 
-When using an **.editorconfig** file to configure StyleCop Analyzers, the following property can be used:
+Při konfiguraci StyleCop Analyzers pomocí souboru **.editorconfig** lze použít následující vlastnost:
 ```ini
 stylecop.naming.allowedNamespaceComponents = eBay, iPod
 ```
 
-### Tuple element names
+### Názvy prvků n-tic
 
-The following properties are used in **stylecop.json** to configure the behavior of the tuple element name analyzers.
+Následující vlastnosti slouží ke konfiguraci chování analyzátorů názvů prvků n-tic v souboru **stylecop.json**.
 
-| Property | Default Value | Minimum Version | Summary |
+| Vlastnost | Výchozí hodnota | Minimální verze | Popis |
 | --- | --- | --- | --- |
-| `includeInferredTupleElementNames` | false | 1.2.0 | Specifies whether inferred tuple element names will be analyzed as well. Explicit element names, including those in tuple expressions, are always analyzed. |
-| `tupleElementNameCasing` | "PascalCase" | 1.2.0 | Specifies the casing convention used for tuple element names. |
+| `includeInferredTupleElementNames` | false | 1.2.0 | Určuje, zda se mají analyzovat i odvozené názvy prvků n-tice. Explicitní názvy prvků, včetně těch ve výrazech n-tic, se analyzují vždy. |
+| `tupleElementNameCasing` | "PascalCase" | 1.2.0 | Určuje konvenci velikosti písmen používanou v názvech prvků n-tice. |
 
-The following example shows a settings file which requires tuple element names to use camel case for all tuple elements (including inferred element names).
+Následující příklad ukazuje soubor nastavení, který vyžaduje zápis názvů všech prvků n-tice (včetně odvozených názvů) ve formátu camelCase.
 
 ```json
 {
@@ -573,27 +574,27 @@ The following example shows a settings file which requires tuple element names t
 }
 ```
 
-When using an **.editorconfig** file to configure StyleCop Analyzers, the following properties can be used:
+Při konfiguraci StyleCop Analyzers pomocí souboru **.editorconfig** lze použít následující vlastnosti:
 ```ini
 stylecop.naming.includeInferredTupleElementNames = true
 stylecop.naming.tupleElementNameCasing = camelCase
 ```
 
-#### Tuple Element Name Casing
-The `tupleElementNameCasing` property affects the behavior of the [SA1316 Tuple element names should use correct casing](SA1316.md) analyzer.
+#### Velikost písmen v názvech prvků n-tic
+Vlastnost `tupleElementNameCasing` ovlivňuje chování analyzátoru [SA1316 Názvy prvků n-tic mají používat správnou velikost písmen](SA1316.md).
 
-This property has two allowed values, which are described as follows.
+Tato vlastnost má dvě povolené hodnoty:
 
 ##### `"camelCase"`
-In this mode, tuple element names must start with a lowercase letter.
+V tomto režimu musí názvy prvků n-tice začínat malým písmenem.
 
 ##### `"PascalCase"`
-In this mode, tuple element names must start with an uppercase letter.
+V tomto režimu musí názvy prvků n-tice začínat velkým písmenem.
 
 
-## Maintainability Rules
+## Pravidla udržovatelnosti
 
-This section describes the features of maintainability rules which can be configured in **stylecop.json** or **.editorconfig**. Each of the described properties are configured in the `maintainabilityRules` object of the **stylecop.json** file, which is shown in the following sample.
+Tato část popisuje funkce pravidel udržovatelnosti, které lze konfigurovat v souborech **stylecop.json** nebo **.editorconfig**. Všechny popsané vlastnosti se nastavují v objektu `maintainabilityRules` souboru **stylecop.json**, jak ukazuje následující příklad.
 
 ```json
 {
@@ -604,28 +605,29 @@ This section describes the features of maintainability rules which can be config
 }
 ```
 
-The following properties are used in **stylecop.json** to configure maintainability rules in StyleCop Analyzers.
+Následující vlastnosti slouží ke konfiguraci pravidel udržovatelnosti StyleCop Analyzers v souboru **stylecop.json**.
 
-| Property | Default Value | Minimum Version | Summary |
+| Vlastnost | Výchozí hodnota | Minimální verze | Popis |
 | --- | --- | --- | --- |
-| `topLevelTypes` | `[ "class" ]` | 1.1.0 | Specifies which kind of types that should be placed in separate files |
+| `topLevelTypes` | `[ "class" ]` | 1.1.0 | Určuje druhy typů, které mají být umístěny v samostatných souborech. |
 
-The `topLevelTypes` property is an array which specifies which kind of types that should be placed in separate files
-according to rule SA1402. The following types are supported:
+Vlastnost `topLevelTypes` je pole určující druhy typů, které mají být podle pravidla SA1402 umístěny v samostatných
+souborech. Podporovány jsou následující typy:
 * `class`
 * `interface`
 * `struct`
 * `enum`
 * `delegate`
 
-When using an **.editorconfig** file to configure StyleCop Analyzers, the following property can be used (comma-separated, using the same names as above):
+Při konfiguraci StyleCop Analyzers pomocí souboru **.editorconfig** lze použít následující vlastnost (názvy oddělené čárkami, stejné jako výše):
 ```ini
 stylecop.maintainability.topLevelTypes = class
 ```
 
-## Layout Rules
+<a id="layout-rules"></a>
+## Pravidla rozložení
 
-This section describes the features of layout rules which can be configured in **stylecop.json** or **.editorconfig**. Each of the described properties are configured in the `layoutRules` object of the **stylecop.json** file, which is shown in the following sample.
+Tato část popisuje funkce pravidel rozložení, které lze konfigurovat v souborech **stylecop.json** nebo **.editorconfig**. Všechny popsané vlastnosti se nastavují v objektu `layoutRules` souboru **stylecop.json**, jak ukazuje následující příklad.
 
 ```json
 {
@@ -636,54 +638,55 @@ This section describes the features of layout rules which can be configured in *
 }
 ```
 
-The following properties are used in **stylecop.json** to configure layout rules in StyleCop Analyzers.
+Následující vlastnosti slouží ke konfiguraci pravidel rozložení StyleCop Analyzers v souboru **stylecop.json**.
 
-| Property | Default Value | Minimum Version | Summary |
+| Vlastnost | Výchozí hodnota | Minimální verze | Popis |
 | --- | --- | --- | --- |
-| `newlineAtEndOfFile` | `"allow"` | 1.0.0 | Specifies the handling for newline characters which appear at the end of a file |
-| `allowConsecutiveUsings` | `true` | 1.1.0 | Specifies if SA1519 will allow consecutive using statements without braces |
-| `allowDoWhileOnClosingBrace` | `false` | >1.2.0 | Specifies if SA1500 will allow the `while` expression of a `do`/`while` loop to be on the same line as the closing brace, as is generated by the default code snippet of Visual Studio |
+| `newlineAtEndOfFile` | `"allow"` | 1.0.0 | Určuje způsob zpracování znaku nového řádku na konci souboru. |
+| `allowConsecutiveUsings` | `true` | 1.1.0 | Určuje, zda SA1519 povolí po sobě jdoucí příkazy `using` bez složených závorek. |
+| `allowDoWhileOnClosingBrace` | `false` | >1.2.0 | Určuje, zda SA1500 povolí umístit výraz `while` cyklu `do`/`while` na stejný řádek jako uzavírací složenou závorku, jak to vytváří výchozí fragment kódu ve Visual Studiu. |
 
-When using an **.editorconfig** file to configure StyleCop Analyzers, the newline setting (`insert_final_newline`) as described at editorconfig.org can be used, and the following additional properties:
+Při konfiguraci StyleCop Analyzers pomocí souboru **.editorconfig** lze použít nastavení nového řádku (`insert_final_newline`) popsané na webu editorconfig.org a také následující vlastnosti:
 ```ini
 stylecop.layout.newlineAtEndOfFile = allow
 stylecop.layout.allowConsecutiveUsings = true
 stylecop.layout.allowDoWhileOnClosingBrace = false
 ```
 
-> :memo: `insert_final_newline = true` maps to `"require"` and `false` maps to `"omit"`. Neither can express `"allow"`,
-> so use `stylecop.layout.newlineAtEndOfFile` for that. The StyleCop specific property takes precedence.
+> :memo: `insert_final_newline = true` odpovídá hodnotě `"require"` a `false` hodnotě `"omit"`. Ani jedna z nich nevyjadřuje
+> `"allow"`, proto pro tuto hodnotu použijte `stylecop.layout.newlineAtEndOfFile`. Vlastnost specifická pro StyleCop má přednost.
 
-### Lines at End of File
+### Řádky na konci souboru
 
-The behavior of [SA1518](SA1518.md) can be customized regarding the manner in which newline characters at the end of a
-file are handled. The `newlineAtEndOfFile` property supports the following values:
+Chování pravidla [SA1518](SA1518.md) lze přizpůsobit tak, aby určovalo způsob zpracování znaku nového řádku na konci
+souboru. Vlastnost `newlineAtEndOfFile` podporuje následující hodnoty:
 
-* `"allow"`: Files are allowed to end with a single newline character, but it is not required
-* `"require"`: Files are required to end with a single newline character
-* `"omit"`: Files may not end with a newline character
+* `"allow"`: Soubory mohou končit jedním znakem nového řádku, není to však povinné.
+* `"require"`: Soubory musí končit jedním znakem nového řádku.
+* `"omit"`: Soubory nesmí končit znakem nového řádku.
 
-### Consecutive using statements without braces
+### Po sobě jdoucí příkazy using bez složených závorek
 
-The behavior of [SA1519](SA1519.md) can be customized regarding the manner in which consecutive using statements without braces are treated.
-The `allowConsecutiveUsings` property specifies the behavior:
+Chování pravidla [SA1519](SA1519.md) lze přizpůsobit tak, aby určovalo zacházení s po sobě jdoucími příkazy `using` bez
+složených závorek. Chování určuje vlastnost `allowConsecutiveUsings`:
 
-* `true`: consecutive using statements without braces will not produce diagnostics
-* `false`: consecutive using statements without braces will produce a SA1519 diagnostic
+* `true`: po sobě jdoucí příkazy `using` bez složených závorek nevyvolají diagnostiku.
+* `false`: po sobě jdoucí příkazy `using` bez složených závorek vyvolají diagnostiku SA1519.
 
-This only allows omitting the braces for a using followed by another using statement. A using statement followed by any other type of statement will still
-require braces to used.
+Toto nastavení povoluje vynechat složené závorky pouze u příkazu `using`, po kterém následuje další příkaz `using`.
+Příkaz `using`, za kterým následuje jakýkoli jiný typ příkazu, bude i nadále vyžadovat složené závorky.
 
-### Do-While Loop Placement
+### Umístění cyklu do-while
 
-The behavior of [SA1500](SA1500.md) can be customized regarding the manner in which the `while` expression of a `do`/`while` loop is allowed to be placed. The `allowDoWhileOnClosingBrace` property specified the behavior:
+Chování pravidla [SA1500](SA1500.md) lze přizpůsobit nastavením umístění výrazu `while` v cyklu `do`/`while`.
+Chování určuje vlastnost `allowDoWhileOnClosingBrace`:
 
-* `true`: the `while` expression of a `do`/`while` loop may be placed on the same line as the closing brace or on a separate line
-* `false`: the `while` expression of a `do`/`while` loop must be on a separate line from the closing brace
+* `true`: výraz `while` cyklu `do`/`while` lze umístit na stejný řádek jako uzavírací složenou závorku nebo na samostatný řádek.
+* `false`: výraz `while` cyklu `do`/`while` musí být na samostatném řádku od uzavírací složené závorky.
 
-## Documentation Rules
+## Pravidla dokumentace
 
-This section describes the features of documentation rules which can be configured in **stylecop.json** or **.editorconfig**. Each of the described properties are configured in the `documentationRules` object of the **stylecop.json** file, which is shown in the following sample.
+Tato část popisuje funkce pravidel dokumentace, které lze konfigurovat v souborech **stylecop.json** nebo **.editorconfig**. Všechny popsané vlastnosti se nastavují v objektu `documentationRules` souboru **stylecop.json**, jak ukazuje následující příklad.
 
 ```json
 {
@@ -694,19 +697,19 @@ This section describes the features of documentation rules which can be configur
 }
 ```
 
-### Copyright Headers
+### Hlavičky s informacemi o autorských právech
 
-The following properties are used in **stylecop.json** to configure copyright headers in StyleCop Analyzers.
+Následující vlastnosti slouží ke konfiguraci hlaviček s informacemi o autorských právech v StyleCop Analyzers v souboru **stylecop.json**.
 
-| Property | Default Value | Minimum Version | Summary |
+| Vlastnost | Výchozí hodnota | Minimální verze | Popis |
 | --- | --- | --- | --- |
-| `companyName` | `"PlaceholderCompany"` | 1.0.0 | Specifies the company name which should appear in copyright notices |
-| `copyrightText` | `"Copyright (c) {companyName}. All rights reserved."` | 1.0.0 | Specifies the default copyright text which should appear in copyright headers |
-| `xmlHeader` | **true** | 1.0.0 | Specifies whether file headers should use standard StyleCop XML format, where the copyright notice is wrapped in a `<copyright>` element |
-| `variables` | n/a | 1.0.0 | Specifies replacement variables which can be referenced in the `copyrightText` value |
-| `headerDecoration` | n/a | 1.1.0 | This value can be set to add a decoration for the header comment so headers look similar to the ones generated by the StyleCop Classic ReSharper fix |
+| `companyName` | `"PlaceholderCompany"` | 1.0.0 | Určuje název společnosti, který se má zobrazit v oznámeních o autorských právech. |
+| `copyrightText` | `"Copyright (c) {companyName}. All rights reserved."` | 1.0.0 | Určuje výchozí text o autorských právech, který se má zobrazit v hlavičkách souborů. |
+| `xmlHeader` | **true** | 1.0.0 | Určuje, zda mají hlavičky souborů používat standardní formát XML StyleCop, v němž je oznámení o autorských právech obklopeno elementem `<copyright>`. |
+| `variables` | n/a | 1.0.0 | Určuje proměnné nahrazující text, na které lze odkazovat v hodnotě `copyrightText`. |
+| `headerDecoration` | n/a | 1.1.0 | Touto hodnotou lze ozdobit komentář hlavičky, aby se hlavičky podobaly těm, které vytváří oprava ReSharperu ve StyleCop Classic. |
 
-When using an **.editorconfig** file to configure StyleCop Analyzers, the following properties can be used:
+Při konfiguraci StyleCop Analyzers pomocí souboru **.editorconfig** lze použít následující vlastnosti:
 ```ini
 stylecop.documentation.companyName = PlaceholderCompany
 stylecop.documentation.copyrightText = Copyright (c) {companyName}. All rights reserved.
@@ -714,24 +717,27 @@ stylecop.documentation.xmlHeader = true
 stylecop.documentation.headerDecoration = -----------------
 ```
 
-> :memo: Instead of `stylecop.documentation.copyrightText` the `file_header_template` property as described in [IDE0073 (Require file header)](https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0073) can be used. However the StyleCop specific property will take precedence.
+> :memo: Místo `stylecop.documentation.copyrightText` lze použít vlastnost `file_header_template` popsanou v pravidle
+> [IDE0073 (Vyžadovat hlavičku souboru)](https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0073).
+> Vlastnost specifická pro StyleCop má přednost.
 
-> :bulb: Variables can be set in an **.editorconfig** file with `stylecop.documentation.variables.<name> = <value>`.
-> EditorConfig lowercases property names, so `<name>` is matched case-insensitively. This requires a compiler version
-> that exposes the list of configured keys (Roslyn 4.4 / Visual Studio 2022 17.4 or newer).
+> :bulb: Proměnné lze nastavit v souboru **.editorconfig** pomocí zápisu
+> `stylecop.documentation.variables.<name> = <value>`. EditorConfig převádí názvy vlastností na malá písmena, proto se
+> `<name>` porovnává bez rozlišení velikosti písmen. To vyžaduje verzi kompilátoru, která zpřístupňuje seznam
+> nakonfigurovaných klíčů (Roslyn 4.4 / Visual Studio 2022 17.4 nebo novější).
 
-#### Configuring Copyright Text
+#### Konfigurace textu o autorských právech
 
-In order to successfully use StyleCop-checked file headers, most projects will need to configure the `companyName`
-property.
+Většina projektů musí nastavit vlastnost `companyName`, aby bylo možné správně používat hlavičky souborů kontrolované
+StyleCopem.
 
-> The `companyName` property is so frequently customized that it is included in the default **stylecop.json** file
-> produced by the code fix.
+> Vlastnost `companyName` se upravuje tak často, že je zahrnuta ve výchozím souboru **stylecop.json**, který vytváří
+> oprava kódu.
 
-The `copyrightText` property is a string which may contain placeholders. Each placeholder has the form `{variable}`,
-where `variable` is either a built-in variable (see below), or the name of a property in the `variables` property. The
-following sample file shows a custom **stylecop.json** file which references both `companyName` and two custom variables
-within the `copyrightText`.
+Vlastnost `copyrightText` je řetězec, který může obsahovat zástupné symboly. Každý zástupný symbol má tvar `{variable}`,
+kde `variable` je buď předdefinovaná proměnná (viz níže), nebo název vlastnosti v položce `variables`. Následující
+příklad ukazuje vlastní soubor **stylecop.json**, jehož hodnota `copyrightText` odkazuje na `companyName` a dvě vlastní
+proměnné.
 
 ```json
 {
@@ -748,7 +754,7 @@ within the `copyrightText`.
 }
 ```
 
-With the above configuration, a file **TypeName.cs** would be expected to have the following header.
+Při výše uvedené konfiguraci se v souboru **TypeName.cs** očekává následující hlavička.
 
 ```csharp
 // <copyright file="TypeName.cs" company="FooCorp">
@@ -757,19 +763,20 @@ With the above configuration, a file **TypeName.cs** would be expected to have t
 // </copyright>
 ```
 
-##### Built-In Variables
+##### Předdefinované proměnné
 
-| Variable | Meaning |
+| Proměnná | Význam |
 | --- | --- |
-| `companyName` | The value of the `companyName` configuration property in **stylecop.json** |
-| `fileName` | The file name of the current source file |
+| `companyName` | Hodnota konfigurační vlastnosti `companyName` v souboru **stylecop.json** |
+| `fileName` | Název aktuálního zdrojového souboru |
 
-> :memo: If a `fileName` variable is explicitly included within the `variables` property of **stylecop.json**, that
-> value will be used instead of the name of the current source file.
+> :memo: Pokud je proměnná `fileName` výslovně uvedena ve vlastnosti `variables` souboru **stylecop.json**, použije se
+> její hodnota namísto názvu aktuálního zdrojového souboru.
 
-#### Configuring XML Headers
+#### Konfigurace hlaviček XML
 
-When the `xmlHeader` property is **true** (the default), StyleCop Analyzers expects file headers to conform to the following standard StyleCop format.
+Je-li vlastnost `xmlHeader` nastavena na **true** (výchozí hodnota), StyleCop Analyzers očekává, že hlavičky souborů
+budou odpovídat následujícímu standardnímu formátu StyleCop.
 
 ```csharp
 // <copyright file="{fileName}" company="{companyName}">
@@ -777,20 +784,21 @@ When the `xmlHeader` property is **true** (the default), StyleCop Analyzers expe
 // </copyright>
 ```
 
-When the `xmlHeader` property is explicitly set to **false**, StyleCop Analyzers expects file headers to conform to the following customizable format.
+Je-li vlastnost `xmlHeader` výslovně nastavena na **false**, StyleCop Analyzers očekává, že hlavičky souborů budou
+odpovídat následujícímu přizpůsobitelnému formátu.
 
 ```csharp
 // {copyrightText}
 ```
 
-#### Configuring Copyright Text Header Decoration
+#### Konfigurace ozdobení hlavičky s textem o autorských právech
 
-The `headerDecoration` property is a string which can contain text that's used for decorating the generated header so
-headers look similar to the ones generated by the StyleCop Classic ReSharper fix.
+Vlastnost `headerDecoration` je řetězec, který může obsahovat text používaný k ozdobení generované hlavičky, aby se
+podobala hlavičkám vytvářeným opravou ReSharperu ve StyleCop Classic.
 
-The default value for the `headerDecoration` property is empty, so no decoration will be added.
+Výchozí hodnota vlastnosti `headerDecoration` je prázdná, takže se žádné ozdobení nepřidá.
 
-> :memo: The header decoration is not checked, it's only used for fixing the header.
+> :memo: Ozdobení hlavičky se nekontroluje; používá se pouze při opravě hlavičky.
 
 ```json
 {
@@ -804,7 +812,7 @@ The default value for the `headerDecoration` property is empty, so no decoration
 }
 ```
 
-With the above configuration, the fix for a file **TypeName.cs** would look like the following.
+Při výše uvedené konfiguraci by opravená hlavička souboru **TypeName.cs** vypadala následovně.
 
 ```csharp
 // -----------------------------------------------------------------------
@@ -814,27 +822,33 @@ With the above configuration, the fix for a file **TypeName.cs** would look like
 // -----------------------------------------------------------------------
 ```
 
-### Documentation Requirements
+### Požadavky na dokumentaci
 
-StyleCop Analyzers includes rules which require developers to document the majority of a code base by default. This requirement can easily overwhelm a team which did not use StyleCop for the entire development process. To help guide developers towards a properly documented code base, several properties are available in **stylecop.json** to progressively increase the documentation requirements.
+StyleCop Analyzers ve výchozím nastavení obsahuje pravidla vyžadující dokumentaci většiny kódové základny. Tento
+požadavek může snadno zahltit tým, který StyleCop nepoužíval po celou dobu vývoje. Aby bylo možné postupně zvyšovat
+požadavky na dokumentaci a vést vývojáře k řádně dokumentované kódové základně, nabízí **stylecop.json** několik
+vlastností.
 
-| Property | Default Value | Minimum Version | Summary |
+| Vlastnost | Výchozí hodnota | Minimální verze | Popis |
 | --- | --- | --- | --- |
-| `documentInterfaces` | **true** | 1.0.0 | Specifies whether interface members need to be documented. When true, all interface members require documentation, regardless of accessibility. |
-| `documentExposedElements` | **true** | 1.0.0 | Specifies whether exposed elements need to be documented. When true, all publicly-exposed types and members require documentation. |
-| `documentInternalElements` | **true** | 1.0.0 | Specifies whether internal elements need to be documented. When true, all internally-exposed types and members require documentation. |
-| `documentPrivateElements` | **false** | 1.0.0 | Specifies whether private elements need to be documented. When true, all types and members except for declared private fields require documentation. |
-| `documentPrivateFields` | **false** | 1.0.0 | Specifies whether private fields need to be documented. When true, all fields require documentation, regardless of accessibility. |
+| `documentInterfaces` | **true** | 1.0.0 | Určuje, zda je třeba dokumentovat členy rozhraní. Při hodnotě `true` vyžadují dokumentaci všichni členové rozhraní bez ohledu na přístupnost. |
+| `documentExposedElements` | **true** | 1.0.0 | Určuje, zda je třeba dokumentovat zpřístupněné prvky. Při hodnotě `true` vyžadují dokumentaci všechny veřejně zpřístupněné typy a členy. |
+| `documentInternalElements` | **true** | 1.0.0 | Určuje, zda je třeba dokumentovat interní prvky. Při hodnotě `true` vyžadují dokumentaci všechny interně zpřístupněné typy a členy. |
+| `documentPrivateElements` | **false** | 1.0.0 | Určuje, zda je třeba dokumentovat soukromé prvky. Při hodnotě `true` vyžadují dokumentaci všechny typy a členy kromě výslovně deklarovaných soukromých polí. |
+| `documentPrivateFields` | **false** | 1.0.0 | Určuje, zda je třeba dokumentovat soukromá pole. Při hodnotě `true` vyžadují dokumentaci všechna pole bez ohledu na přístupnost. |
 
-These properties affect the behavior of the following rules which report missing documentation. Rules which report incorrect or incomplete documentation continue to apply to all documentation comments in the code.
+Tyto vlastnosti ovlivňují chování následujících pravidel, která hlásí chybějící dokumentaci. Pravidla hlásící nesprávnou
+nebo neúplnou dokumentaci se nadále vztahují na všechny komentáře dokumentace v kódu.
 
 * [SA1600 Elements should be documented](SA1600.md)
 * [SA1601 Partial elements should be documented](SA1601.md)
 * [SA1602 Enumeration items should be documented](SA1602.md)
 
-The following example shows a configuration file which requires developers to document all publicly-accessible members and all interfaces (regardless of accessibility), but does not require other internal or private members to be documented.
+Následující příklad ukazuje konfigurační soubor, který vyžaduje dokumentaci všech veřejně přístupných členů a všech
+rozhraní (bez ohledu na jejich přístupnost), ale nevyžaduje dokumentaci ostatních interních ani soukromých členů.
 
-> :memo: Documenting interfaces is a low-effort task compared to documenting an entire code base, but provides high value in the fact that it covers the sections of code most likely to impact cross-team usage scenarios.
+> :memo: Dokumentování rozhraní vyžaduje ve srovnání s dokumentováním celé kódové základny jen malé úsilí, ale přináší
+> velký užitek, protože pokrývá části kódu, které nejspíše ovlivní používání napříč týmy.
 
 
 ```json
@@ -848,7 +862,7 @@ The following example shows a configuration file which requires developers to do
 }
 ```
 
-When using an **.editorconfig** file to configure StyleCop Analyzers, the following properties can be used:
+Při konfiguraci StyleCop Analyzers pomocí souboru **.editorconfig** lze použít následující vlastnosti:
 ```ini
 stylecop.documentation.documentInterfaces = true
 stylecop.documentation.documentExposedElements = true
@@ -857,24 +871,26 @@ stylecop.documentation.documentPrivateElements = false
 stylecop.documentation.documentPrivateFields = false
 ```
 
-### Documentation Culture
+### Jazyková verze dokumentace
 
-Some documentation rules require summary texts to start with specific strings. To allow teams to document their code in their native language, **stylecop.json** contains the `documentationCulture` property.
+Některá pravidla dokumentace vyžadují, aby texty souhrnů začínaly určitými řetězci. Aby týmy mohly dokumentovat kód ve
+svém jazyce, obsahuje **stylecop.json** vlastnost `documentationCulture`.
 
-| Property | Default Value | Minimum Version | Summary |
+| Vlastnost | Výchozí hodnota | Minimální verze | Popis |
 | --- | --- | --- | --- |
-| `documentationCulture` | `"en-US"` |  1.1.0 | Specifies the culture or language to be used for certain documentation texts. |
+| `documentationCulture` | `"en-US"` |  1.1.0 | Určuje jazykovou verzi nebo jazyk použitý pro určité texty dokumentace. |
 
-This property affects the behavior of the following rules which report incorrect documentation.
+Tato vlastnost ovlivňuje chování následujících pravidel, která hlásí nesprávnou dokumentaci.
 
 * [SA1623 Property summary documentation should match accessors](SA1623.md)
 * [SA1624 Property summary documentation should omit set accessor with restricted access](SA1624.md)
 * [SA1642 Constructor summary documentation should begin with standard text](SA1642.md)
 * [SA1643 Destructor summary documentation should begin with standard text](SA1643.md)
 
-> :memo: The default value for `documentationCulture` is fixed instead of reflecting the user's system language. This is to ensure that different developers working on the same project always use the same value.
+> :memo: Výchozí hodnota `documentationCulture` je pevně stanovena a neodvozuje se od jazyka systému uživatele. Díky
+> tomu všichni vývojáři pracující na stejném projektu vždy používají stejnou hodnotu.
 
-The following values are currently supported. Unsupported values will automatically fall back to the default value.
+V současnosti jsou podporovány následující hodnoty. Nepodporované hodnoty se automaticky převedou na výchozí hodnotu.
 
 * `"cs-CZ"`
 * `"de-DE"`
@@ -897,20 +913,20 @@ The following values are currently supported. Unsupported values will automatica
 }
 ```
 
-When using an **.editorconfig** file to configure StyleCop Analyzers, the following property can be used:
+Při konfiguraci StyleCop Analyzers pomocí souboru **.editorconfig** lze použít následující vlastnost:
 ```ini
 stylecop.documentation.documentationCulture = de-DE
 ```
 
-### File naming conventions
+### Konvence pojmenování souborů
 
-The `fileNamingConvention` property in **stylecop.json** will determine how the [SA1649 File name should match type name](SA1649.md) analyzer will check file names.
+Vlastnost `fileNamingConvention` v souboru **stylecop.json** určuje, jak analyzátor [SA1649 Název souboru má odpovídat názvu typu](SA1649.md) kontroluje názvy souborů.
 
-| Property | Default Value | Minimum Version | Summary |
+| Vlastnost | Výchozí hodnota | Minimální verze | Popis |
 | --- | --- | --- | --- |
-| `fileNamingConvention` | `"stylecop"` |  1.0.0 | Specifies the convention for file names of generics. |
+| `fileNamingConvention` | `"stylecop"` |  1.0.0 | Určuje konvenci názvů souborů pro obecné typy. |
 
-Given the following code:
+Pro následující kód:
 
 ```csharp
 public class Class1<T1, T2, T3>
@@ -918,38 +934,40 @@ public class Class1<T1, T2, T3>
 }
 ```
 
-The analyzer will expect file names according the table below. When the `fileNamingConvention` property is not set, the `stylecop` convention is used as default.
+Analyzátor bude očekávat názvy souborů podle následující tabulky. Pokud vlastnost `fileNamingConvention` není nastavena,
+použije se jako výchozí konvence `stylecop`.
 
-File naming convention | Expected file name
------------------------| ------------------
+Konvence názvu souboru | Očekávaný název souboru
+----------------------|------------------------
 stylecop               | Class1{T1,T2,T3}.cs
 metadata               | Class1`3.cs
 
-When using an **.editorconfig** file to configure StyleCop Analyzers, the following property can be used:
+Při konfiguraci StyleCop Analyzers pomocí souboru **.editorconfig** lze použít následující vlastnost:
 ```ini
 stylecop.documentation.fileNamingConvention = stylecop
 ```
 
-### Text ending with a period
+### Text zakončený tečkou
 
-The [SA1629 Documentation Text Must End With A Period](SA1629.md) analyzer checks if sections within XML documentation end with a period. The following properties can be used in **stylecop.json** to control the behavior of the analyzer:
+Analyzátor [SA1629 Text dokumentace musí končit tečkou](SA1629.md) kontroluje, zda oddíly dokumentace XML končí
+tečkou. Chování analyzátoru lze řídit následujícími vlastnostmi v souboru **stylecop.json**:
 
-| Property | Default Value | Minimum Version | Summary |
+| Vlastnost | Výchozí hodnota | Minimální verze | Popis |
 | --- | --- | --- | --- |
-| `excludeFromPunctuationCheck` | `[ "seealso" ]` |  1.1.0 | Specifies the top-level tags within XML documentation that will be excluded from analysis. |
+| `excludeFromPunctuationCheck` | `[ "seealso" ]` |  1.1.0 | Určuje značky nejvyšší úrovně v dokumentaci XML, které se vynechají z analýzy. |
 
-When using an **.editorconfig** file to configure StyleCop Analyzers, the following property can be used:
+Při konfiguraci StyleCop Analyzers pomocí souboru **.editorconfig** lze použít následující vlastnost:
 ```ini
 stylecop.documentation.excludeFromPunctuationCheck = seealso
 ```
 
-## Sharing configuration among solutions
+## Sdílení konfigurace mezi řešeními
 
-It is possible to define your preferred configuration once and reuse it across multiple independent projects. This involves rolling out your own NuGet package,
-which will contain the `stylecop.json` configuration and potentially a custom ruleset file. A custom `.props` file glues that configuration to any project
-that will use the NuGet package.
+Preferovanou konfiguraci lze definovat jednou a opakovaně používat v několika nezávislých projektech. K tomu je třeba
+vytvořit vlastní balíček NuGet, který bude obsahovat konfiguraci `stylecop.json` a případně také vlastní soubor sady
+pravidel. Vlastní soubor `.props` propojí tuto konfiguraci s každým projektem, který balíček NuGet použije.
 
-Example `.nuspec` file:
+Příklad souboru `.nuspec`:
 
 ```xml
 <?xml version="1.0"?>
@@ -969,7 +987,7 @@ Example `.nuspec` file:
 </package>
 ```
 
-Example `.props` file:
+Příklad souboru `.props`:
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
