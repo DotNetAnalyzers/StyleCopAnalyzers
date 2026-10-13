@@ -159,6 +159,32 @@ public class TestClass
 
         [Fact]
         [WorkItem(4011, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4011")]
+        public async Task TestCompositeUsingAliasTargetsWithAllowBuiltInTypeAliasesAsync()
+        {
+            // The setting only allows aliases whose complete target is a built-in type.
+            string testCode = @"
+using Numbers = System.Collections.Generic.List<{|#0:System.Int32|}>;
+using IntArray = {|#1:System.Int32|}[];
+using Pair = ({|#2:System.Int32|}, {|#3:System.String|});
+
+public class TestClass
+{
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+                Diagnostic().WithLocation(2),
+                Diagnostic().WithLocation(3),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, AllowBuiltInTypeAliasesSettingsJson, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(4011, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4011")]
         public async Task TestUsingStaticAndNamespaceDirectivesAsync()
         {
             // Using static and namespace directives still require a type or namespace name, so they are not reported.

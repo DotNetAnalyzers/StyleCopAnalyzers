@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -281,6 +282,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 if (settings.ReadabilityRules.AllowBuiltInTypeAliases
                     && usingDirective?.Alias != null
+                    && IsBuiltInAliasTarget(usingDirective, identifierNameSyntax)
                     && !IsBuiltInTypeName(usingDirective.Alias.Name.Identifier.ValueText, this.supportsNativeSizedIntegers))
                 {
                     return;
@@ -349,6 +351,43 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 case nameof(IntPtr):
                 case nameof(UIntPtr):
                     return supportsNativeSizedIntegers;
+                default:
+                    return false;
+                }
+            }
+
+            private static bool IsBuiltInAliasTarget(UsingDirectiveSyntax usingDirective, IdentifierNameSyntax identifierNameSyntax)
+            {
+                TypeSyntax target = usingDirective.NamespaceOrType() ?? usingDirective.Name;
+                if (!IsSimpleName(target))
+                {
+                    return false;
+                }
+
+                while (target is QualifiedNameSyntax qualifiedName)
+                {
+                    target = qualifiedName.Right;
+                }
+
+                if (target is AliasQualifiedNameSyntax aliasQualifiedName)
+                {
+                    target = aliasQualifiedName.Name;
+                }
+
+                // The identifier has already resolved to a built-in type; only simple names can be the complete alias target.
+                return target == identifierNameSyntax;
+            }
+
+            private static bool IsSimpleName(TypeSyntax type)
+            {
+                switch (type)
+                {
+                case IdentifierNameSyntax _:
+                    return true;
+                case QualifiedNameSyntax qualifiedName:
+                    return IsSimpleName(qualifiedName.Left) && IsSimpleName(qualifiedName.Right);
+                case AliasQualifiedNameSyntax aliasQualifiedName:
+                    return IsSimpleName(aliasQualifiedName.Alias) && IsSimpleName(aliasQualifiedName.Name);
                 default:
                     return false;
                 }
