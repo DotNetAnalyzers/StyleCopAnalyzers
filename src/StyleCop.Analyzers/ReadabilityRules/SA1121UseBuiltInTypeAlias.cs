@@ -215,39 +215,29 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return;
                 }
 
-                // Most source files will not have any using alias directives. Then we don't have to use semantics
-                // if the identifier name doesn't match the name of a special type
                 bool allowBuiltInTypeAliases = settings.ReadabilityRules.AllowBuiltInTypeAliases;
-                bool hasUsingAliases = false;
-                if (!allowBuiltInTypeAliases)
+                switch (identifierNameSyntax.Identifier.ValueText)
                 {
-                    hasUsingAliases = this.usingAliasCache.ContainsUsingAlias(identifierNameSyntax.SyntaxTree, context.SemanticModel, context.CancellationToken);
-                    if (!hasUsingAliases)
-                    {
-                        switch (identifierNameSyntax.Identifier.ValueText)
-                        {
-                        case nameof(Boolean):
-                        case nameof(Byte):
-                        case nameof(Char):
-                        case nameof(Decimal):
-                        case nameof(Double):
-                        case nameof(Int16):
-                        case nameof(Int32):
-                        case nameof(Int64):
-                        case nameof(Object):
-                        case nameof(SByte):
-                        case nameof(Single):
-                        case nameof(String):
-                        case nameof(UInt16):
-                        case nameof(UInt32):
-                        case nameof(UInt64):
-                        case nameof(IntPtr) or nameof(UIntPtr) when this.supportsNativeSizedIntegers:
-                            break;
+                case nameof(Boolean):
+                case nameof(Byte):
+                case nameof(Char):
+                case nameof(Decimal):
+                case nameof(Double):
+                case nameof(Int16):
+                case nameof(Int32):
+                case nameof(Int64):
+                case nameof(Object):
+                case nameof(SByte):
+                case nameof(Single):
+                case nameof(String):
+                case nameof(UInt16):
+                case nameof(UInt32):
+                case nameof(UInt64):
+                case nameof(IntPtr) or nameof(UIntPtr) when this.supportsNativeSizedIntegers:
+                    break;
 
-                        default:
-                            return;
-                        }
-                    }
+                default:
+                    return;
                 }
 
                 SemanticModel semanticModel = context.SemanticModel;
@@ -280,8 +270,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return;
                 }
 
-                if ((hasUsingAliases
-                    || (allowBuiltInTypeAliases && this.usingAliasCache.ContainsUsingAlias(identifierNameSyntax.SyntaxTree, semanticModel, context.CancellationToken)))
+                if (this.usingAliasCache.ContainsUsingAlias(identifierNameSyntax.SyntaxTree, semanticModel, context.CancellationToken)
                     && semanticModel.GetAliasInfo(identifierNameSyntax, context.CancellationToken) != null)
                 {
                     return;
