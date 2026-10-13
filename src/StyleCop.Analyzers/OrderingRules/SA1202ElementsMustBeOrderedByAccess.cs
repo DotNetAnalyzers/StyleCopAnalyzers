@@ -6,6 +6,7 @@
 namespace StyleCop.Analyzers.OrderingRules
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -138,11 +139,9 @@ namespace StyleCop.Analyzers.OrderingRules
 
         private static void HandleMemberList(SyntaxNodeAnalysisContext context, ImmutableArray<OrderingTrait> elementOrder, int accessibilityIndex, SyntaxList<MemberDeclarationSyntax> members)
         {
-            var previousSyntaxKind = SyntaxKind.None;
-            var previousAccessLevel = AccessLevel.NotSpecified;
-            bool previousIsConst = false;
-            bool previousIsReadonly = false;
-            bool previousIsStatic = false;
+            var handledMembers = new List<MemberInfo>();
+            Dictionary<string, ImmutableHashSet<string>> fieldDependencies = null;
+            Dictionary<string, FieldVariableInfo> fieldVariableInfos = null;
 
             foreach (var member in members)
             {
@@ -162,68 +161,189 @@ namespace StyleCop.Analyzers.OrderingRules
                 bool currentIsReadonly = modifiers.Any(SyntaxKind.ReadOnlyKeyword);
                 bool currentIsStatic = modifiers.Any(SyntaxKind.StaticKeyword);
 
-                if (previousAccessLevel != AccessLevel.NotSpecified)
+                var currentInfo = new MemberInfo(member, currentSyntaxKind, currentAccessLevel, currentIsConst, currentIsReadonly, currentIsStatic);
+
+                if (handledMembers.Count > 0)
                 {
-                    bool compareAccessLevel = true;
-                    for (int j = 0; compareAccessLevel && j < accessibilityIndex; j++)
+                    bool hasExcusedMemberForCurrent = false;
+
+                    for (int i = handledMembers.Count - 1; i >= 0; i--)
                     {
-                        switch (elementOrder[j])
+                        var previousInfo = handledMembers[i];
+
+                        bool compareAccessLevel = true;
+                        for (int j = 0; compareAccessLevel && j < accessibilityIndex; j++)
                         {
-                        case OrderingTrait.Kind:
-                            if (previousSyntaxKind != currentSyntaxKind)
+                            switch (elementOrder[j])
                             {
-                                compareAccessLevel = false;
+                            case OrderingTrait.Kind:
+                                if (previousInfo.Kind != currentSyntaxKind)
+                                {
+                                    compareAccessLevel = false;
+                                }
+
+                                continue;
+
+                            case OrderingTrait.Constant:
+                                if (previousInfo.IsConst != currentIsConst)
+                                {
+                                    compareAccessLevel = false;
+                                }
+
+                                continue;
+
+                            case OrderingTrait.Readonly:
+                                if (previousInfo.IsReadonly != currentIsReadonly)
+                                {
+                                    compareAccessLevel = false;
+                                }
+
+                                continue;
+
+                            case OrderingTrait.Static:
+                                if (previousInfo.IsStatic != currentIsStatic)
+                                {
+                                    compareAccessLevel = false;
+                                }
+
+                                continue;
+
+                            case OrderingTrait.Accessibility:
+                            default:
+                                continue;
                             }
+                        }
 
-                            continue;
-
-                        case OrderingTrait.Constant:
-                            if (previousIsConst != currentIsConst)
-                            {
-                                compareAccessLevel = false;
-                            }
-
-                            continue;
-
-                        case OrderingTrait.Readonly:
-                            if (previousIsReadonly != currentIsReadonly)
-                            {
-                                compareAccessLevel = false;
-                            }
-
-                            continue;
-
-                        case OrderingTrait.Static:
-                            if (previousIsStatic != currentIsStatic)
-                            {
-                                compareAccessLevel = false;
-                            }
-
-                            continue;
-
-                        case OrderingTrait.Accessibility:
-                        default:
+                        if (!compareAccessLevel)
+                        {
                             continue;
                         }
-                    }
 
-                    if (compareAccessLevel && currentAccessLevel > previousAccessLevel)
-                    {
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                Descriptor,
-                                NamedTypeHelpers.GetNameOrIdentifierLocation(member),
-                                AccessLevelHelper.GetName(currentAccessLevel),
-                                AccessLevelHelper.GetName(previousAccessLevel)));
+                        if (currentAccessLevel > previousInfo.AccessLevel)
+                        {
+                            bool isExcused = false;
+                            if (member is FieldDeclarationSyntax currentField && previousInfo.Member is FieldDeclarationSyntax previousField)
+                            {
+                                if (fieldDependencies == null)
+                                {
+                                    fieldVariableInfos = new Dictionary<string, FieldVariableInfo>();
+                                    foreach (var m in members)
+                                    {
+                                        if (m is FieldDeclarationSyntax f)
+                                        {
+                                            var access = MemberOrderHelper.GetAccessLevelForOrdering(f, f.GetModifiers());
+                                            var spanStart = f.SpanStart;
+                                            foreach (var v in f.Declaration.Variables)
+                                            {
+                                                fieldVariableInfos[v.Identifier.ValueText] = new FieldVariableInfo(access, spanStart);
+                                            }
+                                        }
+                                    }
+
+                                    fieldDependencies = FieldDependencyHelper.ComputeFieldDependencies(context.SemanticModel, members, context.CancellationToken);
+                                }
+
+                                isExcused = IsRequiredToAppearAfter(currentField, previousField, previousInfo.AccessLevel, fieldDependencies, fieldVariableInfos);
+                            }
+
+                            if (isExcused)
+                            {
+                                hasExcusedMemberForCurrent = true;
+                                continue;
+                            }
+
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    Descriptor,
+                                    NamedTypeHelpers.GetNameOrIdentifierLocation(member),
+                                    AccessLevelHelper.GetName(currentAccessLevel),
+                                    AccessLevelHelper.GetName(previousInfo.AccessLevel)));
+                            break;
+                        }
+                        else if (!hasExcusedMemberForCurrent)
+                        {
+                            break;
+                        }
                     }
                 }
 
-                previousSyntaxKind = currentSyntaxKind;
-                previousAccessLevel = currentAccessLevel;
-                previousIsConst = currentIsConst;
-                previousIsReadonly = currentIsReadonly;
-                previousIsStatic = currentIsStatic;
+                handledMembers.Add(currentInfo);
             }
+        }
+
+        private static bool IsRequiredToAppearAfter(
+            FieldDeclarationSyntax currentField,
+            FieldDeclarationSyntax precedingField,
+            AccessLevel precedingAccessLevel,
+            Dictionary<string, ImmutableHashSet<string>> fieldDependencies,
+            Dictionary<string, FieldVariableInfo> variableInfos)
+        {
+            if (fieldDependencies == null || fieldDependencies.Count == 0)
+            {
+                return false;
+            }
+
+            if (FieldDependencyHelper.DependsOn(currentField, precedingField, fieldDependencies))
+            {
+                return true;
+            }
+
+            foreach (var variable in currentField.Declaration.Variables)
+            {
+                if (fieldDependencies.TryGetValue(variable.Identifier.ValueText, out var deps))
+                {
+                    foreach (var dep in deps)
+                    {
+                        if (variableInfos.TryGetValue(dep, out var depInfo))
+                        {
+                            if (precedingField.SpanStart < depInfo.SpanStart && precedingAccessLevel >= depInfo.AccessLevel)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private readonly struct FieldVariableInfo
+        {
+            public FieldVariableInfo(AccessLevel accessLevel, int spanStart)
+            {
+                this.AccessLevel = accessLevel;
+                this.SpanStart = spanStart;
+            }
+
+            public AccessLevel AccessLevel { get; }
+
+            public int SpanStart { get; }
+        }
+
+        private readonly struct MemberInfo
+        {
+            public MemberInfo(MemberDeclarationSyntax member, SyntaxKind kind, AccessLevel accessLevel, bool isConst, bool isReadonly, bool isStatic)
+            {
+                this.Member = member;
+                this.Kind = kind;
+                this.AccessLevel = accessLevel;
+                this.IsConst = isConst;
+                this.IsReadonly = isReadonly;
+                this.IsStatic = isStatic;
+            }
+
+            public MemberDeclarationSyntax Member { get; }
+
+            public SyntaxKind Kind { get; }
+
+            public AccessLevel AccessLevel { get; }
+
+            public bool IsConst { get; }
+
+            public bool IsReadonly { get; }
+
+            public bool IsStatic { get; }
         }
     }
 }

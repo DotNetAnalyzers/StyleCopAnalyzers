@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
+    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -70,19 +71,27 @@ namespace StyleCop.Analyzers.OrderingRules
                 return document;
             }
 
-            syntaxRoot = UpdateSyntaxRoot(memberDeclaration, elementOrder, syntaxRoot, settings.Indentation);
+            var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            syntaxRoot = UpdateSyntaxRoot(memberDeclaration, elementOrder, syntaxRoot, settings.Indentation, semanticModel, cancellationToken);
 
             return document.WithSyntaxRoot(syntaxRoot);
         }
 
-        private static SyntaxNode UpdateSyntaxRoot(MemberDeclarationSyntax memberDeclaration, ImmutableArray<OrderingTrait> elementOrder, SyntaxNode syntaxRoot, IndentationSettings indentationSettings)
+        private static SyntaxNode UpdateSyntaxRoot(
+            MemberDeclarationSyntax memberDeclaration,
+            ImmutableArray<OrderingTrait> elementOrder,
+            SyntaxNode syntaxRoot,
+            IndentationSettings indentationSettings,
+            SemanticModel semanticModel = null,
+            CancellationToken cancellationToken = default,
+            Dictionary<string, Dictionary<string, ImmutableHashSet<string>>> fieldDependenciesByType = null)
         {
             var parentDeclaration = memberDeclaration.Parent;
             var memberToMove = new MemberOrderHelper(memberDeclaration, elementOrder);
 
             if (parentDeclaration is TypeDeclarationSyntax syntax)
             {
-                return HandleTypeDeclaration(memberToMove, syntax, elementOrder, syntaxRoot, indentationSettings);
+                return HandleTypeDeclaration(memberToMove, syntax, elementOrder, syntaxRoot, indentationSettings, semanticModel, cancellationToken, fieldDependenciesByType);
             }
 
             if (BaseNamespaceDeclarationSyntaxWrapper.IsInstance(parentDeclaration))
@@ -98,28 +107,58 @@ namespace StyleCop.Analyzers.OrderingRules
             return syntaxRoot;
         }
 
-        private static SyntaxNode HandleTypeDeclaration(MemberOrderHelper memberOrder, TypeDeclarationSyntax typeDeclarationNode, ImmutableArray<OrderingTrait> elementOrder, SyntaxNode syntaxRoot, IndentationSettings indentationSettings)
+        private static SyntaxNode HandleTypeDeclaration(
+            MemberOrderHelper memberOrder,
+            TypeDeclarationSyntax typeDeclarationNode,
+            ImmutableArray<OrderingTrait> elementOrder,
+            SyntaxNode syntaxRoot,
+            IndentationSettings indentationSettings,
+            SemanticModel semanticModel,
+            CancellationToken cancellationToken,
+            Dictionary<string, Dictionary<string, ImmutableHashSet<string>>> fieldDependenciesByType)
         {
-            return OrderMember(memberOrder, typeDeclarationNode.Members, elementOrder, syntaxRoot, indentationSettings);
+            Dictionary<string, ImmutableHashSet<string>> fieldDependencies = null;
+            if (fieldDependenciesByType != null)
+            {
+                fieldDependenciesByType.TryGetValue(GetTypeKey(typeDeclarationNode), out fieldDependencies);
+            }
+            else if (semanticModel != null)
+            {
+                fieldDependencies = FieldDependencyHelper.ComputeFieldDependencies(semanticModel, typeDeclarationNode.Members, cancellationToken);
+            }
+
+            return OrderMember(memberOrder, typeDeclarationNode.Members, elementOrder, syntaxRoot, indentationSettings, fieldDependencies);
         }
 
         private static SyntaxNode HandleCompilationUnitDeclaration(MemberOrderHelper memberOrder, CompilationUnitSyntax compilationUnitDeclaration, ImmutableArray<OrderingTrait> elementOrder, SyntaxNode syntaxRoot, IndentationSettings indentationSettings)
         {
-            return OrderMember(memberOrder, compilationUnitDeclaration.Members, elementOrder, syntaxRoot, indentationSettings);
+            return OrderMember(memberOrder, compilationUnitDeclaration.Members, elementOrder, syntaxRoot, indentationSettings, fieldDependencies: null);
         }
 
         private static SyntaxNode HandleBaseNamespaceDeclaration(MemberOrderHelper memberOrder, BaseNamespaceDeclarationSyntaxWrapper namespaceDeclaration, ImmutableArray<OrderingTrait> elementOrder, SyntaxNode syntaxRoot, IndentationSettings indentationSettings)
         {
-            return OrderMember(memberOrder, namespaceDeclaration.Members, elementOrder, syntaxRoot, indentationSettings);
+            return OrderMember(memberOrder, namespaceDeclaration.Members, elementOrder, syntaxRoot, indentationSettings, fieldDependencies: null);
         }
 
-        private static SyntaxNode OrderMember(MemberOrderHelper memberOrder, SyntaxList<MemberDeclarationSyntax> members, ImmutableArray<OrderingTrait> elementOrder, SyntaxNode syntaxRoot, IndentationSettings indentationSettings)
+        private static SyntaxNode OrderMember(
+            MemberOrderHelper memberOrder,
+            SyntaxList<MemberDeclarationSyntax> members,
+            ImmutableArray<OrderingTrait> elementOrder,
+            SyntaxNode syntaxRoot,
+            IndentationSettings indentationSettings,
+            Dictionary<string, ImmutableHashSet<string>> fieldDependencies)
         {
             var memberIndex = members.IndexOf(memberOrder.Member);
             MemberOrderHelper target = default;
 
             for (var i = memberIndex - 1; i >= 0; --i)
             {
+                if (FieldDependencyHelper.DependsOn(memberOrder.Member, members[i], fieldDependencies)
+                    || FieldDependencyHelper.DependsOn(members[i], memberOrder.Member, fieldDependencies))
+                {
+                    break;
+                }
+
                 var orderHelper = new MemberOrderHelper(members[i], elementOrder);
                 if (orderHelper.Priority < memberOrder.Priority)
                 {
@@ -132,6 +171,24 @@ namespace StyleCop.Analyzers.OrderingRules
             }
 
             return target.Member != null ? MoveMember(syntaxRoot, memberOrder.Member, target.Member, indentationSettings) : syntaxRoot;
+        }
+
+        private static string GetTypeKey(TypeDeclarationSyntax typeDeclaration)
+        {
+            var sb = new StringBuilder(typeDeclaration.Identifier.ValueText);
+            for (var parent = typeDeclaration.Parent; parent != null; parent = parent.Parent)
+            {
+                if (parent is TypeDeclarationSyntax parentType)
+                {
+                    sb.Insert(0, parentType.Identifier.ValueText + ".");
+                }
+                else if (BaseNamespaceDeclarationSyntaxWrapper.IsInstance(parent))
+                {
+                    sb.Insert(0, ((BaseNamespaceDeclarationSyntaxWrapper)parent).Name + ".");
+                }
+            }
+
+            return sb.ToString();
         }
 
         private static SyntaxNode MoveMember(SyntaxNode syntaxRoot, MemberDeclarationSyntax member, MemberDeclarationSyntax targetMember, IndentationSettings indentationSettings)
@@ -267,8 +324,22 @@ namespace StyleCop.Analyzers.OrderingRules
                 }
 
                 var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var semanticModel = await document.GetSemanticModelAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
                 var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, fixAllContext.CancellationToken);
                 var elementOrder = settings.OrderingRules.ElementOrder;
+
+                var fieldDependenciesByType = new Dictionary<string, Dictionary<string, ImmutableHashSet<string>>>();
+                if (semanticModel != null)
+                {
+                    foreach (var typeDeclaration in syntaxRoot.DescendantNodesAndSelf().OfType<TypeDeclarationSyntax>())
+                    {
+                        var deps = FieldDependencyHelper.ComputeFieldDependencies(semanticModel, typeDeclaration.Members, fixAllContext.CancellationToken);
+                        if (deps.Count > 0)
+                        {
+                            fieldDependenciesByType[GetTypeKey(typeDeclaration)] = deps;
+                        }
+                    }
+                }
 
                 var trackedDiagnosticMembers = new List<MemberDeclarationSyntax>();
                 foreach (var diagnostic in diagnostics)
@@ -287,7 +358,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 foreach (var member in trackedDiagnosticMembers)
                 {
                     var memberDeclaration = syntaxRoot.GetCurrentNode(member);
-                    syntaxRoot = UpdateSyntaxRoot(memberDeclaration, elementOrder, syntaxRoot, settings.Indentation);
+                    syntaxRoot = UpdateSyntaxRoot(memberDeclaration, elementOrder, syntaxRoot, settings.Indentation, semanticModel, fixAllContext.CancellationToken, fieldDependenciesByType);
                 }
 
                 return syntaxRoot;
