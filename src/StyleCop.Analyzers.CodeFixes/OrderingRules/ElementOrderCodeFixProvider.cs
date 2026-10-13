@@ -372,7 +372,8 @@ namespace StyleCop.Analyzers.OrderingRules
                     }
                 }
 
-                var trackedDiagnosticMembers = new List<MemberDeclarationSyntax>();
+                var trackedMembers = new List<MemberDeclarationSyntax>();
+                var trackedMembersSet = new HashSet<MemberDeclarationSyntax>();
                 foreach (var diagnostic in diagnostics)
                 {
                     var memberDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<MemberDeclarationSyntax>();
@@ -381,12 +382,26 @@ namespace StyleCop.Analyzers.OrderingRules
                         continue;
                     }
 
-                    trackedDiagnosticMembers.Add(memberDeclaration);
+                    if (diagnostic.Id == SA1201ElementsMustAppearInTheCorrectOrder.DiagnosticId)
+                    {
+                        // Moving one member can create a new ordering violation between previously adjacent siblings.
+                        foreach (var sibling in memberDeclaration.Parent.ChildNodes().OfType<MemberDeclarationSyntax>())
+                        {
+                            if (trackedMembersSet.Add(sibling))
+                            {
+                                trackedMembers.Add(sibling);
+                            }
+                        }
+                    }
+                    else if (trackedMembersSet.Add(memberDeclaration))
+                    {
+                        trackedMembers.Add(memberDeclaration);
+                    }
                 }
 
-                syntaxRoot = syntaxRoot.TrackNodes(trackedDiagnosticMembers);
+                syntaxRoot = syntaxRoot.TrackNodes(trackedMembers);
 
-                foreach (var member in trackedDiagnosticMembers)
+                foreach (var member in trackedMembers)
                 {
                     var memberDeclaration = syntaxRoot.GetCurrentNode(member);
                     syntaxRoot = UpdateSyntaxRoot(memberDeclaration, elementOrder, syntaxRoot, settings.Indentation, semanticModel, fixAllContext.CancellationToken, fieldDependenciesByType);

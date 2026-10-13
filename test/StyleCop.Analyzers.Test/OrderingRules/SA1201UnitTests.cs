@@ -242,6 +242,67 @@ public enum OtherEnum { A }
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that Fix All sorts all members in a type in a single pass.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(1589, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1589")]
+        public async Task TestFixAllSortsTypeMembersInSinglePassAsync()
+        {
+            string testCode = @"namespace ClassLibrary1
+{
+    public class Class1
+    {
+        public void Method1()
+        {
+        }
+
+        public static string {|#0:Property1|} { get; }
+
+        public string Property2 { get; }
+
+        public void Method2()
+        {
+        }
+
+        public string {|#1:Property3|} { get; }
+    }
+}
+";
+            string fixedCode = @"namespace ClassLibrary1
+{
+    public class Class1
+    {
+        public static string Property1 { get; }
+
+        public string Property2 { get; }
+
+        public string Property3 { get; }
+
+        public void Method1()
+        {
+        }
+
+        public void Method2()
+        {
+        }
+    }
+}
+";
+
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                NumberOfIncrementalIterations = 3,
+                NumberOfFixAllIterations = 1,
+            };
+            test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithArguments("A property", "a method"));
+            test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(1).WithArguments("A property", "a method"));
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestTypeMemberOrderWrongOrderClassAsync()
         {
@@ -297,7 +358,7 @@ public enum OtherEnum { A }
                 TestCode = testCode,
                 FixedCode = fixedCode,
                 NumberOfIncrementalIterations = 8,
-                NumberOfFixAllIterations = 3,
+                NumberOfFixAllIterations = 1,
             };
 
             test.ExpectedDiagnostics.AddRange(expected);
@@ -356,7 +417,7 @@ public enum OtherEnum { A }
                 TestCode = testCode,
                 FixedCode = fixedCode,
                 NumberOfIncrementalIterations = 7,
-                NumberOfFixAllIterations = 3,
+                NumberOfFixAllIterations = 1,
             };
 
             test.ExpectedDiagnostics.AddRange(expected);

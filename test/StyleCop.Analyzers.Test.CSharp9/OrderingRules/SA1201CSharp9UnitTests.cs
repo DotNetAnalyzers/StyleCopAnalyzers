@@ -134,7 +134,7 @@ public struct {|#1:FooStruct|} { }
                 TestCode = testCode,
                 FixedCode = fixedCode,
                 NumberOfIncrementalIterations = 7,
-                NumberOfFixAllIterations = 3,
+                NumberOfFixAllIterations = 1,
             };
 
             test.ExpectedDiagnostics.AddRange(expected);
