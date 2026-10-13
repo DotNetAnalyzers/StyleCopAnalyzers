@@ -6,6 +6,7 @@
 namespace StyleCop.Analyzers.OrderingRules
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -138,11 +139,10 @@ namespace StyleCop.Analyzers.OrderingRules
 
         private static void HandleMemberList(SyntaxNodeAnalysisContext context, ImmutableArray<OrderingTrait> elementOrder, int accessibilityIndex, SyntaxList<MemberDeclarationSyntax> members)
         {
-            var previousSyntaxKind = SyntaxKind.None;
-            var previousAccessLevel = AccessLevel.NotSpecified;
-            bool previousIsConst = false;
-            bool previousIsReadonly = false;
-            bool previousIsStatic = false;
+            var handledMembers = new List<MemberInfo>();
+            bool hasExcusedMembers = false;
+            Dictionary<FieldDeclarationSyntax, ImmutableHashSet<FieldDeclarationSyntax>> fieldDependencies = null;
+            Dictionary<FieldDeclarationSyntax, AccessLevel> fieldAccessLevels = null;
 
             foreach (var member in members)
             {
@@ -162,68 +162,343 @@ namespace StyleCop.Analyzers.OrderingRules
                 bool currentIsReadonly = modifiers.Any(SyntaxKind.ReadOnlyKeyword);
                 bool currentIsStatic = modifiers.Any(SyntaxKind.StaticKeyword);
 
-                if (previousAccessLevel != AccessLevel.NotSpecified)
+                var currentInfo = new MemberInfo(member, currentSyntaxKind, currentAccessLevel, currentIsConst, currentIsReadonly, currentIsStatic);
+
+                if (handledMembers.Count > 0)
                 {
-                    bool compareAccessLevel = true;
-                    for (int j = 0; compareAccessLevel && j < accessibilityIndex; j++)
+                    for (int i = handledMembers.Count - 1; i >= 0; i--)
                     {
-                        switch (elementOrder[j])
+                        var previousInfo = handledMembers[i];
+
+                        bool compareAccessLevel = true;
+                        for (int j = 0; compareAccessLevel && j < accessibilityIndex; j++)
                         {
-                        case OrderingTrait.Kind:
-                            if (previousSyntaxKind != currentSyntaxKind)
+                            switch (elementOrder[j])
                             {
-                                compareAccessLevel = false;
+                            case OrderingTrait.Kind:
+                                if (previousInfo.Kind != currentSyntaxKind)
+                                {
+                                    compareAccessLevel = false;
+                                }
+
+                                continue;
+
+                            case OrderingTrait.Constant:
+                                if (previousInfo.IsConst != currentIsConst)
+                                {
+                                    compareAccessLevel = false;
+                                }
+
+                                continue;
+
+                            case OrderingTrait.Readonly:
+                                if (previousInfo.IsReadonly != currentIsReadonly)
+                                {
+                                    compareAccessLevel = false;
+                                }
+
+                                continue;
+
+                            case OrderingTrait.Static:
+                                if (previousInfo.IsStatic != currentIsStatic)
+                                {
+                                    compareAccessLevel = false;
+                                }
+
+                                continue;
+
+                            case OrderingTrait.Accessibility:
+                            default:
+                                continue;
                             }
+                        }
 
-                            continue;
-
-                        case OrderingTrait.Constant:
-                            if (previousIsConst != currentIsConst)
-                            {
-                                compareAccessLevel = false;
-                            }
-
-                            continue;
-
-                        case OrderingTrait.Readonly:
-                            if (previousIsReadonly != currentIsReadonly)
-                            {
-                                compareAccessLevel = false;
-                            }
-
-                            continue;
-
-                        case OrderingTrait.Static:
-                            if (previousIsStatic != currentIsStatic)
-                            {
-                                compareAccessLevel = false;
-                            }
-
-                            continue;
-
-                        case OrderingTrait.Accessibility:
-                        default:
+                        if (!compareAccessLevel)
+                        {
                             continue;
                         }
-                    }
 
-                    if (compareAccessLevel && currentAccessLevel > previousAccessLevel)
-                    {
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                Descriptor,
-                                NamedTypeHelpers.GetNameOrIdentifierLocation(member),
-                                AccessLevelHelper.GetName(currentAccessLevel),
-                                AccessLevelHelper.GetName(previousAccessLevel)));
+                        if (currentAccessLevel > previousInfo.AccessLevel)
+                        {
+                            bool isExcused = false;
+                            if (member is FieldDeclarationSyntax currentField && previousInfo.Member is FieldDeclarationSyntax previousField)
+                            {
+                                if (fieldDependencies == null)
+                                {
+                                    fieldAccessLevels = new Dictionary<FieldDeclarationSyntax, AccessLevel>();
+                                    fieldDependencies = ComputeFieldDependencies(context, members, fieldAccessLevels);
+                                }
+
+                                isExcused = IsRequiredToAppearAfter(currentField, previousField, previousInfo.AccessLevel, fieldDependencies, fieldAccessLevels);
+                            }
+
+                            if (isExcused)
+                            {
+                                hasExcusedMembers = true;
+                                continue;
+                            }
+
+                            context.ReportDiagnostic(
+                                Diagnostic.Create(
+                                    Descriptor,
+                                    NamedTypeHelpers.GetNameOrIdentifierLocation(member),
+                                    AccessLevelHelper.GetName(currentAccessLevel),
+                                    AccessLevelHelper.GetName(previousInfo.AccessLevel)));
+                            break;
+                        }
+                        else if (!hasExcusedMembers)
+                        {
+                            break;
+                        }
                     }
                 }
 
-                previousSyntaxKind = currentSyntaxKind;
-                previousAccessLevel = currentAccessLevel;
-                previousIsConst = currentIsConst;
-                previousIsReadonly = currentIsReadonly;
-                previousIsStatic = currentIsStatic;
+                handledMembers.Add(currentInfo);
             }
+        }
+
+        private static bool IsRequiredToAppearAfter(
+            FieldDeclarationSyntax currentField,
+            FieldDeclarationSyntax precedingField,
+            AccessLevel precedingAccessLevel,
+            Dictionary<FieldDeclarationSyntax, ImmutableHashSet<FieldDeclarationSyntax>> fieldDependencies,
+            Dictionary<FieldDeclarationSyntax, AccessLevel> fieldAccessLevels)
+        {
+            if (!fieldDependencies.TryGetValue(currentField, out var currentDeps) || currentDeps.IsEmpty)
+            {
+                return false;
+            }
+
+            if (currentDeps.Contains(precedingField))
+            {
+                return true;
+            }
+
+            foreach (var dep in currentDeps)
+            {
+                if (fieldAccessLevels.TryGetValue(dep, out var depAccess) && precedingAccessLevel > depAccess)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static Dictionary<FieldDeclarationSyntax, ImmutableHashSet<FieldDeclarationSyntax>> ComputeFieldDependencies(
+            SyntaxNodeAnalysisContext context,
+            SyntaxList<MemberDeclarationSyntax> members,
+            Dictionary<FieldDeclarationSyntax, AccessLevel> fieldAccessLevels)
+        {
+            var fieldDeclarations = new List<FieldDeclarationSyntax>();
+            var fieldNames = new HashSet<string>();
+
+            foreach (var member in members)
+            {
+                if (member is FieldDeclarationSyntax field)
+                {
+                    fieldDeclarations.Add(field);
+                    var modifiers = field.GetModifiers();
+                    fieldAccessLevels[field] = MemberOrderHelper.GetAccessLevelForOrdering(field, modifiers);
+
+                    foreach (var variable in field.Declaration.Variables)
+                    {
+                        fieldNames.Add(variable.Identifier.ValueText);
+                    }
+                }
+            }
+
+            if (fieldDeclarations.Count < 2 || fieldNames.Count == 0)
+            {
+                return new Dictionary<FieldDeclarationSyntax, ImmutableHashSet<FieldDeclarationSyntax>>();
+            }
+
+            var fieldsWithCandidateInitializers = new List<FieldDeclarationSyntax>();
+            foreach (var field in fieldDeclarations)
+            {
+                bool hasCandidate = false;
+                foreach (var variable in field.Declaration.Variables)
+                {
+                    if (variable.Initializer != null && HasCandidateIdentifier(variable.Initializer.Value, fieldNames))
+                    {
+                        hasCandidate = true;
+                        break;
+                    }
+                }
+
+                if (hasCandidate)
+                {
+                    fieldsWithCandidateInitializers.Add(field);
+                }
+            }
+
+            if (fieldsWithCandidateInitializers.Count == 0)
+            {
+                return new Dictionary<FieldDeclarationSyntax, ImmutableHashSet<FieldDeclarationSyntax>>();
+            }
+
+            var fieldSymbolMap = new Dictionary<ISymbol, FieldDeclarationSyntax>();
+            INamedTypeSymbol enclosingType = null;
+
+            foreach (var field in fieldDeclarations)
+            {
+                foreach (var variable in field.Declaration.Variables)
+                {
+                    var fieldSymbol = context.SemanticModel.GetDeclaredSymbol(variable, context.CancellationToken);
+                    if (fieldSymbol != null)
+                    {
+                        fieldSymbolMap[fieldSymbol] = field;
+                        enclosingType ??= fieldSymbol.ContainingType;
+                    }
+                }
+            }
+
+            if (enclosingType == null)
+            {
+                return new Dictionary<FieldDeclarationSyntax, ImmutableHashSet<FieldDeclarationSyntax>>();
+            }
+
+            var directDependencies = new Dictionary<FieldDeclarationSyntax, HashSet<FieldDeclarationSyntax>>();
+
+            foreach (var field in fieldsWithCandidateInitializers)
+            {
+                HashSet<FieldDeclarationSyntax> deps = null;
+
+                foreach (var variable in field.Declaration.Variables)
+                {
+                    if (variable.Initializer == null)
+                    {
+                        continue;
+                    }
+
+                    foreach (var node in variable.Initializer.Value.DescendantNodesAndSelf())
+                    {
+                        if (node is IdentifierNameSyntax identifierName
+                            && fieldNames.Contains(identifierName.Identifier.ValueText)
+                            && !IsInNameof(identifierName))
+                        {
+                            var symbolInfo = context.SemanticModel.GetSymbolInfo(identifierName, context.CancellationToken);
+                            var symbol = symbolInfo.Symbol;
+
+                            if (symbol is IFieldSymbol fieldSymbol
+                                && !fieldSymbol.IsConst
+                                && Equals(fieldSymbol.ContainingType?.OriginalDefinition, enclosingType.OriginalDefinition))
+                            {
+                                if (fieldSymbolMap.TryGetValue(fieldSymbol, out var targetField) && targetField != field)
+                                {
+                                    deps ??= new HashSet<FieldDeclarationSyntax>();
+                                    deps.Add(targetField);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (deps != null)
+                {
+                    directDependencies[field] = deps;
+                }
+            }
+
+            if (directDependencies.Count == 0)
+            {
+                return new Dictionary<FieldDeclarationSyntax, ImmutableHashSet<FieldDeclarationSyntax>>();
+            }
+
+            var result = new Dictionary<FieldDeclarationSyntax, ImmutableHashSet<FieldDeclarationSyntax>>();
+
+            foreach (var kvp in directDependencies)
+            {
+                var field = kvp.Key;
+                var transitiveDeps = new HashSet<FieldDeclarationSyntax>();
+                var queue = new Queue<FieldDeclarationSyntax>(kvp.Value);
+
+                while (queue.Count > 0)
+                {
+                    var current = queue.Dequeue();
+                    if (transitiveDeps.Add(current))
+                    {
+                        if (directDependencies.TryGetValue(current, out var nextDeps))
+                        {
+                            foreach (var next in nextDeps)
+                            {
+                                if (!transitiveDeps.Contains(next))
+                                {
+                                    queue.Enqueue(next);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                result[field] = transitiveDeps.ToImmutableHashSet();
+            }
+
+            return result;
+        }
+
+        private static bool HasCandidateIdentifier(SyntaxNode expression, HashSet<string> fieldNames)
+        {
+            foreach (var node in expression.DescendantNodesAndSelf())
+            {
+                if (node is IdentifierNameSyntax id && fieldNames.Contains(id.Identifier.ValueText))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool IsInNameof(SyntaxNode node)
+        {
+            for (SyntaxNode current = node.Parent; current != null; current = current.Parent)
+            {
+                if (current is InvocationExpressionSyntax invocation)
+                {
+                    if (invocation.Expression is IdentifierNameSyntax nameSyntax
+                        && nameSyntax.Identifier.ValueText == "nameof")
+                    {
+                        return true;
+                    }
+
+                    break;
+                }
+
+                if (current is ExpressionSyntax || current is ArgumentSyntax || current is ArgumentListSyntax)
+                {
+                    continue;
+                }
+
+                break;
+            }
+
+            return false;
+        }
+
+        private readonly struct MemberInfo
+        {
+            public MemberInfo(MemberDeclarationSyntax member, SyntaxKind kind, AccessLevel accessLevel, bool isConst, bool isReadonly, bool isStatic)
+            {
+                this.Member = member;
+                this.Kind = kind;
+                this.AccessLevel = accessLevel;
+                this.IsConst = isConst;
+                this.IsReadonly = isReadonly;
+                this.IsStatic = isStatic;
+            }
+
+            public MemberDeclarationSyntax Member { get; }
+
+            public SyntaxKind Kind { get; }
+
+            public AccessLevel AccessLevel { get; }
+
+            public bool IsConst { get; }
+
+            public bool IsReadonly { get; }
+
+            public bool IsStatic { get; }
         }
     }
 }
