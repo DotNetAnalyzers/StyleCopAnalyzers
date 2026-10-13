@@ -157,6 +157,60 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
+        [WorkItem(3547, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3547")]
+        public async Task TestBitwiseOperatorPrecedenceAsync()
+        {
+            var testCode = @"public class Foo
+{
+    public void Bar()
+    {
+        int bitwiseAnd = 1 & {|#0:2 + 3|};
+        int bitwiseOr = 1 | {|#1:2 & 3|};
+        int bitwiseXor = 1 ^ {|#2:2 & 3|};
+        int arithmeticAnd = {|#3:1 + 2|} & 3;
+    }
+}";
+            DiagnosticResult[] expected =
+                {
+                    Diagnostic().WithLocation(0),
+                    Diagnostic().WithLocation(1),
+                    Diagnostic().WithLocation(2),
+                    Diagnostic().WithLocation(3),
+                };
+
+            var fixedCode = @"public class Foo
+{
+    public void Bar()
+    {
+        int bitwiseAnd = 1 & (2 + 3);
+        int bitwiseOr = 1 | (2 & 3);
+        int bitwiseXor = 1 ^ (2 & 3);
+        int arithmeticAnd = (1 + 2) & 3;
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3547, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3547")]
+        public async Task TestBitwiseOperatorsSamePrecedenceAndParenthesizedAsync()
+        {
+            var testCode = @"public class Foo
+{
+    public void Bar()
+    {
+        int bitwiseAnd = 1 & 2 & 3;
+        int bitwiseOr = 1 | 2 | 3;
+        int bitwiseXor = 1 ^ 2 ^ 3;
+        int parenthesized = 1 | (2 & 3);
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestSubViolationsAsync()
         {
             var testCode = @"public class Foo
