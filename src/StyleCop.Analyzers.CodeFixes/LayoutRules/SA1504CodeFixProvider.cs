@@ -284,41 +284,48 @@ namespace StyleCop.Analyzers.LayoutRules
             }
             else
             {
-                SyntaxToken keyword = ReformatKeywordAsSingleLine(accessor.Keyword);
-                keyword = keyword.WithTrailingTrivia(ReformatTriviaList(accessor.Keyword.TrailingTrivia));
-                if (accessor.Modifiers.Count == 0)
-                {
-                    keyword = keyword.WithLeadingTrivia(keyword.LeadingTrivia.Insert(0, indentation));
-                }
+                var expressionBody = accessor.ExpressionBody();
+                SyntaxToken keyword = ReformatKeywordAsMultipleLines(accessor.Keyword, indentation, accessor.Modifiers.Count == 0);
+                keyword = keyword.WithTrailingTrivia(
+                    keyword.TrailingTrivia.AddRange(ReformatTriviaListNoLeadingSpace(expressionBody.ArrowToken.LeadingTrivia)));
+                var body = SyntaxFactory.Block(CreateStatementFromExpressionBody(accessor, expressionBody));
 
                 newAccessor = newAccessor
                     .WithKeyword(keyword)
-                    .WithExpressionBody(ReformatExpressionBodyAsMultipleLines(accessor.ExpressionBody(), indentationStatements))
-                    .WithSemicolonToken(ReformatSemicolonAsMultipleLines(accessor.SemicolonToken));
+                    .WithExpressionBody(null)
+                    .WithSemicolonToken(default(SyntaxToken))
+                    .WithBody(ReformatBodyAsMultipleLines(body, indentation, indentationStatements));
             }
 
             return newAccessor;
         }
 
-        private static ArrowExpressionClauseSyntax ReformatExpressionBodyAsMultipleLines(ArrowExpressionClauseSyntax expressionBody, SyntaxTrivia indentation)
+        private static StatementSyntax CreateStatementFromExpressionBody(AccessorDeclarationSyntax accessor, ArrowExpressionClauseSyntax expressionBody)
         {
-            var arrowToken = expressionBody.ArrowToken
-                .WithLeadingTrivia(ReformatTriviaListNoLeadingSpace(expressionBody.ArrowToken.LeadingTrivia))
-                .WithTrailingTrivia(ReformatTriviaListNoTrailingSpace(expressionBody.ArrowToken.TrailingTrivia).Add(SyntaxFactory.CarriageReturnLineFeed));
+            var leadingTrivia = SyntaxFactory.TriviaList(expressionBody.ArrowToken.TrailingTrivia.Concat(expressionBody.Expression.GetLeadingTrivia()));
+            var trailingTrivia = SyntaxFactory.TriviaList(expressionBody.Expression.GetTrailingTrivia().Concat(accessor.SemicolonToken.LeadingTrivia));
             var expression = expressionBody.Expression
-                .WithLeadingTrivia(ReformatTriviaListNoLeadingSpace(expressionBody.Expression.GetLeadingTrivia()).Insert(0, indentation))
-                .WithTrailingTrivia(ReformatTriviaListNoTrailingSpace(expressionBody.Expression.GetTrailingTrivia()));
+                .WithLeadingTrivia(ReformatTriviaListNoLeadingSpace(leadingTrivia))
+                .WithTrailingTrivia(ReformatTriviaListNoTrailingSpace(trailingTrivia));
 
-            return expressionBody
-                .WithArrowToken(arrowToken)
-                .WithExpression(expression);
-        }
+            StatementSyntax statement;
+            if (ThrowExpressionSyntaxWrapper.IsInstance(expression))
+            {
+                var throwExpression = (ThrowExpressionSyntaxWrapper)expression;
+                statement = SyntaxFactory.ThrowStatement(throwExpression.Expression)
+                    .WithThrowKeyword(throwExpression.ThrowKeyword);
+            }
+            else if (accessor.IsKind(SyntaxKind.GetAccessorDeclaration))
+            {
+                statement = SyntaxFactory.ReturnStatement(expression)
+                    .WithReturnKeyword(SyntaxFactory.Token(SyntaxKind.ReturnKeyword).WithTrailingTrivia(SyntaxFactory.Space));
+            }
+            else
+            {
+                statement = SyntaxFactory.ExpressionStatement(expression);
+            }
 
-        private static SyntaxToken ReformatSemicolonAsMultipleLines(SyntaxToken semicolon)
-        {
-            return semicolon
-                .WithLeadingTrivia(ReformatTriviaListNoLeadingSpace(semicolon.LeadingTrivia))
-                .WithTrailingTrivia(ReformatTriviaListNoTrailingSpace(semicolon.TrailingTrivia).Add(SyntaxFactory.CarriageReturnLineFeed));
+            return statement.WithTrailingTrivia(ReformatTriviaListNoTrailingSpace(accessor.SemicolonToken.TrailingTrivia));
         }
 
         private static SyntaxTokenList ReformatModifiersAsMultipleLines(SyntaxTokenList modifiers, SyntaxTrivia indentation)

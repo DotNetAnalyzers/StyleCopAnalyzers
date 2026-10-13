@@ -55,8 +55,10 @@ public class Foo
 
     public int Value
     {
-        get =>
-            this.value;
+        get
+        {
+            return this.value;
+        }
 
         set
         {
@@ -79,6 +81,100 @@ public class Foo
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected },
                 FixedCode = fixedTestCodeMultiple,
+                CodeActionIndex = 1,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the multiple-line fix converts expression-bodied setters to block bodies.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestExpressionBodiedSetterMultipleLineFixAsync()
+        {
+            var testCode = @"
+public class Foo
+{
+    private int value;
+
+    public int Value
+    {
+        get { return this.value; }
+        {|#0:set|} =>
+            this.value = value;
+    }
+}";
+
+            var fixedTestCode = @"
+public class Foo
+{
+    private int value;
+
+    public int Value
+    {
+        get
+        {
+            return this.value;
+        }
+
+        set
+        {
+            this.value = value;
+        }
+    }
+}";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(8, 9);
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics = { expected },
+                FixedCode = fixedTestCode,
+                CodeActionIndex = 1,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the multiple-line fix converts a throw expression into a throw statement.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestThrowExpressionMultipleLineFixAsync()
+        {
+            var testCode = @"
+public class Foo
+{
+    public int Value
+    {
+        {|#0:get|} => throw new System.InvalidOperationException();
+        set
+        {
+        }
+    }
+}";
+
+            var fixedTestCode = @"
+public class Foo
+{
+    public int Value
+    {
+        get
+        {
+            throw new System.InvalidOperationException();
+        }
+
+        set
+        {
+        }
+    }
+}";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics = { expected },
+                FixedCode = fixedTestCode,
                 CodeActionIndex = 1,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
