@@ -23,7 +23,7 @@ namespace StyleCop.Analyzers.Test
             "int a , int b",
             "++ i",
             "Commas should not be preceded by whitespace",
-            "逗号的前方 不应有空白字符",
+            "逗号的前方不应有空白字符",
             "Пробельные символы не должны находиться слева от запятой",
             "Increment symbol '++' should not be followed by a space",
             "递增符号“++”的后方不应有空格",

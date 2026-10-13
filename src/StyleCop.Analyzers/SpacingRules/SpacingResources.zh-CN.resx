@@ -463,7 +463,7 @@
     <value>修正空格</value>
   </data>
   <data name="SpacingNot" xml:space="preserve">
-    <value> 不</value>
+    <value>不</value>
   </data>
   <data name="SpacingPreceded" xml:space="preserve">
     <value>前方</value>

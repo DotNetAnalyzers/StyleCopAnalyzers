@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 
 Push-Location (Join-Path $PSScriptRoot '..')
 try {
@@ -57,7 +57,7 @@ try {
         foreach ($localized in $localizedReports) {
             $titles = @{}
             Get-ChildItem 'src\StyleCop.Analyzers' -Recurse -Filter "*.$($localized.Culture).resx" | ForEach-Object {
-                [xml]$resources = Get-Content $_.FullName -Raw
+                [xml]$resources = Get-Content $_.FullName -Raw -Encoding utf8
                 foreach ($entry in $resources.SelectNodes('/root/data')) {
                     $key = $entry.GetAttribute('name')
                     if ($key -match '^(S[AX]\d+S?)Title$') {
@@ -66,9 +66,15 @@ try {
                 }
             }
 
-            $report = Get-Content $reportPath -Raw | ConvertFrom-Json -DateKind String
+            # A prefix prevents automatic date conversion, including on Windows PowerShell 5.1.
+            $reportJson = (Get-Content $reportPath -Raw -Encoding utf8) -replace '("When"\s*:\s*")', '$1_'
+            $report = $reportJson | ConvertFrom-Json
             if (!$report.diagnostics -or !$report.git.Sha) {
                 throw 'The rule status report is invalid or empty.'
+            }
+
+            foreach ($signature in @($report.git.Author, $report.git.Committer)) {
+                $signature.When = $signature.When.Substring(1)
             }
 
             foreach ($diagnostic in $report.diagnostics) {
@@ -87,7 +93,8 @@ try {
                 }
             }
 
-            $report | ConvertTo-Json -Depth 20 | Set-Content $localized.Path -Encoding utf8
+            $localizedJson = $report | ConvertTo-Json -Depth 20
+            [System.IO.File]::WriteAllText((Join-Path $PWD $localized.Path), $localizedJson, [System.Text.UTF8Encoding]::new($false))
         }
     } else {
         foreach ($localized in $localizedReports) {

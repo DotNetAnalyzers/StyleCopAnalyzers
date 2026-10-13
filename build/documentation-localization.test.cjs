@@ -1,4 +1,5 @@
 const assert = require("node:assert/strict");
+const { spawnSync } = require("node:child_process");
 const fs = require("node:fs");
 const path = require("node:path");
 const test = require("node:test");
@@ -153,8 +154,12 @@ test(`${culture} resources have exactly the neutral keys and preserve format pla
                     const tags = text => Array.from(text.matchAll(/&lt;\/?([a-zA-Z][\w:.-]*)\b/g),
                         match => match[1]).sort();
                     assert.deepEqual(tags(localized), tags(value), `${file}: ${name}: preserve XML tag names`);
-                    assert.equal(localized.match(/^\s*/)[0], value.match(/^\s*/)[0],
-                        `${file}: ${name}: leading whitespace`);
+                    if (file === "SpacingResources.resx" && name === "SpacingNot") {
+                        assert.equal(localized.match(/^\s*/)[0], "", `${file}: ${name}: leading whitespace`);
+                    } else {
+                        assert.equal(localized.match(/^\s*/)[0], value.match(/^\s*/)[0],
+                            `${file}: ${name}: leading whitespace`);
+                    }
                     assert.equal(localized.match(/\s*$/)[0], value.match(/\s*$/)[0],
                         `${file}: ${name}: trailing whitespace`);
                 }
@@ -357,6 +362,45 @@ test("localized status reports preserve commit metadata including timestamp offs
     for (const [locale, culture] of [["ru-ru", "ru-RU"], ["cs-cz", "cs-CZ"], ["zh-cn", "zh-CN"]]) {
         const localized = JSON.parse(read("_site", locale, "status", `StyleCop.Analyzers.Status.${culture}.json`));
         assert.deepEqual(localized.git, report.git, `${locale}: preserve the original timestamp strings and commit metadata`);
+    }
+});
+
+test("status localization preserves alternate timestamp strings on supported PowerShell editions", () => {
+    const reportPath = path.join(root, "docs", "StyleCop.Analyzers.Status.json");
+    const localizedPaths = ["ru-RU", "cs-CZ", "zh-CN"].map(culture =>
+        path.join(root, "docs", `StyleCop.Analyzers.Status.${culture}.json`));
+    const originals = new Map([reportPath, ...localizedPaths].map(file =>
+        [file, fs.existsSync(file) ? fs.readFileSync(file) : null]));
+    const report = JSON.parse(originals.get(reportPath).toString("utf8").replace(/^\uFEFF/, ""));
+    const shells = process.platform === "win32" ? ["powershell.exe", "pwsh"] : ["pwsh"];
+    try {
+        for (const [author, committer] of [
+            ["2026-10-13T13:22:42-06:00", "2026-10-14T01:52:42+05:30"],
+            ["2026-10-13T19:22:42Z", "2026-10-13T19:22:42.1234567+00:00"],
+        ]) {
+            report.git.Author.When = author;
+            report.git.Committer.When = committer;
+            fs.writeFileSync(reportPath, JSON.stringify(report), "utf8");
+            for (const shell of shells) {
+                // Exercise the real localization script without rebuilding the site for each fixture.
+                const result = spawnSync(shell, ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass",
+                    "-Command", "function dotnet { $global:LASTEXITCODE = 0 }; & .\\build\\documentation.ps1"],
+                    { cwd: root, encoding: "utf8" });
+                assert.equal(result.status, 0, `${shell}: ${result.error || result.stderr || result.stdout}`);
+                for (const file of localizedPaths) {
+                    const localized = JSON.parse(fs.readFileSync(file, "utf8"));
+                    assert.deepEqual(localized.git, report.git, `${shell}: ${file}: preserve all commit metadata`);
+                }
+            }
+        }
+    } finally {
+        for (const [file, content] of originals) {
+            if (content === null) {
+                fs.rmSync(file, { force: true });
+            } else {
+                fs.writeFileSync(file, content);
+            }
+        }
     }
 });
 
