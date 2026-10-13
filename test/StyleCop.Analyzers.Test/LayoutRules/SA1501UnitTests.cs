@@ -204,6 +204,91 @@ public class Foo
         }
 
         /// <summary>
+        /// Verifies that empty catch and finally blocks are allowed on a single line.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3564, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3564")]
+        public async Task TestEmptyCatchAndFinallyBlocksAreAllowedAsync()
+        {
+            string testCode = @"using System;
+public class Foo
+{
+    public void Bar()
+    {
+        try
+        {
+        }
+        catch { }
+
+        try
+        {
+        }
+        catch (Exception) { }
+
+        try
+        {
+        }
+        catch (Exception exception) when (exception != null)
+        { }
+
+        try
+        {
+        }
+        finally { }
+
+        try
+        {
+        }
+        catch { /* Intentionally empty. */ }
+
+        try
+        {
+        }
+        finally
+        {
+            // Intentionally empty.
+        }
+    }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that nonempty catch and finally blocks on a single line still trigger a warning.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3564, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3564")]
+        public async Task TestNonemptyCatchAndFinallyBlocksStillTriggerWarningAsync()
+        {
+            string testCode = @"using System;
+public class Foo
+{
+    public void Bar()
+    {
+        try
+        {
+        }
+        catch {|#0:{|} ; }
+
+        try
+        {
+        }
+        finally {|#1:{|} GC.KeepAlive(null); }
+    }
+}";
+            await VerifyCSharpDiagnosticAsync(
+                testCode,
+                new[]
+                {
+                    Diagnostic().WithLocation(0),
+                    Diagnostic().WithLocation(1),
+                },
+                CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that the code fix provider will correctly expand the block to a multiline statement.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
