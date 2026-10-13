@@ -91,14 +91,14 @@ namespace StyleCop.Analyzers.SpacingRules
             {
                 // Opening generic brackets should not be {preceded} by a space.
                 var properties = TokenSpacingProperties.RemovePreceding;
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "preceded"));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, SpacingDiagnosticArguments.Preceded));
             }
 
             if (followedBySpace)
             {
                 // Opening generic brackets should not be {followed} by a space.
                 var properties = TokenSpacingProperties.RemoveFollowing;
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "followed"));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, SpacingDiagnosticArguments.Followed));
             }
         }
     }

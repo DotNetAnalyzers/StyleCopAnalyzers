@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="RenameToCodeFix" xml:space="preserve">
+    <value>重命名为“{0}”</value>
+  </data>
+  <data name="SA1300Description" xml:space="preserve">
+    <value>C# 元素的名称未以大写字母开头。</value>
+  </data>
+  <data name="SA1300MessageFormat" xml:space="preserve">
+    <value>元素“{0}”应以大写字母开头</value>
+  </data>
+  <data name="SA1300Title" xml:space="preserve">
+    <value>元素应以大写字母开头</value>
+  </data>
+  <data name="SA1301Description" xml:space="preserve">
+    <value>目前没有任何情况会触发此规则。</value>
+  </data>
+  <data name="SA1301MessageFormat" xml:space="preserve">
+    <value>元素应以小写字母开头</value>
+  </data>
+  <data name="SA1301Title" xml:space="preserve">
+    <value>元素应以小写字母开头</value>
+  </data>
+  <data name="SA1302CodeFix" xml:space="preserve">
+    <value>为接口名称添加前缀“I”</value>
+  </data>
+  <data name="SA1302Description" xml:space="preserve">
+    <value>C# 接口的名称未以大写字母 I 开头。</value>
+  </data>
+  <data name="SA1302MessageFormat" xml:space="preserve">
+    <value>接口名称应以 I 开头</value>
+  </data>
+  <data name="SA1302Title" xml:space="preserve">
+    <value>接口名称应以 I 开头</value>
+  </data>
+  <data name="SA1303Description" xml:space="preserve">
+    <value>C# 常量字段的名称应以大写字母开头。</value>
+  </data>
+  <data name="SA1303MessageFormat" xml:space="preserve">
+    <value>常量字段名称应以大写字母开头</value>
+  </data>
+  <data name="SA1303Title" xml:space="preserve">
+    <value>常量字段名称应以大写字母开头</value>
+  </data>
+  <data name="SA1304Description" xml:space="preserve">
+    <value>C# 非私有只读字段的名称应以大写字母开头。</value>
+  </data>
+  <data name="SA1304MessageFormat" xml:space="preserve">
+    <value>非私有只读字段应以大写字母开头</value>
+  </data>
+  <data name="SA1304Title" xml:space="preserve">
+    <value>非私有只读字段应以大写字母开头</value>
+  </data>
+  <data name="SA1305Description" xml:space="preserve">
+    <value>C# 字段或变量的名称使用了匈牙利命名法。</value>
+  </data>
+  <data name="SA1305MessageFormat" xml:space="preserve">
+    <value>{0}“{1}”不应使用匈牙利命名法</value>
+  </data>
+  <data name="SA1305Title" xml:space="preserve">
+    <value>字段名称不应使用匈牙利命名法</value>
+  </data>
+  <data name="SA1306Description" xml:space="preserve">
+    <value>C# 字段的名称未以小写字母开头。</value>
+  </data>
+  <data name="SA1306MessageFormat" xml:space="preserve">
+    <value>字段“{0}”应以小写字母开头</value>
+  </data>
+  <data name="SA1306Title" xml:space="preserve">
+    <value>字段名称应以小写字母开头</value>
+  </data>
+  <data name="SA1307Description" xml:space="preserve">
+    <value>C# 公共字段或内部字段的名称未以大写字母开头。</value>
+  </data>
+  <data name="SA1307MessageFormat" xml:space="preserve">
+    <value>字段“{0}”应以大写字母开头</value>
+  </data>
+  <data name="SA1307Title" xml:space="preserve">
+    <value>可访问字段应以大写字母开头</value>
+  </data>
+  <data name="SA1308Description" xml:space="preserve">
+    <value>C# 字段名称带有“m_”、“s_”或“t_”前缀。</value>
+  </data>
+  <data name="SA1308MessageFormat" xml:space="preserve">
+    <value>字段“{0}”不应以前缀“{1}”开头</value>
+  </data>
+  <data name="SA1308Title" xml:space="preserve">
+    <value>变量名称不应带有前缀</value>
+  </data>
+  <data name="SA1309Description" xml:space="preserve">
+    <value>C# 字段名称以下划线开头。</value>
+  </data>
+  <data name="SA1309MessageFormat" xml:space="preserve">
+    <value>字段“{0}”不应以下划线开头</value>
+  </data>
+  <data name="SA1309Title" xml:space="preserve">
+    <value>字段名称不应以下划线开头</value>
+  </data>
+  <data name="SA1310Description" xml:space="preserve">
+    <value>C# 字段名称包含下划线。</value>
+  </data>
+  <data name="SA1310MessageFormat" xml:space="preserve">
+    <value>字段“{0}”不应包含下划线</value>
+  </data>
+  <data name="SA1310Title" xml:space="preserve">
+    <value>字段名称不应包含下划线</value>
+  </data>
+  <data name="SA1311Description" xml:space="preserve">
+    <value>静态只读字段的名称未以大写字母开头。</value>
+  </data>
+  <data name="SA1311MessageFormat" xml:space="preserve">
+    <value>静态只读字段应以大写字母开头</value>
+  </data>
+  <data name="SA1311Title" xml:space="preserve">
+    <value>静态只读字段应以大写字母开头</value>
+  </data>
+  <data name="SA1312CodeFix" xml:space="preserve">
+    <value>替换为弃元</value>
+  </data>
+  <data name="SA1312Description" xml:space="preserve">
+    <value>C# 变量的名称未以小写字母开头。</value>
+  </data>
+  <data name="SA1312MessageFormat" xml:space="preserve">
+    <value>变量“{0}”应以小写字母开头</value>
+  </data>
+  <data name="SA1312Title" xml:space="preserve">
+    <value>变量名称应以小写字母开头</value>
+  </data>
+  <data name="SA1313Description" xml:space="preserve">
+    <value>C# 参数的名称未以小写字母开头。</value>
+  </data>
+  <data name="SA1313MessageFormat" xml:space="preserve">
+    <value>参数“{0}”应以小写字母开头</value>
+  </data>
+  <data name="SA1313Title" xml:space="preserve">
+    <value>参数名称应以小写字母开头</value>
+  </data>
+  <data name="SA1314CodeFix" xml:space="preserve">
+    <value>为类型参数名称添加前缀“T”</value>
+  </data>
+  <data name="SA1314Description" xml:space="preserve">
+    <value>C# 类型参数的名称未以大写字母 T 开头。</value>
+  </data>
+  <data name="SA1314MessageFormat" xml:space="preserve">
+    <value>类型参数名称应以 T 开头</value>
+  </data>
+  <data name="SA1314Title" xml:space="preserve">
+    <value>类型参数名称应以 T 开头</value>
+  </data>
+  <data name="SA1316CodeFix" xml:space="preserve">
+    <value>修正元组元素名称的大小写</value>
+  </data>
+  <data name="SA1316Description" xml:space="preserve">
+    <value>元组类型中的元素名称应使用正确的大小写。</value>
+  </data>
+  <data name="SA1316MessageFormat" xml:space="preserve">
+    <value>元组元素名称应使用正确的大小写</value>
+  </data>
+  <data name="SA1316Title" xml:space="preserve">
+    <value>元组元素名称应使用正确的大小写</value>
+  </data>
+  <data name="SX1309Description" xml:space="preserve">
+    <value>C# 字段名称未以下划线开头。</value>
+  </data>
+  <data name="SX1309MessageFormat" xml:space="preserve">
+    <value>字段“{0}”应以下划线开头</value>
+  </data>
+  <data name="SX1309SDescription" xml:space="preserve">
+    <value>C# 静态字段名称未以下划线开头。</value>
+  </data>
+  <data name="SX1309SMessageFormat" xml:space="preserve">
+    <value>静态字段“{0}”应以下划线开头</value>
+  </data>
+  <data name="SX1309STitle" xml:space="preserve">
+    <value>静态字段名称应以下划线开头</value>
+  </data>
+  <data name="SX1309Title" xml:space="preserve">
+    <value>字段名称应以下划线开头</value>
+  </data>
+</root>

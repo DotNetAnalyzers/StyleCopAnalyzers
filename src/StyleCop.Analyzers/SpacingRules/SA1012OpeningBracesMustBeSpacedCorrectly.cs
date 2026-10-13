@@ -84,7 +84,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 {
                     // Opening brace should{} be {followed} by a space.
                     var properties = TokenSpacingProperties.RemoveFollowing;
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, " not", "followed"));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, SpacingDiagnosticArguments.Not, SpacingDiagnosticArguments.Followed));
                 }
 
                 return;
@@ -116,14 +116,14 @@ namespace StyleCop.Analyzers.SpacingRules
                 // Opening brace should{} be {preceded} by a space.
                 // Opening brace should{ not} be {preceded} by a space.
                 var properties = expectPrecedingSpace ? TokenSpacingProperties.InsertPreceding : TokenSpacingProperties.RemovePrecedingPreserveLayout;
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, expectPrecedingSpace ? string.Empty : " not", "preceded"));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, expectPrecedingSpace ? string.Empty : SpacingDiagnosticArguments.Not, SpacingDiagnosticArguments.Preceded));
             }
 
             if (!token.IsLastInLine() && !followedBySpace)
             {
                 // Opening brace should{} be {followed} by a space.
                 var properties = TokenSpacingProperties.InsertFollowing;
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, string.Empty, "followed"));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, string.Empty, SpacingDiagnosticArguments.Followed));
             }
         }
     }

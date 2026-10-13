@@ -1,0 +1,297 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="SA1500CodeFix" xml:space="preserve">
+    <value>对齐大括号</value>
+  </data>
+  <data name="SA1500Description" xml:space="preserve">
+    <value>C# 语句、元素或表达式中的左大括号或右大括号未独占一行。</value>
+  </data>
+  <data name="SA1500MessageFormat" xml:space="preserve">
+    <value>多行语句的大括号不应与其他内容共用一行</value>
+  </data>
+  <data name="SA1500Title" xml:space="preserve">
+    <value>多行语句的大括号不应与其他内容共用一行</value>
+  </data>
+  <data name="SA1501CodeFix" xml:space="preserve">
+    <value>展开单行块</value>
+  </data>
+  <data name="SA1501CodeFixAll" xml:space="preserve">
+    <value>展开所有单行块</value>
+  </data>
+  <data name="SA1501Description" xml:space="preserve">
+    <value>包含左大括号和右大括号的 C# 语句完全写在一行中。</value>
+  </data>
+  <data name="SA1501MessageFormat" xml:space="preserve">
+    <value>语句不应写在一行中</value>
+  </data>
+  <data name="SA1501Title" xml:space="preserve">
+    <value>语句不应写在一行中</value>
+  </data>
+  <data name="SA1502CodeFix" xml:space="preserve">
+    <value>展开元素</value>
+  </data>
+  <data name="SA1502Description" xml:space="preserve">
+    <value>包含左大括号和右大括号的 C# 元素完全写在一行中。</value>
+  </data>
+  <data name="SA1502MessageFormat" xml:space="preserve">
+    <value>元素不应写在一行中</value>
+  </data>
+  <data name="SA1502Title" xml:space="preserve">
+    <value>元素不应写在一行中</value>
+  </data>
+  <data name="SA1503CodeFix" xml:space="preserve">
+    <value>用大括号包围</value>
+  </data>
+  <data name="SA1503Description" xml:space="preserve">
+    <value>C# 语句省略了左大括号和右大括号。</value>
+  </data>
+  <data name="SA1503MessageFormat" xml:space="preserve">
+    <value>不应省略大括号</value>
+  </data>
+  <data name="SA1503Title" xml:space="preserve">
+    <value>不应省略大括号</value>
+  </data>
+  <data name="SA1504CodeFixMultipleLines" xml:space="preserve">
+    <value>将访问器重新格式化为多行样式</value>
+  </data>
+  <data name="SA1504CodeFixSingleLine" xml:space="preserve">
+    <value>将访问器重新格式化为单行样式</value>
+  </data>
+  <data name="SA1504Description" xml:space="preserve">
+    <value>C# 属性、索引器或事件中至少有一个子访问器写在一行中，同时至少有一个子访问器跨多行书写。</value>
+  </data>
+  <data name="SA1504MessageFormat" xml:space="preserve">
+    <value>所有访问器应统一使用单行或多行样式</value>
+  </data>
+  <data name="SA1504Title" xml:space="preserve">
+    <value>所有访问器应统一使用单行或多行样式</value>
+  </data>
+  <data name="SA1505CodeFix" xml:space="preserve">
+    <value>删除此大括号之后的空行</value>
+  </data>
+  <data name="SA1505Description" xml:space="preserve">
+    <value>C# 元素、语句或表达式中的左大括号之后有空行。</value>
+  </data>
+  <data name="SA1505MessageFormat" xml:space="preserve">
+    <value>左大括号之后不应有空行</value>
+  </data>
+  <data name="SA1505Title" xml:space="preserve">
+    <value>左大括号之后不应有空行</value>
+  </data>
+  <data name="SA1506CodeFix" xml:space="preserve">
+    <value>删除文档标头之后的空行</value>
+  </data>
+  <data name="SA1506Description" xml:space="preserve">
+    <value>C# 元素上方的元素文档标头之后有空行。</value>
+  </data>
+  <data name="SA1506MessageFormat" xml:space="preserve">
+    <value>元素文档标头之后不应有空行</value>
+  </data>
+  <data name="SA1506Title" xml:space="preserve">
+    <value>元素文档标头之后不应有空行</value>
+  </data>
+  <data name="SA1507CodeFix" xml:space="preserve">
+    <value>删除连续空行</value>
+  </data>
+  <data name="SA1507Description" xml:space="preserve">
+    <value>C# 代码包含多个连续空行。</value>
+  </data>
+  <data name="SA1507MessageFormat" xml:space="preserve">
+    <value>代码不应包含多个连续空行</value>
+  </data>
+  <data name="SA1507Title" xml:space="preserve">
+    <value>代码不应包含多个连续空行</value>
+  </data>
+  <data name="SA1508CodeFix" xml:space="preserve">
+    <value>删除此大括号之前的空行</value>
+  </data>
+  <data name="SA1508Description" xml:space="preserve">
+    <value>C# 元素、语句或表达式中的右大括号之前有空行。</value>
+  </data>
+  <data name="SA1508MessageFormat" xml:space="preserve">
+    <value>右大括号之前不应有空行</value>
+  </data>
+  <data name="SA1508Title" xml:space="preserve">
+    <value>右大括号之前不应有空行</value>
+  </data>
+  <data name="SA1509CodeFix" xml:space="preserve">
+    <value>删除此大括号之前的空行</value>
+  </data>
+  <data name="SA1509Description" xml:space="preserve">
+    <value>C# 元素、语句或表达式中的左大括号之前有空行。</value>
+  </data>
+  <data name="SA1509MessageFormat" xml:space="preserve">
+    <value>左大括号之前不应有空行</value>
+  </data>
+  <data name="SA1509Title" xml:space="preserve">
+    <value>左大括号之前不应有空行</value>
+  </data>
+  <data name="SA1510CodeFix" xml:space="preserve">
+    <value>删除链接语句之前的空行</value>
+  </data>
+  <data name="SA1510Description" xml:space="preserve">
+    <value>相互链接的 C# 语句之间有空行。</value>
+  </data>
+  <data name="SA1510MessageFormat" xml:space="preserve">
+    <value>“{0}”语句之前不应有空行</value>
+  </data>
+  <data name="SA1510Title" xml:space="preserve">
+    <value>链接的语句块之前不应有空行</value>
+  </data>
+  <data name="SA1511CodeFix" xml:space="preserve">
+    <value>删除 while 之前的空行</value>
+  </data>
+  <data name="SA1511Description" xml:space="preserve">
+    <value>do-while 语句底部的 while 尾部与语句之间有空行。</value>
+  </data>
+  <data name="SA1511MessageFormat" xml:space="preserve">
+    <value>do-while 的 while 尾部之前不应有空行</value>
+  </data>
+  <data name="SA1511Title" xml:space="preserve">
+    <value>do-while 的 while 尾部之前不应有空行</value>
+  </data>
+  <data name="SA1512CodeFix" xml:space="preserve">
+    <value>删除注释之后的空行</value>
+  </data>
+  <data name="SA1512Description" xml:space="preserve">
+    <value>C# 代码中的单行注释之后有空行。</value>
+  </data>
+  <data name="SA1512MessageFormat" xml:space="preserve">
+    <value>单行注释之后不应有空行</value>
+  </data>
+  <data name="SA1512Title" xml:space="preserve">
+    <value>单行注释之后不应有空行</value>
+  </data>
+  <data name="SA1513CodeFix" xml:space="preserve">
+    <value>在大括号之后插入空行</value>
+  </data>
+  <data name="SA1513Description" xml:space="preserve">
+    <value>C# 元素、语句或表达式中的右大括号之后没有空行。</value>
+  </data>
+  <data name="SA1513MessageFormat" xml:space="preserve">
+    <value>右大括号之后应有空行</value>
+  </data>
+  <data name="SA1513Title" xml:space="preserve">
+    <value>右大括号之后应有空行</value>
+  </data>
+  <data name="SA1514CodeFix" xml:space="preserve">
+    <value>在文档标头之前插入空行</value>
+  </data>
+  <data name="SA1514Description" xml:space="preserve">
+    <value>C# 元素上方的元素文档标头之前没有空行。</value>
+  </data>
+  <data name="SA1514MessageFormat" xml:space="preserve">
+    <value>元素文档标头之前应有空行</value>
+  </data>
+  <data name="SA1514Title" xml:space="preserve">
+    <value>元素文档标头之前应有空行</value>
+  </data>
+  <data name="SA1515CodeFix" xml:space="preserve">
+    <value>在注释之前插入空行</value>
+  </data>
+  <data name="SA1515Description" xml:space="preserve">
+    <value>C# 代码中的单行注释之前没有空行。</value>
+  </data>
+  <data name="SA1515MessageFormat" xml:space="preserve">
+    <value>单行注释之前应有空行</value>
+  </data>
+  <data name="SA1515Title" xml:space="preserve">
+    <value>单行注释之前应有空行</value>
+  </data>
+  <data name="SA1516CodeFixAll" xml:space="preserve">
+    <value>修正空行</value>
+  </data>
+  <data name="SA1516CodeFixInsert" xml:space="preserve">
+    <value>插入新行</value>
+  </data>
+  <data name="SA1516CodeFixRemove" xml:space="preserve">
+    <value>删除空行</value>
+  </data>
+  <data name="SA1516Description" xml:space="preserve">
+    <value>相邻的 C# 元素之间没有用空行分隔。</value>
+  </data>
+  <data name="SA1516DescriptionOmit" xml:space="preserve">
+    <value>相邻的 using 指令之间不应用空行分隔。</value>
+  </data>
+  <data name="SA1516DescriptionRequire" xml:space="preserve">
+    <value>相邻的 using 指令之间应用空行分隔。</value>
+  </data>
+  <data name="SA1516MessageFormat" xml:space="preserve">
+    <value>元素之间应用空行分隔</value>
+  </data>
+  <data name="SA1516MessageFormatOmit" xml:space="preserve">
+    <value>using 指令之间不应用空行分隔</value>
+  </data>
+  <data name="SA1516MessageFormatRequire" xml:space="preserve">
+    <value>using 指令之间应用空行分隔</value>
+  </data>
+  <data name="SA1516Title" xml:space="preserve">
+    <value>元素之间应用空行分隔</value>
+  </data>
+  <data name="SA1517CodeFix" xml:space="preserve">
+    <value>删除文件开头的空行</value>
+  </data>
+  <data name="SA1517Description" xml:space="preserve">
+    <value>代码文件开头有空行。</value>
+  </data>
+  <data name="SA1517MessageFormat" xml:space="preserve">
+    <value>代码文件开头不应包含空行</value>
+  </data>
+  <data name="SA1517Title" xml:space="preserve">
+    <value>代码文件开头不应包含空行</value>
+  </data>
+  <data name="SA1518CodeFix" xml:space="preserve">
+    <value>修正文件末尾的空白</value>
+  </data>
+  <data name="SA1518DescriptionAllow" xml:space="preserve">
+    <value>代码文件末尾不应包含空行。</value>
+  </data>
+  <data name="SA1518DescriptionOmit" xml:space="preserve">
+    <value>文件不得以换行符结尾。</value>
+  </data>
+  <data name="SA1518DescriptionRequire" xml:space="preserve">
+    <value>文件必须以一个换行符结尾。</value>
+  </data>
+  <data name="SA1518MessageFormatAllow" xml:space="preserve">
+    <value>代码文件末尾不应包含空行</value>
+  </data>
+  <data name="SA1518MessageFormatOmit" xml:space="preserve">
+    <value>文件不得以换行符结尾</value>
+  </data>
+  <data name="SA1518MessageFormatRequire" xml:space="preserve">
+    <value>文件必须以一个换行符结尾</value>
+  </data>
+  <data name="SA1518Title" xml:space="preserve">
+    <value>在文件末尾正确使用换行符</value>
+  </data>
+  <data name="SA1519Description" xml:space="preserve">
+    <value>多行 C# 语句省略了左大括号和右大括号。</value>
+  </data>
+  <data name="SA1519MessageFormat" xml:space="preserve">
+    <value>多行子语句不应省略大括号</value>
+  </data>
+  <data name="SA1519Title" xml:space="preserve">
+    <value>多行子语句不应省略大括号</value>
+  </data>
+  <data name="SA1520Description" xml:space="preserve">
+    <value>相互链接的 if/else if/else 结构中，有些分支包含左大括号和右大括号，而其他分支省略了大括号。</value>
+  </data>
+  <data name="SA1520MessageFormat" xml:space="preserve">
+    <value>一致地使用大括号</value>
+  </data>
+  <data name="SA1520Title" xml:space="preserve">
+    <value>一致地使用大括号</value>
+  </data>
+</root>

@@ -5,6 +5,22 @@ try {
     $reportPath = 'docs\StyleCop.Analyzers.Status.json'
     $localizedReports = @(
         @{
+            Culture = 'zh-CN'
+            Locale = 'zh-cn'
+            Path = 'docs\StyleCop.Analyzers.Status.zh-CN.json'
+            EnglishTitleFallback = $false
+            Reasons = @{
+                'No automatic code fix is possible for general JSON syntax errors.' = '无法自动修复一般的 JSON 语法错误。'
+                'The necessary actions for this code fix are not supported by the analysis infrastructure.' = '分析基础设施不支持此代码修复所需的操作。'
+                'Cannot generate documentation' = '无法生成文档'
+                "Don't fix what isn't broken." = '不要修改没有问题的代码。'
+                'Provided by Visual Studio' = '由 Visual Studio 提供'
+                'Cannot generate appropriate names.' = '无法生成合适的名称。'
+                'No message is available for Debug.Fail' = '没有可用于 Debug.Fail 的消息'
+                'The "Encapsulate Field" fix is provided by Visual Studio.' = '“封装字段”修复由 Visual Studio 提供。'
+            }
+        },
+        @{
             Culture = 'ru-RU'
             Locale = 'ru-ru'
             Path = 'docs\StyleCop.Analyzers.Status.ru-RU.json'
@@ -99,6 +115,11 @@ try {
     dotnet docfx (Join-Path 'docfx' 'docfx.cs-cz.json') --warningsAsErrors
     if ($LASTEXITCODE -ne 0) {
         throw 'The Czech documentation build failed.'
+    }
+
+    dotnet docfx (Join-Path 'docfx' 'docfx.zh-cn.json') --warningsAsErrors
+    if ($LASTEXITCODE -ne 0) {
+        throw 'The Chinese documentation build failed.'
     }
 } finally {
     Pop-Location

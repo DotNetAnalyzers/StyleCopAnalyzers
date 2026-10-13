@@ -1130,6 +1130,31 @@ public class TestClass
                 false).ConfigureAwait(false);
         }
 
+        [Theory]
+        [InlineData("class", "类")]
+        [InlineData("struct", "结构")]
+        [WorkItem(3792, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3792")]
+        public async Task TestChineseDocumentationCultureIsUsedAsync(string typeKind, string typeKindText)
+        {
+            var settings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""documentationCulture"": ""zh-CN""
+    }
+  }
+}
+";
+
+            await TestConstructorCorrectDocumentationSimpleAsync(
+                settings,
+                typeKind,
+                "public",
+                "初始化 ",
+                " " + typeKindText + "的新实例",
+                false).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Verify that the codefix will work properly with Visual Studio generated documentation headers.
         /// </summary>

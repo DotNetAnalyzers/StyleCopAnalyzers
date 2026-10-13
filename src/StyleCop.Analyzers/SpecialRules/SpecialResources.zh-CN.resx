@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="SA0001Description" xml:space="preserve">
+    <value>只有将项目配置为解析文档注释后，才能执行 XML 注释分析。要启用此功能，请更新项目，使其在生成过程中输出 XML 文档文件。</value>
+  </data>
+  <data name="SA0001MessageFormat" xml:space="preserve">
+    <value>由于项目配置，XML 注释分析已禁用</value>
+  </data>
+  <data name="SA0001Title" xml:space="preserve">
+    <value>XML 注释分析已禁用</value>
+  </data>
+  <data name="SA0002Description" xml:space="preserve">
+    <value>stylecop.json 文件中的各种错误可能导致分析器无法加载该文件。在这种情况下，将改用默认设置。
+
+{0}</value>
+  </data>
+  <data name="SA0002MessageFormat" xml:space="preserve">
+    <value>无法加载 stylecop.json 设置文件</value>
+  </data>
+  <data name="SA0002Title" xml:space="preserve">
+    <value>设置文件无效</value>
+  </data>
+</root>

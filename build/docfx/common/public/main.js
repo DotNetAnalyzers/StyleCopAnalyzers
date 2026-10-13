@@ -2,6 +2,7 @@ const locales = [
     { lang: "en", label: "English", prefix: "", searchLanguages: ["en"], languageLabel: "Language", anchorLabel: "Anchor" },
     { lang: "ru", label: "Русский", prefix: "ru-ru/", searchLanguages: ["en", "ru"], languageLabel: "Язык", anchorLabel: "Ссылка на раздел" },
     { lang: "cs", label: "Čeština", prefix: "cs-cz/", searchLanguages: ["en", "cs"], languageLabel: "Jazyk", anchorLabel: "Odkaz na oddíl" },
+    { lang: "zh-CN", label: "简体中文", prefix: "zh-cn/", searchLanguages: ["en"], languageLabel: "语言", anchorLabel: "章节链接" },
 ];
 const currentLocale = locales.find(locale => locale.lang === document.documentElement.lang);
 if (!currentLocale) {
@@ -28,6 +29,13 @@ export default {
                 "Close": "Zavřít",
                 "Show table of contents": "Zobrazit obsah",
                 toc: "Obsah",
+            },
+            "zh-CN": {
+                "Toggle navigation": "展开或折叠导航",
+                "Search": "搜索",
+                "Close": "关闭",
+                "Show table of contents": "显示目录",
+                toc: "目录",
             },
         }[currentLocale.lang];
         const root = new URL(document.querySelector('meta[name="docfx:rel"]').content || "./", window.location.href);
