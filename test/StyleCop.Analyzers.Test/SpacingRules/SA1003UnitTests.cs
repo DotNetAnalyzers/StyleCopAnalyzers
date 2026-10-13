@@ -701,7 +701,8 @@ public class Foo : Exception
     {
     }
 
-    public Foo(int value) : base(value.ToString())
+    public Foo(int value)
+        : base(value.ToString())
     {
     }
 
@@ -729,7 +730,7 @@ public class Foo : Exception
                 },
                 RemainingDiagnostics =
                 {
-                    Diagnostic(DescriptorNotAtEndOfLine).WithLocation(26, 29).WithArguments(":"),
+                    Diagnostic(DescriptorNotAtEndOfLine).WithLocation(27, 29).WithArguments(":"),
                 },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
@@ -1197,6 +1198,70 @@ public class Foo : Exception
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix preserves a line break before a constructor initializer.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2613, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2613")]
+        public async Task TestConstructorInitializerLineBreakPreservedAsync()
+        {
+            var testCode = @"public class MyBaseType
+{
+    public MyBaseType(int value)
+    {
+    }
+}
+
+public class MyType : MyBaseType
+{
+    public MyType() /* preserved comment */ {|#0::|}
+        base(/* preserved comment */ 3)
+    {
+    }
+
+    public MyType(int value) {|#1::|}
+        base(value)
+    {
+    }
+}
+";
+            var fixedCode = @"public class MyBaseType
+{
+    public MyBaseType(int value)
+    {
+    }
+}
+
+public class MyType : MyBaseType
+{
+    public MyType() /* preserved comment */
+        : base(/* preserved comment */ 3)
+    {
+    }
+
+    public MyType(int value)
+        : base(value)
+    {
+    }
+}
+";
+            var settings = @"{
+  ""settings"": {
+    ""indentation"": {
+      ""indentationSize"": 2
+    }
+  }
+}";
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DescriptorNotAtEndOfLine).WithLocation(0).WithArguments(":"),
+                Diagnostic(DescriptorNotAtEndOfLine).WithLocation(1).WithArguments(":"),
+            };
+
+            await VerifyCSharpFixAsync(testCode, settings, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
