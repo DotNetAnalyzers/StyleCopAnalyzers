@@ -6,7 +6,7 @@ namespace StyleCop.Analyzers.Test.CSharp11.DocumentationRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp10.DocumentationRules;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<
-        StyleCop.Analyzers.DocumentationRules.SA1625ElementDocumentationMustNotBeCopiedAndPasted>;
+        StyleCop.Analyzers.DocumentationRules.SA1625ElementDocumentationMustNotBeDuplicated>;
 
     public partial class SA1625CSharp11UnitTests : SA1625CSharp10UnitTests
     {

@@ -28,7 +28,7 @@ Identifier | Name | Description
 [SA1622](SA1622.md) | GenericTypeParameterDocumentationMustHaveText | A `<typeparam>` tag within the Xml header documentation for a generic C# element is empty. 
 [SA1623](SA1623.md) | PropertySummaryDocumentationMustMatchAccessors | The documentation text within a C# property's `<summary>` tag does not match the accessors within the property. 
 [SA1624](SA1624.md) | PropertySummaryDocumentationMustOmitSetAccessorWithRestrictedAccess | The documentation text within a C# property's `<summary>` tag takes into account all of the accessors within the property, but one of the accessors has limited access. 
-[SA1625](SA1625.md) | ElementDocumentationMustNotBeCopiedAndPasted | The Xml documentation for a C# element contains two or more identical entries, indicating that the documentation has been copied and pasted.
+[SA1625](SA1625.md) | ElementDocumentationMustNotBeDuplicated | The Xml documentation for a C# element contains two or more identical entries.
 [SA1626](SA1626.md) | SingleLineCommentsMustNotUseDocumentationStyleSlashes | The C# code contains a single-line comment which begins with three forward slashes in a row. 
 [SA1627](SA1627.md) | DocumentationTextMustNotBeEmpty | The Xml header documentation for a C# code element contains an empty tag. 
 [SA1628](SA1628.md) | DocumentationTextMustBeginWithACapitalLetter | A section of the Xml header documentation for a C# element does not begin with a capital letter. 

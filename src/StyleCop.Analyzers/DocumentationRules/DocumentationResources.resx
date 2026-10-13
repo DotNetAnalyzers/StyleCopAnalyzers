@@ -394,13 +394,13 @@
     <value>Property summary documentation should omit accessor with restricted access</value>
   </data>
   <data name="SA1625Description" xml:space="preserve">
-    <value>The Xml documentation for a C# element contains two or more identical entries, indicating that the documentation has been copied and pasted. This can sometimes indicate invalid or poorly written documentation.</value>
+    <value>The Xml documentation for a C# element contains two or more identical entries.</value>
   </data>
   <data name="SA1625MessageFormat" xml:space="preserve">
-    <value>Element documentation should not be copied and pasted</value>
+    <value>Element documentation should not contain duplicate entries</value>
   </data>
   <data name="SA1625Title" xml:space="preserve">
-    <value>Element documentation should not be copied and pasted</value>
+    <value>Element documentation should not contain duplicate entries</value>
   </data>
   <data name="SA1626CodeFix" xml:space="preserve">
     <value>Convert to line comment</value>

@@ -335,13 +335,13 @@
     <value>属性的摘要文档应省略访问权限受限的访问器</value>
   </data>
   <data name="SA1625Description" xml:space="preserve">
-    <value>C# 元素的 XML 文档注释包含两个或更多相同的条目，表明文档是通过复制粘贴编写的。这有时意味着文档无效或质量不佳。</value>
+    <value>C# 元素的 XML 文档包含两个或更多相同的条目。</value>
   </data>
   <data name="SA1625MessageFormat" xml:space="preserve">
-    <value>元素的文档注释不应复制粘贴</value>
+    <value>元素文档不应包含重复条目</value>
   </data>
   <data name="SA1625Title" xml:space="preserve">
-    <value>元素的文档注释不应复制粘贴</value>
+    <value>元素文档不应包含重复条目</value>
   </data>
   <data name="SA1626CodeFix" xml:space="preserve">
     <value>转换为单行注释</value>

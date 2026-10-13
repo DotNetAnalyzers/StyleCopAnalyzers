@@ -18,8 +18,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
-    /// The XML documentation for a C# element contains two or more identical entries, indicating that the documentation
-    /// has been copied and pasted. This can sometimes indicate invalid or poorly written documentation.
+    /// The XML documentation for a C# element contains two or more identical entries.
     /// </summary>
     /// <remarks>
     /// <para>C# syntax provides a mechanism for inserting documentation for classes and elements directly into the
@@ -60,10 +59,10 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1625ElementDocumentationMustNotBeCopiedAndPasted : ElementDocumentationBase
+    internal class SA1625ElementDocumentationMustNotBeDuplicated : ElementDocumentationBase
     {
         /// <summary>
-        /// The ID for diagnostics produced by the <see cref="SA1625ElementDocumentationMustNotBeCopiedAndPasted"/>
+        /// The ID for diagnostics produced by the <see cref="SA1625ElementDocumentationMustNotBeDuplicated"/>
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1625";
@@ -75,7 +74,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        public SA1625ElementDocumentationMustNotBeCopiedAndPasted()
+        public SA1625ElementDocumentationMustNotBeDuplicated()
             : base(inheritDocSuppressesWarnings: false)
         {
         }

@@ -198,11 +198,11 @@ namespace StyleCop.Analyzers.DocumentationRules
         public static string @SA1624MessageFormat => GetResourceString("SA1624MessageFormat")!;
         /// <summary>Property summary documentation should omit accessor with restricted access</summary>
         public static string @SA1624Title => GetResourceString("SA1624Title")!;
-        /// <summary>The Xml documentation for a C# element contains two or more identical entries, indicating that the documentation has been copied and pasted. This can sometimes indicate invalid or poorly written documentation.</summary>
+        /// <summary>The Xml documentation for a C# element contains two or more identical entries.</summary>
         public static string @SA1625Description => GetResourceString("SA1625Description")!;
-        /// <summary>Element documentation should not be copied and pasted</summary>
+        /// <summary>Element documentation should not contain duplicate entries</summary>
         public static string @SA1625MessageFormat => GetResourceString("SA1625MessageFormat")!;
-        /// <summary>Element documentation should not be copied and pasted</summary>
+        /// <summary>Element documentation should not contain duplicate entries</summary>
         public static string @SA1625Title => GetResourceString("SA1625Title")!;
         /// <summary>Convert to line comment</summary>
         public static string @SA1626CodeFix => GetResourceString("SA1626CodeFix")!;

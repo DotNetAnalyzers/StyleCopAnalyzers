@@ -271,9 +271,9 @@
   <data name="SA1624Description"><value>The documentation text within a C# property’s &lt;summary&gt; tag takes into account all of the accessors within the property, but one of the accessors has limited access.</value></data>
   <data name="SA1624MessageFormat"><value>Because the property only contains a visible {0} accessor, the documentation summary text should begin with '{1}'.</value></data>
   <data name="SA1624Title"><value>Property summary documentation should omit accessor with restricted access</value></data>
-  <data name="SA1625Description"><value>The Xml documentation for a C# element contains two or more identical entries, indicating that the documentation has been copied and pasted. This can sometimes indicate invalid or poorly written documentation.</value></data>
-  <data name="SA1625MessageFormat"><value>Element documentation should not be copied and pasted</value></data>
-  <data name="SA1625Title"><value>Element documentation should not be copied and pasted</value></data>
+  <data name="SA1625Description"><value>The Xml documentation for a C# element contains two or more identical entries.</value></data>
+  <data name="SA1625MessageFormat"><value>Element documentation should not contain duplicate entries</value></data>
+  <data name="SA1625Title"><value>Element documentation should not contain duplicate entries</value></data>
   <data name="SA1626CodeFix"><value>Convert to line comment</value></data>
   <data name="SA1626CodeFixStrayComment"><value>Convert to documentation comment</value></data>
   <data name="SA1626Description"><value>The C# code contains a single-line comment which begins with three forward slashes in a row.</value></data>

@@ -190,7 +190,7 @@
         <Rule Id="SA1622"  Action="Warning" />          <!-- Generic type parameter documentation should have text -->
         <Rule Id="SA1623"  Action="Warning" />          <!-- Property summary documentation should match accessors -->
         <Rule Id="SA1624"  Action="Warning" />          <!-- Property summary documentation should omit accessor with restricted access -->
-        <Rule Id="SA1625"  Action="Warning" />          <!-- Element documentation should not be copied and pasted -->
+        <Rule Id="SA1625"  Action="Warning" />          <!-- Element documentation should not contain duplicate entries -->
         <Rule Id="SA1626"  Action="Warning" />          <!-- Single-line comments should not use documentation style slashes -->
         <Rule Id="SA1627"  Action="Warning" />          <!-- Documentation text should not be empty -->
         <Rule Id="SA1628"  Action="None" />             <!-- Documentation text should begin with a capital letter -->

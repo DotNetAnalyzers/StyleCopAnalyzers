@@ -28,7 +28,7 @@
 [SA1622](SA1622.md) | GenericTypeParameterDocumentationMustHaveText | C# 泛型元素的 XML 文档注释头中的 `<typeparam>` 标记为空。
 [SA1623](SA1623.md) | PropertySummaryDocumentationMustMatchAccessors | C# 属性的 `<summary>` 标记中的文档文本，与该属性的访问器不匹配。
 [SA1624](SA1624.md) | PropertySummaryDocumentationMustOmitSetAccessorWithRestrictedAccess | C# 属性的 `<summary>` 标记中的文档文本描述了所有访问器，但其中一个访问器的访问权限受限。
-[SA1625](SA1625.md) | ElementDocumentationMustNotBeCopiedAndPasted | C# 元素的 XML 文档包含两个或更多相同的条目，表明文档经过了复制粘贴。
+[SA1625](SA1625.md) | ElementDocumentationMustNotBeDuplicated | C# 元素的 XML 文档包含两个或更多相同的条目。
 [SA1626](SA1626.md) | SingleLineCommentsMustNotUseDocumentationStyleSlashes | C# 代码包含以三个连续正斜杠开头的单行注释。
 [SA1627](SA1627.md) | DocumentationTextMustNotBeEmpty | C# 代码元素的 XML 文档注释头包含空标记。
 [SA1628](SA1628.md) | DocumentationTextMustBeginWithACapitalLetter | C# 元素的 XML 文档注释头中的某一部分未以大写字母开头。
