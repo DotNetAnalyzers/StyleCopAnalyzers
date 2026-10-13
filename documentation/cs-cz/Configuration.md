@@ -233,7 +233,7 @@ Následující vlastnosti slouží ke konfiguraci základního odsazení StyleCo
 
 | Vlastnost | Výchozí hodnota | Minimální verze | Popis |
 | --- | --- | --- | --- |
-| `indentationSize` | **4** | 1.1.0 | Počet sloupců použitý pro každou úroveň odsazení kódu. Podle nastavení `useTabs` a `tabSize` se vyplní tabulátory nebo mezerami. |
+| `indentationSize` | **4** | 1.1.0 | Počet sloupců použitý pro každou úroveň odsazení kódu. Podle nastavení `useTabs` a `tabSize` se každá úroveň odsazení vytvoří pomocí tabulátorů nebo mezer. |
 | `tabSize` | **4** | 1.1.0 | Šířka znaku tabulátoru ve zdrojovém kódu. Tato hodnota se používá při převodu mezi tabulátory a mezerami. |
 | `useTabs` | **false** | 1.1.0 | **true** pro odsazování tabulátory; jinak **false** pro odsazování mezerami |
 

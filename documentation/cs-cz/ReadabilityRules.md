@@ -39,7 +39,7 @@ Identifikátor | Název | Popis
 [SA1134](SA1134.md) | AttributesMustNotShareLine | Atribut je umístěn na stejném řádku kódu jako jiný atribut nebo prvek.
 [SA1135](SA1135.md) | UsingDirectivesMustBeQualified | Direktiva `using` není kvalifikována.
 [SA1136](SA1136.md) | EnumValuesShouldBeOnSeparateLines | Více hodnot enum je umístěno na stejném řádku kódu.
-[SA1137](SA1137.md) | ElementsShouldHaveTheSameIndentation | Dva sourozenecké prvky, které každý začínají na vlastním řádku, mají odlišné úrovně odsazení.
+[SA1137](SA1137.md) | ElementsShouldHaveTheSameIndentation | Dva sourozenecké prvky, z nichž každý začíná na vlastním řádku, mají různé úrovně odsazení.
 [SA1139](SA1139.md) | UseLiteralsSuffixNotationInsteadOfCasting | Použijte notaci přípon literálů místo přetypování.
 [SA1141](SA1141.md) | UseTupleSyntax | Použijte syntaxi tuple místo základního typu `ValueTuple`.
 [SA1142](SA1142.md) | ReferToTupleElementsByName | Prvek tuple byl odkazován podle metadatového názvu, když je k dispozici jméno prvku.
