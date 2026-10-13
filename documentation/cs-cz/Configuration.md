@@ -279,15 +279,15 @@ Následující vlastnost slouží ke konfiguraci aliasů předdefinovaných typ�
 | --- | --- | --- | --- |
 | `allowBuiltInTypeAliases` | **false** | 1.1.0-beta007 | Určuje, zda jsou povoleny aliasy předdefinovaných typů. |
 
-Ve výchozím nastavení SA1121 hlásí diagnostiku při použití pojmenovaných aliasů předdefinovaných typů:
+Ve výchozím nastavení SA1121 hlásí diagnostiku u deklarace pojmenovaného aliasu předdefinovaného typu:
 
 ```csharp
-using HRESULT = System.Int32;
+using HRESULT = System.Int32; // SA1121
 
-HRESULT hr = SomeNativeOperation(); // SA1121
+HRESULT hr = SomeNativeOperation();
 ```
 
-Konfigurační vlastnost `allowBuiltInTypeAliases` lze nastavit na `true`, aby se takové případy povolily a současně se nadále hlásily diagnostiky pro přímé odkazy na název typu metadat, například `Int32`.
+Konfigurační vlastnost `allowBuiltInTypeAliases` lze nastavit na `true`, aby se povolily pojmenované aliasy předdefinovaných typů a současně se nadále hlásily diagnostiky pro přímé odkazy na názvy typů metadat, například `Int32`. Diagnostika se nadále hlásí u aliasů, jejichž název sám odpovídá názvu předdefinovaného typu v metadatech (například `using Int32 = System.UInt32;`).
 
 Při konfiguraci StyleCop Analyzers pomocí souboru **.editorconfig** lze použít následující vlastnost:
 ```ini

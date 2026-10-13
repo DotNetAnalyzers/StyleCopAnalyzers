@@ -274,15 +274,15 @@ The following property is used in **stylecop.json** to configure aliases for bui
 | --- | --- | --- | --- |
 | `allowBuiltInTypeAliases` | **false** | 1.1.0-beta007 | Specifies whether aliases are allowed for built-in types. |
 
-By default, SA1121 reports a diagnostic for the use of named aliases for built-in types:
+By default, SA1121 reports a diagnostic on the declaration of a named alias to a built-in type:
 
 ```csharp
-using HRESULT = System.Int32;
+using HRESULT = System.Int32; // SA1121
 
-HRESULT hr = SomeNativeOperation(); // SA1121
+HRESULT hr = SomeNativeOperation();
 ```
 
-The `allowBuiltInTypeAliases` configuration property can be set to `true` to allow cases like this while continuing to report diagnostics for direct references to the metadata type name, `Int32`.
+The `allowBuiltInTypeAliases` configuration property can be set to `true` to allow named aliases to built-in types while continuing to report diagnostics for direct references to metadata type names, such as `Int32`. Aliases that use a built-in metadata type name themselves (for example, `using Int32 = System.UInt32;`) are still reported.
 
 When using an **.editorconfig** file to configure StyleCop Analyzers, the following property can be used:
 ```ini

@@ -101,6 +101,11 @@ on master").
 
 - Update `documentation/SA####.md` when visible behavior changes (new exemption, new cases reported, new
   setting interaction). Keep docs-only clarifications in their own PR when there's no code change (#4205).
+- When updating a localized rule page, update every existing translated counterpart under
+  `documentation/<culture>/SA####.md` as well, keeping the translated explanation consistent with the English
+  behavior change. Documentation pages do not fall back to English automatically; if a reliable translation is
+  unavailable, copy the updated English explanation into the existing localized page rather than leaving stale
+  behavior documented. See the `maintaining-translations` skill.
 - PR title: `SA####: <what changed>`. Body: `Fixes #<issue>` on its own line, what was wrong, what changed,
   the tests and that they fail on master, the perf impact (usually "one extra syntax check, no measurable
   cost"), and any behavior change flagged clearly (#4202: SA1316 now reports explicit tuple names by default).

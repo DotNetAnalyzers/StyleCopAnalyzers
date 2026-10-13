@@ -513,93 +513,71 @@ public class Foo
         [InlineData("\r\n")]
         public virtual async Task TestMissleadingUsingAsync(string lineEnding)
         {
-            string oldSource = @"namespace Foo
+            string testSource = @"namespace Foo
 {
-  using Int32 = System.UInt32;
+  using Int32 = {|#0:System.UInt32|};
   class Bar
   {
-    {|#0:Int32|} value = 3;
+    Int32 value = 3;
   }
 }
 ".ReplaceLineEndings(lineEnding);
 
-            string newSource = @"namespace Foo
-{
-  using Int32 = System.UInt32;
-  class Bar
-  {
-    uint value = 3;
-  }
-}
-".ReplaceLineEndings(lineEnding);
-
-            await new CSharpTest
-            {
-                TestCode = oldSource,
-                ExpectedDiagnostics = { Diagnostic().WithLocation(0) },
-                FixedCode = newSource,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testSource, Diagnostic().WithLocation(0), CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public virtual async Task TestUsingNameChangeAsync()
         {
-            string oldSource = @"namespace Foo
+            string testSource = @"namespace Foo
 {
-  using MyInt = System.UInt32;
+  using MyInt = {|#0:System.UInt32|};
   class Bar
   {
     MyInt value = 3;
   }
 }
 ";
-            string newSource = @"namespace Foo
+
+            await VerifyCSharpDiagnosticAsync(testSource, Diagnostic().WithLocation(0), CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3640, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3640")]
+        public async Task TestUsingAliasDiagnosticOnDeclarationAsync()
+        {
+            string testSource = @"
+using Cookie = {|#0:System.Int32|};
+
+public class TestClass
 {
-  using MyInt = System.UInt32;
-  class Bar
-  {
-    uint value = 3;
-  }
+    public int Field;
+
+    public void TestMethod(Cookie parameter)
+    {
+        Cookie local = parameter;
+        Field = local;
+    }
 }
 ";
 
-            await new CSharpTest
-            {
-                TestCode = oldSource,
-                ExpectedDiagnostics = { Diagnostic().WithLocation(6, 5) },
-                FixedCode = newSource,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testSource, Diagnostic().WithLocation(0), CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public virtual async Task TestMissleadingUsingAllowAliasesAsync()
         {
-            string oldSource = @"namespace Foo
+            string testSource = @"namespace Foo
 {
-  using Int32 = System.UInt32;
+  using Int32 = {|#0:System.UInt32|};
   class Bar
   {
     Int32 value = 3;
   }
 }
 ";
-            string newSource = @"namespace Foo
-{
-  using Int32 = System.UInt32;
-  class Bar
-  {
-    uint value = 3;
-  }
-}
-";
 
-            await new CSharpTest
-            {
-                TestCode = oldSource,
-                ExpectedDiagnostics = { Diagnostic().WithLocation(6, 5) },
-                FixedCode = newSource,
-                Settings = AllowBuiltInTypeAliasesSettings,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testSource, AllowBuiltInTypeAliasesSettings, new[] { Diagnostic().WithLocation(0) }, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -615,11 +593,7 @@ public class Foo
 }
 ";
 
-            await new CSharpTest
-            {
-                TestCode = testSource,
-                Settings = AllowBuiltInTypeAliasesSettings,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testSource, AllowBuiltInTypeAliasesSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]

@@ -22,24 +22,17 @@ namespace StyleCop.Analyzers.Test.CSharp11.ReadabilityRules
         public virtual async Task TestUsingNameChangeInGlobalUsingInAnotherFileAsync()
         {
             var source1 = @"
-global using MyDouble = System.Double;";
+global using MyDouble = [|System.Double|];";
 
-            var oldSource2 = @"
+            var source2 = @"
 class TestClass
 {
-    private [|MyDouble|] x;
-}";
-
-            var newSource2 = @"
-class TestClass
-{
-    private double x;
+    private MyDouble x;
 }";
 
             await new CSharpTest()
             {
-                TestSources = { source1, oldSource2 },
-                FixedSources = { source1, newSource2 },
+                TestSources = { source1, source2 },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -47,22 +40,15 @@ class TestClass
         [WorkItem(3594, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3594")]
         public virtual async Task TestUsingNameChangeInGlobalUsingInSameFileAsync()
         {
-            var source = @"global using MyDouble = System.Double;
+            var source = @"global using MyDouble = [|System.Double|];
 class TestClass
 {
-    private [|MyDouble|] x;
-}";
-
-            var newSource = @"global using MyDouble = System.Double;
-class TestClass
-{
-    private double x;
+    private MyDouble x;
 }";
 
             await new CSharpTest()
             {
                 TestSources = { source },
-                FixedSources = { newSource },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 

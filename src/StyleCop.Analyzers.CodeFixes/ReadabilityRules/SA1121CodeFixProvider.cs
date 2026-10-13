@@ -16,6 +16,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1121UseBuiltInTypeAlias"/>.
@@ -43,6 +44,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             foreach (var diagnostic in context.Diagnostics)
             {
+                if (IsUnsupportedUsingAliasTarget(context.Document, diagnostic))
+                {
+                    continue;
+                }
+
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         ReadabilityResources.SA1121CodeFix,
@@ -52,6 +58,25 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             return SpecializedTasks.CompletedTask;
+        }
+
+        private static bool IsUnsupportedUsingAliasTarget(Document document, Diagnostic diagnostic)
+        {
+            if (document.Project.ParseOptions is not CSharpParseOptions parseOptions
+                || parseOptions.LanguageVersion >= LanguageVersionEx.CSharp12
+                || diagnostic.Location.SourceTree == null)
+            {
+                return false;
+            }
+
+            var root = diagnostic.Location.SourceTree.GetRoot();
+            var node = root.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
+            var usingDirective = node.FirstAncestorOrSelf<UsingDirectiveSyntax>();
+            var aliasTarget = usingDirective?.NamespaceOrType() ?? usingDirective?.Name;
+            return usingDirective?.Alias != null
+                && aliasTarget != null
+                && aliasTarget.Span.Contains(diagnostic.Location.SourceSpan)
+                && node.FirstAncestorOrSelf<TypeArgumentListSyntax>() == null;
         }
 
         private static SyntaxNode ComputeReplacement(SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
@@ -131,9 +156,19 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 List<SyntaxNode> nodesToReplace = new List<SyntaxNode>(diagnostics.Length);
                 foreach (var diagnostic in diagnostics)
                 {
+                    if (IsUnsupportedUsingAliasTarget(document, diagnostic))
+                    {
+                        continue;
+                    }
+
                     var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
 
                     nodesToReplace.Add(node);
+                }
+
+                if (nodesToReplace.Count == 0)
+                {
+                    return null;
                 }
 
                 return syntaxRoot.ReplaceNodes(nodesToReplace, (originalNode, rewrittenNode) => ComputeReplacement(semanticModel, originalNode, fixAllContext.CancellationToken));

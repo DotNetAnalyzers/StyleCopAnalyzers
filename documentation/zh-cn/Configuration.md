@@ -310,15 +310,15 @@ stylecop.documentation.excludeFromPunctuationCheck = seealso   # comma-separated
 | --- | --- | --- | --- |
 | `allowBuiltInTypeAliases` | **false** | 1.1.0-beta007 | 指定是否允许内置类型使用别名。 |
 
-默认情况下，SA1121 会对使用内置类型的命名别名报告诊断：
+默认情况下，当命名别名指向内置类型时，SA1121 会在别名声明处报告诊断：
 
 ```csharp
-using HRESULT = System.Int32;
+using HRESULT = System.Int32; // SA1121
 
-HRESULT hr = SomeNativeOperation(); // SA1121
+HRESULT hr = SomeNativeOperation();
 ```
 
-可将 `allowBuiltInTypeAliases` 配置属性设置为 `true`，以允许这种情况，同时继续对直接引用元数据类型名称 `Int32` 报告诊断。
+可将 `allowBuiltInTypeAliases` 配置属性设置为 `true`，以允许命名别名指向内置类型，同时继续对直接引用元数据类型名称（例如 `Int32`）报告诊断。对于别名名称本身使用内置元数据类型名称的情况（例如 `using Int32 = System.UInt32;`），仍会报告诊断。
 
 使用 **.editorconfig** 文件配置 StyleCop Analyzers 时，可使用以下属性：
 ```ini
