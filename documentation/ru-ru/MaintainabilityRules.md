@@ -11,7 +11,7 @@
 [SA1404](SA1404.md) | CodeAnalysisSuppressionMustHaveJustification | Атрибут SuppressMessage для анализа кода не содержит обоснования.
 [SA1405](SA1405.md) | DebugAssertMustProvideMessageText | Вызов Debug.Assert в коде C# не содержит поясняющего сообщения.
 [SA1406](SA1406.md) | DebugFailMustProvideMessageText | Вызов Debug.Fail в коде C# не содержит поясняющего сообщения.
-[SA1407](SA1407.md) | ArithmeticExpressionsMustDeclarePrecedence | Инструкция C# содержит сложное арифметическое выражение, в котором операции не выделены скобками.
+[SA1407](SA1407.md) | ArithmeticExpressionsMustDeclarePrecedence | Инструкция C# содержит сложное выражение с арифметическими, побитовыми операторами или операторами сдвига без скобок, явно задающих приоритет операций.
 [SA1408](SA1408.md) | ConditionalExpressionsMustDeclarePrecedence | Инструкция C# содержит сложное условное выражение, в котором операции не выделены скобками.
 [SA1409](SA1409.md) | RemoveUnnecessaryCode | Файл C# содержит ненужный код, который можно удалить, не меняя общую логику программы.
 [SA1410](SA1410.md) | RemoveDelegateParenthesisWhenPossible | При использовании анонимного метода C# без параметров в записи по-прежнему присутствуют круглые скобки.
