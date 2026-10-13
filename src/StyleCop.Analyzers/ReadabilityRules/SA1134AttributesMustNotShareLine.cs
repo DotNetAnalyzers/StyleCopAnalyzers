@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// An attribute is placed on the same line of code as another attribute or element.
@@ -71,6 +72,16 @@ namespace StyleCop.Analyzers.ReadabilityRules
             if (attributeList.Parent.IsKind(SyntaxKind.ParenthesizedLambdaExpression) || attributeList.Parent.IsKind(SyntaxKind.SimpleLambdaExpression))
             {
                 // no analysis required for attributes on lambda expressions, which are part of an expression
+                return;
+            }
+
+            var accessorDeclaration = attributeList.Parent as AccessorDeclarationSyntax;
+            if (accessorDeclaration != null
+                && accessorDeclaration.Body == null
+                && accessorDeclaration.ExpressionBody() == null
+                && accessorDeclaration.Parent?.Parent is PropertyDeclarationSyntax)
+            {
+                // Attributes on auto-property accessors are part of the property declaration.
                 return;
             }
 
