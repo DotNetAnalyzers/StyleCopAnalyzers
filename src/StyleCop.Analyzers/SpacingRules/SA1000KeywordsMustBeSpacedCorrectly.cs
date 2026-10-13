@@ -297,7 +297,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
-            reportDiagnostic(ref context, Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemoveFollowing, token.Text, " not"));
+            reportDiagnostic(ref context, Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemoveFollowing, token.Text, SpacingDiagnosticArguments.Not));
         }
 
         private static void HandleNewOrStackAllocKeywordToken(ref SyntaxTreeAnalysisContext context, SyntaxToken token)

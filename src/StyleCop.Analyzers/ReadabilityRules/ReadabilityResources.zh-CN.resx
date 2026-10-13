@@ -1,0 +1,576 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="IndentationCodeFix" xml:space="preserve">
+    <value>修正缩进</value>
+  </data>
+  <data name="RemoveRegionCodeFix" xml:space="preserve">
+    <value>删除区域</value>
+  </data>
+  <data name="SA1100CodeFix" xml:space="preserve">
+    <value>将 'base.' 替换为 'this.'</value>
+  </data>
+  <data name="SA1100Description" xml:space="preserve">
+    <value>调用继承自基类的成员时使用了 'base.' 前缀，但当前类没有重写或实现该成员。</value>
+  </data>
+  <data name="SA1100MessageFormat" xml:space="preserve">
+    <value>仅在当前类中存在实现时才使用 base 前缀调用</value>
+  </data>
+  <data name="SA1100Title" xml:space="preserve">
+    <value>仅在当前类中存在实现时才使用 base 前缀调用</value>
+  </data>
+  <data name="SA1101CodeFix" xml:space="preserve">
+    <value>为引用添加 'this.' 前缀</value>
+  </data>
+  <data name="SA1101Description" xml:space="preserve">
+    <value>C# 代码文件中对当前类或基类实例成员的调用没有使用 'this.' 前缀。</value>
+  </data>
+  <data name="SA1101MessageFormat" xml:space="preserve">
+    <value>当前类的成员调用应使用 this 前缀</value>
+  </data>
+  <data name="SA1101Title" xml:space="preserve">
+    <value>当前类的成员调用应使用 this 前缀</value>
+  </data>
+  <data name="SA1102CodeFix" xml:space="preserve">
+    <value>删除分隔的空行</value>
+  </data>
+  <data name="SA1102Description" xml:space="preserve">
+    <value>C# 查询子句没有在前一个子句所在行或其下一行开始。</value>
+  </data>
+  <data name="SA1102MessageFormat" xml:space="preserve">
+    <value>查询子句应紧接前一个子句。</value>
+  </data>
+  <data name="SA1102Title" xml:space="preserve">
+    <value>查询子句应紧接前一个子句</value>
+  </data>
+  <data name="SA1103CodeFixMultipleLines" xml:space="preserve">
+    <value>分成多行</value>
+  </data>
+  <data name="SA1103CodeFixSingleLine" xml:space="preserve">
+    <value>合并为一行</value>
+  </data>
+  <data name="SA1103Description" xml:space="preserve">
+    <value>C# 查询表达式中的子句既没有全部位于同一行，也没有各占一行。</value>
+  </data>
+  <data name="SA1103MessageFormat" xml:space="preserve">
+    <value>查询子句应各占一行或全部位于同一行</value>
+  </data>
+  <data name="SA1103Title" xml:space="preserve">
+    <value>查询子句应各占一行或全部位于同一行</value>
+  </data>
+  <data name="SA1104Description" xml:space="preserve">
+    <value>C# 查询表达式中，前一个子句跨越多行，而下一个子句在前一个子句的结束行开始。</value>
+  </data>
+  <data name="SA1104MessageFormat" xml:space="preserve">
+    <value>前一个查询子句跨多行时，下一个子句应另起一行</value>
+  </data>
+  <data name="SA1104SA1105CodeFix" xml:space="preserve">
+    <value>插入换行</value>
+  </data>
+  <data name="SA1104Title" xml:space="preserve">
+    <value>前一个查询子句跨多行时，下一个子句应另起一行</value>
+  </data>
+  <data name="SA1105Description" xml:space="preserve">
+    <value>C# 查询表达式中的子句跨越多行，但没有另起一行。</value>
+  </data>
+  <data name="SA1105MessageFormat" xml:space="preserve">
+    <value>跨多行的查询子句应另起一行</value>
+  </data>
+  <data name="SA1105Title" xml:space="preserve">
+    <value>跨多行的查询子句应另起一行</value>
+  </data>
+  <data name="SA1106CodeFix" xml:space="preserve">
+    <value>删除空语句</value>
+  </data>
+  <data name="SA1106Description" xml:space="preserve">
+    <value>C# 代码中包含多余的分号。</value>
+  </data>
+  <data name="SA1106MessageFormat" xml:space="preserve">
+    <value>代码中不应有空语句</value>
+  </data>
+  <data name="SA1106Title" xml:space="preserve">
+    <value>代码中不应有空语句</value>
+  </data>
+  <data name="SA1107CodeFix" xml:space="preserve">
+    <value>添加换行</value>
+  </data>
+  <data name="SA1107Description" xml:space="preserve">
+    <value>C# 代码中有一行包含多个语句。</value>
+  </data>
+  <data name="SA1107MessageFormat" xml:space="preserve">
+    <value>同一行中不应有多个语句</value>
+  </data>
+  <data name="SA1107Title" xml:space="preserve">
+    <value>同一行中不应有多个语句</value>
+  </data>
+  <data name="SA1108Description" xml:space="preserve">
+    <value>C# 语句的声明与左大括号之间包含注释。</value>
+  </data>
+  <data name="SA1108MessageFormat" xml:space="preserve">
+    <value>块语句的声明与左大括号之间不应有注释</value>
+  </data>
+  <data name="SA1108Title" xml:space="preserve">
+    <value>块语句的声明与左大括号之间不应有注释</value>
+  </data>
+  <data name="SA1109Description" xml:space="preserve">
+    <value>C# 语句的声明与左大括号之间包含区域标记。</value>
+  </data>
+  <data name="SA1109MessageFormat" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SA1109Title" xml:space="preserve">
+    <value>块语句的声明与左大括号之间不应有区域标记</value>
+  </data>
+  <data name="SA1110Description" xml:space="preserve">
+    <value>左圆括号或左方括号没有与方法、索引器、特性或数组名称位于同一行。</value>
+  </data>
+  <data name="SA1110MessageFormat" xml:space="preserve">
+    <value>左圆括号或左方括号应位于声明所在行</value>
+  </data>
+  <data name="SA1110Title" xml:space="preserve">
+    <value>左圆括号或左方括号应位于声明所在行</value>
+  </data>
+  <data name="SA1111Description" xml:space="preserve">
+    <value>C# 方法、索引器、特性、数组、构造函数或委托的调用或声明中的右圆括号或右方括号，没有与最后一个参数位于同一行。</value>
+  </data>
+  <data name="SA1111MessageFormat" xml:space="preserve">
+    <value>右圆括号应与最后一个参数位于同一行</value>
+  </data>
+  <data name="SA1111Title" xml:space="preserve">
+    <value>右圆括号应与最后一个参数位于同一行</value>
+  </data>
+  <data name="SA1112Description" xml:space="preserve">
+    <value>C# 方法或索引器的调用或声明不接受任何参数时，右圆括号或右方括号没有与左括号位于同一行。</value>
+  </data>
+  <data name="SA1112MessageFormat" xml:space="preserve">
+    <value>右圆括号应与左圆括号位于同一行</value>
+  </data>
+  <data name="SA1112Title" xml:space="preserve">
+    <value>右圆括号应与左圆括号位于同一行</value>
+  </data>
+  <data name="SA1113Description" xml:space="preserve">
+    <value>C# 方法或索引器的调用或声明中，两个参数之间的逗号没有与前一个参数位于同一行。</value>
+  </data>
+  <data name="SA1113MessageFormat" xml:space="preserve">
+    <value>逗号应与前一个参数位于同一行</value>
+  </data>
+  <data name="SA1113Title" xml:space="preserve">
+    <value>逗号应与前一个参数位于同一行</value>
+  </data>
+  <data name="SA1114Description" xml:space="preserve">
+    <value>方法、构造函数、索引器、数组或运算符的调用或声明中的参数列表，没有在左括号所在行或其下一行开始。</value>
+  </data>
+  <data name="SA1114MessageFormat" xml:space="preserve">
+    <value>参数列表应紧接声明</value>
+  </data>
+  <data name="SA1114Title" xml:space="preserve">
+    <value>参数列表应紧接声明</value>
+  </data>
+  <data name="SA1115Description" xml:space="preserve">
+    <value>C# 方法或索引器的调用或声明中的参数，没有在前一个参数所在行或其下一行开始。</value>
+  </data>
+  <data name="SA1115MessageFormat" xml:space="preserve">
+    <value>参数应在前一个参数的下一行开始</value>
+  </data>
+  <data name="SA1115Title" xml:space="preserve">
+    <value>参数应紧接逗号</value>
+  </data>
+  <data name="SA1116CodeFix" xml:space="preserve">
+    <value>将第一个实参移到下一行</value>
+  </data>
+  <data name="SA1116Description" xml:space="preserve">
+    <value>C# 方法或索引器的调用或声明中的参数跨越多行，但第一个参数没有在左括号的下一行开始。</value>
+  </data>
+  <data name="SA1116MessageFormat" xml:space="preserve">
+    <value>参数跨越多行时，参数列表应在声明的下一行开始</value>
+  </data>
+  <data name="SA1116Title" xml:space="preserve">
+    <value>分行的参数列表应在声明的下一行开始</value>
+  </data>
+  <data name="SA1117Description" xml:space="preserve">
+    <value>C# 方法或索引器的调用或声明中的参数，既没有全部位于同一行，也没有各占一行。</value>
+  </data>
+  <data name="SA1117MessageFormat" xml:space="preserve">
+    <value>所有参数应放在同一行，或者每个参数各占一行</value>
+  </data>
+  <data name="SA1117Title" xml:space="preserve">
+    <value>参数应全部位于同一行或各占一行</value>
+  </data>
+  <data name="SA1118Description" xml:space="preserve">
+    <value>C# 方法、索引器、特性或数组中除第一个参数以外的某个参数跨越多行。如果该参数较短，请将整个参数放在一行中。否则，请将参数的内容存储在临时变量中，并将该临时变量作为参数传递。</value>
+  </data>
+  <data name="SA1118MessageFormat" xml:space="preserve">
+    <value>参数跨越了多行</value>
+  </data>
+  <data name="SA1118Title" xml:space="preserve">
+    <value>参数不应跨越多行</value>
+  </data>
+  <data name="SA1120CodeFix" xml:space="preserve">
+    <value>删除空注释</value>
+  </data>
+  <data name="SA1120Description" xml:space="preserve">
+    <value>C# 注释没有包含任何注释文本。</value>
+  </data>
+  <data name="SA1120MessageFormat" xml:space="preserve">
+    <value>注释应包含文本</value>
+  </data>
+  <data name="SA1120Title" xml:space="preserve">
+    <value>注释应包含文本</value>
+  </data>
+  <data name="SA1121CodeFix" xml:space="preserve">
+    <value>替换为内置类型</value>
+  </data>
+  <data name="SA1121Description" xml:space="preserve">
+    <value>代码使用了某个 C# 基本类型，但没有使用该类型的内置别名。</value>
+  </data>
+  <data name="SA1121MessageFormat" xml:space="preserve">
+    <value>使用内置类型别名</value>
+  </data>
+  <data name="SA1121Title" xml:space="preserve">
+    <value>使用内置类型别名</value>
+  </data>
+  <data name="SA1122CodeFix" xml:space="preserve">
+    <value>替换为 string.Empty</value>
+  </data>
+  <data name="SA1122Description" xml:space="preserve">
+    <value>C# 代码中使用 "" 表示空字符串。</value>
+  </data>
+  <data name="SA1122MessageFormat" xml:space="preserve">
+    <value>使用 string.Empty 表示空字符串</value>
+  </data>
+  <data name="SA1122Title" xml:space="preserve">
+    <value>使用 string.Empty 表示空字符串</value>
+  </data>
+  <data name="SA1123Description" xml:space="preserve">
+    <value>C# 代码在代码元素的主体内部包含区域。</value>
+  </data>
+  <data name="SA1123MessageFormat" xml:space="preserve">
+    <value>区域不应位于代码元素内部</value>
+  </data>
+  <data name="SA1123Title" xml:space="preserve">
+    <value>不要在元素内部放置区域</value>
+  </data>
+  <data name="SA1124Description" xml:space="preserve">
+    <value>C# 代码中包含区域。</value>
+  </data>
+  <data name="SA1124MessageFormat" xml:space="preserve">
+    <value>不要使用区域</value>
+  </data>
+  <data name="SA1124Title" xml:space="preserve">
+    <value>不要使用区域</value>
+  </data>
+  <data name="SA1125Description" xml:space="preserve">
+    <value>Nullable&lt;T&gt; 类型没有使用 C# 简写形式定义。例如，使用了 Nullable&lt;DateTime&gt;，而不是推荐的 DateTime?</value>
+  </data>
+  <data name="SA1125MessageFormat" xml:space="preserve">
+    <value>使用可为 null 类型的简写形式</value>
+  </data>
+  <data name="SA1125Title" xml:space="preserve">
+    <value>使用可为 null 类型的简写形式</value>
+  </data>
+  <data name="SA1126Description" xml:space="preserve">
+    <value>C# 代码文件中的成员调用没有使用 'this.'、'base.'、'object.' 或 'typename.' 前缀来明确要执行的方法调用。</value>
+  </data>
+  <data name="SA1126MessageFormat" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SA1126Title" xml:space="preserve">
+    <value>正确使用调用前缀</value>
+  </data>
+  <data name="SA1127CodeFix" xml:space="preserve">
+    <value>将每个类型约束放在新的一行</value>
+  </data>
+  <data name="SA1127Description" xml:space="preserve">
+    <value>泛型类型参数的每个类型约束子句都应独占一行代码。</value>
+  </data>
+  <data name="SA1127MessageFormat" xml:space="preserve">
+    <value>泛型类型约束应各占一行</value>
+  </data>
+  <data name="SA1127Title" xml:space="preserve">
+    <value>泛型类型约束应各占一行</value>
+  </data>
+  <data name="SA1128CodeFix" xml:space="preserve">
+    <value>将构造函数初始值设定项放在独立的一行</value>
+  </data>
+  <data name="SA1128Description" xml:space="preserve">
+    <value>构造函数初始值设定项（包括冒号字符）应独占一行。</value>
+  </data>
+  <data name="SA1128MessageFormat" xml:space="preserve">
+    <value>构造函数初始值设定项应独占一行</value>
+  </data>
+  <data name="SA1128Title" xml:space="preserve">
+    <value>构造函数初始值设定项应独占一行</value>
+  </data>
+  <data name="SA1129CodeFix" xml:space="preserve">
+    <value>替换为 default(T)</value>
+  </data>
+  <data name="SA1129Description" xml:space="preserve">
+    <value>创建值类型 T 的新实例时，'default(T)' 语法在功能上等效于 'new T()'。为避免对所得实例的行为产生误解，应优先使用第一种形式。</value>
+  </data>
+  <data name="SA1129MessageFormat" xml:space="preserve">
+    <value>不要使用值类型的默认构造函数</value>
+  </data>
+  <data name="SA1129Title" xml:space="preserve">
+    <value>不要使用值类型的默认构造函数</value>
+  </data>
+  <data name="SA1130CodeFix" xml:space="preserve">
+    <value>替换为 lambda 表达式。</value>
+  </data>
+  <data name="SA1130Description" xml:space="preserve">
+    <value>lambda 表达式比匿名方法更简洁、更易读，因此两者在功能上等效时，应优先使用 lambda 表达式。</value>
+  </data>
+  <data name="SA1130MessageFormat" xml:space="preserve">
+    <value>使用 lambda 语法</value>
+  </data>
+  <data name="SA1130Title" xml:space="preserve">
+    <value>使用 lambda 语法</value>
+  </data>
+  <data name="SA1131CodeFix" xml:space="preserve">
+    <value>交换操作数</value>
+  </data>
+  <data name="SA1131Description" xml:space="preserve">
+    <value>变量与字面量进行比较时，应将变量放在左侧，以尽可能提高可读性。</value>
+  </data>
+  <data name="SA1131MessageFormat" xml:space="preserve">
+    <value>常量值应位于比较运算的右侧</value>
+  </data>
+  <data name="SA1131Title" xml:space="preserve">
+    <value>使用易读的条件表达式</value>
+  </data>
+  <data name="SA1132CodeFix" xml:space="preserve">
+    <value>将每个字段放在新的一行</value>
+  </data>
+  <data name="SA1132Description" xml:space="preserve">
+    <value>每个字段应独占一行声明，以便清楚地查看类型的各个字段，并为每个字段的行为提供适当的文档说明。</value>
+  </data>
+  <data name="SA1132MessageFormat" xml:space="preserve">
+    <value>每个字段应独占一行声明</value>
+  </data>
+  <data name="SA1132Title" xml:space="preserve">
+    <value>不要合并字段声明</value>
+  </data>
+  <data name="SA1133CodeFix" xml:space="preserve">
+    <value>为每个特性使用独立的方括号</value>
+  </data>
+  <data name="SA1133Description" xml:space="preserve">
+    <value>每个特性都应放在独立的一组方括号中，以尽可能提高可读性。</value>
+  </data>
+  <data name="SA1133MessageFormat" xml:space="preserve">
+    <value>每个特性都应放在独立的一组方括号中</value>
+  </data>
+  <data name="SA1133Title" xml:space="preserve">
+    <value>不要合并特性</value>
+  </data>
+  <data name="SA1134CodeFix" xml:space="preserve">
+    <value>将特性放在独立的一行。</value>
+  </data>
+  <data name="SA1134Description" xml:space="preserve">
+    <value>每个特性都应独占一行代码。</value>
+  </data>
+  <data name="SA1134MessageFormat" xml:space="preserve">
+    <value>每个特性都应独占一行代码</value>
+  </data>
+  <data name="SA1134Title" xml:space="preserve">
+    <value>特性不应共用一行</value>
+  </data>
+  <data name="SA1135CodeFix" xml:space="preserve">
+    <value>为 using 指令添加完全限定名称</value>
+  </data>
+  <data name="SA1135Description" xml:space="preserve">
+    <value>所有 using 指令都应使用完全限定名称。</value>
+  </data>
+  <data name="SA1135MessageFormatNamespace" xml:space="preserve">
+    <value>命名空间“{0}”的 using 指令应使用完全限定名称</value>
+  </data>
+  <data name="SA1135MessageFormatType" xml:space="preserve">
+    <value>类型“{0}”的 using 指令应使用完全限定名称</value>
+  </data>
+  <data name="SA1135Title" xml:space="preserve">
+    <value>using 指令应使用完全限定名称</value>
+  </data>
+  <data name="SA1136CodeFix" xml:space="preserve">
+    <value>将每个枚举值放在独立的一行</value>
+  </data>
+  <data name="SA1136Description" xml:space="preserve">
+    <value>枚举值应各占一行，以尽可能提高可读性。</value>
+  </data>
+  <data name="SA1136MessageFormat" xml:space="preserve">
+    <value>枚举值应各占一行</value>
+  </data>
+  <data name="SA1136Title" xml:space="preserve">
+    <value>枚举值应各占一行</value>
+  </data>
+  <data name="SA1137Description" xml:space="preserve">
+    <value>语法树中同一级别的元素应具有相同的缩进。</value>
+  </data>
+  <data name="SA1137MessageFormat" xml:space="preserve">
+    <value>元素应具有相同的缩进</value>
+  </data>
+  <data name="SA1137Title" xml:space="preserve">
+    <value>元素应具有相同的缩进</value>
+  </data>
+  <data name="SA1139CodeFix" xml:space="preserve">
+    <value>使用字面量后缀表示法而不是强制转换</value>
+  </data>
+  <data name="SA1139Description" xml:space="preserve">
+    <value>使用字面量后缀表示法而不是强制转换，以提高可读性、避免与非法强制转换有关的错误，并确保生成最优的 IL。</value>
+  </data>
+  <data name="SA1139MessageFormat" xml:space="preserve">
+    <value>使用字面量后缀表示法而不是强制转换</value>
+  </data>
+  <data name="SA1139Title" xml:space="preserve">
+    <value>使用字面量后缀表示法而不是强制转换</value>
+  </data>
+  <data name="SA1141CodeFix" xml:space="preserve">
+    <value>替换为元组语法</value>
+  </data>
+  <data name="SA1141Description" xml:space="preserve">
+    <value>使用元组语法，而不是底层的 ValueTuple 实现类型。</value>
+  </data>
+  <data name="SA1141MessageFormat" xml:space="preserve">
+    <value>使用元组语法</value>
+  </data>
+  <data name="SA1141Title" xml:space="preserve">
+    <value>使用元组语法</value>
+  </data>
+  <data name="SA1142CodeFix" xml:space="preserve">
+    <value>使用元组字段名称</value>
+  </data>
+  <data name="SA1142Description" xml:space="preserve">
+    <value>元组字段具有可用的字段名称，但引用时使用了其元数据名称。</value>
+  </data>
+  <data name="SA1142MessageFormat" xml:space="preserve">
+    <value>通过名称引用元组字段</value>
+  </data>
+  <data name="SA1142Title" xml:space="preserve">
+    <value>通过名称引用元组字段</value>
+  </data>
+  <data name="SX1101CodeFix" xml:space="preserve">
+    <value>删除 'this.' 前缀</value>
+  </data>
+  <data name="SX1101Description" xml:space="preserve">
+    <value>对当前类或基类实例成员的调用使用了 `this.` 前缀。</value>
+  </data>
+  <data name="SX1101MessageFormat" xml:space="preserve">
+    <value>当前类的成员调用不应使用 'this.' 前缀</value>
+  </data>
+  <data name="SX1101Title" xml:space="preserve">
+    <value>当前类的成员调用不应使用 'this.' 前缀</value>
+  </data>
+</root>
