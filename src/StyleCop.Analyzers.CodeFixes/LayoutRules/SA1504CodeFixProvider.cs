@@ -17,6 +17,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -50,35 +51,61 @@ namespace StyleCop.Analyzers.LayoutRules
                 foreach (var accessor in accessorList.Accessors)
                 {
                     // only offer single line fix for accessors without attributes
-                    if (accessor.AttributeLists.Count > 0)
+                    if (accessor.AttributeLists.Count > 0
+                        || accessor.Keyword.TrailingTrivia.Any(t => t.IsKind(SyntaxKind.SingleLineCommentTrivia)))
                     {
                         canOfferSingleLineFix = false;
                         break;
                     }
 
-                    // only offer single line fix for accessors with at most a single statement
-                    if (accessor.Body.Statements.Count > 1)
+                    if (accessor.Body == null)
                     {
-                        canOfferSingleLineFix = false;
-                        break;
-                    }
+                        var expressionBody = accessor.ExpressionBody();
+                        if (expressionBody == null)
+                        {
+                            canOfferSingleLineFix = false;
+                            break;
+                        }
 
-                    if (accessor.Body.Statements.Count == 1)
-                    {
-                        // only offer single line fix when the statement is on a single line
-                        var lineSpan = accessor.Body.Statements[0].GetLineSpan();
+                        var lineSpan = expressionBody.Expression.GetLocation().GetLineSpan();
                         if (lineSpan.StartLinePosition.Line != lineSpan.EndLinePosition.Line)
                         {
                             canOfferSingleLineFix = false;
                             break;
                         }
-                    }
 
-                    // only offer single line fix if there are no interfering trivia
-                    if (accessor.Body.DescendantTrivia().Any(t => !IsAllowedTrivia(t)))
+                        if (expressionBody.DescendantTrivia().Any(t => !IsAllowedTrivia(t)))
+                        {
+                            canOfferSingleLineFix = false;
+                            break;
+                        }
+                    }
+                    else
                     {
-                        canOfferSingleLineFix = false;
-                        break;
+                        // only offer single line fix for accessors with at most a single statement
+                        if (accessor.Body.Statements.Count > 1)
+                        {
+                            canOfferSingleLineFix = false;
+                            break;
+                        }
+
+                        if (accessor.Body.Statements.Count == 1)
+                        {
+                            // only offer single line fix when the statement is on a single line
+                            var lineSpan = accessor.Body.Statements[0].GetLineSpan();
+                            if (lineSpan.StartLinePosition.Line != lineSpan.EndLinePosition.Line)
+                            {
+                                canOfferSingleLineFix = false;
+                                break;
+                            }
+                        }
+
+                        // only offer single line fix if there are no interfering trivia
+                        if (accessor.Body.DescendantTrivia().Any(t => !IsAllowedTrivia(t)))
+                        {
+                            canOfferSingleLineFix = false;
+                            break;
+                        }
                     }
                 }
 
@@ -119,19 +146,89 @@ namespace StyleCop.Analyzers.LayoutRules
 
             foreach (var accessor in accessorList.Accessors)
             {
-                replacements[accessor] = ReformatAccessorAsSingleLine(settings.Indentation, accessor);
+                replacements[accessor] = ReformatAccessorAsSingleLine(
+                    settings.Indentation,
+                    accessor,
+                    CanConvertBlockBodyToExpressionBody(accessorList, accessor));
             }
 
             var newSyntaxRoot = syntaxRoot.ReplaceNodes(replacements.Keys, (original, maybeRewritten) => replacements[original]);
             return document.WithSyntaxRoot(newSyntaxRoot.WithoutFormatting());
         }
 
-        private static SyntaxNode ReformatAccessorAsSingleLine(IndentationSettings indentationSettings, AccessorDeclarationSyntax accessor)
+        private static bool CanConvertBlockBodyToExpressionBody(AccessorListSyntax accessorList, AccessorDeclarationSyntax accessor)
+        {
+            if (accessor.Body == null
+                || accessor.Body.Statements.Count != 1
+                || accessor.Body.DescendantTrivia().Any(t => t.IsKind(SyntaxKind.SingleLineCommentTrivia) || t.IsKind(SyntaxKind.MultiLineCommentTrivia)))
+            {
+                return false;
+            }
+
+            bool hasOtherAccessor = false;
+            foreach (var otherAccessor in accessorList.Accessors)
+            {
+                if (otherAccessor == accessor)
+                {
+                    continue;
+                }
+
+                hasOtherAccessor = true;
+                if (otherAccessor.ExpressionBody() == null)
+                {
+                    return false;
+                }
+            }
+
+            if (!hasOtherAccessor)
+            {
+                return false;
+            }
+
+            var statement = accessor.Body.Statements[0];
+            return (accessor.IsKind(SyntaxKind.GetAccessorDeclaration)
+                    && statement is ReturnStatementSyntax returnStatement
+                    && returnStatement.Expression != null)
+                || (!accessor.IsKind(SyntaxKind.GetAccessorDeclaration)
+                    && statement is ExpressionStatementSyntax);
+        }
+
+        private static SyntaxNode ReformatAccessorAsSingleLine(IndentationSettings indentationSettings, AccessorDeclarationSyntax accessor, bool convertBlockBodyToExpressionBody)
         {
             var newAccessor = accessor
                 .WithModifiers(ReformatModifiersAsSingleLine(accessor.Modifiers))
-                .WithKeyword(ReformatKeywordAsSingleLine(accessor.Keyword))
-                .WithBody(ReformatBodyAsSingleLine(accessor.Body));
+                .WithKeyword(ReformatKeywordAsSingleLine(accessor.Keyword));
+
+            if (convertBlockBodyToExpressionBody)
+            {
+                var statement = accessor.Body.Statements[0];
+                ExpressionSyntax expression = statement is ReturnStatementSyntax returnStatement
+                    ? returnStatement.Expression
+                    : ((ExpressionStatementSyntax)statement).Expression;
+                expression = expression
+                    .WithLeadingTrivia(ReformatTriviaListNoLeadingSpace(expression.GetLeadingTrivia()))
+                    .WithTrailingTrivia(ReformatTriviaListNoTrailingSpace(expression.GetTrailingTrivia()));
+                var arrowToken = SyntaxFactory.Token(SyntaxKind.EqualsGreaterThanToken).WithTrailingTrivia(SyntaxFactory.Space);
+                var keyword = newAccessor.Keyword.WithTrailingTrivia(SyntaxFactory.Space);
+
+                newAccessor = newAccessor
+                    .WithKeyword(keyword)
+                    .WithBody(null)
+                    .WithExpressionBody(SyntaxFactory.ArrowExpressionClause(arrowToken, expression))
+                    .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken).WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed));
+            }
+            else if (accessor.Body != null)
+            {
+                newAccessor = newAccessor.WithBody(ReformatBodyAsSingleLine(accessor.Body));
+            }
+            else
+            {
+                var keyword = newAccessor.Keyword.WithTrailingTrivia(ReformatTriviaList(accessor.Keyword.TrailingTrivia));
+                newAccessor = newAccessor
+                    .WithKeyword(keyword)
+                    .WithExpressionBody(ReformatExpressionBodyAsSingleLine(accessor.ExpressionBody()))
+                    .WithSemicolonToken(ReformatSemicolonAsSingleLine(accessor.SemicolonToken));
+            }
 
             var accessorList = (AccessorListSyntax)accessor.Parent;
 
@@ -140,6 +237,24 @@ namespace StyleCop.Analyzers.LayoutRules
 
             newAccessor = newAccessor.WithLeadingTrivia(newAccessor.GetLeadingTrivia().Insert(0, indentation));
             return newAccessor;
+        }
+
+        private static ArrowExpressionClauseSyntax ReformatExpressionBodyAsSingleLine(ArrowExpressionClauseSyntax expressionBody)
+        {
+            var arrowToken = ReformatKeywordAsSingleLine(expressionBody.ArrowToken)
+                .WithTrailingTrivia(ReformatTriviaList(expressionBody.ArrowToken.TrailingTrivia));
+            var expression = expressionBody.Expression
+                .WithLeadingTrivia(ReformatTriviaListNoLeadingSpace(expressionBody.Expression.GetLeadingTrivia()))
+                .WithTrailingTrivia(ReformatTriviaListNoTrailingSpace(expressionBody.Expression.GetTrailingTrivia()));
+
+            return expressionBody
+                .WithArrowToken(arrowToken)
+                .WithExpression(expression);
+        }
+
+        private static SyntaxToken ReformatSemicolonAsSingleLine(SyntaxToken semicolon)
+        {
+            return semicolon.WithLeadingTrivia(ReformatTriviaListNoLeadingSpace(semicolon.LeadingTrivia));
         }
 
         private static SyntaxTokenList ReformatModifiersAsSingleLine(SyntaxTokenList modifiers)
@@ -219,12 +334,57 @@ namespace StyleCop.Analyzers.LayoutRules
             var indentation = IndentationHelper.GenerateWhitespaceTrivia(indentationSettings, indentationSteps);
             var indentationStatements = IndentationHelper.GenerateWhitespaceTrivia(indentationSettings, indentationSteps + 1);
 
-            var newAccessor = accessor
-                .WithModifiers(ReformatModifiersAsMultipleLines(accessor.Modifiers, indentation))
-                .WithKeyword(ReformatKeywordAsMultipleLines(accessor.Keyword, indentation, accessor.Modifiers.Count == 0))
-                .WithBody(ReformatBodyAsMultipleLines(accessor.Body, indentation, indentationStatements));
+            var newAccessor = accessor.WithModifiers(ReformatModifiersAsMultipleLines(accessor.Modifiers, indentation));
+            if (accessor.Body != null)
+            {
+                newAccessor = newAccessor
+                    .WithKeyword(ReformatKeywordAsMultipleLines(accessor.Keyword, indentation, accessor.Modifiers.Count == 0))
+                    .WithBody(ReformatBodyAsMultipleLines(accessor.Body, indentation, indentationStatements));
+            }
+            else
+            {
+                var expressionBody = accessor.ExpressionBody();
+                SyntaxToken keyword = ReformatKeywordAsMultipleLines(accessor.Keyword, indentation, accessor.Modifiers.Count == 0);
+                keyword = keyword.WithTrailingTrivia(
+                    keyword.TrailingTrivia.AddRange(ReformatTriviaListNoLeadingSpace(expressionBody.ArrowToken.LeadingTrivia)));
+                var body = SyntaxFactory.Block(CreateStatementFromExpressionBody(accessor, expressionBody));
+
+                newAccessor = newAccessor
+                    .WithKeyword(keyword)
+                    .WithExpressionBody(null)
+                    .WithSemicolonToken(default(SyntaxToken))
+                    .WithBody(ReformatBodyAsMultipleLines(body, indentation, indentationStatements, preserveSingleLineComments: true));
+            }
 
             return newAccessor;
+        }
+
+        private static StatementSyntax CreateStatementFromExpressionBody(AccessorDeclarationSyntax accessor, ArrowExpressionClauseSyntax expressionBody)
+        {
+            var leadingTrivia = SyntaxFactory.TriviaList(expressionBody.ArrowToken.TrailingTrivia.Concat(expressionBody.Expression.GetLeadingTrivia()));
+            var trailingTrivia = SyntaxFactory.TriviaList(expressionBody.Expression.GetTrailingTrivia().Concat(accessor.SemicolonToken.LeadingTrivia));
+            var expression = expressionBody.Expression
+                .WithLeadingTrivia(ReformatTriviaListNoLeadingSpace(leadingTrivia))
+                .WithTrailingTrivia(ReformatTriviaListNoTrailingSpace(trailingTrivia));
+
+            StatementSyntax statement;
+            if (ThrowExpressionSyntaxWrapper.IsInstance(expression))
+            {
+                var throwExpression = (ThrowExpressionSyntaxWrapper)expression;
+                statement = SyntaxFactory.ThrowStatement(throwExpression.Expression)
+                    .WithThrowKeyword(throwExpression.ThrowKeyword);
+            }
+            else if (accessor.IsKind(SyntaxKind.GetAccessorDeclaration))
+            {
+                statement = SyntaxFactory.ReturnStatement(expression)
+                    .WithReturnKeyword(SyntaxFactory.Token(SyntaxKind.ReturnKeyword).WithTrailingTrivia(SyntaxFactory.Space));
+            }
+            else
+            {
+                statement = SyntaxFactory.ExpressionStatement(expression);
+            }
+
+            return statement.WithTrailingTrivia(ReformatTriviaListPreservingSingleLineCommentsNoTrailingSpace(accessor.SemicolonToken.TrailingTrivia));
         }
 
         private static SyntaxTokenList ReformatModifiersAsMultipleLines(SyntaxTokenList modifiers, SyntaxTrivia indentation)
@@ -248,14 +408,14 @@ namespace StyleCop.Analyzers.LayoutRules
                 newLeadingTrivia = newLeadingTrivia.Insert(0, indentation);
             }
 
-            var newTrailingTrivia = ReformatTriviaListNoTrailingSpace(keyword.TrailingTrivia).Add(SyntaxFactory.CarriageReturnLineFeed);
+            var newTrailingTrivia = ReformatTriviaListPreservingSingleLineCommentsNoTrailingSpace(keyword.TrailingTrivia).Add(SyntaxFactory.CarriageReturnLineFeed);
 
             return keyword
                 .WithLeadingTrivia(newLeadingTrivia)
                 .WithTrailingTrivia(newTrailingTrivia);
         }
 
-        private static BlockSyntax ReformatBodyAsMultipleLines(BlockSyntax body, SyntaxTrivia indentation, SyntaxTrivia indentationStatements)
+        private static BlockSyntax ReformatBodyAsMultipleLines(BlockSyntax body, SyntaxTrivia indentation, SyntaxTrivia indentationStatements, bool preserveSingleLineComments = false)
         {
             SyntaxTriviaList reformattedOpenBraceTrailingTrivia;
             SyntaxTriviaList reformattedCloseBraceLeadingTrivia;
@@ -267,9 +427,12 @@ namespace StyleCop.Analyzers.LayoutRules
 
                 foreach (var statement in body.Statements)
                 {
+                    var reformattedTrailingTrivia = preserveSingleLineComments
+                        ? ReformatTriviaListPreservingSingleLineCommentsNoTrailingSpace(statement.GetTrailingTrivia())
+                        : ReformatTriviaListNoTrailingSpace(statement.GetTrailingTrivia());
                     var reformattedStatement = statement
                         .WithLeadingTrivia(ReformatTriviaListNoLeadingSpace(statement.GetLeadingTrivia()).Insert(0, indentationStatements))
-                        .WithTrailingTrivia(ReformatTriviaListNoTrailingSpace(statement.GetTrailingTrivia()).Add(SyntaxFactory.CarriageReturnLineFeed));
+                        .WithTrailingTrivia(reformattedTrailingTrivia.Add(SyntaxFactory.CarriageReturnLineFeed));
                     statements.Add(reformattedStatement);
                 }
 
@@ -315,6 +478,11 @@ namespace StyleCop.Analyzers.LayoutRules
         private static SyntaxTriviaList ReformatTriviaListNoTrailingSpace(IReadOnlyList<SyntaxTrivia> triviaList)
         {
             return SyntaxFactory.TriviaList(triviaList.Where(t => t.IsKind(SyntaxKind.MultiLineCommentTrivia)).SelectMany(ExpandComment));
+        }
+
+        private static SyntaxTriviaList ReformatTriviaListPreservingSingleLineCommentsNoTrailingSpace(IReadOnlyList<SyntaxTrivia> triviaList)
+        {
+            return SyntaxFactory.TriviaList(triviaList.Where(t => t.IsKind(SyntaxKind.MultiLineCommentTrivia) || t.IsKind(SyntaxKind.SingleLineCommentTrivia)).SelectMany(ExpandComment));
         }
 
         private static SyntaxTriviaList ReformatTriviaListNoLeadingSpace(IReadOnlyList<SyntaxTrivia> triviaList)
