@@ -150,7 +150,8 @@ namespace StyleCop.Analyzers.Helpers
             if ((type == SyntaxKind.ConstructorDeclaration && modifiers.Any(SyntaxKind.StaticKeyword))
                 || (type == SyntaxKind.MethodDeclaration && ((MethodDeclarationSyntax)member).ExplicitInterfaceSpecifier != null)
                 || (type == SyntaxKind.PropertyDeclaration && ((PropertyDeclarationSyntax)member).ExplicitInterfaceSpecifier != null)
-                || (type == SyntaxKind.IndexerDeclaration && ((IndexerDeclarationSyntax)member).ExplicitInterfaceSpecifier != null))
+                || (type == SyntaxKind.IndexerDeclaration && ((IndexerDeclarationSyntax)member).ExplicitInterfaceSpecifier != null)
+                || (type == SyntaxKind.EventDeclaration && ((EventDeclarationSyntax)member).ExplicitInterfaceSpecifier != null))
             {
                 accessibility = AccessLevel.Public;
             }

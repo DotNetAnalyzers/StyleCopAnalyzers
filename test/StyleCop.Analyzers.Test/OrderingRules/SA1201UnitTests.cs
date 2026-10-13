@@ -708,5 +708,59 @@ public class Class2
 ";
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that explicit interface events use public accessibility when accessibility precedes kind.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(1823, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1823")]
+        public async Task TestExplicitInterfaceEventWithAccessibilityFirstOrderingAsync()
+        {
+            var testCode = @"public interface IExample
+{
+    event System.Action Changed;
+}
+
+public class Example : IExample
+{
+    public void PublicMethod() { }
+    event System.Action IExample.{|#0:Changed|} { add { } remove { } }
+}
+";
+
+            var fixedCode = @"public interface IExample
+{
+    event System.Action Changed;
+}
+
+public class Example : IExample
+{
+    event System.Action IExample.Changed { add { } remove { } }
+    public void PublicMethod() { }
+}
+";
+
+            var settings = @"{
+  ""settings"": {
+    ""orderingRules"": {
+      ""elementOrder"": [
+        ""accessibility"",
+        ""kind"",
+        ""constant"",
+        ""static"",
+        ""readonly""
+      ]
+    }
+  }
+}";
+
+            await VerifyCSharpFixAsync(
+                testCode,
+                settings,
+                new[] { Diagnostic().WithLocation(0).WithArguments("An event", "a method") },
+                fixedCode,
+                CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
