@@ -70,13 +70,13 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         public static string @SA1406MessageFormat => GetResourceString("SA1406MessageFormat")!;
         /// <summary>Debug.Fail should provide message text</summary>
         public static string @SA1406Title => GetResourceString("SA1406Title")!;
-        /// <summary>A C# statement contains a complex arithmetic expression which omits parenthesis around operators.</summary>
+        /// <summary>A C# statement contains a complex expression with arithmetic, bitwise, or shift operators which omits parentheses to make precedence explicit.</summary>
         public static string @SA1407Description => GetResourceString("SA1407Description")!;
-        /// <summary>Arithmetic expressions should declare precedence</summary>
+        /// <summary>Arithmetic, bitwise, and shift expressions should declare precedence</summary>
         public static string @SA1407MessageFormat => GetResourceString("SA1407MessageFormat")!;
         /// <summary>Add parentheses</summary>
         public static string @SA1407SA1408CodeFix => GetResourceString("SA1407SA1408CodeFix")!;
-        /// <summary>Arithmetic expressions should declare precedence</summary>
+        /// <summary>Arithmetic, bitwise, and shift expressions should declare precedence</summary>
         public static string @SA1407Title => GetResourceString("SA1407Title")!;
         /// <summary>A C# statement contains a complex conditional expression which omits parenthesis around operators.</summary>
         public static string @SA1408Description => GetResourceString("SA1408Description")!;
