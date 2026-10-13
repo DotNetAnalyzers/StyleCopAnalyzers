@@ -28,6 +28,30 @@ test("the two sidebars cover the same pages", () => {
     assert.deepEqual(hrefs(read("documentation", "cs-cz", "toc.yml")), hrefs(read("documentation", "toc.yml")));
 });
 
+test("rule pages use descriptive headings as their compiled sidebar captions without metadata tables", () => {
+    const decodeHtml = text => text.replace(/&#x([0-9a-f]+);/gi, (_, value) => String.fromCodePoint(parseInt(value, 16)))
+        .replace(/&#(\d+);/g, (_, value) => String.fromCodePoint(Number(value)))
+        .replaceAll("&quot;", '"').replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&amp;", "&");
+    const rulePages = pages.filter(file => /^S[AX]\d+S?\.md$/.test(file));
+    for (const locale of ["", "ru-ru", "cs-cz"]) {
+        const toc = read("documentation", locale, "toc.yml");
+        const sidebar = decodeHtml(read("_site", locale, "navigation", "toc.html"));
+        for (const file of rulePages) {
+            const id = file.replace(".md", "");
+            const source = read("documentation", locale, file);
+            const title = source.match(/^\uFEFF?# (S[AX]\d+S?: [^\r\n]+)\r?$/m)?.[1];
+            assert.ok(title?.startsWith(`${id}: `), `${locale}/${file}: missing descriptive page title`);
+            assert.doesNotMatch(source, /<td>(?:TypeName|CheckId|Category|Категория|Název typu|ID kontroly|Kategorie)<\/td>/);
+            assert.ok(toc.includes(`- href: ${file}`), `${locale}/${file}: use a heading-derived caption`);
+            assert.doesNotMatch(toc, new RegExp(`name: ${id}\\b`));
+            const html = decodeHtml(read("_site", locale, file.replace(".md", ".html")));
+            const heading = html.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/)?.[1].replace(/<[^>]+>/g, "").trim();
+            assert.equal(heading, title, `${locale}/${file}: compiled page heading`);
+            assert.ok(sidebar.includes(`>${title}</a>`), `${locale}/${file}: compiled sidebar caption`);
+        }
+    }
+});
+
 test("the Czech sidebar uses Czech labels in both source and compiled navigation", () => {
     const labels = [
         "Přehled",
