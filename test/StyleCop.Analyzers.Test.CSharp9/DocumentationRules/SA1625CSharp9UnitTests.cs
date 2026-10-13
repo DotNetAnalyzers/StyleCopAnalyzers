@@ -10,7 +10,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.DocumentationRules
     using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<
-        StyleCop.Analyzers.DocumentationRules.SA1625ElementDocumentationMustNotBeCopiedAndPasted>;
+        StyleCop.Analyzers.DocumentationRules.SA1625ElementDocumentationMustNotBeDuplicated>;
 
     public partial class SA1625CSharp9UnitTests : SA1625CSharp8UnitTests
     {

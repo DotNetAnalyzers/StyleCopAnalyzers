@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1625ElementDocumentationMustNotBeCopiedAndPasted>;
+    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1625ElementDocumentationMustNotBeDuplicated>;
 
     /// <summary>
     /// This class contains the unit tests for SA1625.
@@ -42,6 +42,16 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
                     yield return new[] { "public record struct Test { }" };
                 }
             }
+        }
+
+        [Fact]
+        public void VerifyDiagnosticDescriptorDescribesDuplicateDocumentation()
+        {
+            var descriptor = new SA1625ElementDocumentationMustNotBeDuplicated().SupportedDiagnostics[0];
+
+            Assert.Equal("Element documentation should not contain duplicate entries", descriptor.Title.ToString());
+            Assert.Equal("Element documentation should not contain duplicate entries", descriptor.MessageFormat.ToString());
+            Assert.Equal("The Xml documentation for a C# element contains two or more identical entries.", descriptor.Description.ToString());
         }
 
         [Theory]
@@ -437,7 +447,7 @@ public class TestClass
             return test.RunAsync(cancellationToken);
         }
 
-        private static StyleCopDiagnosticVerifier<SA1625ElementDocumentationMustNotBeCopiedAndPasted>.CSharpTest CreateTest(DiagnosticResult[] expected)
+        private static StyleCopDiagnosticVerifier<SA1625ElementDocumentationMustNotBeDuplicated>.CSharpTest CreateTest(DiagnosticResult[] expected)
         {
             string correctDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <TestClass>
@@ -519,7 +529,7 @@ public class TestClass
 </TestClass>
 ";
 
-            var test = new StyleCopDiagnosticVerifier<SA1625ElementDocumentationMustNotBeCopiedAndPasted>.CSharpTest
+            var test = new StyleCopDiagnosticVerifier<SA1625ElementDocumentationMustNotBeDuplicated>.CSharpTest
             {
                 XmlReferences =
                 {

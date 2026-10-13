@@ -28,7 +28,7 @@
 [SA1622](SA1622.md) | GenericTypeParameterDocumentationMustHaveText | Тег `<typeparam>` в XML-комментарии документации обобщённого элемента C# пуст.
 [SA1623](SA1623.md) | PropertySummaryDocumentationMustMatchAccessors | Текст документации в теге `<summary>` свойства C# не соответствует методам доступа свойства.
 [SA1624](SA1624.md) | PropertySummaryDocumentationMustOmitSetAccessorWithRestrictedAccess | Текст документации в теге `<summary>` свойства C# учитывает все методы доступа свойства, хотя один из них имеет ограниченную доступность.
-[SA1625](SA1625.md) | ElementDocumentationMustNotBeCopiedAndPasted | XML-документация элемента C# содержит две или более одинаковые записи, что указывает на копирование и вставку документации.
+[SA1625](SA1625.md) | ElementDocumentationMustNotBeDuplicated | XML-документация элемента C# содержит две или более одинаковые записи.
 [SA1626](SA1626.md) | SingleLineCommentsMustNotUseDocumentationStyleSlashes | Код C# содержит однострочный комментарий, начинающийся с трёх косых черт подряд.
 [SA1627](SA1627.md) | DocumentationTextMustNotBeEmpty | XML-комментарий документации элемента кода C# содержит пустой тег.
 [SA1628](SA1628.md) | DocumentationTextMustBeginWithACapitalLetter | Раздел XML-комментария документации элемента C# не начинается с прописной буквы.

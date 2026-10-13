@@ -28,7 +28,7 @@ Identifikátor | Název | Popis
 [SA1622](SA1622.md) | GenericTypeParameterDocumentationMustHaveText | Značka `<typeparam>` v dokumentační hlavičce obecného prvku C# je prázdná.
 [SA1623](SA1623.md) | PropertySummaryDocumentationMustMatchAccessors | Dokumentační text v značce `<summary>` vlastnosti C# neodpovídá přístupovým objektům v této vlastnosti.
 [SA1624](SA1624.md) | PropertySummaryDocumentationMustOmitSetAccessorWithRestrictedAccess | Dokumentační text v značce `<summary>` vlastnosti C# bere v úvahu všechny přístupové objekty vlastnosti, ale jeden z přístupových objektů má omezený přístup.
-[SA1625](SA1625.md) | ElementDocumentationMustNotBeCopiedAndPasted | XML dokumentace prvku C# obsahuje dvě nebo více identických položek, což naznačuje, že dokumentace byla zkopírována a vložena.
+[SA1625](SA1625.md) | ElementDocumentationMustNotBeDuplicated | Dokumentace XML prvku C# obsahuje dvě nebo více shodných položek.
 [SA1626](SA1626.md) | SingleLineCommentsMustNotUseDocumentationStyleSlashes | Kód C# obsahuje jednořádkový komentář, který začíná třemi lomítky za sebou.
 [SA1627](SA1627.md) | DocumentationTextMustNotBeEmpty | Dokumentace XML pro prvek kódu C# obsahuje prázdnou značku.
 [SA1628](SA1628.md) | DocumentationTextMustBeginWithACapitalLetter | Část XML dokumentace prvku C# nezačíná velkým písmenem.

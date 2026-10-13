@@ -148,7 +148,7 @@ SA1619 | StyleCop.CSharp.DocumentationRules | Warning | SA1619GenericTypeParamet
 SA1620 | StyleCop.CSharp.DocumentationRules | Warning | SA1620GenericTypeParameterDocumentationMustMatchTypeParameters, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1620.html)
 SA1621 | StyleCop.CSharp.DocumentationRules | Warning | SA1621GenericTypeParameterDocumentationMustDeclareParameterName, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1621.html)
 SA1622 | StyleCop.CSharp.DocumentationRules | Warning | SA1622GenericTypeParameterDocumentationMustHaveText, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1622.html)
-SA1625 | StyleCop.CSharp.DocumentationRules | Warning | SA1625ElementDocumentationMustNotBeCopiedAndPasted, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1625.html)
+SA1625 | StyleCop.CSharp.DocumentationRules | Warning | SA1625ElementDocumentationMustNotBeDuplicated, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1625.html)
 SA1626 | StyleCop.CSharp.DocumentationRules | Warning | SA1626SingleLineCommentsMustNotUseDocumentationStyleSlashes, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1626.html)
 SA1627 | StyleCop.CSharp.DocumentationRules | Warning | SA1627DocumentationTextMustNotBeEmpty
 SA1642 | StyleCop.CSharp.DocumentationRules | Warning | SA1642ConstructorSummaryDocumentationMustBeginWithStandardText, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1642.html)
