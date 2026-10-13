@@ -66,7 +66,7 @@ try {
                 }
             }
 
-            $report = Get-Content $reportPath -Raw | ConvertFrom-Json
+            $report = Get-Content $reportPath -Raw | ConvertFrom-Json -DateKind String
             if (!$report.diagnostics -or !$report.git.Sha) {
                 throw 'The rule status report is invalid or empty.'
             }

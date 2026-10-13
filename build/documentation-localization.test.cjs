@@ -352,6 +352,14 @@ test("Chinese status uses its localized report without changing implementation d
     }
 });
 
+test("localized status reports preserve commit metadata including timestamp offsets", () => {
+    const report = JSON.parse(read("docs", "StyleCop.Analyzers.Status.json"));
+    for (const [locale, culture] of [["ru-ru", "ru-RU"], ["cs-cz", "cs-CZ"], ["zh-cn", "zh-CN"]]) {
+        const localized = JSON.parse(read("_site", locale, "status", `StyleCop.Analyzers.Status.${culture}.json`));
+        assert.deepEqual(localized.git, report.git, `${locale}: preserve the original timestamp strings and commit metadata`);
+    }
+});
+
 test("the Czech status page embeds its localized fragment and requests its localized report", () => {
     const page = read("documentation", "cs-cz", "RuleStatus.md");
     const fragment = read("docs", "status.cs-cz.md");
