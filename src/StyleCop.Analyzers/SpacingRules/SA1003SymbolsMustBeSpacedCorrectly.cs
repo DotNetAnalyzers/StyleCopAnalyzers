@@ -548,7 +548,9 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
-            if (allowTrailingComment && followingTriviaList.Any(SyntaxKind.SingleLineCommentTrivia))
+            if (allowTrailingComment
+                && !withTrailingWhitespace
+                && followingTriviaList.Any(SyntaxKind.SingleLineCommentTrivia))
             {
                 return;
             }

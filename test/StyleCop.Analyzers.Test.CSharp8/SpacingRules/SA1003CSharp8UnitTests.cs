@@ -447,6 +447,9 @@ namespace TestNamespace
 
             var stillValid = GetValue()!
                 + ""suffix"";
+
+            var missingWhitespace = GetValue(){|#1:!|}/*block comment*/ // trailing comment
+                + ""suffix"";
         }
 
         private void Print(string para1, string para2, string para3)
@@ -460,40 +463,7 @@ namespace TestNamespace
 
             await VerifyCSharpDiagnosticAsync(
                 testCode,
-                DiagnosticResult.EmptyDiagnosticResults,
-                CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        [WorkItem(4264, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4264")]
-        public async Task TestPostfixIncrementAndDecrementAtEndOfLineAsync()
-        {
-            var testCode = @"
-namespace TestNamespace
-{
-    public class TestClass
-    {
-        public void TestMethod()
-        {
-            var incrementedValue = GetCounter().Value++
-                + 2;
-            var decrementedValue = GetCounter().Value--
-                + 2;
-        }
-
-        private Counter GetCounter() => new Counter();
-
-        private class Counter
-        {
-            public int Value;
-        }
-    }
-}
-";
-
-            await VerifyCSharpDiagnosticAsync(
-                testCode,
-                DiagnosticResult.EmptyDiagnosticResults,
+                Diagnostic(DescriptorFollowedByWhitespace).WithLocation(1).WithArguments("!"),
                 CancellationToken.None).ConfigureAwait(false);
         }
     }

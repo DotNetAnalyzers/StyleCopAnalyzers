@@ -79,6 +79,36 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
 
         /// <summary>
+        /// Verifies that postfix increment and decrement operators may end a line before the next token.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestPostfixIncrementAndDecrementAtEndOfLineAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var incrementedValue = GetCounter().Value++
+            + 2;
+        var decrementedValue = GetCounter().Value--
+            + 2;
+    }
+
+    private Counter GetCounter() => new Counter();
+
+    private class Counter
+    {
+        public int Value;
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that Invalid unary expressions produce the correct diagnostics and code fixes.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
