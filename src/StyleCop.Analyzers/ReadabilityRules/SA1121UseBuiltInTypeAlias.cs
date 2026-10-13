@@ -30,6 +30,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// <c>System.Single</c>, <c>System.String</c>, <c>System.UInt16</c>, <c>System.UInt32</c>,
     /// <c>System.UInt64</c>.</para>
     ///
+    /// <para>When one of these types is used as the target of a using alias, the diagnostic is reported on the target
+    /// instead of on each use of the alias.</para>
+    ///
     /// <para>Rather than using the type name or the fully-qualified type name, the built-in aliases for these types
     /// should always be used: <c>bool</c>, <c>byte</c>, <c>char</c>, <c>decimal</c>, <c>double</c>, <c>short</c>,
     /// <c>int</c>, <c>long</c>, <c>object</c>, <c>sbyte</c>, <c> float</c>, <c>string</c>, <c>ushort</c>, <c>uint</c>,
@@ -206,7 +209,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 var usingDirective = identifierNameSyntax.FirstAncestorOrSelf<UsingDirectiveSyntax>();
                 if (usingDirective != null
                     && identifierNameSyntax.FirstAncestorOrSelf<TypeArgumentListSyntax>() == null
-                    && !IsInUsingAliasTargetThatAllowsAnyType(context, usingDirective, identifierNameSyntax))
+                    && !IsInUsingAliasTarget(usingDirective, identifierNameSyntax))
                 {
                     return;
                 }
@@ -243,14 +246,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 SemanticModel semanticModel = context.SemanticModel;
 
-                // We go straight to the symbol here. We don't need to check alias information because aliases will fall
-                // into one of two categories:
-                //
-                // 1. The alias to a built-in type matches the name of a built-in type (e.g. using Int32 = Int32;). In
-                //    this case, a diagnostic is reported even if allowBuiltInTypeAliases=true.
-                // 2. The alias to a built-in type is a different name. In this case, if allowBuiltInTypeAliases is true
-                //    then the above code would have already returned due to the renamed symbol not being in the set of
-                //    strings checked by the analyzer above.
+                // Alias uses are handled at the alias target so that a single declaration does not produce diagnostics
+                // at every use.
                 INamedTypeSymbol symbol = semanticModel.GetSymbolInfo(identifierNameSyntax, context.CancellationToken).Symbol as INamedTypeSymbol;
 
                 switch (symbol?.SpecialType)
@@ -274,6 +271,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     break;
 
                 default:
+                    return;
+                }
+
+                if (semanticModel.GetAliasInfo(identifierNameSyntax, context.CancellationToken) != null)
+                {
                     return;
                 }
 
@@ -303,25 +305,18 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             /// <summary>
-            /// Determines whether a name is part of the target of a using alias directive, in a syntax tree whose
-            /// language version allows the target to use a built-in type keyword (C# 12 and newer).
+            /// Determines whether a name is part of the target of a using alias directive.
             /// </summary>
-            /// <param name="context">The analysis context.</param>
             /// <param name="usingDirective">The using directive containing <paramref name="identifierNameSyntax"/>.</param>
             /// <param name="identifierNameSyntax">The name to check.</param>
-            /// <returns><see langword="true"/> if the name is part of a using alias target that can be written with a
-            /// built-in type keyword; otherwise, <see langword="false"/>.</returns>
-            private static bool IsInUsingAliasTargetThatAllowsAnyType(SyntaxNodeAnalysisContext context, UsingDirectiveSyntax usingDirective, IdentifierNameSyntax identifierNameSyntax)
+            /// <returns><see langword="true"/> if the name is part of a using alias target; otherwise,
+            /// <see langword="false"/>.</returns>
+            private static bool IsInUsingAliasTarget(UsingDirectiveSyntax usingDirective, IdentifierNameSyntax identifierNameSyntax)
             {
                 // Only alias directives (using A = B;) can have a keyword as their target. Normal and static using
                 // directives still require a namespace or type name. The alias name itself is never a type reference.
-                if (usingDirective.Alias == null
-                    || usingDirective.Alias.Span.Contains(identifierNameSyntax.Span))
-                {
-                    return false;
-                }
-
-                return context.SupportsUsingAliasToAnyType();
+                return usingDirective.Alias != null
+                    && !usingDirective.Alias.Span.Contains(identifierNameSyntax.Span);
             }
 
             private static bool IsNameInNameOfExpression(IdentifierNameSyntax identifierNameSyntax)

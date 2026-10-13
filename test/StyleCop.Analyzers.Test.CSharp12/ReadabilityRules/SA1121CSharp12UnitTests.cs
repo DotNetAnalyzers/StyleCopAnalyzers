@@ -59,7 +59,7 @@ global using MyInt = {|#0:System.Int32|};
 
 public class TestClass
 {
-    private {|#1:MyInt|} value;
+    private MyInt value;
 }
 ";
 
@@ -68,24 +68,18 @@ global using MyInt = int;
 
 public class TestClass
 {
-    private int value;
+    private MyInt value;
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                Diagnostic().WithLocation(0),
-                Diagnostic().WithLocation(1),
-            };
-
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         [WorkItem(4011, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4011")]
         public async Task TestUsingAliasTargetWithSameNameAsAliasAsync()
         {
-            // The alias name is a declaration, not a reference to System.Int32, so only the target is reported.
+            // The alias name is a declaration, not a reference to System.Int32, and its uses are not reported.
             string testCode = @"
 namespace TestNamespace
 {
@@ -93,7 +87,7 @@ namespace TestNamespace
 
     public class TestClass
     {
-        private {|#1:Int32|} value;
+        private Int32 value;
     }
 }
 ";
@@ -105,18 +99,12 @@ namespace TestNamespace
 
     public class TestClass
     {
-        private int value;
+        private Int32 value;
     }
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                Diagnostic().WithLocation(0),
-                Diagnostic().WithLocation(1),
-            };
-
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -205,20 +193,19 @@ public class TestClass
         [WorkItem(4011, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4011")]
         public async Task TestUsingAliasTargetBeforeCSharp12Async()
         {
-            // Before C# 12, the target of a using alias cannot be written with a keyword.
+            // Before C# 12, the target cannot be fixed to a built-in type keyword, but it is still diagnosed here.
             string testCode = @"
-using MyInt = System.Int32;
+using MyInt = {|#0:System.Int32|};
 
 public class TestClass
 {
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp11, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp11, testCode, Diagnostic().WithLocation(0), CancellationToken.None).ConfigureAwait(false);
         }
 
-        // The following tests are inherited from earlier language versions, where the target of a using alias directive
-        // can't be written with a built-in type keyword. From C# 12 it can, so the target is reported as well.
+        // C# 12 allows the target of a using alias directive to be replaced with a built-in type keyword.
 
         /// <inheritdoc/>
         //// xUnit reads the InlineData attributes from the base method as well, so they must not be repeated here.
@@ -229,10 +216,10 @@ public class TestClass
         {
             string oldSource = @"namespace Foo
 {
-  using Int32 = {|#1:System.UInt32|};
+  using Int32 = {|#0:System.UInt32|};
   class Bar
   {
-    {|#0:Int32|} value = 3;
+    Int32 value = 3;
   }
 }
 ".ReplaceLineEndings(lineEnding);
@@ -242,7 +229,7 @@ public class TestClass
   using Int32 = uint;
   class Bar
   {
-    uint value = 3;
+    Int32 value = 3;
   }
 }
 ".ReplaceLineEndings(lineEnding);
@@ -250,7 +237,7 @@ public class TestClass
             await new CSharpTest
             {
                 TestCode = oldSource,
-                ExpectedDiagnostics = { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1) },
+                ExpectedDiagnostics = { Diagnostic().WithLocation(0) },
                 FixedCode = newSource,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
@@ -261,10 +248,10 @@ public class TestClass
         {
             string oldSource = @"namespace Foo
 {
-  using MyInt = {|#1:System.UInt32|};
+  using MyInt = {|#0:System.UInt32|};
   class Bar
   {
-    {|#0:MyInt|} value = 3;
+    MyInt value = 3;
   }
 }
 ";
@@ -273,7 +260,7 @@ public class TestClass
   using MyInt = uint;
   class Bar
   {
-    uint value = 3;
+    MyInt value = 3;
   }
 }
 ";
@@ -281,7 +268,7 @@ public class TestClass
             await new CSharpTest
             {
                 TestCode = oldSource,
-                ExpectedDiagnostics = { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1) },
+                ExpectedDiagnostics = { Diagnostic().WithLocation(0) },
                 FixedCode = newSource,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
@@ -292,10 +279,10 @@ public class TestClass
         {
             string oldSource = @"namespace Foo
 {
-  using Int32 = {|#1:System.UInt32|};
+  using Int32 = {|#0:System.UInt32|};
   class Bar
   {
-    {|#0:Int32|} value = 3;
+    Int32 value = 3;
   }
 }
 ";
@@ -304,7 +291,7 @@ public class TestClass
   using Int32 = uint;
   class Bar
   {
-    uint value = 3;
+    Int32 value = 3;
   }
 }
 ";
@@ -312,7 +299,7 @@ public class TestClass
             await new CSharpTest
             {
                 TestCode = oldSource,
-                ExpectedDiagnostics = { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1) },
+                ExpectedDiagnostics = { Diagnostic().WithLocation(0) },
                 FixedCode = newSource,
                 Settings = AllowBuiltInTypeAliasesSettingsJson,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
@@ -356,10 +343,10 @@ public class TestClass
         {
             string oldSource = @"namespace Foo;
 
-using MyInt = {|#1:System.UInt32|};
+using MyInt = {|#0:System.UInt32|};
 class Bar
 {
-{|#0:MyInt|} value = 3;
+MyInt value = 3;
 }
 ";
             string newSource = @"namespace Foo;
@@ -367,14 +354,14 @@ class Bar
 using MyInt = uint;
 class Bar
 {
-uint value = 3;
+MyInt value = 3;
 }
 ";
 
             await new CSharpTest
             {
                 TestCode = oldSource,
-                ExpectedDiagnostics = { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1) },
+                ExpectedDiagnostics = { Diagnostic().WithLocation(0) },
                 FixedCode = newSource,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
@@ -392,13 +379,13 @@ global using MyDouble = double;";
             var oldSource2 = @"
 class TestClass
 {
-    private [|MyDouble|] x;
+    private MyDouble x;
 }";
 
             var newSource2 = @"
 class TestClass
 {
-    private double x;
+    private MyDouble x;
 }";
 
             await new CSharpTest()
@@ -415,13 +402,13 @@ class TestClass
             var source = @"global using MyDouble = [|System.Double|];
 class TestClass
 {
-    private [|MyDouble|] x;
+    private MyDouble x;
 }";
 
             var newSource = @"global using MyDouble = double;
 class TestClass
 {
-    private double x;
+    private MyDouble x;
 }";
 
             await new CSharpTest()

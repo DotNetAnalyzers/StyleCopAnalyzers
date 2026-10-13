@@ -16,6 +16,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1121UseBuiltInTypeAlias"/>.
@@ -43,6 +44,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             foreach (var diagnostic in context.Diagnostics)
             {
+                if (IsUnsupportedUsingAliasTarget(context, diagnostic))
+                {
+                    continue;
+                }
+
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         ReadabilityResources.SA1121CodeFix,
@@ -52,6 +58,23 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             return SpecializedTasks.CompletedTask;
+        }
+
+        private static bool IsUnsupportedUsingAliasTarget(CodeFixContext context, Diagnostic diagnostic)
+        {
+            if (context.Document.Project.ParseOptions is not CSharpParseOptions parseOptions
+                || parseOptions.LanguageVersion >= LanguageVersionEx.CSharp12
+                || diagnostic.Location.SourceTree == null)
+            {
+                return false;
+            }
+
+            var root = diagnostic.Location.SourceTree.GetRoot();
+            var node = root.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
+            var usingDirective = node.FirstAncestorOrSelf<UsingDirectiveSyntax>();
+            return usingDirective?.Alias != null
+                && usingDirective.Name.Span.Contains(diagnostic.Location.SourceSpan)
+                && node.FirstAncestorOrSelf<TypeArgumentListSyntax>() == null;
         }
 
         private static SyntaxNode ComputeReplacement(SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
