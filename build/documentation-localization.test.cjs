@@ -56,13 +56,26 @@ test("the Czech sidebar uses Czech labels in both source and compiled navigation
     }
 });
 
+test("Czech pages retain complete English fallback paragraphs instead of malformed partial translations", () => {
+    for (const file of [
+        "SA1101.md", "SA1120.md", "SA1123.md", "SA1124.md", "SA1125.md", "SA1126.md",
+        "SA1127.md", "SA1128.md", "SA1130.md", "SA1131.md", "SX1101.md",
+    ]) {
+        const english = read("documentation", file).replaceAll("\r\n", "\n");
+        const czech = read("documentation", "cs-cz", file).replaceAll("\r\n", "\n");
+        const paragraph = english.match(/^A violation of this rule occurs whenever[\s\S]*?(?=\n\n|$)/m)?.[0];
+        assert.ok(paragraph, `${file}: missing neutral fallback paragraph`);
+        assert.ok(czech.includes(paragraph), `${file}: preserve the complete English fallback paragraph`);
+    }
+});
+
 test("the Czech edition is included in the DocFX build and shared locale picker", () => {
     const configPath = path.join(root, "docfx", "docfx.cs-cz.json");
     assert.ok(fs.existsSync(configPath), "Missing Czech DocFX build configuration");
     assert.match(read("build", "documentation.ps1"), /Join-Path 'docfx' 'docfx\.cs-cz\.json'/);
     assert.match(read("build", "docfx", "common", "public", "main.js"), /lang: "cs"/);
     assert.match(read("documentation", "cs-cz", "RuleStatus.md"), /status\.cs-cz\.md/);
-    assert.ok(fs.existsSync(path.join(root, "docs", "status.cs-CZ.md")), "Missing Czech status page fragment");
+    assert.ok(fs.readdirSync(path.join(root, "docs")).includes("status.cs-cz.md"), "Missing Czech status page fragment (exact case)");
     assert.ok(fs.existsSync(path.join(root, "build", "docfx", "cs-cz", "token.json")), "Missing Czech DocFX tokens");
     assert.ok(fs.existsSync(path.join(root, "documentation", "cs-cz", "navbar", "toc.yml")), "Missing Czech top navigation");
 });
