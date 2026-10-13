@@ -221,6 +221,36 @@ public class TestClass
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that the code fix is not offered for a tuple alias target when the language version does not support it.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestUsingTupleAliasTargetBeforeCSharp12Async()
+        {
+            string testCode = @"
+using Pair = ({|#0:System.Int32|}, {|#1:System.String|});
+
+public class TestClass
+{
+}
+";
+
+            var test = new CSharpTest(LanguageVersion.CSharp11)
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(0),
+                    Diagnostic().WithLocation(1),
+                },
+                FixedCode = testCode,
+                CompilerDiagnostics = CompilerDiagnostics.None,
+            };
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestFixAllBeforeCSharp12SkipsAliasTargetAsync()
         {

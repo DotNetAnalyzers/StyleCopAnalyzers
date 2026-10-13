@@ -16,36 +16,6 @@ namespace StyleCop.Analyzers.Test.CSharp15.ReadabilityRules
     public partial class SA1121CSharp15UnitTests : SA1121CSharp14UnitTests
     {
         /// <summary>
-        /// Verifies that the code fix is not offered for a tuple alias target when the language version does not support it.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestUsingTupleAliasTargetBeforeCSharp12Async()
-        {
-            string testCode = @"
-using Pair = ({|#0:System.Int32|}, {|#1:System.String|});
-
-public class TestClass
-{
-}
-";
-
-            var test = new CSharpTest(LanguageVersion.CSharp11)
-            {
-                TestCode = testCode,
-                ExpectedDiagnostics =
-                {
-                    Diagnostic().WithLocation(0),
-                    Diagnostic().WithLocation(1),
-                },
-                FixedCode = testCode,
-                CompilerDiagnostics = CompilerDiagnostics.None,
-            };
-
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <summary>
         /// Verifies that a type name in a union member is reported exactly once. The analyzer driver in Roslyn 5.9 ran
         /// syntax node actions on union members three times (dotnet/roslyn#84570), which reported this diagnostic
         /// three times.
