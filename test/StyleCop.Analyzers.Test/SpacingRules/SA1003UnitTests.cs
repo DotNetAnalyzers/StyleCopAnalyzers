@@ -136,25 +136,21 @@ v1;
 
         var v9_1 = new
         {
-            Property = v1++
-,
+            Property = v1++,
         };
         var v9_2 = new
         {
-            Property = v1--
-,
+            Property = v1--,
         };
         var v9_3 = new int[]
         {
             v1++,
-            v1++
-,
+            v1++,
         };
         var v9_4 = new int[]
         {
             v1--,
-            v1--
-,
+            v1--,
         };
     }
 }
@@ -181,25 +177,21 @@ v1;
 
         var v9_1 = new
         {
-            Property = v1++
-,
+            Property = v1++,
         };
         var v9_2 = new
         {
-            Property = v1--
-,
+            Property = v1--,
         };
         var v9_3 = new int[]
         {
             v1++,
-            v1++
-,
+            v1++,
         };
         var v9_4 = new int[]
         {
             v1--,
-            v1--
-,
+            v1--,
         };
     }
 }
