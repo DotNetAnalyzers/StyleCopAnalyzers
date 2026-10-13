@@ -537,6 +537,31 @@ public class TestClass : TestInterface
         }
 
         /// <summary>
+        /// Verifies that an explicit interface event followed by a private static event is correctly ordered.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(1823, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1823")]
+        public async Task TestExplicitInterfaceEventFollowedByPrivateStaticEventAsync()
+        {
+            var testCode = @"
+public interface TestInterface
+{
+    event System.Action Changed;
+}
+
+public class TestClass : TestInterface
+{
+    event System.Action TestInterface.Changed { add { } remove { } }
+
+    private static event System.Action StaticChanged { add { } remove { } }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that the analyzer will properly incomplete members.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
