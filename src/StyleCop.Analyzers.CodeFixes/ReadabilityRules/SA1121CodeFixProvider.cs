@@ -72,8 +72,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var root = diagnostic.Location.SourceTree.GetRoot();
             var node = root.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
             var usingDirective = node.FirstAncestorOrSelf<UsingDirectiveSyntax>();
+            var aliasTarget = usingDirective?.NamespaceOrType() ?? usingDirective?.Name;
             return usingDirective?.Alias != null
-                && usingDirective.Name.Span.Contains(diagnostic.Location.SourceSpan)
+                && aliasTarget != null
+                && aliasTarget.Span.Contains(diagnostic.Location.SourceSpan)
                 && node.FirstAncestorOrSelf<TypeArgumentListSyntax>() == null;
         }
 
