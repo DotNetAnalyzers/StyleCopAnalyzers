@@ -232,7 +232,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
 
                 if (openBracketLineSpan.EndLinePosition.Line != firstSizeLineSpan.StartLinePosition.Line &&
-                    openBracketLineSpan.EndLinePosition.Line != (firstSizeLineSpan.StartLinePosition.Line - 1))
+                    openBracketLineSpan.EndLinePosition.Line != (firstSizeLineSpan.StartLinePosition.Line - 1) &&
+                    !HasOnlyCommentLinesBetween(openBracketToken, firstSize))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstSize.GetLocation()));
                 }
@@ -264,7 +265,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             if (openBracketLineSpan.EndLinePosition.Line != firstAttributeLineSpan.StartLinePosition.Line &&
-                openBracketLineSpan.EndLinePosition.Line != (firstAttributeLineSpan.StartLinePosition.Line - 1))
+                openBracketLineSpan.EndLinePosition.Line != (firstAttributeLineSpan.StartLinePosition.Line - 1) &&
+                !HasOnlyCommentLinesBetween(openBracketToken, firstAttribute))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstAttribute.GetLocation()));
             }
@@ -299,7 +301,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             if (openBracketLineSpan.EndLinePosition.Line != firstArgumentLineSpan.StartLinePosition.Line &&
-                openBracketLineSpan.EndLinePosition.Line != (firstArgumentLineSpan.StartLinePosition.Line - 1))
+                openBracketLineSpan.EndLinePosition.Line != (firstArgumentLineSpan.StartLinePosition.Line - 1) &&
+                !HasOnlyCommentLinesBetween(openBracketToken, firstArgument))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstArgument.GetLocation()));
             }
@@ -334,7 +337,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             if (openParenLineSpan.EndLinePosition.Line != firstArgumentLineSpan.StartLinePosition.Line &&
-                openParenLineSpan.EndLinePosition.Line != (firstArgumentLineSpan.StartLinePosition.Line - 1))
+                openParenLineSpan.EndLinePosition.Line != (firstArgumentLineSpan.StartLinePosition.Line - 1) &&
+                !HasOnlyCommentLinesBetween(argumentListSyntax.OpenParenToken, firstArgument))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstArgument.GetLocation()));
             }
@@ -369,7 +373,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             if (openParenLineSpan.EndLinePosition.Line != firstArgumentLineSpan.StartLinePosition.Line &&
-                openParenLineSpan.EndLinePosition.Line != (firstArgumentLineSpan.StartLinePosition.Line - 1))
+                openParenLineSpan.EndLinePosition.Line != (firstArgumentLineSpan.StartLinePosition.Line - 1) &&
+                !HasOnlyCommentLinesBetween(openParenToken, firstArgument))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstArgument.GetLocation()));
             }
@@ -400,7 +405,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             if (openBracketLineSpan.EndLinePosition.Line != firstParameterLineSpan.StartLinePosition.Line &&
-                openBracketLineSpan.EndLinePosition.Line != (firstParameterLineSpan.StartLinePosition.Line - 1))
+                openBracketLineSpan.EndLinePosition.Line != (firstParameterLineSpan.StartLinePosition.Line - 1) &&
+                !HasOnlyCommentLinesBetween(openBracketToken, firstParameter))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstParameter.GetLocation()));
             }
@@ -430,10 +436,49 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             var parenLine = parameterListSyntax.OpenParenToken.GetLineSpan().EndLinePosition.Line;
 
-            if ((firstParameterLine - parenLine) > 1)
+            if ((firstParameterLine - parenLine) > 1 &&
+                !HasOnlyCommentLinesBetween(parameterListSyntax.OpenParenToken, firstParameter))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstParameter.GetLocation()));
             }
+        }
+
+        private static bool HasOnlyCommentLinesBetween(SyntaxToken openingToken, SyntaxNode firstItem)
+        {
+            var onBlankLine = false;
+            return HasOnlyCommentLines(openingToken.TrailingTrivia, ref onBlankLine)
+                && HasOnlyCommentLines(firstItem.GetLeadingTrivia(), ref onBlankLine);
+        }
+
+        private static bool HasOnlyCommentLines(SyntaxTriviaList triviaList, ref bool onBlankLine)
+        {
+            for (var i = 0; i < triviaList.Count; i++)
+            {
+                switch (triviaList[i].Kind())
+                {
+                case SyntaxKind.WhitespaceTrivia:
+                    break;
+
+                case SyntaxKind.EndOfLineTrivia:
+                    if (onBlankLine)
+                    {
+                        return false;
+                    }
+
+                    onBlankLine = true;
+                    break;
+
+                case SyntaxKind.SingleLineCommentTrivia:
+                case SyntaxKind.MultiLineCommentTrivia:
+                    onBlankLine = false;
+                    break;
+
+                default:
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private static bool IsValidTrivia(SyntaxTrivia trivia)

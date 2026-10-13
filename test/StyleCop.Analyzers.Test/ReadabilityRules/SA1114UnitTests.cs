@@ -130,6 +130,133 @@ class Foo
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that comments grouping arguments do not count as blank lines.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2917, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2917")]
+        public async Task TestMethodCallWithGroupedArgumentsAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    void Func(string a, string b, string c, int d, int e, int f) { }
+    void M()
+    {
+        Func(
+// Chars
+""A"", ""B"", ""C"",
+// Numbers
+1, 2, 3);
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that blank lines before or after an argument comment still result in diagnostics.
+        /// </summary>
+        /// <param name="beforeComment">The whitespace before the comment.</param>
+        /// <param name="afterComment">The whitespace after the comment.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("\r\n\r\n", "\r\n")]
+        [InlineData("\r\n", "\r\n\r\n")]
+        [WorkItem(2917, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2917")]
+        public async Task TestMethodCallWithCommentAndBlankLineAsync(string beforeComment, string afterComment)
+        {
+            var testCode = @"
+class Foo
+{
+    void Func(string a) { }
+    void M()
+    {
+        Func(" + beforeComment + "// Chars" + afterComment + @"{|#0:""A""|});
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, Diagnostic().WithLocation(0), CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that comments are allowed in each kind of list, but surrounding blank lines are not.
+        /// </summary>
+        /// <param name="code">The code containing a list.</param>
+        /// <param name="comment">The comment before the first item.</param>
+        /// <param name="beforeComment">The whitespace before the comment.</param>
+        /// <param name="blankLinePosition">The position of an optional blank line.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [CombinatorialData]
+        [WorkItem(2917, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2917")]
+        public async Task TestListsWithCommentsAsync(
+            [CombinatorialValues(
+                "class Foo { void M($$int a) { } }",
+                "class Foo { public int this[$$int a] { get { return a; } } }",
+                "class Foo { void M() { M($$); } void M(int a) { } }",
+                "class Foo { void M(int[] a) { var b = a[$$]; } }",
+                "[System.Obsolete($$)] class Foo { }",
+                "[$$] class Foo { }",
+                "class Foo { void M() { var a = new int[$$]; } }")] string code,
+            [CombinatorialValues("// Comment", "// First\r\n// Second", "/* Comment */", "/* First\r\nSecond */", "/* First\r\n\r\nSecond */")] string comment,
+            [CombinatorialValues("\r\n", " ")] string beforeComment,
+            [CombinatorialValues(0, 1, 2)] int blankLinePosition)
+        {
+            string item;
+            if (code.Contains("$$int a"))
+            {
+                item = "int a";
+                code = code.Replace("$$int a", "$$");
+            }
+            else if (code.StartsWith("[System.Obsolete"))
+            {
+                item = "\"message\"";
+            }
+            else if (code.StartsWith("[$$"))
+            {
+                item = "System.Obsolete";
+            }
+            else
+            {
+                item = "1";
+            }
+
+            var trivia = (blankLinePosition == 1 ? "\r\n\r\n" : beforeComment)
+                + comment
+                + (blankLinePosition == 2 ? "\r\n\r\n" : "\r\n")
+                + "    ";
+            var testCode = code.Replace("$$", trivia + (blankLinePosition == 0 ? item : "{|#0:" + item + "|}"));
+            var expected = blankLinePosition == 0 ? DiagnosticResult.EmptyDiagnosticResults : new[] { Diagnostic().WithLocation(0) };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the comment exemption does not change the handling of conditional directives in arguments.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestMethodCallWithConditionalDirectiveAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    void M(int a) { }
+    void M()
+    {
+        M(
+#if true
+            {|#0:1|}
+#endif
+        );
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, Diagnostic().WithLocation(0), CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestMethodCallNoParametersAsync()
         {
