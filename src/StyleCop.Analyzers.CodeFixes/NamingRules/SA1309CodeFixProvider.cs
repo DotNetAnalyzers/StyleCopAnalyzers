@@ -19,6 +19,7 @@ namespace StyleCop.Analyzers.NamingRules
     using Microsoft.CodeAnalysis.FindSymbols;
     using Microsoft.CodeAnalysis.Simplification;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1309FieldNamesMustNotBeginWithUnderscore"/>.
@@ -91,9 +92,12 @@ namespace StyleCop.Analyzers.NamingRules
                     .OfType<IdentifierNameSyntax>()
                     .Where(identifier => !(identifier.Parent is MemberAccessExpressionSyntax memberAccess && memberAccess.Name == identifier)
                         && !(identifier.Parent is MemberBindingExpressionSyntax)
+                        && !(identifier.Parent is NameColonSyntax)
+                        && !identifier.Ancestors().Any(ancestor => ancestor.IsKind(SyntaxKindEx.ExpressionColon))
                         && !(identifier.Parent is AssignmentExpressionSyntax assignment
                             && assignment.Left == identifier
-                            && assignment.Parent is InitializerExpressionSyntax)
+                            && (assignment.Parent.IsKind(SyntaxKind.ObjectInitializerExpression)
+                                || assignment.Parent.IsKind(SyntaxKindEx.WithInitializerExpression)))
                         && referenceModel.LookupSymbols(identifier.SpanStart, name: newName)
                             .Any(symbol => symbol.Kind == SymbolKind.Local || symbol.Kind == SymbolKind.Parameter))
                     .ToImmutableArray();

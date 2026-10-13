@@ -204,6 +204,37 @@ public class Derived : Base<int>
             await VerifyCSharpFixAsync(testCode, Diagnostic().WithArguments("_value").WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory]
+        [InlineData("int[]", "new int[]", false)]
+        [InlineData("int[]", "new int[]", true)]
+        [InlineData("System.Collections.Generic.List<int>", "new System.Collections.Generic.List<int>", true)]
+        [WorkItem(2939, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2939")]
+        public async Task TestFieldAssignmentInInitializerAsync(string returnType, string creation, bool parenthesized)
+        {
+            var open = parenthesized ? "(" : string.Empty;
+            var close = parenthesized ? ")" : string.Empty;
+            var testCode = @"public class C
+{
+    private int {|#0:_value|};
+
+    public " + returnType + @" Create(int value)
+    {
+        return " + creation + @" { " + open + "_value = value" + close + @" };
+    }
+}";
+            var fixedCode = @"public class C
+{
+    private int value;
+
+    public " + returnType + @" Create(int value)
+    {
+        return " + creation + @" { " + open + "this.value = value" + close + @" };
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithArguments("_value").WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestFieldStartingAnUnderscorePlacedInsideNativeMethodsClassAsync()
         {
