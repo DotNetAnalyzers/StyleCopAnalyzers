@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// Within a C# property, indexer or event, at least one of the child accessors is written on a single line, and at
@@ -106,8 +107,17 @@ namespace StyleCop.Analyzers.LayoutRules
 
             foreach (var accessor in accessorList.Accessors)
             {
-                // never report when any accessor has no body.
-                if (accessor.Body == null)
+                // Accessors without a block or expression body (such as auto-accessors) are not part of this rule.
+                SyntaxNode accessorBody = accessor.Body;
+                bool hasExpressionBody = false;
+                if (accessorBody == null)
+                {
+                    var expressionBody = accessor.ExpressionBody();
+                    accessorBody = expressionBody;
+                    hasExpressionBody = expressionBody != null;
+                }
+
+                if (accessorBody == null)
                 {
                     return;
                 }
@@ -116,7 +126,9 @@ namespace StyleCop.Analyzers.LayoutRules
                 // preceding line is still a single-line accessor.
                 var startToken = accessor.Modifiers.Count > 0 ? accessor.Modifiers[0] : accessor.Keyword;
                 int startLine = startToken.GetLocation().GetLineSpan().StartLinePosition.Line;
-                int endLine = accessor.Body.GetLocation().GetLineSpan().EndLinePosition.Line;
+                int endLine = hasExpressionBody && !accessor.SemicolonToken.IsMissing
+                    ? accessor.SemicolonToken.GetLocation().GetLineSpan().EndLinePosition.Line
+                    : accessorBody.GetLocation().GetLineSpan().EndLinePosition.Line;
                 if (startLine == endLine)
                 {
                     hasSingleLineAccessor = true;
