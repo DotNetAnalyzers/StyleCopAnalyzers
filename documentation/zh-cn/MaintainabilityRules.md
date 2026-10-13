@@ -11,7 +11,7 @@
 [SA1404](SA1404.md) | CodeAnalysisSuppressionMustHaveJustification | 代码分析 SuppressMessage 特性未包含理由说明。
 [SA1405](SA1405.md) | DebugAssertMustProvideMessageText | C# 代码中的 Debug.Assert 调用未包含描述性消息。
 [SA1406](SA1406.md) | DebugFailMustProvideMessageText | C# 代码中的 Debug.Fail 调用未包含描述性消息。
-[SA1407](SA1407.md) | ArithmeticExpressionsMustDeclarePrecedence | C# 语句包含复杂的算术表达式，但省略了运算符周围的圆括号。
+[SA1407](SA1407.md) | ArithmeticExpressionsMustDeclarePrecedence | C# 语句中的复杂表达式包含算术、位运算或移位运算符，但未使用圆括号明确运算优先级。
 [SA1408](SA1408.md) | ConditionalExpressionsMustDeclarePrecedence | C# 语句包含复杂的条件表达式，但省略了运算符周围的圆括号。
 [SA1409](SA1409.md) | RemoveUnnecessaryCode | C# 文件包含可以删除而不会改变整体代码逻辑的不必要代码。
 [SA1410](SA1410.md) | RemoveDelegateParenthesisWhenPossible | 对 C# 匿名方法的调用没有任何方法参数，但语句仍包含圆括号。

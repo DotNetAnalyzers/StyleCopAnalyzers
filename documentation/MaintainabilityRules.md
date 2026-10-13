@@ -11,7 +11,7 @@ Identifier | Name | Description
 [SA1404](SA1404.md) | CodeAnalysisSuppressionMustHaveJustification | A Code Analysis SuppressMessage attribute does not include a justification. 
 [SA1405](SA1405.md) | DebugAssertMustProvideMessageText | A call to Debug.Assert in C# code does not include a descriptive message. 
 [SA1406](SA1406.md) | DebugFailMustProvideMessageText | A call to Debug.Fail in C# code does not include a descriptive message. 
-[SA1407](SA1407.md) | ArithmeticExpressionsMustDeclarePrecedence | A C# statement contains a complex arithmetic expression which omits parenthesis around operators. 
+[SA1407](SA1407.md) | ArithmeticExpressionsMustDeclarePrecedence | A C# statement contains a complex expression with arithmetic, bitwise, or shift operators which omits parentheses to make precedence explicit.
 [SA1408](SA1408.md) | ConditionalExpressionsMustDeclarePrecedence | A C# statement contains a complex conditional expression which omits parenthesis around operators. 
 [SA1409](SA1409.md) | RemoveUnnecessaryCode | A C# file contains code which is unnecessary and can be removed without changing the overall logic of the code. 
 [SA1410](SA1410.md) | RemoveDelegateParenthesisWhenPossible | A call to a C# anonymous method does not contain any method parameters, yet the statement still includes parenthesis. 

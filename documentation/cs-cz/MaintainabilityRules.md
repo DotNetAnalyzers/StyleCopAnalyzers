@@ -11,7 +11,7 @@ Identifikátor | Název | Popis
 [SA1404](SA1404.md) | CodeAnalysisSuppressionMustHaveJustification | Atribut `SuppressMessage` pro analýzu kódu neobsahuje odůvodnění.
 [SA1405](SA1405.md) | DebugAssertMustProvideMessageText | Volání `Debug.Assert` v kódu C# neobsahuje popisnou zprávu.
 [SA1406](SA1406.md) | DebugFailMustProvideMessageText | Volání `Debug.Fail` v kódu C# neobsahuje popisnou zprávu.
-[SA1407](SA1407.md) | ArithmeticExpressionsMustDeclarePrecedence | Příkaz v jazyce C# obsahuje složitý aritmetický výraz, který opomíjí závorky kolem operátorů.
+[SA1407](SA1407.md) | ArithmeticExpressionsMustDeclarePrecedence | Příkaz jazyka C# obsahuje složitý výraz s aritmetickými, bitovými nebo posuvnými operátory bez závorek, které by jednoznačně určovaly jejich prioritu.
 [SA1408](SA1408.md) | ConditionalExpressionsMustDeclarePrecedence | Příkaz v jazyce C# obsahuje složitý podmíněný výraz, který opomíjí závorky kolem operátorů.
 [SA1409](SA1409.md) | RemoveUnnecessaryCode | Soubor kódu C# obsahuje kód, který je zbytečný a lze jej odstranit bez změny celkové logiky kódu.
 [SA1410](SA1410.md) | RemoveDelegateParenthesisWhenPossible | Volání anonymní metody v jazyce C# neobsahuje žádné parametry metody, přesto příkaz stále obsahuje závorky.

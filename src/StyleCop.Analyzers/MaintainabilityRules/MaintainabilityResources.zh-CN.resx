@@ -97,16 +97,16 @@
     <value>Debug.Fail 应提供消息文本</value>
   </data>
   <data name="SA1407Description" xml:space="preserve">
-    <value>C# 语句中的复杂算术表达式省略了运算符周围的圆括号。</value>
+    <value>C# 语句中的复杂表达式包含算术、位运算或移位运算符，但未使用圆括号明确运算优先级。</value>
   </data>
   <data name="SA1407MessageFormat" xml:space="preserve">
-    <value>算术表达式应明确运算优先级</value>
+    <value>算术、位运算和移位表达式应明确运算优先级</value>
   </data>
   <data name="SA1407SA1408CodeFix" xml:space="preserve">
     <value>添加圆括号</value>
   </data>
   <data name="SA1407Title" xml:space="preserve">
-    <value>算术表达式应明确运算优先级</value>
+    <value>算术、位运算和移位表达式应明确运算优先级</value>
   </data>
   <data name="SA1408Description" xml:space="preserve">
     <value>C# 语句中的复杂条件表达式省略了运算符周围的圆括号。</value>
