@@ -21,9 +21,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// <remarks>
     /// <para>To prevent method calls from becoming excessively complicated and unreadable, only the first parameter to
     /// a method or indexer call is allowed to span across multiple lines. The exception is an anonymous method passed
-    /// as a parameter, which is always allowed to span multiple lines. A violation of this rule occurs whenever a
-    /// parameter other than the first parameter spans across multiple lines, and the parameter does not contain an
-    /// anonymous method.</para>
+    /// as a parameter and tuple expressions are allowed to span multiple lines. A violation of this rule occurs
+    /// whenever a parameter other than the first parameter spans across multiple lines, and the parameter does not
+    /// contain an anonymous method or tuple expression.</para>
     ///
     /// <para>For example, the following code would violate this rule, since the second parameter spans across multiple
     /// lines:</para>
@@ -88,6 +88,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             SyntaxKindEx.WithExpression,
             SyntaxKindEx.ImplicitObjectCreationExpression,
             SyntaxKindEx.CollectionExpression,
+            SyntaxKindEx.TupleExpression,
         };
 
         /// <inheritdoc/>
