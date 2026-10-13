@@ -70,12 +70,137 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             var expressionType = context.Compilation.GetTypeByMetadataName("System.Linq.Expressions.Expression`1");
 
+            var valueTupleType = context.Compilation.GetTypeByMetadataName("System.ValueTuple");
             context.RegisterSyntaxNodeAction(context => HandleObjectCreationExpression(context, expressionType), SyntaxKind.ObjectCreationExpression);
-            context.RegisterSyntaxNodeAction(context => HandleInvocationExpression(context, expressionType), SyntaxKind.InvocationExpression);
-
+            context.RegisterSyntaxNodeAction(context => HandleInvocationExpression(context, valueTupleType, expressionType), SyntaxKind.InvocationExpression);
             context.RegisterSyntaxNodeAction(context => HandleDefaultExpression(context, expressionType), SyntaxKind.DefaultExpression);
-
             context.RegisterSyntaxNodeAction(context => HandleCastExpression(context, expressionType), SyntaxKind.CastExpression);
+        }
+
+        private static void CheckExpressionType(SyntaxNodeAnalysisContext context, INamedTypeSymbol expressionType, TypeSyntax syntax, Location reportLocation = null)
+        {
+            if (!LightupHelpers.SupportsIOperation)
+            {
+                CheckType(context, expressionType, syntax, reportLocation);
+                return;
+            }
+
+            if (!ContainsValueTuple(syntax))
+            {
+                return;
+            }
+
+            var operation = context.SemanticModel.GetOperation(context.Node, context.CancellationToken);
+            if (operation != null)
+            {
+                CheckOperationType(context, syntax, operation.Type, IsInExpressionTree(operation, expressionType), reportLocation);
+            }
+        }
+
+        private static bool ContainsValueTuple(TypeSyntax syntax)
+        {
+            switch (syntax.Kind())
+            {
+            case SyntaxKind.QualifiedName:
+                return ContainsValueTuple(((QualifiedNameSyntax)syntax).Right);
+
+            case SyntaxKindEx.TupleType:
+                foreach (var element in ((TupleTypeSyntaxWrapper)syntax).Elements)
+                {
+                    if (ContainsValueTuple(element.Type))
+                    {
+                        return true;
+                    }
+                }
+
+                break;
+
+            case SyntaxKind.GenericName:
+                var genericName = (GenericNameSyntax)syntax;
+                if (genericName.Identifier.ValueText == "ValueTuple")
+                {
+                    return true;
+                }
+
+                foreach (var argument in genericName.TypeArgumentList.Arguments)
+                {
+                    if (ContainsValueTuple(argument))
+                    {
+                        return true;
+                    }
+                }
+
+                break;
+            }
+
+            return false;
+        }
+
+        private static void CheckOperationType(SyntaxNodeAnalysisContext context, TypeSyntax syntax, ITypeSymbol type, bool isInExpressionTree, Location reportLocation = null)
+        {
+            if (type is not INamedTypeSymbol namedType)
+            {
+                return;
+            }
+
+            switch (syntax.Kind())
+            {
+            case SyntaxKind.QualifiedName:
+                CheckOperationType(context, ((QualifiedNameSyntax)syntax).Right, type, isInExpressionTree, reportLocation ?? syntax.GetLocation());
+                break;
+
+            case SyntaxKindEx.TupleType:
+                var elements = ((TupleTypeSyntaxWrapper)syntax).Elements;
+                var fields = namedType.TupleElements();
+                for (var i = 0; i < elements.Count && i < fields.Length; i++)
+                {
+                    CheckOperationType(context, elements[i].Type, fields[i].Type, isInExpressionTree, reportLocation);
+                }
+
+                break;
+
+            case SyntaxKind.GenericName:
+                var genericName = (GenericNameSyntax)syntax;
+                if (genericName.Identifier.ValueText == "ValueTuple"
+                    && namedType.IsTupleType()
+                    && namedType.TupleElements().Length > 1
+                    && !isInExpressionTree)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, reportLocation ?? syntax.GetLocation()));
+                    return;
+                }
+
+                var arguments = genericName.TypeArgumentList.Arguments;
+
+                // Older compilers expose tuple type arguments only on the underlying ValueTuple type.
+                var typeArguments = (namedType.TupleUnderlyingType() ?? namedType).TypeArguments;
+                for (var i = 0; i < arguments.Count && i < typeArguments.Length; i++)
+                {
+                    CheckOperationType(context, arguments[i], typeArguments[i], isInExpressionTree);
+                }
+
+                break;
+            }
+        }
+
+        private static bool IsInExpressionTree(IOperation operation, INamedTypeSymbol expressionType)
+        {
+            if (expressionType is null)
+            {
+                return false;
+            }
+
+            for (var current = IOperationWrapper.FromOperation(operation); current.WrappedOperation != null; current = IOperationWrapper.FromOperation(current.Parent))
+            {
+                if (current.Kind == OperationKindEx.Conversion
+                    && Equals(current.Type?.OriginalDefinition, expressionType)
+                    && IConversionOperationWrapper.FromOperation(current.WrappedOperation).Operand.Kind == OperationKindEx.AnonymousFunction)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
@@ -120,10 +245,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static void HandleObjectCreationExpression(SyntaxNodeAnalysisContext context, INamedTypeSymbol expressionType)
         {
             var objectCreationExpression = (ObjectCreationExpressionSyntax)context.Node;
-            CheckType(context, expressionType, objectCreationExpression.Type, objectCreationExpression.GetLocation());
+            CheckExpressionType(context, expressionType, objectCreationExpression.Type, objectCreationExpression.GetLocation());
         }
 
-        private static void HandleInvocationExpression(SyntaxNodeAnalysisContext context, INamedTypeSymbol expressionType)
+        private static void HandleInvocationExpression(SyntaxNodeAnalysisContext context, INamedTypeSymbol valueTupleType, INamedTypeSymbol expressionType)
         {
             var invocationExpression = (InvocationExpressionSyntax)context.Node;
             if (invocationExpression.ArgumentList.Arguments.Count < 2)
@@ -140,6 +265,19 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var memberAccessExpression = (MemberAccessExpressionSyntax)invocationExpression.Expression;
             if (memberAccessExpression.Name.Identifier.ValueText == "Create")
             {
+                if (LightupHelpers.SupportsIOperation)
+                {
+                    var operation = context.SemanticModel.GetOperation(invocationExpression, context.CancellationToken);
+                    if (IInvocationOperationWrapper.IsInstance(operation)
+                        && Equals(IInvocationOperationWrapper.FromOperation(operation).TargetMethod.ContainingType, valueTupleType)
+                        && !IsInExpressionTree(operation, expressionType))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, memberAccessExpression.GetLocation()));
+                    }
+
+                    return;
+                }
+
                 var symbolInfo = context.SemanticModel.GetSymbolInfo(memberAccessExpression.Expression);
                 if (symbolInfo.Symbol is INamedTypeSymbol namedTypeSymbol
                     && namedTypeSymbol.ToDisplayString(DisplayFormat) == "System.ValueTuple"
@@ -153,7 +291,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static void HandleDefaultExpression(SyntaxNodeAnalysisContext context, INamedTypeSymbol expressionType)
         {
             var defaultExpression = (DefaultExpressionSyntax)context.Node;
-            CheckType(context, expressionType, defaultExpression.Type);
+            CheckExpressionType(context, expressionType, defaultExpression.Type);
         }
 
         private static void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
@@ -166,7 +304,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static void HandleCastExpression(SyntaxNodeAnalysisContext context, INamedTypeSymbol expressionType)
         {
             var castExpression = (CastExpressionSyntax)context.Node;
-            CheckType(context, expressionType, castExpression.Type);
+            CheckExpressionType(context, expressionType, castExpression.Type);
         }
 
         private static void CheckParameterList(SyntaxNodeAnalysisContext context, ParameterListSyntax parameterList)

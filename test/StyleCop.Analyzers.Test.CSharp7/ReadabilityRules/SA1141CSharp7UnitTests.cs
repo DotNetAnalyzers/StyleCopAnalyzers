@@ -21,6 +21,110 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
     public partial class SA1141CSharp7UnitTests : SA1141UnitTests
     {
         /// <summary>
+        /// Verifies that expression analysis preserves nested type locations and ignores non-tuple operations.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3609, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3609")]
+        public async Task ValidateNestedTupleTypesInExpressionsAsync()
+        {
+            var testCode = @"using System;
+using System.Collections.Generic;
+
+class TestClass
+{
+    void TestMethod(object input)
+    {
+        var list = new List<[|ValueTuple<int, int>|]>();
+        var empty = default(Dictionary<int, [|System.ValueTuple<int, int>|]>);
+        var cast = (List<([|ValueTuple<int, int>|], int)>)input;
+        var multiple = default(Dictionary<[|ValueTuple<int, int>|], [|ValueTuple<long, long>|]>);
+        var other = new ValueTuple<List<[|ValueTuple<int, int>|]>>();
+        var tuple = (1, 2);
+        var converted = ((int, int))input;
+        var single = new ValueTuple<int>(1);
+        var zero = ValueTuple.Create();
+        var one = ValueTuple.Create(1);
+        var referenceTuple = Tuple.Create(1, 2);
+        var unrelated = TestClass.Create(1, 2);
+    }
+
+    static int Create(int first, int second) => first + second;
+}
+";
+            var fixedCode = @"using System;
+using System.Collections.Generic;
+
+class TestClass
+{
+    void TestMethod(object input)
+    {
+        var list = new List<(int, int)>();
+        var empty = default(Dictionary<int, (int, int)>);
+        var cast = (List<((int, int), int)>)input;
+        var multiple = default(Dictionary<(int, int), (long, long)>);
+        var other = new ValueTuple<List<(int, int)>>();
+        var tuple = (1, 2);
+        var converted = ((int, int))input;
+        var single = new ValueTuple<int>(1);
+        var zero = ValueTuple.Create();
+        var one = ValueTuple.Create(1);
+        var referenceTuple = Tuple.Create(1, 2);
+        var unrelated = TestClass.Create(1, 2);
+    }
+
+    static int Create(int first, int second) => first + second;
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that conversions and query-generated lambdas preserve expression-tree exclusions.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3609, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3609")]
+        public async Task ValidateExpressionTreeConversionsAndQueriesAsync()
+        {
+            var testCode = @"using System;
+using System.Linq;
+using System.Linq.Expressions;
+
+class TestClass
+{
+    Expression<Func<object, (int, int)>> cast = input => (ValueTuple<int, int>)input;
+    Expression<Func<(int, int)>> empty = () => default(ValueTuple<int, int>);
+    Expression<Func<Func<(int, int)>>> nested = () => () => ValueTuple.Create(1, 2);
+
+    void TestMethod(IQueryable<int> query)
+    {
+        var result = from item in query
+                     let pair = new ValueTuple<int, int>(item, item)
+                     where ValueTuple.Create(item, item).Item1 > 0
+                     orderby ValueTuple.Create(item, item).Item1
+                     select ValueTuple.Create(item, item);
+        Func<(int, int)> factory = () => { return [|ValueTuple.Create|](1, 2); };
+        var enumerable = from item in query.AsEnumerable()
+                         select [|ValueTuple.Create|](item, item);
+    }
+
+    void CastExpressionTree(object input)
+    {
+        var expression = (Expression<Func<[|ValueTuple<int, int>|]>>)input;
+    }
+}
+";
+            var fixedCode = testCode
+                .Replace("[|ValueTuple.Create|](1, 2)", "(1, 2)")
+                .Replace("[|ValueTuple.Create|](item, item)", "(item, item)")
+                .Replace("[|ValueTuple<int, int>|]", "(int, int)");
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that member declarations containing ValueTuple will result in the proper diagnostics and fixes.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
