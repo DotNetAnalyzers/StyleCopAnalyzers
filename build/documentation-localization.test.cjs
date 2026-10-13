@@ -57,14 +57,35 @@ test("the Czech sidebar uses Czech labels in both source and compiled navigation
 });
 
 test("the Czech edition is included in the DocFX build and shared locale picker", () => {
-    const configPath = path.join(root, "docfx.cs-cz.json");
+    const configPath = path.join(root, "docfx", "docfx.cs-cz.json");
     assert.ok(fs.existsSync(configPath), "Missing Czech DocFX build configuration");
-    assert.match(read("build", "documentation.ps1"), /docfx\.cs-cz\.json/);
+    assert.match(read("build", "documentation.ps1"), /Join-Path 'docfx' 'docfx\.cs-cz\.json'/);
     assert.match(read("build", "docfx", "common", "public", "main.js"), /lang: "cs"/);
     assert.match(read("documentation", "cs-cz", "RuleStatus.md"), /status\.cs-cz\.md/);
     assert.ok(fs.existsSync(path.join(root, "docs", "status.cs-CZ.md")), "Missing Czech status page fragment");
     assert.ok(fs.existsSync(path.join(root, "build", "docfx", "cs-cz", "token.json")), "Missing Czech DocFX tokens");
     assert.ok(fs.existsSync(path.join(root, "documentation", "cs-cz", "navbar", "toc.yml")), "Missing Czech top navigation");
+});
+
+test("DocFX configurations live under docfx and resolve paths from that directory", () => {
+    assert.deepEqual(fs.readdirSync(root).filter(file => /^docfx.*\.json$/.test(file)), []);
+    for (const [file, output] of [
+        ["docfx.json", "_site"],
+        ["docfx.ru-ru.json", "_site/ru-ru"],
+        ["docfx.cs-cz.json", "_site/cs-cz"],
+    ]) {
+        const directory = path.join(root, "docfx");
+        const { build } = JSON.parse(read("docfx", file));
+        assert.equal(path.resolve(directory, build.dest), path.resolve(root, output));
+        for (const item of [...build.content, ...build.resource]) {
+            assert.ok(item.src, `${file}: source must be explicit`);
+            assert.ok(fs.existsSync(path.resolve(directory, item.src)), `${file}: missing source ${item.src}`);
+        }
+        for (const template of build.template.filter(template => template !== "default" && template !== "modern")) {
+            assert.ok(fs.existsSync(path.resolve(directory, template)), `${file}: missing template ${template}`);
+        }
+        assert.ok(read("build", "documentation.ps1").includes(`Join-Path 'docfx' '${file}'`));
+    }
 });
 
 test("Russian resources have exactly the neutral keys and preserve format placeholders", () => {

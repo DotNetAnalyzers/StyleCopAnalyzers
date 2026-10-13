@@ -102,6 +102,8 @@ dotnet tool restore
 
 The generated site is written to `_site` (ignored by git). To preview it locally, run
 `dotnet docfx serve _site` and open the URL printed by DocFX.
+Build configurations live in `docfx/`, with input, output, and custom template paths relative to that directory.
+To build a single edition from the repository root, run `dotnet docfx docfx/docfx.json --warningsAsErrors` (English), or select its `docfx/docfx.<locale>.json` configuration.
 The English edition retains its existing URLs; the Russian and Czech editions are under
 `ru-ru/` and `cs-cz/`, respectively.
 The language dropdown in the header shows the current language and switches to the same page
@@ -117,7 +119,7 @@ Each localized sidebar belongs in `documentation/<locale>/toc.yml` and its top n
 `build/docfx/common/public/main.js`, whose shared `locales` list defines each edition's native name,
 URL prefix, language-picker label, and search languages; localized interface labels belong in
 `build/docfx/<locale>/token.json`. All DocFX editions are deployed together in one Pages artifact.
-When adding a language, add its DocFX configuration, wire its build and status-report translation into
+When adding a language, add its `docfx/docfx.<locale>.json` configuration, wire its build and status-report translation into
 `build/documentation.ps1`, and extend the shared locale list and localization tests.
 The build script localizes the generated status report using the available Russian and Czech
 resources and translates code-fix explanations, while preserving the implementation data and commit metadata.

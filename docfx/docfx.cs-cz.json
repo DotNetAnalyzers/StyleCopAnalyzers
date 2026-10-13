@@ -3,19 +3,19 @@
   "build": {
     "content": [
       {
-        "src": "documentation/ru-ru/navbar",
+        "src": "../documentation/cs-cz/navbar",
         "files": [
           "toc.yml"
         ]
       },
       {
-        "src": "documentation/ru-ru",
+        "src": "../documentation/cs-cz",
         "files": [
           "*.md"
         ]
       },
       {
-        "src": "documentation/ru-ru",
+        "src": "../documentation/cs-cz",
         "files": [
           "toc.yml"
         ],
@@ -24,7 +24,7 @@
     ],
     "resource": [
       {
-        "src": "docs",
+        "src": "../docs",
         "files": [
           "**/*"
         ],
@@ -34,19 +34,19 @@
         "dest": "status"
       }
     ],
-    "dest": "_site/ru-ru",
+    "dest": "../_site/cs-cz",
     "template": [
       "default",
       "modern",
-      "build/docfx/common",
-      "build/docfx/ru-ru"
+      "../build/docfx/common",
+      "../build/docfx/cs-cz"
     ],
     "globalMetadata": {
       "_appName": "StyleCop.Analyzers",
-      "_appTitle": "Документация StyleCop.Analyzers",
-      "_appFooter": "Создано с помощью <a href=\"https://dotnet.github.io/docfx\">DocFX</a>",
+      "_appTitle": "Dokumentace StyleCop.Analyzers",
+      "_appFooter": "Vytvořeno pomocí <a href=\"https://dotnet.github.io/docfx\">DocFX</a>",
       "_enableSearch": true,
-      "_lang": "ru",
+      "_lang": "cs",
       "_gitContribute": {
         "branch": "master"
       }

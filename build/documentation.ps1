@@ -86,17 +86,17 @@ try {
         Write-Warning 'No rule status report exists. Generate it as described in CONTRIBUTING.md to preview the status pages.'
     }
 
-    dotnet docfx docfx.json --warningsAsErrors
+    dotnet docfx (Join-Path 'docfx' 'docfx.json') --warningsAsErrors
     if ($LASTEXITCODE -ne 0) {
         throw 'The English documentation build failed.'
     }
 
-    dotnet docfx docfx.ru-ru.json --warningsAsErrors
+    dotnet docfx (Join-Path 'docfx' 'docfx.ru-ru.json') --warningsAsErrors
     if ($LASTEXITCODE -ne 0) {
         throw 'The Russian documentation build failed.'
     }
 
-    dotnet docfx docfx.cs-cz.json --warningsAsErrors
+    dotnet docfx (Join-Path 'docfx' 'docfx.cs-cz.json') --warningsAsErrors
     if ($LASTEXITCODE -ne 0) {
         throw 'The Czech documentation build failed.'
     }
