@@ -1,0 +1,664 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ConstructorDocumentationCodeFix" xml:space="preserve">
+    <value>生成构造函数文档注释</value>
+  </data>
+  <data name="DestructorDocumentationCodeFix" xml:space="preserve">
+    <value>生成析构函数文档注释</value>
+  </data>
+  <data name="DestructorStandardTextFirstPart" xml:space="preserve">
+    <value>终结 </value>
+  </data>
+  <data name="DestructorStandardTextSecondPart" xml:space="preserve">
+    <value> 类的实例.</value>
+  </data>
+  <data name="InheritdocCodeFix" xml:space="preserve">
+    <value>继承文档注释</value>
+  </data>
+  <data name="MethodDocumentationCodeFix" xml:space="preserve">
+    <value>生成方法文档注释</value>
+  </data>
+  <data name="NonPrivateConstructorStandardTextFirstPart" xml:space="preserve">
+    <value>初始化 </value>
+  </data>
+  <data name="NonPrivateConstructorStandardTextSecondPart" xml:space="preserve">
+    <value> {0}的新实例</value>
+  </data>
+  <data name="ParameterNotUsed" xml:space="preserve">
+    <value>此参数未使用.</value>
+  </data>
+  <data name="PrivateConstructorStandardTextFirstPart" xml:space="preserve">
+    <value>防止创建 </value>
+  </data>
+  <data name="PrivateConstructorStandardTextSecondPart" xml:space="preserve">
+    <value> {0}的默认实例</value>
+  </data>
+  <data name="PropertySummaryStartTextCodeFix" xml:space="preserve">
+    <value>添加标准文本</value>
+  </data>
+  <data name="SA1600Description" xml:space="preserve">
+    <value>C# 代码元素缺少文档注释。</value>
+  </data>
+  <data name="SA1600MessageFormat" xml:space="preserve">
+    <value>元素应有文档注释</value>
+  </data>
+  <data name="SA1600Title" xml:space="preserve">
+    <value>元素应有文档注释</value>
+  </data>
+  <data name="SA1601Description" xml:space="preserve">
+    <value>C# 分部元素缺少文档注释。</value>
+  </data>
+  <data name="SA1601MessageFormat" xml:space="preserve">
+    <value>分部元素应有文档注释</value>
+  </data>
+  <data name="SA1601Title" xml:space="preserve">
+    <value>分部元素应有文档注释</value>
+  </data>
+  <data name="SA1602Description" xml:space="preserve">
+    <value>C# 枚举中的某个枚举项缺少 XML 文档注释。</value>
+  </data>
+  <data name="SA1602MessageFormat" xml:space="preserve">
+    <value>枚举项应有文档注释</value>
+  </data>
+  <data name="SA1602Title" xml:space="preserve">
+    <value>枚举项应有文档注释</value>
+  </data>
+  <data name="SA1603Description" xml:space="preserve">
+    <value>C# 元素的文档注释中的 XML 格式不正确。</value>
+  </data>
+  <data name="SA1603MessageFormat" xml:space="preserve">
+    <value>文档注释包含无效的 XML：{0}</value>
+  </data>
+  <data name="SA1603Title" xml:space="preserve">
+    <value>文档注释应包含有效的 XML</value>
+  </data>
+  <data name="SA1604Description" xml:space="preserve">
+    <value>C# 元素的 XML 文档注释缺少 &lt;summary&gt; 标记。</value>
+  </data>
+  <data name="SA1604MessageFormat" xml:space="preserve">
+    <value>元素的文档注释应有摘要</value>
+  </data>
+  <data name="SA1604Title" xml:space="preserve">
+    <value>元素的文档注释应有摘要</value>
+  </data>
+  <data name="SA1605Description" xml:space="preserve">
+    <value>C# 代码元素的文档注释中的 &lt;summary&gt; 或 &lt;content&gt; 标记缺失或为空。</value>
+  </data>
+  <data name="SA1605MessageFormat" xml:space="preserve">
+    <value>分部元素的文档注释应有摘要</value>
+  </data>
+  <data name="SA1605Title" xml:space="preserve">
+    <value>分部元素的文档注释应有摘要</value>
+  </data>
+  <data name="SA1606Description" xml:space="preserve">
+    <value>C# 代码元素的文档注释中的 &lt;summary&gt; 标记为空。</value>
+  </data>
+  <data name="SA1606MessageFormat" xml:space="preserve">
+    <value>元素的文档注释应有摘要文本</value>
+  </data>
+  <data name="SA1606Title" xml:space="preserve">
+    <value>元素的文档注释应有摘要文本</value>
+  </data>
+  <data name="SA1607Description" xml:space="preserve">
+    <value>C# 代码元素的文档注释中的 &lt;summary&gt; 或 &lt;content&gt; 标记为空。</value>
+  </data>
+  <data name="SA1607MessageFormat" xml:space="preserve">
+    <value>分部元素的文档注释应有摘要文本</value>
+  </data>
+  <data name="SA1607Title" xml:space="preserve">
+    <value>分部元素的文档注释应有摘要文本</value>
+  </data>
+  <data name="SA1608Description" xml:space="preserve">
+    <value>元素的 XML 文档注释中的 &lt;summary&gt; 标记包含 Visual Studio 在创建元素时生成的默认文本。</value>
+  </data>
+  <data name="SA1608MessageFormat" xml:space="preserve">
+    <value>元素的文档注释不应使用默认摘要</value>
+  </data>
+  <data name="SA1608Title" xml:space="preserve">
+    <value>元素的文档注释不应使用默认摘要</value>
+  </data>
+  <data name="SA1609Description" xml:space="preserve">
+    <value>C# 属性的 XML 文档注释不包含 &lt;value&gt; 标记。</value>
+  </data>
+  <data name="SA1609MessageFormat" xml:space="preserve">
+    <value>属性的文档注释应有值说明</value>
+  </data>
+  <data name="SA1609SA1610CodeFix" xml:space="preserve">
+    <value>根据摘要生成值说明</value>
+  </data>
+  <data name="SA1609Title" xml:space="preserve">
+    <value>属性的文档注释应有值说明</value>
+  </data>
+  <data name="SA1610Description" xml:space="preserve">
+    <value>C# 属性的 XML 文档注释包含空的 &lt;value&gt; 标记。</value>
+  </data>
+  <data name="SA1610MessageFormat" xml:space="preserve">
+    <value>属性的文档注释应有值说明文本</value>
+  </data>
+  <data name="SA1610Title" xml:space="preserve">
+    <value>属性的文档注释应有值说明文本</value>
+  </data>
+  <data name="SA1611Description" xml:space="preserve">
+    <value>C# 方法、构造函数、委托或索引器缺少一个或多个参数的文档注释。</value>
+  </data>
+  <data name="SA1611MessageFormat" xml:space="preserve">
+    <value>缺少参数“{0}”的文档注释</value>
+  </data>
+  <data name="SA1611Title" xml:space="preserve">
+    <value>元素的参数应有文档注释</value>
+  </data>
+  <data name="SA1612Description" xml:space="preserve">
+    <value>C# 方法、构造函数、委托或索引器的参数文档与元素的实际参数不匹配。</value>
+  </data>
+  <data name="SA1612MissingParamForDocumentationMessageFormat" xml:space="preserve">
+    <value>参数“{0}”不存在</value>
+  </data>
+  <data name="SA1612ParamWrongOrderMessageFormat" xml:space="preserve">
+    <value>参数“{0}”的文档应位于第 {1} 个位置</value>
+  </data>
+  <data name="SA1612Title" xml:space="preserve">
+    <value>元素的参数文档应与实际参数匹配</value>
+  </data>
+  <data name="SA1613Description" xml:space="preserve">
+    <value>C# 元素的文档注释中的 &lt;param&gt; 标记缺少包含参数名称的 name 属性。</value>
+  </data>
+  <data name="SA1613MessageFormat" xml:space="preserve">
+    <value>元素的参数文档应声明参数名称</value>
+  </data>
+  <data name="SA1613Title" xml:space="preserve">
+    <value>元素的参数文档应声明参数名称</value>
+  </data>
+  <data name="SA1614Description" xml:space="preserve">
+    <value>C# 元素的文档注释中的 &lt;param&gt; 标记为空。</value>
+  </data>
+  <data name="SA1614MessageFormat" xml:space="preserve">
+    <value>元素的参数文档应有说明文本</value>
+  </data>
+  <data name="SA1614Title" xml:space="preserve">
+    <value>元素的参数文档应有说明文本</value>
+  </data>
+  <data name="SA1615Description" xml:space="preserve">
+    <value>C# 元素缺少返回值的文档注释。</value>
+  </data>
+  <data name="SA1615MessageFormat" xml:space="preserve">
+    <value>元素的返回值应有文档注释</value>
+  </data>
+  <data name="SA1615SA1616CodeFix" xml:space="preserve">
+    <value>为返回值编写文档注释</value>
+  </data>
+  <data name="SA1615Title" xml:space="preserve">
+    <value>元素的返回值应有文档注释</value>
+  </data>
+  <data name="SA1616Description" xml:space="preserve">
+    <value>C# 元素的文档注释中的 &lt;returns&gt; 标记为空。</value>
+  </data>
+  <data name="SA1616MessageFormat" xml:space="preserve">
+    <value>元素的返回值文档应有说明文本</value>
+  </data>
+  <data name="SA1616Title" xml:space="preserve">
+    <value>元素的返回值文档应有说明文本</value>
+  </data>
+  <data name="SA1617CodeFix" xml:space="preserve">
+    <value>删除 &lt;returns&gt; XML 注释</value>
+  </data>
+  <data name="SA1617Description" xml:space="preserve">
+    <value>C# 代码元素没有返回值，或者返回 void，但其文档注释包含 &lt;returns&gt; 标记。</value>
+  </data>
+  <data name="SA1617MessageFormat" xml:space="preserve">
+    <value>不应为 void 返回值编写文档注释</value>
+  </data>
+  <data name="SA1617Title" xml:space="preserve">
+    <value>不应为 void 返回值编写文档注释</value>
+  </data>
+  <data name="SA1618Description" xml:space="preserve">
+    <value>C# 泛型元素缺少一个或多个泛型类型参数的文档注释。</value>
+  </data>
+  <data name="SA1618MessageFormat" xml:space="preserve">
+    <value>缺少类型参数“{0}”的文档注释</value>
+  </data>
+  <data name="SA1618Title" xml:space="preserve">
+    <value>泛型类型参数应有文档注释</value>
+  </data>
+  <data name="SA1619Description" xml:space="preserve">
+    <value>C# 泛型分部元素缺少一个或多个泛型类型参数的文档注释，且元素的文档注释包含 &lt;summary&gt; 标记。</value>
+  </data>
+  <data name="SA1619MessageFormat" xml:space="preserve">
+    <value>缺少类型参数“{0}”的文档注释</value>
+  </data>
+  <data name="SA1619Title" xml:space="preserve">
+    <value>分部类的泛型类型参数应有文档注释</value>
+  </data>
+  <data name="SA1620Description" xml:space="preserve">
+    <value>C# 泛型元素的 XML 文档注释中的 &lt;typeparam&gt; 标记与元素的泛型类型参数不匹配。</value>
+  </data>
+  <data name="SA1620MissingMessageFormat" xml:space="preserve">
+    <value>类型参数“{0}”不存在。</value>
+  </data>
+  <data name="SA1620Title" xml:space="preserve">
+    <value>泛型类型参数文档应与实际类型参数匹配</value>
+  </data>
+  <data name="SA1620WrongOrderMessageFormat" xml:space="preserve">
+    <value>类型参数“{0}”的文档应位于第 {1} 个位置。</value>
+  </data>
+  <data name="SA1621Description" xml:space="preserve">
+    <value>C# 泛型元素的 XML 文档注释中的 &lt;typeparam&gt; 标记缺少 name 属性，或者 name 属性为空。</value>
+  </data>
+  <data name="SA1621MessageFormat" xml:space="preserve">
+    <value>泛型类型参数文档应声明参数名称。</value>
+  </data>
+  <data name="SA1621Title" xml:space="preserve">
+    <value>泛型类型参数文档应声明参数名称</value>
+  </data>
+  <data name="SA1622Description" xml:space="preserve">
+    <value>C# 泛型元素的 XML 文档注释中的 &lt;typeparam&gt; 标记为空。</value>
+  </data>
+  <data name="SA1622MessageFormat" xml:space="preserve">
+    <value>泛型类型参数文档应有说明文本。</value>
+  </data>
+  <data name="SA1622Title" xml:space="preserve">
+    <value>泛型类型参数文档应有说明文本</value>
+  </data>
+  <data name="SA1623Description" xml:space="preserve">
+    <value>C# 属性的 &lt;summary&gt; 标记中的文档文本与属性的访问器不匹配。</value>
+  </data>
+  <data name="SA1623MessageFormat" xml:space="preserve">
+    <value>属性的摘要文档文本应以“{0}”开头</value>
+  </data>
+  <data name="SA1623Title" xml:space="preserve">
+    <value>属性的摘要文档应与访问器匹配</value>
+  </data>
+  <data name="SA1624Description" xml:space="preserve">
+    <value>C# 属性的 &lt;summary&gt; 标记中的文档文本描述了属性的所有访问器，但其中一个访问器的访问权限受限。</value>
+  </data>
+  <data name="SA1624MessageFormat" xml:space="preserve">
+    <value>由于属性只有可见的 {0} 访问器，摘要文档文本应以“{1}”开头。</value>
+  </data>
+  <data name="SA1624Title" xml:space="preserve">
+    <value>属性的摘要文档应省略访问权限受限的访问器</value>
+  </data>
+  <data name="SA1625Description" xml:space="preserve">
+    <value>C# 元素的 XML 文档注释包含两个或更多相同的条目，表明文档是通过复制粘贴编写的。这有时意味着文档无效或质量不佳。</value>
+  </data>
+  <data name="SA1625MessageFormat" xml:space="preserve">
+    <value>元素的文档注释不应复制粘贴</value>
+  </data>
+  <data name="SA1625Title" xml:space="preserve">
+    <value>元素的文档注释不应复制粘贴</value>
+  </data>
+  <data name="SA1626CodeFix" xml:space="preserve">
+    <value>转换为单行注释</value>
+  </data>
+  <data name="SA1626CodeFixStrayComment" xml:space="preserve">
+    <value>转换为文档注释</value>
+  </data>
+  <data name="SA1626Description" xml:space="preserve">
+    <value>C# 代码包含以连续三个正斜杠开头的单行注释。</value>
+  </data>
+  <data name="SA1626MessageFormat" xml:space="preserve">
+    <value>单行注释不应使用文档注释形式的斜杠</value>
+  </data>
+  <data name="SA1626Title" xml:space="preserve">
+    <value>单行注释不应使用文档注释形式的斜杠</value>
+  </data>
+  <data name="SA1627Description" xml:space="preserve">
+    <value>C# 代码元素的 XML 文档注释包含空标记。</value>
+  </data>
+  <data name="SA1627MessageFormat" xml:space="preserve">
+    <value>“{0}”标记中的文档文本不应为空</value>
+  </data>
+  <data name="SA1627Title" xml:space="preserve">
+    <value>文档文本不应为空</value>
+  </data>
+  <data name="SA1628Description" xml:space="preserve">
+    <value>C# 元素的 XML 文档注释中的某个部分没有以大写字母开头。</value>
+  </data>
+  <data name="SA1628MessageFormat" xml:space="preserve">
+    <value>待办：消息格式</value>
+  </data>
+  <data name="SA1628Title" xml:space="preserve">
+    <value>文档文本应以大写字母开头</value>
+  </data>
+  <data name="SA1629CodeFix" xml:space="preserve">
+    <value>添加句点</value>
+  </data>
+  <data name="SA1629Description" xml:space="preserve">
+    <value>C# 元素的 XML 文档注释中的某个部分没有以句点结尾。</value>
+  </data>
+  <data name="SA1629MessageFormat" xml:space="preserve">
+    <value>文档文本应以句点结尾</value>
+  </data>
+  <data name="SA1629Title" xml:space="preserve">
+    <value>文档文本应以句点结尾</value>
+  </data>
+  <data name="SA1630Description" xml:space="preserve">
+    <value>C# 元素的 XML 文档注释中的某个部分在词与词之间没有任何空白字符。</value>
+  </data>
+  <data name="SA1630MessageFormat" xml:space="preserve">
+    <value>待办：消息格式</value>
+  </data>
+  <data name="SA1630Title" xml:space="preserve">
+    <value>文档文本应包含空白字符</value>
+  </data>
+  <data name="SA1631Description" xml:space="preserve">
+    <value>C# 元素的 XML 文档注释中的某个部分没有包含足够的字母字符。</value>
+  </data>
+  <data name="SA1631MessageFormat" xml:space="preserve">
+    <value>待办：消息格式</value>
+  </data>
+  <data name="SA1631Title" xml:space="preserve">
+    <value>文档注释应满足字母字符占比要求</value>
+  </data>
+  <data name="SA1632Description" xml:space="preserve">
+    <value>C# 元素的 XML 文档注释中的某个部分过短。</value>
+  </data>
+  <data name="SA1632MessageFormat" xml:space="preserve">
+    <value>待办：消息格式</value>
+  </data>
+  <data name="SA1632Title" xml:space="preserve">
+    <value>文档文本应满足最少字符数要求</value>
+  </data>
+  <data name="SA1633CodeFix" xml:space="preserve">
+    <value>添加文件头</value>
+  </data>
+  <data name="SA1633Description" xml:space="preserve">
+    <value>C# 代码文件缺少标准文件头。</value>
+  </data>
+  <data name="SA1633MessageFormatMalformed" xml:space="preserve">
+    <value>文件头的 XML 无效。</value>
+  </data>
+  <data name="SA1633MessageFormatMissing" xml:space="preserve">
+    <value>文件头缺失，或者不在文件顶部。</value>
+  </data>
+  <data name="SA1633Title" xml:space="preserve">
+    <value>文件应有文件头</value>
+  </data>
+  <data name="SA1634Description" xml:space="preserve">
+    <value>C# 代码文件顶部的文件头缺少 copyright 标记。</value>
+  </data>
+  <data name="SA1634MessageFormat" xml:space="preserve">
+    <value>文件头应包含 copyright 标记。</value>
+  </data>
+  <data name="SA1634Title" xml:space="preserve">
+    <value>文件头应包含版权标记</value>
+  </data>
+  <data name="SA1635Description" xml:space="preserve">
+    <value>C# 代码文件顶部的文件头缺少版权文本。</value>
+  </data>
+  <data name="SA1635MessageFormat" xml:space="preserve">
+    <value>文件头应有版权文本</value>
+  </data>
+  <data name="SA1635Title" xml:space="preserve">
+    <value>文件头应有版权文本</value>
+  </data>
+  <data name="SA1636Description" xml:space="preserve">
+    <value>C# 代码文件顶部的文件头没有包含正确的版权文本。</value>
+  </data>
+  <data name="SA1636MessageFormat" xml:space="preserve">
+    <value>文件头的版权文本应与设置中的版权文本匹配。</value>
+  </data>
+  <data name="SA1636Title" xml:space="preserve">
+    <value>文件头的版权文本应与配置匹配</value>
+  </data>
+  <data name="SA1637Description" xml:space="preserve">
+    <value>C# 代码文件顶部的文件头缺少文件名。</value>
+  </data>
+  <data name="SA1637MessageFormat" xml:space="preserve">
+    <value>文件头应包含文件名。</value>
+  </data>
+  <data name="SA1637Title" xml:space="preserve">
+    <value>文件头应包含文件名</value>
+  </data>
+  <data name="SA1638Description" xml:space="preserve">
+    <value>C# 代码文件顶部的文件头中的 copyright 标记的 file 属性没有包含该文件的名称。</value>
+  </data>
+  <data name="SA1638MessageFormat" xml:space="preserve">
+    <value>文件头中的文件名应与实际文件名匹配。</value>
+  </data>
+  <data name="SA1638Title" xml:space="preserve">
+    <value>文件头中的文件名应与实际文件名匹配</value>
+  </data>
+  <data name="SA1639Description" xml:space="preserve">
+    <value>C# 代码文件顶部的文件头没有包含已填写内容的 summary 标记。</value>
+  </data>
+  <data name="SA1639MessageFormat" xml:space="preserve">
+    <value>文件头应有摘要</value>
+  </data>
+  <data name="SA1639Title" xml:space="preserve">
+    <value>文件头应有摘要</value>
+  </data>
+  <data name="SA1640Description" xml:space="preserve">
+    <value>C# 代码文件顶部的文件头没有包含公司名称文本。</value>
+  </data>
+  <data name="SA1640MessageFormat" xml:space="preserve">
+    <value>copyright 标记应包含非空的 company 属性。</value>
+  </data>
+  <data name="SA1640Title" xml:space="preserve">
+    <value>文件头应有有效的公司名称文本</value>
+  </data>
+  <data name="SA1641Description" xml:space="preserve">
+    <value>C# 代码文件顶部的文件头没有包含正确的公司名称文本。</value>
+  </data>
+  <data name="SA1641MessageFormat" xml:space="preserve">
+    <value>文件头的公司名称应与设置中的公司名称匹配。</value>
+  </data>
+  <data name="SA1641Title" xml:space="preserve">
+    <value>文件头的公司名称文本应与配置匹配</value>
+  </data>
+  <data name="SA1642Description" xml:space="preserve">
+    <value>C# 构造函数的 XML 文档注释没有包含正确的摘要文本。</value>
+  </data>
+  <data name="SA1642MessageFormat" xml:space="preserve">
+    <value>构造函数的摘要文档应以标准文本开头</value>
+  </data>
+  <data name="SA1642SA1643CodeFix" xml:space="preserve">
+    <value>添加标准文本</value>
+  </data>
+  <data name="SA1642Title" xml:space="preserve">
+    <value>构造函数的摘要文档应以标准文本开头</value>
+  </data>
+  <data name="SA1643Description" xml:space="preserve">
+    <value>C# 析构函数的 XML 文档注释没有包含正确的摘要文本。</value>
+  </data>
+  <data name="SA1643MessageFormat" xml:space="preserve">
+    <value>析构函数的摘要文档应以标准文本开头</value>
+  </data>
+  <data name="SA1643Title" xml:space="preserve">
+    <value>析构函数的摘要文档应以标准文本开头</value>
+  </data>
+  <data name="SA1644Description" xml:space="preserve">
+    <value>C# 元素的 XML 文档注释中的某个部分包含空行。</value>
+  </data>
+  <data name="SA1644MessageFormat" xml:space="preserve">
+    <value>待办：消息格式</value>
+  </data>
+  <data name="SA1644Title" xml:space="preserve">
+    <value>文档注释不应包含空行</value>
+  </data>
+  <data name="SA1645Description" xml:space="preserve">
+    <value>引入的 XML 文档文件不存在。</value>
+  </data>
+  <data name="SA1645MessageFormat" xml:space="preserve">
+    <value>待办：消息格式</value>
+  </data>
+  <data name="SA1645Title" xml:space="preserve">
+    <value>引入的文档文件不存在</value>
+  </data>
+  <data name="SA1646Description" xml:space="preserve">
+    <value>引入的 XML 文档链接包含无效的路径。</value>
+  </data>
+  <data name="SA1646MessageFormat" xml:space="preserve">
+    <value>待办：消息格式</value>
+  </data>
+  <data name="SA1646Title" xml:space="preserve">
+    <value>引入的文档 XPath 不存在</value>
+  </data>
+  <data name="SA1647Description" xml:space="preserve">
+    <value>XML 文档注释中的 include 标记没有有效的 file 和 path 属性。</value>
+  </data>
+  <data name="SA1647MessageFormat" xml:space="preserve">
+    <value>待办：消息格式</value>
+  </data>
+  <data name="SA1647Title" xml:space="preserve">
+    <value>include 节点未包含有效的 file 和 path 属性</value>
+  </data>
+  <data name="SA1648Description" xml:space="preserve">
+    <value>在既不继承基类也不实现接口的元素上使用了 &lt;inheritdoc&gt;。</value>
+  </data>
+  <data name="SA1648MessageFormat" xml:space="preserve">
+    <value>inheritdoc 应用于具有继承关系的类</value>
+  </data>
+  <data name="SA1648Title" xml:space="preserve">
+    <value>inheritdoc 应用于具有继承关系的类</value>
+  </data>
+  <data name="SA1649CodeFix" xml:space="preserve">
+    <value>重命名文件，使其与第一个类型的名称匹配</value>
+  </data>
+  <data name="SA1649Description" xml:space="preserve">
+    <value>C# 代码文件的文件名与文件中声明的第一个类型的名称不匹配。</value>
+  </data>
+  <data name="SA1649MessageFormat" xml:space="preserve">
+    <value>文件名应与第一个类型的名称匹配</value>
+  </data>
+  <data name="SA1649Title" xml:space="preserve">
+    <value>文件名应与第一个类型的名称匹配</value>
+  </data>
+  <data name="SA1650Description" xml:space="preserve">
+    <value>元素的文档注释包含一个或多个拼写错误或无法识别的词。</value>
+  </data>
+  <data name="SA1650MessageFormat" xml:space="preserve">
+    <value>待办：消息格式</value>
+  </data>
+  <data name="SA1650Title" xml:space="preserve">
+    <value>元素的文档注释应拼写正确</value>
+  </data>
+  <data name="SA1651CodeFix" xml:space="preserve">
+    <value>确认占位符文本并移除标记</value>
+  </data>
+  <data name="SA1651Description" xml:space="preserve">
+    <value>元素的文档注释包含 &lt;placeholder&gt; 元素。</value>
+  </data>
+  <data name="SA1651MessageFormat" xml:space="preserve">
+    <value>不要使用占位符元素</value>
+  </data>
+  <data name="SA1651Title" xml:space="preserve">
+    <value>不要使用占位符元素</value>
+  </data>
+  <data name="StartingTextGets" xml:space="preserve">
+    <value>获取</value>
+  </data>
+  <data name="StartingTextGetsOrSets" xml:space="preserve">
+    <value>获取或设置</value>
+  </data>
+  <data name="StartingTextGetsOrSetsWhether" xml:space="preserve">
+    <value>获取或设置一个值，该值指示是否</value>
+  </data>
+  <data name="StartingTextGetsWhether" xml:space="preserve">
+    <value>获取一个值，该值指示是否</value>
+  </data>
+  <data name="StartingTextReturns" xml:space="preserve">
+    <value>返回</value>
+  </data>
+  <data name="StartingTextReturnsWhether" xml:space="preserve">
+    <value>返回一个值，该值指示是否</value>
+  </data>
+  <data name="StartingTextSets" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="StartingTextSetsWhether" xml:space="preserve">
+    <value>设置一个值，该值指示是否</value>
+  </data>
+  <data name="StaticConstructorKeywordText" xml:space="preserve">
+    <value>静态</value>
+  </data>
+  <data name="StaticConstructorStandardTextFirstPart" xml:space="preserve">
+    <value>初始化 </value>
+  </data>
+  <data name="StaticConstructorStandardTextSecondPart" xml:space="preserve">
+    <value> {0}的静态成员</value>
+  </data>
+  <data name="StartingTextGetsOrInitializes" xml:space="preserve">
+    <value>获取或初始化</value>
+  </data>
+  <data name="TaskReturnElementFirstPart" xml:space="preserve">
+    <value>表示异步操作结果的 </value>
+  </data>
+  <data name="TaskReturnElementSecondPart" xml:space="preserve">
+    <value> 实例.</value>
+  </data>
+  <data name="TypeTextClass" xml:space="preserve">
+    <value>类</value>
+  </data>
+  <data name="TypeTextStruct" xml:space="preserve">
+    <value>结构</value>
+  </data>
+  <data name="TypeTextUnion" xml:space="preserve">
+    <value>联合</value>
+  </data>
+  <data name="StartingTextGetsOrInitializesWhether" xml:space="preserve">
+    <value>获取或初始化一个值，该值指示是否</value>
+  </data>
+  <data name="StartingTextInitializes" xml:space="preserve">
+    <value>初始化</value>
+  </data>
+  <data name="StartingTextInitializesWhether" xml:space="preserve">
+    <value>初始化一个值，该值指示是否</value>
+  </data>
+</root>

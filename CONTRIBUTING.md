@@ -104,12 +104,14 @@ The generated site is written to `_site` (ignored by git). To preview it locally
 `dotnet docfx serve _site` and open the URL printed by DocFX.
 Build configurations live in `docfx/`, with input, output, and custom template paths relative to that directory.
 To build a single edition from the repository root, run `dotnet docfx docfx/docfx.json --warningsAsErrors` (English), or select its `docfx/docfx.<locale>.json` configuration.
-The English edition retains its existing URLs; the Russian and Czech editions are under
-`ru-ru/` and `cs-cz/`, respectively.
+The English edition retains its existing URLs; the Russian, Czech, and Simplified Chinese editions are under
+`ru-ru/`, `cs-cz/`, and `zh-cn/`, respectively.
 The language dropdown in the header shows the current language and switches to the same page
 in another edition. Languages are listed by their native names.
 Each edition has its own navigation and search index. Russian and Czech search also include
 English terms, so rule identifiers and code terminology remain searchable.
+The Simplified Chinese edition also has a separate search index, using DocFX's English search pipeline for rule identifiers and code terminology.
+DocFX's bundled Lunr language modules do not support Chinese word segmentation; Chinese phrase searching is not supported.
 
 Localized Markdown sources belong in `documentation/<locale>` (for example, `documentation/ru-ru`),
 with the same filenames as the English sources. Keep all editions up to date when changing a page;
@@ -121,11 +123,11 @@ URL prefix, language-picker label, and search languages; localized interface lab
 `build/docfx/<locale>/token.json`. All DocFX editions are deployed together in one Pages artifact.
 When adding a language, add its `docfx/docfx.<locale>.json` configuration, wire its build and status-report translation into
 `build/documentation.ps1`, and extend the shared locale list and localization tests.
-The build script localizes the generated status report using the available Russian and Czech
+The build script localizes the generated status report using the available Russian, Czech, and Simplified Chinese
 resources and translates code-fix explanations, while preserving the implementation data and commit metadata.
-Russian report titles must all have translations; untranslated Czech titles retain the English fallback.
+Russian and Simplified Chinese report titles must all have translations; untranslated Czech titles retain the English fallback.
 Localization regression tests run with `node --test build/documentation-localization.test.cjs`
-after building both editions.
+after building all editions with a generated status report.
 
 The GitHub Build workflow also checks links in all repository Markdown and HTML files using
 [Markup Link Checker (mlc)](https://github.com/becheran/mlc). Install version 1.2.2 from its

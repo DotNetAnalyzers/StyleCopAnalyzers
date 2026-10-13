@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ElementOrderCodeFix" xml:space="preserve">
+    <value>修正元素顺序</value>
+  </data>
+  <data name="ModifierOrderCodeFix" xml:space="preserve">
+    <value>修正修饰符顺序</value>
+  </data>
+  <data name="SA1200DescriptionInside" xml:space="preserve">
+    <value>C# using 指令位于命名空间元素外部。</value>
+  </data>
+  <data name="SA1200DescriptionOutside" xml:space="preserve">
+    <value>C# using 指令位于命名空间声明内部。</value>
+  </data>
+  <data name="SA1200MessageFormatInside" xml:space="preserve">
+    <value>using 指令应位于命名空间声明内部</value>
+  </data>
+  <data name="SA1200MessageFormatOutside" xml:space="preserve">
+    <value>using 指令应位于命名空间声明外部</value>
+  </data>
+  <data name="SA1200Title" xml:space="preserve">
+    <value>using 指令应放置在正确的位置</value>
+  </data>
+  <data name="SA1201Description" xml:space="preserve">
+    <value>C# 代码文件中的某个元素相对于其他元素的顺序不正确。</value>
+  </data>
+  <data name="SA1201MessageFormat" xml:space="preserve">
+    <value>{0} 不应位于 {1} 之后</value>
+  </data>
+  <data name="SA1201Title" xml:space="preserve">
+    <value>元素应按正确的顺序排列</value>
+  </data>
+  <data name="SA1202Description" xml:space="preserve">
+    <value>C# 代码文件中的某个元素相对于其他元素的顺序不正确。</value>
+  </data>
+  <data name="SA1202MessageFormat" xml:space="preserve">
+    <value>“{0}”成员应位于“{1}”成员之前</value>
+  </data>
+  <data name="SA1202Title" xml:space="preserve">
+    <value>元素应按访问级别排序</value>
+  </data>
+  <data name="SA1203Description" xml:space="preserve">
+    <value>常量字段位于非常量字段之后。</value>
+  </data>
+  <data name="SA1203MessageFormat" xml:space="preserve">
+    <value>常量字段应位于非常量字段之前</value>
+  </data>
+  <data name="SA1203Title" xml:space="preserve">
+    <value>常量应位于字段之前</value>
+  </data>
+  <data name="SA1204Description" xml:space="preserve">
+    <value>静态元素位于实例元素之后。</value>
+  </data>
+  <data name="SA1204MessageFormat" xml:space="preserve">
+    <value>静态成员应位于非静态成员之前</value>
+  </data>
+  <data name="SA1204Title" xml:space="preserve">
+    <value>静态元素应位于实例元素之前</value>
+  </data>
+  <data name="SA1205CodeFix" xml:space="preserve">
+    <value>添加访问修饰符</value>
+  </data>
+  <data name="SA1205Description" xml:space="preserve">
+    <value>分部元素未定义访问修饰符。</value>
+  </data>
+  <data name="SA1205MessageFormat" xml:space="preserve">
+    <value>分部元素应声明访问修饰符</value>
+  </data>
+  <data name="SA1205Title" xml:space="preserve">
+    <value>分部元素应声明访问级别</value>
+  </data>
+  <data name="SA1206Description" xml:space="preserve">
+    <value>元素声明中的关键字未遵循标准的排列顺序。</value>
+  </data>
+  <data name="SA1206MessageFormat" xml:space="preserve">
+    <value>“{0}”修饰符应位于“{1}”之前</value>
+  </data>
+  <data name="SA1206Title" xml:space="preserve">
+    <value>声明关键字应按顺序排列</value>
+  </data>
+  <data name="SA1207CodeFix" xml:space="preserve">
+    <value>将关键字“protected”移到关键字“internal”之前</value>
+  </data>
+  <data name="SA1207Description" xml:space="preserve">
+    <value>在 {0} {1} C# 元素的声明中，关键字“{0}”位于关键字“{1}”之后。</value>
+  </data>
+  <data name="SA1207MessageFormat" xml:space="preserve">
+    <value>关键字“{0}”应位于“{1}”之前</value>
+  </data>
+  <data name="SA1207Title" xml:space="preserve">
+    <value>protected 应位于 internal 之前</value>
+  </data>
+  <data name="SA1208Description" xml:space="preserve">
+    <value>在 C# 代码文件中，声明“System”命名空间成员的 using 指令位于声明其他命名空间成员的 using 指令之后。</value>
+  </data>
+  <data name="SA1208MessageFormat" xml:space="preserve">
+    <value>“{0}”的 using 指令应位于“{1}”的指令之前</value>
+  </data>
+  <data name="SA1208Title" xml:space="preserve">
+    <value>System 的 using 指令应位于其他 using 指令之前</value>
+  </data>
+  <data name="SA1209Description" xml:space="preserve">
+    <value>using 别名指令位于普通 using 指令之前。</value>
+  </data>
+  <data name="SA1209MessageFormat" xml:space="preserve">
+    <value>using 别名指令应位于所有 using 命名空间指令之后</value>
+  </data>
+  <data name="SA1209Title" xml:space="preserve">
+    <value>using 别名指令应位于其他 using 指令之后</value>
+  </data>
+  <data name="SA1210Description" xml:space="preserve">
+    <value>C# 代码文件中的 using 指令未按命名空间的字母顺序排列。</value>
+  </data>
+  <data name="SA1210MessageFormat" xml:space="preserve">
+    <value>using 指令应按命名空间的字母顺序排列</value>
+  </data>
+  <data name="SA1210Title" xml:space="preserve">
+    <value>using 指令应按命名空间的字母顺序排列</value>
+  </data>
+  <data name="SA1211Description" xml:space="preserve">
+    <value>C# 代码文件中的 using 别名指令未按别名的字母顺序排列。</value>
+  </data>
+  <data name="SA1211MessageFormat" xml:space="preserve">
+    <value>“{0}”的 using 别名指令应位于“{1}”的 using 别名指令之前</value>
+  </data>
+  <data name="SA1211Title" xml:space="preserve">
+    <value>using 别名指令应按别名的字母顺序排列</value>
+  </data>
+  <data name="SA1212Description" xml:space="preserve">
+    <value>属性或索引器中的 get 访问器位于 set 访问器之后。</value>
+  </data>
+  <data name="SA1212MessageFormat" xml:space="preserve">
+    <value>属性或索引器中的 get 访问器位于 set 访问器之后</value>
+  </data>
+  <data name="SA1212Title" xml:space="preserve">
+    <value>属性访问器应按顺序排列</value>
+  </data>
+  <data name="SA1213CodeFix" xml:space="preserve">
+    <value>修正访问器顺序</value>
+  </data>
+  <data name="SA1213Description" xml:space="preserve">
+    <value>事件中的 add 访问器位于 remove 访问器之后。</value>
+  </data>
+  <data name="SA1213MessageFormat" xml:space="preserve">
+    <value>事件访问器应按顺序排列</value>
+  </data>
+  <data name="SA1213Title" xml:space="preserve">
+    <value>事件访问器应按顺序排列</value>
+  </data>
+  <data name="SA1214Description" xml:space="preserve">
+    <value>只读字段位于非只读字段之后。</value>
+  </data>
+  <data name="SA1214MessageFormat" xml:space="preserve">
+    <value>只读字段应位于非只读字段之前</value>
+  </data>
+  <data name="SA1214Title" xml:space="preserve">
+    <value>只读字段应位于非只读字段之前</value>
+  </data>
+  <data name="SA1216Description" xml:space="preserve">
+    <value>using static 指令位于普通 using 指令之前或 using 别名指令之后。</value>
+  </data>
+  <data name="SA1216MessageFormat" xml:space="preserve">
+    <value>using static 指令应放置在正确的位置</value>
+  </data>
+  <data name="SA1216Title" xml:space="preserve">
+    <value>using static 指令应放置在正确的位置</value>
+  </data>
+  <data name="SA1217Description" xml:space="preserve">
+    <value>所有 using static 指令都应按字母顺序排列。</value>
+  </data>
+  <data name="SA1217MessageFormat" xml:space="preserve">
+    <value>“{0}”的 using static 指令应位于“{1}”的 using static 指令之后</value>
+  </data>
+  <data name="SA1217Title" xml:space="preserve">
+    <value>using static 指令应按字母顺序排列</value>
+  </data>
+  <data name="UsingCodeFix" xml:space="preserve">
+    <value>重新排列 using 语句</value>
+  </data>
+</root>

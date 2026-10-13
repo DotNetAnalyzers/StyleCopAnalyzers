@@ -462,4 +462,19 @@
   <data name="TokenSpacingCodeFix" xml:space="preserve">
     <value>Fix spacing</value>
   </data>
+  <data name="SpacingNot" xml:space="preserve">
+    <value> not</value>
+  </data>
+  <data name="SpacingPreceded" xml:space="preserve">
+    <value>preceded</value>
+  </data>
+  <data name="SpacingFollowed" xml:space="preserve">
+    <value>followed</value>
+  </data>
+  <data name="SpacingIncrement" xml:space="preserve">
+    <value>Increment</value>
+  </data>
+  <data name="SpacingDecrement" xml:space="preserve">
+    <value>Decrement</value>
+  </data>
 </root>

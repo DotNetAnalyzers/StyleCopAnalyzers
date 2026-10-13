@@ -1,0 +1,239 @@
+order: -1
+items:
+- name: 概览
+  href: index.md
+- name: 使用 .NET CLI
+  href: DotNetCli.md
+- name: 配置
+  href: Configuration.md
+- name: 启用配置
+  href: EnableConfiguration.md
+- name: 与 StyleCop Classic 的差异
+  href: KnownChanges.md
+- name: 规则类别
+  items:
+  - name: 特殊规则
+    href: SpecialRules.md
+    items:
+    - href: SA0001.md
+    - href: SA0002.md
+  - name: 空格规则
+    href: SpacingRules.md
+    items:
+    - href: SA1000.md
+    - href: SA1001.md
+    - href: SA1002.md
+    - href: SA1003.md
+    - href: SA1004.md
+    - href: SA1005.md
+    - href: SA1006.md
+    - href: SA1007.md
+    - href: SA1008.md
+    - href: SA1009.md
+    - href: SA1010.md
+    - href: SA1011.md
+    - href: SA1012.md
+    - href: SA1013.md
+    - href: SA1014.md
+    - href: SA1015.md
+    - href: SA1016.md
+    - href: SA1017.md
+    - href: SA1018.md
+    - href: SA1019.md
+    - href: SA1020.md
+    - href: SA1021.md
+    - href: SA1022.md
+    - href: SA1023.md
+    - href: SA1024.md
+    - href: SA1025.md
+    - href: SA1026.md
+    - href: SA1027.md
+    - href: SA1028.md
+  - name: 可读性规则
+    href: ReadabilityRules.md
+    items:
+    - href: SA1100.md
+    - href: SA1101.md
+    - href: SA1102.md
+    - href: SA1103.md
+    - href: SA1104.md
+    - href: SA1105.md
+    - href: SA1106.md
+    - href: SA1107.md
+    - href: SA1108.md
+    - href: SA1109.md
+    - href: SA1110.md
+    - href: SA1111.md
+    - href: SA1112.md
+    - href: SA1113.md
+    - href: SA1114.md
+    - href: SA1115.md
+    - href: SA1116.md
+    - href: SA1117.md
+    - href: SA1118.md
+    - href: SA1119.md
+    - href: SA1120.md
+    - href: SA1121.md
+    - href: SA1122.md
+    - href: SA1123.md
+    - href: SA1124.md
+    - href: SA1125.md
+    - href: SA1126.md
+    - href: SA1127.md
+    - href: SA1128.md
+    - href: SA1129.md
+    - href: SA1130.md
+    - href: SA1131.md
+    - href: SA1132.md
+    - href: SA1133.md
+    - href: SA1134.md
+    - href: SA1135.md
+    - href: SA1136.md
+    - href: SA1137.md
+    - href: SA1139.md
+    - href: SA1141.md
+    - href: SA1142.md
+  - name: 排序规则
+    href: OrderingRules.md
+    items:
+    - href: SA1200.md
+    - href: SA1201.md
+    - href: SA1202.md
+    - href: SA1203.md
+    - href: SA1204.md
+    - href: SA1205.md
+    - href: SA1206.md
+    - href: SA1207.md
+    - href: SA1208.md
+    - href: SA1209.md
+    - href: SA1210.md
+    - href: SA1211.md
+    - href: SA1212.md
+    - href: SA1213.md
+    - href: SA1214.md
+    - href: SA1215.md
+    - href: SA1216.md
+    - href: SA1217.md
+  - name: 命名规则
+    href: NamingRules.md
+    items:
+    - href: SA1300.md
+    - href: SA1301.md
+    - href: SA1302.md
+    - href: SA1303.md
+    - href: SA1304.md
+    - href: SA1305.md
+    - href: SA1306.md
+    - href: SA1307.md
+    - href: SA1308.md
+    - href: SA1309.md
+    - href: SA1310.md
+    - href: SA1311.md
+    - href: SA1312.md
+    - href: SA1313.md
+    - href: SA1314.md
+    - href: SA1316.md
+  - name: 可维护性规则
+    href: MaintainabilityRules.md
+    items:
+    - href: SA1400.md
+    - href: SA1401.md
+    - href: SA1402.md
+    - href: SA1403.md
+    - href: SA1404.md
+    - href: SA1405.md
+    - href: SA1406.md
+    - href: SA1407.md
+    - href: SA1408.md
+    - href: SA1409.md
+    - href: SA1410.md
+    - href: SA1411.md
+    - href: SA1412.md
+    - href: SA1413.md
+    - href: SA1414.md
+  - name: 布局规则
+    href: LayoutRules.md
+    items:
+    - href: SA1500.md
+    - href: SA1501.md
+    - href: SA1502.md
+    - href: SA1503.md
+    - href: SA1504.md
+    - href: SA1505.md
+    - href: SA1506.md
+    - href: SA1507.md
+    - href: SA1508.md
+    - href: SA1509.md
+    - href: SA1510.md
+    - href: SA1511.md
+    - href: SA1512.md
+    - href: SA1513.md
+    - href: SA1514.md
+    - href: SA1515.md
+    - href: SA1516.md
+    - href: SA1517.md
+    - href: SA1518.md
+    - href: SA1519.md
+    - href: SA1520.md
+  - name: 文档规则
+    href: DocumentationRules.md
+    items:
+    - href: SA1600.md
+    - href: SA1601.md
+    - href: SA1602.md
+    - href: SA1603.md
+    - href: SA1604.md
+    - href: SA1605.md
+    - href: SA1606.md
+    - href: SA1607.md
+    - href: SA1608.md
+    - href: SA1609.md
+    - href: SA1610.md
+    - href: SA1611.md
+    - href: SA1612.md
+    - href: SA1613.md
+    - href: SA1614.md
+    - href: SA1615.md
+    - href: SA1616.md
+    - href: SA1617.md
+    - href: SA1618.md
+    - href: SA1619.md
+    - href: SA1620.md
+    - href: SA1621.md
+    - href: SA1622.md
+    - href: SA1623.md
+    - href: SA1624.md
+    - href: SA1625.md
+    - href: SA1626.md
+    - href: SA1627.md
+    - href: SA1628.md
+    - href: SA1629.md
+    - href: SA1630.md
+    - href: SA1631.md
+    - href: SA1632.md
+    - href: SA1633.md
+    - href: SA1634.md
+    - href: SA1635.md
+    - href: SA1636.md
+    - href: SA1637.md
+    - href: SA1638.md
+    - href: SA1639.md
+    - href: SA1640.md
+    - href: SA1641.md
+    - href: SA1642.md
+    - href: SA1643.md
+    - href: SA1644.md
+    - href: SA1645.md
+    - href: SA1646.md
+    - href: SA1647.md
+    - href: SA1648.md
+    - href: SA1649.md
+    - href: SA1650.md
+    - href: SA1651.md
+    - href: SA1652.md
+  - name: 替代规则
+    href: AlternativeRules.md
+    items:
+    - href: SX1101.md
+    - href: SX1309.md
+    - href: SX1309S.md

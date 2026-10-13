@@ -140,13 +140,13 @@ namespace StyleCop.Analyzers.SpacingRules
             if (missingFollowingSpace)
             {
                 // semicolon should{} be {followed} by a space
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.InsertFollowing, string.Empty, "followed"));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.InsertFollowing, string.Empty, SpacingDiagnosticArguments.Followed));
             }
 
             if (hasPrecedingSpace && !ignorePrecedingSpace)
             {
                 // semicolon should{ not} be {preceded} by a space
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemoveImmediatePreceding, " not", "preceded"));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemoveImmediatePreceding, SpacingDiagnosticArguments.Not, SpacingDiagnosticArguments.Preceded));
             }
         }
     }

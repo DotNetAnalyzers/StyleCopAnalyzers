@@ -108,19 +108,19 @@ namespace StyleCop.Analyzers.SpacingRules
             if (!followsDirective && (token.IsFirstInLine() || token.IsPrecededByWhitespace(context.CancellationToken)))
             {
                 // comma should{ not} be {preceded} by whitespace
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemovePrecedingPreserveLayout, " not", "preceded"));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemovePrecedingPreserveLayout, SpacingDiagnosticArguments.Not, SpacingDiagnosticArguments.Preceded));
             }
 
             if (missingFollowingSpace && !shouldNotHaveFollowingSpace)
             {
                 // comma should{} be {followed} by whitespace
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.InsertFollowing, string.Empty, "followed"));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.InsertFollowing, string.Empty, SpacingDiagnosticArguments.Followed));
             }
 
             if (!missingFollowingSpace && shouldNotHaveFollowingSpace)
             {
                 // comma should{ not} be {followed} by whitespace
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemoveFollowing, " not", "followed"));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemoveFollowing, SpacingDiagnosticArguments.Not, SpacingDiagnosticArguments.Followed));
             }
         }
 

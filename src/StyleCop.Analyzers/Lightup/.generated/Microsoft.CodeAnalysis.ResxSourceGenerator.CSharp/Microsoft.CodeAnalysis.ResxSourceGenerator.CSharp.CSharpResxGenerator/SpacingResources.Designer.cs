@@ -244,6 +244,16 @@ namespace StyleCop.Analyzers.SpacingRules
         public static string @SA1028Title => GetResourceString("SA1028Title")!;
         /// <summary>Fix spacing</summary>
         public static string @TokenSpacingCodeFix => GetResourceString("TokenSpacingCodeFix")!;
+        /// <summary>not</summary>
+        public static string @SpacingNot => GetResourceString("SpacingNot")!;
+        /// <summary>preceded</summary>
+        public static string @SpacingPreceded => GetResourceString("SpacingPreceded")!;
+        /// <summary>followed</summary>
+        public static string @SpacingFollowed => GetResourceString("SpacingFollowed")!;
+        /// <summary>Increment</summary>
+        public static string @SpacingIncrement => GetResourceString("SpacingIncrement")!;
+        /// <summary>Decrement</summary>
+        public static string @SpacingDecrement => GetResourceString("SpacingDecrement")!;
 
     }
 }
