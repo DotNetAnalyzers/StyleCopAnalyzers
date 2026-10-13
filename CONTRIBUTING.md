@@ -161,6 +161,8 @@ The JSON report is an ignored build output. Status page regression tests run wit
 and analyzer tests to succeed, so the displayed status describes a validated build.
 
 When adding a page, link it from `documentation/toc.yml` or an existing rule-area page so it is discoverable.
+Rule pages use a level-one heading containing the diagnostic ID and a short description (for example, `# SA1000: Keywords should be spaced correctly`), without a rule metadata table.
+Their sidebar entries specify only `href`, so DocFX uses the page heading as the caption in every edition.
 The root `toc.yml` defines the short top navigation, while `documentation/toc.yml` defines the left sidebar.
 The sidebar TOC is emitted under `_site/navigation` to keep it separate from the top navigation without
 changing documentation page URLs.
