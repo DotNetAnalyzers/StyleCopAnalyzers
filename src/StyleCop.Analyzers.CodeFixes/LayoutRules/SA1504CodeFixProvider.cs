@@ -145,20 +145,76 @@ namespace StyleCop.Analyzers.LayoutRules
 
             foreach (var accessor in accessorList.Accessors)
             {
-                replacements[accessor] = ReformatAccessorAsSingleLine(settings.Indentation, accessor);
+                replacements[accessor] = ReformatAccessorAsSingleLine(
+                    settings.Indentation,
+                    accessor,
+                    CanConvertBlockBodyToExpressionBody(accessorList, accessor));
             }
 
             var newSyntaxRoot = syntaxRoot.ReplaceNodes(replacements.Keys, (original, maybeRewritten) => replacements[original]);
             return document.WithSyntaxRoot(newSyntaxRoot.WithoutFormatting());
         }
 
-        private static SyntaxNode ReformatAccessorAsSingleLine(IndentationSettings indentationSettings, AccessorDeclarationSyntax accessor)
+        private static bool CanConvertBlockBodyToExpressionBody(AccessorListSyntax accessorList, AccessorDeclarationSyntax accessor)
+        {
+            if (accessor.Body == null || accessor.Body.Statements.Count != 1)
+            {
+                return false;
+            }
+
+            bool hasOtherAccessor = false;
+            foreach (var otherAccessor in accessorList.Accessors)
+            {
+                if (otherAccessor == accessor)
+                {
+                    continue;
+                }
+
+                hasOtherAccessor = true;
+                if (otherAccessor.ExpressionBody() == null)
+                {
+                    return false;
+                }
+            }
+
+            if (!hasOtherAccessor)
+            {
+                return false;
+            }
+
+            var statement = accessor.Body.Statements[0];
+            return (accessor.IsKind(SyntaxKind.GetAccessorDeclaration)
+                    && statement is ReturnStatementSyntax returnStatement
+                    && returnStatement.Expression != null)
+                || (!accessor.IsKind(SyntaxKind.GetAccessorDeclaration)
+                    && statement is ExpressionStatementSyntax);
+        }
+
+        private static SyntaxNode ReformatAccessorAsSingleLine(IndentationSettings indentationSettings, AccessorDeclarationSyntax accessor, bool convertBlockBodyToExpressionBody)
         {
             var newAccessor = accessor
                 .WithModifiers(ReformatModifiersAsSingleLine(accessor.Modifiers))
                 .WithKeyword(ReformatKeywordAsSingleLine(accessor.Keyword));
 
-            if (accessor.Body != null)
+            if (convertBlockBodyToExpressionBody)
+            {
+                var statement = accessor.Body.Statements[0];
+                ExpressionSyntax expression = statement is ReturnStatementSyntax returnStatement
+                    ? returnStatement.Expression
+                    : ((ExpressionStatementSyntax)statement).Expression;
+                expression = expression
+                    .WithLeadingTrivia(ReformatTriviaListNoLeadingSpace(expression.GetLeadingTrivia()))
+                    .WithTrailingTrivia(ReformatTriviaListNoTrailingSpace(expression.GetTrailingTrivia()));
+                var arrowToken = SyntaxFactory.Token(SyntaxKind.EqualsGreaterThanToken).WithTrailingTrivia(SyntaxFactory.Space);
+                var keyword = newAccessor.Keyword.WithTrailingTrivia(SyntaxFactory.Space);
+
+                newAccessor = newAccessor
+                    .WithKeyword(keyword)
+                    .WithBody(null)
+                    .WithExpressionBody(SyntaxFactory.ArrowExpressionClause(arrowToken, expression))
+                    .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken).WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed));
+            }
+            else if (accessor.Body != null)
             {
                 newAccessor = newAccessor.WithBody(ReformatBodyAsSingleLine(accessor.Body));
             }

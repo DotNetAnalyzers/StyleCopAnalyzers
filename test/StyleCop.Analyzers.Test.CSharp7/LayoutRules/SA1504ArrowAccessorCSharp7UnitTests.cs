@@ -44,7 +44,7 @@ public class Foo
     public int Value
     {
         get => this.value;
-        set { this.value = value; }
+        set => this.value = value;
     }
 }";
 
@@ -82,6 +82,50 @@ public class Foo
                 ExpectedDiagnostics = { expected },
                 FixedCode = fixedTestCodeMultiple,
                 CodeActionIndex = 1,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a block accessor remains a block when the other accessor is not expression-bodied.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestSingleLineFixKeepsBlockBodiesWhenAccessorsAreMixedAsync()
+        {
+            var testCode = @"
+public class Foo
+{
+    private int value;
+
+    public int Value
+    {
+        get { return this.value; }
+        set
+        {
+            this.value = value;
+        }
+    }
+}";
+
+            var fixedTestCode = @"
+public class Foo
+{
+    private int value;
+
+    public int Value
+    {
+        get { return this.value; }
+        set { this.value = value; }
+    }
+}";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(8, 9);
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics = { expected },
+                FixedCode = fixedTestCode,
+                CodeActionIndex = 0,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
