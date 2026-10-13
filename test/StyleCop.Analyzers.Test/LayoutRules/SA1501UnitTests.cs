@@ -270,7 +270,7 @@ public class Foo
         try
         {
         }
-        catch {|#0:{|} GC.KeepAlive(null); }
+        catch {|#0:{|} ; }
 
         try
         {
