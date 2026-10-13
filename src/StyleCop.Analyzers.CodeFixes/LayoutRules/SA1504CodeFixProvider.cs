@@ -51,7 +51,8 @@ namespace StyleCop.Analyzers.LayoutRules
                 foreach (var accessor in accessorList.Accessors)
                 {
                     // only offer single line fix for accessors without attributes
-                    if (accessor.AttributeLists.Count > 0)
+                    if (accessor.AttributeLists.Count > 0
+                        || accessor.Keyword.TrailingTrivia.Any(t => t.IsKind(SyntaxKind.SingleLineCommentTrivia)))
                     {
                         canOfferSingleLineFix = false;
                         break;
@@ -157,7 +158,9 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static bool CanConvertBlockBodyToExpressionBody(AccessorListSyntax accessorList, AccessorDeclarationSyntax accessor)
         {
-            if (accessor.Body == null || accessor.Body.Statements.Count != 1)
+            if (accessor.Body == null
+                || accessor.Body.Statements.Count != 1
+                || accessor.Body.DescendantTrivia().Any(t => t.IsKind(SyntaxKind.SingleLineCommentTrivia) || t.IsKind(SyntaxKind.MultiLineCommentTrivia)))
             {
                 return false;
             }
@@ -405,7 +408,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 newLeadingTrivia = newLeadingTrivia.Insert(0, indentation);
             }
 
-            var newTrailingTrivia = ReformatTriviaListNoTrailingSpace(keyword.TrailingTrivia).Add(SyntaxFactory.CarriageReturnLineFeed);
+            var newTrailingTrivia = ReformatTriviaListPreservingSingleLineCommentsNoTrailingSpace(keyword.TrailingTrivia).Add(SyntaxFactory.CarriageReturnLineFeed);
 
             return keyword
                 .WithLeadingTrivia(newLeadingTrivia)

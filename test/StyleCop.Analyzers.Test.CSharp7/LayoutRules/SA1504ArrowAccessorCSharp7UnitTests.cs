@@ -130,6 +130,99 @@ public class Foo
     }
 
     /// <summary>
+    /// Verifies that the single-line fix is not offered when an accessor keyword has a trailing line comment.
+    /// </summary>
+    /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+    [Fact]
+    public async Task TestSingleLineFixIsNotOfferedForKeywordCommentAsync()
+    {
+        var testCode = @"
+public class Foo
+{
+    private int value;
+
+    public int Value
+    {
+        {|#0:get|} // keep
+            => this.value;
+        set => this.value = value;
+    }
+}";
+
+        var fixedTestCode = @"
+public class Foo
+{
+    private int value;
+
+    public int Value
+    {
+        get // keep
+        {
+            return this.value;
+        }
+
+        set
+        {
+            this.value = value;
+        }
+    }
+}";
+
+        DiagnosticResult expected = Diagnostic().WithLocation(0);
+        await new CSharpTest
+        {
+            TestCode = testCode,
+            ExpectedDiagnostics = { expected },
+            FixedCode = fixedTestCode,
+            CodeActionIndex = 0,
+        }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Verifies that the single-line fix keeps commented block accessors as blocks.
+    /// </summary>
+    /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+    [Fact]
+    public async Task TestSingleLineFixKeepsCommentedBlockAccessorAsync()
+    {
+        var testCode = @"
+public class Foo
+{
+    private int value;
+
+    public int Value
+    {
+        get => this.value;
+        set
+        {
+            this.value = value; /* keep */
+        }
+    }
+}";
+
+        var fixedTestCode = @"
+public class Foo
+{
+    private int value;
+
+    public int Value
+    {
+        get => this.value;
+        set { this.value = value; /* keep */ }
+    }
+}";
+
+        DiagnosticResult expected = Diagnostic().WithLocation(8, 9);
+        await new CSharpTest
+        {
+            TestCode = testCode,
+            ExpectedDiagnostics = { expected },
+            FixedCode = fixedTestCode,
+            CodeActionIndex = 0,
+        }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
+    /// <summary>
     /// Verifies that the multiple-line fix converts expression-bodied setters to block bodies.
     /// </summary>
     /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
