@@ -48,6 +48,25 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await TestDestructorCorrectDocumentationCustomizedImplAsync(DocumentationResources.DestructorStandardTextFirstPart, DocumentationResources.DestructorStandardTextSecondPart, false).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that langword markup is not newly accepted for destructor standard text.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestDestructorClassLangwordIsNotAcceptedAsStandardTextAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    /// <summary>
+    /// Finalizes an instance of the <see cref=""TestClass""/> <see langword=""class""/>.
+    /// </summary>
+    ~TestClass() { }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, new[] { Diagnostic().WithLocation(3, 9) }, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestNonPrivateConstructorCorrectDocumentationGenericSimpleAsync()
         {
