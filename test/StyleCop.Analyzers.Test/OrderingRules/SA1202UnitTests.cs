@@ -866,7 +866,7 @@ class Test : IA
 {
     private event EventHandler TestEvent2;
 
-    event EventHandler IA.TestEvent1 { add { } remove { } }
+    event EventHandler IA.{|#0:TestEvent1|} { add { } remove { } }
 
     public int Q { get; set; }
 
@@ -898,7 +898,7 @@ class Test : IA
 
             DiagnosticResult[] expected =
             {
-                // explicit interface events are considered private by StyleCop
+                Diagnostic().WithLocation(0).WithArguments("public", "private"),
                 Diagnostic().WithLocation(34, 12).WithArguments("public", "protected"),
                 Diagnostic().WithLocation(41, 15).WithArguments("public", "protected"),
                 Diagnostic().WithLocation(45, 13).WithArguments("public", "protected"),
@@ -920,9 +920,9 @@ internal interface IA
 
 class Test : IA
 {
-    private event EventHandler TestEvent2;
-
     event EventHandler IA.TestEvent1 { add { } remove { } }
+
+    private event EventHandler TestEvent2;
 
     public int Q { get; set; }
 
@@ -1361,6 +1361,90 @@ internal class Class2
 
             var expected = Diagnostic().WithLocation(0).WithArguments("public", "private");
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that explicit interface events are ordered as public members.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(1823, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1823")]
+        public async Task TestExplicitInterfaceEventAndPublicEventHaveSameAccessLevelAsync()
+        {
+            var testCode = @"public interface IExample
+{
+    event System.Action Changed;
+}
+
+public class Example : IExample
+{
+    event System.Action IExample.Changed { add { } remove { } }
+    public event System.Action PublicChanged { add { } remove { } }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an explicit interface event is moved before a private event by the code fix.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(1823, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1823")]
+        public async Task TestExplicitInterfaceEventCodeFixAsync()
+        {
+            var testCode = @"public interface IExample
+{
+    event System.Action Changed;
+}
+
+public class Example : IExample
+{
+    private event System.Action PrivateChanged { add { } remove { } }
+    event System.Action IExample.{|#0:Changed|} { add { } remove { } }
+}
+";
+
+            var fixedCode = @"public interface IExample
+{
+    event System.Action Changed;
+}
+
+public class Example : IExample
+{
+    event System.Action IExample.Changed { add { } remove { } }
+    private event System.Action PrivateChanged { add { } remove { } }
+}
+";
+            var expected = Diagnostic().WithLocation(0).WithArguments("public", "private");
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a non-explicit event without an access modifier remains private for ordering.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(1823, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1823")]
+        public async Task TestNonExplicitEventRemainsPrivateAsync()
+        {
+            var testCode = @"public class Example
+{
+    event System.Action ImplicitChanged { add { } remove { } }
+    public event System.Action {|#0:PublicChanged|} { add { } remove { } }
+}
+";
+
+            var fixedCode = @"public class Example
+{
+    public event System.Action PublicChanged { add { } remove { } }
+    event System.Action ImplicitChanged { add { } remove { } }
+}
+";
+
+            var expected = Diagnostic().WithLocation(0).WithArguments("public", "private");
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
