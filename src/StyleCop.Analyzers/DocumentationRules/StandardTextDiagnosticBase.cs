@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Globalization;
     using System.Linq;
     using System.Text;
     using System.Xml.Linq;
@@ -64,8 +65,10 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <param name="secondTextPart">The second part of the standard text.</param>
         /// <param name="diagnosticDescriptor">The diagnostic to report for violations, or <see langword="null"/> to not report violations.</param>
         /// <param name="allowLangwordStandardText"><see langword="true"/> to accept supported <c>see langword</c> tags in the standard text.</param>
+        /// <param name="documentationCulture">The culture used to look up the localized text for the <see langword="static"/> keyword.</param>
+        /// <param name="typeKindText">The localized text for the declared type kind, or <see langword="null"/> if it is not accepted.</param>
         /// <returns>A <see cref="MatchResult"/> describing the result of the analysis.</returns>
-        protected static MatchResult HandleDeclaration(SyntaxNodeAnalysisContext context, string firstTextPart, string secondTextPart, DiagnosticDescriptor diagnosticDescriptor, bool allowLangwordStandardText = false)
+        protected static MatchResult HandleDeclaration(SyntaxNodeAnalysisContext context, string firstTextPart, string secondTextPart, DiagnosticDescriptor diagnosticDescriptor, bool allowLangwordStandardText = false, CultureInfo documentationCulture = null, string typeKindText = null)
         {
             var declarationSyntax = (BaseMethodDeclarationSyntax)context.Node;
             var documentationStructure = declarationSyntax.GetDocumentationCommentTriviaSyntax();
@@ -117,7 +120,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 if (allowLangwordStandardText
                     && ContainsLangwordSee(summaryNodes)
-                    && TextPartsMatch(firstTextPart, secondTextPart, summaryNodes, declarationSyntax, out var includedClassReferencePart)
+                    && TextPartsMatch(firstTextPart, secondTextPart, summaryNodes, declarationSyntax, documentationCulture, typeKindText, out var includedClassReferencePart)
                     && SeeTagIsCorrect(context, includedClassReferencePart, declarationSyntax))
                 {
                     return MatchResult.FoundMatch;
@@ -172,7 +175,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     if (allowLangwordStandardText
                         && classReferencePart == null
                         && ContainsLangwordSee(summaryElement.Content)
-                        && TextPartsMatch(firstTextPart, secondTextPart, summaryElement.Content, declarationSyntax, out var langwordClassReferencePart))
+                        && TextPartsMatch(firstTextPart, secondTextPart, summaryElement.Content, declarationSyntax, documentationCulture, typeKindText, out var langwordClassReferencePart))
                     {
                         classReferencePart = langwordClassReferencePart;
                     }
@@ -284,7 +287,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             return false;
         }
 
-        private static bool TextPartsMatch(string firstText, string secondText, SyntaxList<XmlNodeSyntax> content, BaseMethodDeclarationSyntax declarationSyntax, out XmlEmptyElementSyntax classReferencePart)
+        private static bool TextPartsMatch(string firstText, string secondText, SyntaxList<XmlNodeSyntax> content, BaseMethodDeclarationSyntax declarationSyntax, CultureInfo documentationCulture, string typeKindText, out XmlEmptyElementSyntax classReferencePart)
         {
             var firstTextPart = new StringBuilder();
             var secondTextPart = new StringBuilder();
@@ -309,7 +312,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     else if (XmlCommentHelper.GetFirstAttributeOrDefault<XmlTextAttributeSyntax>(emptyElement) is XmlTextAttributeSyntax langwordAttribute
                         && langwordAttribute.Name.ToString() == "langword"
                         && langwordAttribute.TextTokens.Count == 1
-                        && GetStandardTextForLangword(langwordAttribute.TextTokens[0].ValueText, declarationSyntax.Parent) is string standardText)
+                        && GetStandardTextForLangword(langwordAttribute.TextTokens[0].ValueText, declarationSyntax.Parent, documentationCulture, typeKindText) is string standardText)
                     {
                         currentTextPart.Append(standardText);
                     }
@@ -334,7 +337,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 && secondTextPart.ToString().StartsWith(secondText, StringComparison.Ordinal);
         }
 
-        private static bool TextPartsMatch(string firstText, string secondText, System.Collections.Generic.List<XNode> content, BaseMethodDeclarationSyntax declarationSyntax, out XElement classReferencePart)
+        private static bool TextPartsMatch(string firstText, string secondText, System.Collections.Generic.List<XNode> content, BaseMethodDeclarationSyntax declarationSyntax, CultureInfo documentationCulture, string typeKindText, out XElement classReferencePart)
         {
             var firstTextPart = new StringBuilder();
             var secondTextPart = new StringBuilder();
@@ -355,7 +358,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                         currentTextPart = secondTextPart;
                     }
                     else if (element.Attribute("langword") is XAttribute langwordAttribute
-                        && GetStandardTextForLangword(langwordAttribute.Value, declarationSyntax.Parent) is string standardText)
+                        && GetStandardTextForLangword(langwordAttribute.Value, declarationSyntax.Parent, documentationCulture, typeKindText) is string standardText)
                     {
                         currentTextPart.Append(standardText);
                     }
@@ -380,26 +383,29 @@ namespace StyleCop.Analyzers.DocumentationRules
                 && secondTextPart.ToString().StartsWith(secondText, StringComparison.Ordinal);
         }
 
-        private static string GetStandardTextForLangword(string langword, SyntaxNode typeDeclaration)
+        private static string GetStandardTextForLangword(string langword, SyntaxNode typeDeclaration, CultureInfo documentationCulture, string typeKindText)
         {
-            if (langword == "record")
+            if (langword == "static" && documentationCulture != null)
             {
-                if (typeDeclaration.IsKind(SyntaxKindEx.RecordDeclaration))
-                {
-                    return "class";
-                }
-
-                if (typeDeclaration.IsKind(SyntaxKindEx.RecordStructDeclaration))
-                {
-                    return "struct";
-                }
-
-                return null;
+                return DocumentationResources.ResourceManager.GetString(nameof(DocumentationResources.StaticConstructorKeywordText), documentationCulture);
             }
 
-            if (langword == "static" || langword == "class" || langword == "struct")
+            if (langword == "class"
+                && (typeDeclaration.IsKind(SyntaxKind.ClassDeclaration) || typeDeclaration.IsKind(SyntaxKindEx.RecordDeclaration)))
             {
-                return langword;
+                return typeKindText;
+            }
+
+            if (langword == "struct"
+                && (typeDeclaration.IsKind(SyntaxKind.StructDeclaration) || typeDeclaration.IsKind(SyntaxKindEx.RecordStructDeclaration)))
+            {
+                return typeKindText;
+            }
+
+            if (langword == "record"
+                && (typeDeclaration.IsKind(SyntaxKindEx.RecordDeclaration) || typeDeclaration.IsKind(SyntaxKindEx.RecordStructDeclaration)))
+            {
+                return typeKindText;
             }
 
             return null;

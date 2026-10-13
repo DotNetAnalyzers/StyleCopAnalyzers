@@ -684,6 +684,9 @@
   <data name="StartingTextSetsWhether" xml:space="preserve">
     <value>Sets a value indicating whether</value>
   </data>
+  <data name="StaticConstructorKeywordText" xml:space="preserve">
+    <value>static</value>
+  </data>
   <data name="StaticConstructorStandardTextFirstPart" xml:space="preserve">
     <value>Initializes static members of the </value>
   </data>

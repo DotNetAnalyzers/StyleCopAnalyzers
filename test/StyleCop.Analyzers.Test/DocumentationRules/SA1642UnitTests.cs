@@ -295,7 +295,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 {
   ""settings"": {
     ""documentationRules"": {
-      ""documentationCulture"": ""en-GB""
+      ""documentationCulture"": ""de-DE""
     }
   }
 }
@@ -303,7 +303,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             var testCode = @"public class TestClass
 {
     /// <summary>
-    /// Initialises <see langword=""static""/> members of the <see cref=""TestClass""/> <see langword=""class""/>.
+    /// Initialisiert <see langword=""static""/> Member der <see cref=""TestClass""/> <see langword=""class""/>.
     /// </summary>
     static TestClass() { }
 }
@@ -313,6 +313,24 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             test.TestCode = testCode;
             test.FixedCode = testCode;
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("Prevents a default instance of the <see cref=\"TestClass\"/> <see langword=\"class\"/> from being created.")]
+        [InlineData("Initializes a new instance of the <see cref=\"TestClass\"/> <see langword=\"class\"/>")]
+        [WorkItem(2144, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2144")]
+        public async Task TestPrivateConstructorLangwordDocumentationAsync(string summary)
+        {
+            var testCode = $@"public class TestClass
+{{
+    /// <summary>
+    /// {summary}
+    /// </summary>
+    private TestClass() {{ }}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>

@@ -162,7 +162,9 @@ namespace StyleCop.Analyzers.DocumentationRules
                     string.Format(resourceManager.GetString(nameof(DocumentationResources.StaticConstructorStandardTextFirstPart), culture), typeKindText),
                     string.Format(resourceManager.GetString(nameof(DocumentationResources.StaticConstructorStandardTextSecondPart), culture), typeKindText),
                     Descriptor,
-                    allowLangwordStandardText: true);
+                    allowLangwordStandardText: true,
+                    documentationCulture: culture,
+                    typeKindText: typeKindText);
             }
             else if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword))
             {
@@ -173,7 +175,8 @@ namespace StyleCop.Analyzers.DocumentationRules
                         resourceManager.GetString(nameof(DocumentationResources.PrivateConstructorStandardTextSecondPart), culture),
                         typeKindText),
                     null,
-                    allowLangwordStandardText: true);
+                    allowLangwordStandardText: true,
+                    typeKindText: typeKindText);
 
                 if (privateConstructorMatch == MatchResult.FoundMatch)
                 {
@@ -190,7 +193,8 @@ namespace StyleCop.Analyzers.DocumentationRules
                         resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextSecondPart), culture),
                         typeKindText),
                     Descriptor,
-                    allowLangwordStandardText: true);
+                    allowLangwordStandardText: true,
+                    typeKindText: typeKindText);
             }
             else
             {
@@ -203,7 +207,8 @@ namespace StyleCop.Analyzers.DocumentationRules
                         resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextSecondPart), culture),
                         typeKindText),
                     Descriptor,
-                    allowLangwordStandardText: true);
+                    allowLangwordStandardText: true,
+                    typeKindText: typeKindText);
             }
         }
     }
