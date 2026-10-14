@@ -64,6 +64,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context, StyleCopSettings settings)
         {
             var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
+            if (((CompilationUnitSyntax)syntaxRoot).Members.Any(SyntaxKind.GlobalStatement))
+            {
+                return;
+            }
 
             var typeNodes = GetTopLevelTypeDeclarations(syntaxRoot, settings);
 
