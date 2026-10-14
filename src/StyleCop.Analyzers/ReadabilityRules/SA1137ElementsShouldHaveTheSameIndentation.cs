@@ -118,7 +118,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             var elements = ImmutableList.CreateBuilder<SyntaxNode>();
             AddMembersAndAttributes(elements, typeDeclaration.Members);
-            CheckElements(context, elements.ToImmutable());
+            CheckElements(context, elements.ToImmutable(), preferMostCommonIndentation: true);
         }
 
         private static void HandleEnumDeclaration(SyntaxNodeAnalysisContext context)
@@ -132,7 +132,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 elements.Add(enumMemberDeclaration);
             }
 
-            CheckElements(context, elements.ToImmutable());
+            CheckElements(context, elements.ToImmutable(), preferMostCommonIndentation: true);
         }
 
         private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
@@ -444,7 +444,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private static void CheckElements<T>(SyntaxNodeAnalysisContext context, ImmutableList<T> elements)
+        private static void CheckElements<T>(SyntaxNodeAnalysisContext context, ImmutableList<T> elements, bool preferMostCommonIndentation = false)
             where T : SyntaxNode
         {
             if (elements.Count < 2)
@@ -459,8 +459,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
-            // Try to reorder the list so the first item is not an attribute list. This element will establish the
-            // expected indentation for the entire collection.
+            // Prefer a non-attribute element as the initial anchor and as the tie-breaker for type members.
             int desiredFirst = elements.FindIndex(x => !x.IsKind(SyntaxKind.AttributeList));
             if (desiredFirst > 0)
             {
@@ -468,26 +467,109 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 elements = elements.RemoveAt(desiredFirst).Insert(0, newFirstElement);
             }
 
-            bool first = true;
-            string? expectedIndentation = null;
+            if (!preferMostCommonIndentation || desiredFirst < 0)
+            {
+                bool first = true;
+                string? firstExpectedIndentation = null;
+                foreach (T element in elements)
+                {
+                    SyntaxToken firstToken = GetFirstTokenForAnalysis(element);
+                    SyntaxTrivia indentationTrivia = firstToken.LeadingTrivia.LastOrDefault();
+                    string indentation = indentationTrivia.IsKind(SyntaxKind.WhitespaceTrivia) ? indentationTrivia.ToString() : string.Empty;
+
+                    if (first)
+                    {
+                        firstExpectedIndentation = indentation;
+                        first = false;
+                        continue;
+                    }
+
+                    if (!string.Equals(firstExpectedIndentation, indentation, StringComparison.Ordinal))
+                    {
+                        ReportDiagnostic(context, firstToken, indentationTrivia, indentation, firstExpectedIndentation!);
+                    }
+                }
+
+                return;
+            }
+
+            string expectedIndentation = GetIndentationForAnalysis(elements[0]);
+            bool hasMismatchedIndentation = false;
+            for (int i = 1; i < elements.Count; i++)
+            {
+                if (!string.Equals(expectedIndentation, GetIndentationForAnalysis(elements[i]), StringComparison.Ordinal))
+                {
+                    hasMismatchedIndentation = true;
+                    break;
+                }
+            }
+
+            if (!hasMismatchedIndentation)
+            {
+                return;
+            }
+
+            bool hasNonAttributeElement = false;
+            foreach (T element in elements)
+            {
+                if (!element.IsKind(SyntaxKind.AttributeList))
+                {
+                    hasNonAttributeElement = true;
+                    break;
+                }
+            }
+
+            var indentationCounts = new Dictionary<string, int>(StringComparer.Ordinal);
+            int highestCount = 0;
+            foreach (T element in elements)
+            {
+                if (hasNonAttributeElement && element.IsKind(SyntaxKind.AttributeList))
+                {
+                    continue;
+                }
+
+                string indentation = GetIndentationForAnalysis(element);
+                indentationCounts.TryGetValue(indentation, out int count);
+                count++;
+                indentationCounts[indentation] = count;
+                if (count > highestCount)
+                {
+                    highestCount = count;
+                }
+            }
+
+            foreach (T element in elements)
+            {
+                if (hasNonAttributeElement && element.IsKind(SyntaxKind.AttributeList))
+                {
+                    continue;
+                }
+
+                string indentation = GetIndentationForAnalysis(element);
+                if (indentationCounts[indentation] == highestCount)
+                {
+                    expectedIndentation = indentation;
+                    break;
+                }
+            }
+
             foreach (T element in elements)
             {
                 SyntaxToken firstToken = GetFirstTokenForAnalysis(element);
                 SyntaxTrivia indentationTrivia = firstToken.LeadingTrivia.LastOrDefault();
                 string indentation = indentationTrivia.IsKind(SyntaxKind.WhitespaceTrivia) ? indentationTrivia.ToString() : string.Empty;
 
-                if (first)
-                {
-                    expectedIndentation = indentation;
-                    first = false;
-                    continue;
-                }
-
                 if (!string.Equals(expectedIndentation, indentation, StringComparison.Ordinal))
                 {
-                    ReportDiagnostic(context, firstToken, indentationTrivia, indentation, expectedIndentation!);
+                    ReportDiagnostic(context, firstToken, indentationTrivia, indentation, expectedIndentation);
                 }
             }
+        }
+
+        private static string GetIndentationForAnalysis(SyntaxNode element)
+        {
+            SyntaxTrivia indentationTrivia = GetFirstTokenForAnalysis(element).LeadingTrivia.LastOrDefault();
+            return indentationTrivia.IsKind(SyntaxKind.WhitespaceTrivia) ? indentationTrivia.ToString() : string.Empty;
         }
 
         private static ImmutableList<T> CleanupElementsList<T>(ImmutableList<T> elements)

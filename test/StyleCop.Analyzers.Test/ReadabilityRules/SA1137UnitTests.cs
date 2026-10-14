@@ -18,6 +18,229 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     /// </summary>
     public class SA1137UnitTests
     {
+        /// <summary>
+        /// Verifies that an incorrectly indented first member does not establish the indentation for its siblings.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Fact]
+        [WorkItem(3874, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3874")]
+        public async Task VerifyFirstMemberOutlierIndentationAsync()
+        {
+            var testCode = @"
+namespace MySpace
+{
+    internal sealed class SomeClass
+    {
+{|#0:      |}internal const string Name = ""Name"";
+
+        private readonly object cache;
+
+        private SomeClass()
+        {
+            // Some code
+        }
+    }
+}
+";
+            var fixedCode = @"
+namespace MySpace
+{
+    internal sealed class SomeClass
+    {
+        internal const string Name = ""Name"";
+
+        private readonly object cache;
+
+        private SomeClass()
+        {
+            // Some code
+        }
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the first member determines the expected indentation when indentation levels are tied.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Fact]
+        [WorkItem(3874, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3874")]
+        public async Task VerifyTiedMemberIndentationUsesFirstMemberAsync()
+        {
+            var testCode = @"
+class C
+{
+  int first;
+{|#0:    |}int second;
+}
+";
+            var fixedCode = @"
+class C
+{
+  int first;
+  int second;
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that first-member precedence applies when tied indentation levels are interleaved.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Fact]
+        public async Task VerifyInterleavedTiedMemberIndentationUsesFirstMemberAsync()
+        {
+            var testCode = @"
+class C
+{
+  int first;
+{|#0:    |}int second;
+{|#1:    |}int third;
+  int fourth;
+}
+";
+            var fixedCode = @"
+class C
+{
+  int first;
+  int second;
+  int third;
+  int fourth;
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that enum members use the most common indentation rather than a first-member outlier.
+        /// </summary>
+        /// <returns>A task representing an asynchronous operation.</returns>
+        [Fact]
+        public async Task VerifyEnumMemberIndentationOutlierAsync()
+        {
+            var testCode = @"
+using System;
+enum E
+{
+  First,
+    Second,
+    Third,
+}
+";
+            var fixedCode = @"
+using System;
+enum E
+{
+    First,
+    Second,
+    Third,
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(5, 1), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that outdented attribute lists do not outweigh the indentation of type members.
+        /// </summary>
+        /// <returns>A task representing an asynchronous operation.</returns>
+        [Fact]
+        public async Task VerifyAttributeListsDoNotOutweighTypeMembersAsync()
+        {
+            var testCode = @"
+using System;
+class C
+{
+  [A]
+  [A]
+  [A]
+    int first;
+    int second;
+}
+[AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
+class AAttribute : Attribute { }
+";
+            var fixedCode = @"
+using System;
+class C
+{
+    [A]
+    [A]
+    [A]
+    int first;
+    int second;
+}
+[AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
+class AAttribute : Attribute { }
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(5, 1),
+                Diagnostic().WithLocation(6, 1),
+                Diagnostic().WithLocation(7, 1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the first attribute list establishes indentation when no member starts on its own line.
+        /// </summary>
+        /// <param name="typeKind">The type declaration keyword.</param>
+        /// <param name="firstMember">The first member declaration.</param>
+        /// <param name="secondMember">The second member declaration.</param>
+        /// <param name="thirdMember">The third member declaration.</param>
+        /// <returns>A task representing an asynchronous operation.</returns>
+        [Theory]
+        [InlineData("class", "int first;", "int second;", "int third;")]
+        [InlineData("enum", "First,", "Second,", "Third,")]
+        public async Task VerifyInlineAttributedMembersUseFirstAttributeIndentationAsync(string typeKind, string firstMember, string secondMember, string thirdMember)
+        {
+            var testCode = $@"
+using System;
+{typeKind} C
+{{
+  [A] {firstMember}
+{{|#0:    |}}[A] {secondMember}
+{{|#1:    |}}[A] {thirdMember}
+}}
+[AttributeUsage(AttributeTargets.Field)]
+class AAttribute : Attribute {{ }}
+";
+            var fixedCode = $@"
+using System;
+{typeKind} C
+{{
+  [A] {firstMember}
+  [A] {secondMember}
+  [A] {thirdMember}
+}}
+[AttributeUsage(AttributeTargets.Field)]
+class AAttribute : Attribute {{ }}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Theory]
         [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestNamespaceDeclarationAsync(string baseTypeKind)
