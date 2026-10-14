@@ -330,9 +330,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                         }
                     }
 
-                    if (HasLeadingHeaderComment(root))
+                    int leadingHeaderCommentCount = GetLeadingHeaderCommentCount(root);
+                    if (leadingHeaderCommentCount > 0)
                     {
-                        linkedExtractedRoot = NormalizeLeadingCommentSeparator(linkedExtractedRoot);
+                        linkedExtractedRoot = NormalizeLeadingCommentSeparator(linkedExtractedRoot, leadingHeaderCommentCount);
                     }
 
                     updatedSolution = updatedSolution.WithDocumentSyntaxRoot(linkedExtractedDocumentId, linkedExtractedRoot);
@@ -399,7 +400,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             }
         }
 
-        private static SyntaxNode NormalizeLeadingCommentSeparator(SyntaxNode root)
+        private static SyntaxNode NormalizeLeadingCommentSeparator(SyntaxNode root, int headerCommentCount)
         {
             SyntaxNode? firstChild = null;
             foreach (var child in root.ChildNodes())
@@ -426,28 +427,18 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 }
             }
 
-            if (commentIndices.Count == 0 || commentIndices.Count > 2)
+            if (commentIndices.Count < headerCommentCount)
             {
                 return root;
             }
 
             string? lineEnding = null;
-            SyntaxTrivia trailingWhitespace = default;
-            int lastCommentIndex = commentIndices[commentIndices.Count - 1];
-            for (int i = lastCommentIndex + 1; i < leading.Count; i++)
+            int lastHeaderCommentIndex = commentIndices[headerCommentCount - 1];
+            for (int i = 0; i < leading.Count; i++)
             {
                 if (leading[i].IsKind(SyntaxKind.EndOfLineTrivia))
                 {
                     lineEnding ??= leading[i].ToString();
-                    trailingWhitespace = default;
-                }
-                else if (leading[i].IsKind(SyntaxKind.WhitespaceTrivia))
-                {
-                    trailingWhitespace = leading[i];
-                }
-                else
-                {
-                    return root;
                 }
             }
 
@@ -456,24 +447,36 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 return root;
             }
 
-            var normalizedLeading = new List<SyntaxTrivia>(lastCommentIndex + 4);
-            int headerCommentIndex = commentIndices[0];
-            for (int i = 0; i <= headerCommentIndex; i++)
+            int remainderStart = lastHeaderCommentIndex + 1;
+            while (remainderStart < leading.Count)
+            {
+                if (leading[remainderStart].IsKind(SyntaxKind.EndOfLineTrivia))
+                {
+                    remainderStart++;
+                }
+                else if (leading[remainderStart].IsKind(SyntaxKind.WhitespaceTrivia)
+                    && remainderStart + 1 < leading.Count
+                    && leading[remainderStart + 1].IsKind(SyntaxKind.EndOfLineTrivia))
+                {
+                    remainderStart += 2;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            List<SyntaxTrivia> normalizedLeading = new List<SyntaxTrivia>(leading.Count + 1);
+            for (int i = 0; i <= lastHeaderCommentIndex; i++)
             {
                 normalizedLeading.Add(leading[i]);
             }
 
             normalizedLeading.Add(SyntaxFactory.EndOfLine(lineEnding));
             normalizedLeading.Add(SyntaxFactory.EndOfLine(lineEnding));
-            if (commentIndices.Count == 2)
+            for (int i = remainderStart; i < leading.Count; i++)
             {
-                normalizedLeading.Add(leading[commentIndices[1]]);
-                normalizedLeading.Add(SyntaxFactory.EndOfLine(lineEnding));
-            }
-
-            if (trailingWhitespace.RawKind != 0)
-            {
-                normalizedLeading.Add(trailingWhitespace);
+                normalizedLeading.Add(leading[i]);
             }
 
             return root.ReplaceNode(firstChild, firstChild.WithLeadingTrivia(SyntaxFactory.TriviaList(normalizedLeading)));
@@ -492,7 +495,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             return false;
         }
 
-        private static bool HasLeadingHeaderComment(SyntaxNode sourceRoot)
+        private static int GetLeadingHeaderCommentCount(SyntaxNode sourceRoot)
         {
             SyntaxNode? firstChild = null;
             foreach (var child in sourceRoot.ChildNodes())
@@ -503,19 +506,20 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
             if (!(firstChild is UsingDirectiveSyntax usingDirective))
             {
-                return false;
+                return 0;
             }
 
+            int count = 0;
             foreach (var trivia in usingDirective.GetLeadingTrivia())
             {
                 if (trivia.IsKind(SyntaxKind.SingleLineCommentTrivia)
                     || trivia.IsKind(SyntaxKind.MultiLineCommentTrivia))
                 {
-                    return true;
+                    count++;
                 }
             }
 
-            return false;
+            return count;
         }
 
         /// <summary>

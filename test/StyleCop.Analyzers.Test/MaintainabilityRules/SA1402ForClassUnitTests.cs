@@ -138,6 +138,98 @@ public class TestClass
         }
 
         [Fact]
+        public async Task TestExtractedTypePreservesDirectivesBetweenHeaderAndTypeCommentAsync()
+        {
+            var testCode = @"// File header
+using System.Collections.Generic;
+using System.Linq;
+
+public class Foo
+{
+}
+
+#pragma warning disable CS0169
+// Type comment
+public class {|#0:TestClass|}
+{
+}
+#pragma warning restore CS0169
+";
+
+            var fixedCode = new[]
+            {
+                ("/0/Test0.cs", @"// File header
+using System.Collections.Generic;
+using System.Linq;
+
+public class Foo
+{
+}
+#pragma warning restore CS0169
+"),
+                ("TestClass.cs", @"// File header
+
+#pragma warning disable CS0169
+// Type comment
+public class TestClass
+{
+}
+#pragma warning restore CS0169
+"),
+            };
+
+            var expected = this.Diagnostic().WithLocation(0);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestExtractedTypePreservesConsecutiveFileHeaderCommentsWhenRemovingUsingAsync()
+        {
+            var testCode = @"// File header
+// Additional header line
+using System.Collections.Generic;
+using System.Linq;
+
+public class Foo
+{
+    public List<int> Values { get; } = Enumerable.Empty<int>().ToList();
+}
+
+public class {|#0:TestClass|}
+{
+    public List<int> Values { get; } = new List<int>();
+}
+";
+
+            var fixedCode = new[]
+            {
+                ("/0/Test0.cs", @"// File header
+// Additional header line
+using System.Collections.Generic;
+using System.Linq;
+
+public class Foo
+{
+    public List<int> Values { get; } = Enumerable.Empty<int>().ToList();
+}
+"),
+                ("TestClass.cs", @"// File header
+// Additional header line
+
+using System.Collections.Generic;
+
+public class TestClass
+{
+    public List<int> Values { get; } = new List<int>();
+}
+"),
+            };
+
+            var expected = this.Diagnostic().WithLocation(0);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestExtractedTypePreservesDocumentationCommentAfterRemovingNamespaceUsingAsync()
         {
             var testCode = @"namespace TestNamespace
