@@ -193,9 +193,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                         unnecessaryUsing = unnecessaryUsing.Parent;
                     }
 
-                    if (unnecessaryUsing != null
-                        && !ContainsDirective(unnecessaryUsing.GetLeadingTrivia())
-                        && !ContainsDirective(unnecessaryUsing.GetTrailingTrivia()))
+                    if (unnecessaryUsing != null && !unnecessaryUsing.ContainsDirectives)
                     {
                         unnecessaryUsings.Add(unnecessaryUsing);
                     }
@@ -482,19 +480,6 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             return root.ReplaceNode(firstChild, firstChild.WithLeadingTrivia(SyntaxFactory.TriviaList(normalizedLeading)));
         }
 
-        private static bool ContainsDirective(SyntaxTriviaList triviaList)
-        {
-            foreach (var trivia in triviaList)
-            {
-                if (trivia.IsDirective)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         private static int GetLeadingHeaderCommentCount(SyntaxNode sourceRoot)
         {
             SyntaxNode? firstChild = null;
@@ -510,12 +495,26 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             }
 
             int count = 0;
+            int endOfLineCount = 0;
             foreach (var trivia in usingDirective.GetLeadingTrivia())
             {
                 if (trivia.IsKind(SyntaxKind.SingleLineCommentTrivia)
                     || trivia.IsKind(SyntaxKind.MultiLineCommentTrivia))
                 {
                     count++;
+                    endOfLineCount = 0;
+                }
+                else if (trivia.IsKind(SyntaxKind.EndOfLineTrivia))
+                {
+                    endOfLineCount++;
+                    if (endOfLineCount > 1)
+                    {
+                        break;
+                    }
+                }
+                else if (!trivia.IsKind(SyntaxKind.WhitespaceTrivia) && trivia.IsDirective)
+                {
+                    break;
                 }
             }
 

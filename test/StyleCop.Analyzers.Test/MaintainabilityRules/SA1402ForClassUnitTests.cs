@@ -230,6 +230,98 @@ public class TestClass
         }
 
         [Fact]
+        public async Task TestExtractedTypePreservesDirectivesInsideUsingAsync()
+        {
+            var testCode = @"using
+#if true
+System.Collections.Generic;
+#endif
+
+public class Foo
+{
+}
+
+public class {|#0:TestClass|}
+{
+}
+";
+
+            var fixedCode = new[]
+            {
+                ("/0/Test0.cs", @"using
+#if true
+System.Collections.Generic;
+#endif
+
+public class Foo
+{
+}
+"),
+                ("TestClass.cs", @"using
+#if true
+System.Collections.Generic;
+#endif
+
+public class TestClass
+{
+}
+"),
+            };
+
+            var expected = this.Diagnostic().WithLocation(0);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestExtractedTypePreservesCommentBeforeRetainedUsingAsync()
+        {
+            var testCode = @"// File header
+
+// Import comment
+using System;
+using System.Collections.Generic;
+
+public class Foo
+{
+    public List<int> Values { get; } = new List<int>();
+}
+
+public class {|#0:TestClass|}
+{
+    public DateTime Value { get; set; }
+}
+";
+
+            var fixedCode = new[]
+            {
+                ("/0/Test0.cs", @"// File header
+
+// Import comment
+using System;
+using System.Collections.Generic;
+
+public class Foo
+{
+    public List<int> Values { get; } = new List<int>();
+}
+"),
+                ("TestClass.cs", @"// File header
+
+// Import comment
+using System;
+
+public class TestClass
+{
+    public DateTime Value { get; set; }
+}
+"),
+            };
+
+            var expected = this.Diagnostic().WithLocation(0);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestExtractedTypePreservesDocumentationCommentAfterRemovingNamespaceUsingAsync()
         {
             var testCode = @"namespace TestNamespace
