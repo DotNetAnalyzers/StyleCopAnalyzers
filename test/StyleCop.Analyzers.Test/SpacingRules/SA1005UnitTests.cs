@@ -41,6 +41,30 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
 
         /// <summary>
+        /// Verify that marker comments used by other tools do not trigger a diagnostic.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3546, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3546")]
+        public async Task TestMarkerCommentsAsync()
+        {
+            var testCode = @"class TestClass
+{
+    //language=regexp
+    //NOSONAR
+    //NOSONARish
+}
+";
+
+            DiagnosticResult[] expectedDiagnostic =
+            {
+                Diagnostic().WithLocation(5, 5),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verify that a single line comment without a leading space gets detected and fixed properly.
         /// </summary>
         /// <param name="lineEnding">The line ending to use in the test code.</param>

@@ -115,9 +115,10 @@ namespace StyleCop.Analyzers.LayoutRules
                     continue;
                 }
 
-                if (trivia.ToString().StartsWith("////", StringComparison.Ordinal))
+                var commentText = trivia.ToString();
+                if (IsMarkerComment(commentText))
                 {
-                    // ignore commented out code
+                    // Ignore commented out code and marker comments consumed by other tools.
                     continue;
                 }
 
@@ -157,6 +158,53 @@ namespace StyleCop.Analyzers.LayoutRules
                 var diagnosticSpan = TextSpan.FromBounds(trivia.SpanStart, trivia.SpanStart + 2);
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, diagnosticSpan)));
             }
+        }
+
+        private static bool IsMarkerComment(string commentText)
+        {
+            if (commentText.StartsWith("////", StringComparison.Ordinal))
+            {
+                return true;
+            }
+
+            var markerStartIndex = 2;
+            while ((markerStartIndex < commentText.Length) && char.IsWhiteSpace(commentText[markerStartIndex]))
+            {
+                markerStartIndex++;
+            }
+
+            if (markerStartIndex == commentText.Length)
+            {
+                return false;
+            }
+
+            switch (commentText[markerStartIndex])
+            {
+            case 'R':
+                return StartsWithMarker(commentText, markerStartIndex, "ReSharper disable", StringComparison.Ordinal, requireWordBoundary: true)
+                    || StartsWithMarker(commentText, markerStartIndex, "ReSharper restore", StringComparison.Ordinal, requireWordBoundary: true);
+
+            case '@':
+                return StartsWithMarker(commentText, markerStartIndex, "@formatter:", StringComparison.Ordinal, requireWordBoundary: false);
+
+            case 'l':
+                return StartsWithMarker(commentText, markerStartIndex, "language=", StringComparison.Ordinal, requireWordBoundary: false);
+
+            case 'N':
+            case 'n':
+                return StartsWithMarker(commentText, markerStartIndex, "NOSONAR", StringComparison.OrdinalIgnoreCase, requireWordBoundary: true);
+
+            default:
+                return false;
+            }
+        }
+
+        private static bool StartsWithMarker(string commentText, int markerStartIndex, string marker, StringComparison comparison, bool requireWordBoundary)
+        {
+            var remainingLength = commentText.Length - markerStartIndex;
+            return (remainingLength >= marker.Length)
+                && (string.Compare(commentText, markerStartIndex, marker, 0, marker.Length, comparison) == 0)
+                && (!requireWordBoundary || (remainingLength == marker.Length) || char.IsWhiteSpace(commentText[markerStartIndex + marker.Length]));
         }
 
         private static bool IsOnOwnLine<T>(T triviaList, int triviaIndex)
