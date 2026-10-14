@@ -55,6 +55,87 @@ public class Bar
         }
 
         [Fact]
+        public async Task TestExtractedTypeRemovesUnnecessaryNamespaceUsingAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    using System;
+
+    public class Foo
+    {
+        public DateTime Value { get; set; }
+    }
+
+    public class {|#0:TestClass|}
+    {
+    }
+}
+";
+
+            var fixedCode = new[]
+            {
+                ("/0/Test0.cs", @"namespace TestNamespace
+{
+    using System;
+
+    public class Foo
+    {
+        public DateTime Value { get; set; }
+    }
+}
+"),
+                ("TestClass.cs", @"namespace TestNamespace
+{
+    public class TestClass
+    {
+    }
+}
+"),
+            };
+
+            var expected = this.Diagnostic().WithLocation(0);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestExtractedTypePreservesHeaderWhenRemovingAllUsingsAsync()
+        {
+            var testCode = @"// File header
+using System.Collections.Generic;
+using System.Linq;
+
+public class Foo
+{
+}
+
+public class {|#0:TestClass|}
+{
+}
+";
+
+            var fixedCode = new[]
+            {
+                ("/0/Test0.cs", @"// File header
+using System.Collections.Generic;
+using System.Linq;
+
+public class Foo
+{
+}
+"),
+                ("TestClass.cs", @"// File header
+
+public class TestClass
+{
+}
+"),
+            };
+
+            var expected = this.Diagnostic().WithLocation(0);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(3876, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3876")]
         public async Task TestExtractedTypeDoesNotGainBlankLineAfterNamespaceAsync()
         {
