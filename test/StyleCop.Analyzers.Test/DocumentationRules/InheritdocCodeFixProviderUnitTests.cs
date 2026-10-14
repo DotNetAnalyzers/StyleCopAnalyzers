@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Threading;
@@ -32,7 +30,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData(true, "ChildClass.TestMember()", "string             TestMember() { return null; }")]
         [InlineData(true, "ChildClass.this[int]", "string             this[int a] { get { return \"a\"; } set { } }")]
         [InlineData(true, "ChildClass.TestMember", "event EventHandler TestMember { add { } remove { } }")]
-        public async Task TestClassVirtualInheritedMembersAsync(bool compilerWarning, string memberName, string memberData)
+        public async Task TestClassVirtualInheritedMembersAsync(bool compilerWarning, string? memberName, string memberData)
         {
             var testCode = $@"using System;
 public class ParentClass
@@ -74,7 +72,7 @@ public class ChildClass : ParentClass
                 {
                     Diagnostic(descriptor).WithArguments("ParentClass").WithLocation(2, 14),
                     Diagnostic(descriptor).WithArguments("ChildClass").WithLocation(10, 14),
-                    Diagnostic(descriptor).WithArguments(memberName).WithLocation(12, 40),
+                    Diagnostic(descriptor).WithArguments(memberName == null ? new object[0] : new object[] { memberName }).WithLocation(12, 40),
                 },
                 FixedCode = fixedCode,
                 RemainingDiagnostics =
@@ -97,7 +95,7 @@ public class ChildClass : ParentClass
         [InlineData(true, "ChildClass.TestMember()", "string             TestMember();", "string             TestMember() { return null; }")]
         [InlineData(true, "ChildClass.this[int]", "string             this[int a] { get; set; }", "string             this[int a] { get { return \"a\"; } set { } }")]
         [InlineData(true, "ChildClass.TestMember", "event EventHandler TestMember;", "event EventHandler TestMember { add { } remove { } }")]
-        public async Task TestInterfaceInheritedMembersAsync(bool compilerWarning, string memberName, string parentData, string childData)
+        public async Task TestInterfaceInheritedMembersAsync(bool compilerWarning, string? memberName, string parentData, string childData)
         {
             var testCode = $@"using System;
 public interface IParent
@@ -139,7 +137,7 @@ public class ChildClass : IParent
                 {
                     Diagnostic(descriptor).WithArguments("IParent").WithLocation(2, 18),
                     Diagnostic(descriptor).WithArguments("ChildClass").WithLocation(10, 14),
-                    Diagnostic(descriptor).WithArguments(memberName).WithLocation(12, 31),
+                    Diagnostic(descriptor).WithArguments(memberName == null ? new object[0] : new object[] { memberName }).WithLocation(12, 31),
                 },
                 FixedCode = fixedCode,
                 RemainingDiagnostics =

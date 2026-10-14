@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
     using System.Collections.Generic;
@@ -36,7 +34,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             return null;
         }
 
-        internal static string TryGetStringValue(AnalyzerConfigOptionsWrapper analyzerConfigOptions, string key, bool allowExplicitUnset = true)
+        internal static string? TryGetStringValue(AnalyzerConfigOptionsWrapper analyzerConfigOptions, string key, bool allowExplicitUnset = true)
         {
             if (analyzerConfigOptions.TryGetValue(key, out var value))
             {
@@ -51,7 +49,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             return null;
         }
 
-        internal static string TryGetMultiLineStringValue(AnalyzerConfigOptionsWrapper analyzerConfigOptions, string key, bool allowExplicitUnset = true)
+        internal static string? TryGetMultiLineStringValue(AnalyzerConfigOptionsWrapper analyzerConfigOptions, string key, bool allowExplicitUnset = true)
         {
             var orgValue = TryGetStringValue(analyzerConfigOptions, key, allowExplicitUnset);
             return orgValue?.Replace("\\r", "\r").Replace("\\n", "\n");
@@ -121,10 +119,10 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             return null;
         }
 
-        private static T? ParseEnum<T>(string value)
+        private static T? ParseEnum<T>(string? value)
             where T : struct, System.Enum
         {
-            if (!string.IsNullOrEmpty(value)
+            if (value is not null && value.Length != 0
                 && !char.IsDigit(value[0])
                 && value.IndexOf(',') < 0
                 && System.Enum.TryParse<T>(value, ignoreCase: true, out var parsed)

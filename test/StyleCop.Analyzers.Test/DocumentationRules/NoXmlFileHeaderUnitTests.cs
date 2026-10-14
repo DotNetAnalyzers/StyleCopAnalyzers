@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Threading;
@@ -396,19 +394,23 @@ namespace Bar
         private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
             => VerifyCSharpFixAsync(source, TestSettings, expected, fixedSource: null, cancellationToken);
 
-        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult expected, string fixedSource, CancellationToken cancellationToken)
+        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult expected, string? fixedSource, CancellationToken cancellationToken)
             => VerifyCSharpFixAsync(source, TestSettings, new[] { expected }, fixedSource, cancellationToken);
 
-        private static Task VerifyCSharpFixAsync(string source, string testSettings, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
+        private static Task VerifyCSharpFixAsync(string source, string testSettings, DiagnosticResult[] expected, string? fixedSource, CancellationToken cancellationToken)
         {
             var test = new StyleCopCodeFixVerifier<FileHeaderAnalyzers, FileHeaderCodeFixProvider>.CSharpTest
             {
                 TestCode = source,
-                FixedCode = fixedSource,
                 Settings = testSettings,
             };
 
             test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
+            if (fixedSource != null)
+            {
+                test.FixedCode = fixedSource;
+            }
+
             test.ExpectedDiagnostics.AddRange(expected);
             return test.RunAsync(cancellationToken);
         }

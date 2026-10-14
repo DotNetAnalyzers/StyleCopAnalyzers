@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
     using LightJson;
@@ -70,7 +68,8 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         {
             foreach (var kvp in settingsObject)
             {
-                var childSettingsObject = kvp.Value.AsJsonObject;
+                // Each recognized section is validated below before the child is consumed.
+                var childSettingsObject = kvp.Value.AsJsonObject!;
                 switch (kvp.Key)
                 {
                 case "indentation":

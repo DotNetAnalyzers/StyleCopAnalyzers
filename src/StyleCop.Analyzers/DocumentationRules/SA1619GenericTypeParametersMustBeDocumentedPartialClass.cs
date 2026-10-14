@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
@@ -201,7 +199,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 foreach (var parameter in typeDeclaration.TypeParameterList.Parameters)
                 {
-                    if (!xmlParameterNames.Any(x => x.Identifier.Identifier.ValueText == parameter.Identifier.ValueText))
+                    if (!xmlParameterNames.Any(x => x!.Identifier.Identifier.ValueText == parameter.Identifier.ValueText))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, parameter.Identifier.GetLocation(), parameter.Identifier.ValueText));
                     }

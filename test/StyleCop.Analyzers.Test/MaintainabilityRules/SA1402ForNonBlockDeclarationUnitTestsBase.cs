@@ -1,18 +1,18 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using global::LightJson;
     using global::LightJson.Serialization;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.MaintainabilityRules;
     using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.Test.Helpers;
     using StyleCop.Analyzers.Test.Verifiers;
+    using Xunit;
 
     public abstract class SA1402ForNonBlockDeclarationUnitTestsBase
     {
@@ -23,10 +23,10 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         protected static DiagnosticResult Diagnostic()
             => StyleCopDiagnosticVerifier<SA1402FileMayOnlyContainASingleType>.Diagnostic();
 
-        protected static Task VerifyCSharpDiagnosticAsync(string source, string testSettings, DiagnosticResult expected, CancellationToken cancellationToken)
+        protected static Task VerifyCSharpDiagnosticAsync(string source, string? testSettings, DiagnosticResult expected, CancellationToken cancellationToken)
             => VerifyCSharpDiagnosticAsync(source, testSettings, new[] { expected }, cancellationToken);
 
-        protected static Task VerifyCSharpDiagnosticAsync(string source, string testSettings, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        protected static Task VerifyCSharpDiagnosticAsync(string source, string? testSettings, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
             var test = new StyleCopCodeFixVerifier<SA1402FileMayOnlyContainASingleType, SA1402CodeFixProvider>.CSharpTest
             {
@@ -38,10 +38,10 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             return test.RunAsync(cancellationToken);
         }
 
-        protected static Task VerifyCSharpFixAsync(string source, string testSettings, DiagnosticResult expected, (string fileName, string content)[] fixedSources, CancellationToken cancellationToken)
+        protected static Task VerifyCSharpFixAsync(string source, string? testSettings, DiagnosticResult expected, (string fileName, string content)[] fixedSources, CancellationToken cancellationToken)
             => VerifyCSharpFixAsync(source, testSettings, new[] { expected }, fixedSources, cancellationToken);
 
-        protected static Task VerifyCSharpFixAsync(string source, string testSettings, DiagnosticResult[] expected, (string fileName, string content)[] fixedSources, CancellationToken cancellationToken)
+        protected static Task VerifyCSharpFixAsync(string source, string? testSettings, DiagnosticResult[] expected, (string fileName, string content)[] fixedSources, CancellationToken cancellationToken)
         {
             var test = new StyleCopCodeFixVerifier<SA1402FileMayOnlyContainASingleType, SA1402CodeFixProvider>.CSharpTest
             {
@@ -58,7 +58,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             return test.RunAsync(cancellationToken);
         }
 
-        private protected virtual string GetSettings(FileNamingConvention namingConvention = FileNamingConvention.StyleCop)
+        private protected virtual string? GetSettings(FileNamingConvention namingConvention = FileNamingConvention.StyleCop)
         {
             var settings = this.SettingsConfiguration.GetSettings(this.Keyword);
             if (settings is null && namingConvention == FileNamingConvention.StyleCop)
@@ -80,7 +80,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 return namingSettings;
             }
 
-            var merged = JsonTestHelper.MergeJsonObjects(JsonReader.Parse(settings).AsJsonObject, JsonReader.Parse(namingSettings).AsJsonObject);
+            var priority = Assert.IsType<JsonObject>(JsonReader.Parse(settings).AsJsonObject);
+            var fallback = Assert.IsType<JsonObject>(JsonReader.Parse(namingSettings).AsJsonObject);
+            var merged = JsonTestHelper.MergeJsonObjects(priority, fallback);
             return new JsonWriter(pretty: true).Serialize(merged);
         }
     }

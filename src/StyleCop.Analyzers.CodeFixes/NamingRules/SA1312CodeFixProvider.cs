@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.NamingRules
 {
     using System.Collections.Immutable;
@@ -55,7 +53,7 @@ namespace StyleCop.Analyzers.NamingRules
                 return;
             }
 
-            SemanticModel semanticModel = null;
+            SemanticModel? semanticModel = null;
             foreach (var diagnostic in context.Diagnostics)
             {
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
@@ -216,9 +214,9 @@ namespace StyleCop.Analyzers.NamingRules
                 return false;
             }
 
-            foreach (char c in name)
+            for (var i = 0; i < name.Length; i++)
             {
-                if (c != '_')
+                if (name[i] != '_')
                 {
                     return false;
                 }

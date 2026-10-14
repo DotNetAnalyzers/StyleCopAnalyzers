@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp8.Lightup
 {
     using System.Linq;
@@ -44,7 +42,9 @@ namespace StyleCop.Analyzers.Test.CSharp8.Lightup
 
             var wrapperWithArms = wrapper.WithArms(new SeparatedSyntaxListWrapper<SwitchExpressionArmSyntaxWrapper>.AutoWrapSeparatedSyntaxList<SwitchExpressionArmSyntax>(arms));
             Assert.Single(wrapperWithArms.Arms);
-            Assert.True(arm.IsEquivalentTo(wrapperWithArms.Arms.Single()));
+            var modifiedArm = wrapperWithArms.Arms.Single();
+            Assert.NotNull(modifiedArm.SyntaxNode);
+            Assert.True(arm.IsEquivalentTo(modifiedArm.SyntaxNode));
         }
 
         [Fact]
@@ -122,7 +122,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.Lightup
             var switchExpressionSyntax = this.CreateSwitchExpression();
             var wrapper = (SwitchExpressionSyntaxWrapper)switchExpressionSyntax;
 
-            CSharpSyntaxNode syntax = wrapper;
+            CSharpSyntaxNode? syntax = wrapper;
             Assert.Same(switchExpressionSyntax, syntax);
         }
 

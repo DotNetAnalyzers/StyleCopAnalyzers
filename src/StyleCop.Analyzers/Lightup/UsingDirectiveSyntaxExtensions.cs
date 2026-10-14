@@ -11,16 +11,16 @@ namespace StyleCop.Analyzers.Lightup
     {
         private static readonly Func<UsingDirectiveSyntax, SyntaxToken> GlobalKeywordAccessor;
         private static readonly Func<UsingDirectiveSyntax, SyntaxToken> UnsafeKeywordAccessor;
-        private static readonly Func<UsingDirectiveSyntax, TypeSyntax> NamespaceOrTypeAccessor;
+        private static readonly Func<UsingDirectiveSyntax, TypeSyntax?> NamespaceOrTypeAccessor;
         private static readonly Func<UsingDirectiveSyntax, SyntaxToken, UsingDirectiveSyntax> WithGlobalKeywordAccessor;
         private static readonly Func<UsingDirectiveSyntax, SyntaxToken, UsingDirectiveSyntax> WithUnsafeKeywordAccessor;
-        private static readonly Func<UsingDirectiveSyntax, TypeSyntax, UsingDirectiveSyntax> WithNamespaceOrTypeAccessor;
+        private static readonly Func<UsingDirectiveSyntax, TypeSyntax?, UsingDirectiveSyntax> WithNamespaceOrTypeAccessor;
 
         static UsingDirectiveSyntaxExtensions()
         {
             GlobalKeywordAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<UsingDirectiveSyntax, SyntaxToken>(typeof(UsingDirectiveSyntax), nameof(GlobalKeyword));
             UnsafeKeywordAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<UsingDirectiveSyntax, SyntaxToken>(typeof(UsingDirectiveSyntax), nameof(UnsafeKeyword));
-            NamespaceOrTypeAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<UsingDirectiveSyntax, TypeSyntax>(typeof(UsingDirectiveSyntax), nameof(NamespaceOrType));
+            NamespaceOrTypeAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<UsingDirectiveSyntax, TypeSyntax?>(typeof(UsingDirectiveSyntax), nameof(NamespaceOrType));
             WithGlobalKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<UsingDirectiveSyntax, SyntaxToken>(typeof(UsingDirectiveSyntax), nameof(GlobalKeyword));
             WithUnsafeKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<UsingDirectiveSyntax, SyntaxToken>(typeof(UsingDirectiveSyntax), nameof(UnsafeKeyword));
             WithNamespaceOrTypeAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<UsingDirectiveSyntax, TypeSyntax>(typeof(UsingDirectiveSyntax), nameof(NamespaceOrType));
@@ -36,7 +36,7 @@ namespace StyleCop.Analyzers.Lightup
             return UnsafeKeywordAccessor(syntax);
         }
 
-        public static TypeSyntax NamespaceOrType(this UsingDirectiveSyntax syntax)
+        public static TypeSyntax? NamespaceOrType(this UsingDirectiveSyntax syntax)
         {
             return NamespaceOrTypeAccessor(syntax);
         }
@@ -51,7 +51,7 @@ namespace StyleCop.Analyzers.Lightup
             return WithUnsafeKeywordAccessor(syntax, unsafeKeyword);
         }
 
-        public static UsingDirectiveSyntax WithNamespaceOrType(this UsingDirectiveSyntax syntax, TypeSyntax namespaceOrType)
+        public static UsingDirectiveSyntax WithNamespaceOrType(this UsingDirectiveSyntax syntax, TypeSyntax? namespaceOrType)
         {
             return WithNamespaceOrTypeAccessor(syntax, namespaceOrType);
         }

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp8.Settings
 {
     using System;
@@ -316,7 +314,7 @@ csharp_using_directive_placement = {placement}
         protected virtual AnalyzerConfigOptionsProvider CreateAnalyzerConfigOptionsProvider(AnalyzerConfigSet analyzerConfigSet)
             => new TestAnalyzerConfigOptionsProvider(analyzerConfigSet);
 
-        protected async Task<SyntaxTreeAnalysisContext> CreateAnalysisContextFromEditorConfigAsync(string editorConfig, string stylecopJson = null)
+        protected async Task<SyntaxTreeAnalysisContext> CreateAnalysisContextFromEditorConfigAsync(string editorConfig, string? stylecopJson = null)
         {
             var projectId = ProjectId.CreateNewId();
             var documentId = DocumentId.CreateNewId(projectId);
@@ -329,7 +327,9 @@ csharp_using_directive_placement = {placement}
                 .AddAnalyzerConfigDocument(analyzerConfigDocumentId, "/.editorconfig", SourceText.From(editorConfig), filePath: "/.editorconfig");
 
             var document = solution.GetDocument(documentId);
+            Assert.NotNull(document);
             var syntaxTree = await document.GetSyntaxTreeAsync(CancellationToken.None).ConfigureAwait(false);
+            Assert.NotNull(syntaxTree);
 
             var analyzerConfigSet = AnalyzerConfigSet.Create(new[] { AnalyzerConfig.Parse(SourceText.From(editorConfig), "/.editorconfig") });
             var additionalFiles = stylecopJson is null
@@ -352,7 +352,8 @@ csharp_using_directive_placement = {placement}
 
             public override bool TryGetValue(string key, out string value)
             {
-                return this.analyzerConfigOptionsResult.AnalyzerOptions.TryGetValue(key, out value);
+                // Roslyn's override contract does not annotate the null value returned for missing keys.
+                return this.analyzerConfigOptionsResult.AnalyzerOptions.TryGetValue(key, out value!);
             }
         }
 

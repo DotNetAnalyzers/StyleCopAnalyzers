@@ -1,12 +1,11 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
     using System.Text;
@@ -68,7 +67,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <param name="documentationCulture">The culture used to look up the localized text for the <see langword="static"/> keyword.</param>
         /// <param name="typeKindText">The localized text for the declared type kind, or <see langword="null"/> if it is not accepted.</param>
         /// <returns>A <see cref="MatchResult"/> describing the result of the analysis.</returns>
-        protected static MatchResult HandleDeclaration(SyntaxNodeAnalysisContext context, string firstTextPart, string secondTextPart, DiagnosticDescriptor diagnosticDescriptor, bool allowLangwordStandardText = false, CultureInfo documentationCulture = null, string typeKindText = null)
+        protected static MatchResult HandleDeclaration(SyntaxNodeAnalysisContext context, string firstTextPart, string secondTextPart, DiagnosticDescriptor? diagnosticDescriptor, bool allowLangwordStandardText = false, CultureInfo? documentationCulture = null, string? typeKindText = null)
         {
             var declarationSyntax = (BaseMethodDeclarationSyntax)context.Node;
             var documentationStructure = declarationSyntax.GetDocumentationCommentTriviaSyntax();
@@ -159,7 +158,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 // Check if the summary content could be a correct standard text
                 if (summaryElement.Content.Count >= 3)
                 {
-                    XmlEmptyElementSyntax classReferencePart = null;
+                    XmlEmptyElementSyntax? classReferencePart = null;
 
                     // Standard text has the form <part1><see><part2>
                     if (summaryElement.Content[0] is XmlTextSyntax firstTextPartSyntax
@@ -204,20 +203,20 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static bool SeeTagIsCorrect(SyntaxNodeAnalysisContext context, XmlEmptyElementSyntax classReferencePart, BaseMethodDeclarationSyntax constructorDeclarationSyntax)
         {
-            XmlCrefAttributeSyntax crefAttribute = XmlCommentHelper.GetFirstAttributeOrDefault<XmlCrefAttributeSyntax>(classReferencePart);
-            CrefSyntax crefSyntax = crefAttribute?.Cref;
+            XmlCrefAttributeSyntax? crefAttribute = XmlCommentHelper.GetFirstAttributeOrDefault<XmlCrefAttributeSyntax>(classReferencePart);
             if (crefAttribute == null)
             {
                 return false;
             }
 
             SemanticModel semanticModel = context.SemanticModel;
+            CrefSyntax crefSyntax = crefAttribute.Cref;
             if (!(semanticModel.GetSymbolInfo(crefSyntax, context.CancellationToken).Symbol is INamedTypeSymbol actualSymbol))
             {
                 return false;
             }
 
-            INamedTypeSymbol expectedSymbol = semanticModel.GetDeclaredSymbol(constructorDeclarationSyntax.Parent, context.CancellationToken) as INamedTypeSymbol;
+            INamedTypeSymbol? expectedSymbol = semanticModel.GetDeclaredSymbol(constructorDeclarationSyntax.Parent, context.CancellationToken) as INamedTypeSymbol;
             return Equals(actualSymbol.OriginalDefinition, expectedSymbol);
         }
 
@@ -230,7 +229,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             SemanticModel semanticModel = context.SemanticModel;
-            INamedTypeSymbol expectedSymbol = semanticModel.GetDeclaredSymbol(constructorDeclarationSyntax.Parent, context.CancellationToken) as INamedTypeSymbol;
+            INamedTypeSymbol? expectedSymbol = semanticModel.GetDeclaredSymbol(constructorDeclarationSyntax.Parent, context.CancellationToken) as INamedTypeSymbol;
 
             // Expanded includes carry the qualified documentation ID, which a lookup by simple name cannot find
             if (expectedSymbol != null && string.Equals(crefAttribute.Value, expectedSymbol.GetDocumentationCommentId(), StringComparison.Ordinal))
@@ -287,7 +286,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             return false;
         }
 
-        private static bool TextPartsMatch(string firstText, string secondText, SyntaxList<XmlNodeSyntax> content, BaseMethodDeclarationSyntax declarationSyntax, CultureInfo documentationCulture, string typeKindText, out XmlEmptyElementSyntax classReferencePart)
+        private static bool TextPartsMatch(string firstText, string secondText, SyntaxList<XmlNodeSyntax> content, BaseMethodDeclarationSyntax declarationSyntax, CultureInfo? documentationCulture, string? typeKindText, [NotNullWhen(true)] out XmlEmptyElementSyntax? classReferencePart)
         {
             var firstTextPart = new StringBuilder();
             var secondTextPart = new StringBuilder();
@@ -337,7 +336,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 && secondTextPart.ToString().StartsWith(secondText, StringComparison.Ordinal);
         }
 
-        private static bool TextPartsMatch(string firstText, string secondText, System.Collections.Generic.List<XNode> content, BaseMethodDeclarationSyntax declarationSyntax, CultureInfo documentationCulture, string typeKindText, out XElement classReferencePart)
+        private static bool TextPartsMatch(string firstText, string secondText, System.Collections.Generic.List<XNode> content, BaseMethodDeclarationSyntax declarationSyntax, CultureInfo? documentationCulture, string? typeKindText, [NotNullWhen(true)] out XElement? classReferencePart)
         {
             var firstTextPart = new StringBuilder();
             var secondTextPart = new StringBuilder();
@@ -383,7 +382,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 && secondTextPart.ToString().StartsWith(secondText, StringComparison.Ordinal);
         }
 
-        private static string GetStandardTextForLangword(string langword, SyntaxNode typeDeclaration, CultureInfo documentationCulture, string typeKindText)
+        private static string? GetStandardTextForLangword(string langword, SyntaxNode typeDeclaration, CultureInfo? documentationCulture, string? typeKindText)
         {
             if (langword == "static" && documentationCulture != null)
             {

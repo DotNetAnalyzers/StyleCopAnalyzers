@@ -4,6 +4,7 @@
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
@@ -13,6 +14,7 @@ namespace StyleCop.Analyzers.Lightup
     {
         public static SyntaxWrapper<TNode> Default { get; } = FindDefaultSyntaxWrapper();
 
+        [return: NotNullIfNotNull(nameof(node))]
         public abstract TNode? Wrap(SyntaxNode? node);
 
         public abstract SyntaxNode? Unwrap(TNode? node);
@@ -34,6 +36,7 @@ namespace StyleCop.Analyzers.Lightup
                 return (SyntaxNode?)(object?)node;
             }
 
+            [return: NotNullIfNotNull(nameof(node))]
             public override TNode? Wrap(SyntaxNode? node)
             {
                 return (TNode?)(object?)node;
@@ -65,9 +68,11 @@ namespace StyleCop.Analyzers.Lightup
                 return this.unwrapAccessor(node);
             }
 
+            [return: NotNullIfNotNull(nameof(node))]
             public override TNode? Wrap(SyntaxNode? node)
             {
-                return this.wrapAccessor(node);
+                // The conversion wraps every non-null node; null input retains the default-wrapper behavior.
+                return this.wrapAccessor(node)!;
             }
         }
     }

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace LightJson
 {
     using System;
@@ -25,7 +23,7 @@ namespace LightJson
         public static readonly JsonValue Null = new JsonValue(JsonValueType.Null, default, null);
 
         private readonly JsonValueType type;
-        private readonly object reference;
+        private readonly object? reference;
         private readonly double value;
 
         /// <summary>
@@ -72,7 +70,7 @@ namespace LightJson
         /// Initializes a new instance of the <see cref="JsonValue"/> struct, representing a String value.
         /// </summary>
         /// <param name="value">The value to be wrapped.</param>
-        public JsonValue(string value)
+        public JsonValue(string? value)
         {
             if (value != null)
             {
@@ -92,7 +90,7 @@ namespace LightJson
         /// Initializes a new instance of the <see cref="JsonValue"/> struct, representing a JsonObject.
         /// </summary>
         /// <param name="value">The value to be wrapped.</param>
-        public JsonValue(JsonObject value)
+        public JsonValue(JsonObject? value)
         {
             if (value != null)
             {
@@ -112,7 +110,7 @@ namespace LightJson
         /// Initializes a new instance of the <see cref="JsonValue"/> struct, representing a Array reference value.
         /// </summary>
         /// <param name="value">The value to be wrapped.</param>
-        public JsonValue(JsonArray value)
+        public JsonValue(JsonArray? value)
         {
             if (value != null)
             {
@@ -140,7 +138,7 @@ namespace LightJson
         /// The internal value reference of the JsonValue.
         /// This value is used when the Json type is String, JsonObject, or JsonArray.
         /// </param>
-        private JsonValue(JsonValueType type, double value, object reference)
+        private JsonValue(JsonValueType type, double value, object? reference)
         {
             this.type = type;
             this.value = value;
@@ -217,6 +215,7 @@ namespace LightJson
         /// Gets a value indicating whether this JsonValue is a String.
         /// </summary>
         /// <value>A value indicating whether this JsonValue is a String.</value>
+        [MemberNotNullWhen(true, nameof(reference), nameof(AsString))]
         public readonly bool IsString
         {
             get
@@ -229,6 +228,7 @@ namespace LightJson
         /// Gets a value indicating whether this JsonValue is a JsonObject.
         /// </summary>
         /// <value>A value indicating whether this JsonValue is a JsonObject.</value>
+        [MemberNotNullWhen(true, nameof(reference), nameof(AsJsonObject))]
         public readonly bool IsJsonObject
         {
             get
@@ -241,6 +241,7 @@ namespace LightJson
         /// Gets a value indicating whether this JsonValue is a JsonArray.
         /// </summary>
         /// <value>A value indicating whether this JsonValue is a JsonArray.</value>
+        [MemberNotNullWhen(true, nameof(reference), nameof(AsJsonArray))]
         public readonly bool IsJsonArray
         {
             get
@@ -278,7 +279,7 @@ namespace LightJson
                     return this.value != 0;
 
                 case JsonValueType.String:
-                    return (string)this.reference != string.Empty;
+                    return (string)this.reference! != string.Empty;
 
                 case JsonValueType.Object:
                 case JsonValueType.Array:
@@ -335,7 +336,7 @@ namespace LightJson
 
                 case JsonValueType.String:
                     double number;
-                    if (double.TryParse((string)this.reference, NumberStyles.Float, CultureInfo.InvariantCulture, out number))
+                    if (double.TryParse((string)this.reference!, NumberStyles.Float, CultureInfo.InvariantCulture, out number))
                     {
                         return number;
                     }
@@ -354,7 +355,7 @@ namespace LightJson
         /// Gets this value as a String type.
         /// </summary>
         /// <value>This value as a String type.</value>
-        public readonly string AsString
+        public readonly string? AsString
         {
             get
             {
@@ -369,7 +370,7 @@ namespace LightJson
                     return this.value.ToString(CultureInfo.InvariantCulture);
 
                 case JsonValueType.String:
-                    return (string)this.reference;
+                    return (string)this.reference!;
 
                 default:
                     return null;
@@ -381,7 +382,7 @@ namespace LightJson
         /// Gets this value as an JsonObject.
         /// </summary>
         /// <value>This value as an JsonObject.</value>
-        public readonly JsonObject AsJsonObject
+        public readonly JsonObject? AsJsonObject
         {
             get
             {
@@ -395,7 +396,7 @@ namespace LightJson
         /// Gets this value as an JsonArray.
         /// </summary>
         /// <value>This value as an JsonArray.</value>
-        public readonly JsonArray AsJsonArray
+        public readonly JsonArray? AsJsonArray
         {
             get
             {
@@ -430,7 +431,7 @@ namespace LightJson
         /// Gets this (inner) value as a System.object.
         /// </summary>
         /// <value>This (inner) value as a System.object.</value>
-        public readonly object AsObject
+        public readonly object? AsObject
         {
             get
             {
@@ -541,7 +542,7 @@ namespace LightJson
         /// Converts the given string into a JsonValue.
         /// </summary>
         /// <param name="value">The value to be converted.</param>
-        public static implicit operator JsonValue(string value)
+        public static implicit operator JsonValue(string? value)
         {
             return new JsonValue(value);
         }
@@ -550,7 +551,7 @@ namespace LightJson
         /// Converts the given JsonObject into a JsonValue.
         /// </summary>
         /// <param name="value">The value to be converted.</param>
-        public static implicit operator JsonValue(JsonObject value)
+        public static implicit operator JsonValue(JsonObject? value)
         {
             return new JsonValue(value);
         }
@@ -559,7 +560,7 @@ namespace LightJson
         /// Converts the given JsonArray into a JsonValue.
         /// </summary>
         /// <param name="value">The value to be converted.</param>
-        public static implicit operator JsonValue(JsonArray value)
+        public static implicit operator JsonValue(JsonArray? value)
         {
             return new JsonValue(value);
         }
@@ -700,7 +701,7 @@ namespace LightJson
         /// Converts the given JsonValue into a String.
         /// </summary>
         /// <param name="jsonValue">The JsonValue to be converted.</param>
-        public static explicit operator string(JsonValue jsonValue)
+        public static explicit operator string?(JsonValue jsonValue)
         {
             if (jsonValue.IsString || jsonValue.IsNull)
             {
@@ -716,7 +717,7 @@ namespace LightJson
         /// Converts the given JsonValue into a JsonObject.
         /// </summary>
         /// <param name="jsonValue">The JsonValue to be converted.</param>
-        public static explicit operator JsonObject(JsonValue jsonValue)
+        public static explicit operator JsonObject?(JsonValue jsonValue)
         {
             if (jsonValue.IsJsonObject || jsonValue.IsNull)
             {
@@ -732,7 +733,7 @@ namespace LightJson
         /// Converts the given JsonValue into a JsonArray.
         /// </summary>
         /// <param name="jsonValue">The JsonValue to be converted.</param>
-        public static explicit operator JsonArray(JsonValue jsonValue)
+        public static explicit operator JsonArray?(JsonValue jsonValue)
         {
             if (jsonValue.IsJsonArray || jsonValue.IsNull)
             {
@@ -813,7 +814,7 @@ namespace LightJson
         }
 
         /// <inheritdoc/>
-        public override readonly bool Equals(object obj)
+        public override readonly bool Equals(object? obj)
         {
             if (obj == null)
             {
@@ -842,7 +843,7 @@ namespace LightJson
             {
                 return this.Type.GetHashCode()
                     ^ this.value.GetHashCode()
-                    ^ EqualityComparer<object>.Default.GetHashCode(this.reference);
+                    ^ EqualityComparer<object?>.Default.GetHashCode(this.reference);
             }
         }
 
@@ -856,7 +857,7 @@ namespace LightJson
             }
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public JsonObject ObjectView
+            public JsonObject? ObjectView
             {
                 get
                 {
@@ -872,7 +873,7 @@ namespace LightJson
             }
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public JsonArray ArrayView
+            public JsonArray? ArrayView
             {
                 get
                 {
@@ -895,7 +896,7 @@ namespace LightJson
                 }
             }
 
-            public object Value
+            public object? Value
             {
                 get
                 {

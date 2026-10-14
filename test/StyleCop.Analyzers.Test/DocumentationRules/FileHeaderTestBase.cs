@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Collections.Generic;
@@ -108,22 +106,26 @@ namespace Bar
         protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
             => this.VerifyCSharpFixAsync(source, expected, fixedSource: null, cancellationToken);
 
-        protected Task VerifyCSharpFixAsync(string source, DiagnosticResult expected, string fixedSource, CancellationToken cancellationToken)
+        protected Task VerifyCSharpFixAsync(string source, DiagnosticResult expected, string? fixedSource, CancellationToken cancellationToken)
             => this.VerifyCSharpFixAsync(source, new[] { expected }, fixedSource, cancellationToken);
 
-        protected Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
+        protected Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string? fixedSource, CancellationToken cancellationToken)
             => this.VerifyCSharpFixAsync(source, expected, fixedSource, DiagnosticResult.EmptyDiagnosticResults, cancellationToken);
 
-        protected Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, DiagnosticResult[] remainingDiagnostics, CancellationToken cancellationToken)
+        protected Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string? fixedSource, DiagnosticResult[] remainingDiagnostics, CancellationToken cancellationToken)
         {
             var test = new StyleCopCodeFixVerifier<FileHeaderAnalyzers, FileHeaderCodeFixProvider>.CSharpTest
             {
                 TestCode = source,
-                FixedCode = fixedSource,
                 Settings = this.GetSettings(),
             };
 
             test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
+            if (fixedSource != null)
+            {
+                test.FixedCode = fixedSource;
+            }
+
             test.ExpectedDiagnostics.AddRange(expected);
             test.RemainingDiagnostics.AddRange(remainingDiagnostics);
             test.DisabledDiagnostics.AddRange(this.GetDisabledDiagnostics());

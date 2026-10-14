@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
@@ -252,7 +250,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                     if (!compilation.IsAnalyzerSuppressed(SA1636Descriptor))
                     {
-                        if (!CompareCopyrightText(context, settings.DocumentationRules, fileHeader.CopyrightText))
+                        if (!CompareCopyrightText(context, settings.DocumentationRules, fileHeader.CopyrightText!))
                         {
                             context.ReportDiagnostic(Diagnostic.Create(SA1636Descriptor, fileHeader.GetLocation(context.Tree)));
                             return;

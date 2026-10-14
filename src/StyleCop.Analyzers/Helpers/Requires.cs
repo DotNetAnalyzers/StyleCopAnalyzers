@@ -1,11 +1,10 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Helpers
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
     /// This class contains helper methods for argument validation.
@@ -21,7 +20,7 @@ namespace StyleCop.Analyzers.Helpers
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="argument"/> is <see langword="null"/>.
         /// </exception>
-        public static void NotNull<T>(T argument, string parameterName)
+        public static void NotNull<T>([NotNull] T? argument, string parameterName)
             where T : class
         {
             if (argument == null)

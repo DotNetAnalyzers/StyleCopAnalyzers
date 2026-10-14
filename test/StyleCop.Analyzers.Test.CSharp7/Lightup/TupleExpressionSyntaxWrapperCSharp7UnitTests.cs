@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp7.Lightup
 {
     using System;
@@ -87,7 +85,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var syntaxNode = default(SyntaxNode);
             var wrapper = (TupleExpressionSyntaxWrapper)syntaxNode;
 
-            ExpressionSyntax syntax = wrapper;
+            ExpressionSyntax? syntax = wrapper;
             Assert.Null(syntax);
         }
 
@@ -97,7 +95,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var syntaxNode = this.CreateTupleExpression();
             var wrapper = (TupleExpressionSyntaxWrapper)syntaxNode;
 
-            ExpressionSyntax syntax = wrapper;
+            ExpressionSyntax? syntax = wrapper;
             Assert.Same(syntaxNode, syntax);
         }
 

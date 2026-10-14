@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System;
@@ -139,7 +137,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
             if (switchExpression.Arms.SeparatorCount < switchExpression.Arms.Count)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, switchExpression.Arms.Last().SyntaxNode.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, switchExpression.Arms.Last().SyntaxNode!.GetLocation()));
             }
         }
 
@@ -153,7 +151,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
             if (propertyPatternClause.Subpatterns.SeparatorCount < propertyPatternClause.Subpatterns.Count)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, propertyPatternClause.Subpatterns.Last().SyntaxNode.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, propertyPatternClause.Subpatterns.Last().SyntaxNode!.GetLocation()));
             }
         }
 
@@ -167,7 +165,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
             if (collectionExpression.Elements.SeparatorCount < collectionExpression.Elements.Count)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, collectionExpression.Elements.Last().SyntaxNode.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, collectionExpression.Elements.Last().SyntaxNode!.GetLocation()));
             }
         }
     }

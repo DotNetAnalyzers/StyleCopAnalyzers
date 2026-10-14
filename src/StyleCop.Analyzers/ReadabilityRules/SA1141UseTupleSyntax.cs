@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
@@ -77,7 +75,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(context => HandleCastExpression(context, expressionType), SyntaxKind.CastExpression);
         }
 
-        private static void CheckExpressionType(SyntaxNodeAnalysisContext context, INamedTypeSymbol expressionType, TypeSyntax syntax, Location reportLocation = null)
+        private static void CheckExpressionType(SyntaxNodeAnalysisContext context, INamedTypeSymbol? expressionType, TypeSyntax syntax, Location? reportLocation = null)
         {
             if (!LightupHelpers.SupportsIOperation)
             {
@@ -136,7 +134,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             return false;
         }
 
-        private static void CheckOperationType(SyntaxNodeAnalysisContext context, TypeSyntax syntax, ITypeSymbol type, bool isInExpressionTree, Location reportLocation = null)
+        private static void CheckOperationType(SyntaxNodeAnalysisContext context, TypeSyntax syntax, ITypeSymbol? type, bool isInExpressionTree, Location? reportLocation = null)
         {
             if (type is not INamedTypeSymbol namedType)
             {
@@ -183,7 +181,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private static bool IsInExpressionTree(IOperation operation, INamedTypeSymbol expressionType)
+        private static bool IsInExpressionTree(IOperation operation, INamedTypeSymbol? expressionType)
         {
             if (expressionType is null)
             {
@@ -315,7 +313,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private static void CheckType(SyntaxNodeAnalysisContext context, INamedTypeSymbol expressionType, TypeSyntax typeSyntax, Location reportLocation = null)
+        private static void CheckType(SyntaxNodeAnalysisContext context, INamedTypeSymbol? expressionType, TypeSyntax? typeSyntax, Location? reportLocation = null)
         {
             if (typeSyntax is null)
             {
@@ -338,7 +336,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private static void CheckTupleType(SyntaxNodeAnalysisContext context, INamedTypeSymbol expressionType, TupleTypeSyntaxWrapper tupleTypeSyntax, Location reportLocation)
+        private static void CheckTupleType(SyntaxNodeAnalysisContext context, INamedTypeSymbol? expressionType, TupleTypeSyntaxWrapper tupleTypeSyntax, Location? reportLocation)
         {
             foreach (var tupleElementSyntax in tupleTypeSyntax.Elements)
             {
@@ -346,7 +344,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private static void CheckGenericName(SyntaxNodeAnalysisContext context, INamedTypeSymbol expressionType, GenericNameSyntax genericNameSyntax, Location reportLocation)
+        private static void CheckGenericName(SyntaxNodeAnalysisContext context, INamedTypeSymbol? expressionType, GenericNameSyntax genericNameSyntax, Location? reportLocation)
         {
             if (genericNameSyntax.Identifier.ValueText == "ValueTuple"
                 && IsValueTupleWithLanguageRepresentation(context, expressionType, genericNameSyntax))
@@ -364,7 +362,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private static bool IsValueTupleWithLanguageRepresentation(SyntaxNodeAnalysisContext context, INamedTypeSymbol expressionType, ExpressionSyntax syntax)
+        private static bool IsValueTupleWithLanguageRepresentation(SyntaxNodeAnalysisContext context, INamedTypeSymbol? expressionType, ExpressionSyntax syntax)
         {
             var symbolInfo = context.SemanticModel.GetSymbolInfo(syntax, context.CancellationToken);
             return symbolInfo.Symbol is INamedTypeSymbol typeSymbol

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
@@ -191,7 +189,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var attribute = (AttributeSyntax)context.Node;
 
-            IdentifierNameSyntax identifierNameSyntax = null;
+            IdentifierNameSyntax? identifierNameSyntax = null;
             if (attribute.Name is QualifiedNameSyntax qualifiedNameSyntax)
             {
                 identifierNameSyntax = qualifiedNameSyntax.DescendantNodes().OfType<IdentifierNameSyntax>().LastOrDefault();
@@ -372,7 +370,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var primaryConstructorBaseType = (PrimaryConstructorBaseTypeSyntaxWrapper)context.Node;
 
-            var identifierName = ((BaseTypeSyntax)primaryConstructorBaseType).ChildNodes()
+            var identifierName = ((BaseTypeSyntax)primaryConstructorBaseType)!.ChildNodes()
                 .OfType<IdentifierNameSyntax>()
                 .FirstOrDefault();
             if (identifierName == null || identifierName.Identifier.IsMissing)

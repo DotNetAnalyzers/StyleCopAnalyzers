@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
@@ -42,7 +40,7 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public abstract object UnderlyingList
+        public abstract object? UnderlyingList
         {
             get;
         }
@@ -52,7 +50,7 @@ namespace StyleCop.Analyzers.Lightup
             get;
         }
 
-        public static bool operator ==(SeparatedSyntaxListWrapper<TNode> left, SeparatedSyntaxListWrapper<TNode> right)
+        public static bool operator ==(SeparatedSyntaxListWrapper<TNode>? left, SeparatedSyntaxListWrapper<TNode>? right)
         {
             if (left is null)
             {
@@ -62,7 +60,7 @@ namespace StyleCop.Analyzers.Lightup
             return left.Equals(right);
         }
 
-        public static bool operator !=(SeparatedSyntaxListWrapper<TNode> left, SeparatedSyntaxListWrapper<TNode> right)
+        public static bool operator !=(SeparatedSyntaxListWrapper<TNode>? left, SeparatedSyntaxListWrapper<TNode>? right)
         {
             return !(left == right);
         }
@@ -89,7 +87,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public abstract bool Contains(TNode node);
 
-        public bool Equals(SeparatedSyntaxListWrapper<TNode> other)
+        public bool Equals(SeparatedSyntaxListWrapper<TNode>? other)
         {
             if (other is null)
             {
@@ -106,14 +104,14 @@ namespace StyleCop.Analyzers.Lightup
             return Equals(this.UnderlyingList, other.UnderlyingList);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return this.Equals(obj as SeparatedSyntaxListWrapper<TNode>);
         }
 
         public abstract TNode First();
 
-        public abstract TNode FirstOrDefault();
+        public abstract TNode? FirstOrDefault();
 
         public Enumerator GetEnumerator()
         {
@@ -152,7 +150,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public abstract int LastIndexOf(TNode node);
 
-        public abstract TNode LastOrDefault();
+        public abstract TNode? LastOrDefault();
 
         public abstract SeparatedSyntaxListWrapper<TNode> Remove(TNode node);
 
@@ -172,7 +170,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             private readonly SeparatedSyntaxListWrapper<TNode> wrapper;
             private int index;
-            private TNode current;
+            private TNode? current;
 
             public Enumerator(SeparatedSyntaxListWrapper<TNode> wrapper)
             {
@@ -181,11 +179,12 @@ namespace StyleCop.Analyzers.Lightup
                 this.current = default;
             }
 
-            public readonly TNode Current => this.current;
+            // Current is only defined after MoveNext succeeds, when the list supplies a non-null item.
+            public readonly TNode Current => this.current!;
 
-            readonly object IEnumerator.Current => this.Current;
+            readonly object IEnumerator.Current => this.Current!;
 
-            public override readonly bool Equals(object obj)
+            public override readonly bool Equals(object? obj)
             {
                 Enumerator? otherOpt = obj as Enumerator?;
                 if (!otherOpt.HasValue)
@@ -279,7 +278,7 @@ namespace StyleCop.Analyzers.Lightup
             public override TNode First()
                 => SyntaxWrapper.Wrap(this.syntaxList.First());
 
-            public override TNode FirstOrDefault()
+            public override TNode? FirstOrDefault()
                 => SyntaxWrapper.Wrap(this.syntaxList.FirstOrDefault());
 
             public override int GetHashCode()
@@ -294,41 +293,43 @@ namespace StyleCop.Analyzers.Lightup
             public override SyntaxNodeOrTokenList GetWithSeparators()
                 => this.syntaxList.GetWithSeparators();
 
+            // Roslyn's generic API excludes null in its annotation, but default wrappers must retain its null-node behavior.
             public override int IndexOf(TNode node)
-                => this.syntaxList.IndexOf((TSyntax)SyntaxWrapper.Unwrap(node));
+                => this.syntaxList.IndexOf((TSyntax)SyntaxWrapper.Unwrap(node)!);
 
             public override int IndexOf(Func<TNode, bool> predicate)
                 => this.syntaxList.IndexOf(node => predicate(SyntaxWrapper.Wrap(node)));
 
+            // Leave validation of a default wrapper's null node to Roslyn, preserving its exception behavior.
             public override SeparatedSyntaxListWrapper<TNode> Insert(int index, TNode node)
-                => new AutoWrapSeparatedSyntaxList<TSyntax>(this.syntaxList.Insert(index, (TSyntax)SyntaxWrapper.Unwrap(node)));
+                => new AutoWrapSeparatedSyntaxList<TSyntax>(this.syntaxList.Insert(index, (TSyntax)SyntaxWrapper.Unwrap(node)!));
 
             public override SeparatedSyntaxListWrapper<TNode> InsertRange(int index, IEnumerable<TNode> nodes)
-                => new AutoWrapSeparatedSyntaxList<TSyntax>(this.syntaxList.InsertRange(index, nodes.Select(node => (TSyntax)SyntaxWrapper.Unwrap(node))));
+                => new AutoWrapSeparatedSyntaxList<TSyntax>(this.syntaxList.InsertRange(index, nodes.Select(node => (TSyntax)SyntaxWrapper.Unwrap(node)!)));
 
             public override TNode Last()
                 => SyntaxWrapper.Wrap(this.syntaxList.Last());
 
             public override int LastIndexOf(TNode node)
-                => this.syntaxList.LastIndexOf((TSyntax)SyntaxWrapper.Unwrap(node));
+                => this.syntaxList.LastIndexOf((TSyntax)SyntaxWrapper.Unwrap(node)!);
 
             public override int LastIndexOf(Func<TNode, bool> predicate)
                 => this.syntaxList.LastIndexOf(node => predicate(SyntaxWrapper.Wrap(node)));
 
-            public override TNode LastOrDefault()
+            public override TNode? LastOrDefault()
                 => SyntaxWrapper.Wrap(this.syntaxList.LastOrDefault());
 
             public override SeparatedSyntaxListWrapper<TNode> Remove(TNode node)
-                => new AutoWrapSeparatedSyntaxList<TSyntax>(this.syntaxList.Remove((TSyntax)SyntaxWrapper.Unwrap(node)));
+                => new AutoWrapSeparatedSyntaxList<TSyntax>(this.syntaxList.Remove((TSyntax)SyntaxWrapper.Unwrap(node)!));
 
             public override SeparatedSyntaxListWrapper<TNode> RemoveAt(int index)
                 => new AutoWrapSeparatedSyntaxList<TSyntax>(this.syntaxList.RemoveAt(index));
 
             public override SeparatedSyntaxListWrapper<TNode> Replace(TNode nodeInList, TNode newNode)
-                => new AutoWrapSeparatedSyntaxList<TSyntax>(this.syntaxList.Replace((TSyntax)SyntaxWrapper.Unwrap(nodeInList), (TSyntax)SyntaxWrapper.Unwrap(newNode)));
+                => new AutoWrapSeparatedSyntaxList<TSyntax>(this.syntaxList.Replace((TSyntax)SyntaxWrapper.Unwrap(nodeInList)!, (TSyntax)SyntaxWrapper.Unwrap(newNode)!));
 
             public override SeparatedSyntaxListWrapper<TNode> ReplaceRange(TNode nodeInList, IEnumerable<TNode> newNodes)
-                => new AutoWrapSeparatedSyntaxList<TSyntax>(this.syntaxList.ReplaceRange((TSyntax)SyntaxWrapper.Unwrap(nodeInList), newNodes.Select(node => (TSyntax)SyntaxWrapper.Unwrap(node))));
+                => new AutoWrapSeparatedSyntaxList<TSyntax>(this.syntaxList.ReplaceRange((TSyntax)SyntaxWrapper.Unwrap(nodeInList)!, newNodes.Select(node => (TSyntax)SyntaxWrapper.Unwrap(node)!)));
 
             public override SeparatedSyntaxListWrapper<TNode> ReplaceSeparator(SyntaxToken separatorToken, SyntaxToken newSeparator)
                 => new AutoWrapSeparatedSyntaxList<TSyntax>(this.syntaxList.ReplaceSeparator(separatorToken, newSeparator));
@@ -360,7 +361,7 @@ namespace StyleCop.Analyzers.Lightup
             public override TextSpan Span
                 => SyntaxList.Span;
 
-            public override object UnderlyingList
+            public override object? UnderlyingList
                 => null;
 
             public override TNode this[int index]
@@ -375,7 +376,7 @@ namespace StyleCop.Analyzers.Lightup
             public override TNode First()
                 => SyntaxWrapper.Wrap(SyntaxList.First());
 
-            public override TNode FirstOrDefault()
+            public override TNode? FirstOrDefault()
                 => SyntaxWrapper.Wrap(default);
 
             public override int GetHashCode()
@@ -391,7 +392,7 @@ namespace StyleCop.Analyzers.Lightup
                 => SyntaxList.GetWithSeparators();
 
             public override int IndexOf(TNode node)
-                => SyntaxList.IndexOf(SyntaxWrapper.Unwrap(node));
+                => SyntaxList.IndexOf(SyntaxWrapper.Unwrap(node)!);
 
             public override int IndexOf(Func<TNode, bool> predicate)
                 => SyntaxList.IndexOf(node => predicate(SyntaxWrapper.Wrap(node)));
@@ -410,12 +411,12 @@ namespace StyleCop.Analyzers.Lightup
                 => SyntaxWrapper.Wrap(SyntaxList.Last());
 
             public override int LastIndexOf(TNode node)
-                => SyntaxList.LastIndexOf(SyntaxWrapper.Unwrap(node));
+                => SyntaxList.LastIndexOf(SyntaxWrapper.Unwrap(node)!);
 
             public override int LastIndexOf(Func<TNode, bool> predicate)
                 => SyntaxList.LastIndexOf(node => predicate(SyntaxWrapper.Wrap(node)));
 
-            public override TNode LastOrDefault()
+            public override TNode? LastOrDefault()
                 => SyntaxWrapper.Wrap(default);
 
             public override SeparatedSyntaxListWrapper<TNode> Remove(TNode node)

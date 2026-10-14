@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.Helpers
 {
     using System;
@@ -29,13 +27,13 @@ namespace StyleCop.Analyzers.Test.Helpers
 
         private readonly Lazy<CultureInfo> uiCulture;
 
-        private CultureInfo originalCulture;
+        private CultureInfo originalCulture = CultureInfo.CurrentCulture;
 
-        private CultureInfo originalUiCulture;
+        private CultureInfo originalUiCulture = CultureInfo.CurrentUICulture;
 
-        private CultureInfo originalDefaultCulture;
+        private CultureInfo? originalDefaultCulture;
 
-        private CultureInfo originalDefaultUiCulture;
+        private CultureInfo? originalDefaultUiCulture;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UseCultureAttribute"/>

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.LightJson.Serialization
 {
     using System;
@@ -39,8 +37,8 @@ namespace StyleCop.Analyzers.Test.LightJson.Serialization
                 Assert.Equal("true", JsonReader.Parse(reader).AsString);
             }
 
-            Assert.Throws<ArgumentNullException>("source", () => JsonReader.Parse(default(string)));
-            Assert.Throws<ArgumentNullException>("reader", () => JsonReader.Parse(default(TextReader)));
+            Assert.Throws<ArgumentNullException>("source", () => JsonReader.Parse((string)null!));
+            Assert.Throws<ArgumentNullException>("reader", () => JsonReader.Parse((TextReader)null!));
         }
 
         [Fact]

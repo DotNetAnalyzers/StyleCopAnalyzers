@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.LinqHelpers
 {
     using System;
@@ -18,13 +16,13 @@ namespace StyleCop.Analyzers.Test.LinqHelpers
         [Fact]
         public void TestAnyWithNullArgument()
         {
-            Assert.Throws<ArgumentNullException>(() => SyntaxTriviaListEnumerable.Any(SyntaxFactory.TriviaList(), null));
+            Assert.Throws<ArgumentNullException>(() => SyntaxTriviaListEnumerable.Any(SyntaxFactory.TriviaList(), null!));
         }
 
         [Fact]
         public void TestAllWithNullArgument()
         {
-            Assert.Throws<ArgumentNullException>(() => SyntaxTriviaListEnumerable.All(SyntaxFactory.TriviaList(), null));
+            Assert.Throws<ArgumentNullException>(() => SyntaxTriviaListEnumerable.All(SyntaxFactory.TriviaList(), null!));
         }
     }
 }

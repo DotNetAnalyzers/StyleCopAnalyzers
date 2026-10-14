@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.LayoutRules
 {
     using System;
@@ -108,7 +106,7 @@ namespace StyleCop.Analyzers.LayoutRules
             foreach (var accessor in accessorList.Accessors)
             {
                 // Accessors without a block or expression body (such as auto-accessors) are not part of this rule.
-                SyntaxNode accessorBody = accessor.Body;
+                SyntaxNode? accessorBody = accessor.Body;
                 bool hasExpressionBody = false;
                 if (accessorBody == null)
                 {

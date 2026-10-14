@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Immutable;
@@ -58,7 +56,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var node = syntaxRoot?.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
             if (node != null && node.IsKind(SyntaxKind.RegionDirectiveTrivia))
             {
-                var regionDirective = node as RegionDirectiveTriviaSyntax;
+                var regionDirective = (node as RegionDirectiveTriviaSyntax)!;
 
                 var newSyntaxRoot = syntaxRoot.RemoveNodes(regionDirective.GetRelatedDirectives(), SyntaxRemoveOptions.AddElasticMarker);
 

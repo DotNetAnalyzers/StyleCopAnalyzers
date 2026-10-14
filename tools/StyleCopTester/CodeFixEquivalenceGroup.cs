@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCopTester
 {
     using System;
@@ -18,7 +16,7 @@ namespace StyleCopTester
     internal class CodeFixEquivalenceGroup
     {
         private CodeFixEquivalenceGroup(
-            string equivalenceKey,
+            string? equivalenceKey,
             Solution solution,
             FixAllProvider fixAllProvider,
             CodeFixProvider codeFixProvider,
@@ -35,7 +33,7 @@ namespace StyleCopTester
                 + projectDiagnosticsToFix.SelectMany(x => x.Value).Count();
         }
 
-        internal string CodeFixEquivalenceKey { get; }
+        internal string? CodeFixEquivalenceKey { get; }
 
         internal Solution Solution { get; }
 
@@ -110,7 +108,7 @@ namespace StyleCopTester
             ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>> projectDiagnosticsToFix =
                 relevantProjectDiagnostics.ToImmutableDictionary(i => i.Key, i => i.Value.ToImmutableArray());
 
-            HashSet<string> equivalenceKeys = new HashSet<string>();
+            HashSet<string?> equivalenceKeys = new HashSet<string?>();
             foreach (var diagnostic in relevantDocumentDiagnostics.Values.SelectMany(i => i.Values).SelectMany(i => i).Concat(relevantProjectDiagnostics.Values.SelectMany(i => i)))
             {
                 foreach (var codeAction in await GetFixesAsync(solution, codeFixProvider, diagnostic, cancellationToken).ConfigureAwait(false))
@@ -131,14 +129,15 @@ namespace StyleCopTester
         internal async Task<ImmutableArray<CodeActionOperation>> GetOperationsAsync(CancellationToken cancellationToken)
         {
             Diagnostic diagnostic = this.DocumentDiagnosticsToFix.Values.SelectMany(i => i.Values).Concat(this.ProjectDiagnosticsToFix.Values).First().First();
-            Document document = this.Solution.GetDocument(diagnostic.Location.SourceTree);
+            Document document = this.Solution.GetDocument(diagnostic.Location.SourceTree)!;
             HashSet<string> diagnosticIds = new HashSet<string>(this.DocumentDiagnosticsToFix.Values.SelectMany(i => i.Values).Concat(this.ProjectDiagnosticsToFix.Values).SelectMany(i => i.Select(j => j.Id)));
 
             var diagnosticsProvider = new TesterDiagnosticProvider(this.DocumentDiagnosticsToFix, this.ProjectDiagnosticsToFix);
 
             var context = new FixAllContext(document, this.CodeFixProvider, FixAllScope.Solution, this.CodeFixEquivalenceKey, diagnosticIds, diagnosticsProvider, cancellationToken);
 
-            CodeAction action = await this.FixAllProvider.GetFixAsync(context).ConfigureAwait(false);
+            CodeAction action = await this.FixAllProvider.GetFixAsync(context).ConfigureAwait(false)
+                ?? throw new InvalidOperationException("The Fix All provider returned no action.");
 
             return await action.GetOperationsAsync(cancellationToken).ConfigureAwait(false);
         }
@@ -147,7 +146,7 @@ namespace StyleCopTester
         {
             List<CodeAction> codeActions = new List<CodeAction>();
 
-            await codeFixProvider.RegisterCodeFixesAsync(new CodeFixContext(solution.GetDocument(diagnostic.Location.SourceTree), diagnostic, (a, d) => codeActions.Add(a), cancellationToken)).ConfigureAwait(false);
+            await codeFixProvider.RegisterCodeFixesAsync(new CodeFixContext(solution.GetDocument(diagnostic.Location.SourceTree)!, diagnostic, (a, d) => codeActions.Add(a), cancellationToken)).ConfigureAwait(false);
 
             return codeActions;
         }

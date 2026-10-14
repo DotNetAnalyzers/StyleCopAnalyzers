@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Helpers
 {
     using System;
@@ -15,7 +13,7 @@ namespace StyleCop.Analyzers.Helpers
 
     internal static class NamedTypeHelpers
     {
-        internal static bool IsNativeMethodsClass(INamedTypeSymbol type)
+        internal static bool IsNativeMethodsClass(INamedTypeSymbol? type)
         {
             if (type == null || type.TypeKind != TypeKind.Class)
             {
@@ -30,9 +28,9 @@ namespace StyleCop.Analyzers.Helpers
             return false;
         }
 
-        internal static bool IsNativeMethodsClass(ClassDeclarationSyntax syntax)
+        internal static bool IsNativeMethodsClass(ClassDeclarationSyntax? syntax)
         {
-            string name = syntax?.Identifier.ValueText;
+            string? name = syntax?.Identifier.ValueText;
             if (name == null)
             {
                 return false;
@@ -41,7 +39,7 @@ namespace StyleCop.Analyzers.Helpers
             return name.EndsWith("NativeMethods", StringComparison.Ordinal);
         }
 
-        internal static bool IsContainedInNativeMethodsClass(INamedTypeSymbol type)
+        internal static bool IsContainedInNativeMethodsClass(INamedTypeSymbol? type)
         {
             if (type == null)
             {
@@ -53,7 +51,7 @@ namespace StyleCop.Analyzers.Helpers
                 return true;
             }
 
-            INamedTypeSymbol typeSymbol = type;
+            INamedTypeSymbol? typeSymbol = type;
             while ((typeSymbol = typeSymbol.ContainingType) != null)
             {
                 if (IsNativeMethodsClass(typeSymbol))
@@ -65,11 +63,11 @@ namespace StyleCop.Analyzers.Helpers
             return false;
         }
 
-        internal static bool IsContainedInNativeMethodsClass(SyntaxNode syntax)
+        internal static bool IsContainedInNativeMethodsClass(SyntaxNode? syntax)
         {
             while (syntax != null)
             {
-                ClassDeclarationSyntax classDeclarationSyntax = syntax.FirstAncestorOrSelf<ClassDeclarationSyntax>();
+                ClassDeclarationSyntax? classDeclarationSyntax = syntax.FirstAncestorOrSelf<ClassDeclarationSyntax>();
                 if (IsNativeMethodsClass(classDeclarationSyntax))
                 {
                     return true;
@@ -103,7 +101,7 @@ namespace StyleCop.Analyzers.Helpers
 
         internal static Location GetNameOrIdentifierLocation(SyntaxNode member)
         {
-            Location location = null;
+            Location? location = null;
             if (member.IsKind(SyntaxKindEx.ExtensionBlockDeclaration))
             {
                 // A C# 14 extension block has no identifier, so report on the 'extension' keyword

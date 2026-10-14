@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Helpers
 {
     using System.Collections.Generic;
@@ -167,10 +165,10 @@ namespace StyleCop.Analyzers.Helpers
 
             case SyntaxKindEx.RecordDeclaration:
             case SyntaxKindEx.RecordStructDeclaration:
-                return ((RecordDeclarationSyntaxWrapper)node).WithModifiers(modifiers);
+                return ((RecordDeclarationSyntaxWrapper)node).WithModifiers(modifiers).SyntaxNode!;
 
             case SyntaxKindEx.UnionDeclaration:
-                return ((UnionDeclarationSyntaxWrapper)node).WithModifiers(modifiers);
+                return ((UnionDeclarationSyntaxWrapper)node).WithModifiers(modifiers).SyntaxNode!;
 
             case SyntaxKind.DelegateDeclaration:
                 return ((DelegateDeclarationSyntax)node).WithModifiers(modifiers);

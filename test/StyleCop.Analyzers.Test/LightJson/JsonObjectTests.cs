@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.LightJson
 {
     using System;
@@ -129,13 +127,13 @@ namespace StyleCop.Analyzers.Test.LightJson
             var proxy = Activator.CreateInstance(proxyType, obj);
             Assert.NotNull(proxy);
 
-            var keys = proxyType.GetTypeInfo().GetDeclaredProperty("Keys").GetValue(proxy);
+            var keys = Assert.IsAssignableFrom<PropertyInfo>(proxyType.GetTypeInfo().GetDeclaredProperty("Keys")).GetValue(proxy);
             var keysArray = Assert.IsAssignableFrom<Array>(keys);
 
             Assert.NotEmpty(keysArray);
             foreach (var key in keysArray)
             {
-                var view = key.GetType().GetTypeInfo().GetDeclaredProperty("View").GetValue(key);
+                var view = Assert.IsAssignableFrom<PropertyInfo>(key.GetType().GetTypeInfo().GetDeclaredProperty("View")).GetValue(key);
                 Assert.NotNull(view);
             }
         }

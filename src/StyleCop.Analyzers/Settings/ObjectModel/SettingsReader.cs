@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Settings.ObjectModel;
 
 using System;
@@ -18,10 +16,10 @@ using StyleCop.Analyzers.Lightup;
 /// </summary>
 internal readonly struct SettingsReader
 {
-    private readonly JsonObject json;
+    private readonly JsonObject? json;
     private readonly AnalyzerConfigOptionsWrapper options;
 
-    public SettingsReader(JsonObject json, AnalyzerConfigOptionsWrapper options)
+    public SettingsReader(JsonObject? json, AnalyzerConfigOptionsWrapper options)
     {
         this.json = json;
         this.options = options;
@@ -47,7 +45,7 @@ internal readonly struct SettingsReader
         return AnalyzerConfigHelper.TryGetInt32Value(this.options, editorConfigKey);
     }
 
-    public string GetString(string jsonKey, string editorConfigKey)
+    public string? GetString(string jsonKey, string editorConfigKey)
     {
         if (this.TryGetJson(jsonKey, out var kvp))
         {
@@ -57,7 +55,7 @@ internal readonly struct SettingsReader
         return AnalyzerConfigHelper.TryGetStringValue(this.options, editorConfigKey);
     }
 
-    public string GetMultiLineString(string jsonKey, string editorConfigKey, string fallbackEditorConfigKey = null)
+    public string? GetMultiLineString(string jsonKey, string editorConfigKey, string? fallbackEditorConfigKey = null)
     {
         if (this.TryGetJson(jsonKey, out var kvp))
         {
@@ -111,7 +109,7 @@ internal readonly struct SettingsReader
         {
             kvp.AssertIsArray();
             var builder = ImmutableArray.CreateBuilder<T>();
-            foreach (var value in kvp.Value.AsJsonArray)
+            foreach (var value in kvp.Value.AsJsonArray!)
             {
                 builder.Add(value.ToEnumValue<T>(jsonKey));
             }
@@ -122,14 +120,14 @@ internal readonly struct SettingsReader
         return AnalyzerConfigHelper.TryGetEnumListValue<T>(this.options, editorConfigKey);
     }
 
-    public ImmutableArray<string>? GetStringList(string jsonKey, string editorConfigKey, Func<string, bool> filter = null)
+    public ImmutableArray<string>? GetStringList(string jsonKey, string editorConfigKey, Func<string, bool>? filter = null)
     {
         ImmutableArray<string> result;
         if (this.TryGetJson(jsonKey, out var kvp))
         {
             kvp.AssertIsArray();
             var builder = ImmutableArray.CreateBuilder<string>();
-            foreach (var value in kvp.Value.AsJsonArray)
+            foreach (var value in kvp.Value.AsJsonArray!)
             {
                 builder.Add(value.ToStringValue(jsonKey));
             }
@@ -168,7 +166,7 @@ internal readonly struct SettingsReader
     /// <param name="jsonKey">The key in the <strong>stylecop.json</strong> section.</param>
     /// <param name="isValidName">Determines whether a name is accepted; other names are skipped.</param>
     /// <returns>The named values, or <see langword="null"/> if <strong>stylecop.json</strong> doesn't provide them.</returns>
-    public ImmutableDictionary<string, string> GetJsonStringMap(string jsonKey, Func<string, bool> isValidName)
+    public ImmutableDictionary<string, string>? GetJsonStringMap(string jsonKey, Func<string, bool> isValidName)
     {
         if (!this.TryGetJson(jsonKey, out var kvp))
         {
@@ -177,7 +175,7 @@ internal readonly struct SettingsReader
 
         kvp.AssertIsObject();
         var map = ImmutableDictionary.CreateBuilder<string, string>();
-        foreach (var child in kvp.Value.AsJsonObject)
+        foreach (var child in kvp.Value.AsJsonObject!)
         {
             if (isValidName(child.Key))
             {
@@ -196,9 +194,9 @@ internal readonly struct SettingsReader
     /// <param name="editorConfigPrefix">The <strong>.editorconfig</strong> key prefix, including the trailing dot.</param>
     /// <param name="isValidName">Determines whether a name is accepted; other names are skipped.</param>
     /// <returns>The named values, or <see langword="null"/> if there are none.</returns>
-    public ImmutableDictionary<string, string> GetEditorConfigStringMap(string editorConfigPrefix, Func<string, bool> isValidName)
+    public ImmutableDictionary<string, string>? GetEditorConfigStringMap(string editorConfigPrefix, Func<string, bool> isValidName)
     {
-        ImmutableDictionary<string, string>.Builder map = null;
+        ImmutableDictionary<string, string>.Builder? map = null;
         foreach (var key in this.options.GetKeys())
         {
             if (!key.StartsWith(editorConfigPrefix, StringComparison.OrdinalIgnoreCase))

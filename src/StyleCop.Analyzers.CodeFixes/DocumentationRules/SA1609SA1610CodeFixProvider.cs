@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
@@ -97,7 +95,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return document;
             }
 
-            DocumentationCommentTriviaSyntax documentationComment = propertyDeclarationSyntax.GetDocumentationCommentTriviaSyntax();
+            DocumentationCommentTriviaSyntax? documentationComment = propertyDeclarationSyntax.GetDocumentationCommentTriviaSyntax();
             if (documentationComment == null)
             {
                 return document;
@@ -143,7 +141,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             // Try to replace an existing <value> element if the comment contains one. Otherwise, add it as a new element.
             SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             SyntaxNode newRoot;
-            XmlNodeSyntax existingValue = documentationComment.Content.GetFirstXmlElement(XmlCommentHelper.ValueXmlTag);
+            XmlNodeSyntax? existingValue = documentationComment.Content.GetFirstXmlElement(XmlCommentHelper.ValueXmlTag);
             if (existingValue != null)
             {
                 newRoot = root.ReplaceNode(existingValue, valueElement);

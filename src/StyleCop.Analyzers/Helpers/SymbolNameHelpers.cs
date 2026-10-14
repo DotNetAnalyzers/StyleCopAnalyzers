@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Helpers
 {
     using System.Text;
@@ -74,7 +72,7 @@ namespace StyleCop.Analyzers.Helpers
             }
         }
 
-        private static bool AppendQualifiedSymbolName(StringBuilder builder, ISymbol symbol, TypeSyntax type)
+        private static bool AppendQualifiedSymbolName(StringBuilder builder, ISymbol symbol, TypeSyntax? type)
         {
             switch (symbol.Kind)
             {
@@ -140,7 +138,7 @@ namespace StyleCop.Analyzers.Helpers
             }
         }
 
-        private static bool AppendNamedType(StringBuilder builder, INamedTypeSymbol namedTypeSymbol, TypeSyntax type)
+        private static bool AppendNamedType(StringBuilder builder, INamedTypeSymbol namedTypeSymbol, TypeSyntax? type)
         {
             if (AppendQualifiedSymbolName(builder, namedTypeSymbol.ContainingSymbol, (type as QualifiedNameSyntax)?.Left))
             {
@@ -179,7 +177,7 @@ namespace StyleCop.Analyzers.Helpers
             return true;
         }
 
-        private static bool AppendTupleType(StringBuilder builder, INamedTypeSymbol namedTypeSymbol, TypeSyntax type)
+        private static bool AppendTupleType(StringBuilder builder, INamedTypeSymbol namedTypeSymbol, TypeSyntax? type)
         {
             if (TupleTypeSyntaxWrapper.IsInstance(type))
             {
@@ -214,7 +212,7 @@ namespace StyleCop.Analyzers.Helpers
             }
         }
 
-        private static TypeSyntax GetElementSyntax(TypeSyntax typeSyntax)
+        private static TypeSyntax? GetElementSyntax(TypeSyntax? typeSyntax)
         {
             return typeSyntax switch
             {
@@ -231,7 +229,7 @@ namespace StyleCop.Analyzers.Helpers
             };
         }
 
-        private static void AppendNullableSuffixIfNeeded(StringBuilder builder, TypeSyntax type)
+        private static void AppendNullableSuffixIfNeeded(StringBuilder builder, TypeSyntax? type)
         {
             if (type?.IsKind(SyntaxKind.NullableType) == true)
             {

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System;
@@ -185,7 +183,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             CheckAccessModifiers(context, syntax.Identifier, syntax.Modifiers);
         }
 
-        private static void CheckAccessModifiers(SyntaxNodeAnalysisContext context, SyntaxToken identifier, SyntaxTokenList modifiers, SyntaxNode declarationNode = null)
+        private static void CheckAccessModifiers(SyntaxNodeAnalysisContext context, SyntaxToken identifier, SyntaxTokenList modifiers, SyntaxNode? declarationNode = null)
         {
             if (identifier.IsMissing)
             {
@@ -222,7 +220,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
             // missing access modifier
             ISymbol symbol = context.SemanticModel.GetDeclaredSymbol(declarationNode ?? context.Node, context.CancellationToken);
-            string name = symbol?.Name;
+            string? name = symbol?.Name;
             if (string.IsNullOrEmpty(name))
             {
                 return;

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace LightJson.Serialization
 {
     using System;
@@ -19,14 +17,16 @@ namespace LightJson.Serialization
     {
         private int indent;
         private bool isNewLine;
-        private TextWriter writer;
+
+        // Initialized for each serialization before rendering begins.
+        private StringWriter writer = null!;
 
         /// <summary>
         /// A set of containing all the collection objects (JsonObject/JsonArray) being rendered.
         /// It is used to prevent circular references; since collections that contain themselves
         /// will never finish rendering.
         /// </summary>
-        private HashSet<IEnumerable<JsonValue>> renderingCollections;
+        private HashSet<IEnumerable<JsonValue>> renderingCollections = null!;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="JsonWriter"/> class.
@@ -58,7 +58,7 @@ namespace LightJson.Serialization
         /// <value>
         /// The string representing a indent in the output.
         /// </value>
-        public string IndentString { get; set; }
+        public string? IndentString { get; set; }
 
         /// <summary>
         /// Gets or sets the string representing a space in the output.
@@ -66,7 +66,7 @@ namespace LightJson.Serialization
         /// <value>
         /// The string representing a space in the output.
         /// </value>
-        public string SpacingString { get; set; }
+        public string? SpacingString { get; set; }
 
         /// <summary>
         /// Gets or sets the string representing a new line on the output.
@@ -74,7 +74,7 @@ namespace LightJson.Serialization
         /// <value>
         /// The string representing a new line on the output.
         /// </value>
-        public string NewLineString { get; set; }
+        public string? NewLineString { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether JsonObject properties should be written in a deterministic order.
@@ -117,7 +117,7 @@ namespace LightJson.Serialization
             this.renderingCollections = new HashSet<IEnumerable<JsonValue>>();
         }
 
-        private void Write(string text)
+        private void Write(string? text)
         {
             if (this.isNewLine)
             {
@@ -146,7 +146,7 @@ namespace LightJson.Serialization
 
             default:
                 Debug.Assert(value.Type == JsonValueType.String, "value.Type == JsonValueType.String");
-                this.WriteEncodedString((string)value);
+                this.WriteEncodedString(value.AsString!);
                 break;
             }
         }
@@ -253,11 +253,11 @@ namespace LightJson.Serialization
                 break;
 
             case JsonValueType.Object:
-                this.Render((JsonObject)value);
+                this.Render(value.AsJsonObject!);
                 break;
 
             case JsonValueType.Array:
-                this.Render((JsonArray)value);
+                this.Render(value.AsJsonArray!);
                 break;
 
             default:

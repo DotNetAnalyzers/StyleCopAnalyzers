@@ -126,7 +126,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            DocumentationCommentTriviaSyntax documentation = context.Node.GetDocumentationCommentTriviaSyntax();
+            DocumentationCommentTriviaSyntax? documentation = context.Node.GetDocumentationCommentTriviaSyntax();
             if (documentation == null)
             {
                 return;
@@ -160,7 +160,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
             else
             {
-                XmlNodeSyntax inheritDocElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag);
+                XmlNodeSyntax? inheritDocElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag);
                 if (inheritDocElement == null)
                 {
                     return;
@@ -188,7 +188,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            DocumentationCommentTriviaSyntax documentation = memberSyntax.GetDocumentationCommentTriviaSyntax();
+            DocumentationCommentTriviaSyntax? documentation = memberSyntax.GetDocumentationCommentTriviaSyntax();
             if (documentation == null)
             {
                 return;
@@ -246,7 +246,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
             else
             {
-                XmlNodeSyntax inheritDocElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag);
+                XmlNodeSyntax? inheritDocElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag);
                 if (inheritDocElement == null)
                 {
                     return;

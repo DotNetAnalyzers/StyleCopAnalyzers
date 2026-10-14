@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp7.Lightup
 {
     using System;
@@ -63,7 +61,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             singleVariableDesignationSyntax = (SingleVariableDesignationSyntaxWrapper)variableDesignationSyntax;
             Assert.Null(singleVariableDesignationSyntax.SyntaxNode);
 
-            SyntaxNode syntax = singleVariableDesignationSyntax;
+            SyntaxNode? syntax = singleVariableDesignationSyntax;
             Assert.Null(syntax);
         }
 
@@ -79,7 +77,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             singleVariableDesignationSyntax = (SingleVariableDesignationSyntaxWrapper)variableDesignationSyntax;
             Assert.Same(syntaxNode, singleVariableDesignationSyntax.SyntaxNode);
 
-            SyntaxNode syntax = singleVariableDesignationSyntax;
+            SyntaxNode? syntax = singleVariableDesignationSyntax;
             Assert.Same(syntaxNode, syntax);
         }
 

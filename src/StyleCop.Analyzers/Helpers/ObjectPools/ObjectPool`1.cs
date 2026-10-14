@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Helpers.ObjectPools
 {
     // This code was copied from the Roslyn code base (and slightly modified)
@@ -40,7 +38,7 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
 
         // Storage for the pool objects. The first item is stored in a dedicated field because we
         // expect to be able to satisfy most requests from it.
-        private T firstItem;
+        private T? firstItem;
 
         internal ObjectPool(Func<T> factory)
 #pragma warning disable IDE0079 // Remove unnecessary suppression
@@ -73,7 +71,7 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
             // Note that the initial read is optimistically not synchronized. That is intentional.
             // We will interlock only when we have a candidate. in a worst case we may miss some
             // recently returned objects. Not a big deal.
-            T inst = this.firstItem;
+            T? inst = this.firstItem;
             if (inst == null || inst != Interlocked.CompareExchange(ref this.firstItem, null, inst))
             {
                 inst = this.AllocateSlow();
@@ -91,7 +89,7 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
         /// reducing how far we will typically search in Allocate.</para>
         /// </remarks>
         /// <param name="obj">The object to free.</param>
-        internal void Free(T obj)
+        internal void Free(T? obj)
         {
             if (this.firstItem == null)
             {
@@ -121,7 +119,7 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
                 // Note that the initial read is optimistically not synchronized. That is intentional.
                 // We will interlock only when we have a candidate. in a worst case we may miss some
                 // recently returned objects. Not a big deal.
-                T inst = items[i].Value;
+                T? inst = items[i].Value;
                 if (inst != null)
                 {
                     if (inst == Interlocked.CompareExchange(ref items[i].Value, null, inst))
@@ -134,7 +132,7 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
             return this.CreateInstance();
         }
 
-        private void FreeSlow(T obj)
+        private void FreeSlow(T? obj)
         {
             var items = this.items;
             for (int i = 0; i < items.Length; i++)
@@ -153,7 +151,7 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
         [DebuggerDisplay("{Value,nq}")]
         private struct Element
         {
-            internal T Value;
+            internal T? Value;
         }
     }
 }

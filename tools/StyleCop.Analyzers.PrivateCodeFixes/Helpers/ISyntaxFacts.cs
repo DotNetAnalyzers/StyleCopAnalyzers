@@ -22,7 +22,7 @@ namespace Analyzer.Utilities
         SyntaxList<SyntaxNode> GetAttributeLists(SyntaxNode node);
 
         SeparatedSyntaxList<SyntaxNode> GetVariablesOfLocalDeclarationStatement(SyntaxNode node);
-        SyntaxNode GetInitializerOfVariableDeclarator(SyntaxNode node);
+        SyntaxNode? GetInitializerOfVariableDeclarator(SyntaxNode node);
         SyntaxNode? GetValueOfEqualsValueClause(SyntaxNode? node);
 
         /// <summary>

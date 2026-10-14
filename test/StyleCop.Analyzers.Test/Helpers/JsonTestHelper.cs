@@ -21,7 +21,9 @@ namespace StyleCop.Analyzers.Test.Helpers
                         break;
 
                     case JsonValueType.Object:
-                        fallback[pair.Key] = MergeJsonObjects(pair.Value.AsJsonObject, fallback[pair.Key].AsJsonObject);
+                        fallback[pair.Key] = MergeJsonObjects(
+                            pair.Value.AsJsonObject ?? throw new InvalidOperationException("Expected the priority value to be a JSON object."),
+                            fallback[pair.Key].AsJsonObject ?? throw new InvalidOperationException("Expected the fallback value to be a JSON object."));
                         break;
 
                     default:

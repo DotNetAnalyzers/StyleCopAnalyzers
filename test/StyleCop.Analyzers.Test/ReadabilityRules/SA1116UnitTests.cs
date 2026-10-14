@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System.Collections.Generic;
@@ -44,11 +42,11 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             yield return new object[] { $"long ll = this[2,{delimiter} 2];", $"long ll = this[{fixDelimiter}2,{delimiter} 2];", 24 };
         }
 
-        public static IEnumerable<object[]> ValidTestExpressions()
+        public static IEnumerable<object?[]> ValidTestExpressions()
         {
-            yield return new object[] { $"System.Action func = () => Bar(0, 3)", null, 0 };
-            yield return new object[] { $"System.Action<int> func = x => Bar(x, 3)", null, 0 };
-            yield return new object[] { $"System.Action func = delegate {{ Bar(0, 0); }}", null, 0 };
+            yield return new object?[] { $"System.Action func = () => Bar(0, 3)", null, 0 };
+            yield return new object?[] { $"System.Action<int> func = x => Bar(x, 3)", null, 0 };
+            yield return new object?[] { $"System.Action func = delegate {{ Bar(0, 0); }}", null, 0 };
         }
 
         [Theory]
@@ -168,7 +166,7 @@ class Derived : Base
         [Theory]
         [MemberData(nameof(GetTestExpressions), "", "")]
         [MemberData(nameof(ValidTestExpressions))]
-        public async Task TestValidExpressionAsync(string expression, string fixedExpression, int column)
+        public async Task TestValidExpressionAsync(string expression, string? fixedExpression, int column)
         {
             // Not needed for this test
             _ = fixedExpression;

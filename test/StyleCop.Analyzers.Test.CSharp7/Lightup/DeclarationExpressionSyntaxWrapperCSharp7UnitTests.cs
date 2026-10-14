@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp7.Lightup
 {
     using System;
@@ -69,13 +67,13 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var syntaxNode = default(SyntaxNode);
             var declarationExpressionSyntax = (DeclarationExpressionSyntaxWrapper)syntaxNode;
 
-            ExpressionSyntax expressionSyntax = declarationExpressionSyntax;
+            ExpressionSyntax? expressionSyntax = declarationExpressionSyntax;
             Assert.Null(expressionSyntax);
 
             declarationExpressionSyntax = (DeclarationExpressionSyntaxWrapper)expressionSyntax;
             Assert.Null(declarationExpressionSyntax.SyntaxNode);
 
-            SyntaxNode syntax = declarationExpressionSyntax;
+            SyntaxNode? syntax = declarationExpressionSyntax;
             Assert.Null(syntax);
         }
 
@@ -87,13 +85,13 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
                 SyntaxFactory.DiscardDesignation());
             var declarationExpressionSyntax = (DeclarationExpressionSyntaxWrapper)syntaxNode;
 
-            ExpressionSyntax expressionSyntax = declarationExpressionSyntax;
+            ExpressionSyntax? expressionSyntax = declarationExpressionSyntax;
             Assert.Same(syntaxNode, expressionSyntax);
 
             declarationExpressionSyntax = (DeclarationExpressionSyntaxWrapper)expressionSyntax;
             Assert.Same(syntaxNode, declarationExpressionSyntax.SyntaxNode);
 
-            SyntaxNode syntax = declarationExpressionSyntax;
+            SyntaxNode? syntax = declarationExpressionSyntax;
             Assert.Same(syntaxNode, syntax);
         }
 

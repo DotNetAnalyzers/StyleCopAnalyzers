@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.OrderingRules
 {
     using System.Collections.Immutable;
@@ -74,7 +72,7 @@ namespace StyleCop.Analyzers.OrderingRules
             var keywordToken = typeDeclarationNode.Keyword;
 
             var replacementModifiers = DeclarationModifiersHelper.AddModifiers(typeDeclarationNode.Modifiers, ref keywordToken, accessModifierKinds);
-            var replacementNode = ReplaceModifiers(typeDeclarationNode, replacementModifiers);
+            var replacementNode = ReplaceModifiers(typeDeclarationNode, replacementModifiers)!;
             replacementNode = ReplaceKeyword(replacementNode, keywordToken);
             var newSyntaxRoot = syntaxRoot.ReplaceNode(typeDeclarationNode, replacementNode);
             return document.WithSyntaxRoot(newSyntaxRoot);
@@ -104,7 +102,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
         // This code was copied from the Roslyn code base (and slightly modified). It can be removed if
         // TypeDeclarationSyntaxExtensions.WithModifiers is made public (Roslyn issue #2186)
-        private static TypeDeclarationSyntax ReplaceModifiers(TypeDeclarationSyntax node, SyntaxTokenList modifiers)
+        private static TypeDeclarationSyntax? ReplaceModifiers(TypeDeclarationSyntax node, SyntaxTokenList modifiers)
         {
             switch (node.Kind())
             {
@@ -126,7 +124,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
         // This code was copied from the Roslyn code base (and slightly modified). It can be removed if
         // TypeDeclarationSyntaxExtensions.WithModifiers is made public (Roslyn issue #2186)
-        private static TypeDeclarationSyntax ReplaceKeyword(TypeDeclarationSyntax node, SyntaxToken keyword)
+        private static TypeDeclarationSyntax? ReplaceKeyword(TypeDeclarationSyntax node, SyntaxToken keyword)
         {
             switch (node.Kind())
             {

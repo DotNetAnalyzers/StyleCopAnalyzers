@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Helpers
 {
     using System;
@@ -23,7 +21,7 @@ namespace StyleCop.Analyzers.Helpers
 
         private readonly SyntaxTree tree;
         private readonly object gate = new object();
-        private Collected collected;
+        private Collected? collected;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SyntaxTreeTokens"/> class.
@@ -95,7 +93,8 @@ namespace StyleCop.Analyzers.Helpers
                     Volatile.Write(ref this.collected, this.Collect(cancellationToken));
                 }
 
-                return this.collected;
+                // The lock protects initialization; Volatile.Write has published the collected tokens.
+                return this.collected!;
             }
         }
 

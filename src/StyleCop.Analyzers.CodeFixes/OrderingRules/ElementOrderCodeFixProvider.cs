@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.OrderingRules
 {
     using System.Collections.Generic;
@@ -91,9 +89,9 @@ namespace StyleCop.Analyzers.OrderingRules
             ImmutableArray<OrderingTrait> elementOrder,
             SyntaxNode syntaxRoot,
             IndentationSettings indentationSettings,
-            SemanticModel semanticModel = null,
+            SemanticModel? semanticModel = null,
             CancellationToken cancellationToken = default,
-            Dictionary<string, Dictionary<string, ImmutableHashSet<string>>> fieldDependenciesByType = null)
+            Dictionary<string, Dictionary<string, ImmutableHashSet<string>>>? fieldDependenciesByType = null)
         {
             var parentDeclaration = memberDeclaration.Parent;
             var memberToMove = new MemberOrderHelper(memberDeclaration, elementOrder);
@@ -122,11 +120,11 @@ namespace StyleCop.Analyzers.OrderingRules
             ImmutableArray<OrderingTrait> elementOrder,
             SyntaxNode syntaxRoot,
             IndentationSettings indentationSettings,
-            SemanticModel semanticModel,
+            SemanticModel? semanticModel,
             CancellationToken cancellationToken,
-            Dictionary<string, Dictionary<string, ImmutableHashSet<string>>> fieldDependenciesByType)
+            Dictionary<string, Dictionary<string, ImmutableHashSet<string>>>? fieldDependenciesByType)
         {
-            Dictionary<string, ImmutableHashSet<string>> fieldDependencies = null;
+            Dictionary<string, ImmutableHashSet<string>>? fieldDependencies = null;
             if (fieldDependenciesByType != null)
             {
                 fieldDependenciesByType.TryGetValue(GetTypeKey(typeDeclarationNode), out fieldDependencies);
@@ -155,7 +153,7 @@ namespace StyleCop.Analyzers.OrderingRules
             ImmutableArray<OrderingTrait> elementOrder,
             SyntaxNode syntaxRoot,
             IndentationSettings indentationSettings,
-            Dictionary<string, ImmutableHashSet<string>> fieldDependencies)
+            Dictionary<string, ImmutableHashSet<string>>? fieldDependencies)
         {
             if (memberOrder.Member.ContainsDirectives)
             {
@@ -347,7 +345,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
             protected override string CodeActionTitle => OrderingResources.ElementOrderCodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+            protected override async Task<SyntaxNode?> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
                 if (diagnostics.IsEmpty)
                 {

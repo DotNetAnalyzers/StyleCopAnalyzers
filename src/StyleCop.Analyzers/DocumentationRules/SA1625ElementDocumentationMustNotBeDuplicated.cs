@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
@@ -100,7 +98,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     continue;
                 }
 
-                if (!documentationTexts.Add(documentation))
+                if (!documentationTexts.Add(documentation!))
                 {
                     // Add violation
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, documentationSyntax.GetLocation()));
@@ -153,7 +151,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             objectPool.ClearAndFree(documentationTexts);
         }
 
-        private static bool ShouldSkipElement(string element, string parameterNotUsed)
+        private static bool ShouldSkipElement(string? element, string parameterNotUsed)
         {
             return string.IsNullOrWhiteSpace(element) || string.Equals(element, parameterNotUsed, StringComparison.Ordinal);
         }

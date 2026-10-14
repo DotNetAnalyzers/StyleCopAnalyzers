@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.LayoutRules
 {
     using System.Collections.Generic;
@@ -120,7 +118,7 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private SyntaxNode RegisterLocalFunctionStatementCodeFix(SyntaxNode syntaxRoot, LocalFunctionStatementSyntaxWrapper node, IndentationSettings indentationSettings)
         {
-            return this.ReformatElement(syntaxRoot, node, node.Body.OpenBraceToken, node.Body.CloseBraceToken, indentationSettings);
+            return this.ReformatElement(syntaxRoot, node.SyntaxNode!, node.Body!.OpenBraceToken, node.Body!.CloseBraceToken, indentationSettings);
         }
 
         private SyntaxNode RegisterNamespaceDeclarationCodeFix(SyntaxNode syntaxRoot, NamespaceDeclarationSyntax node, IndentationSettings indentationSettings)

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.LightJson
 {
     using System;
@@ -183,13 +181,13 @@ namespace StyleCop.Analyzers.Test.LightJson
         public void TestStringIndexer()
         {
             Assert.ThrowsAny<InvalidOperationException>(() => new JsonValue(false)["key"]);
-            Assert.ThrowsAny<InvalidOperationException>(() => new JsonValue(false)[null]);
+            Assert.ThrowsAny<InvalidOperationException>(() => new JsonValue(false)[null!]);
             Assert.ThrowsAny<InvalidOperationException>(() => new JsonValue(false) { ["key"] = "value" });
 
             Assert.Equal(JsonValue.Null, new JsonValue(new JsonObject())["key"]);
             var value = new JsonValue(new JsonObject()) { ["key"] = "value" };
             Assert.Equal("value", value["key"].AsString);
-            Assert.ThrowsAny<ArgumentNullException>(() => new JsonValue(new JsonObject())[null]);
+            Assert.ThrowsAny<ArgumentNullException>(() => new JsonValue(new JsonObject())[null!]);
         }
 
         [Fact]
@@ -278,23 +276,23 @@ namespace StyleCop.Analyzers.Test.LightJson
             Assert.Null((double?)new JsonValue(default(JsonObject)));
 
             // (string)(JsonValue)
-            Assert.Null((string)new JsonValue(false));
-            Assert.Null((string)new JsonValue(true));
-            Assert.Null((string)new JsonValue(1.0));
-            Assert.Equal("text", (string)new JsonValue("text"));
-            Assert.Null((string)new JsonValue(new JsonObject()));
-            Assert.Null((string)new JsonValue(default(JsonObject)));
-            Assert.Null((string)new JsonValue(new JsonArray()));
+            Assert.Null((string?)new JsonValue(false));
+            Assert.Null((string?)new JsonValue(true));
+            Assert.Null((string?)new JsonValue(1.0));
+            Assert.Equal("text", (string?)new JsonValue("text"));
+            Assert.Null((string?)new JsonValue(new JsonObject()));
+            Assert.Null((string?)new JsonValue(default(JsonObject)));
+            Assert.Null((string?)new JsonValue(new JsonArray()));
 
             // (JsonObject)(JsonValue)
-            Assert.Null((JsonObject)new JsonValue(false));
-            Assert.IsType<JsonObject>((JsonObject)new JsonValue(new JsonObject()));
-            Assert.Null((JsonObject)new JsonValue(default(JsonObject)));
+            Assert.Null((JsonObject?)new JsonValue(false));
+            Assert.IsType<JsonObject>((JsonObject?)new JsonValue(new JsonObject()));
+            Assert.Null((JsonObject?)new JsonValue(default(JsonObject)));
 
             // (JsonArray)(JsonValue)
-            Assert.Null((JsonArray)new JsonValue(false));
-            Assert.IsType<JsonArray>((JsonArray)new JsonValue(new JsonArray()));
-            Assert.Null((JsonArray)new JsonValue(default(JsonArray)));
+            Assert.Null((JsonArray?)new JsonValue(false));
+            Assert.IsType<JsonArray>((JsonArray?)new JsonValue(new JsonArray()));
+            Assert.Null((JsonArray?)new JsonValue(default(JsonArray)));
 
             // (DateTime)(JsonValue)
             Assert.Equal(DateTime.MinValue, (DateTime)new JsonValue(false));
@@ -367,10 +365,10 @@ namespace StyleCop.Analyzers.Test.LightJson
             var proxy = Activator.CreateInstance(proxyType, obj);
             Assert.NotNull(proxy);
 
-            var objectView = proxyType.GetTypeInfo().GetDeclaredProperty("ObjectView").GetValue(proxy);
-            var arrayView = proxyType.GetTypeInfo().GetDeclaredProperty("ArrayView").GetValue(proxy);
-            var jsonValueType = proxyType.GetTypeInfo().GetDeclaredProperty("Type").GetValue(proxy);
-            var value = proxyType.GetTypeInfo().GetDeclaredProperty("Value").GetValue(proxy);
+            var objectView = Assert.IsAssignableFrom<PropertyInfo>(proxyType.GetTypeInfo().GetDeclaredProperty("ObjectView")).GetValue(proxy);
+            var arrayView = Assert.IsAssignableFrom<PropertyInfo>(proxyType.GetTypeInfo().GetDeclaredProperty("ArrayView")).GetValue(proxy);
+            var jsonValueType = Assert.IsAssignableFrom<PropertyInfo>(proxyType.GetTypeInfo().GetDeclaredProperty("Type")).GetValue(proxy);
+            var value = Assert.IsAssignableFrom<PropertyInfo>(proxyType.GetTypeInfo().GetDeclaredProperty("Value")).GetValue(proxy);
 
             Assert.Same(obj.AsJsonObject, objectView);
             Assert.Same(obj.AsJsonArray, arrayView);
@@ -394,10 +392,10 @@ namespace StyleCop.Analyzers.Test.LightJson
             var proxy = Activator.CreateInstance(proxyType, obj);
             Assert.NotNull(proxy);
 
-            var objectView = proxyType.GetTypeInfo().GetDeclaredProperty("ObjectView").GetValue(proxy);
-            var arrayView = proxyType.GetTypeInfo().GetDeclaredProperty("ArrayView").GetValue(proxy);
-            var jsonValueType = proxyType.GetTypeInfo().GetDeclaredProperty("Type").GetValue(proxy);
-            var value = proxyType.GetTypeInfo().GetDeclaredProperty("Value").GetValue(proxy);
+            var objectView = Assert.IsAssignableFrom<PropertyInfo>(proxyType.GetTypeInfo().GetDeclaredProperty("ObjectView")).GetValue(proxy);
+            var arrayView = Assert.IsAssignableFrom<PropertyInfo>(proxyType.GetTypeInfo().GetDeclaredProperty("ArrayView")).GetValue(proxy);
+            var jsonValueType = Assert.IsAssignableFrom<PropertyInfo>(proxyType.GetTypeInfo().GetDeclaredProperty("Type")).GetValue(proxy);
+            var value = Assert.IsAssignableFrom<PropertyInfo>(proxyType.GetTypeInfo().GetDeclaredProperty("Value")).GetValue(proxy);
 
             Assert.Same(obj.AsJsonObject, objectView);
             Assert.Same(obj.AsJsonArray, arrayView);
@@ -421,10 +419,10 @@ namespace StyleCop.Analyzers.Test.LightJson
             var proxy = Activator.CreateInstance(proxyType, obj);
             Assert.NotNull(proxy);
 
-            var objectView = proxyType.GetTypeInfo().GetDeclaredProperty("ObjectView").GetValue(proxy);
-            var arrayView = proxyType.GetTypeInfo().GetDeclaredProperty("ArrayView").GetValue(proxy);
-            var jsonValueType = proxyType.GetTypeInfo().GetDeclaredProperty("Type").GetValue(proxy);
-            var value = proxyType.GetTypeInfo().GetDeclaredProperty("Value").GetValue(proxy);
+            var objectView = Assert.IsAssignableFrom<PropertyInfo>(proxyType.GetTypeInfo().GetDeclaredProperty("ObjectView")).GetValue(proxy);
+            var arrayView = Assert.IsAssignableFrom<PropertyInfo>(proxyType.GetTypeInfo().GetDeclaredProperty("ArrayView")).GetValue(proxy);
+            var jsonValueType = Assert.IsAssignableFrom<PropertyInfo>(proxyType.GetTypeInfo().GetDeclaredProperty("Type")).GetValue(proxy);
+            var value = Assert.IsAssignableFrom<PropertyInfo>(proxyType.GetTypeInfo().GetDeclaredProperty("Value")).GetValue(proxy);
 
             Assert.Same(obj.AsJsonObject, objectView);
             Assert.Same(obj.AsJsonArray, arrayView);

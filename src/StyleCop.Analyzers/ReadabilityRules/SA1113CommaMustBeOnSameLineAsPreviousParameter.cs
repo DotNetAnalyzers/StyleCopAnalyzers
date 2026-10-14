@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
@@ -265,7 +263,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void CheckIfCommasAreAtTheSameLineAsThePreviousParameter(SyntaxNodeAnalysisContext context, SyntaxNodeOrTokenList nodeOrTokenList)
         {
-            SyntaxNode previousNode = null;
+            SyntaxNode? previousNode = null;
 
             // If index is even we expecting parameter syntax node, otherwise we expecting comma token.
             for (int index = 0, count = nodeOrTokenList.Count; index < count; ++index)
@@ -289,7 +287,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                         return;
                     }
 
-                    if (previousNode.GetEndLine() < nodeOrToken.GetLineSpan().StartLinePosition.Line)
+                    if (previousNode!.GetEndLine() < nodeOrToken.GetLineSpan().StartLinePosition.Line)
                     {
                         var properties = TokenSpacingProperties.RemovePrecedingPreserveLayout;
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, nodeOrToken.GetLocation(), properties));

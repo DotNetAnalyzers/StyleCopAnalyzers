@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp11.Settings
 {
     using System.Collections.Generic;
@@ -71,7 +69,10 @@ stylecop.documentation.variables.licenseName = MIT
             }
 
             public override bool TryGetValue(string key, out string value)
-                => this.result.AnalyzerOptions.TryGetValue(key, out value);
+            {
+                // Roslyn's override contract does not annotate the null value returned for missing keys.
+                return this.result.AnalyzerOptions.TryGetValue(key, out value!);
+            }
         }
 
         private sealed class NoKeysAnalyzerConfigOptionsProvider : AnalyzerConfigOptionsProvider
@@ -105,7 +106,10 @@ stylecop.documentation.variables.licenseName = MIT
             public override IEnumerable<string> Keys => this.result.AnalyzerOptions.Keys;
 
             public override bool TryGetValue(string key, out string value)
-                => this.result.AnalyzerOptions.TryGetValue(key, out value);
+            {
+                // Roslyn's override contract does not annotate the null value returned for missing keys.
+                return this.result.AnalyzerOptions.TryGetValue(key, out value!);
+            }
         }
 
         private sealed class KeysAwareAnalyzerConfigOptionsProvider : AnalyzerConfigOptionsProvider

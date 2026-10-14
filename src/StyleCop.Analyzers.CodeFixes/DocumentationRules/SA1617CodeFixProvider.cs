@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Generic;
@@ -59,7 +57,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var node = root.FindNode(diagnostic.Location.SourceSpan);
-            var documentation = node.GetDocumentationCommentTriviaSyntax();
+            var documentation = node.GetDocumentationCommentTriviaSyntax()!;
 
             // Check if the return value is documented
             var returnsElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.ReturnsXmlTag);
@@ -71,7 +69,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             // Find the node previous to the <returns> node to determine if it is an XML comment indicator. If so, we
             // will remove that node from the syntax tree as well.
-            SyntaxNode previous = null;
+            SyntaxNode? previous = null;
             foreach (var item in documentation.ChildNodes())
             {
                 if (item.Equals(returnsElement))

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
@@ -492,7 +490,7 @@ namespace StyleCop.Analyzers.SpacingRules
             CheckToken(context, switchExpressionArm.EqualsGreaterThanToken, true, true, true);
         }
 
-        private static void CheckToken(SyntaxNodeAnalysisContext context, SyntaxToken token, bool withLeadingWhitespace, bool allowAtEndOfLine, bool withTrailingWhitespace, string tokenText = null, bool allowTrailingComment = false)
+        private static void CheckToken(SyntaxNodeAnalysisContext context, SyntaxToken token, bool withLeadingWhitespace, bool allowAtEndOfLine, bool withTrailingWhitespace, string? tokenText = null, bool allowTrailingComment = false)
         {
             tokenText = tokenText ?? token.Text;
 
@@ -500,7 +498,7 @@ namespace StyleCop.Analyzers.SpacingRules
             CheckTokenTrailingWhitespace(context, token, allowAtEndOfLine, withTrailingWhitespace, tokenText, allowTrailingComment);
         }
 
-        private static void CheckTokenLeadingWhitespace(SyntaxNodeAnalysisContext context, SyntaxToken token, bool withLeadingWhitespace, string tokenText = null)
+        private static void CheckTokenLeadingWhitespace(SyntaxNodeAnalysisContext context, SyntaxToken token, bool withLeadingWhitespace, string? tokenText = null)
         {
             tokenText = tokenText ?? token.Text;
 
@@ -531,7 +529,7 @@ namespace StyleCop.Analyzers.SpacingRules
             }
         }
 
-        private static void CheckTokenTrailingWhitespace(SyntaxNodeAnalysisContext context, SyntaxToken token, bool allowAtEndOfLine, bool withTrailingWhitespace, string tokenText = null, bool allowTrailingComment = false)
+        private static void CheckTokenTrailingWhitespace(SyntaxNodeAnalysisContext context, SyntaxToken token, bool allowAtEndOfLine, bool withTrailingWhitespace, string? tokenText = null, bool allowTrailingComment = false)
         {
             tokenText = tokenText ?? token.Text;
 

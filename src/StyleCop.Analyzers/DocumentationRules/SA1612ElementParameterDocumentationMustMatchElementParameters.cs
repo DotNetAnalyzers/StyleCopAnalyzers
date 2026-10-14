@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Generic;
@@ -63,16 +61,14 @@ namespace StyleCop.Analyzers.DocumentationRules
             var node = context.Node;
             var identifier = GetIdentifier(node);
 
-            bool supportedIdentifier = identifier != null;
-            if (!supportedIdentifier)
+            if (identifier == null)
             {
                 return;
             }
 
             var parameterList = GetParameters(node)?.ToImmutableArray();
 
-            bool hasParameters = parameterList?.Any() ?? false;
-            if (!hasParameters)
+            if (parameterList == null || !parameterList.Value.Any())
             {
                 return;
             }
@@ -91,7 +87,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     return;
                 }
 
-                var location = nameAttributeSyntax.Identifier.Identifier.GetLocation();
+                var location = nameAttributeSyntax!.Identifier.Identifier.GetLocation();
 
                 var parentParameter = parentParameters.FirstOrDefault(s => s.Identifier.ValueText == nameAttributeText);
                 if (parentParameter == null)
@@ -135,8 +131,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             var node = context.Node;
             var identifier = GetIdentifier(node);
 
-            bool supportedIdentifier = identifier != null;
-            if (!supportedIdentifier)
+            if (identifier == null)
             {
                 return;
             }
@@ -144,8 +139,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             var identifierLocation = identifier.Value.GetLocation();
             var parameterList = GetParameters(node)?.ToImmutableArray();
 
-            bool hasParameters = parameterList?.Any() ?? false;
-            if (!hasParameters)
+            if (parameterList == null || !parameterList.Value.Any())
             {
                 return;
             }
@@ -204,7 +198,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
         }
 
-        private static IEnumerable<ParameterSyntax> GetParameters(SyntaxNode node)
+        private static IEnumerable<ParameterSyntax>? GetParameters(SyntaxNode node)
         {
             return (node as BaseMethodDeclarationSyntax)?.ParameterList?.Parameters
                 ?? (node as IndexerDeclarationSyntax)?.ParameterList?.Parameters

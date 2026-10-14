@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Helpers.ObjectPools
 {
     // This code was copied from the Roslyn code base (and slightly modified)
@@ -19,9 +17,9 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
     {
         private readonly Action<ObjectPool<T>, T> releaser;
         private readonly ObjectPool<T> pool;
-        private T pooledObject;
+        private T? pooledObject;
 
-        public PooledObject(ObjectPool<T> pool, Func<ObjectPool<T>, T> allocator, Action<ObjectPool<T>, T> releaser)
+        public PooledObject(ObjectPool<T> pool, Func<ObjectPool<T>, T?> allocator, Action<ObjectPool<T>, T> releaser)
             : this()
         {
             this.pool = pool;
@@ -29,7 +27,7 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
             this.releaser = releaser;
         }
 
-        public readonly T Object
+        public readonly T? Object
         {
             get
             {

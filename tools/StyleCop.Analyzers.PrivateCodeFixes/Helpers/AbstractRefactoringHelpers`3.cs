@@ -5,8 +5,6 @@
 
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-#nullable disable warnings
-
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -364,7 +362,7 @@ namespace Analyzer.Utilities
                 // is wanted.
                 // `var a = 1, `c = 2, d = 3`;
                 // -> `var a = 1`, c = 2, d = 3;
-                var variables = syntaxFacts.GetVariablesOfLocalDeclarationStatement(localDeclarationStatement);
+                var variables = syntaxFacts.GetVariablesOfLocalDeclarationStatement(localDeclarationStatement!);
                 if (variables.Count == 1)
                 {
                     var declaredVariable = variables.First();

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Helpers
 {
     using System.Collections.Generic;
@@ -20,9 +18,9 @@ namespace StyleCop.Analyzers.Helpers
     {
         protected abstract string CodeActionTitle { get; }
 
-        public override Task<CodeAction> GetFixAsync(FixAllContext fixAllContext)
+        public override Task<CodeAction?> GetFixAsync(FixAllContext fixAllContext)
         {
-            CodeAction fixAction;
+            CodeAction? fixAction;
             switch (fixAllContext.Scope)
             {
             case FixAllScope.Document:
@@ -66,7 +64,7 @@ namespace StyleCop.Analyzers.Helpers
         /// <para>-or-</para>
         /// <para><see langword="null"/>, if no changes were made to the document.</para>
         /// </returns>
-        protected abstract Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics);
+        protected abstract Task<SyntaxNode?> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics);
 
         private async Task<Document> GetDocumentFixesAsync(FixAllContext fixAllContext)
         {
@@ -91,7 +89,7 @@ namespace StyleCop.Analyzers.Helpers
             var documentDiagnosticsToFix = await FixAllContextHelper.GetDocumentDiagnosticsToFixAsync(fixAllContext).ConfigureAwait(false);
 
             Solution solution = fixAllContext.Solution;
-            List<Task<SyntaxNode>> newDocuments = new List<Task<SyntaxNode>>(documents.Length);
+            List<Task<SyntaxNode?>> newDocuments = new List<Task<SyntaxNode?>>(documents.Length);
             foreach (var document in documents)
             {
                 ImmutableArray<Diagnostic> diagnostics;

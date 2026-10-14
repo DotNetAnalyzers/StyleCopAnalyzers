@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.Lightup
 {
     using System;
@@ -30,7 +28,7 @@ namespace StyleCop.Analyzers.Test.Lightup
                 Assert.Null(value);
                 Assert.Empty(provider.GlobalOptions.GetKeys());
                 Assert.Empty(provider.GetOptions(SyntaxFactory.ParseSyntaxTree(string.Empty)).GetKeys());
-                Assert.Throws<ArgumentNullException>(() => provider.GetOptions((SyntaxTree)null));
+                Assert.Throws<ArgumentNullException>(() => provider.GetOptions((SyntaxTree)null!));
             }
             else
             {
@@ -64,24 +62,24 @@ namespace StyleCop.Analyzers.Test.Lightup
             var propertyAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<SyntaxNode, object>(typeof(SyntaxNode), "NonExistentProperty");
             Assert.NotNull(propertyAccessor);
             Assert.Null(propertyAccessor(SyntaxFactory.AccessorList()));
-            Assert.Throws<NullReferenceException>(() => propertyAccessor(null));
+            Assert.Throws<NullReferenceException>(() => propertyAccessor(null!));
 
-            var withPropertyAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<SyntaxNode, object>(typeof(SyntaxNode), "NonExistentProperty");
+            var withPropertyAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<SyntaxNode, object?>(typeof(SyntaxNode), "NonExistentProperty");
             Assert.NotNull(withPropertyAccessor);
             Assert.NotNull(withPropertyAccessor(SyntaxFactory.AccessorList(), null));
             Assert.ThrowsAny<NotSupportedException>(() => withPropertyAccessor(SyntaxFactory.AccessorList(), new object()));
-            Assert.Throws<NullReferenceException>(() => withPropertyAccessor(null, new object()));
+            Assert.Throws<NullReferenceException>(() => withPropertyAccessor(null!, new object()));
 
             var separatedListPropertyAccessor = LightupHelpers.CreateSeparatedSyntaxListPropertyAccessor<SyntaxNode, SyntaxNode>(typeof(SyntaxNode), "NonExistentProperty");
             Assert.NotNull(separatedListPropertyAccessor);
             Assert.NotNull(separatedListPropertyAccessor(SyntaxFactory.AccessorList()));
-            Assert.Throws<NullReferenceException>(() => separatedListPropertyAccessor(null));
+            Assert.Throws<NullReferenceException>(() => separatedListPropertyAccessor(null!));
 
             var separatedListWithPropertyAccessor = LightupHelpers.CreateSeparatedSyntaxListWithPropertyAccessor<SyntaxNode, SyntaxNode>(typeof(SyntaxNode), "NonExistentProperty");
             Assert.NotNull(separatedListWithPropertyAccessor);
             Assert.NotNull(separatedListWithPropertyAccessor(SyntaxFactory.AccessorList(), null));
             Assert.ThrowsAny<NotSupportedException>(() => separatedListWithPropertyAccessor(SyntaxFactory.AccessorList(), new SeparatedSyntaxListWrapper<SyntaxNode>.AutoWrapSeparatedSyntaxList<LiteralExpressionSyntax>(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)))));
-            Assert.Throws<NullReferenceException>(() => separatedListWithPropertyAccessor(null, SeparatedSyntaxListWrapper<SyntaxNode>.UnsupportedEmpty));
+            Assert.Throws<NullReferenceException>(() => separatedListWithPropertyAccessor(null!, SeparatedSyntaxListWrapper<SyntaxNode>.UnsupportedEmpty));
         }
 
         [Fact]

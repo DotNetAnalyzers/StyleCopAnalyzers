@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.LayoutRules
 {
     using System;
@@ -115,8 +113,8 @@ namespace StyleCop.Analyzers.LayoutRules
                     //   allowDoWhileOnClosingBrace setting is enabled.
                     var nextToken = braceToken.GetNextToken();
                     var nextTokenLine = nextToken.IsKind(SyntaxKind.None) ? -1 : LocationHelpers.GetLineSpan(nextToken).StartLinePosition.Line;
-                    var isMultiDimensionArrayInitializer = braceToken.IsKind(SyntaxKind.OpenBraceToken) && braceToken.Parent.IsKind(SyntaxKind.ArrayInitializerExpression) && braceToken.Parent.Parent.IsKind(SyntaxKind.ArrayInitializerExpression);
-                    var allowDoWhileOnClosingBrace = settings.LayoutRules.AllowDoWhileOnClosingBrace && nextToken.IsKind(SyntaxKind.WhileKeyword) && (braceToken.Parent?.IsKind(SyntaxKind.Block) ?? false) && (braceToken.Parent.Parent?.IsKind(SyntaxKind.DoStatement) ?? false);
+                    var isMultiDimensionArrayInitializer = braceToken.IsKind(SyntaxKind.OpenBraceToken) && braceToken.Parent.IsKind(SyntaxKind.ArrayInitializerExpression) && braceToken.Parent!.Parent.IsKind(SyntaxKind.ArrayInitializerExpression);
+                    var allowDoWhileOnClosingBrace = settings.LayoutRules.AllowDoWhileOnClosingBrace && nextToken.IsKind(SyntaxKind.WhileKeyword) && (braceToken.Parent?.IsKind(SyntaxKind.Block) ?? false) && (braceToken.Parent!.Parent?.IsKind(SyntaxKind.DoStatement) ?? false);
 
                     if ((nextTokenLine == braceLine) &&
                         (!braceToken.IsKind(SyntaxKind.CloseBraceToken) || !IsValidFollowingToken(nextToken)) &&
@@ -276,7 +274,7 @@ namespace StyleCop.Analyzers.LayoutRules
             protected override string CodeActionTitle =>
                 LayoutResources.SA1500CodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+            protected override async Task<SyntaxNode?> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
                 if (diagnostics.IsEmpty)
                 {

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
@@ -63,9 +61,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (CheckFieldName(fieldReference.Field))
             {
-                var location = fieldReference.WrappedOperation.Syntax is MemberAccessExpressionSyntax memberAccessExpression
+                var location = fieldReference.WrappedOperation!.Syntax is MemberAccessExpressionSyntax memberAccessExpression
                     ? memberAccessExpression.Name.GetLocation()
-                    : fieldReference.WrappedOperation.Syntax.GetLocation();
+                    : fieldReference.WrappedOperation!.Syntax.GetLocation();
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
             }
         }

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test
 {
     using System.Collections.Generic;
@@ -66,7 +64,7 @@ class TypeName
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
                 ImmutableArray.Create(Descriptor);
 
-            public AnalyzerExtensionsTests AnalyzerExtensionsTests
+            public AnalyzerExtensionsTests? AnalyzerExtensionsTests
             {
                 get;
                 set;
@@ -85,6 +83,7 @@ class TypeName
                             {
                                 Assert.IsAssignableFrom<BlockSyntax>(syntaxNodeContext.Node);
                                 Assert.NotNull(settings);
+                                Assert.NotNull(this.AnalyzerExtensionsTests);
                                 this.AnalyzerExtensionsTests.invokedBlockCallback = true;
                             },
                             SyntaxKind.Block);
@@ -93,6 +92,7 @@ class TypeName
                             {
                                 Assert.IsAssignableFrom<MethodDeclarationSyntax>(syntaxNodeContext.Node);
                                 Assert.NotNull(settings);
+                                Assert.NotNull(this.AnalyzerExtensionsTests);
                                 this.AnalyzerExtensionsTests.invokedMethodDeclarationCallback = true;
                             },
                             ImmutableArray.Create(SyntaxKind.MethodDeclaration));

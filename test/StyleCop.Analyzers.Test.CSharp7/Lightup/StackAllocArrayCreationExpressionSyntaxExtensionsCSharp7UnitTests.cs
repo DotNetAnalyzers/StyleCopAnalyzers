@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp7.Lightup
 {
     using Microsoft.CodeAnalysis.CSharp;
@@ -17,7 +15,9 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var stackAllocSyntax = SyntaxFactory.StackAllocArrayCreationExpression(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword)))
                 .WithInitializer(SyntaxFactory.InitializerExpression(SyntaxKind.ArrayInitializerExpression));
             Assert.NotNull(StackAllocArrayCreationExpressionSyntaxExtensions.Initializer(stackAllocSyntax));
-            Assert.Equal(SyntaxKind.ArrayInitializerExpression, StackAllocArrayCreationExpressionSyntaxExtensions.Initializer(stackAllocSyntax).Kind());
+            var initializer = StackAllocArrayCreationExpressionSyntaxExtensions.Initializer(stackAllocSyntax);
+            Assert.NotNull(initializer);
+            Assert.Equal(SyntaxKind.ArrayInitializerExpression, initializer.Kind());
         }
 
         [Fact]

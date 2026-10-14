@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
@@ -63,7 +61,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
             var options = document.Project.Solution.Workspace.Options;
             var baseFieldDeclaration = (BaseFieldDeclarationSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
-            List<BaseFieldDeclarationSyntax> newFieldDeclarations = SplitDeclaration(sourceText, options, baseFieldDeclaration);
+            List<BaseFieldDeclarationSyntax>? newFieldDeclarations = SplitDeclaration(sourceText, options, baseFieldDeclaration);
 
             if (newFieldDeclarations != null)
             {
@@ -76,7 +74,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             return document;
         }
 
-        private static List<BaseFieldDeclarationSyntax> SplitDeclaration(SourceText sourceText, OptionSet options, BaseFieldDeclarationSyntax baseFieldDeclaration)
+        private static List<BaseFieldDeclarationSyntax>? SplitDeclaration(SourceText sourceText, OptionSet options, BaseFieldDeclarationSyntax baseFieldDeclaration)
         {
             if (baseFieldDeclaration is FieldDeclarationSyntax fieldDeclaration)
             {
@@ -110,7 +108,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             SeparatedSyntaxList<VariableDeclaratorSyntax> variables = declaration.Variables;
             VariableDeclaratorSyntax first = variables.First();
-            BaseFieldDeclarationSyntax previous = null;
+            BaseFieldDeclarationSyntax? previous = null;
             var newFieldDeclarations = new List<BaseFieldDeclarationSyntax>(variables.Count);
 
             foreach (SyntaxNodeOrToken nodeOrToken in variables.GetWithSeparators())
@@ -171,7 +169,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
             }
 
-            newFieldDeclarations.Add(previous.WithTrailingTrivia(declarationTrailingTrivia));
+            newFieldDeclarations.Add(previous!.WithTrailingTrivia(declarationTrailingTrivia));
             return newFieldDeclarations;
         }
     }
