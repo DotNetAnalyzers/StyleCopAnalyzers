@@ -159,6 +159,15 @@
   <data name="StaticConstructorKeywordText" xml:space="preserve">
     <value>statické</value>
   </data>
+  <data name="SA1653Description" xml:space="preserve">
+    <value>Pouze jedna deklarace částečného typu má obsahovat dokumentaci &lt;summary&gt;. V ostatních částech použijte &lt;content&gt;.</value>
+  </data>
+  <data name="SA1653MessageFormat" xml:space="preserve">
+    <value>Více částečných deklarací typu '{0}' obsahuje dokumentaci &lt;summary&gt;; v ostatních částech použijte &lt;content&gt;</value>
+  </data>
+  <data name="SA1653Title" xml:space="preserve">
+    <value>Pouze jedna částečná deklarace má obsahovat souhrnnou dokumentaci</value>
+  </data>
   <data name="StaticConstructorStandardTextFirstPart" xml:space="preserve">
     <value>Inicializuje statické členy {0} </value>
   </data>
