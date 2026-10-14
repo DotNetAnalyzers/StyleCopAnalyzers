@@ -8,6 +8,13 @@ namespace StyleCop.Analyzers.CodeGeneration
 
     internal static class GeneratorSyntaxExtensions
     {
+        public static TSyntax WithNullableContext<TSyntax>(this TSyntax syntax)
+            where TSyntax : SyntaxNode
+        {
+            return syntax.WithLeadingTrivia(syntax.GetLeadingTrivia().AddRange(
+                SyntaxFactory.ParseLeadingTrivia("#nullable enable\r\n\r\n")));
+        }
+
         public static TSyntax WithLeadingBlankLine<TSyntax>(this TSyntax syntax)
             where TSyntax : SyntaxNode
         {

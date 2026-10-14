@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.HelperTests.ObjectPools
 {
     using System;
@@ -42,7 +40,7 @@ namespace StyleCop.Analyzers.Test.HelperTests.ObjectPools
         [Fact]
         public void TestStringBuilderPool()
         {
-            StringBuilder builder = null;
+            StringBuilder builder;
             using (var obj = SharedPools.Default<StringBuilder>().GetPooledObject())
             {
                 Assert.NotNull(obj.Object);
@@ -61,7 +59,7 @@ namespace StyleCop.Analyzers.Test.HelperTests.ObjectPools
         [Fact]
         public void TestStackPool()
         {
-            Stack<int> collection = null;
+            Stack<int> collection;
             using (var obj = SharedPools.Default<Stack<int>>().GetPooledObject())
             {
                 Assert.NotNull(obj.Object);
@@ -80,7 +78,7 @@ namespace StyleCop.Analyzers.Test.HelperTests.ObjectPools
         [Fact]
         public void TestQueuePool()
         {
-            Queue<int> collection = null;
+            Queue<int> collection;
             using (var obj = SharedPools.Default<Queue<int>>().GetPooledObject())
             {
                 Assert.NotNull(obj.Object);
@@ -99,7 +97,7 @@ namespace StyleCop.Analyzers.Test.HelperTests.ObjectPools
         [Fact]
         public void TestHashSetPool()
         {
-            HashSet<int> collection = null;
+            HashSet<int> collection;
             using (var obj = SharedPools.Default<HashSet<int>>().GetPooledObject())
             {
                 Assert.NotNull(obj.Object);
@@ -118,7 +116,7 @@ namespace StyleCop.Analyzers.Test.HelperTests.ObjectPools
         [Fact]
         public void TestDictionaryPool()
         {
-            Dictionary<int, int> collection = null;
+            Dictionary<int, int> collection;
             using (var obj = SharedPools.Default<Dictionary<int, int>>().GetPooledObject())
             {
                 Assert.NotNull(obj.Object);
@@ -137,7 +135,7 @@ namespace StyleCop.Analyzers.Test.HelperTests.ObjectPools
         [Fact]
         public void TestListPool()
         {
-            List<int> collection = null;
+            List<int> collection;
             using (var obj = SharedPools.Default<List<int>>().GetPooledObject())
             {
                 Assert.NotNull(obj.Object);
@@ -213,7 +211,7 @@ namespace StyleCop.Analyzers.Test.HelperTests.ObjectPools
         [Fact]
         public void TestPooledObjectHandlesNullAllocation()
         {
-            object NullAllocator(ObjectPool<object> pool)
+            object? NullAllocator(ObjectPool<object> pool)
                 => null;
 
             object NonNullAllocator(ObjectPool<object> pool)

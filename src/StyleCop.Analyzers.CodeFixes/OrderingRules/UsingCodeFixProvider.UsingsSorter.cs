@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.OrderingRules
 {
     using System;
@@ -490,7 +488,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 // it. References to aliases (and to names imported by a using directive of an outer block) are
                 // therefore replaced by their fully qualified form before the directive is moved.
                 NameSyntax originalName = usingDirective.Name;
-                string enclosingNamespaceName = null;
+                string? enclosingNamespaceName = null;
                 if (BaseNamespaceDeclarationSyntaxWrapper.IsInstance(usingDirective.Parent))
                 {
                     enclosingNamespaceName = ((BaseNamespaceDeclarationSyntaxWrapper)usingDirective.Parent).Name.WithoutTrivia().ToString();
@@ -627,9 +625,9 @@ namespace StyleCop.Analyzers.OrderingRules
             private sealed class AliasReferenceExpander : CSharpSyntaxRewriter
             {
                 private readonly SemanticModel semanticModel;
-                private readonly string enclosingNamespaceName;
+                private readonly string? enclosingNamespaceName;
 
-                public AliasReferenceExpander(SemanticModel semanticModel, string enclosingNamespaceName)
+                public AliasReferenceExpander(SemanticModel semanticModel, string? enclosingNamespaceName)
                 {
                     this.semanticModel = semanticModel;
                     this.enclosingNamespaceName = enclosingNamespaceName;
@@ -759,7 +757,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
                     var name = containingNamespace.ToDisplayString(FullNamespaceDisplayFormat);
                     return string.Equals(name, this.enclosingNamespaceName, StringComparison.Ordinal)
-                        || this.enclosingNamespaceName.StartsWith(name + ".", StringComparison.Ordinal);
+                        || this.enclosingNamespaceName!.StartsWith(name + ".", StringComparison.Ordinal);
                 }
             }
         }

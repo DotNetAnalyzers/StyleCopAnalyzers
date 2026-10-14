@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.OrderingRules
 {
     using System;
@@ -140,8 +138,8 @@ namespace StyleCop.Analyzers.OrderingRules
         private static void HandleMemberList(SyntaxNodeAnalysisContext context, ImmutableArray<OrderingTrait> elementOrder, int accessibilityIndex, SyntaxList<MemberDeclarationSyntax> members)
         {
             var handledMembers = new List<MemberInfo>();
-            Dictionary<string, ImmutableHashSet<string>> fieldDependencies = null;
-            Dictionary<string, FieldVariableInfo> fieldVariableInfos = null;
+            Dictionary<string, ImmutableHashSet<string>>? fieldDependencies = null;
+            Dictionary<string, FieldVariableInfo>? fieldVariableInfos = null;
 
             foreach (var member in members)
             {
@@ -243,7 +241,7 @@ namespace StyleCop.Analyzers.OrderingRules
                                     fieldDependencies = FieldDependencyHelper.ComputeFieldDependencies(context.SemanticModel, members, context.CancellationToken);
                                 }
 
-                                isExcused = IsRequiredToAppearAfter(currentField, previousField, previousInfo.AccessLevel, fieldDependencies, fieldVariableInfos);
+                                isExcused = IsRequiredToAppearAfter(currentField, previousField, previousInfo.AccessLevel, fieldDependencies, fieldVariableInfos!);
                             }
 
                             if (isExcused)

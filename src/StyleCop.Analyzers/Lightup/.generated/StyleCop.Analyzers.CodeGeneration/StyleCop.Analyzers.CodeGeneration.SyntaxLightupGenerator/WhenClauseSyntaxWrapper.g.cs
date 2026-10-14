@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,14 +15,14 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct WhenClauseSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> WhenKeywordAccessor;
         private static readonly Func<CSharpSyntaxNode, ExpressionSyntax> ConditionAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithWhenKeywordAccessor;
         private static readonly Func<CSharpSyntaxNode, ExpressionSyntax, CSharpSyntaxNode> WithConditionAccessor;
 
-        private readonly CSharpSyntaxNode node;
+        private readonly CSharpSyntaxNode? node;
 
         static WhenClauseSyntaxWrapper()
         {
@@ -30,19 +33,19 @@ namespace StyleCop.Analyzers.Lightup
             WithConditionAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, ExpressionSyntax>(WrappedType, nameof(Condition));
         }
 
-        private WhenClauseSyntaxWrapper(CSharpSyntaxNode node)
+        private WhenClauseSyntaxWrapper(CSharpSyntaxNode? node)
         {
             this.node = node;
         }
 
-        public CSharpSyntaxNode SyntaxNode => this.node;
+        public CSharpSyntaxNode? SyntaxNode => this.node;
 
 
         public SyntaxToken WhenKeyword
         {
             get
             {
-                return WhenKeywordAccessor(this.SyntaxNode);
+                return WhenKeywordAccessor(this.node!);
             }
         }
 
@@ -50,11 +53,11 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ConditionAccessor(this.SyntaxNode);
+                return ConditionAccessor(this.node!);
             }
         }
 
-        public static explicit operator WhenClauseSyntaxWrapper(SyntaxNode node)
+        public static explicit operator WhenClauseSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -69,24 +72,24 @@ namespace StyleCop.Analyzers.Lightup
             return new WhenClauseSyntaxWrapper((CSharpSyntaxNode)node);
         }
 
-        public static implicit operator CSharpSyntaxNode(WhenClauseSyntaxWrapper wrapper)
+        public static implicit operator CSharpSyntaxNode? (WhenClauseSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public WhenClauseSyntaxWrapper WithWhenKeyword(SyntaxToken whenKeyword)
         {
-            return new WhenClauseSyntaxWrapper(WithWhenKeywordAccessor(this.SyntaxNode, whenKeyword));
+            return new WhenClauseSyntaxWrapper(WithWhenKeywordAccessor(this.node!, whenKeyword));
         }
 
         public WhenClauseSyntaxWrapper WithCondition(ExpressionSyntax condition)
         {
-            return new WhenClauseSyntaxWrapper(WithConditionAccessor(this.SyntaxNode, condition));
+            return new WhenClauseSyntaxWrapper(WithConditionAccessor(this.node!, condition));
         }
     }
 }

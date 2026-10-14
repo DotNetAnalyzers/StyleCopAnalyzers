@@ -5,8 +5,6 @@
 
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
 
-#nullable disable warnings
-
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -56,7 +54,7 @@ namespace Analyzer.Utilities
         public SeparatedSyntaxList<SyntaxNode> GetVariablesOfLocalDeclarationStatement(SyntaxNode node)
             => ((LocalDeclarationStatementSyntax)node).Declaration.Variables;
 
-        public SyntaxNode GetInitializerOfVariableDeclarator(SyntaxNode node)
+        public SyntaxNode? GetInitializerOfVariableDeclarator(SyntaxNode node)
             => ((VariableDeclaratorSyntax)node).Initializer;
 
         public SyntaxNode? GetValueOfEqualsValueClause(SyntaxNode? node)
@@ -143,7 +141,7 @@ namespace Analyzer.Utilities
             localDeclaration = node;
             var initializersExpressions = node.Declaration.Variables
                 .Where(v => v.Initializer != null)
-                .Select(initializedV => initializedV.Initializer.Value)
+                .Select(initializedV => initializedV.Initializer!.Value)
                 .ToImmutableArray();
             return IsOnHeader(root, position, node, node, holes: initializersExpressions);
         }

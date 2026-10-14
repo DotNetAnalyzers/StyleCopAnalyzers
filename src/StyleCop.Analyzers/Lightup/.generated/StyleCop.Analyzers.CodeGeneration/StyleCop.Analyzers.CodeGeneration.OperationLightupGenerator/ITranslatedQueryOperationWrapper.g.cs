@@ -1,36 +1,39 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct ITranslatedQueryOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.ITranslatedQueryOperation";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
         private static readonly Func<IOperation, IOperation> OperationAccessor;
-        private readonly IOperation operation;
+        private readonly IOperation? operation;
         static ITranslatedQueryOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(ITranslatedQueryOperationWrapper));
             OperationAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation>(WrappedType, nameof(Operation));
         }
 
-        private ITranslatedQueryOperationWrapper(IOperation operation)
+        private ITranslatedQueryOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
-        public IOperation Operation => OperationAccessor(this.WrappedOperation);
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
+        public IOperation Operation => OperationAccessor(this.operation!);
 
         public static explicit operator ITranslatedQueryOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(ITranslatedQueryOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static ITranslatedQueryOperationWrapper FromOperation(IOperation operation)
+        public static ITranslatedQueryOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -45,7 +48,7 @@ namespace StyleCop.Analyzers.Lightup
             return new ITranslatedQueryOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }

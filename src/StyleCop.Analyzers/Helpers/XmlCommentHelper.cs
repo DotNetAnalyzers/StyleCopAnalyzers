@@ -1,10 +1,9 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Helpers
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Text;
     using System.Threading;
@@ -141,7 +140,7 @@ namespace StyleCop.Analyzers.Helpers
         /// </summary>
         /// <param name="node">The XML node that should be checked.</param>
         /// <returns>true, if the comment should be considered empty, false otherwise.</returns>
-        internal static bool IsConsideredEmpty(XNode node)
+        internal static bool IsConsideredEmpty(XNode? node)
         {
             if (node is XText text)
             {
@@ -170,7 +169,7 @@ namespace StyleCop.Analyzers.Helpers
         /// <param name="node">The XML content to search.</param>
         /// <returns>The first <see cref="XmlTextSyntax"/> which is not simply empty or whitespace, or
         /// <see langword="null"/> if no such element exists.</returns>
-        internal static XmlTextSyntax TryGetFirstTextElementWithContent(XmlNodeSyntax node)
+        internal static XmlTextSyntax? TryGetFirstTextElementWithContent(XmlNodeSyntax node)
         {
             if (node is XmlEmptyElementSyntax)
             {
@@ -201,7 +200,7 @@ namespace StyleCop.Analyzers.Helpers
         /// <param name="node">The XML content to search.</param>
         /// <returns>The last <see cref="XmlTextSyntax"/> which is not simply empty or whitespace, or
         /// <see langword="null"/> if no such element exists.</returns>
-        internal static XmlTextSyntax TryGetLastTextElementWithContent(XmlNodeSyntax node)
+        internal static XmlTextSyntax? TryGetLastTextElementWithContent(XmlNodeSyntax node)
         {
             if (node is XmlEmptyElementSyntax)
             {
@@ -262,7 +261,7 @@ namespace StyleCop.Analyzers.Helpers
             return commentTrivia != null && !IsMissingOrEmpty(commentTrivia.ParentTrivia);
         }
 
-        internal static string GetText(XmlNodeSyntax nodeSyntax, bool normalizeWhitespace = false)
+        internal static string? GetText(XmlNodeSyntax nodeSyntax, bool normalizeWhitespace = false)
         {
             if (nodeSyntax is XmlTextSyntax xmlTextSyntax)
             {
@@ -289,12 +288,14 @@ namespace StyleCop.Analyzers.Helpers
             return null;
         }
 
-        internal static string GetText(XmlTextSyntax textElement)
+        [return: NotNullIfNotNull(nameof(textElement))]
+        internal static string? GetText(XmlTextSyntax? textElement)
         {
             return GetText(textElement, false);
         }
 
-        internal static string GetText(XmlTextSyntax textElement, bool normalizeWhitespace)
+        [return: NotNullIfNotNull(nameof(textElement))]
+        internal static string? GetText(XmlTextSyntax? textElement, bool normalizeWhitespace)
         {
             if (textElement == null)
             {
@@ -305,7 +306,7 @@ namespace StyleCop.Analyzers.Helpers
 
             string single = string.Empty;
 
-            StringBuilder stringBuilder = null;
+            StringBuilder? stringBuilder = null;
 
             foreach (var item in textElement.TextTokens)
             {
@@ -362,8 +363,9 @@ namespace StyleCop.Analyzers.Helpers
 
             if (normalizeWhitespace)
             {
-                foreach (char ch in text)
+                for (int i = 0; i < text.Length; i++)
                 {
+                    char ch = text[i];
                     if (char.IsWhiteSpace(ch))
                     {
                         if (lastWhitespace)
@@ -398,7 +400,7 @@ namespace StyleCop.Analyzers.Helpers
             return diff;
         }
 
-        internal static T GetFirstAttributeOrDefault<T>(XmlNodeSyntax nodeSyntax)
+        internal static T? GetFirstAttributeOrDefault<T>(XmlNodeSyntax nodeSyntax)
             where T : XmlAttributeSyntax
         {
             if (nodeSyntax is XmlEmptyElementSyntax emptyElementSyntax)
@@ -488,7 +490,7 @@ namespace StyleCop.Analyzers.Helpers
             }
         }
 
-        private static bool IsInlineElement(string localName)
+        private static bool IsInlineElement(string? localName)
         {
             switch (localName)
             {
@@ -503,7 +505,7 @@ namespace StyleCop.Analyzers.Helpers
             }
         }
 
-        private static bool IsBlockElement(string localName)
+        private static bool IsBlockElement(string? localName)
         {
             switch (localName)
             {
@@ -518,7 +520,7 @@ namespace StyleCop.Analyzers.Helpers
             }
         }
 
-        private static bool HasBaseList(INamedTypeSymbol typeSymbol, SyntaxNode node)
+        private static bool HasBaseList(INamedTypeSymbol? typeSymbol, SyntaxNode node)
         {
             // The base list may be declared on any part of a partial type.
             if (typeSymbol != null)

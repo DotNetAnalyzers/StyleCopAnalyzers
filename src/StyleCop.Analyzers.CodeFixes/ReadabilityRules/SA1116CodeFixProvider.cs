@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Generic;
@@ -84,7 +82,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     SyntaxFactory.Whitespace(lineText.Substring(0, indentLength) + indentationStep));
 
             // The first element moves one indentation step to the right, so every other line of it moves as well.
-            SyntaxNode element = GetListElement(originalToken);
+            SyntaxNode? element = GetListElement(originalToken);
             IEnumerable<SyntaxToken> tokensToUpdate = element != null ? element.DescendantTokens() : new[] { originalToken };
             SyntaxNode updatedRoot = root.ReplaceTokens(
                 tokensToUpdate,
@@ -94,7 +92,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             return document.WithSyntaxRoot(updatedRoot);
         }
 
-        private static SyntaxNode GetListElement(SyntaxToken token)
+        private static SyntaxNode? GetListElement(SyntaxToken token)
         {
             SyntaxNode current = token.Parent;
             while (current != null)

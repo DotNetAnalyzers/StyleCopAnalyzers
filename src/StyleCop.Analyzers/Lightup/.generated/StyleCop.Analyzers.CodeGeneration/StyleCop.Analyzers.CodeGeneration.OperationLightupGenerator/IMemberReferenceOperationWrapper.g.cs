@@ -1,39 +1,42 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct IMemberReferenceOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IMemberReferenceOperation";
-        private static readonly Type WrappedType;
-        private static readonly Func<IOperation, IOperation> InstanceAccessor;
+        private static readonly Type? WrappedType;
+        private static readonly Func<IOperation, IOperation?> InstanceAccessor;
         private static readonly Func<IOperation, ISymbol> MemberAccessor;
-        private readonly IOperation operation;
+        private readonly IOperation? operation;
         static IMemberReferenceOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(IMemberReferenceOperationWrapper));
-            InstanceAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation>(WrappedType, nameof(Instance));
+            InstanceAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation?>(WrappedType, nameof(Instance));
             MemberAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, ISymbol>(WrappedType, nameof(Member));
         }
 
-        private IMemberReferenceOperationWrapper(IOperation operation)
+        private IMemberReferenceOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
-        public IOperation Instance => InstanceAccessor(this.WrappedOperation);
-        public ISymbol Member => MemberAccessor(this.WrappedOperation);
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
+        public IOperation? Instance => InstanceAccessor(this.operation!);
+        public ISymbol Member => MemberAccessor(this.operation!);
 
         public static explicit operator IMemberReferenceOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IMemberReferenceOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static IMemberReferenceOperationWrapper FromOperation(IOperation operation)
+        public static IMemberReferenceOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -48,12 +51,12 @@ namespace StyleCop.Analyzers.Lightup
             return new IMemberReferenceOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }
 
-        internal static IMemberReferenceOperationWrapper FromUpcast(IOperation operation)
+        internal static IMemberReferenceOperationWrapper FromUpcast(IOperation? operation)
         {
             return new IMemberReferenceOperationWrapper(operation);
         }

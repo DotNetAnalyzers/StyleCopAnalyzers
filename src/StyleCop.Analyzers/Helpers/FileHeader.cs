@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Helpers
 {
     using Microsoft.CodeAnalysis;
@@ -21,7 +19,7 @@ namespace StyleCop.Analyzers.Helpers
         /// <param name="copyrightText">The copyright string, as parsed from the header.</param>
         /// <param name="fileHeaderStart">The offset within the file at which the header started.</param>
         /// <param name="fileHeaderEnd">The offset within the file at which the header ended.</param>
-        internal FileHeader(string copyrightText, int fileHeaderStart, int fileHeaderEnd)
+        internal FileHeader(string? copyrightText, int fileHeaderStart, int fileHeaderEnd)
         {
             // Currently unused
             _ = fileHeaderEnd;
@@ -65,7 +63,7 @@ namespace StyleCop.Analyzers.Helpers
         /// <value>
         /// The copyright text, as parsed from the header.
         /// </value>
-        internal string CopyrightText { get; }
+        internal string? CopyrightText { get; }
 
         /// <summary>
         /// Gets the location representing the start of the file header.

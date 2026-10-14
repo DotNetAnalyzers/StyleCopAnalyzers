@@ -1,19 +1,22 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct ILocalReferenceOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.ILocalReferenceOperation";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
         private static readonly Func<IOperation, ILocalSymbol> LocalAccessor;
         private static readonly Func<IOperation, bool> IsDeclarationAccessor;
-        private readonly IOperation operation;
+        private readonly IOperation? operation;
         static ILocalReferenceOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(ILocalReferenceOperationWrapper));
@@ -21,19 +24,19 @@ namespace StyleCop.Analyzers.Lightup
             IsDeclarationAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, bool>(WrappedType, nameof(IsDeclaration));
         }
 
-        private ILocalReferenceOperationWrapper(IOperation operation)
+        private ILocalReferenceOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
-        public ILocalSymbol Local => LocalAccessor(this.WrappedOperation);
-        public bool IsDeclaration => IsDeclarationAccessor(this.WrappedOperation);
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
+        public ILocalSymbol Local => LocalAccessor(this.operation!);
+        public bool IsDeclaration => IsDeclarationAccessor(this.operation!);
 
         public static explicit operator ILocalReferenceOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(ILocalReferenceOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static ILocalReferenceOperationWrapper FromOperation(IOperation operation)
+        public static ILocalReferenceOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -48,7 +51,7 @@ namespace StyleCop.Analyzers.Lightup
             return new ILocalReferenceOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }

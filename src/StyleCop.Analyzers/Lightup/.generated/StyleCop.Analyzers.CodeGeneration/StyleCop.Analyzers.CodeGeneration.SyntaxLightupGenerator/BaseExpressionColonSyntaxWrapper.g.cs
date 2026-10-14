@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,14 +15,14 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct BaseExpressionColonSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.BaseExpressionColonSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<CSharpSyntaxNode, ExpressionSyntax> ExpressionAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> ColonTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, ExpressionSyntax, CSharpSyntaxNode> WithExpressionAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithColonTokenAccessor;
 
-        private readonly CSharpSyntaxNode node;
+        private readonly CSharpSyntaxNode? node;
 
         static BaseExpressionColonSyntaxWrapper()
         {
@@ -30,19 +33,19 @@ namespace StyleCop.Analyzers.Lightup
             WithColonTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(ColonToken));
         }
 
-        private BaseExpressionColonSyntaxWrapper(CSharpSyntaxNode node)
+        private BaseExpressionColonSyntaxWrapper(CSharpSyntaxNode? node)
         {
             this.node = node;
         }
 
-        public CSharpSyntaxNode SyntaxNode => this.node;
+        public CSharpSyntaxNode? SyntaxNode => this.node;
 
 
         public ExpressionSyntax Expression
         {
             get
             {
-                return ExpressionAccessor(this.SyntaxNode);
+                return ExpressionAccessor(this.node!);
             }
         }
 
@@ -50,11 +53,11 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ColonTokenAccessor(this.SyntaxNode);
+                return ColonTokenAccessor(this.node!);
             }
         }
 
-        public static explicit operator BaseExpressionColonSyntaxWrapper(SyntaxNode node)
+        public static explicit operator BaseExpressionColonSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -69,27 +72,27 @@ namespace StyleCop.Analyzers.Lightup
             return new BaseExpressionColonSyntaxWrapper((CSharpSyntaxNode)node);
         }
 
-        public static implicit operator CSharpSyntaxNode(BaseExpressionColonSyntaxWrapper wrapper)
+        public static implicit operator CSharpSyntaxNode? (BaseExpressionColonSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public BaseExpressionColonSyntaxWrapper WithExpression(ExpressionSyntax expression)
         {
-            return new BaseExpressionColonSyntaxWrapper(WithExpressionAccessor(this.SyntaxNode, expression));
+            return new BaseExpressionColonSyntaxWrapper(WithExpressionAccessor(this.node!, expression));
         }
 
         public BaseExpressionColonSyntaxWrapper WithColonToken(SyntaxToken colonToken)
         {
-            return new BaseExpressionColonSyntaxWrapper(WithColonTokenAccessor(this.SyntaxNode, colonToken));
+            return new BaseExpressionColonSyntaxWrapper(WithColonTokenAccessor(this.node!, colonToken));
         }
 
-        internal static BaseExpressionColonSyntaxWrapper FromUpcast(CSharpSyntaxNode node)
+        internal static BaseExpressionColonSyntaxWrapper FromUpcast(CSharpSyntaxNode? node)
         {
             return new BaseExpressionColonSyntaxWrapper(node);
         }

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
@@ -60,7 +58,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var objectCreation = IObjectCreationOperationWrapper.FromOperation(context.Operation);
 
-            var typeToCreate = objectCreation.Constructor.ContainingType;
+            var typeToCreate = objectCreation.Constructor!.ContainingType;
             if ((typeToCreate == null) || typeToCreate.IsReferenceType || IsReferenceTypeParameter(typeToCreate))
             {
                 return;
@@ -72,7 +70,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
-            if (!objectCreation.Constructor.IsImplicitlyDeclared)
+            if (!objectCreation.Constructor!.IsImplicitlyDeclared)
             {
                 // The value type includes an explicit parameterless constructor
                 return;
@@ -83,7 +81,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, objectCreation.WrappedOperation.Syntax.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, objectCreation.WrappedOperation!.Syntax.GetLocation()));
         }
 
         private static void HandleTypeParameterObjectCreationOperation(OperationAnalysisContext context)
@@ -101,7 +99,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, objectCreation.WrappedOperation.Syntax.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, objectCreation.WrappedOperation!.Syntax.GetLocation()));
         }
 
         private static void HandleObjectCreationExpression(SyntaxNodeAnalysisContext context)

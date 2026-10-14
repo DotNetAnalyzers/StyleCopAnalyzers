@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,18 +15,18 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct ListPatternSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.ListPatternSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> OpenBracketTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, SeparatedSyntaxListWrapper<PatternSyntaxWrapper>> PatternsAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> CloseBracketTokenAccessor;
-        private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode> DesignationAccessor;
+        private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode?> DesignationAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithOpenBracketTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, SeparatedSyntaxListWrapper<PatternSyntaxWrapper>, CSharpSyntaxNode> WithPatternsAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithCloseBracketTokenAccessor;
-        private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode, CSharpSyntaxNode> WithDesignationAccessor;
+        private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode?, CSharpSyntaxNode> WithDesignationAccessor;
 
-        private readonly CSharpSyntaxNode node;
+        private readonly CSharpSyntaxNode? node;
 
         static ListPatternSyntaxWrapper()
         {
@@ -31,26 +34,26 @@ namespace StyleCop.Analyzers.Lightup
             OpenBracketTokenAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(OpenBracketToken));
             PatternsAccessor = LightupHelpers.CreateSeparatedSyntaxListPropertyAccessor<CSharpSyntaxNode, PatternSyntaxWrapper>(WrappedType, nameof(Patterns));
             CloseBracketTokenAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(CloseBracketToken));
-            DesignationAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, CSharpSyntaxNode>(WrappedType, nameof(Designation));
+            DesignationAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, CSharpSyntaxNode?>(WrappedType, nameof(Designation));
             WithOpenBracketTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(OpenBracketToken));
             WithPatternsAccessor = LightupHelpers.CreateSeparatedSyntaxListWithPropertyAccessor<CSharpSyntaxNode, PatternSyntaxWrapper>(WrappedType, nameof(Patterns));
             WithCloseBracketTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(CloseBracketToken));
-            WithDesignationAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, CSharpSyntaxNode>(WrappedType, nameof(Designation));
+            WithDesignationAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, CSharpSyntaxNode?>(WrappedType, nameof(Designation));
         }
 
-        private ListPatternSyntaxWrapper(CSharpSyntaxNode node)
+        private ListPatternSyntaxWrapper(CSharpSyntaxNode? node)
         {
             this.node = node;
         }
 
-        public CSharpSyntaxNode SyntaxNode => this.node;
+        public CSharpSyntaxNode? SyntaxNode => this.node;
 
 
         public SyntaxToken OpenBracketToken
         {
             get
             {
-                return OpenBracketTokenAccessor(this.SyntaxNode);
+                return OpenBracketTokenAccessor(this.node!);
             }
         }
 
@@ -58,7 +61,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return PatternsAccessor(this.SyntaxNode);
+                return PatternsAccessor(this.node!);
             }
         }
 
@@ -66,7 +69,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return CloseBracketTokenAccessor(this.SyntaxNode);
+                return CloseBracketTokenAccessor(this.node!);
             }
         }
 
@@ -74,7 +77,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return (VariableDesignationSyntaxWrapper)DesignationAccessor(this.SyntaxNode);
+                return (VariableDesignationSyntaxWrapper)DesignationAccessor(this.node!);
             }
         }
 
@@ -88,7 +91,7 @@ namespace StyleCop.Analyzers.Lightup
             return (ListPatternSyntaxWrapper)node.SyntaxNode;
         }
 
-        public static explicit operator ListPatternSyntaxWrapper(SyntaxNode node)
+        public static explicit operator ListPatternSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -113,34 +116,34 @@ namespace StyleCop.Analyzers.Lightup
             return ExpressionOrPatternSyntaxWrapper.FromUpcast(wrapper.node);
         }
 
-        public static implicit operator CSharpSyntaxNode(ListPatternSyntaxWrapper wrapper)
+        public static implicit operator CSharpSyntaxNode? (ListPatternSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public ListPatternSyntaxWrapper WithOpenBracketToken(SyntaxToken openBracketToken)
         {
-            return new ListPatternSyntaxWrapper(WithOpenBracketTokenAccessor(this.SyntaxNode, openBracketToken));
+            return new ListPatternSyntaxWrapper(WithOpenBracketTokenAccessor(this.node!, openBracketToken));
         }
 
         public ListPatternSyntaxWrapper WithPatterns(SeparatedSyntaxListWrapper<PatternSyntaxWrapper> patterns)
         {
-            return new ListPatternSyntaxWrapper(WithPatternsAccessor(this.SyntaxNode, patterns));
+            return new ListPatternSyntaxWrapper(WithPatternsAccessor(this.node!, patterns));
         }
 
         public ListPatternSyntaxWrapper WithCloseBracketToken(SyntaxToken closeBracketToken)
         {
-            return new ListPatternSyntaxWrapper(WithCloseBracketTokenAccessor(this.SyntaxNode, closeBracketToken));
+            return new ListPatternSyntaxWrapper(WithCloseBracketTokenAccessor(this.node!, closeBracketToken));
         }
 
         public ListPatternSyntaxWrapper WithDesignation(VariableDesignationSyntaxWrapper designation)
         {
-            return new ListPatternSyntaxWrapper(WithDesignationAccessor(this.SyntaxNode, designation));
+            return new ListPatternSyntaxWrapper(WithDesignationAccessor(this.node!, designation.SyntaxNode));
         }
     }
 }

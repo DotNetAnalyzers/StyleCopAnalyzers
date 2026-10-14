@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.LayoutRules
 {
     using System;
@@ -122,7 +120,7 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static int DetermineIndentationLevel(IndentationSettings indentationSettings, Dictionary<SyntaxToken, SyntaxToken> tokenReplaceMap, StatementSyntax statement)
         {
-            var parent = GetStatementParent(statement.Parent);
+            var parent = GetStatementParent(statement.Parent)!;
             int parentIndentationLevel;
 
             SyntaxToken replacementToken;
@@ -141,7 +139,7 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static void ReformatBlock(IndentationSettings indentationSettings, BlockSyntax block, Dictionary<SyntaxToken, SyntaxToken> tokenReplaceMap)
         {
-            var parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationSettings, GetStatementParent(block.Parent));
+            var parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationSettings, GetStatementParent(block.Parent)!);
 
             // use one additional step of indentation for lambdas / anonymous methods
             switch (block.Parent.Kind())
@@ -259,7 +257,7 @@ namespace StyleCop.Analyzers.LayoutRules
             return string.Equals(left.ToString(), right.ToString(), StringComparison.Ordinal);
         }
 
-        private static SyntaxNode GetStatementParent(SyntaxNode node)
+        private static SyntaxNode? GetStatementParent(SyntaxNode node)
         {
             StatementSyntax statementSyntax = node.FirstAncestorOrSelf<StatementSyntax>();
             if (statementSyntax == null)
@@ -283,7 +281,7 @@ namespace StyleCop.Analyzers.LayoutRules
             protected override string CodeActionTitle =>
                 LayoutResources.SA1501CodeFixAll;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+            protected override async Task<SyntaxNode?> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
                 if (diagnostics.IsEmpty)
                 {

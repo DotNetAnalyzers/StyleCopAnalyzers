@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Helpers;
 
 using System;
@@ -66,7 +64,7 @@ internal static class FieldDependencyHelper
         }
 
         var fieldSymbolMap = new Dictionary<ISymbol, string>();
-        INamedTypeSymbol enclosingType = null;
+        INamedTypeSymbol? enclosingType = null;
 
         foreach (var field in fieldDeclarations)
         {
@@ -97,7 +95,7 @@ internal static class FieldDependencyHelper
                     continue;
                 }
 
-                HashSet<string> deps = null;
+                HashSet<string>? deps = null;
                 var currentVarName = variable.Identifier.ValueText;
 
                 foreach (var node in variable.Initializer.Value.DescendantNodesAndSelf())
@@ -170,7 +168,7 @@ internal static class FieldDependencyHelper
     internal static bool DependsOn(
         MemberDeclarationSyntax currentMember,
         MemberDeclarationSyntax targetMember,
-        Dictionary<string, ImmutableHashSet<string>> fieldDependencies)
+        Dictionary<string, ImmutableHashSet<string>>? fieldDependencies)
     {
         if (fieldDependencies == null || fieldDependencies.Count == 0)
         {

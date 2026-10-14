@@ -114,6 +114,14 @@ namespace StyleCop.Analyzers.CodeGeneration
             var concreteBaseNode = syntaxData.TryGetConcreteBase(nodeData);
             var concreteBase = concreteBaseNode?.Name ?? nameof(SyntaxNode);
 
+            // Default wrappers have no node; accessing their members retains the existing throwing behavior.
+            var wrappedNode = SyntaxFactory.PostfixUnaryExpression(
+                SyntaxKind.SuppressNullableWarningExpression,
+                SyntaxFactory.MemberAccessExpression(
+                    SyntaxKind.SimpleMemberAccessExpression,
+                    SyntaxFactory.ThisExpression(),
+                    SyntaxFactory.IdentifierName("node")));
+
             var members = SyntaxFactory.List<MemberDeclarationSyntax>();
 
             // internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax";
@@ -127,12 +135,12 @@ namespace StyleCop.Analyzers.CodeGeneration
                         argumentList: null,
                         initializer: SyntaxFactory.EqualsValueClause(SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal("Microsoft.CodeAnalysis.CSharp.Syntax." + nodeData.Name))))))));
 
-            // private static readonly Type WrappedType;
+            // private static readonly Type? WrappedType;
             members = members.Add(SyntaxFactory.FieldDeclaration(
                 attributeLists: default,
                 modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PrivateKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword), SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)),
                 declaration: SyntaxFactory.VariableDeclaration(
-                    type: SyntaxFactory.IdentifierName("Type"),
+                    type: SyntaxFactory.NullableType(SyntaxFactory.IdentifierName("Type")),
                     variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator("WrappedType")))));
 
             bool first = true;
@@ -197,12 +205,12 @@ namespace StyleCop.Analyzers.CodeGeneration
                         variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(field.WithAccessorName)))));
             }
 
-            // private readonly SyntaxNode node;
+            // private readonly SyntaxNode? node;
             members = members.Add(SyntaxFactory.FieldDeclaration(
                 attributeLists: default,
                 modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PrivateKeyword), SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)),
                 declaration: SyntaxFactory.VariableDeclaration(
-                    type: SyntaxFactory.IdentifierName(concreteBase),
+                    type: SyntaxFactory.NullableType(SyntaxFactory.IdentifierName(concreteBase)),
                     variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator("node")))).WithLeadingBlankLine());
 
             // WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(SyntaxWrapper));
@@ -345,7 +353,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 body: SyntaxFactory.Block(staticCtorStatements),
                 expressionBody: null).WithLeadingBlankLine());
 
-            // private SyntaxNodeWrapper(SyntaxNode node)
+            // private SyntaxNodeWrapper(SyntaxNode? node)
             // {
             //     this.node = node;
             // }
@@ -356,7 +364,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 parameterList: SyntaxFactory.ParameterList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Parameter(
                     attributeLists: default,
                     modifiers: default,
-                    type: SyntaxFactory.IdentifierName(concreteBase),
+                    type: SyntaxFactory.NullableType(SyntaxFactory.IdentifierName(concreteBase)),
                     identifier: SyntaxFactory.Identifier("node"),
                     @default: null))),
                 initializer: null,
@@ -370,11 +378,11 @@ namespace StyleCop.Analyzers.CodeGeneration
                         right: SyntaxFactory.IdentifierName("node")))),
                 expressionBody: null));
 
-            // public SyntaxNode SyntaxNode => this.node;
+            // public SyntaxNode? SyntaxNode => this.node;
             members = members.Add(SyntaxFactory.PropertyDeclaration(
                 attributeLists: default,
                 modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)),
-                type: SyntaxFactory.IdentifierName(concreteBase),
+                type: SyntaxFactory.NullableType(SyntaxFactory.IdentifierName(concreteBase)),
                 explicitInterfaceSpecifier: null,
                 identifier: SyntaxFactory.Identifier("SyntaxNode"),
                 accessorList: null,
@@ -407,10 +415,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                     // this.SyntaxNode.OpenParenToken
                     returnExpression = SyntaxFactory.MemberAccessExpression(
                         SyntaxKind.SimpleMemberAccessExpression,
-                        expression: SyntaxFactory.MemberAccessExpression(
-                            SyntaxKind.SimpleMemberAccessExpression,
-                            expression: SyntaxFactory.ThisExpression(),
-                            name: SyntaxFactory.IdentifierName("SyntaxNode")),
+                        expression: wrappedNode,
                         name: SyntaxFactory.IdentifierName(field.Name));
                 }
                 else if (field.IsWrappedSeparatedSyntaxList(syntaxData, out var elementNode))
@@ -419,10 +424,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                     returnExpression = SyntaxFactory.InvocationExpression(
                         expression: SyntaxFactory.IdentifierName(field.AccessorName),
                         argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                expression: SyntaxFactory.ThisExpression(),
-                                name: SyntaxFactory.IdentifierName("SyntaxNode"))))));
+                            wrappedNode))));
                 }
                 else if (syntaxData.TryGetNode(field.Type) is { } fieldNodeType)
                 {
@@ -430,10 +432,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                     returnExpression = SyntaxFactory.InvocationExpression(
                         expression: SyntaxFactory.IdentifierName(field.AccessorName),
                         argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                expression: SyntaxFactory.ThisExpression(),
-                                name: SyntaxFactory.IdentifierName("SyntaxNode"))))));
+                            wrappedNode))));
 
                     if (fieldNodeType.WrapperName is not null)
                     {
@@ -450,10 +449,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                     returnExpression = SyntaxFactory.InvocationExpression(
                         expression: SyntaxFactory.IdentifierName(field.AccessorName),
                         argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(
-                            SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                expression: SyntaxFactory.ThisExpression(),
-                                name: SyntaxFactory.IdentifierName("SyntaxNode"))))));
+                            wrappedNode))));
                 }
 
                 // public T Field
@@ -523,7 +519,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 members = members.Add(wrapperConversion);
             }
 
-            // public static explicit operator WhenClauseSyntaxWrapper(SyntaxNode node)
+            // public static explicit operator WhenClauseSyntaxWrapper(SyntaxNode? node)
             // {
             //     if (node == null)
             //     {
@@ -546,7 +542,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 parameterList: SyntaxFactory.ParameterList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Parameter(
                     attributeLists: default,
                     modifiers: default,
-                    type: SyntaxFactory.IdentifierName("SyntaxNode"),
+                    type: SyntaxFactory.NullableType(SyntaxFactory.IdentifierName("SyntaxNode")),
                     identifier: SyntaxFactory.Identifier("node"),
                     @default: null))),
                 body: SyntaxFactory.Block(
@@ -652,7 +648,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                     semicolonToken: default));
             }
 
-            // public static implicit operator CSharpSyntaxNode(SyntaxWrapper wrapper)
+            // public static implicit operator CSharpSyntaxNode?(SyntaxWrapper wrapper)
             // {
             //     return wrapper.node;
             // }
@@ -661,7 +657,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword)),
                 implicitOrExplicitKeyword: SyntaxFactory.Token(SyntaxKind.ImplicitKeyword),
                 operatorKeyword: SyntaxFactory.Token(SyntaxKind.OperatorKeyword),
-                type: SyntaxFactory.IdentifierName(concreteBase),
+                type: SyntaxFactory.NullableType(SyntaxFactory.IdentifierName(concreteBase)),
                 parameterList: SyntaxFactory.ParameterList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Parameter(
                     attributeLists: default,
                     modifiers: default,
@@ -675,7 +671,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 expressionBody: null,
                 semicolonToken: default));
 
-            // public static bool IsInstance(SyntaxNode node)
+            // public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
             // {
             //     return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
             // }
@@ -687,9 +683,9 @@ namespace StyleCop.Analyzers.CodeGeneration
                 identifier: SyntaxFactory.Identifier("IsInstance"),
                 typeParameterList: null,
                 parameterList: SyntaxFactory.ParameterList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Parameter(
-                    attributeLists: default,
+                    attributeLists: SyntaxFactory.ParseParameterList("([NotNullWhen(true)] SyntaxNode? node)").Parameters[0].AttributeLists,
                     modifiers: default,
-                    type: SyntaxFactory.IdentifierName("SyntaxNode"),
+                    type: SyntaxFactory.NullableType(SyntaxFactory.IdentifierName("SyntaxNode")),
                     identifier: SyntaxFactory.Identifier("node"),
                     @default: null))),
                 constraintClauses: default,
@@ -728,6 +724,15 @@ namespace StyleCop.Analyzers.CodeGeneration
                 if (syntaxData.TryGetNode(field.Type) is { WrapperName: { } wrapperName })
                 {
                     propertyType = SyntaxFactory.IdentifierName(wrapperName);
+                    convertedValue = SyntaxFactory.MemberAccessExpression(
+                        SyntaxKind.SimpleMemberAccessExpression,
+                        convertedValue,
+                        SyntaxFactory.IdentifierName("SyntaxNode"));
+                    if (!field.IsOptional)
+                    {
+                        // Required children reject null in Roslyn's With method, including default wrappers.
+                        convertedValue = SyntaxFactory.PostfixUnaryExpression(SyntaxKind.SuppressNullableWarningExpression, convertedValue);
+                    }
                 }
 
                 ExpressionSyntax returnExpression = SyntaxFactory.InvocationExpression(
@@ -735,10 +740,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                     argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(
                         new[]
                         {
-                            SyntaxFactory.Argument(SyntaxFactory.MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                expression: SyntaxFactory.ThisExpression(),
-                                name: SyntaxFactory.IdentifierName("SyntaxNode"))),
+                            SyntaxFactory.Argument(wrappedNode),
                             SyntaxFactory.Argument(convertedValue),
                         })));
 
@@ -771,7 +773,7 @@ namespace StyleCop.Analyzers.CodeGeneration
 
             if (nodeData.Kind == NodeKind.Abstract)
             {
-                // internal static SyntaxWrapper FromUpcast(CSharpSyntaxNode node)
+                // internal static SyntaxWrapper FromUpcast(CSharpSyntaxNode? node)
                 // {
                 //     return new SyntaxWrapper(node);
                 // }
@@ -785,7 +787,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                     parameterList: SyntaxFactory.ParameterList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Parameter(
                         attributeLists: default,
                         modifiers: default,
-                        type: SyntaxFactory.IdentifierName(concreteBase),
+                        type: SyntaxFactory.NullableType(SyntaxFactory.IdentifierName(concreteBase)),
                         identifier: SyntaxFactory.Identifier("node"),
                         @default: null))),
                     constraintClauses: default,
@@ -814,6 +816,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 usings: SyntaxFactory.List<UsingDirectiveSyntax>()
                     .Add(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System")))
                     .Add(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Collections.Immutable")))
+                    .Add(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Diagnostics.CodeAnalysis")))
                     .Add(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("Microsoft.CodeAnalysis")))
                     .Add(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("Microsoft.CodeAnalysis.CSharp")))
                     .Add(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("Microsoft.CodeAnalysis.CSharp.Syntax"))),
@@ -830,12 +833,12 @@ namespace StyleCop.Analyzers.CodeGeneration
                 .WithTrailingTrivia(
                     SyntaxFactory.CarriageReturnLineFeed);
 
-            context.AddSource(nodeData.WrapperName + ".g.cs", wrapperNamespace.GetText(Encoding.UTF8));
+            context.AddSource(nodeData.WrapperName + ".g.cs", wrapperNamespace.WithNullableContext().GetText(Encoding.UTF8));
         }
 
         private void GenerateSyntaxWrapperHelper(in SourceProductionContext context, ImmutableArray<NodeData> wrapperTypes)
         {
-            // private static readonly ImmutableDictionary<Type, Type> WrappedTypes;
+            // private static readonly ImmutableDictionary<Type, Type?> WrappedTypes;
             var wrappedTypes = SyntaxFactory.FieldDeclaration(
                 attributeLists: default,
                 modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PrivateKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword), SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)),
@@ -844,15 +847,15 @@ namespace StyleCop.Analyzers.CodeGeneration
                         identifier: SyntaxFactory.Identifier("ImmutableDictionary"),
                         typeArgumentList: SyntaxFactory.TypeArgumentList(
                             SyntaxFactory.SeparatedList<TypeSyntax>(
-                                new[]
+                                new TypeSyntax[]
                                 {
                                     SyntaxFactory.IdentifierName("Type"),
-                                    SyntaxFactory.IdentifierName("Type"),
+                                    SyntaxFactory.NullableType(SyntaxFactory.IdentifierName("Type")),
                                 }))),
                     variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier("WrappedTypes")))));
 
             // var csharpCodeAnalysisAssembly = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly;
-            // var builder = ImmutableDictionary.CreateBuilder<Type, Type>();
+            // var builder = ImmutableDictionary.CreateBuilder<Type, Type?>();
             var staticCtorStatements = SyntaxFactory.List<StatementSyntax>()
                 .Add(SyntaxFactory.LocalDeclarationStatement(SyntaxFactory.VariableDeclaration(
                     type: SyntaxFactory.IdentifierName("var"),
@@ -882,10 +885,10 @@ namespace StyleCop.Analyzers.CodeGeneration
                                         identifier: SyntaxFactory.Identifier("CreateBuilder"),
                                         typeArgumentList: SyntaxFactory.TypeArgumentList(
                                             SyntaxFactory.SeparatedList<TypeSyntax>(
-                                                new[]
+                                                new TypeSyntax[]
                                                 {
                                                     SyntaxFactory.IdentifierName("Type"),
-                                                    SyntaxFactory.IdentifierName("Type"),
+                                                    SyntaxFactory.NullableType(SyntaxFactory.IdentifierName("Type")),
                                                 })))))))))));
 
             foreach (var node in wrapperTypes.OrderBy(node => node.Name, StringComparer.OrdinalIgnoreCase))
@@ -1119,9 +1122,9 @@ namespace StyleCop.Analyzers.CodeGeneration
             // /// </summary>
             // /// <param name="wrapperType">Type of the wrapper for which the wrapped type should be retrieved.</param>
             // /// <returns>The wrapped type, or null if there is no info.</returns>
-            // internal static Type GetWrappedType(Type wrapperType)
+            // internal static Type? GetWrappedType(Type wrapperType)
             // {
-            //     if (WrappedTypes.TryGetValue(wrapperType, out Type wrappedType))
+            //     if (WrappedTypes.TryGetValue(wrapperType, out Type? wrappedType))
             //     {
             //         return wrappedType;
             //     }
@@ -1131,7 +1134,7 @@ namespace StyleCop.Analyzers.CodeGeneration
             var getWrappedType = SyntaxFactory.MethodDeclaration(
                 attributeLists: default,
                 modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.InternalKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword)),
-                returnType: SyntaxFactory.IdentifierName("Type"),
+                returnType: SyntaxFactory.NullableType(SyntaxFactory.IdentifierName("Type")),
                 explicitInterfaceSpecifier: null,
                 identifier: SyntaxFactory.Identifier("GetWrappedType"),
                 typeParameterList: null,
@@ -1157,7 +1160,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                                         nameColon: null,
                                         refKindKeyword: SyntaxFactory.Token(SyntaxKind.OutKeyword),
                                         expression: SyntaxFactory.DeclarationExpression(
-                                            type: SyntaxFactory.IdentifierName("Type"),
+                                            type: SyntaxFactory.NullableType(SyntaxFactory.IdentifierName("Type")),
                                             designation: SyntaxFactory.SingleVariableDesignation(SyntaxFactory.Identifier("wrappedType")))),
                                 }))),
                         statement: SyntaxFactory.Block(
@@ -1217,7 +1220,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                 .WithTrailingTrivia(
                     SyntaxFactory.CarriageReturnLineFeed);
 
-            context.AddSource("SyntaxWrapperHelper.g.cs", wrapperNamespace.GetText(Encoding.UTF8));
+            context.AddSource("SyntaxWrapperHelper.g.cs", wrapperNamespace.WithNullableContext().GetText(Encoding.UTF8));
         }
 
         private sealed class SyntaxData
@@ -1333,6 +1336,8 @@ namespace StyleCop.Analyzers.CodeGeneration
                 };
 
                 this.IsOverride = element.Attribute("Override")?.Value == "true";
+                this.IsOptional = element.Attribute("Optional")?.Value == "true"
+                    || element.Ancestors("Choice").Any();
 
                 this.AccessorName = this.Name + "Accessor";
                 this.WithAccessorName = "With" + this.Name + "Accessor";
@@ -1349,6 +1354,8 @@ namespace StyleCop.Analyzers.CodeGeneration
             public string Type { get; }
 
             public bool IsOverride { get; }
+
+            public bool IsOptional { get; }
 
             /// <summary>
             /// Determines whether the wrapper property for this field reads the value with a direct property call on
@@ -1445,7 +1452,8 @@ namespace StyleCop.Analyzers.CodeGeneration
                 var typeNode = syntaxData.TryGetNode(this.Type);
                 if (typeNode is not null)
                 {
-                    return syntaxData.TryGetConcreteType(typeNode)?.Name ?? nameof(SyntaxNode);
+                    var typeName = syntaxData.TryGetConcreteType(typeNode)?.Name ?? nameof(SyntaxNode);
+                    return this.IsOptional && this.Type != nameof(SyntaxToken) ? typeName + "?" : typeName;
                 }
 
                 if (this.IsWrappedSeparatedSyntaxList(syntaxData, out var elementTypeNode))

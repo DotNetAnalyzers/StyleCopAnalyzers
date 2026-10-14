@@ -1,20 +1,23 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct ICollectionElementInitializerOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.ICollectionElementInitializerOperation";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
         private static readonly Func<IOperation, IMethodSymbol> AddMethodAccessor;
         private static readonly Func<IOperation, ImmutableArray<IOperation>> ArgumentsAccessor;
         private static readonly Func<IOperation, bool> IsDynamicAccessor;
-        private readonly IOperation operation;
+        private readonly IOperation? operation;
         static ICollectionElementInitializerOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(ICollectionElementInitializerOperationWrapper));
@@ -23,20 +26,20 @@ namespace StyleCop.Analyzers.Lightup
             IsDynamicAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, bool>(WrappedType, nameof(IsDynamic));
         }
 
-        private ICollectionElementInitializerOperationWrapper(IOperation operation)
+        private ICollectionElementInitializerOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
-        public IMethodSymbol AddMethod => AddMethodAccessor(this.WrappedOperation);
-        public ImmutableArray<IOperation> Arguments => ArgumentsAccessor(this.WrappedOperation);
-        public bool IsDynamic => IsDynamicAccessor(this.WrappedOperation);
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
+        public IMethodSymbol AddMethod => AddMethodAccessor(this.operation!);
+        public ImmutableArray<IOperation> Arguments => ArgumentsAccessor(this.operation!);
+        public bool IsDynamic => IsDynamicAccessor(this.operation!);
 
         public static explicit operator ICollectionElementInitializerOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(ICollectionElementInitializerOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static ICollectionElementInitializerOperationWrapper FromOperation(IOperation operation)
+        public static ICollectionElementInitializerOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -51,7 +54,7 @@ namespace StyleCop.Analyzers.Lightup
             return new ICollectionElementInitializerOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.SpecialRules
 {
     using System;
@@ -386,9 +384,9 @@ namespace NamespaceName { }
 
         private class InvalidAdditionalText : AdditionalText
         {
-            public override string Path => null;
+            public override string Path => null!;
 
-            public override SourceText GetText(CancellationToken cancellationToken) => null;
+            public override SourceText? GetText(CancellationToken cancellationToken) => null;
         }
 
         /// <summary>
@@ -398,7 +396,7 @@ namespace NamespaceName { }
         /// </summary>
         private class AnalysisContextMissingOptions : AnalysisContext
         {
-            public Action<CompilationAnalysisContext> CompilationAction
+            public Action<CompilationAnalysisContext>? CompilationAction
             {
                 get;
                 private set;

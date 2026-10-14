@@ -1,39 +1,42 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct ITupleOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.ITupleOperation";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
         private static readonly Func<IOperation, ImmutableArray<IOperation>> ElementsAccessor;
-        private static readonly Func<IOperation, ITypeSymbol> NaturalTypeAccessor;
-        private readonly IOperation operation;
+        private static readonly Func<IOperation, ITypeSymbol?> NaturalTypeAccessor;
+        private readonly IOperation? operation;
         static ITupleOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(ITupleOperationWrapper));
             ElementsAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, ImmutableArray<IOperation>>(WrappedType, nameof(Elements));
-            NaturalTypeAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, ITypeSymbol>(WrappedType, nameof(NaturalType));
+            NaturalTypeAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, ITypeSymbol?>(WrappedType, nameof(NaturalType));
         }
 
-        private ITupleOperationWrapper(IOperation operation)
+        private ITupleOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
-        public ImmutableArray<IOperation> Elements => ElementsAccessor(this.WrappedOperation);
-        public ITypeSymbol NaturalType => NaturalTypeAccessor(this.WrappedOperation);
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
+        public ImmutableArray<IOperation> Elements => ElementsAccessor(this.operation!);
+        public ITypeSymbol? NaturalType => NaturalTypeAccessor(this.operation!);
 
         public static explicit operator ITupleOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(ITupleOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static ITupleOperationWrapper FromOperation(IOperation operation)
+        public static ITupleOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -48,7 +51,7 @@ namespace StyleCop.Analyzers.Lightup
             return new ITupleOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }

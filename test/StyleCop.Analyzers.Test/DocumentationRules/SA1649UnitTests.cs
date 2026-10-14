@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Collections.Immutable;
@@ -678,7 +676,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             };
         }
 
-        protected static Task VerifyCSharpDiagnosticAsync(string fileName, string source, string testSettings, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        protected static Task VerifyCSharpDiagnosticAsync(string fileName, string source, string? testSettings, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
             var test = new StyleCopCodeFixVerifier<SA1649FileNameMustMatchTypeName, SA1649CodeFixProvider>.CSharpTest()
             {
@@ -694,10 +692,10 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             return test.RunAsync(cancellationToken);
         }
 
-        protected static Task VerifyCSharpFixAsync(string oldFileName, string source, string testSettings, DiagnosticResult expected, string newFileName, string fixedSource, CancellationToken cancellationToken)
+        protected static Task VerifyCSharpFixAsync(string oldFileName, string source, string? testSettings, DiagnosticResult expected, string newFileName, string fixedSource, CancellationToken cancellationToken)
             => VerifyCSharpFixAsync(oldFileName, source, testSettings, new[] { expected }, newFileName, fixedSource, cancellationToken);
 
-        protected static Task VerifyCSharpFixAsync(string oldFileName, string source, string testSettings, DiagnosticResult[] expected, string newFileName, string fixedSource, CancellationToken cancellationToken)
+        protected static Task VerifyCSharpFixAsync(string oldFileName, string source, string? testSettings, DiagnosticResult[] expected, string newFileName, string fixedSource, CancellationToken cancellationToken)
         {
             var test = new StyleCopCodeFixVerifier<SA1649FileNameMustMatchTypeName, SA1649CodeFixProvider>.CSharpTest()
             {

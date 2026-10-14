@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,61 +15,61 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct BaseObjectCreationExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.BaseObjectCreationExpressionSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<ExpressionSyntax, SyntaxToken> NewKeywordAccessor;
-        private static readonly Func<ExpressionSyntax, ArgumentListSyntax> ArgumentListAccessor;
-        private static readonly Func<ExpressionSyntax, InitializerExpressionSyntax> InitializerAccessor;
+        private static readonly Func<ExpressionSyntax, ArgumentListSyntax?> ArgumentListAccessor;
+        private static readonly Func<ExpressionSyntax, InitializerExpressionSyntax?> InitializerAccessor;
         private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithNewKeywordAccessor;
-        private static readonly Func<ExpressionSyntax, ArgumentListSyntax, ExpressionSyntax> WithArgumentListAccessor;
-        private static readonly Func<ExpressionSyntax, InitializerExpressionSyntax, ExpressionSyntax> WithInitializerAccessor;
+        private static readonly Func<ExpressionSyntax, ArgumentListSyntax?, ExpressionSyntax> WithArgumentListAccessor;
+        private static readonly Func<ExpressionSyntax, InitializerExpressionSyntax?, ExpressionSyntax> WithInitializerAccessor;
 
-        private readonly ExpressionSyntax node;
+        private readonly ExpressionSyntax? node;
 
         static BaseObjectCreationExpressionSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(BaseObjectCreationExpressionSyntaxWrapper));
             NewKeywordAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<ExpressionSyntax, SyntaxToken>(WrappedType, nameof(NewKeyword));
-            ArgumentListAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<ExpressionSyntax, ArgumentListSyntax>(WrappedType, nameof(ArgumentList));
-            InitializerAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<ExpressionSyntax, InitializerExpressionSyntax>(WrappedType, nameof(Initializer));
+            ArgumentListAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<ExpressionSyntax, ArgumentListSyntax?>(WrappedType, nameof(ArgumentList));
+            InitializerAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<ExpressionSyntax, InitializerExpressionSyntax?>(WrappedType, nameof(Initializer));
             WithNewKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, SyntaxToken>(WrappedType, nameof(NewKeyword));
-            WithArgumentListAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, ArgumentListSyntax>(WrappedType, nameof(ArgumentList));
-            WithInitializerAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, InitializerExpressionSyntax>(WrappedType, nameof(Initializer));
+            WithArgumentListAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, ArgumentListSyntax?>(WrappedType, nameof(ArgumentList));
+            WithInitializerAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, InitializerExpressionSyntax?>(WrappedType, nameof(Initializer));
         }
 
-        private BaseObjectCreationExpressionSyntaxWrapper(ExpressionSyntax node)
+        private BaseObjectCreationExpressionSyntaxWrapper(ExpressionSyntax? node)
         {
             this.node = node;
         }
 
-        public ExpressionSyntax SyntaxNode => this.node;
+        public ExpressionSyntax? SyntaxNode => this.node;
 
 
         public SyntaxToken NewKeyword
         {
             get
             {
-                return NewKeywordAccessor(this.SyntaxNode);
+                return NewKeywordAccessor(this.node!);
             }
         }
 
-        public ArgumentListSyntax ArgumentList
+        public ArgumentListSyntax? ArgumentList
         {
             get
             {
-                return ArgumentListAccessor(this.SyntaxNode);
+                return ArgumentListAccessor(this.node!);
             }
         }
 
-        public InitializerExpressionSyntax Initializer
+        public InitializerExpressionSyntax? Initializer
         {
             get
             {
-                return InitializerAccessor(this.SyntaxNode);
+                return InitializerAccessor(this.node!);
             }
         }
 
-        public static explicit operator BaseObjectCreationExpressionSyntaxWrapper(SyntaxNode node)
+        public static explicit operator BaseObjectCreationExpressionSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -81,32 +84,32 @@ namespace StyleCop.Analyzers.Lightup
             return new BaseObjectCreationExpressionSyntaxWrapper((ExpressionSyntax)node);
         }
 
-        public static implicit operator ExpressionSyntax(BaseObjectCreationExpressionSyntaxWrapper wrapper)
+        public static implicit operator ExpressionSyntax? (BaseObjectCreationExpressionSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public BaseObjectCreationExpressionSyntaxWrapper WithNewKeyword(SyntaxToken newKeyword)
         {
-            return new BaseObjectCreationExpressionSyntaxWrapper(WithNewKeywordAccessor(this.SyntaxNode, newKeyword));
+            return new BaseObjectCreationExpressionSyntaxWrapper(WithNewKeywordAccessor(this.node!, newKeyword));
         }
 
-        public BaseObjectCreationExpressionSyntaxWrapper WithArgumentList(ArgumentListSyntax argumentList)
+        public BaseObjectCreationExpressionSyntaxWrapper WithArgumentList(ArgumentListSyntax? argumentList)
         {
-            return new BaseObjectCreationExpressionSyntaxWrapper(WithArgumentListAccessor(this.SyntaxNode, argumentList));
+            return new BaseObjectCreationExpressionSyntaxWrapper(WithArgumentListAccessor(this.node!, argumentList));
         }
 
-        public BaseObjectCreationExpressionSyntaxWrapper WithInitializer(InitializerExpressionSyntax initializer)
+        public BaseObjectCreationExpressionSyntaxWrapper WithInitializer(InitializerExpressionSyntax? initializer)
         {
-            return new BaseObjectCreationExpressionSyntaxWrapper(WithInitializerAccessor(this.SyntaxNode, initializer));
+            return new BaseObjectCreationExpressionSyntaxWrapper(WithInitializerAccessor(this.node!, initializer));
         }
 
-        internal static BaseObjectCreationExpressionSyntaxWrapper FromUpcast(ExpressionSyntax node)
+        internal static BaseObjectCreationExpressionSyntaxWrapper FromUpcast(ExpressionSyntax? node)
         {
             return new BaseObjectCreationExpressionSyntaxWrapper(node);
         }

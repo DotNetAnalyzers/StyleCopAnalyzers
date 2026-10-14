@@ -1,19 +1,22 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct ILockOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.ILockOperation";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
         private static readonly Func<IOperation, IOperation> LockedValueAccessor;
         private static readonly Func<IOperation, IOperation> BodyAccessor;
-        private readonly IOperation operation;
+        private readonly IOperation? operation;
         static ILockOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(ILockOperationWrapper));
@@ -21,19 +24,19 @@ namespace StyleCop.Analyzers.Lightup
             BodyAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation>(WrappedType, nameof(Body));
         }
 
-        private ILockOperationWrapper(IOperation operation)
+        private ILockOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
-        public IOperation LockedValue => LockedValueAccessor(this.WrappedOperation);
-        public IOperation Body => BodyAccessor(this.WrappedOperation);
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
+        public IOperation LockedValue => LockedValueAccessor(this.operation!);
+        public IOperation Body => BodyAccessor(this.operation!);
 
         public static explicit operator ILockOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(ILockOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static ILockOperationWrapper FromOperation(IOperation operation)
+        public static ILockOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -48,7 +51,7 @@ namespace StyleCop.Analyzers.Lightup
             return new ILockOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }

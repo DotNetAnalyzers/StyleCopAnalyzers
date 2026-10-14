@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
@@ -54,11 +52,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <param name="argumentIndex">The index of the argument containing the delegate.</param>
         /// <returns>A parameter list for the delegate parameters, or <see langword="null"/> if the parameter is not
         /// of a delegate type.</returns>
-        internal static ParameterListSyntax GetDelegateParameterList(ISymbol symbol, int argumentIndex)
+        internal static ParameterListSyntax? GetDelegateParameterList(ISymbol symbol, int argumentIndex)
         {
             ImmutableArray<IParameterSymbol> parameterList;
             int realIndex;
-            INamedTypeSymbol delegateType;
+            INamedTypeSymbol? delegateType;
             if (symbol is IMethodSymbol methodSymbol)
             {
                 parameterList = methodSymbol.Parameters;

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp7.Lightup
 {
     using System;
@@ -40,7 +38,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             Assert.Same(syntaxNode.Expression, isPatternExpressionSyntax.Expression);
             Assert.True(syntaxNode.IsKeyword.IsEquivalentTo(isPatternExpressionSyntax.IsKeyword));
             Assert.Same(syntaxNode.Pattern, isPatternExpressionSyntax.Pattern.SyntaxNode);
-            Assert.Equal(SyntaxKind.NullLiteralExpression, ((ConstantPatternSyntax)isPatternExpressionSyntax.Pattern).Expression.Kind());
+            Assert.Equal(SyntaxKind.NullLiteralExpression, Assert.IsType<ConstantPatternSyntax>(isPatternExpressionSyntax.Pattern.SyntaxNode).Expression.Kind());
 
             var newExpression = SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(0));
             var modifiedExpression = isPatternExpressionSyntax.WithExpression(newExpression);
@@ -58,7 +56,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var modifiedPattern = isPatternExpressionSyntax.WithPattern((PatternSyntaxWrapper)newPattern);
             Assert.NotNull(modifiedPattern.SyntaxNode);
             Assert.Equal(SyntaxKind.DefaultExpression, modifiedPattern.Expression.Kind());
-            Assert.Equal(SyntaxKind.NumericLiteralExpression, ((ConstantPatternSyntax)modifiedPattern.Pattern).Expression.Kind());
+            Assert.Equal(SyntaxKind.NumericLiteralExpression, Assert.IsType<ConstantPatternSyntax>(modifiedPattern.Pattern.SyntaxNode).Expression.Kind());
         }
 
         [Fact]
@@ -77,7 +75,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var syntaxNode = default(SyntaxNode);
             var isPatternExpressionSyntax = (IsPatternExpressionSyntaxWrapper)syntaxNode;
 
-            ExpressionSyntax syntax = isPatternExpressionSyntax;
+            ExpressionSyntax? syntax = isPatternExpressionSyntax;
             Assert.Null(syntax);
         }
 
@@ -87,7 +85,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var syntaxNode = SyntaxFactory.IsPatternExpression(SyntaxFactory.DefaultExpression(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword))), SyntaxFactory.ConstantPattern(SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)));
             var isPatternExpressionSyntax = (IsPatternExpressionSyntaxWrapper)syntaxNode;
 
-            ExpressionSyntax syntax = isPatternExpressionSyntax;
+            ExpressionSyntax? syntax = isPatternExpressionSyntax;
             Assert.Same(syntaxNode, syntax);
         }
 

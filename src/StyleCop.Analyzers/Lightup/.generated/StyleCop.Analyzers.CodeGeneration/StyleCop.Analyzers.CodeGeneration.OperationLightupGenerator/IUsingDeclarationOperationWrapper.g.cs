@@ -1,19 +1,22 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct IUsingDeclarationOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IUsingDeclarationOperation";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
         private static readonly Func<IOperation, IOperation> DeclarationGroupAccessor;
         private static readonly Func<IOperation, bool> IsAsynchronousAccessor;
-        private readonly IOperation operation;
+        private readonly IOperation? operation;
         static IUsingDeclarationOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(IUsingDeclarationOperationWrapper));
@@ -21,19 +24,19 @@ namespace StyleCop.Analyzers.Lightup
             IsAsynchronousAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, bool>(WrappedType, nameof(IsAsynchronous));
         }
 
-        private IUsingDeclarationOperationWrapper(IOperation operation)
+        private IUsingDeclarationOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
-        public IVariableDeclarationGroupOperationWrapper DeclarationGroup => IVariableDeclarationGroupOperationWrapper.FromOperation(DeclarationGroupAccessor(this.WrappedOperation));
-        public bool IsAsynchronous => IsAsynchronousAccessor(this.WrappedOperation);
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
+        public IVariableDeclarationGroupOperationWrapper DeclarationGroup => IVariableDeclarationGroupOperationWrapper.FromOperation(DeclarationGroupAccessor(this.operation!));
+        public bool IsAsynchronous => IsAsynchronousAccessor(this.operation!);
 
         public static explicit operator IUsingDeclarationOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IUsingDeclarationOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static IUsingDeclarationOperationWrapper FromOperation(IOperation operation)
+        public static IUsingDeclarationOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -48,7 +51,7 @@ namespace StyleCop.Analyzers.Lightup
             return new IUsingDeclarationOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }

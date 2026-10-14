@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.NamingRules
 {
     using System;
@@ -159,7 +157,7 @@ namespace StyleCop.Analyzers.NamingRules
                     }
                 }
 
-                CheckIdentifier(context, parameter.Identifier, settings, "parameter");
+                CheckIdentifier(context, parameter!.Identifier, settings, "parameter");
             }
 
             public static void HandleCatchDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)

@@ -162,7 +162,7 @@ namespace StyleCop.Analyzers.Lightup
             public override bool IsDefaultOrEmpty => this.array.IsDefaultOrEmpty;
 
             public override T this[int index]
-                => (T)WrapperHelper.Wrap(this.array[index]);
+                => (T)WrapperHelper.Wrap(this.array[index]!);
 
             public override int GetHashCode()
                 => this.array.GetHashCode();

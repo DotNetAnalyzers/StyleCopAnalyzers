@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,14 +15,14 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct VarPatternSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.VarPatternSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> VarKeywordAccessor;
         private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode> DesignationAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithVarKeywordAccessor;
         private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode, CSharpSyntaxNode> WithDesignationAccessor;
 
-        private readonly CSharpSyntaxNode node;
+        private readonly CSharpSyntaxNode? node;
 
         static VarPatternSyntaxWrapper()
         {
@@ -30,19 +33,19 @@ namespace StyleCop.Analyzers.Lightup
             WithDesignationAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, CSharpSyntaxNode>(WrappedType, nameof(Designation));
         }
 
-        private VarPatternSyntaxWrapper(CSharpSyntaxNode node)
+        private VarPatternSyntaxWrapper(CSharpSyntaxNode? node)
         {
             this.node = node;
         }
 
-        public CSharpSyntaxNode SyntaxNode => this.node;
+        public CSharpSyntaxNode? SyntaxNode => this.node;
 
 
         public SyntaxToken VarKeyword
         {
             get
             {
-                return VarKeywordAccessor(this.SyntaxNode);
+                return VarKeywordAccessor(this.node!);
             }
         }
 
@@ -50,7 +53,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return (VariableDesignationSyntaxWrapper)DesignationAccessor(this.SyntaxNode);
+                return (VariableDesignationSyntaxWrapper)DesignationAccessor(this.node!);
             }
         }
 
@@ -64,7 +67,7 @@ namespace StyleCop.Analyzers.Lightup
             return (VarPatternSyntaxWrapper)node.SyntaxNode;
         }
 
-        public static explicit operator VarPatternSyntaxWrapper(SyntaxNode node)
+        public static explicit operator VarPatternSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -89,24 +92,24 @@ namespace StyleCop.Analyzers.Lightup
             return ExpressionOrPatternSyntaxWrapper.FromUpcast(wrapper.node);
         }
 
-        public static implicit operator CSharpSyntaxNode(VarPatternSyntaxWrapper wrapper)
+        public static implicit operator CSharpSyntaxNode? (VarPatternSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public VarPatternSyntaxWrapper WithVarKeyword(SyntaxToken varKeyword)
         {
-            return new VarPatternSyntaxWrapper(WithVarKeywordAccessor(this.SyntaxNode, varKeyword));
+            return new VarPatternSyntaxWrapper(WithVarKeywordAccessor(this.node!, varKeyword));
         }
 
         public VarPatternSyntaxWrapper WithDesignation(VariableDesignationSyntaxWrapper designation)
         {
-            return new VarPatternSyntaxWrapper(WithDesignationAccessor(this.SyntaxNode, designation));
+            return new VarPatternSyntaxWrapper(WithDesignationAccessor(this.node!, designation.SyntaxNode!));
         }
     }
 }

@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,7 +15,7 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct LineDirectivePositionSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.LineDirectivePositionSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> OpenParenTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> LineAccessor;
@@ -25,7 +28,7 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithCharacterAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithCloseParenTokenAccessor;
 
-        private readonly CSharpSyntaxNode node;
+        private readonly CSharpSyntaxNode? node;
 
         static LineDirectivePositionSyntaxWrapper()
         {
@@ -42,19 +45,19 @@ namespace StyleCop.Analyzers.Lightup
             WithCloseParenTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(CloseParenToken));
         }
 
-        private LineDirectivePositionSyntaxWrapper(CSharpSyntaxNode node)
+        private LineDirectivePositionSyntaxWrapper(CSharpSyntaxNode? node)
         {
             this.node = node;
         }
 
-        public CSharpSyntaxNode SyntaxNode => this.node;
+        public CSharpSyntaxNode? SyntaxNode => this.node;
 
 
         public SyntaxToken OpenParenToken
         {
             get
             {
-                return OpenParenTokenAccessor(this.SyntaxNode);
+                return OpenParenTokenAccessor(this.node!);
             }
         }
 
@@ -62,7 +65,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return LineAccessor(this.SyntaxNode);
+                return LineAccessor(this.node!);
             }
         }
 
@@ -70,7 +73,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return CommaTokenAccessor(this.SyntaxNode);
+                return CommaTokenAccessor(this.node!);
             }
         }
 
@@ -78,7 +81,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return CharacterAccessor(this.SyntaxNode);
+                return CharacterAccessor(this.node!);
             }
         }
 
@@ -86,11 +89,11 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return CloseParenTokenAccessor(this.SyntaxNode);
+                return CloseParenTokenAccessor(this.node!);
             }
         }
 
-        public static explicit operator LineDirectivePositionSyntaxWrapper(SyntaxNode node)
+        public static explicit operator LineDirectivePositionSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -105,39 +108,39 @@ namespace StyleCop.Analyzers.Lightup
             return new LineDirectivePositionSyntaxWrapper((CSharpSyntaxNode)node);
         }
 
-        public static implicit operator CSharpSyntaxNode(LineDirectivePositionSyntaxWrapper wrapper)
+        public static implicit operator CSharpSyntaxNode? (LineDirectivePositionSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public LineDirectivePositionSyntaxWrapper WithOpenParenToken(SyntaxToken openParenToken)
         {
-            return new LineDirectivePositionSyntaxWrapper(WithOpenParenTokenAccessor(this.SyntaxNode, openParenToken));
+            return new LineDirectivePositionSyntaxWrapper(WithOpenParenTokenAccessor(this.node!, openParenToken));
         }
 
         public LineDirectivePositionSyntaxWrapper WithLine(SyntaxToken line)
         {
-            return new LineDirectivePositionSyntaxWrapper(WithLineAccessor(this.SyntaxNode, line));
+            return new LineDirectivePositionSyntaxWrapper(WithLineAccessor(this.node!, line));
         }
 
         public LineDirectivePositionSyntaxWrapper WithCommaToken(SyntaxToken commaToken)
         {
-            return new LineDirectivePositionSyntaxWrapper(WithCommaTokenAccessor(this.SyntaxNode, commaToken));
+            return new LineDirectivePositionSyntaxWrapper(WithCommaTokenAccessor(this.node!, commaToken));
         }
 
         public LineDirectivePositionSyntaxWrapper WithCharacter(SyntaxToken character)
         {
-            return new LineDirectivePositionSyntaxWrapper(WithCharacterAccessor(this.SyntaxNode, character));
+            return new LineDirectivePositionSyntaxWrapper(WithCharacterAccessor(this.node!, character));
         }
 
         public LineDirectivePositionSyntaxWrapper WithCloseParenToken(SyntaxToken closeParenToken)
         {
-            return new LineDirectivePositionSyntaxWrapper(WithCloseParenTokenAccessor(this.SyntaxNode, closeParenToken));
+            return new LineDirectivePositionSyntaxWrapper(WithCloseParenTokenAccessor(this.node!, closeParenToken));
         }
     }
 }

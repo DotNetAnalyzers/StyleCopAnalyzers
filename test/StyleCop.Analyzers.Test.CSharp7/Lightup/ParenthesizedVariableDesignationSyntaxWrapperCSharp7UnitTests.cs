@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp7.Lightup
 {
     using System;
@@ -44,7 +42,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var variableSyntaxNode = SyntaxFactory.SingleVariableDesignation(SyntaxFactory.Identifier("Anything"));
             parenthesizedVariableDesignationSyntax = parenthesizedVariableDesignationSyntax.AddVariables((SingleVariableDesignationSyntaxWrapper)variableSyntaxNode);
             Assert.Same(
-                ((ParenthesizedVariableDesignationSyntax)parenthesizedVariableDesignationSyntax.SyntaxNode).Variables[0],
+                Assert.IsType<ParenthesizedVariableDesignationSyntax>(parenthesizedVariableDesignationSyntax.SyntaxNode).Variables[0],
                 parenthesizedVariableDesignationSyntax.Variables[0].SyntaxNode);
 
             parenthesizedVariableDesignationSyntax = parenthesizedVariableDesignationSyntax.WithOpenParenToken(SpacingExtensions.WithoutTrivia(SyntaxFactory.Token(SyntaxKind.OpenParenToken)));
@@ -56,7 +54,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var variables = SyntaxFactory.SingletonSeparatedList<VariableDesignationSyntax>(SyntaxFactory.DiscardDesignation());
             parenthesizedVariableDesignationSyntax = parenthesizedVariableDesignationSyntax.WithVariables(new SeparatedSyntaxListWrapper<VariableDesignationSyntaxWrapper>.AutoWrapSeparatedSyntaxList<VariableDesignationSyntax>(variables));
             Assert.Same(
-                ((ParenthesizedVariableDesignationSyntax)parenthesizedVariableDesignationSyntax.SyntaxNode).Variables[0],
+                Assert.IsType<ParenthesizedVariableDesignationSyntax>(parenthesizedVariableDesignationSyntax.SyntaxNode).Variables[0],
                 parenthesizedVariableDesignationSyntax.Variables[0].SyntaxNode);
 
             parenthesizedVariableDesignationSyntax = parenthesizedVariableDesignationSyntax.WithCloseParenToken(SpacingExtensions.WithoutTrivia(SyntaxFactory.Token(SyntaxKind.CloseParenToken)));
@@ -87,7 +85,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             parenthesizedVariableDesignationSyntax = (ParenthesizedVariableDesignationSyntaxWrapper)variableDesignationSyntax;
             Assert.Null(parenthesizedVariableDesignationSyntax.SyntaxNode);
 
-            SyntaxNode syntax = parenthesizedVariableDesignationSyntax;
+            SyntaxNode? syntax = parenthesizedVariableDesignationSyntax;
             Assert.Null(syntax);
         }
 
@@ -103,7 +101,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             parenthesizedVariableDesignationSyntax = (ParenthesizedVariableDesignationSyntaxWrapper)variableDesignationSyntax;
             Assert.Same(syntaxNode, parenthesizedVariableDesignationSyntax.SyntaxNode);
 
-            SyntaxNode syntax = parenthesizedVariableDesignationSyntax;
+            SyntaxNode? syntax = parenthesizedVariableDesignationSyntax;
             Assert.Same(syntaxNode, syntax);
         }
 

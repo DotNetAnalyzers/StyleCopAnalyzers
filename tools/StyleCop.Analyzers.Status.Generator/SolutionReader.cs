@@ -1,13 +1,12 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Status.Generator
 {
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Reflection;
     using System.Text.RegularExpressions;
@@ -26,21 +25,27 @@ namespace StyleCop.Analyzers.Status.Generator
     public class SolutionReader
     {
         private static readonly Regex DiagnosticPathRegex = new Regex(@"(?<type>[A-Za-z]+)Rules[\\/](?<name>[A-Za-z0-9]+)\.cs$");
-        private INamedTypeSymbol diagnosticAnalyzerTypeSymbol;
-        private INamedTypeSymbol noCodeFixAttributeTypeSymbol;
 
-        private Solution solution;
-        private Project analyzerProject;
-        private Project codeFixProject;
+        // CreateAsync initializes this state before publishing the reader.
+        private INamedTypeSymbol diagnosticAnalyzerTypeSymbol = null!;
+        private INamedTypeSymbol noCodeFixAttributeTypeSymbol = null!;
+
+        private Solution solution = null!;
+        private Project analyzerProject = null!;
+        private Project codeFixProject = null!;
         private MSBuildWorkspace workspace;
-        private Assembly analyzerAssembly;
-        private Assembly codeFixAssembly;
-        private Compilation analyzerCompilation;
-        private Compilation codeFixCompilation;
-        private ITypeSymbol booleanType;
+        private Assembly analyzerAssembly = null!;
+        private Assembly codeFixAssembly = null!;
+        private Compilation analyzerCompilation = null!;
+        private Compilation codeFixCompilation = null!;
+        private ITypeSymbol booleanType = null!;
 
-        private SolutionReader()
+        private SolutionReader(string slnPath, string analyzerProjectName, string codeFixProjectName, MSBuildWorkspace workspace)
         {
+            this.SlnPath = slnPath;
+            this.AnalyzerProjectName = analyzerProjectName;
+            this.CodeFixProjectName = codeFixProjectName;
+            this.workspace = workspace;
             AppDomain.CurrentDomain.AssemblyResolve += (s, e) =>
             {
                 if (e.Name.Contains(this.AnalyzerProjectName))
@@ -70,12 +75,11 @@ namespace StyleCop.Analyzers.Status.Generator
         /// <returns>A <see cref="Task{TResult}"/> representing the asynchronous operation.</returns>
         public static async Task<SolutionReader> CreateAsync(string pathToSln, string analyzerProjectName = "StyleCop.Analyzers", string codeFixProjectName = "StyleCop.Analyzers.CodeFixes", string configuration = "Debug")
         {
-            SolutionReader reader = new SolutionReader();
-
-            reader.SlnPath = pathToSln;
-            reader.AnalyzerProjectName = analyzerProjectName;
-            reader.CodeFixProjectName = codeFixProjectName;
-            reader.workspace = MSBuildWorkspace.Create(new Dictionary<string, string> { { "Configuration", configuration } });
+            SolutionReader reader = new SolutionReader(
+                pathToSln,
+                analyzerProjectName,
+                codeFixProjectName,
+                MSBuildWorkspace.Create(new Dictionary<string, string> { { "Configuration", configuration } }));
 
             await reader.InitializeAsync().ConfigureAwait(false);
 
@@ -100,20 +104,20 @@ namespace StyleCop.Analyzers.Status.Generator
                     continue;
                 }
 
-                string shortName = match.Groups["name"].Value;
-                string noCodeFixReason = null;
+                string? shortName = match.Groups["name"].Value;
+                string? noCodeFixReason = null;
 
                 // Check if this syntax tree represents a diagnostic
                 SyntaxNode syntaxRoot = await syntaxTree.GetRootAsync().ConfigureAwait(false);
                 SemanticModel semanticModel = this.analyzerCompilation.GetSemanticModel(syntaxTree);
-                SyntaxNode classSyntaxNode = syntaxRoot.DescendantNodes().FirstOrDefault(x => x.IsKind(SyntaxKind.ClassDeclaration));
+                SyntaxNode? classSyntaxNode = syntaxRoot.DescendantNodes().FirstOrDefault(x => x.IsKind(SyntaxKind.ClassDeclaration));
 
                 if (classSyntaxNode == null)
                 {
                     continue;
                 }
 
-                INamedTypeSymbol classSymbol = semanticModel.GetDeclaredSymbol(classSyntaxNode) as INamedTypeSymbol;
+                INamedTypeSymbol? classSymbol = semanticModel.GetDeclaredSymbol(classSyntaxNode) as INamedTypeSymbol;
 
                 if (!this.InheritsFrom(classSymbol, this.diagnosticAnalyzerTypeSymbol))
                 {
@@ -180,26 +184,30 @@ namespace StyleCop.Analyzers.Status.Generator
             this.solution = await this.workspace.OpenSolutionAsync(this.SlnPath).ConfigureAwait(false);
 
             this.analyzerProject = this.solution.Projects.First(x => x.Name == this.AnalyzerProjectName || x.AssemblyName == this.AnalyzerProjectName);
-            this.analyzerCompilation = await this.analyzerProject.GetCompilationAsync().ConfigureAwait(false);
+            this.analyzerCompilation = await this.analyzerProject.GetCompilationAsync().ConfigureAwait(false)
+                ?? throw new InvalidOperationException("The analyzer project does not support compilation.");
             this.analyzerCompilation = this.analyzerCompilation.WithOptions(this.analyzerCompilation.Options.WithOutputKind(OutputKind.DynamicallyLinkedLibrary));
 
             this.codeFixProject = this.solution.Projects.First(x => x.Name == this.CodeFixProjectName || x.AssemblyName == this.CodeFixProjectName);
-            this.codeFixCompilation = await this.codeFixProject.GetCompilationAsync().ConfigureAwait(false);
+            this.codeFixCompilation = await this.codeFixProject.GetCompilationAsync().ConfigureAwait(false)
+                ?? throw new InvalidOperationException("The code fix project does not support compilation.");
             this.codeFixCompilation = this.codeFixCompilation.WithOptions(this.codeFixCompilation.Options.WithOutputKind(OutputKind.DynamicallyLinkedLibrary));
 
             this.booleanType = this.analyzerCompilation.GetSpecialType(SpecialType.System_Boolean);
 
             this.LoadAssemblies();
 
-            this.noCodeFixAttributeTypeSymbol = this.analyzerCompilation.GetTypeByMetadataName("StyleCop.Analyzers.NoCodeFixAttribute");
-            this.diagnosticAnalyzerTypeSymbol = this.analyzerCompilation.GetTypeByMetadataName(typeof(DiagnosticAnalyzer).FullName);
+            this.noCodeFixAttributeTypeSymbol = this.analyzerCompilation.GetTypeByMetadataName("StyleCop.Analyzers.NoCodeFixAttribute")
+                ?? throw new InvalidOperationException("The analyzer compilation does not contain NoCodeFixAttribute.");
+            this.diagnosticAnalyzerTypeSymbol = this.analyzerCompilation.GetTypeByMetadataName(typeof(DiagnosticAnalyzer).FullName!)
+                ?? throw new InvalidOperationException("The analyzer compilation does not reference DiagnosticAnalyzer.");
 
             this.InitializeCodeFixTypes();
         }
 
         private void InitializeCodeFixTypes()
         {
-            var codeFixTypes = this.codeFixAssembly.GetTypes().Where(x => x.FullName.EndsWith("CodeFixProvider"));
+            var codeFixTypes = this.codeFixAssembly.GetTypes().Where(x => x.FullName!.EndsWith("CodeFixProvider"));
 
             this.CodeFixProviders = ImmutableArray.Create(
                 codeFixTypes
@@ -218,7 +226,8 @@ namespace StyleCop.Analyzers.Status.Generator
 
         private Assembly GetAssembly(Project project)
         {
-            return Assembly.LoadFile(project.OutputFilePath);
+            return Assembly.LoadFile(project.OutputFilePath
+                ?? throw new InvalidOperationException($"Project '{project.Name}' has no output file path."));
         }
 
         private string GetStatus(INamedTypeSymbol classSymbol, SyntaxNode root, SemanticModel model, DiagnosticDescriptor descriptor)
@@ -229,8 +238,8 @@ namespace StyleCop.Analyzers.Status.Generator
 
             foreach (var member in members)
             {
-                ObjectCreationExpressionSyntax initializer;
-                SyntaxNode node = root.FindNode(member.Locations.FirstOrDefault().SourceSpan);
+                ObjectCreationExpressionSyntax? initializer;
+                SyntaxNode node = root.FindNode(member.Locations.First().SourceSpan);
 
                 if (node != null)
                 {
@@ -250,9 +259,9 @@ namespace StyleCop.Analyzers.Status.Generator
                     continue;
                 }
 
-                var firstArgument = initializer.ArgumentList.Arguments[0];
+                var firstArgument = initializer.ArgumentList!.Arguments[0];
 
-                string constantValue = (string)model.GetConstantValue(firstArgument.Expression).Value;
+                string? constantValue = (string?)model.GetConstantValue(firstArgument.Expression).Value;
 
                 if (constantValue != descriptor.Id)
                 {
@@ -263,7 +272,7 @@ namespace StyleCop.Analyzers.Status.Generator
                 var enabledByDefaultParameter = from argument in initializer.ArgumentList.Arguments
                                                 where SymbolEqualityComparer.Default.Equals(model.GetTypeInfo(argument.Expression).Type, this.booleanType)
                                                 select argument.Expression;
-                var parameter = enabledByDefaultParameter.FirstOrDefault();
+                var parameter = enabledByDefaultParameter.First();
                 string parameterString = parameter.ToString();
                 var analyzerConstantLength = "AnalyzerConstants.".Length;
 
@@ -280,13 +289,14 @@ namespace StyleCop.Analyzers.Status.Generator
 
         private IEnumerable<DiagnosticDescriptor> GetDescriptor(INamedTypeSymbol classSymbol)
         {
-            var analyzer = (DiagnosticAnalyzer)Activator.CreateInstance(this.analyzerAssembly.GetType(classSymbol.ToString()));
+            var analyzerType = this.analyzerAssembly.GetType(classSymbol.ToString()!, throwOnError: true)!;
+            var analyzer = (DiagnosticAnalyzer)Activator.CreateInstance(analyzerType)!;
 
             // This currently only supports one diagnostic for each analyzer.
             return analyzer.SupportedDiagnostics;
         }
 
-        private (CodeFixStatus codeFixStatus, FixAllStatus fixAllStatus) GetCodeFixAndFixAllStatus(string diagnosticId, INamedTypeSymbol classSymbol, out string noCodeFixReason)
+        private (CodeFixStatus codeFixStatus, FixAllStatus fixAllStatus) GetCodeFixAndFixAllStatus(string diagnosticId, INamedTypeSymbol classSymbol, out string? noCodeFixReason)
         {
             CodeFixStatus codeFixStatus;
             FixAllStatus fixAllStatus;
@@ -297,8 +307,7 @@ namespace StyleCop.Analyzers.Status.Generator
                 .GetAttributes()
                 .SingleOrDefault(x => SymbolEqualityComparer.Default.Equals(x.AttributeClass, this.noCodeFixAttributeTypeSymbol));
 
-            bool hasCodeFix = noCodeFixAttribute == null;
-            if (!hasCodeFix)
+            if (noCodeFixAttribute is not null)
             {
                 codeFixStatus = CodeFixStatus.NotImplemented;
                 fixAllStatus = FixAllStatus.None;
@@ -315,7 +324,7 @@ namespace StyleCop.Analyzers.Status.Generator
                     .Select(x => this.IsBatchFixer(x))
                     .ToArray();
 
-                hasCodeFix = codeFixes.Length > 0;
+                var hasCodeFix = codeFixes.Length > 0;
 
                 codeFixStatus = hasCodeFix ? CodeFixStatus.Implemented : CodeFixStatus.NotYetImplemented;
 
@@ -350,7 +359,7 @@ namespace StyleCop.Analyzers.Status.Generator
             }
         }
 
-        private bool InheritsFrom(INamedTypeSymbol declaration, INamedTypeSymbol possibleBaseType)
+        private bool InheritsFrom([NotNullWhen(true)] INamedTypeSymbol? declaration, INamedTypeSymbol possibleBaseType)
         {
             while (declaration != null)
             {

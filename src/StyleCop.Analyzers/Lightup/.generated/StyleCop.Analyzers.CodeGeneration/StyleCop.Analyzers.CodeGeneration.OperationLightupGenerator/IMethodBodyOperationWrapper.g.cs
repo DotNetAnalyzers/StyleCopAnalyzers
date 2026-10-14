@@ -1,29 +1,32 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct IMethodBodyOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IMethodBodyOperation";
-        private static readonly Type WrappedType;
-        private readonly IOperation operation;
+        private static readonly Type? WrappedType;
+        private readonly IOperation? operation;
         static IMethodBodyOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(IMethodBodyOperationWrapper));
         }
 
-        private IMethodBodyOperationWrapper(IOperation operation)
+        private IMethodBodyOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
 
         public static explicit operator IMethodBodyOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IMethodBodyOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
@@ -32,7 +35,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public static explicit operator IMethodBodyOperationWrapper(IMethodBodyBaseOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IMethodBodyBaseOperationWrapper(IMethodBodyOperationWrapper wrapper) => IMethodBodyBaseOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static IMethodBodyOperationWrapper FromOperation(IOperation operation)
+        public static IMethodBodyOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -47,7 +50,7 @@ namespace StyleCop.Analyzers.Lightup
             return new IMethodBodyOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }

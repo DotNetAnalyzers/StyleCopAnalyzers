@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System;
@@ -130,7 +128,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 var left = (BinaryPatternSyntaxWrapper)binaryPattern.Left;
                 if (IsLogicalOperator(left.OperatorToken) && !IsSameFamily(binaryPattern.OperatorToken, left.OperatorToken))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, left.SyntaxNode.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, left.SyntaxNode!.GetLocation()));
                 }
             }
 
@@ -139,7 +137,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 var right = (BinaryPatternSyntaxWrapper)binaryPattern.Right;
                 if (IsLogicalOperator(right.OperatorToken) && !IsSameFamily(binaryPattern.OperatorToken, right.OperatorToken))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, right.SyntaxNode.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, right.SyntaxNode!.GetLocation()));
                 }
             }
         }

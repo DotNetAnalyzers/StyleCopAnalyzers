@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Generic;
@@ -115,7 +113,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             protected override string CodeActionTitle { get; } = DocumentationResources.SA1651CodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+            protected override async Task<SyntaxNode?> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
                 var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
                 var elements = new List<XmlElementSyntax>();
@@ -153,7 +151,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     var element = list[index];
                     if (element.HasAnnotation(NodeToReplaceAnnotation))
                     {
-                        list = list.ReplaceRange(element, RemovePlaceHolder(element as XmlElementSyntax).Cast<TNode>());
+                        list = list.ReplaceRange(element, RemovePlaceHolder((element as XmlElementSyntax)!).Cast<TNode>());
                     }
                     else
                     {

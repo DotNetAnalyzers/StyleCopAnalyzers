@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.LayoutRules
 {
     using System.Text;
@@ -28,7 +26,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         [Theory]
         [InlineData(null)]
         [InlineData("Test")]
-        public async Task TestAllowForCompilationUnitAsync(string namespaceName)
+        public async Task TestAllowForCompilationUnitAsync(string? namespaceName)
         {
             var testCode = @"
 using System;
@@ -58,7 +56,7 @@ using Factory = System.Activator;
         [Theory]
         [InlineData(null)]
         [InlineData("Test")]
-        public async Task TestOmitWithSystemFirstAsync(string namespaceName)
+        public async Task TestOmitWithSystemFirstAsync(string? namespaceName)
         {
             var testCode = @"
 using System;
@@ -111,7 +109,7 @@ namespace TestNamespace
         [Theory]
         [InlineData(null)]
         [InlineData("Test")]
-        public async Task TestOmitWithoutSystemFirstAsync(string namespaceName)
+        public async Task TestOmitWithoutSystemFirstAsync(string? namespaceName)
         {
             var testCode = @"
 using System;
@@ -162,7 +160,7 @@ namespace TestNamespace
         [Theory]
         [InlineData(null)]
         [InlineData("Test")]
-        public async Task TestOmitWithSeparingCommentsAsync(string namespaceName)
+        public async Task TestOmitWithSeparingCommentsAsync(string? namespaceName)
         {
             var testCode = @"
 using System;
@@ -195,7 +193,7 @@ namespace TestNamespace
         [Theory]
         [InlineData(null)]
         [InlineData("Test")]
-        public async Task TestRequireWithSystemFirstAsync(string namespaceName)
+        public async Task TestRequireWithSystemFirstAsync(string? namespaceName)
         {
             var testCode = @"
 using System;
@@ -248,7 +246,7 @@ namespace TestNamespace
         [Theory]
         [InlineData(null)]
         [InlineData("Test")]
-        public async Task TestRequireWithoutSystemFirstAsync(string namespaceName)
+        public async Task TestRequireWithoutSystemFirstAsync(string? namespaceName)
         {
             var testCode = @"
 using System;
@@ -305,7 +303,7 @@ namespace TestNamespace
 ";
         }
 
-        private static string WrapWithNamespace(string testCode, string namespaceName)
+        private static string WrapWithNamespace(string testCode, string? namespaceName)
         {
             var builder = new StringBuilder(testCode);
 
@@ -322,7 +320,7 @@ namespace TestNamespace { }
             return builder.ToString();
         }
 
-        private static int GetLineOffset(string namespaceName)
+        private static int GetLineOffset(string? namespaceName)
         {
             return string.IsNullOrEmpty(namespaceName) ? 0 : 2;
         }

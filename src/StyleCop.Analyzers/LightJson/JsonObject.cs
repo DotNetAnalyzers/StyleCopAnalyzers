@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace LightJson
 {
     using System.Collections.Generic;
@@ -246,11 +244,11 @@ namespace LightJson
                     {
                         if (this.value.IsJsonObject)
                         {
-                            return (JsonObject)this.value;
+                            return this.value.AsJsonObject;
                         }
                         else if (this.value.IsJsonArray)
                         {
-                            return (JsonArray)this.value;
+                            return this.value.AsJsonArray;
                         }
                         else
                         {

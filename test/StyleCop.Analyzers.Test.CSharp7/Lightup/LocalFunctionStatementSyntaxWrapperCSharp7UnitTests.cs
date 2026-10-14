@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp7.Lightup
 {
     using System;
@@ -88,6 +86,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var wrapperWithModifiedTypeParameterList = wrapper.WithTypeParameterList(newTypeParameterList);
             Assert.NotNull(wrapperWithModifiedTypeParameterList.SyntaxNode);
             Assert.NotSame(syntaxNode.TypeParameterList, wrapperWithModifiedTypeParameterList.TypeParameterList);
+            Assert.NotNull(wrapperWithModifiedTypeParameterList.TypeParameterList);
             Assert.Empty(wrapperWithModifiedTypeParameterList.TypeParameterList.Parameters);
 
             var newParameterList = SyntaxFactory.ParameterList();
@@ -105,12 +104,14 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var newBody = SyntaxFactory.Block();
             var wrapperWithModifiedBody = wrapper.WithBody(newBody);
             Assert.NotNull(wrapperWithModifiedBody.SyntaxNode);
+            Assert.NotNull(wrapperWithModifiedBody.Body);
             Assert.Equal(SyntaxKind.Block, wrapperWithModifiedBody.Body.Kind());
             Assert.Empty(wrapperWithModifiedBody.Body.Statements);
 
             var newExpressionBody = SyntaxFactory.ArrowExpressionClause(SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression));
             var wrapperWithModifiedExpressionBody = wrapper.WithExpressionBody(newExpressionBody);
             Assert.NotNull(wrapperWithModifiedExpressionBody.SyntaxNode);
+            Assert.NotNull(wrapperWithModifiedExpressionBody.ExpressionBody);
             Assert.Equal(SyntaxKind.ArrowExpressionClause, wrapperWithModifiedExpressionBody.ExpressionBody.Kind());
             Assert.Equal(SyntaxKind.NullLiteralExpression, wrapperWithModifiedExpressionBody.ExpressionBody.Expression.Kind());
 
@@ -132,6 +133,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var wrapperWithAddedTypeParameterList = wrapper.AddTypeParameterListParameters(addedTypeParameterList);
             Assert.NotNull(wrapperWithAddedTypeParameterList.SyntaxNode);
             Assert.NotSame(syntaxNode.TypeParameterList, wrapperWithAddedTypeParameterList.TypeParameterList);
+            Assert.NotNull(wrapperWithAddedTypeParameterList.TypeParameterList);
             Assert.Equal(2, wrapperWithAddedTypeParameterList.TypeParameterList.Parameters.Count);
             Assert.Equal("T1", wrapperWithAddedTypeParameterList.TypeParameterList.Parameters[0].Identifier.Text);
             Assert.Equal("T2", wrapperWithAddedTypeParameterList.TypeParameterList.Parameters[1].Identifier.Text);
@@ -155,6 +157,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var addedBodyStatements = new StatementSyntax[] { SyntaxFactory.ReturnStatement() };
             var wrapperWithAddedBodyStatements = wrapper.AddBodyStatements(addedBodyStatements);
             Assert.NotNull(wrapperWithAddedBodyStatements.SyntaxNode);
+            Assert.NotNull(wrapperWithAddedBodyStatements.Body);
             Assert.Equal(SyntaxKind.Block, wrapperWithAddedBodyStatements.Body.Kind());
             Assert.Equal(2, wrapperWithAddedBodyStatements.Body.Statements.Count);
             Assert.Equal(SyntaxKind.BreakStatement, wrapperWithAddedBodyStatements.Body.Statements[0].Kind());
@@ -177,7 +180,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var syntaxNode = default(SyntaxNode);
             var wrapper = (LocalFunctionStatementSyntaxWrapper)syntaxNode;
 
-            StatementSyntax syntax = wrapper;
+            StatementSyntax? syntax = wrapper;
             Assert.Null(syntax);
         }
 
@@ -187,7 +190,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var syntaxNode = this.CreateLocalFunctionStatement();
             var wrapper = (LocalFunctionStatementSyntaxWrapper)syntaxNode;
 
-            StatementSyntax syntax = wrapper;
+            StatementSyntax? syntax = wrapper;
             Assert.Same(syntaxNode, syntax);
         }
 

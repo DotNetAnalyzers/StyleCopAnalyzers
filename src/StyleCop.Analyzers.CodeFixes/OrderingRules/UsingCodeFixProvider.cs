@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.OrderingRules
 {
     using System;
@@ -453,7 +451,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 this.fileHeader = fileHeader;
             }
 
-            public override SyntaxNode VisitUsingDirective(UsingDirectiveSyntax node)
+            public override SyntaxNode? VisitUsingDirective(UsingDirectiveSyntax node)
             {
                 // The strip list is used to remove using directives that will be moved.
                 if (this.stripList.Contains(node))
@@ -516,7 +514,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 => OrderingResources.UsingCodeFix;
 
             /// <inheritdoc/>
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+            protected override async Task<SyntaxNode?> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
                 if (diagnostics.IsEmpty)
                 {

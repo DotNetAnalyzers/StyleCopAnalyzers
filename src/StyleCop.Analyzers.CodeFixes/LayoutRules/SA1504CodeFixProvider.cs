@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.LayoutRules
 {
     using System.Collections.Generic;
@@ -226,7 +224,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 var keyword = newAccessor.Keyword.WithTrailingTrivia(ReformatTriviaList(accessor.Keyword.TrailingTrivia));
                 newAccessor = newAccessor
                     .WithKeyword(keyword)
-                    .WithExpressionBody(ReformatExpressionBodyAsSingleLine(accessor.ExpressionBody()))
+                    .WithExpressionBody(ReformatExpressionBodyAsSingleLine(accessor.ExpressionBody()!))
                     .WithSemicolonToken(ReformatSemicolonAsSingleLine(accessor.SemicolonToken));
             }
 
@@ -343,7 +341,7 @@ namespace StyleCop.Analyzers.LayoutRules
             }
             else
             {
-                var expressionBody = accessor.ExpressionBody();
+                var expressionBody = accessor.ExpressionBody()!;
                 SyntaxToken keyword = ReformatKeywordAsMultipleLines(accessor.Keyword, indentation, accessor.Modifiers.Count == 0);
                 keyword = keyword.WithTrailingTrivia(
                     keyword.TrailingTrivia.AddRange(ReformatTriviaListNoLeadingSpace(expressionBody.ArrowToken.LeadingTrivia)));

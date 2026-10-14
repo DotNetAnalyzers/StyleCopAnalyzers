@@ -1,20 +1,23 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct IEventAssignmentOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IEventAssignmentOperation";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
         private static readonly Func<IOperation, IOperation> EventReferenceAccessor;
         private static readonly Func<IOperation, IOperation> HandlerValueAccessor;
         private static readonly Func<IOperation, bool> AddsAccessor;
-        private readonly IOperation operation;
+        private readonly IOperation? operation;
         static IEventAssignmentOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(IEventAssignmentOperationWrapper));
@@ -23,20 +26,20 @@ namespace StyleCop.Analyzers.Lightup
             AddsAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, bool>(WrappedType, nameof(Adds));
         }
 
-        private IEventAssignmentOperationWrapper(IOperation operation)
+        private IEventAssignmentOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
-        public IOperation EventReference => EventReferenceAccessor(this.WrappedOperation);
-        public IOperation HandlerValue => HandlerValueAccessor(this.WrappedOperation);
-        public bool Adds => AddsAccessor(this.WrappedOperation);
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
+        public IOperation EventReference => EventReferenceAccessor(this.operation!);
+        public IOperation HandlerValue => HandlerValueAccessor(this.operation!);
+        public bool Adds => AddsAccessor(this.operation!);
 
         public static explicit operator IEventAssignmentOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IEventAssignmentOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static IEventAssignmentOperationWrapper FromOperation(IOperation operation)
+        public static IEventAssignmentOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -51,7 +54,7 @@ namespace StyleCop.Analyzers.Lightup
             return new IEventAssignmentOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
@@ -244,7 +242,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 // Alias uses are handled at the alias target so that a single declaration does not produce diagnostics
                 // at every use.
-                INamedTypeSymbol symbol = semanticModel.GetSymbolInfo(identifierNameSyntax, context.CancellationToken).Symbol as INamedTypeSymbol;
+                INamedTypeSymbol? symbol = semanticModel.GetSymbolInfo(identifierNameSyntax, context.CancellationToken).Symbol as INamedTypeSymbol;
 
                 switch (symbol?.SpecialType)
                 {

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System;
@@ -168,7 +166,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
                 if (tupleElementSyntax.Identifier.IsKind(SyntaxKind.None) && !NamedTypeHelpers.IsImplementingAnInterfaceMember(context.SemanticModel.GetDeclaredSymbol(context.Node)))
                 {
-                    var location = tupleElementSyntax.SyntaxNode.GetLocation();
+                    var location = tupleElementSyntax.SyntaxNode!.GetLocation();
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
                 }
             }

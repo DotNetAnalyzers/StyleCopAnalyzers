@@ -37,6 +37,24 @@ compiler version and the legacy `StyleCopTester` dependencies.
 `Directory.Packages.Analyzers.props` separately pins the shipped analyzers and code fixes to Roslyn
 1.2.1 for compiler-host compatibility; do not upgrade these pins with the build tools.
 Transitive pinning is not enabled, preserving the existing dependency resolution.
+Generated light-up APIs explicitly enable nullable analysis. Maintain their contracts in
+`tools/StyleCop.Analyzers.CodeGeneration` and the light-up XML inputs, then regenerate; do not edit
+`Lightup/.generated` by hand. Syntax optionality includes fields inside a `Choice`; optional tokens
+and lists remain value types. Operation annotations follow the pinned modern Roslyn API, except
+where an older host can return null for an unavailable member (such as `IOperation.Language`).
+Default wrapper structs represent null nodes/operations, so their underlying-node properties and
+reference conversions are nullable; accessing other members retains the existing exceptions.
+Nullable analysis is enabled throughout product, test, and tool sources; do not add file-wide
+opt-outs. Handwritten light-ups annotate nullable runtime types and unavailable-property results.
+Use conditional out-parameter annotations for `TryGetValue` and flow annotations for `IsInstance`;
+preserve existing null/default-wrapper exceptions and old-host fallbacks. Prefer accurate nullable
+contracts and existing flow checks over null-forgiving assertions; reserve assertions for proven
+invariants and deliberate invalid-input tests.
+Nullable contract probes and comparisons against available Roslyn properties live in
+`NullableLightupCSharp8UnitTests` and run in each subsequent compiler's inherited tests.
+The original Roslyn 1.2.1 references are not augmented with nullable annotations, so direct calls
+to those APIs remain nullable-oblivious even in migrated code.
+
 The language-audit probe uses the central tool version by default and still accepts
 `-p:RoslynVersion=<version>` to test another compiler.
 `NuGet.config` maps normal packages to nuget.org, Roslyn compiler packages to nuget.org or

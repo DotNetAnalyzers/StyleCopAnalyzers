@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Helpers
 {
     using System;
@@ -14,7 +12,7 @@ namespace StyleCop.Analyzers.Helpers
 
     internal static class DocumentationCommentExtensions
     {
-        public static DocumentationCommentTriviaSyntax GetDocumentationCommentTriviaSyntax(this SyntaxNode node)
+        public static DocumentationCommentTriviaSyntax? GetDocumentationCommentTriviaSyntax(this SyntaxNode? node)
         {
             if (node == null)
             {
@@ -32,7 +30,7 @@ namespace StyleCop.Analyzers.Helpers
             return null;
         }
 
-        public static XmlNodeSyntax GetFirstXmlElement(this SyntaxList<XmlNodeSyntax> content, string elementName)
+        public static XmlNodeSyntax? GetFirstXmlElement(this SyntaxList<XmlNodeSyntax> content, string elementName)
         {
             return content.GetXmlElements(elementName).FirstOrDefault();
         }
@@ -239,7 +237,7 @@ namespace StyleCop.Analyzers.Helpers
             return node.ReplaceTokens(replacements.Keys, (originalToken, rewrittenToken) => replacements[originalToken]);
         }
 
-        public static XmlNameSyntax GetName(this XmlNodeSyntax element)
+        public static XmlNameSyntax? GetName(this XmlNodeSyntax? element)
         {
             return (element as XmlElementSyntax)?.StartTag?.Name
                 ?? (element as XmlEmptyElementSyntax)?.Name;

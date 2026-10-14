@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System;
@@ -83,7 +81,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             /// A lazily-initialized reference to <see cref="SuppressMessageAttribute"/> within the context of a
             /// particular <see cref="Compilation"/>.
             /// </summary>
-            private INamedTypeSymbol suppressMessageAttribute;
+            private INamedTypeSymbol? suppressMessageAttribute;
 
             public AnalyzerInstance(UsingAliasCache usingAliasCache)
             {
@@ -105,8 +103,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                         }
                         else
                         {
-                            QualifiedNameSyntax qualifiedNameSyntax = attribute.Name as QualifiedNameSyntax;
-                            simpleNameSyntax = qualifiedNameSyntax.Right;
+                            QualifiedNameSyntax? qualifiedNameSyntax = attribute.Name as QualifiedNameSyntax;
+                            simpleNameSyntax = qualifiedNameSyntax!.Right;
                         }
                     }
 

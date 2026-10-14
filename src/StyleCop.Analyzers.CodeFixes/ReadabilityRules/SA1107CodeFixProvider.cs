@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Generic;
@@ -53,7 +51,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     context.RegisterCodeFix(
                         CodeAction.Create(
                             ReadabilityResources.SA1107CodeFix,
-                            cancellationToken => GetTransformedDocumentAsync(context.Document, root, node, cancellationToken),
+                            cancellationToken => GetTransformedDocumentAsync(context.Document, root!, node, cancellationToken),
                             nameof(SA1107CodeFixProvider)),
                         diagnostic);
                 }

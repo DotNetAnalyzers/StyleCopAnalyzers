@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,14 +15,14 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct RefStructConstraintSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.RefStructConstraintSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> RefKeywordAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> StructKeywordAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithRefKeywordAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithStructKeywordAccessor;
 
-        private readonly CSharpSyntaxNode node;
+        private readonly CSharpSyntaxNode? node;
 
         static RefStructConstraintSyntaxWrapper()
         {
@@ -30,19 +33,19 @@ namespace StyleCop.Analyzers.Lightup
             WithStructKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(StructKeyword));
         }
 
-        private RefStructConstraintSyntaxWrapper(CSharpSyntaxNode node)
+        private RefStructConstraintSyntaxWrapper(CSharpSyntaxNode? node)
         {
             this.node = node;
         }
 
-        public CSharpSyntaxNode SyntaxNode => this.node;
+        public CSharpSyntaxNode? SyntaxNode => this.node;
 
 
         public SyntaxToken RefKeyword
         {
             get
             {
-                return RefKeywordAccessor(this.SyntaxNode);
+                return RefKeywordAccessor(this.node!);
             }
         }
 
@@ -50,7 +53,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return StructKeywordAccessor(this.SyntaxNode);
+                return StructKeywordAccessor(this.node!);
             }
         }
 
@@ -59,7 +62,7 @@ namespace StyleCop.Analyzers.Lightup
             return (RefStructConstraintSyntaxWrapper)node.SyntaxNode;
         }
 
-        public static explicit operator RefStructConstraintSyntaxWrapper(SyntaxNode node)
+        public static explicit operator RefStructConstraintSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -79,24 +82,24 @@ namespace StyleCop.Analyzers.Lightup
             return AllowsConstraintSyntaxWrapper.FromUpcast(wrapper.node);
         }
 
-        public static implicit operator CSharpSyntaxNode(RefStructConstraintSyntaxWrapper wrapper)
+        public static implicit operator CSharpSyntaxNode? (RefStructConstraintSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public RefStructConstraintSyntaxWrapper WithRefKeyword(SyntaxToken refKeyword)
         {
-            return new RefStructConstraintSyntaxWrapper(WithRefKeywordAccessor(this.SyntaxNode, refKeyword));
+            return new RefStructConstraintSyntaxWrapper(WithRefKeywordAccessor(this.node!, refKeyword));
         }
 
         public RefStructConstraintSyntaxWrapper WithStructKeyword(SyntaxToken structKeyword)
         {
-            return new RefStructConstraintSyntaxWrapper(WithStructKeywordAccessor(this.SyntaxNode, structKeyword));
+            return new RefStructConstraintSyntaxWrapper(WithStructKeywordAccessor(this.node!, structKeyword));
         }
     }
 }

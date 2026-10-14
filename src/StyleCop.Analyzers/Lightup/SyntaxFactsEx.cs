@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
@@ -13,12 +11,12 @@ namespace StyleCop.Analyzers.Lightup
 
     internal static class SyntaxFactsEx
     {
-        private static readonly Func<SyntaxNode, string> TryGetInferredMemberNameAccessor;
+        private static readonly Func<SyntaxNode, string?> TryGetInferredMemberNameAccessor;
         private static readonly Func<string, bool> IsReservedTupleElementNameAccessor;
 
         static SyntaxFactsEx()
         {
-            string FallbackAccessor(SyntaxNode syntax)
+            string? FallbackAccessor(SyntaxNode syntax)
             {
                 if (syntax == null)
                 {
@@ -34,8 +32,8 @@ namespace StyleCop.Analyzers.Lightup
             if (tryGetInferredMemberNameMethod is object)
             {
                 var syntaxParameter = Expression.Parameter(typeof(SyntaxNode), "syntax");
-                Expression<Func<SyntaxNode, string>> expression =
-                    Expression.Lambda<Func<SyntaxNode, string>>(
+                Expression<Func<SyntaxNode, string?>> expression =
+                    Expression.Lambda<Func<SyntaxNode, string?>>(
                         Expression.Call(tryGetInferredMemberNameMethod, syntaxParameter),
                         syntaxParameter);
                 TryGetInferredMemberNameAccessor = expression.Compile();
@@ -61,7 +59,7 @@ namespace StyleCop.Analyzers.Lightup
             }
         }
 
-        public static string TryGetInferredMemberName(this SyntaxNode syntax)
+        public static string? TryGetInferredMemberName(this SyntaxNode syntax)
         {
             return TryGetInferredMemberNameAccessor(syntax);
         }

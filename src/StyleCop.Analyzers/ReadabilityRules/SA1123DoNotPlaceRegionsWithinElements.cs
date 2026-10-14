@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
@@ -69,7 +67,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 throw new ArgumentNullException(nameof(regionSyntax));
             }
 
-            BlockSyntax syntax = null;
+            BlockSyntax? syntax = null;
             foreach (var directive in regionSyntax.GetRelatedDirectives())
             {
                 BlockSyntax blockSyntax = directive.AncestorsAndSelf().OfType<BlockSyntax>().LastOrDefault();

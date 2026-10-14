@@ -1,19 +1,22 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct IBinaryPatternOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IBinaryPatternOperation";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
         private static readonly Func<IOperation, IOperation> LeftPatternAccessor;
         private static readonly Func<IOperation, IOperation> RightPatternAccessor;
-        private readonly IOperation operation;
+        private readonly IOperation? operation;
         static IBinaryPatternOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(IBinaryPatternOperationWrapper));
@@ -21,16 +24,16 @@ namespace StyleCop.Analyzers.Lightup
             RightPatternAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation>(WrappedType, nameof(RightPattern));
         }
 
-        private IBinaryPatternOperationWrapper(IOperation operation)
+        private IBinaryPatternOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
         public object OperatorKind => throw new NotImplementedException("Property 'IBinaryPatternOperation.OperatorKind' has unsupported type 'BinaryOperatorKind'");
-        public IPatternOperationWrapper LeftPattern => IPatternOperationWrapper.FromOperation(LeftPatternAccessor(this.WrappedOperation));
-        public IPatternOperationWrapper RightPattern => IPatternOperationWrapper.FromOperation(RightPatternAccessor(this.WrappedOperation));
+        public IPatternOperationWrapper LeftPattern => IPatternOperationWrapper.FromOperation(LeftPatternAccessor(this.operation!));
+        public IPatternOperationWrapper RightPattern => IPatternOperationWrapper.FromOperation(RightPatternAccessor(this.operation!));
 
         public static explicit operator IBinaryPatternOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IBinaryPatternOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
@@ -39,7 +42,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public static explicit operator IBinaryPatternOperationWrapper(IPatternOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IPatternOperationWrapper(IBinaryPatternOperationWrapper wrapper) => IPatternOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static IBinaryPatternOperationWrapper FromOperation(IOperation operation)
+        public static IBinaryPatternOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -54,7 +57,7 @@ namespace StyleCop.Analyzers.Lightup
             return new IBinaryPatternOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }

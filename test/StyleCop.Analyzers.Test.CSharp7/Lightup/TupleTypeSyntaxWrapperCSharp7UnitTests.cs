@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp7.Lightup
 {
     using System;
@@ -52,7 +50,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var newElements = wrapper.Elements.Replace(wrapper.Elements[0], (TupleElementSyntaxWrapper)SyntaxFactory.TupleElement(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.StringKeyword))));
             var wrapperWithModifiedElements = wrapper.WithElements(newElements);
             Assert.NotNull(wrapperWithModifiedElements.SyntaxNode);
-            Assert.NotEqual(syntaxNode.Elements[0], (TupleElementSyntax)wrapperWithModifiedElements.Elements[0]);
+            Assert.NotEqual(syntaxNode.Elements[0], (TupleElementSyntax?)wrapperWithModifiedElements.Elements[0]);
             Assert.Equal(SyntaxKind.StringKeyword, ((PredefinedTypeSyntax)wrapperWithModifiedElements.Elements[0].Type).Keyword.Kind());
 
             var wrapperWithAddedElements = wrapper.AddElements((TupleElementSyntaxWrapper)SyntaxFactory.TupleElement(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ShortKeyword))));
@@ -84,7 +82,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var syntaxNode = default(SyntaxNode);
             var wrapper = (TupleTypeSyntaxWrapper)syntaxNode;
 
-            TypeSyntax syntax = wrapper;
+            TypeSyntax? syntax = wrapper;
             Assert.Null(syntax);
         }
 
@@ -94,7 +92,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var syntaxNode = this.CreateTupleType();
             var wrapper = (TupleTypeSyntaxWrapper)syntaxNode;
 
-            TypeSyntax syntax = wrapper;
+            TypeSyntax? syntax = wrapper;
             Assert.Same(syntaxNode, syntax);
         }
 

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
@@ -14,13 +12,13 @@ namespace StyleCop.Analyzers.Lightup
 
     internal static class WrapperHelper
     {
-        private static readonly ImmutableDictionary<Type, Type> WrappedTypes;
+        private static readonly ImmutableDictionary<Type, Type?> WrappedTypes;
         private static ImmutableDictionary<Type, Func<object, object>> wrapInstance = ImmutableDictionary<Type, Func<object, object>>.Empty;
 
         static WrapperHelper()
         {
             var codeAnalysisAssembly = typeof(SyntaxNode).GetTypeInfo().Assembly;
-            var builder = ImmutableDictionary.CreateBuilder<Type, Type>();
+            var builder = ImmutableDictionary.CreateBuilder<Type, Type?>();
 
             builder.Add(typeof(AnalyzerConfigOptionsProviderWrapper), codeAnalysisAssembly.GetType(AnalyzerConfigOptionsProviderWrapper.WrappedTypeName));
             builder.Add(typeof(AnalyzerConfigOptionsWrapper), codeAnalysisAssembly.GetType(AnalyzerConfigOptionsWrapper.WrappedTypeName));
@@ -34,9 +32,9 @@ namespace StyleCop.Analyzers.Lightup
         /// </summary>
         /// <param name = "wrapperType">Type of the wrapper for which the wrapped type should be retrieved.</param>
         /// <returns>The wrapped type, or null if there is no info.</returns>
-        internal static Type GetWrappedType(Type wrapperType)
+        internal static Type? GetWrappedType(Type wrapperType)
         {
-            if (WrappedTypes.TryGetValue(wrapperType, out Type wrappedType))
+            if (WrappedTypes.TryGetValue(wrapperType, out Type? wrappedType))
             {
                 return wrappedType;
             }
@@ -60,7 +58,7 @@ namespace StyleCop.Analyzers.Lightup
                     {
                         if (pair.Value.GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
                         {
-                            var fromObjectMethod = pair.Key.GetTypeInfo().GetDeclaredMethod("FromObject");
+                            var fromObjectMethod = pair.Key.GetTypeInfo().GetDeclaredMethod("FromObject")!;
                             var parameterType = fromObjectMethod.GetParameters()[0].ParameterType;
                             var instanceParameter = Expression.Parameter(fromObjectMethod.GetParameters()[0].ParameterType, "instance");
                             Expression value =

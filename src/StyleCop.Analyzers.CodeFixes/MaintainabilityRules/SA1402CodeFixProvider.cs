@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System;
@@ -36,7 +34,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             ImmutableArray.Create(SA1402FileMayOnlyContainASingleType.DiagnosticId);
 
         /// <inheritdoc/>
-        public override FixAllProvider GetFixAllProvider()
+        public override FixAllProvider? GetFixAllProvider()
         {
             // The batch fixer can't handle code fixes that create new files
             return null;
@@ -75,12 +73,12 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
             var keptAnnotation = new SyntaxAnnotation("SA1402Kept");
             root = root.ReplaceNode(node, node.WithAdditionalAnnotations(keptAnnotation));
-            node = GetAnnotatedNode(root, keptAnnotation);
+            node = GetAnnotatedNode(root, keptAnnotation)!;
 
             List<SyntaxNode> nodesToRemoveFromExtracted = new List<SyntaxNode>();
             List<SyntaxNode> nodesToTrim = new List<SyntaxNode>();
             List<int> blankLinesToKeep = new List<int>();
-            SyntaxNode previous = node;
+            SyntaxNode? previous = node;
             for (SyntaxNode current = node.Parent; current != null; previous = current, current = current.Parent)
             {
                 List<SyntaxNode> children = new List<SyntaxNode>();
@@ -180,7 +178,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             return updatedSolution;
         }
 
-        private static SyntaxNode GetAnnotatedNode(SyntaxNode root, SyntaxAnnotation annotation)
+        private static SyntaxNode? GetAnnotatedNode(SyntaxNode root, SyntaxAnnotation annotation)
         {
             foreach (var annotated in root.GetAnnotatedNodes(annotation))
             {
@@ -198,8 +196,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         {
             while (true)
             {
-                SyntaxNode kept = null;
-                SyntaxAnnotation annotation = null;
+                SyntaxNode? kept = null;
+                SyntaxAnnotation? annotation = null;
                 foreach (var candidate in root.GetAnnotatedNodes(TrimAnnotationKind))
                 {
                     kept = candidate;

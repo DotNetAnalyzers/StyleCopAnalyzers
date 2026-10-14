@@ -1,23 +1,26 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct IForToLoopOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IForToLoopOperation";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
         private static readonly Func<IOperation, IOperation> LoopControlVariableAccessor;
         private static readonly Func<IOperation, IOperation> InitialValueAccessor;
         private static readonly Func<IOperation, IOperation> LimitValueAccessor;
         private static readonly Func<IOperation, IOperation> StepValueAccessor;
         private static readonly Func<IOperation, bool> IsCheckedAccessor;
         private static readonly Func<IOperation, ImmutableArray<IOperation>> NextVariablesAccessor;
-        private readonly IOperation operation;
+        private readonly IOperation? operation;
         static IForToLoopOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(IForToLoopOperationWrapper));
@@ -29,19 +32,19 @@ namespace StyleCop.Analyzers.Lightup
             NextVariablesAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, ImmutableArray<IOperation>>(WrappedType, nameof(NextVariables));
         }
 
-        private IForToLoopOperationWrapper(IOperation operation)
+        private IForToLoopOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
-        public IOperation LoopControlVariable => LoopControlVariableAccessor(this.WrappedOperation);
-        public IOperation InitialValue => InitialValueAccessor(this.WrappedOperation);
-        public IOperation LimitValue => LimitValueAccessor(this.WrappedOperation);
-        public IOperation StepValue => StepValueAccessor(this.WrappedOperation);
-        public bool IsChecked => IsCheckedAccessor(this.WrappedOperation);
-        public ImmutableArray<IOperation> NextVariables => NextVariablesAccessor(this.WrappedOperation);
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
+        public IOperation LoopControlVariable => LoopControlVariableAccessor(this.operation!);
+        public IOperation InitialValue => InitialValueAccessor(this.operation!);
+        public IOperation LimitValue => LimitValueAccessor(this.operation!);
+        public IOperation StepValue => StepValueAccessor(this.operation!);
+        public bool IsChecked => IsCheckedAccessor(this.operation!);
+        public ImmutableArray<IOperation> NextVariables => NextVariablesAccessor(this.operation!);
 
         public static explicit operator IForToLoopOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IForToLoopOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
@@ -53,7 +56,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public static explicit operator IForToLoopOperationWrapper(ILoopOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator ILoopOperationWrapper(IForToLoopOperationWrapper wrapper) => ILoopOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static IForToLoopOperationWrapper FromOperation(IOperation operation)
+        public static IForToLoopOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -68,7 +71,7 @@ namespace StyleCop.Analyzers.Lightup
             return new IForToLoopOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }

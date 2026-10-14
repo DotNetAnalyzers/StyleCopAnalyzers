@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Settings
 {
     using System.Collections.Immutable;
@@ -89,7 +87,7 @@ namespace StyleCop.Analyzers.Settings
         }
 
         /// <inheritdoc/>
-        public override FixAllProvider GetFixAllProvider()
+        public override FixAllProvider? GetFixAllProvider()
         {
             // Added this to make it explicitly clear that this code fix does not support fix all actions.
             return null;

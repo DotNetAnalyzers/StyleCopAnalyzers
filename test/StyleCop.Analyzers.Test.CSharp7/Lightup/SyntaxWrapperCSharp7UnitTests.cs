@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp7.Lightup
 {
     using Microsoft.CodeAnalysis;
@@ -30,6 +28,15 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
 
             Assert.Same(syntaxNode, syntaxWrapper.Wrap(syntaxNode).SyntaxNode);
             Assert.Same(syntaxNode, syntaxWrapper.Unwrap((DiscardDesignationSyntaxWrapper)syntaxNode));
+        }
+
+        [Fact]
+        public void TestWrapNullSyntaxWrapperNode()
+        {
+            var syntaxWrapper = SyntaxWrapper<DiscardDesignationSyntaxWrapper>.Default;
+
+            Assert.Null(syntaxWrapper.Wrap(null).SyntaxNode);
+            Assert.Null(syntaxWrapper.Unwrap(default));
         }
     }
 }

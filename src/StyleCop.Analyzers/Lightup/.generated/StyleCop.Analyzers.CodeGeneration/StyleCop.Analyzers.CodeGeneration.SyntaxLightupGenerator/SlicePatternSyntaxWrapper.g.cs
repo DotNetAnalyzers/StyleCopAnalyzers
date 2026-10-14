@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,37 +15,37 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct SlicePatternSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.SlicePatternSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> DotDotTokenAccessor;
-        private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode> PatternAccessor;
+        private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode?> PatternAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithDotDotTokenAccessor;
-        private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode, CSharpSyntaxNode> WithPatternAccessor;
+        private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode?, CSharpSyntaxNode> WithPatternAccessor;
 
-        private readonly CSharpSyntaxNode node;
+        private readonly CSharpSyntaxNode? node;
 
         static SlicePatternSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(SlicePatternSyntaxWrapper));
             DotDotTokenAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(DotDotToken));
-            PatternAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, CSharpSyntaxNode>(WrappedType, nameof(Pattern));
+            PatternAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, CSharpSyntaxNode?>(WrappedType, nameof(Pattern));
             WithDotDotTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(DotDotToken));
-            WithPatternAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, CSharpSyntaxNode>(WrappedType, nameof(Pattern));
+            WithPatternAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, CSharpSyntaxNode?>(WrappedType, nameof(Pattern));
         }
 
-        private SlicePatternSyntaxWrapper(CSharpSyntaxNode node)
+        private SlicePatternSyntaxWrapper(CSharpSyntaxNode? node)
         {
             this.node = node;
         }
 
-        public CSharpSyntaxNode SyntaxNode => this.node;
+        public CSharpSyntaxNode? SyntaxNode => this.node;
 
 
         public SyntaxToken DotDotToken
         {
             get
             {
-                return DotDotTokenAccessor(this.SyntaxNode);
+                return DotDotTokenAccessor(this.node!);
             }
         }
 
@@ -50,7 +53,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return (PatternSyntaxWrapper)PatternAccessor(this.SyntaxNode);
+                return (PatternSyntaxWrapper)PatternAccessor(this.node!);
             }
         }
 
@@ -64,7 +67,7 @@ namespace StyleCop.Analyzers.Lightup
             return (SlicePatternSyntaxWrapper)node.SyntaxNode;
         }
 
-        public static explicit operator SlicePatternSyntaxWrapper(SyntaxNode node)
+        public static explicit operator SlicePatternSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -89,24 +92,24 @@ namespace StyleCop.Analyzers.Lightup
             return ExpressionOrPatternSyntaxWrapper.FromUpcast(wrapper.node);
         }
 
-        public static implicit operator CSharpSyntaxNode(SlicePatternSyntaxWrapper wrapper)
+        public static implicit operator CSharpSyntaxNode? (SlicePatternSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public SlicePatternSyntaxWrapper WithDotDotToken(SyntaxToken dotDotToken)
         {
-            return new SlicePatternSyntaxWrapper(WithDotDotTokenAccessor(this.SyntaxNode, dotDotToken));
+            return new SlicePatternSyntaxWrapper(WithDotDotTokenAccessor(this.node!, dotDotToken));
         }
 
         public SlicePatternSyntaxWrapper WithPattern(PatternSyntaxWrapper pattern)
         {
-            return new SlicePatternSyntaxWrapper(WithPatternAccessor(this.SyntaxNode, pattern));
+            return new SlicePatternSyntaxWrapper(WithPatternAccessor(this.node!, pattern.SyntaxNode));
         }
     }
 }

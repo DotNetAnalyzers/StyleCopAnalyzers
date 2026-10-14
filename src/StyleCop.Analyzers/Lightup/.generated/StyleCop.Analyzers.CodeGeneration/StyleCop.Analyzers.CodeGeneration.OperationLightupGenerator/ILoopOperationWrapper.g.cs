@@ -1,21 +1,24 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct ILoopOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.ILoopOperation";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
         private static readonly Func<IOperation, IOperation> BodyAccessor;
         private static readonly Func<IOperation, ImmutableArray<ILocalSymbol>> LocalsAccessor;
         private static readonly Func<IOperation, ILabelSymbol> ContinueLabelAccessor;
         private static readonly Func<IOperation, ILabelSymbol> ExitLabelAccessor;
-        private readonly IOperation operation;
+        private readonly IOperation? operation;
         static ILoopOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(ILoopOperationWrapper));
@@ -25,22 +28,22 @@ namespace StyleCop.Analyzers.Lightup
             ExitLabelAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, ILabelSymbol>(WrappedType, nameof(ExitLabel));
         }
 
-        private ILoopOperationWrapper(IOperation operation)
+        private ILoopOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
         public object LoopKind => throw new NotImplementedException("Property 'ILoopOperation.LoopKind' has unsupported type 'LoopKind'");
-        public IOperation Body => BodyAccessor(this.WrappedOperation);
-        public ImmutableArray<ILocalSymbol> Locals => LocalsAccessor(this.WrappedOperation);
-        public ILabelSymbol ContinueLabel => ContinueLabelAccessor(this.WrappedOperation);
-        public ILabelSymbol ExitLabel => ExitLabelAccessor(this.WrappedOperation);
+        public IOperation Body => BodyAccessor(this.operation!);
+        public ImmutableArray<ILocalSymbol> Locals => LocalsAccessor(this.operation!);
+        public ILabelSymbol ContinueLabel => ContinueLabelAccessor(this.operation!);
+        public ILabelSymbol ExitLabel => ExitLabelAccessor(this.operation!);
 
         public static explicit operator ILoopOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(ILoopOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static ILoopOperationWrapper FromOperation(IOperation operation)
+        public static ILoopOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -55,12 +58,12 @@ namespace StyleCop.Analyzers.Lightup
             return new ILoopOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }
 
-        internal static ILoopOperationWrapper FromUpcast(IOperation operation)
+        internal static ILoopOperationWrapper FromUpcast(IOperation? operation)
         {
             return new ILoopOperationWrapper(operation);
         }

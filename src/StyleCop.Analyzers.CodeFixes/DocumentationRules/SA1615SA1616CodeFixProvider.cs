@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
@@ -74,7 +72,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return document;
             }
 
-            DocumentationCommentTriviaSyntax documentationComment =
+            DocumentationCommentTriviaSyntax? documentationComment =
                 methodDeclarationSyntax?.GetDocumentationCommentTriviaSyntax()
                 ?? delegateDeclarationSyntax?.GetDocumentationCommentTriviaSyntax();
             bool canIgnoreDocumentation =
@@ -98,11 +96,11 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
             else
             {
-                isTask = TaskHelper.IsTaskReturningMethod(semanticModel, delegateDeclarationSyntax, cancellationToken);
+                isTask = TaskHelper.IsTaskReturningMethod(semanticModel, delegateDeclarationSyntax!, cancellationToken);
                 isAsynchronousTestMethod = false;
             }
 
-            XmlNodeSyntax returnsElement = documentationComment.Content.GetFirstXmlElement(XmlCommentHelper.ReturnsXmlTag);
+            XmlNodeSyntax? returnsElement = documentationComment!.Content.GetFirstXmlElement(XmlCommentHelper.ReturnsXmlTag);
             if (returnsElement != null && !isTask)
             {
                 // This code fix doesn't know how to do anything more than document Task-returning methods.

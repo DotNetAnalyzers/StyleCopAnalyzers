@@ -1,32 +1,31 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     internal readonly struct AnalyzerConfigOptionsProviderWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptionsProvider";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
-        private static readonly Func<object, object> GlobalOptionsAccessor;
-        private static readonly Func<object, SyntaxTree, object> GetOptionsSyntaxTreeAccessor;
-        private static readonly Func<object, AdditionalText, object> GetOptionsAdditionalTextAccessor;
+        private static readonly Func<object, object?> GlobalOptionsAccessor;
+        private static readonly Func<object, SyntaxTree, object?> GetOptionsSyntaxTreeAccessor;
+        private static readonly Func<object, AdditionalText, object?> GetOptionsAdditionalTextAccessor;
 
-        private readonly object node;
+        private readonly object? node;
 
         static AnalyzerConfigOptionsProviderWrapper()
         {
             WrappedType = WrapperHelper.GetWrappedType(typeof(AnalyzerConfigOptionsProviderWrapper));
 
-            GlobalOptionsAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<object, object>(WrappedType, nameof(GlobalOptions));
-            GetOptionsSyntaxTreeAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<object, SyntaxTree, object>(WrappedType, typeof(SyntaxTree), nameof(GetOptions));
-            GetOptionsAdditionalTextAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<object, AdditionalText, object>(WrappedType, typeof(AdditionalText), nameof(GetOptions));
+            GlobalOptionsAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<object, object?>(WrappedType, nameof(GlobalOptions));
+            GetOptionsSyntaxTreeAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<object, SyntaxTree, object?>(WrappedType, typeof(SyntaxTree), nameof(GetOptions));
+            GetOptionsAdditionalTextAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<object, AdditionalText, object?>(WrappedType, typeof(AdditionalText), nameof(GetOptions));
         }
 
         private AnalyzerConfigOptionsProviderWrapper(object node)
@@ -44,11 +43,11 @@ namespace StyleCop.Analyzers.Lightup
                     return AnalyzerConfigOptionsWrapper.FromObject(null);
                 }
 
-                return AnalyzerConfigOptionsWrapper.FromObject(GlobalOptionsAccessor(this.node));
+                return AnalyzerConfigOptionsWrapper.FromObject(GlobalOptionsAccessor(this.node!));
             }
         }
 
-        public static AnalyzerConfigOptionsProviderWrapper FromObject(object node)
+        public static AnalyzerConfigOptionsProviderWrapper FromObject(object? node)
         {
             if (node == null)
             {
@@ -63,7 +62,7 @@ namespace StyleCop.Analyzers.Lightup
             return new AnalyzerConfigOptionsProviderWrapper(node);
         }
 
-        public static bool IsInstance(object obj)
+        public static bool IsInstance([NotNullWhen(true)] object? obj)
         {
             return obj != null && LightupHelpers.CanWrapObject(obj, WrappedType);
         }
@@ -81,7 +80,7 @@ namespace StyleCop.Analyzers.Lightup
                 return AnalyzerConfigOptionsWrapper.FromObject(null);
             }
 
-            return AnalyzerConfigOptionsWrapper.FromObject(GetOptionsSyntaxTreeAccessor(this.node, tree));
+            return AnalyzerConfigOptionsWrapper.FromObject(GetOptionsSyntaxTreeAccessor(this.node!, tree));
         }
 
         public AnalyzerConfigOptionsWrapper GetOptions(AdditionalText textFile)
@@ -97,7 +96,7 @@ namespace StyleCop.Analyzers.Lightup
                 return AnalyzerConfigOptionsWrapper.FromObject(null);
             }
 
-            return AnalyzerConfigOptionsWrapper.FromObject(GetOptionsAdditionalTextAccessor(this.node, textFile));
+            return AnalyzerConfigOptionsWrapper.FromObject(GetOptionsAdditionalTextAccessor(this.node!, textFile));
         }
     }
 }

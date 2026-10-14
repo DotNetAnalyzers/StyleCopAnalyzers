@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
@@ -111,7 +109,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static void HandleSectionOrBlockXmlElement(SyntaxNodeAnalysisContext context, StyleCopSettings settings, XmlElementSyntax xmlElement, bool startingWithFinalParagraph)
         {
             var startTag = xmlElement.StartTag?.Name?.LocalName.ValueText;
-            if (settings.DocumentationRules.ExcludeFromPunctuationCheck.Contains(startTag))
+            if (settings.DocumentationRules.ExcludeFromPunctuationCheck.Contains(startTag!))
             {
                 return;
             }
@@ -131,7 +129,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                             if (IsMissingRequiredPunctuation(textWithoutTrailingWhitespace, startingWithFinalParagraph))
                             {
                                 int spanStart = textToken.SpanStart + textWithoutTrailingWhitespace.Length;
-                                ImmutableDictionary<string, string> properties = null;
+                                ImmutableDictionary<string, string>? properties = null;
                                 if (textWithoutTrailingWhitespace.EndsWith(",", StringComparison.Ordinal)
                                     || (textWithoutTrailingWhitespace.EndsWith(";", StringComparison.Ordinal)
                                         && !textToken.IsKind(SyntaxKind.XmlEntityLiteralToken)))

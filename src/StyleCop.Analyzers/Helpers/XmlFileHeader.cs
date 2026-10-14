@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Helpers
 {
     using System;
@@ -16,7 +14,7 @@ namespace StyleCop.Analyzers.Helpers
     /// </summary>
     internal class XmlFileHeader
     {
-        private readonly XElement headerXml;
+        private readonly XElement? headerXml;
         private readonly int fileHeaderStart;
         private readonly int fileHeaderEnd;
 
@@ -89,9 +87,10 @@ namespace StyleCop.Analyzers.Helpers
         /// </summary>
         /// <param name="tagName">The tag name for the node.</param>
         /// <returns>The requested node, or null if the node could not be found.</returns>
-        internal XElement GetElement(string tagName)
+        internal XElement? GetElement(string tagName)
         {
-            return this.headerXml.Descendants().FirstOrDefault(e => e.Name.LocalName.Equals(tagName, StringComparison.Ordinal));
+            // Missing and malformed headers have no XML; callers must check their status first.
+            return this.headerXml!.Descendants().FirstOrDefault(e => e.Name.LocalName.Equals(tagName, StringComparison.Ordinal));
         }
 
         /// <summary>

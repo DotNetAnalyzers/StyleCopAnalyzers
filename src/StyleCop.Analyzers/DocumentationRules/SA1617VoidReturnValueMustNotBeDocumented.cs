@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
@@ -75,7 +73,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
         {
             var delegateDeclaration = (DelegateDeclarationSyntax)context.Node;
-            HandleMember(context, delegateDeclaration?.ReturnType);
+            var returnType = delegateDeclaration?.ReturnType;
+            HandleMember(context, returnType!);
         }
 
         private static void HandleMember(SyntaxNodeAnalysisContext context, TypeSyntax returnValue)

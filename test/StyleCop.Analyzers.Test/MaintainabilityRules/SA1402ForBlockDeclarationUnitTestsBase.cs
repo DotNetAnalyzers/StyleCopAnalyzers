@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     using System.Linq;
@@ -193,7 +191,7 @@ public {this.Keyword} Test0
             await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override string GetSettings()
+        protected override string? GetSettings()
         {
             return this.SettingsConfiguration.GetSettings(this.SettingKeyword);
         }

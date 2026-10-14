@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,7 +15,7 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct FileScopedNamespaceDeclarationSyntaxWrapper : ISyntaxWrapper<MemberDeclarationSyntax>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.FileScopedNamespaceDeclarationSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<MemberDeclarationSyntax, SyntaxList<AttributeListSyntax>> AttributeListsAccessor;
         private static readonly Func<MemberDeclarationSyntax, SyntaxTokenList> ModifiersAccessor;
@@ -31,7 +34,7 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<MemberDeclarationSyntax, SyntaxList<UsingDirectiveSyntax>, MemberDeclarationSyntax> WithUsingsAccessor;
         private static readonly Func<MemberDeclarationSyntax, SyntaxList<MemberDeclarationSyntax>, MemberDeclarationSyntax> WithMembersAccessor;
 
-        private readonly MemberDeclarationSyntax node;
+        private readonly MemberDeclarationSyntax? node;
 
         static FileScopedNamespaceDeclarationSyntaxWrapper()
         {
@@ -54,19 +57,19 @@ namespace StyleCop.Analyzers.Lightup
             WithMembersAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<MemberDeclarationSyntax, SyntaxList<MemberDeclarationSyntax>>(WrappedType, nameof(Members));
         }
 
-        private FileScopedNamespaceDeclarationSyntaxWrapper(MemberDeclarationSyntax node)
+        private FileScopedNamespaceDeclarationSyntaxWrapper(MemberDeclarationSyntax? node)
         {
             this.node = node;
         }
 
-        public MemberDeclarationSyntax SyntaxNode => this.node;
+        public MemberDeclarationSyntax? SyntaxNode => this.node;
 
 
         public SyntaxList<AttributeListSyntax> AttributeLists
         {
             get
             {
-                return AttributeListsAccessor(this.SyntaxNode);
+                return AttributeListsAccessor(this.node!);
             }
         }
 
@@ -74,7 +77,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ModifiersAccessor(this.SyntaxNode);
+                return ModifiersAccessor(this.node!);
             }
         }
 
@@ -82,7 +85,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return NamespaceKeywordAccessor(this.SyntaxNode);
+                return NamespaceKeywordAccessor(this.node!);
             }
         }
 
@@ -90,7 +93,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return NameAccessor(this.SyntaxNode);
+                return NameAccessor(this.node!);
             }
         }
 
@@ -98,7 +101,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return SemicolonTokenAccessor(this.SyntaxNode);
+                return SemicolonTokenAccessor(this.node!);
             }
         }
 
@@ -106,7 +109,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ExternsAccessor(this.SyntaxNode);
+                return ExternsAccessor(this.node!);
             }
         }
 
@@ -114,7 +117,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return UsingsAccessor(this.SyntaxNode);
+                return UsingsAccessor(this.node!);
             }
         }
 
@@ -122,7 +125,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return MembersAccessor(this.SyntaxNode);
+                return MembersAccessor(this.node!);
             }
         }
 
@@ -131,7 +134,7 @@ namespace StyleCop.Analyzers.Lightup
             return (FileScopedNamespaceDeclarationSyntaxWrapper)node.SyntaxNode;
         }
 
-        public static explicit operator FileScopedNamespaceDeclarationSyntaxWrapper(SyntaxNode node)
+        public static explicit operator FileScopedNamespaceDeclarationSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -151,54 +154,54 @@ namespace StyleCop.Analyzers.Lightup
             return BaseNamespaceDeclarationSyntaxWrapper.FromUpcast(wrapper.node);
         }
 
-        public static implicit operator MemberDeclarationSyntax(FileScopedNamespaceDeclarationSyntaxWrapper wrapper)
+        public static implicit operator MemberDeclarationSyntax? (FileScopedNamespaceDeclarationSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public FileScopedNamespaceDeclarationSyntaxWrapper WithAttributeLists(SyntaxList<AttributeListSyntax> attributeLists)
         {
-            return new FileScopedNamespaceDeclarationSyntaxWrapper(WithAttributeListsAccessor(this.SyntaxNode, attributeLists));
+            return new FileScopedNamespaceDeclarationSyntaxWrapper(WithAttributeListsAccessor(this.node!, attributeLists));
         }
 
         public FileScopedNamespaceDeclarationSyntaxWrapper WithModifiers(SyntaxTokenList modifiers)
         {
-            return new FileScopedNamespaceDeclarationSyntaxWrapper(WithModifiersAccessor(this.SyntaxNode, modifiers));
+            return new FileScopedNamespaceDeclarationSyntaxWrapper(WithModifiersAccessor(this.node!, modifiers));
         }
 
         public FileScopedNamespaceDeclarationSyntaxWrapper WithNamespaceKeyword(SyntaxToken namespaceKeyword)
         {
-            return new FileScopedNamespaceDeclarationSyntaxWrapper(WithNamespaceKeywordAccessor(this.SyntaxNode, namespaceKeyword));
+            return new FileScopedNamespaceDeclarationSyntaxWrapper(WithNamespaceKeywordAccessor(this.node!, namespaceKeyword));
         }
 
         public FileScopedNamespaceDeclarationSyntaxWrapper WithName(NameSyntax name)
         {
-            return new FileScopedNamespaceDeclarationSyntaxWrapper(WithNameAccessor(this.SyntaxNode, name));
+            return new FileScopedNamespaceDeclarationSyntaxWrapper(WithNameAccessor(this.node!, name));
         }
 
         public FileScopedNamespaceDeclarationSyntaxWrapper WithSemicolonToken(SyntaxToken semicolonToken)
         {
-            return new FileScopedNamespaceDeclarationSyntaxWrapper(WithSemicolonTokenAccessor(this.SyntaxNode, semicolonToken));
+            return new FileScopedNamespaceDeclarationSyntaxWrapper(WithSemicolonTokenAccessor(this.node!, semicolonToken));
         }
 
         public FileScopedNamespaceDeclarationSyntaxWrapper WithExterns(SyntaxList<ExternAliasDirectiveSyntax> externs)
         {
-            return new FileScopedNamespaceDeclarationSyntaxWrapper(WithExternsAccessor(this.SyntaxNode, externs));
+            return new FileScopedNamespaceDeclarationSyntaxWrapper(WithExternsAccessor(this.node!, externs));
         }
 
         public FileScopedNamespaceDeclarationSyntaxWrapper WithUsings(SyntaxList<UsingDirectiveSyntax> usings)
         {
-            return new FileScopedNamespaceDeclarationSyntaxWrapper(WithUsingsAccessor(this.SyntaxNode, usings));
+            return new FileScopedNamespaceDeclarationSyntaxWrapper(WithUsingsAccessor(this.node!, usings));
         }
 
         public FileScopedNamespaceDeclarationSyntaxWrapper WithMembers(SyntaxList<MemberDeclarationSyntax> members)
         {
-            return new FileScopedNamespaceDeclarationSyntaxWrapper(WithMembersAccessor(this.SyntaxNode, members));
+            return new FileScopedNamespaceDeclarationSyntaxWrapper(WithMembersAccessor(this.node!, members));
         }
     }
 }

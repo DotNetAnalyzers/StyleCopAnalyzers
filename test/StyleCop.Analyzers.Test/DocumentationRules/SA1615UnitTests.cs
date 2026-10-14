@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Collections.Generic;
@@ -346,10 +344,10 @@ internal class ClassName
         protected static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
             => VerifyCSharpFixAsync(source, expected, fixedSource: null, cancellationToken);
 
-        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult expected, string fixedSource, CancellationToken cancellationToken)
+        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult expected, string? fixedSource, CancellationToken cancellationToken)
             => VerifyCSharpFixAsync(source, new[] { expected }, fixedSource, cancellationToken);
 
-        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
+        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string? fixedSource, CancellationToken cancellationToken)
         {
             string contentWithReturns = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <Class1>
@@ -383,7 +381,6 @@ internal class ClassName
             var test = new StyleCopCodeFixVerifier<SA1615ElementReturnValueMustBeDocumented, SA1615SA1616CodeFixProvider>.CSharpTest
             {
                 TestCode = source,
-                FixedCode = fixedSource,
                 XmlReferences =
                 {
                     { "MethodWithReturns.xml", contentWithReturns },
@@ -391,6 +388,11 @@ internal class ClassName
                     { "MethodWithoutReturns.xml", contentWithoutReturns },
                 },
             };
+
+            if (fixedSource != null)
+            {
+                test.FixedCode = fixedSource;
+            }
 
             test.ExpectedDiagnostics.AddRange(expected);
             return test.RunAsync(cancellationToken);

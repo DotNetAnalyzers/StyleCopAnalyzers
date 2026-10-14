@@ -1,19 +1,22 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct IPatternOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IPatternOperation";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
         private static readonly Func<IOperation, ITypeSymbol> InputTypeAccessor;
         private static readonly Func<IOperation, ITypeSymbol> NarrowedTypeAccessor;
-        private readonly IOperation operation;
+        private readonly IOperation? operation;
         static IPatternOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(IPatternOperationWrapper));
@@ -21,19 +24,19 @@ namespace StyleCop.Analyzers.Lightup
             NarrowedTypeAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, ITypeSymbol>(WrappedType, nameof(NarrowedType));
         }
 
-        private IPatternOperationWrapper(IOperation operation)
+        private IPatternOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
-        public ITypeSymbol InputType => InputTypeAccessor(this.WrappedOperation);
-        public ITypeSymbol NarrowedType => NarrowedTypeAccessor(this.WrappedOperation);
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
+        public ITypeSymbol InputType => InputTypeAccessor(this.operation!);
+        public ITypeSymbol NarrowedType => NarrowedTypeAccessor(this.operation!);
 
         public static explicit operator IPatternOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IPatternOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static IPatternOperationWrapper FromOperation(IOperation operation)
+        public static IPatternOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -48,12 +51,12 @@ namespace StyleCop.Analyzers.Lightup
             return new IPatternOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }
 
-        internal static IPatternOperationWrapper FromUpcast(IOperation operation)
+        internal static IPatternOperationWrapper FromUpcast(IOperation? operation)
         {
             return new IPatternOperationWrapper(operation);
         }

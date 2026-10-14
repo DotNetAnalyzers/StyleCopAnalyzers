@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.OrderingRules
 {
     using System;
@@ -72,7 +70,7 @@ namespace StyleCop.Analyzers.OrderingRules
             var typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
             // This variable is null when the previous member is not a field.
-            FieldDeclarationSyntax previousField = null;
+            FieldDeclarationSyntax? previousField = null;
             var previousFieldConst = true;
             var previousFieldStatic = false;
             var previousFieldReadonly = false;

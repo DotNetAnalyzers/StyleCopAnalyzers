@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Immutable;
@@ -62,7 +60,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
             var documentation = node.GetDocumentationCommentTriviaSyntax();
 
-            var summaryElement = (XmlElementSyntax)documentation.Content.GetFirstXmlElement(XmlCommentHelper.SummaryXmlTag);
+            var summaryElement = (XmlElementSyntax)documentation!.Content.GetFirstXmlElement(XmlCommentHelper.SummaryXmlTag)!;
             var textElement = XmlCommentHelper.TryGetFirstTextElementWithContent(summaryElement);
             if (textElement == null)
             {

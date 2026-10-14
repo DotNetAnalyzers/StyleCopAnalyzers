@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test
 {
     using System;
@@ -48,7 +46,7 @@ namespace StyleCop.Analyzers.Test
         [MemberData(nameof(AllAnalyzers))]
         public void TestHelpLink(Type analyzerType)
         {
-            var analyzer = (DiagnosticAnalyzer)Activator.CreateInstance(analyzerType);
+            var analyzer = Assert.IsAssignableFrom<DiagnosticAnalyzer>(Activator.CreateInstance(analyzerType));
             foreach (var diagnostic in analyzer.SupportedDiagnostics)
             {
                 if (diagnostic.DefaultSeverity == DiagnosticSeverity.Hidden && diagnostic.CustomTags.Contains(WellKnownDiagnosticTags.NotConfigurable))
@@ -87,7 +85,7 @@ namespace StyleCop.Analyzers.Test
                 => new CodeFixProvider[0];
 
             protected override IEnumerable<DiagnosticAnalyzer> GetDiagnosticAnalyzers()
-                => new[] { (DiagnosticAnalyzer)Activator.CreateInstance(this.analyzerType) };
+                => new[] { Assert.IsAssignableFrom<DiagnosticAnalyzer>(Activator.CreateInstance(this.analyzerType)) };
         }
     }
 }

@@ -1,13 +1,12 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
@@ -63,7 +62,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public static bool SupportsIOperation => SupportsCSharp73;
 
-        internal static bool CanWrapObject(object obj, Type underlyingType)
+        internal static bool CanWrapObject(object? obj, Type? underlyingType)
         {
             if (obj == null)
             {
@@ -89,7 +88,7 @@ namespace StyleCop.Analyzers.Lightup
             return canCast;
         }
 
-        internal static bool CanWrapNode(SyntaxNode node, Type underlyingType)
+        internal static bool CanWrapNode(SyntaxNode? node, Type? underlyingType)
         {
             if (node == null)
             {
@@ -115,7 +114,7 @@ namespace StyleCop.Analyzers.Lightup
             return canCast;
         }
 
-        internal static bool CanWrapOperation(IOperation operation, Type underlyingType)
+        internal static bool CanWrapOperation(IOperation? operation, Type? underlyingType)
         {
             if (operation == null)
             {
@@ -141,7 +140,9 @@ namespace StyleCop.Analyzers.Lightup
             return canCast;
         }
 
-        internal static Func<TOperation, TProperty> CreateOperationPropertyAccessor<TOperation, TProperty>(Type type, string propertyName)
+        // Callers select a nullable TProperty when an unsupported-host default is valid for their input.
+        // Required properties are only read on instances of the supported wrapped type.
+        internal static Func<TOperation, TProperty> CreateOperationPropertyAccessor<TOperation, TProperty>(Type? type, string propertyName)
         {
             TProperty FallbackAccessor(TOperation syntax)
             {
@@ -152,7 +153,7 @@ namespace StyleCop.Analyzers.Lightup
                     throw new NullReferenceException();
                 }
 
-                return default;
+                return default!;
             }
 
             if (type == null)
@@ -189,7 +190,7 @@ namespace StyleCop.Analyzers.Lightup
             return expression.Compile();
         }
 
-        internal static Func<TSource, NullabilityInfo> CreateNullabilityInfoAccessor<TSource>(Type type, string propertyName)
+        internal static Func<TSource, NullabilityInfo> CreateNullabilityInfoAccessor<TSource>(Type? type, string propertyName)
         {
             if (type == null)
             {
@@ -240,7 +241,7 @@ namespace StyleCop.Analyzers.Lightup
             return Expression.Lambda<Func<TSource, NullabilityInfo>>(body, sourceParameter).Compile();
         }
 
-        internal static Func<TOperation, ImmutableArray<IOperation>> CreateOperationListPropertyAccessor<TOperation>(Type type, string propertyName)
+        internal static Func<TOperation, ImmutableArray<IOperation>> CreateOperationListPropertyAccessor<TOperation>(Type? type, string propertyName)
         {
             ImmutableArray<IOperation> FallbackAccessor(TOperation syntax)
             {
@@ -299,11 +300,11 @@ namespace StyleCop.Analyzers.Lightup
             return expression.Compile();
         }
 
-        internal static Func<TProperty> CreateStaticPropertyAccessor<TProperty>(Type type, string propertyName)
+        internal static Func<TProperty> CreateStaticPropertyAccessor<TProperty>(Type? type, string propertyName)
         {
             static TProperty FallbackAccessor()
             {
-                return default;
+                return default!;
             }
 
             if (type == null)
@@ -328,7 +329,7 @@ namespace StyleCop.Analyzers.Lightup
             return expression.Compile();
         }
 
-        internal static Func<TSyntax, TProperty> CreateSyntaxPropertyAccessor<TSyntax, TProperty>(Type type, string propertyName)
+        internal static Func<TSyntax, TProperty> CreateSyntaxPropertyAccessor<TSyntax, TProperty>(Type? type, string propertyName)
         {
             TProperty FallbackAccessor(TSyntax syntax)
             {
@@ -339,7 +340,7 @@ namespace StyleCop.Analyzers.Lightup
                     throw new NullReferenceException();
                 }
 
-                return default;
+                return default!;
             }
 
             if (type == null)
@@ -376,7 +377,7 @@ namespace StyleCop.Analyzers.Lightup
             return expression.Compile();
         }
 
-        internal static Func<TSyntax, TArg, TProperty> CreateSyntaxPropertyAccessor<TSyntax, TArg, TProperty>(Type type, Type argumentType, string accessorMethodName)
+        internal static Func<TSyntax, TArg, TProperty> CreateSyntaxPropertyAccessor<TSyntax, TArg, TProperty>(Type? type, Type argumentType, string accessorMethodName)
         {
             static TProperty FallbackAccessor(TSyntax syntax, TArg argument)
             {
@@ -387,7 +388,7 @@ namespace StyleCop.Analyzers.Lightup
                     throw new NullReferenceException();
                 }
 
-                return default;
+                return default!;
             }
 
             if (type == null)
@@ -406,7 +407,7 @@ namespace StyleCop.Analyzers.Lightup
             }
 
             var methods = type.GetTypeInfo().GetDeclaredMethods(accessorMethodName);
-            MethodInfo method = null;
+            MethodInfo? method = null;
             foreach (var candidate in methods)
             {
                 var parameters = candidate.GetParameters();
@@ -451,7 +452,7 @@ namespace StyleCop.Analyzers.Lightup
             return expression.Compile();
         }
 
-        internal static Func<TSyntax, TArg1, TArg2, TProperty> CreateSyntaxPropertyAccessor<TSyntax, TArg1, TArg2, TProperty>(Type type, Type argumentType1, Type argumentType2, string accessorMethodName)
+        internal static Func<TSyntax, TArg1, TArg2, TProperty> CreateSyntaxPropertyAccessor<TSyntax, TArg1, TArg2, TProperty>(Type? type, Type argumentType1, Type argumentType2, string accessorMethodName)
         {
             static TProperty FallbackAccessor(TSyntax syntax, TArg1 argument1, TArg2 argument2)
             {
@@ -462,7 +463,7 @@ namespace StyleCop.Analyzers.Lightup
                     throw new NullReferenceException();
                 }
 
-                return default;
+                return default!;
             }
 
             if (type == null)
@@ -486,7 +487,7 @@ namespace StyleCop.Analyzers.Lightup
             }
 
             var methods = type.GetTypeInfo().GetDeclaredMethods(accessorMethodName);
-            MethodInfo method = null;
+            MethodInfo? method = null;
             foreach (var candidate in methods)
             {
                 var parameters = candidate.GetParameters();
@@ -543,9 +544,9 @@ namespace StyleCop.Analyzers.Lightup
             return expression.Compile();
         }
 
-        internal static TryGetValueAccessor<TSyntax, TKey, TValue> CreateTryGetValueAccessor<TSyntax, TKey, TValue>(Type type, Type keyType, string methodName)
+        internal static TryGetValueAccessor<TSyntax, TKey, TValue> CreateTryGetValueAccessor<TSyntax, TKey, TValue>(Type? type, Type keyType, string methodName)
         {
-            static bool FallbackAccessor(TSyntax syntax, TKey key, out TValue value)
+            static bool FallbackAccessor(TSyntax syntax, TKey key, [MaybeNullWhen(false)] out TValue value)
             {
                 if (syntax == null)
                 {
@@ -574,7 +575,7 @@ namespace StyleCop.Analyzers.Lightup
             }
 
             var methods = type.GetTypeInfo().GetDeclaredMethods(methodName);
-            MethodInfo method = null;
+            MethodInfo? method = null;
             foreach (var candidate in methods)
             {
                 var parameters = candidate.GetParameters();
@@ -622,7 +623,7 @@ namespace StyleCop.Analyzers.Lightup
             return expression.Compile();
         }
 
-        internal static Func<T, TArg1, TArg2, ImmutableArrayWrapper<TResult>> CreateImmutableArrayMethodAccessor<T, TArg1, TArg2, TResult>(Type type, Type argumentType1, Type argumentType2, string methodName)
+        internal static Func<T, TArg1, TArg2, ImmutableArrayWrapper<TResult>> CreateImmutableArrayMethodAccessor<T, TArg1, TArg2, TResult>(Type? type, Type argumentType1, Type argumentType2, string methodName)
         {
             ImmutableArrayWrapper<TResult> FallbackAccessor(T instance, TArg1 arg1, TArg2 arg2)
             {
@@ -657,7 +658,7 @@ namespace StyleCop.Analyzers.Lightup
             }
 
             var methods = type.GetTypeInfo().GetDeclaredMethods(methodName);
-            MethodInfo method = null;
+            MethodInfo? method = null;
             foreach (var candidate in methods)
             {
                 var parameters = candidate.GetParameters();
@@ -721,7 +722,7 @@ namespace StyleCop.Analyzers.Lightup
             return expression.Compile();
         }
 
-        internal static Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>> CreateSeparatedSyntaxListPropertyAccessor<TSyntax, TProperty>(Type type, string propertyName)
+        internal static Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>> CreateSeparatedSyntaxListPropertyAccessor<TSyntax, TProperty>(Type? type, string propertyName)
         {
             SeparatedSyntaxListWrapper<TProperty> FallbackAccessor(TSyntax syntax)
             {
@@ -781,9 +782,9 @@ namespace StyleCop.Analyzers.Lightup
             return expression.Compile();
         }
 
-        internal static Func<TSyntax, TProperty, TSyntax> CreateSyntaxWithPropertyAccessor<TSyntax, TProperty>(Type type, string propertyName)
+        internal static Func<TSyntax, TProperty?, TSyntax> CreateSyntaxWithPropertyAccessor<TSyntax, TProperty>(Type? type, string propertyName)
         {
-            TSyntax FallbackAccessor(TSyntax syntax, TProperty newValue)
+            TSyntax FallbackAccessor(TSyntax syntax, TProperty? newValue)
             {
                 if (syntax == null)
                 {
@@ -839,17 +840,17 @@ namespace StyleCop.Analyzers.Lightup
                 ? (Expression)valueParameter
                 : Expression.Convert(valueParameter, property.PropertyType);
 
-            Expression<Func<TSyntax, TProperty, TSyntax>> expression =
-                Expression.Lambda<Func<TSyntax, TProperty, TSyntax>>(
+            Expression<Func<TSyntax, TProperty?, TSyntax>> expression =
+                Expression.Lambda<Func<TSyntax, TProperty?, TSyntax>>(
                     Expression.Call(instance, methodInfo, value),
                     syntaxParameter,
                     valueParameter);
             return expression.Compile();
         }
 
-        internal static Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>, TSyntax> CreateSeparatedSyntaxListWithPropertyAccessor<TSyntax, TProperty>(Type type, string propertyName)
+        internal static Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>?, TSyntax> CreateSeparatedSyntaxListWithPropertyAccessor<TSyntax, TProperty>(Type? type, string propertyName)
         {
-            TSyntax FallbackAccessor(TSyntax syntax, SeparatedSyntaxListWrapper<TProperty> newValue)
+            TSyntax FallbackAccessor(TSyntax syntax, SeparatedSyntaxListWrapper<TProperty>? newValue)
             {
                 if (syntax == null)
                 {
@@ -909,8 +910,8 @@ namespace StyleCop.Analyzers.Lightup
                 Expression.Call(valueParameter, underlyingListProperty.GetMethod),
                 property.PropertyType);
 
-            Expression<Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>, TSyntax>> expression =
-                Expression.Lambda<Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>, TSyntax>>(
+            Expression<Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>?, TSyntax>> expression =
+                Expression.Lambda<Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>?, TSyntax>>(
                     Expression.Call(instance, methodInfo, value),
                     syntaxParameter,
                     valueParameter);

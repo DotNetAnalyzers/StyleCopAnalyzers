@@ -1,35 +1,38 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct IConstructorBodyOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IConstructorBodyOperation";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
         private static readonly Func<IOperation, ImmutableArray<ILocalSymbol>> LocalsAccessor;
-        private static readonly Func<IOperation, IOperation> InitializerAccessor;
-        private readonly IOperation operation;
+        private static readonly Func<IOperation, IOperation?> InitializerAccessor;
+        private readonly IOperation? operation;
         static IConstructorBodyOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(IConstructorBodyOperationWrapper));
             LocalsAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, ImmutableArray<ILocalSymbol>>(WrappedType, nameof(Locals));
-            InitializerAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation>(WrappedType, nameof(Initializer));
+            InitializerAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation?>(WrappedType, nameof(Initializer));
         }
 
-        private IConstructorBodyOperationWrapper(IOperation operation)
+        private IConstructorBodyOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
-        public ImmutableArray<ILocalSymbol> Locals => LocalsAccessor(this.WrappedOperation);
-        public IOperation Initializer => InitializerAccessor(this.WrappedOperation);
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
+        public ImmutableArray<ILocalSymbol> Locals => LocalsAccessor(this.operation!);
+        public IOperation? Initializer => InitializerAccessor(this.operation!);
 
         public static explicit operator IConstructorBodyOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IConstructorBodyOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
@@ -38,7 +41,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public static explicit operator IConstructorBodyOperationWrapper(IMethodBodyBaseOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IMethodBodyBaseOperationWrapper(IConstructorBodyOperationWrapper wrapper) => IMethodBodyBaseOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static IConstructorBodyOperationWrapper FromOperation(IOperation operation)
+        public static IConstructorBodyOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -53,7 +56,7 @@ namespace StyleCop.Analyzers.Lightup
             return new IConstructorBodyOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Helpers
 {
     using System;
@@ -19,17 +17,17 @@ namespace StyleCop.Analyzers.Helpers
         /// <para>This allows many analyzers that run on every token in the file to avoid checking
         /// the same state in the document repeatedly.</para>
         /// </remarks>
-        private static Tuple<WeakReference<Compilation>, UsingAliasCache> usingAliasCache
-            = Tuple.Create(new WeakReference<Compilation>(null), default(UsingAliasCache));
+        private static Tuple<WeakReference<Compilation?>, UsingAliasCache?> usingAliasCache
+            = Tuple.Create(new WeakReference<Compilation?>(null), default(UsingAliasCache));
 
         public static UsingAliasCache GetOrCreateUsingAliasCache(this Compilation compilation)
         {
             var cache = usingAliasCache;
 
-            Compilation cachedCompilation;
+            Compilation? cachedCompilation;
             if (!cache.Item1.TryGetTarget(out cachedCompilation) || cachedCompilation != compilation)
             {
-                var replacementCache = Tuple.Create(new WeakReference<Compilation>(compilation), new UsingAliasCache());
+                var replacementCache = Tuple.Create(new WeakReference<Compilation?>(compilation), (UsingAliasCache?)new UsingAliasCache());
                 while (true)
                 {
                     var prior = Interlocked.CompareExchange(ref usingAliasCache, replacementCache, cache);
@@ -47,7 +45,8 @@ namespace StyleCop.Analyzers.Helpers
                 }
             }
 
-            return cache.Item2;
+            // A live matching compilation is only stored together with its initialized cache.
+            return cache.Item2!;
         }
 
         /// <summary>

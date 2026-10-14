@@ -198,7 +198,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var syntaxNode = default(SyntaxNode);
             var wrapper = (ForEachVariableStatementSyntaxWrapper)syntaxNode;
 
-            StatementSyntax syntax = wrapper;
+            StatementSyntax? syntax = wrapper;
             Assert.Null(syntax);
 
             wrapper = (ForEachVariableStatementSyntaxWrapper)(CommonForEachStatementSyntaxWrapper)syntaxNode;
@@ -213,7 +213,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var syntaxNode = this.CreateForEachVariableStatement();
             var wrapper = (ForEachVariableStatementSyntaxWrapper)syntaxNode;
 
-            StatementSyntax syntax = wrapper;
+            StatementSyntax? syntax = wrapper;
             Assert.Same(syntaxNode, syntax);
 
             wrapper = (ForEachVariableStatementSyntaxWrapper)(CommonForEachStatementSyntaxWrapper)syntaxNode;

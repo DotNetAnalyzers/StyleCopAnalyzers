@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System.Collections.Generic;
@@ -19,7 +17,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     {
         protected override string CodeActionTitle => MaintainabilityResources.SA1407SA1408CodeFix;
 
-        protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+        protected override async Task<SyntaxNode?> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
         {
             if (diagnostics.IsEmpty)
             {
@@ -43,7 +41,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             return root.ReplaceNodes(nodes, (originalNode, rewrittenNode) => AddParentheses(rewrittenNode));
         }
 
-        private static SyntaxNode AddParentheses(SyntaxNode node)
+        private static SyntaxNode? AddParentheses(SyntaxNode node)
         {
             if (node is BinaryExpressionSyntax syntax)
             {
@@ -59,7 +57,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 BinaryPatternSyntaxWrapper trimmedSyntax = (BinaryPatternSyntaxWrapper)node.WithoutTrivia();
 
                 return SyntaxFactoryEx.ParenthesizedPattern(trimmedSyntax)
-                    .SyntaxNode
+                    .SyntaxNode!
                     .WithTriviaFrom(node)
                     .WithoutFormatting();
             }

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp7.Lightup
 {
     using System;
@@ -59,13 +57,15 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var wrapperWithModifiedPattern = wrapper.WithPattern((PatternSyntaxWrapper)newPattern);
             Assert.NotNull(wrapperWithModifiedPattern.SyntaxNode);
             Assert.NotSame(syntaxNode.Pattern, wrapperWithModifiedPattern.Pattern.SyntaxNode);
+            Assert.NotNull(wrapperWithModifiedPattern.Pattern.SyntaxNode);
             Assert.Equal(SyntaxKind.ConstantPattern, wrapperWithModifiedPattern.Pattern.SyntaxNode.Kind());
-            Assert.Equal(SyntaxKind.NullLiteralExpression, ((ConstantPatternSyntax)wrapperWithModifiedPattern.Pattern).Expression.Kind());
+            Assert.Equal(SyntaxKind.NullLiteralExpression, Assert.IsType<ConstantPatternSyntax>(wrapperWithModifiedPattern.Pattern.SyntaxNode).Expression.Kind());
 
             var newWhenClause = SyntaxFactory.WhenClause(SyntaxFactory.LiteralExpression(SyntaxKind.TrueLiteralExpression));
             var wrapperWithModifiedWhenClause = wrapper.WithWhenClause((WhenClauseSyntaxWrapper)newWhenClause);
             Assert.NotNull(wrapperWithModifiedWhenClause.SyntaxNode);
             Assert.NotSame(syntaxNode.WhenClause, wrapperWithModifiedWhenClause.WhenClause.SyntaxNode);
+            Assert.NotNull(wrapperWithModifiedWhenClause.WhenClause.SyntaxNode);
             Assert.Equal(SyntaxKind.WhenClause, wrapperWithModifiedWhenClause.WhenClause.SyntaxNode.Kind());
             Assert.Equal(SyntaxKind.TrueLiteralExpression, wrapperWithModifiedWhenClause.WhenClause.Condition.Kind());
         }
@@ -86,7 +86,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var syntaxNode = default(SyntaxNode);
             var wrapper = (CasePatternSwitchLabelSyntaxWrapper)syntaxNode;
 
-            SwitchLabelSyntax syntax = wrapper;
+            SwitchLabelSyntax? syntax = wrapper;
             Assert.Null(syntax);
         }
 
@@ -96,7 +96,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var syntaxNode = this.CreateCasePatternSwitchLabel();
             var wrapper = (CasePatternSwitchLabelSyntaxWrapper)syntaxNode;
 
-            SwitchLabelSyntax syntax = wrapper;
+            SwitchLabelSyntax? syntax = wrapper;
             Assert.Same(syntaxNode, syntax);
         }
 

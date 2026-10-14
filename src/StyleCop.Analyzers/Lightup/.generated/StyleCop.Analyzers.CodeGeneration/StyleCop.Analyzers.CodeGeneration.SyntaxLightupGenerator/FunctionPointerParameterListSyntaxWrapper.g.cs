@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,7 +15,7 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct FunctionPointerParameterListSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.FunctionPointerParameterListSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> LessThanTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, SeparatedSyntaxListWrapper<FunctionPointerParameterSyntaxWrapper>> ParametersAccessor;
@@ -21,7 +24,7 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<CSharpSyntaxNode, SeparatedSyntaxListWrapper<FunctionPointerParameterSyntaxWrapper>, CSharpSyntaxNode> WithParametersAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithGreaterThanTokenAccessor;
 
-        private readonly CSharpSyntaxNode node;
+        private readonly CSharpSyntaxNode? node;
 
         static FunctionPointerParameterListSyntaxWrapper()
         {
@@ -34,19 +37,19 @@ namespace StyleCop.Analyzers.Lightup
             WithGreaterThanTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(GreaterThanToken));
         }
 
-        private FunctionPointerParameterListSyntaxWrapper(CSharpSyntaxNode node)
+        private FunctionPointerParameterListSyntaxWrapper(CSharpSyntaxNode? node)
         {
             this.node = node;
         }
 
-        public CSharpSyntaxNode SyntaxNode => this.node;
+        public CSharpSyntaxNode? SyntaxNode => this.node;
 
 
         public SyntaxToken LessThanToken
         {
             get
             {
-                return LessThanTokenAccessor(this.SyntaxNode);
+                return LessThanTokenAccessor(this.node!);
             }
         }
 
@@ -54,7 +57,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ParametersAccessor(this.SyntaxNode);
+                return ParametersAccessor(this.node!);
             }
         }
 
@@ -62,11 +65,11 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return GreaterThanTokenAccessor(this.SyntaxNode);
+                return GreaterThanTokenAccessor(this.node!);
             }
         }
 
-        public static explicit operator FunctionPointerParameterListSyntaxWrapper(SyntaxNode node)
+        public static explicit operator FunctionPointerParameterListSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -81,29 +84,29 @@ namespace StyleCop.Analyzers.Lightup
             return new FunctionPointerParameterListSyntaxWrapper((CSharpSyntaxNode)node);
         }
 
-        public static implicit operator CSharpSyntaxNode(FunctionPointerParameterListSyntaxWrapper wrapper)
+        public static implicit operator CSharpSyntaxNode? (FunctionPointerParameterListSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public FunctionPointerParameterListSyntaxWrapper WithLessThanToken(SyntaxToken lessThanToken)
         {
-            return new FunctionPointerParameterListSyntaxWrapper(WithLessThanTokenAccessor(this.SyntaxNode, lessThanToken));
+            return new FunctionPointerParameterListSyntaxWrapper(WithLessThanTokenAccessor(this.node!, lessThanToken));
         }
 
         public FunctionPointerParameterListSyntaxWrapper WithParameters(SeparatedSyntaxListWrapper<FunctionPointerParameterSyntaxWrapper> parameters)
         {
-            return new FunctionPointerParameterListSyntaxWrapper(WithParametersAccessor(this.SyntaxNode, parameters));
+            return new FunctionPointerParameterListSyntaxWrapper(WithParametersAccessor(this.node!, parameters));
         }
 
         public FunctionPointerParameterListSyntaxWrapper WithGreaterThanToken(SyntaxToken greaterThanToken)
         {
-            return new FunctionPointerParameterListSyntaxWrapper(WithGreaterThanTokenAccessor(this.SyntaxNode, greaterThanToken));
+            return new FunctionPointerParameterListSyntaxWrapper(WithGreaterThanTokenAccessor(this.node!, greaterThanToken));
         }
     }
 }

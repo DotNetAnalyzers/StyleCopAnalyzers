@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System.Collections.Immutable;
@@ -85,9 +83,9 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
         private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, BinaryPatternSyntaxWrapper syntax)
         {
-            var newNode = (ParenthesizedPatternSyntaxWrapper)SyntaxFactoryEx.ParenthesizedPattern((PatternSyntaxWrapper)syntax.SyntaxNode.WithoutTrivia())
-                .SyntaxNode
-                .WithTriviaFrom(syntax)
+            var newNode = (ParenthesizedPatternSyntaxWrapper)SyntaxFactoryEx.ParenthesizedPattern((PatternSyntaxWrapper)syntax.SyntaxNode!.WithoutTrivia())
+                .SyntaxNode!
+                .WithTriviaFrom(syntax.SyntaxNode!)
                 .WithoutFormatting();
 
             var newSyntaxRoot = root.ReplaceNode(syntax, newNode);

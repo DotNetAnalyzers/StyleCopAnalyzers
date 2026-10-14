@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,14 +15,14 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct AllowsConstraintClauseSyntaxWrapper : ISyntaxWrapper<TypeParameterConstraintSyntax>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.AllowsConstraintClauseSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<TypeParameterConstraintSyntax, SyntaxToken> AllowsKeywordAccessor;
         private static readonly Func<TypeParameterConstraintSyntax, SeparatedSyntaxListWrapper<AllowsConstraintSyntaxWrapper>> ConstraintsAccessor;
         private static readonly Func<TypeParameterConstraintSyntax, SyntaxToken, TypeParameterConstraintSyntax> WithAllowsKeywordAccessor;
         private static readonly Func<TypeParameterConstraintSyntax, SeparatedSyntaxListWrapper<AllowsConstraintSyntaxWrapper>, TypeParameterConstraintSyntax> WithConstraintsAccessor;
 
-        private readonly TypeParameterConstraintSyntax node;
+        private readonly TypeParameterConstraintSyntax? node;
 
         static AllowsConstraintClauseSyntaxWrapper()
         {
@@ -30,19 +33,19 @@ namespace StyleCop.Analyzers.Lightup
             WithConstraintsAccessor = LightupHelpers.CreateSeparatedSyntaxListWithPropertyAccessor<TypeParameterConstraintSyntax, AllowsConstraintSyntaxWrapper>(WrappedType, nameof(Constraints));
         }
 
-        private AllowsConstraintClauseSyntaxWrapper(TypeParameterConstraintSyntax node)
+        private AllowsConstraintClauseSyntaxWrapper(TypeParameterConstraintSyntax? node)
         {
             this.node = node;
         }
 
-        public TypeParameterConstraintSyntax SyntaxNode => this.node;
+        public TypeParameterConstraintSyntax? SyntaxNode => this.node;
 
 
         public SyntaxToken AllowsKeyword
         {
             get
             {
-                return AllowsKeywordAccessor(this.SyntaxNode);
+                return AllowsKeywordAccessor(this.node!);
             }
         }
 
@@ -50,11 +53,11 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ConstraintsAccessor(this.SyntaxNode);
+                return ConstraintsAccessor(this.node!);
             }
         }
 
-        public static explicit operator AllowsConstraintClauseSyntaxWrapper(SyntaxNode node)
+        public static explicit operator AllowsConstraintClauseSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -69,24 +72,24 @@ namespace StyleCop.Analyzers.Lightup
             return new AllowsConstraintClauseSyntaxWrapper((TypeParameterConstraintSyntax)node);
         }
 
-        public static implicit operator TypeParameterConstraintSyntax(AllowsConstraintClauseSyntaxWrapper wrapper)
+        public static implicit operator TypeParameterConstraintSyntax? (AllowsConstraintClauseSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public AllowsConstraintClauseSyntaxWrapper WithAllowsKeyword(SyntaxToken allowsKeyword)
         {
-            return new AllowsConstraintClauseSyntaxWrapper(WithAllowsKeywordAccessor(this.SyntaxNode, allowsKeyword));
+            return new AllowsConstraintClauseSyntaxWrapper(WithAllowsKeywordAccessor(this.node!, allowsKeyword));
         }
 
         public AllowsConstraintClauseSyntaxWrapper WithConstraints(SeparatedSyntaxListWrapper<AllowsConstraintSyntaxWrapper> constraints)
         {
-            return new AllowsConstraintClauseSyntaxWrapper(WithConstraintsAccessor(this.SyntaxNode, constraints));
+            return new AllowsConstraintClauseSyntaxWrapper(WithConstraintsAccessor(this.node!, constraints));
         }
     }
 }

@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,14 +15,14 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct WithElementSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.WithElementSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> WithKeywordAccessor;
         private static readonly Func<CSharpSyntaxNode, ArgumentListSyntax> ArgumentListAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithWithKeywordAccessor;
         private static readonly Func<CSharpSyntaxNode, ArgumentListSyntax, CSharpSyntaxNode> WithArgumentListAccessor;
 
-        private readonly CSharpSyntaxNode node;
+        private readonly CSharpSyntaxNode? node;
 
         static WithElementSyntaxWrapper()
         {
@@ -30,19 +33,19 @@ namespace StyleCop.Analyzers.Lightup
             WithArgumentListAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, ArgumentListSyntax>(WrappedType, nameof(ArgumentList));
         }
 
-        private WithElementSyntaxWrapper(CSharpSyntaxNode node)
+        private WithElementSyntaxWrapper(CSharpSyntaxNode? node)
         {
             this.node = node;
         }
 
-        public CSharpSyntaxNode SyntaxNode => this.node;
+        public CSharpSyntaxNode? SyntaxNode => this.node;
 
 
         public SyntaxToken WithKeyword
         {
             get
             {
-                return WithKeywordAccessor(this.SyntaxNode);
+                return WithKeywordAccessor(this.node!);
             }
         }
 
@@ -50,7 +53,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ArgumentListAccessor(this.SyntaxNode);
+                return ArgumentListAccessor(this.node!);
             }
         }
 
@@ -59,7 +62,7 @@ namespace StyleCop.Analyzers.Lightup
             return (WithElementSyntaxWrapper)node.SyntaxNode;
         }
 
-        public static explicit operator WithElementSyntaxWrapper(SyntaxNode node)
+        public static explicit operator WithElementSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -79,24 +82,24 @@ namespace StyleCop.Analyzers.Lightup
             return CollectionElementSyntaxWrapper.FromUpcast(wrapper.node);
         }
 
-        public static implicit operator CSharpSyntaxNode(WithElementSyntaxWrapper wrapper)
+        public static implicit operator CSharpSyntaxNode? (WithElementSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public WithElementSyntaxWrapper WithWithKeyword(SyntaxToken withKeyword)
         {
-            return new WithElementSyntaxWrapper(WithWithKeywordAccessor(this.SyntaxNode, withKeyword));
+            return new WithElementSyntaxWrapper(WithWithKeywordAccessor(this.node!, withKeyword));
         }
 
         public WithElementSyntaxWrapper WithArgumentList(ArgumentListSyntax argumentList)
         {
-            return new WithElementSyntaxWrapper(WithArgumentListAccessor(this.SyntaxNode, argumentList));
+            return new WithElementSyntaxWrapper(WithArgumentListAccessor(this.node!, argumentList));
         }
     }
 }

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.LightJson.Serialization
 {
     using global::LightJson;
@@ -48,7 +46,7 @@ namespace StyleCop.Analyzers.Test.LightJson.Serialization
         {
             var obj = JsonValue.Parse("{ /* * / */ }");
             Assert.Equal(JsonValueType.Object, obj.Type);
-            Assert.Equal(0, obj.AsJsonObject.Count);
+            Assert.Equal(0, Assert.IsType<JsonObject>(obj.AsJsonObject).Count);
         }
     }
 }

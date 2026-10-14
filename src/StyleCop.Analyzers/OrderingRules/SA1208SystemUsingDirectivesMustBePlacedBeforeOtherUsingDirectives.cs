@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.OrderingRules
 {
     using System;
@@ -89,7 +87,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
         private static void ProcessUsingsAndReportDiagnostic(SyntaxList<UsingDirectiveSyntax> usings, SyntaxNodeAnalysisContext context)
         {
-            string systemUsingDirectivesShouldBeBeforeThisName = null;
+            string? systemUsingDirectivesShouldBeBeforeThisName = null;
             bool systemUsingDirectivesShouldBeBeforeThisNameIsGlobal = false;
             for (var i = 1; i < usings.Count; i++)
             {

@@ -1,41 +1,44 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct IEventReferenceOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IEventReferenceOperation";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
         private static readonly Func<IOperation, IEventSymbol> EventAccessor;
-        private readonly IOperation operation;
+        private readonly IOperation? operation;
         static IEventReferenceOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(IEventReferenceOperationWrapper));
             EventAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IEventSymbol>(WrappedType, nameof(Event));
         }
 
-        private IEventReferenceOperationWrapper(IOperation operation)
+        private IEventReferenceOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
-        public IEventSymbol Event => EventAccessor(this.WrappedOperation);
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
+        public IEventSymbol Event => EventAccessor(this.operation!);
 
         public static explicit operator IEventReferenceOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IEventReferenceOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public IOperation Instance => ((IMemberReferenceOperationWrapper)this).Instance;
+        public IOperation? Instance => ((IMemberReferenceOperationWrapper)this).Instance;
         public ISymbol Member => ((IMemberReferenceOperationWrapper)this).Member;
 
         public static explicit operator IEventReferenceOperationWrapper(IMemberReferenceOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IMemberReferenceOperationWrapper(IEventReferenceOperationWrapper wrapper) => IMemberReferenceOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static IEventReferenceOperationWrapper FromOperation(IOperation operation)
+        public static IEventReferenceOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -50,7 +53,7 @@ namespace StyleCop.Analyzers.Lightup
             return new IEventReferenceOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }

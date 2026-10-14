@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers
 {
     using System;
@@ -45,7 +43,7 @@ namespace StyleCop.Analyzers
 #pragma warning disable IDE0079 // Remove unnecessary suppression
         [SuppressMessage("MicrosoftCodeAnalysisPerformance", "RS1012:Start action has no registered actions", Justification = "This is not a start action")]
 #pragma warning restore IDE0079 // Remove unnecessary suppression
-        internal static SettingsFile GetStyleCopSettingsFile(this CompilationStartAnalysisContext context, CancellationToken cancellationToken)
+        internal static SettingsFile? GetStyleCopSettingsFile(this CompilationStartAnalysisContext context, CancellationToken cancellationToken)
         {
             return GetSettingsFile(context.Options, GetJsonValue, cancellationToken);
 
@@ -98,7 +96,7 @@ namespace StyleCop.Analyzers
         /// <param name="settingsStorage">The storage location for caching an evaluated <see cref="StyleCopSettings"/> object.</param>
         /// <param name="settingsFile">Information about the StyleCop settings file.</param>
         /// <returns>A <see cref="StyleCopSettings"/> instance that represents the StyleCop settings for the given context.</returns>
-        internal static StyleCopSettings GetStyleCopSettings(this SyntaxTreeAnalysisContext context, StrongBox<StyleCopSettings> settingsStorage, SettingsFile settingsFile)
+        internal static StyleCopSettings GetStyleCopSettings(this SyntaxTreeAnalysisContext context, StrongBox<StyleCopSettings> settingsStorage, SettingsFile? settingsFile)
         {
             return GetSettings(context.Options, settingsStorage, context.Tree, settingsFile, DeserializationFailureBehavior.ReturnDefaultSettings);
         }
@@ -131,7 +129,7 @@ namespace StyleCop.Analyzers
         /// <param name="settingsStorage">The storage location for caching an evaluated <see cref="StyleCopSettings"/> object.</param>
         /// <param name="settingsFile">The contents of the StyleCop settnigs file.</param>
         /// <returns>A <see cref="StyleCopSettings"/> instance that represents the StyleCop settings for the given context.</returns>
-        internal static StyleCopSettings GetStyleCopSettings(this SyntaxNodeAnalysisContext context, StrongBox<StyleCopSettings> settingsStorage, SettingsFile settingsFile)
+        internal static StyleCopSettings GetStyleCopSettings(this SyntaxNodeAnalysisContext context, StrongBox<StyleCopSettings> settingsStorage, SettingsFile? settingsFile)
         {
             return GetSettings(context.Options, settingsStorage, context.Node.SyntaxTree, settingsFile, DeserializationFailureBehavior.ReturnDefaultSettings);
         }
@@ -202,7 +200,7 @@ namespace StyleCop.Analyzers
                 || string.Equals(fileName, AltSettingsFileName, StringComparison.OrdinalIgnoreCase);
         }
 
-        private static StyleCopSettings GetSettings(AnalyzerOptions options, StrongBox<StyleCopSettings> settingsStorage, SyntaxTree tree, SettingsFile settingsFile, DeserializationFailureBehavior failureBehavior)
+        private static StyleCopSettings GetSettings(AnalyzerOptions options, StrongBox<StyleCopSettings> settingsStorage, SyntaxTree tree, SettingsFile? settingsFile, DeserializationFailureBehavior failureBehavior)
         {
             if (settingsStorage.Value is { } settings)
             {
@@ -271,7 +269,7 @@ namespace StyleCop.Analyzers
             return new StyleCopSettings();
         }
 
-        private static SettingsFile GetSettingsFile(AnalyzerOptions options, Func<SourceText, Lazy<JsonValue>> getJsonValue, CancellationToken cancellationToken)
+        private static SettingsFile? GetSettingsFile(AnalyzerOptions? options, Func<SourceText, Lazy<JsonValue>> getJsonValue, CancellationToken cancellationToken)
         {
             var additionalFiles = options != null ? options.AdditionalFiles : ImmutableArray.Create<AdditionalText>();
             foreach (var additionalFile in additionalFiles)

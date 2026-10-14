@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Immutable;
@@ -44,7 +42,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, DocumentationCommentTriviaSyntax documentation, XmlNodeSyntax syntax, XElement completeDocumentation, Location[] diagnosticLocations)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, DocumentationCommentTriviaSyntax documentation, XmlNodeSyntax? syntax, XElement? completeDocumentation, Location[] diagnosticLocations)
         {
             if (!needsComment)
             {
@@ -84,7 +82,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 ? settings.DocumentationRules.DocumentPrivateFields
                 : settings.DocumentationRules.DocumentPrivateElements;
             if (!documentPrivate
-                && (documentation.Content.GetFirstXmlElement(XmlCommentHelper.ExcludeXmlTag) != null
+                && (documentation!.Content.GetFirstXmlElement(XmlCommentHelper.ExcludeXmlTag) != null
                     || (completeDocumentation != null && completeDocumentation.Elements(XmlCommentHelper.ExcludeXmlTag).Any())))
             {
                 return;

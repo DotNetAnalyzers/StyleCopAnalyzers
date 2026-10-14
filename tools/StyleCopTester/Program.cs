@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 // Synchronous waits are used in Parallel.ForEach and for per-document analyzer statistics.
 #pragma warning disable VSTHRD002
 
@@ -136,7 +134,7 @@ namespace StyleCopTester
                     var documentPerformance = new Dictionary<DocumentId, DocumentAnalyzerPerformance>();
                     foreach (var projectId in solution.ProjectIds)
                     {
-                        Project project = solution.GetProject(projectId);
+                        Project project = solution.GetProject(projectId)!;
                         if (project.Language != LanguageNames.CSharp)
                         {
                             continue;
@@ -144,8 +142,8 @@ namespace StyleCopTester
 
                         foreach (var documentId in project.DocumentIds)
                         {
-                            var document = project.GetDocument(documentId);
-                            if (!documentMatch(document.FilePath))
+                            var document = project.GetDocument(documentId)!;
+                            if (!documentMatch(document.FilePath!))
                             {
                                 continue;
                             }
@@ -167,10 +165,10 @@ namespace StyleCopTester
                     Console.WriteLine("Slowest files in each project:");
                     foreach (var projectGroup in slowestFiles)
                     {
-                        Console.WriteLine($"  {solution.GetProject(projectGroup.Key).Name}");
+                        Console.WriteLine($"  {solution.GetProject(projectGroup.Key)!.Name}");
                         foreach (var pair in projectGroup.Take(5))
                         {
-                            var document = solution.GetDocument(pair.Key);
+                            var document = solution.GetDocument(pair.Key)!;
                             Console.WriteLine($"    {document.FilePath ?? document.Name}: {pair.Value.EditsPerSecond:0.00}");
                         }
                     }
@@ -183,7 +181,7 @@ namespace StyleCopTester
                             continue;
                         }
 
-                        Project project = solution.GetProject(projectId);
+                        Project project = solution.GetProject(projectId)!;
                         Console.WriteLine($"{project.Name} ({project.DocumentIds.Count} documents): {averageEditsInProject:0.00} edits per second");
                     }
                 }
@@ -240,18 +238,20 @@ namespace StyleCopTester
             supportedDiagnosticsSpecificOptions.Add("AD0001", ReportDiagnostic.Error);
 
             // update the project compilation options
-            var modifiedSpecificDiagnosticOptions = supportedDiagnosticsSpecificOptions.ToImmutableDictionary().SetItems(project.CompilationOptions.SpecificDiagnosticOptions);
-            var modifiedCompilationOptions = project.CompilationOptions.WithSpecificDiagnosticOptions(modifiedSpecificDiagnosticOptions);
+            var modifiedSpecificDiagnosticOptions = supportedDiagnosticsSpecificOptions.ToImmutableDictionary().SetItems(project.CompilationOptions!.SpecificDiagnosticOptions);
+            var modifiedCompilationOptions = project.CompilationOptions!.WithSpecificDiagnosticOptions(modifiedSpecificDiagnosticOptions);
 
             var stopwatch = Stopwatch.StartNew();
             for (int i = 0; i < iterations; i++)
             {
                 var processedProject = project.WithCompilationOptions(modifiedCompilationOptions);
 
-                Compilation compilation = await processedProject.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
+                Compilation compilation = await processedProject.GetCompilationAsync(cancellationToken).ConfigureAwait(false)
+                    ?? throw new InvalidOperationException("The project does not support compilation.");
                 CompilationWithAnalyzers compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, new CompilationWithAnalyzersOptions(processedProject.AnalyzerOptions, null, true, false));
 
-                SyntaxTree tree = await project.GetDocument(documentId).GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
+                SyntaxTree tree = await project.GetDocument(documentId)!.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false)
+                    ?? throw new InvalidOperationException("The document does not support syntax trees.");
                 await compilationWithAnalyzers.GetAnalyzerSyntaxDiagnosticsAsync(tree, cancellationToken).ConfigureAwait(false);
                 await compilationWithAnalyzers.GetAnalyzerSemanticDiagnosticsAsync(compilation.GetSemanticModel(tree), null, cancellationToken).ConfigureAwait(false);
             }
@@ -403,7 +403,7 @@ namespace StyleCopTester
         {
             List<CodeAction> codeActions = new List<CodeAction>();
 
-            await codeFixProvider.RegisterCodeFixesAsync(new CodeFixContext(solution.GetDocument(diagnostic.Location.SourceTree), diagnostic, (a, d) => codeActions.Add(a), cancellationToken)).ConfigureAwait(false);
+            await codeFixProvider.RegisterCodeFixesAsync(new CodeFixContext(solution.GetDocument(diagnostic.Location.SourceTree)!, diagnostic, (a, d) => codeActions.Add(a), cancellationToken)).ConfigureAwait(false);
 
             return codeActions;
         }
@@ -424,7 +424,8 @@ namespace StyleCopTester
 
         private static async Task<Statistic> GetAnalyzerStatisticsAsync(Document document, CancellationToken cancellationToken)
         {
-            SyntaxTree tree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
+            SyntaxTree tree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false)
+                ?? throw new InvalidOperationException("The document does not support syntax trees.");
 
             SyntaxNode root = await tree.GetRootAsync(cancellationToken).ConfigureAwait(false);
 
@@ -560,11 +561,12 @@ namespace StyleCopTester
             supportedDiagnosticsSpecificOptions.Add("AD0001", ReportDiagnostic.Error);
 
             // update the project compilation options
-            var modifiedSpecificDiagnosticOptions = supportedDiagnosticsSpecificOptions.ToImmutableDictionary().SetItems(project.CompilationOptions.SpecificDiagnosticOptions);
-            var modifiedCompilationOptions = project.CompilationOptions.WithSpecificDiagnosticOptions(modifiedSpecificDiagnosticOptions);
+            var modifiedSpecificDiagnosticOptions = supportedDiagnosticsSpecificOptions.ToImmutableDictionary().SetItems(project.CompilationOptions!.SpecificDiagnosticOptions);
+            var modifiedCompilationOptions = project.CompilationOptions!.WithSpecificDiagnosticOptions(modifiedSpecificDiagnosticOptions);
             var processedProject = project.WithCompilationOptions(modifiedCompilationOptions);
 
-            Compilation compilation = await processedProject.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
+            Compilation compilation = await processedProject.GetCompilationAsync(cancellationToken).ConfigureAwait(false)
+                ?? throw new InvalidOperationException("The project does not support compilation.");
             CompilationWithAnalyzers compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, new CompilationWithAnalyzersOptions(processedProject.AnalyzerOptions, null, true, false));
 
             var diagnostics = await compilationWithAnalyzers.GetAllDiagnosticsAsync(cancellationToken).ConfigureAwait(false);

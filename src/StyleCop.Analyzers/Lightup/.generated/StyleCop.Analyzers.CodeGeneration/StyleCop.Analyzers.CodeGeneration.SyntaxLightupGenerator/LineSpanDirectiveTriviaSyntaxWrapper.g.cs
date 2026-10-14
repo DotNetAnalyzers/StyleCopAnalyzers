@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,7 +15,7 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct LineSpanDirectiveTriviaSyntaxWrapper : ISyntaxWrapper<DirectiveTriviaSyntax>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.LineSpanDirectiveTriviaSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<DirectiveTriviaSyntax, SyntaxToken> LineKeywordAccessor;
         private static readonly Func<DirectiveTriviaSyntax, CSharpSyntaxNode> StartAccessor;
@@ -30,7 +33,7 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<DirectiveTriviaSyntax, SyntaxToken, DirectiveTriviaSyntax> WithEndOfDirectiveTokenAccessor;
         private static readonly Func<DirectiveTriviaSyntax, bool, DirectiveTriviaSyntax> WithIsActiveAccessor;
 
-        private readonly DirectiveTriviaSyntax node;
+        private readonly DirectiveTriviaSyntax? node;
 
         static LineSpanDirectiveTriviaSyntaxWrapper()
         {
@@ -52,19 +55,19 @@ namespace StyleCop.Analyzers.Lightup
             WithIsActiveAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<DirectiveTriviaSyntax, bool>(WrappedType, nameof(IsActive));
         }
 
-        private LineSpanDirectiveTriviaSyntaxWrapper(DirectiveTriviaSyntax node)
+        private LineSpanDirectiveTriviaSyntaxWrapper(DirectiveTriviaSyntax? node)
         {
             this.node = node;
         }
 
-        public DirectiveTriviaSyntax SyntaxNode => this.node;
+        public DirectiveTriviaSyntax? SyntaxNode => this.node;
 
 
         public SyntaxToken HashToken
         {
             get
             {
-                return this.SyntaxNode.HashToken;
+                return this.node!.HashToken;
             }
         }
 
@@ -72,7 +75,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return LineKeywordAccessor(this.SyntaxNode);
+                return LineKeywordAccessor(this.node!);
             }
         }
 
@@ -80,7 +83,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return (LineDirectivePositionSyntaxWrapper)StartAccessor(this.SyntaxNode);
+                return (LineDirectivePositionSyntaxWrapper)StartAccessor(this.node!);
             }
         }
 
@@ -88,7 +91,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return MinusTokenAccessor(this.SyntaxNode);
+                return MinusTokenAccessor(this.node!);
             }
         }
 
@@ -96,7 +99,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return (LineDirectivePositionSyntaxWrapper)EndAccessor(this.SyntaxNode);
+                return (LineDirectivePositionSyntaxWrapper)EndAccessor(this.node!);
             }
         }
 
@@ -104,7 +107,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return CharacterOffsetAccessor(this.SyntaxNode);
+                return CharacterOffsetAccessor(this.node!);
             }
         }
 
@@ -112,7 +115,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return FileAccessor(this.SyntaxNode);
+                return FileAccessor(this.node!);
             }
         }
 
@@ -120,7 +123,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return this.SyntaxNode.EndOfDirectiveToken;
+                return this.node!.EndOfDirectiveToken;
             }
         }
 
@@ -128,7 +131,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return this.SyntaxNode.IsActive;
+                return this.node!.IsActive;
             }
         }
 
@@ -137,7 +140,7 @@ namespace StyleCop.Analyzers.Lightup
             return (LineSpanDirectiveTriviaSyntaxWrapper)node.SyntaxNode;
         }
 
-        public static explicit operator LineSpanDirectiveTriviaSyntaxWrapper(SyntaxNode node)
+        public static explicit operator LineSpanDirectiveTriviaSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -157,59 +160,59 @@ namespace StyleCop.Analyzers.Lightup
             return LineOrSpanDirectiveTriviaSyntaxWrapper.FromUpcast(wrapper.node);
         }
 
-        public static implicit operator DirectiveTriviaSyntax(LineSpanDirectiveTriviaSyntaxWrapper wrapper)
+        public static implicit operator DirectiveTriviaSyntax? (LineSpanDirectiveTriviaSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public LineSpanDirectiveTriviaSyntaxWrapper WithHashToken(SyntaxToken hashToken)
         {
-            return new LineSpanDirectiveTriviaSyntaxWrapper(WithHashTokenAccessor(this.SyntaxNode, hashToken));
+            return new LineSpanDirectiveTriviaSyntaxWrapper(WithHashTokenAccessor(this.node!, hashToken));
         }
 
         public LineSpanDirectiveTriviaSyntaxWrapper WithLineKeyword(SyntaxToken lineKeyword)
         {
-            return new LineSpanDirectiveTriviaSyntaxWrapper(WithLineKeywordAccessor(this.SyntaxNode, lineKeyword));
+            return new LineSpanDirectiveTriviaSyntaxWrapper(WithLineKeywordAccessor(this.node!, lineKeyword));
         }
 
         public LineSpanDirectiveTriviaSyntaxWrapper WithStart(LineDirectivePositionSyntaxWrapper start)
         {
-            return new LineSpanDirectiveTriviaSyntaxWrapper(WithStartAccessor(this.SyntaxNode, start));
+            return new LineSpanDirectiveTriviaSyntaxWrapper(WithStartAccessor(this.node!, start.SyntaxNode!));
         }
 
         public LineSpanDirectiveTriviaSyntaxWrapper WithMinusToken(SyntaxToken minusToken)
         {
-            return new LineSpanDirectiveTriviaSyntaxWrapper(WithMinusTokenAccessor(this.SyntaxNode, minusToken));
+            return new LineSpanDirectiveTriviaSyntaxWrapper(WithMinusTokenAccessor(this.node!, minusToken));
         }
 
         public LineSpanDirectiveTriviaSyntaxWrapper WithEnd(LineDirectivePositionSyntaxWrapper end)
         {
-            return new LineSpanDirectiveTriviaSyntaxWrapper(WithEndAccessor(this.SyntaxNode, end));
+            return new LineSpanDirectiveTriviaSyntaxWrapper(WithEndAccessor(this.node!, end.SyntaxNode!));
         }
 
         public LineSpanDirectiveTriviaSyntaxWrapper WithCharacterOffset(SyntaxToken characterOffset)
         {
-            return new LineSpanDirectiveTriviaSyntaxWrapper(WithCharacterOffsetAccessor(this.SyntaxNode, characterOffset));
+            return new LineSpanDirectiveTriviaSyntaxWrapper(WithCharacterOffsetAccessor(this.node!, characterOffset));
         }
 
         public LineSpanDirectiveTriviaSyntaxWrapper WithFile(SyntaxToken file)
         {
-            return new LineSpanDirectiveTriviaSyntaxWrapper(WithFileAccessor(this.SyntaxNode, file));
+            return new LineSpanDirectiveTriviaSyntaxWrapper(WithFileAccessor(this.node!, file));
         }
 
         public LineSpanDirectiveTriviaSyntaxWrapper WithEndOfDirectiveToken(SyntaxToken endOfDirectiveToken)
         {
-            return new LineSpanDirectiveTriviaSyntaxWrapper(WithEndOfDirectiveTokenAccessor(this.SyntaxNode, endOfDirectiveToken));
+            return new LineSpanDirectiveTriviaSyntaxWrapper(WithEndOfDirectiveTokenAccessor(this.node!, endOfDirectiveToken));
         }
 
         public LineSpanDirectiveTriviaSyntaxWrapper WithIsActive(bool isActive)
         {
-            return new LineSpanDirectiveTriviaSyntaxWrapper(WithIsActiveAccessor(this.SyntaxNode, isActive));
+            return new LineSpanDirectiveTriviaSyntaxWrapper(WithIsActiveAccessor(this.node!, isActive));
         }
     }
 }

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.NamingRules
 {
     using System;
@@ -115,7 +113,7 @@ namespace StyleCop.Analyzers.NamingRules
             CheckName(context, settings, tupleElement.SyntaxNode, tupleElement.Identifier.ValueText, tupleElement.Identifier.GetLocation(), true);
         }
 
-        private static void CheckName(SyntaxNodeAnalysisContext context, StyleCopSettings settings, SyntaxNode tupleElement, string tupleElementName, Location location, bool prepareCodeFix)
+        private static void CheckName(SyntaxNodeAnalysisContext context, StyleCopSettings settings, SyntaxNode? tupleElement, string tupleElementName, Location location, bool prepareCodeFix)
         {
             if (tupleElementName == "_")
             {
@@ -165,7 +163,7 @@ namespace StyleCop.Analyzers.NamingRules
         /// When overriding a base class or implementing an interface, the compiler requires the names to match
         /// the original definition. This method checks if we are allowed to change the name of the specified tuple element.
         /// </summary>
-        private static bool CanTupleElementNameBeChanged(SyntaxNodeAnalysisContext context, SyntaxNode tupleElement)
+        private static bool CanTupleElementNameBeChanged(SyntaxNodeAnalysisContext context, SyntaxNode? tupleElement)
         {
             var memberDeclaration = GetAncestorMemberDeclaration(tupleElement);
             if (memberDeclaration == null)
@@ -191,7 +189,7 @@ namespace StyleCop.Analyzers.NamingRules
         /// Returns the ancestor <see cref="MemberDeclarationSyntax"/>, if the node is part of its "signature",
         /// otherwise returns null.
         /// </summary>
-        private static MemberDeclarationSyntax GetAncestorMemberDeclaration(SyntaxNode node)
+        private static MemberDeclarationSyntax? GetAncestorMemberDeclaration(SyntaxNode? node)
         {
             // NOTE: Avoiding a simple FirstAncestorOrSelf<MemberDeclarationSyntax>() call here, since
             // that would also return true for e.g. tuple variable declarations inside a method body.

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
     using System.Collections.Generic;
@@ -107,13 +105,13 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <summary>
         /// This is the cache for the <see cref="GetCopyrightText(string)"/> method.
         /// </summary>
-        private string copyrightTextCache;
+        private string? copyrightTextCache;
 
         /// <summary>
         /// This is the backing field for the <see cref="Variables"/> property. It is computed on first use when the
         /// variables come from <strong>.editorconfig</strong>.
         /// </summary>
-        private ImmutableDictionary<string, string> variables;
+        private ImmutableDictionary<string, string>? variables;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DocumentationSettings"/> class during JSON deserialization.
@@ -241,7 +239,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
         public string GetCopyrightText(string fileName)
         {
-            string copyrightText = this.copyrightTextCache;
+            string? copyrightText = this.copyrightTextCache;
             if (copyrightText != null)
             {
                 return copyrightText;

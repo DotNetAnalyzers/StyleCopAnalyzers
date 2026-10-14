@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.Lightup
 {
     using System.Collections.Generic;
@@ -28,7 +26,9 @@ namespace StyleCop.Analyzers.Test.Lightup
                     continue;
                 }
 
-                var value = (SyntaxKind)field.GetRawConstantValue();
+                var rawValue = field.GetRawConstantValue();
+                Assert.NotNull(rawValue);
+                var value = (SyntaxKind)rawValue;
                 var name = field.Name;
                 SyntaxKindToName.Add(value, name);
                 NameToSyntaxKind.Add(name, value);
@@ -41,7 +41,9 @@ namespace StyleCop.Analyzers.Test.Lightup
             {
                 foreach (var fieldInfo in typeof(SyntaxKindEx).GetTypeInfo().DeclaredFields)
                 {
-                    yield return new object[] { fieldInfo.Name, (SyntaxKind)fieldInfo.GetRawConstantValue() };
+                    var rawValue = fieldInfo.GetRawConstantValue();
+                    Assert.NotNull(rawValue);
+                    yield return new object[] { fieldInfo.Name, (SyntaxKind)rawValue };
                 }
             }
         }

@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,12 +15,12 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct DiscardDesignationSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.DiscardDesignationSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> UnderscoreTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithUnderscoreTokenAccessor;
 
-        private readonly CSharpSyntaxNode node;
+        private readonly CSharpSyntaxNode? node;
 
         static DiscardDesignationSyntaxWrapper()
         {
@@ -26,19 +29,19 @@ namespace StyleCop.Analyzers.Lightup
             WithUnderscoreTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(UnderscoreToken));
         }
 
-        private DiscardDesignationSyntaxWrapper(CSharpSyntaxNode node)
+        private DiscardDesignationSyntaxWrapper(CSharpSyntaxNode? node)
         {
             this.node = node;
         }
 
-        public CSharpSyntaxNode SyntaxNode => this.node;
+        public CSharpSyntaxNode? SyntaxNode => this.node;
 
 
         public SyntaxToken UnderscoreToken
         {
             get
             {
-                return UnderscoreTokenAccessor(this.SyntaxNode);
+                return UnderscoreTokenAccessor(this.node!);
             }
         }
 
@@ -47,7 +50,7 @@ namespace StyleCop.Analyzers.Lightup
             return (DiscardDesignationSyntaxWrapper)node.SyntaxNode;
         }
 
-        public static explicit operator DiscardDesignationSyntaxWrapper(SyntaxNode node)
+        public static explicit operator DiscardDesignationSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -67,19 +70,19 @@ namespace StyleCop.Analyzers.Lightup
             return VariableDesignationSyntaxWrapper.FromUpcast(wrapper.node);
         }
 
-        public static implicit operator CSharpSyntaxNode(DiscardDesignationSyntaxWrapper wrapper)
+        public static implicit operator CSharpSyntaxNode? (DiscardDesignationSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public DiscardDesignationSyntaxWrapper WithUnderscoreToken(SyntaxToken underscoreToken)
         {
-            return new DiscardDesignationSyntaxWrapper(WithUnderscoreTokenAccessor(this.SyntaxNode, underscoreToken));
+            return new DiscardDesignationSyntaxWrapper(WithUnderscoreTokenAccessor(this.node!, underscoreToken));
         }
     }
 }

@@ -54,8 +54,10 @@ namespace StyleCop.Analyzers.Test.CSharp14.Lightup
             Assert.Equal(syntaxNode.Keyword, wrapper.Keyword);
             Assert.True(wrapper.Keyword.IsKind(SyntaxKind.ExtensionKeyword));
             Assert.Same(syntaxNode.TypeParameterList, wrapper.TypeParameterList);
+            Assert.NotNull(wrapper.TypeParameterList);
             Assert.Single(wrapper.TypeParameterList.Parameters);
             Assert.Same(syntaxNode.ParameterList, wrapper.ParameterList);
+            Assert.NotNull(wrapper.ParameterList);
             Assert.Single(wrapper.ParameterList.Parameters);
             Assert.Same(syntaxNode.ParameterList, TypeDeclarationSyntaxExtensions.ParameterList(syntaxNode));
             Assert.Equal(syntaxNode.ConstraintClauses, wrapper.ConstraintClauses);

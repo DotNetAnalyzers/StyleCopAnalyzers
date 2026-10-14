@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.LightJson
 {
     using System;
@@ -30,7 +28,7 @@ namespace StyleCop.Analyzers.Test.LightJson
             Assert.Equal(1, obj2[0].AsInteger);
             Assert.Equal("test2", obj2[1].AsString);
 
-            Assert.Throws<ArgumentNullException>("values", () => new JsonArray(default));
+            Assert.Throws<ArgumentNullException>("values", () => new JsonArray(null!));
         }
 
         [Fact]
@@ -157,7 +155,7 @@ namespace StyleCop.Analyzers.Test.LightJson
             var proxy = Activator.CreateInstance(proxyType, obj);
             Assert.NotNull(proxy);
 
-            var items = proxyType.GetTypeInfo().GetDeclaredProperty("Items").GetValue(proxy);
+            var items = Assert.IsAssignableFrom<PropertyInfo>(proxyType.GetTypeInfo().GetDeclaredProperty("Items")).GetValue(proxy);
             Assert.IsType<JsonValue[]>(items);
         }
     }

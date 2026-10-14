@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
@@ -60,7 +58,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         protected override string XmlTagToHandle => XmlCommentHelper.SummaryXmlTag;
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, XmlNodeSyntax syntax, XElement completeDocumentation, Location diagnosticLocation)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, XmlNodeSyntax? syntax, XElement? completeDocumentation, Location diagnosticLocation)
         {
             if (!(syntax is XmlElementSyntax summaryElement))
             {
@@ -123,8 +121,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var diagnosticProperties = ImmutableDictionary.CreateBuilder<string, string>();
             ArrowExpressionClauseSyntax expressionBody = propertyDeclaration.ExpressionBody;
-            AccessorDeclarationSyntax getter = null;
-            AccessorDeclarationSyntax setter = null;
+            AccessorDeclarationSyntax? getter = null;
+            AccessorDeclarationSyntax? setter = null;
             bool setterIsInitOnly = false;
 
             if (propertyDeclaration.AccessorList != null)
@@ -354,7 +352,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             return false;
         }
 
-        private static XmlNodeSyntax GetFirstMeaningfulChild(XmlNodeSyntax node)
+        private static XmlNodeSyntax? GetFirstMeaningfulChild(XmlNodeSyntax node)
         {
             switch (node)
             {
@@ -405,7 +403,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
         }
 
-        private static void ReportSA1623(SyntaxNodeAnalysisContext context, Location diagnosticLocation, ImmutableDictionary<string, string>.Builder diagnosticProperties, string text, string expectedStartingText, string unexpectedStartingText1, string unexpectedStartingText2 = null, string unexpectedStartingText3 = null, string unexpectedStartingText4 = null, string unexpectedStartingText5 = null)
+        private static void ReportSA1623(SyntaxNodeAnalysisContext context, Location diagnosticLocation, ImmutableDictionary<string, string>.Builder diagnosticProperties, string text, string expectedStartingText, string unexpectedStartingText1, string? unexpectedStartingText2 = null, string? unexpectedStartingText3 = null, string? unexpectedStartingText4 = null, string? unexpectedStartingText5 = null)
         {
             diagnosticProperties.Add(ExpectedTextKey, expectedStartingText);
 

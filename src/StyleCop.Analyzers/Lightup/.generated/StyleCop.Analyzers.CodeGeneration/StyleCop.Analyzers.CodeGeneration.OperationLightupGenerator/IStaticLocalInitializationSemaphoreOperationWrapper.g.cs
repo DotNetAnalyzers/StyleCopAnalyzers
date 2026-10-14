@@ -1,36 +1,39 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct IStaticLocalInitializationSemaphoreOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.FlowAnalysis.IStaticLocalInitializationSemaphoreOperation";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
         private static readonly Func<IOperation, ILocalSymbol> LocalAccessor;
-        private readonly IOperation operation;
+        private readonly IOperation? operation;
         static IStaticLocalInitializationSemaphoreOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(IStaticLocalInitializationSemaphoreOperationWrapper));
             LocalAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, ILocalSymbol>(WrappedType, nameof(Local));
         }
 
-        private IStaticLocalInitializationSemaphoreOperationWrapper(IOperation operation)
+        private IStaticLocalInitializationSemaphoreOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
-        public ILocalSymbol Local => LocalAccessor(this.WrappedOperation);
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
+        public ILocalSymbol Local => LocalAccessor(this.operation!);
 
         public static explicit operator IStaticLocalInitializationSemaphoreOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IStaticLocalInitializationSemaphoreOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static IStaticLocalInitializationSemaphoreOperationWrapper FromOperation(IOperation operation)
+        public static IStaticLocalInitializationSemaphoreOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -45,7 +48,7 @@ namespace StyleCop.Analyzers.Lightup
             return new IStaticLocalInitializationSemaphoreOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }

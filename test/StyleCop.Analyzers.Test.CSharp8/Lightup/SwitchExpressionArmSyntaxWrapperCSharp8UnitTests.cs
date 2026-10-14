@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp8.Lightup
 {
     using System;
@@ -39,7 +37,8 @@ namespace StyleCop.Analyzers.Test.CSharp8.Lightup
             var wrapperWithModifiedPattern = wrapper.WithPattern((PatternSyntaxWrapper)newPattern);
             Assert.NotNull(wrapperWithModifiedPattern.SyntaxNode);
             Assert.NotSame(syntaxNode.Pattern, wrapperWithModifiedPattern.Pattern.SyntaxNode);
-            Assert.True(newPattern.IsEquivalentTo(wrapperWithModifiedPattern.Pattern));
+            Assert.NotNull(wrapperWithModifiedPattern.Pattern.SyntaxNode);
+            Assert.True(newPattern.IsEquivalentTo(wrapperWithModifiedPattern.Pattern.SyntaxNode));
         }
 
         [Fact]
@@ -54,7 +53,8 @@ namespace StyleCop.Analyzers.Test.CSharp8.Lightup
             var wrapperWithModifiedWhenClause = wrapper.WithWhenClause((WhenClauseSyntaxWrapper)newWhenClause);
             Assert.NotNull(wrapperWithModifiedWhenClause.SyntaxNode);
             Assert.NotSame(syntaxNode.WhenClause, wrapperWithModifiedWhenClause.WhenClause.SyntaxNode);
-            Assert.True(newWhenClause.IsEquivalentTo(wrapperWithModifiedWhenClause.WhenClause));
+            Assert.NotNull(wrapperWithModifiedWhenClause.WhenClause.SyntaxNode);
+            Assert.True(newWhenClause.IsEquivalentTo(wrapperWithModifiedWhenClause.WhenClause.SyntaxNode));
         }
 
         [Fact]
@@ -103,7 +103,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.Lightup
             var syntaxNode = this.CreateSwitchExpressionArm();
             var wrapper = (SwitchExpressionArmSyntaxWrapper)syntaxNode;
 
-            CSharpSyntaxNode syntax = wrapper;
+            CSharpSyntaxNode? syntax = wrapper;
             Assert.Same(syntaxNode, syntax);
         }
 

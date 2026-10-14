@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.CSharp7.Lightup
 {
     using System;
@@ -62,7 +60,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             constantPatternSyntax = (ConstantPatternSyntaxWrapper)patternSyntax;
             Assert.Null(constantPatternSyntax.SyntaxNode);
 
-            SyntaxNode syntax = constantPatternSyntax;
+            SyntaxNode? syntax = constantPatternSyntax;
             Assert.Null(syntax);
         }
 
@@ -78,7 +76,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             constantPatternSyntax = (ConstantPatternSyntaxWrapper)patternSyntax;
             Assert.Same(syntaxNode, constantPatternSyntax.SyntaxNode);
 
-            SyntaxNode syntax = constantPatternSyntax;
+            SyntaxNode? syntax = constantPatternSyntax;
             Assert.Same(syntaxNode, syntax);
         }
 

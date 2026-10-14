@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Helpers.ObjectPools
 {
     // This code was copied from the Roslyn code base (and slightly modified)
@@ -15,7 +13,7 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
             return SharedPools.Default<StringBuilder>().AllocateAndClear();
         }
 
-        public static void Free(StringBuilder builder)
+        public static void Free(StringBuilder? builder)
         {
             SharedPools.Default<StringBuilder>().ClearAndFree(builder);
         }

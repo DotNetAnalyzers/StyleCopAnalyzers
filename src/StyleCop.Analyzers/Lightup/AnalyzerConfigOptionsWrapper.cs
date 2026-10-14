@@ -1,32 +1,31 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
 
     internal readonly struct AnalyzerConfigOptionsWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptions";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
-        private static readonly Func<StringComparer> KeyComparerAccessor;
+        private static readonly Func<StringComparer?> KeyComparerAccessor;
         private static readonly TryGetValueAccessor<object, string, string> TryGetValueAccessor;
 
         private static readonly string[] EmptyKeys = new string[0];
-        private static readonly Func<object, IEnumerable<string>> KeysAccessor;
+        private static readonly Func<object, IEnumerable<string>?> KeysAccessor;
 
-        private readonly object node;
+        private readonly object? node;
 
         static AnalyzerConfigOptionsWrapper()
         {
             WrappedType = WrapperHelper.GetWrappedType(typeof(AnalyzerConfigOptionsWrapper));
 
-            KeysAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<object, IEnumerable<string>>(WrappedType, "Keys");
-            KeyComparerAccessor = LightupHelpers.CreateStaticPropertyAccessor<StringComparer>(WrappedType, nameof(KeyComparer));
+            KeysAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<object, IEnumerable<string>?>(WrappedType, "Keys");
+            KeyComparerAccessor = LightupHelpers.CreateStaticPropertyAccessor<StringComparer?>(WrappedType, nameof(KeyComparer));
             TryGetValueAccessor = LightupHelpers.CreateTryGetValueAccessor<object, string, string>(WrappedType, typeof(string), nameof(TryGetValue));
         }
 
@@ -35,7 +34,7 @@ namespace StyleCop.Analyzers.Lightup
             this.node = node;
         }
 
-        public static StringComparer KeyComparer
+        public static StringComparer? KeyComparer
         {
             get
             {
@@ -49,7 +48,7 @@ namespace StyleCop.Analyzers.Lightup
             }
         }
 
-        public static AnalyzerConfigOptionsWrapper FromObject(object node)
+        public static AnalyzerConfigOptionsWrapper FromObject(object? node)
         {
             if (node == null)
             {
@@ -64,7 +63,7 @@ namespace StyleCop.Analyzers.Lightup
             return new AnalyzerConfigOptionsWrapper(node);
         }
 
-        public static bool IsInstance(object obj)
+        public static bool IsInstance([NotNullWhen(true)] object? obj)
         {
             return obj != null && LightupHelpers.CanWrapObject(obj, WrappedType);
         }
@@ -92,7 +91,7 @@ namespace StyleCop.Analyzers.Lightup
             }
         }
 
-        public bool TryGetValue(string key, out string value)
+        public bool TryGetValue(string key, [NotNullWhen(true)] out string? value)
         {
             if (this.node is null && WrappedType is null)
             {
@@ -101,7 +100,7 @@ namespace StyleCop.Analyzers.Lightup
                 return false;
             }
 
-            return TryGetValueAccessor(this.node, key, out value);
+            return TryGetValueAccessor(this.node!, key, out value);
         }
     }
 }

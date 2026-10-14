@@ -59,8 +59,11 @@ public union U<T>(int, T) : System.IDisposable where T : class
             Assert.Single(wrapper.Modifiers);
             Assert.True(wrapper.Keyword.IsKind(SyntaxKind.UnionKeyword));
             Assert.Equal("U", wrapper.Identifier.ValueText);
+            Assert.NotNull(wrapper.TypeParameterList);
             Assert.Single(wrapper.TypeParameterList.Parameters);
+            Assert.NotNull(wrapper.ParameterList);
             Assert.Equal(2, wrapper.ParameterList.Parameters.Count);
+            Assert.NotNull(wrapper.BaseList);
             Assert.Single(wrapper.BaseList.Types);
             Assert.Single(wrapper.ConstraintClauses);
             Assert.True(wrapper.OpenBraceToken.IsKind(SyntaxKind.OpenBraceToken));
@@ -81,6 +84,7 @@ public union U<T>(int, T) : System.IDisposable where T : class
             Assert.Single(wrapper.Modifiers);
             Assert.Equal("Pet", wrapper.Identifier.ValueText);
             Assert.Null(wrapper.TypeParameterList);
+            Assert.NotNull(wrapper.ParameterList);
             Assert.Equal(2, wrapper.ParameterList.Parameters.Count);
             Assert.Null(wrapper.BaseList);
             Assert.Empty(wrapper.ConstraintClauses);

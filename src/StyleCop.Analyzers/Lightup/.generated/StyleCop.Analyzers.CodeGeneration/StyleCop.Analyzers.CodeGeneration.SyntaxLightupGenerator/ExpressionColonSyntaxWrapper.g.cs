@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,14 +15,14 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct ExpressionColonSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionColonSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<CSharpSyntaxNode, ExpressionSyntax> ExpressionAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> ColonTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, ExpressionSyntax, CSharpSyntaxNode> WithExpressionAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithColonTokenAccessor;
 
-        private readonly CSharpSyntaxNode node;
+        private readonly CSharpSyntaxNode? node;
 
         static ExpressionColonSyntaxWrapper()
         {
@@ -30,19 +33,19 @@ namespace StyleCop.Analyzers.Lightup
             WithColonTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(ColonToken));
         }
 
-        private ExpressionColonSyntaxWrapper(CSharpSyntaxNode node)
+        private ExpressionColonSyntaxWrapper(CSharpSyntaxNode? node)
         {
             this.node = node;
         }
 
-        public CSharpSyntaxNode SyntaxNode => this.node;
+        public CSharpSyntaxNode? SyntaxNode => this.node;
 
 
         public ExpressionSyntax Expression
         {
             get
             {
-                return ExpressionAccessor(this.SyntaxNode);
+                return ExpressionAccessor(this.node!);
             }
         }
 
@@ -50,7 +53,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ColonTokenAccessor(this.SyntaxNode);
+                return ColonTokenAccessor(this.node!);
             }
         }
 
@@ -59,7 +62,7 @@ namespace StyleCop.Analyzers.Lightup
             return (ExpressionColonSyntaxWrapper)node.SyntaxNode;
         }
 
-        public static explicit operator ExpressionColonSyntaxWrapper(SyntaxNode node)
+        public static explicit operator ExpressionColonSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -79,24 +82,24 @@ namespace StyleCop.Analyzers.Lightup
             return BaseExpressionColonSyntaxWrapper.FromUpcast(wrapper.node);
         }
 
-        public static implicit operator CSharpSyntaxNode(ExpressionColonSyntaxWrapper wrapper)
+        public static implicit operator CSharpSyntaxNode? (ExpressionColonSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public ExpressionColonSyntaxWrapper WithExpression(ExpressionSyntax expression)
         {
-            return new ExpressionColonSyntaxWrapper(WithExpressionAccessor(this.SyntaxNode, expression));
+            return new ExpressionColonSyntaxWrapper(WithExpressionAccessor(this.node!, expression));
         }
 
         public ExpressionColonSyntaxWrapper WithColonToken(SyntaxToken colonToken)
         {
-            return new ExpressionColonSyntaxWrapper(WithColonTokenAccessor(this.SyntaxNode, colonToken));
+            return new ExpressionColonSyntaxWrapper(WithColonTokenAccessor(this.node!, colonToken));
         }
     }
 }

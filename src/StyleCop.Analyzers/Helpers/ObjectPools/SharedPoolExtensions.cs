@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Helpers.ObjectPools
 {
     // This code was copied from the Roslyn code base (and slightly modified)
@@ -97,7 +95,7 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
             return list;
         }
 
-        public static void ClearAndFree(this ObjectPool<StringBuilder> pool, StringBuilder sb)
+        public static void ClearAndFree(this ObjectPool<StringBuilder> pool, StringBuilder? sb)
         {
             if (sb == null)
             {
@@ -114,7 +112,7 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
             pool.Free(sb);
         }
 
-        public static void ClearAndFree<T>(this ObjectPool<HashSet<T>> pool, HashSet<T> set)
+        public static void ClearAndFree<T>(this ObjectPool<HashSet<T>> pool, HashSet<T>? set)
         {
             if (set == null)
             {
@@ -132,7 +130,7 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
             pool.Free(set);
         }
 
-        public static void ClearAndFree<T>(this ObjectPool<Stack<T>> pool, Stack<T> set)
+        public static void ClearAndFree<T>(this ObjectPool<Stack<T>> pool, Stack<T>? set)
         {
             if (set == null)
             {
@@ -150,7 +148,7 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
             pool.Free(set);
         }
 
-        public static void ClearAndFree<T>(this ObjectPool<Queue<T>> pool, Queue<T> set)
+        public static void ClearAndFree<T>(this ObjectPool<Queue<T>> pool, Queue<T>? set)
         {
             if (set == null)
             {
@@ -168,7 +166,7 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
             pool.Free(set);
         }
 
-        public static void ClearAndFree<TKey, TValue>(this ObjectPool<Dictionary<TKey, TValue>> pool, Dictionary<TKey, TValue> map)
+        public static void ClearAndFree<TKey, TValue>(this ObjectPool<Dictionary<TKey, TValue>> pool, Dictionary<TKey, TValue>? map)
         {
             if (map == null)
             {
@@ -185,7 +183,7 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
             pool.Free(map);
         }
 
-        public static void ClearAndFree<T>(this ObjectPool<List<T>> pool, List<T> list)
+        public static void ClearAndFree<T>(this ObjectPool<List<T>> pool, List<T>? list)
         {
             if (list == null)
             {

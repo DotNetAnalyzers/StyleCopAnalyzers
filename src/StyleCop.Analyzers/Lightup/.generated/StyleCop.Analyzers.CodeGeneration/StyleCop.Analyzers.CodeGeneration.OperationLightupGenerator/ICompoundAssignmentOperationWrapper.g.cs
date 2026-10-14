@@ -1,41 +1,44 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct ICompoundAssignmentOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.ICompoundAssignmentOperation";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
         private static readonly Func<IOperation, bool> IsLiftedAccessor;
         private static readonly Func<IOperation, bool> IsCheckedAccessor;
-        private static readonly Func<IOperation, IMethodSymbol> OperatorMethodAccessor;
-        private readonly IOperation operation;
+        private static readonly Func<IOperation, IMethodSymbol?> OperatorMethodAccessor;
+        private readonly IOperation? operation;
         static ICompoundAssignmentOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(ICompoundAssignmentOperationWrapper));
             IsLiftedAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, bool>(WrappedType, nameof(IsLifted));
             IsCheckedAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, bool>(WrappedType, nameof(IsChecked));
-            OperatorMethodAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IMethodSymbol>(WrappedType, nameof(OperatorMethod));
+            OperatorMethodAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IMethodSymbol?>(WrappedType, nameof(OperatorMethod));
         }
 
-        private ICompoundAssignmentOperationWrapper(IOperation operation)
+        private ICompoundAssignmentOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
         public object InConversion => throw new NotImplementedException("Property 'ICompoundAssignmentOperation.InConversion' has unsupported type 'CommonConversion'");
         public object OutConversion => throw new NotImplementedException("Property 'ICompoundAssignmentOperation.OutConversion' has unsupported type 'CommonConversion'");
         public object OperatorKind => throw new NotImplementedException("Property 'ICompoundAssignmentOperation.OperatorKind' has unsupported type 'BinaryOperatorKind'");
-        public bool IsLifted => IsLiftedAccessor(this.WrappedOperation);
-        public bool IsChecked => IsCheckedAccessor(this.WrappedOperation);
-        public IMethodSymbol OperatorMethod => OperatorMethodAccessor(this.WrappedOperation);
+        public bool IsLifted => IsLiftedAccessor(this.operation!);
+        public bool IsChecked => IsCheckedAccessor(this.operation!);
+        public IMethodSymbol? OperatorMethod => OperatorMethodAccessor(this.operation!);
 
         public static explicit operator ICompoundAssignmentOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(ICompoundAssignmentOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
@@ -44,7 +47,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public static explicit operator ICompoundAssignmentOperationWrapper(IAssignmentOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IAssignmentOperationWrapper(ICompoundAssignmentOperationWrapper wrapper) => IAssignmentOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static ICompoundAssignmentOperationWrapper FromOperation(IOperation operation)
+        public static ICompoundAssignmentOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -59,7 +62,7 @@ namespace StyleCop.Analyzers.Lightup
             return new ICompoundAssignmentOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }

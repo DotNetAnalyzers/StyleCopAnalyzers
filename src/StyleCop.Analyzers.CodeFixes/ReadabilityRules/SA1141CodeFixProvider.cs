@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
@@ -28,7 +26,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             ImmutableArray.Create(SA1141UseTupleSyntax.DiagnosticId);
 
         /// <inheritdoc/>
-        public override FixAllProvider GetFixAllProvider()
+        public override FixAllProvider? GetFixAllProvider()
         {
             // Fix All is not yet supported
             return null;
@@ -84,7 +82,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             return document.WithSyntaxRoot(newSyntaxRoot.WithoutFormatting());
         }
 
-        private static SyntaxNode GetReplacementNode(SemanticModel semanticModel, SyntaxNode node)
+        private static SyntaxNode? GetReplacementNode(SemanticModel semanticModel, SyntaxNode node)
         {
             switch (node)
             {
@@ -105,7 +103,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private static SyntaxNode TransformGenericNameToTuple(SemanticModel semanticModel, GenericNameSyntax genericName)
+        private static SyntaxNode? TransformGenericNameToTuple(SemanticModel semanticModel, GenericNameSyntax genericName)
         {
             var implementationType = typeof(SeparatedSyntaxListWrapper<>.AutoWrapSeparatedSyntaxList<>).MakeGenericType(typeof(TupleElementSyntaxWrapper), SyntaxWrapperHelper.GetWrappedType(typeof(TupleElementSyntaxWrapper)));
             var tupleElements = (SeparatedSyntaxListWrapper<TupleElementSyntaxWrapper>)Activator.CreateInstance(implementationType);
@@ -114,7 +112,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 if (IsValueTuple(semanticModel, typeArgument))
                 {
-                    var tupleTypeSyntax = (TypeSyntax)GetReplacementNode(semanticModel, typeArgument);
+                    var tupleTypeSyntax = (TypeSyntax)GetReplacementNode(semanticModel, typeArgument)!;
                     tupleElements = tupleElements.Add(SyntaxFactoryEx.TupleElement(tupleTypeSyntax));
                 }
                 else
@@ -126,7 +124,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             return SyntaxFactoryEx.TupleType(tupleElements);
         }
 
-        private static SyntaxNode TransformArgumentListToTuple(SemanticModel semanticModel, SeparatedSyntaxList<ArgumentSyntax> arguments)
+        private static SyntaxNode? TransformArgumentListToTuple(SemanticModel semanticModel, SeparatedSyntaxList<ArgumentSyntax> arguments)
         {
             SeparatedSyntaxList<ArgumentSyntax> processedArguments = default;
 

@@ -13,8 +13,8 @@ namespace StyleCop.Analyzers.Test.Lightup
         public void TestNull()
         {
             object? obj = null;
-            Assert.False(IImportScopeWrapper.IsInstance(obj!));
-            var wrapper = IImportScopeWrapper.FromObject(obj!);
+            Assert.False(IImportScopeWrapper.IsInstance(obj));
+            var wrapper = IImportScopeWrapper.FromObject(obj);
             Assert.Throws<NullReferenceException>(() => wrapper.Aliases);
         }
 

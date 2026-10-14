@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
@@ -121,7 +119,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         internal static SyntaxList<XmlNodeSyntax> BuildStandardTextSyntaxList(BaseTypeDeclarationSyntax typeDeclaration, string preText, string postText)
         {
-            TypeParameterListSyntax typeParameterList = GetTypeParameterList(typeDeclaration);
+            TypeParameterListSyntax? typeParameterList = GetTypeParameterList(typeDeclaration);
 
             return XmlSyntaxFactory.List(
                 XmlSyntaxFactory.Text(preText),
@@ -131,7 +129,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         internal static SyntaxList<XmlNodeSyntax> BuildStandardTextSyntaxList(BaseTypeDeclarationSyntax typeDeclaration, string newLineText, string preText, string postText)
         {
-            TypeParameterListSyntax typeParameterList = GetTypeParameterList(typeDeclaration);
+            TypeParameterListSyntax? typeParameterList = GetTypeParameterList(typeDeclaration);
 
             return XmlSyntaxFactory.List(
                 XmlSyntaxFactory.NewLine(newLineText),
@@ -140,7 +138,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 XmlSyntaxFactory.Text(postText.EndsWith(".") ? postText : (postText + ".")));
         }
 
-        private static TypeParameterListSyntax GetTypeParameterList(BaseTypeDeclarationSyntax typeDeclaration)
+        private static TypeParameterListSyntax? GetTypeParameterList(BaseTypeDeclarationSyntax typeDeclaration)
         {
             if (typeDeclaration is ClassDeclarationSyntax classDeclaration)
             {
@@ -298,7 +296,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             return content;
         }
 
-        private static XmlEmptyElementSyntax BuildSeeElement(SyntaxToken identifier, TypeParameterListSyntax typeParameters)
+        private static XmlEmptyElementSyntax BuildSeeElement(SyntaxToken identifier, TypeParameterListSyntax? typeParameters)
         {
             TypeSyntax identifierName;
 

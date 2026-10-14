@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     using System.Threading;
@@ -576,7 +574,7 @@ internal class OuterTypeName
             await this.TestNestedDeclarationWithDirectivesAsync("private", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning).ConfigureAwait(false);
         }
 
-        private async Task TestDeclarationAsync(string modifier, string identifier, string keywordLine, string linesAfter, string elementName = null, bool warning = true)
+        private async Task TestDeclarationAsync(string modifier, string identifier, string keywordLine, string linesAfter, string? elementName = null, bool warning = true)
         {
             var testCode = $@"
  {Tab} {keywordLine}
@@ -597,7 +595,7 @@ internal class OuterTypeName
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestDeclarationWithAttributesAsync(string modifier, string identifier, string keywordLine, string linesAfter, string elementName = null, bool warning = true)
+        private async Task TestDeclarationWithAttributesAsync(string modifier, string identifier, string keywordLine, string linesAfter, string? elementName = null, bool warning = true)
         {
             var testCode = $@"using System;
   [Obsolete]
@@ -620,7 +618,7 @@ internal class OuterTypeName
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestDeclarationWithDirectivesAsync(string modifier, string identifier, string keywordLine, string linesAfter, string elementName = null, bool warning = true)
+        private async Task TestDeclarationWithDirectivesAsync(string modifier, string identifier, string keywordLine, string linesAfter, string? elementName = null, bool warning = true)
         {
             var testCode = $@"
  #  if true
@@ -645,7 +643,7 @@ internal class OuterTypeName
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestNestedDeclarationAsync(string modifier, string identifier, string keywordLine, string linesAfter, string containingType = "class", string baseTypeList = "", string baseTypeDeclarations = "", string elementName = null, bool warning = true)
+        private async Task TestNestedDeclarationAsync(string modifier, string identifier, string keywordLine, string linesAfter, string containingType = "class", string baseTypeList = "", string baseTypeDeclarations = "", string? elementName = null, bool warning = true)
         {
             var testCode = $@"using System;
 public {containingType} OuterTypeName {baseTypeList} {{
@@ -670,7 +668,7 @@ public {containingType} OuterTypeName {baseTypeList} {{
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestNestedDeclarationWithAttributesAsync(string modifier, string identifier, string keywordLine, string linesAfter, string containingType = "class", string baseTypeList = "", string baseTypeDeclarations = "", string elementName = null, bool warning = true)
+        private async Task TestNestedDeclarationWithAttributesAsync(string modifier, string identifier, string keywordLine, string linesAfter, string containingType = "class", string baseTypeList = "", string baseTypeDeclarations = "", string? elementName = null, bool warning = true)
         {
             var testCode = $@"using System;
 public {containingType} OuterTypeName {baseTypeList} {{
@@ -697,7 +695,7 @@ public {containingType} OuterTypeName {baseTypeList} {{
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestNestedDeclarationWithDirectivesAsync(string modifier, string identifier, string keywordLine, string linesAfter, string containingType = "class", string baseTypeList = "", string baseTypeDeclarations = "", string elementName = null, bool warning = true)
+        private async Task TestNestedDeclarationWithDirectivesAsync(string modifier, string identifier, string keywordLine, string linesAfter, string containingType = "class", string baseTypeList = "", string baseTypeDeclarations = "", string? elementName = null, bool warning = true)
         {
             var testCode = $@"using System;
 public {containingType} OuterTypeName {baseTypeList} {{

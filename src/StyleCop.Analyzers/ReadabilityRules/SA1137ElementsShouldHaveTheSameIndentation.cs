@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
@@ -399,7 +397,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
-            CheckElements(context, ((IEnumerable<SyntaxNode>)elements.UnderlyingList).ToImmutableList());
+            CheckElements(context, ((IEnumerable<SyntaxNode>)elements.UnderlyingList!).ToImmutableList());
         }
 
         // BlockSyntax is analyzed separately because it needs to check both braces.
@@ -418,7 +416,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             bool first = true;
-            string expectedIndentation = null;
+            string? expectedIndentation = null;
             foreach (BlockSyntax element in elements)
             {
                 SyntaxTrivia openBraceIndentationTrivia = element.OpenBraceToken.LeadingTrivia.LastOrDefault();
@@ -436,12 +434,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 if (!string.Equals(expectedIndentation, openBraceIndentation, StringComparison.Ordinal))
                 {
-                    ReportDiagnostic(context, element.OpenBraceToken, openBraceIndentationTrivia, openBraceIndentation, expectedIndentation);
+                    ReportDiagnostic(context, element.OpenBraceToken, openBraceIndentationTrivia, openBraceIndentation, expectedIndentation!);
                 }
 
                 if (!string.Equals(expectedIndentation, closeBraceIndentation, StringComparison.Ordinal))
                 {
-                    ReportDiagnostic(context, element.CloseBraceToken, closeBraceIndentationTrivia, closeBraceIndentation, expectedIndentation);
+                    ReportDiagnostic(context, element.CloseBraceToken, closeBraceIndentationTrivia, closeBraceIndentation, expectedIndentation!);
                 }
             }
         }
@@ -471,7 +469,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             bool first = true;
-            string expectedIndentation = null;
+            string? expectedIndentation = null;
             foreach (T element in elements)
             {
                 SyntaxToken firstToken = GetFirstTokenForAnalysis(element);
@@ -487,7 +485,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 if (!string.Equals(expectedIndentation, indentation, StringComparison.Ordinal))
                 {
-                    ReportDiagnostic(context, firstToken, indentationTrivia, indentation, expectedIndentation);
+                    ReportDiagnostic(context, firstToken, indentationTrivia, indentation, expectedIndentation!);
                 }
             }
         }

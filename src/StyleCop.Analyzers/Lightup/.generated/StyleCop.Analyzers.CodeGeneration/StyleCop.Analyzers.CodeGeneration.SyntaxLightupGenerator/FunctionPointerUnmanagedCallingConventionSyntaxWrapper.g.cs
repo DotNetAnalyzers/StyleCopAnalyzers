@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,12 +15,12 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct FunctionPointerUnmanagedCallingConventionSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.FunctionPointerUnmanagedCallingConventionSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> NameAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithNameAccessor;
 
-        private readonly CSharpSyntaxNode node;
+        private readonly CSharpSyntaxNode? node;
 
         static FunctionPointerUnmanagedCallingConventionSyntaxWrapper()
         {
@@ -26,23 +29,23 @@ namespace StyleCop.Analyzers.Lightup
             WithNameAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(Name));
         }
 
-        private FunctionPointerUnmanagedCallingConventionSyntaxWrapper(CSharpSyntaxNode node)
+        private FunctionPointerUnmanagedCallingConventionSyntaxWrapper(CSharpSyntaxNode? node)
         {
             this.node = node;
         }
 
-        public CSharpSyntaxNode SyntaxNode => this.node;
+        public CSharpSyntaxNode? SyntaxNode => this.node;
 
 
         public SyntaxToken Name
         {
             get
             {
-                return NameAccessor(this.SyntaxNode);
+                return NameAccessor(this.node!);
             }
         }
 
-        public static explicit operator FunctionPointerUnmanagedCallingConventionSyntaxWrapper(SyntaxNode node)
+        public static explicit operator FunctionPointerUnmanagedCallingConventionSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -57,19 +60,19 @@ namespace StyleCop.Analyzers.Lightup
             return new FunctionPointerUnmanagedCallingConventionSyntaxWrapper((CSharpSyntaxNode)node);
         }
 
-        public static implicit operator CSharpSyntaxNode(FunctionPointerUnmanagedCallingConventionSyntaxWrapper wrapper)
+        public static implicit operator CSharpSyntaxNode? (FunctionPointerUnmanagedCallingConventionSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public FunctionPointerUnmanagedCallingConventionSyntaxWrapper WithName(SyntaxToken name)
         {
-            return new FunctionPointerUnmanagedCallingConventionSyntaxWrapper(WithNameAccessor(this.SyntaxNode, name));
+            return new FunctionPointerUnmanagedCallingConventionSyntaxWrapper(WithNameAccessor(this.node!, name));
         }
     }
 }

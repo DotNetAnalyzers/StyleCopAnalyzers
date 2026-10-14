@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#nullable disable
-
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
@@ -21,7 +19,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     internal abstract class ElementDocumentationBase : DiagnosticAnalyzer
     {
-        private readonly string matchElementName;
+        private readonly string? matchElementName;
         private readonly bool inheritDocSuppressesWarnings;
 
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> methodDeclarationAction;
@@ -35,7 +33,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> propertyDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> enumMemberDeclarationAction;
 
-        protected ElementDocumentationBase(bool inheritDocSuppressesWarnings, string matchElementName = null)
+        protected ElementDocumentationBase(bool inheritDocSuppressesWarnings, string? matchElementName = null)
         {
             this.matchElementName = matchElementName;
             this.inheritDocSuppressesWarnings = inheritDocSuppressesWarnings;
@@ -226,7 +224,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return true;
             }
 
-            return documentation.Content.GetFirstXmlElement(this.matchElementName) != null;
+            return documentation.Content.GetFirstXmlElement(this.matchElementName!) != null;
         }
 
         private void HandleDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, SyntaxNode node, params Location[] locations)
@@ -282,7 +280,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 ? documentation.Content
                     .Where(x => x is XmlElementSyntax || x is XmlEmptyElementSyntax)
                     .Where(x => !string.Equals(x.GetName()?.ToString(), XmlCommentHelper.IncludeXmlTag, StringComparison.Ordinal))
-                : documentation.Content.GetXmlElements(this.matchElementName);
+                : documentation.Content.GetXmlElements(this.matchElementName!);
 
             this.HandleXmlElement(context, settings, needsComment, matchingXmlElements, locations);
         }
