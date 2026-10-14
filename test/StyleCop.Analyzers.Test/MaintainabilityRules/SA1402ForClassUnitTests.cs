@@ -14,6 +14,47 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         protected override bool IsConfiguredAsTopLevelTypeByDefault => true;
 
         [Fact]
+        [WorkItem(3109, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3109")]
+        public async Task TestExtractedTypeIncludesOnlyRelevantUsingDirectivesAsync()
+        {
+            var testCode = @"using System;
+using System.Collections.Generic;
+
+public class Foo
+{
+    public List<int> Values { get; } = new List<int>();
+}
+
+public class {|#0:Bar|}
+{
+    public DateTime Value { get; set; }
+}
+";
+
+            var fixedCode = new[]
+            {
+                ("/0/Test0.cs", @"using System;
+using System.Collections.Generic;
+
+public class Foo
+{
+    public List<int> Values { get; } = new List<int>();
+}
+"),
+                ("Bar.cs", @"using System;
+
+public class Bar
+{
+    public DateTime Value { get; set; }
+}
+"),
+            };
+
+            var expected = this.Diagnostic().WithLocation(0);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(3876, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3876")]
         public async Task TestExtractedTypeDoesNotGainBlankLineAfterNamespaceAsync()
         {
@@ -204,7 +245,7 @@ namespace TestNamespace
 
         [Fact]
         [WorkItem(3876, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3876")]
-        public async Task TestExtractedTypeInSecondNamespaceKeepsBlankLineAfterUsingAsync()
+        public async Task TestExtractedTypeInSecondNamespaceKeepsBlankLineAfterOpeningBraceAsync()
         {
             var testCode = @"using System;
 
@@ -239,9 +280,7 @@ namespace TestNamespace
 {
 }
 "),
-                ("TestClass2.cs", @"using System;
-
-namespace TestNamespace
+                ("TestClass2.cs", @"namespace TestNamespace
 {
 
     public class TestClass2

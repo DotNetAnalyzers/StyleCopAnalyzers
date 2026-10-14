@@ -164,12 +164,126 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             extractedDocumentNode = RemoveBlankLinesLeftByRemovedSiblings(extractedDocumentNode);
 
             Solution updatedSolution = document.Project.Solution.AddDocument(extractedDocumentId, extractedDocumentName, extractedDocumentNode, document.Folders);
+            List<DocumentId> extractedDocumentIds = new List<DocumentId> { extractedDocumentId };
 
             // Make sure to also add the file to linked projects
             foreach (var linkedDocumentId in document.GetLinkedDocumentIds())
             {
                 DocumentId linkedExtractedDocumentId = DocumentId.CreateNewId(linkedDocumentId.ProjectId);
                 updatedSolution = updatedSolution.AddDocument(linkedExtractedDocumentId, extractedDocumentName, extractedDocumentNode, document.Folders);
+                extractedDocumentIds.Add(linkedExtractedDocumentId);
+            }
+
+            foreach (var linkedExtractedDocumentId in extractedDocumentIds)
+            {
+                Document extractedDocument = updatedSolution.GetDocument(linkedExtractedDocumentId);
+                SemanticModel semanticModel = await extractedDocument.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+                SyntaxNode linkedExtractedRoot = await extractedDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+                List<SyntaxNode> unnecessaryUsings = new List<SyntaxNode>();
+                foreach (var diagnosticInTree in semanticModel.GetDiagnostics())
+                {
+                    if (!string.Equals(diagnosticInTree.Id, "CS8019", StringComparison.Ordinal))
+                    {
+                        continue;
+                    }
+
+                    SyntaxNode unnecessaryUsing = linkedExtractedRoot.FindNode(diagnosticInTree.Location.SourceSpan, getInnermostNodeForTie: true);
+                    while (unnecessaryUsing != null && !(unnecessaryUsing is UsingDirectiveSyntax))
+                    {
+                        unnecessaryUsing = unnecessaryUsing.Parent;
+                    }
+
+                    if (unnecessaryUsing != null)
+                    {
+                        unnecessaryUsings.Add(unnecessaryUsing);
+                    }
+                }
+
+                if (unnecessaryUsings.Count > 0)
+                {
+                    List<SyntaxNode> usingNodesToTrim = new List<SyntaxNode>();
+                    List<int> usingBlankLinesToKeep = new List<int>();
+                    foreach (var unnecessaryUsing in unnecessaryUsings)
+                    {
+                        var siblings = new List<SyntaxNode>();
+                        foreach (var sibling in unnecessaryUsing.Parent.ChildNodes())
+                        {
+                            siblings.Add(sibling);
+                        }
+
+                        int index = IndexOfNode(siblings, unnecessaryUsing);
+                        if (index < 0 || index + 1 >= siblings.Count || ContainsNode(unnecessaryUsings, siblings[index + 1]))
+                        {
+                            continue;
+                        }
+
+                        SyntaxNode nextSibling = siblings[index + 1];
+                        if (!ContainsNode(usingNodesToTrim, nextSibling))
+                        {
+                            usingNodesToTrim.Add(nextSibling);
+                            int blankLines = CountLeadingBlankLines(nextSibling.GetLeadingTrivia());
+                            if (unnecessaryUsing.Parent is CompilationUnitSyntax)
+                            {
+                                bool hasRemainingSiblingBeforeTarget = false;
+                                for (int i = 0; i < index; i++)
+                                {
+                                    if (!ContainsNode(unnecessaryUsings, siblings[i]))
+                                    {
+                                        hasRemainingSiblingBeforeTarget = true;
+                                        break;
+                                    }
+                                }
+
+                                if (!hasRemainingSiblingBeforeTarget)
+                                {
+                                    blankLines = 0;
+                                }
+                            }
+
+                            usingBlankLinesToKeep.Add(blankLines);
+                        }
+                    }
+
+                    List<SyntaxNode> nodesToAnnotate = new List<SyntaxNode>(unnecessaryUsings.Count + usingNodesToTrim.Count);
+                    nodesToAnnotate.AddRange(unnecessaryUsings);
+                    foreach (var nodeToTrim in usingNodesToTrim)
+                    {
+                        if (!ContainsNode(nodesToAnnotate, nodeToTrim))
+                        {
+                            nodesToAnnotate.Add(nodeToTrim);
+                        }
+                    }
+
+                    var removeAnnotation = new SyntaxAnnotation("SA1402RemoveUsing");
+                    linkedExtractedRoot = linkedExtractedRoot.ReplaceNodes(
+                        nodesToAnnotate,
+                        (original, rewritten) =>
+                        {
+                            if (ContainsNode(unnecessaryUsings, original))
+                            {
+                                rewritten = rewritten.WithAdditionalAnnotations(removeAnnotation);
+                            }
+
+                            int trimIndex = IndexOfNode(usingNodesToTrim, original);
+                            if (trimIndex >= 0)
+                            {
+                                var trimAnnotation = new SyntaxAnnotation(TrimAnnotationKind, usingBlankLinesToKeep[trimIndex].ToString());
+                                rewritten = rewritten.WithAdditionalAnnotations(trimAnnotation);
+                            }
+
+                            return rewritten;
+                        });
+
+                    List<SyntaxNode> nodesToRemove = new List<SyntaxNode>();
+                    foreach (var annotated in linkedExtractedRoot.GetAnnotatedNodes(removeAnnotation))
+                    {
+                        nodesToRemove.Add(annotated);
+                    }
+
+                    linkedExtractedRoot = linkedExtractedRoot.RemoveNodes(nodesToRemove, SyntaxRemoveOptions.KeepExteriorTrivia);
+                    linkedExtractedRoot = RemoveBlankLinesLeftByRemovedSiblings(linkedExtractedRoot);
+                    updatedSolution = updatedSolution.WithDocumentSyntaxRoot(linkedExtractedDocumentId, linkedExtractedRoot);
+                }
             }
 
             // Remove the type from its original location
