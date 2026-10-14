@@ -115,13 +115,6 @@ namespace StyleCop.Analyzers.LayoutRules
                     continue;
                 }
 
-                var commentText = trivia.ToString();
-                if (IsMarkerComment(commentText))
-                {
-                    // Ignore commented out code and marker comments consumed by other tools.
-                    continue;
-                }
-
                 int triviaIndex;
                 var triviaList = TriviaHelper.GetContainingTriviaList(trivia, out triviaIndex);
 
@@ -152,6 +145,12 @@ namespace StyleCop.Analyzers.LayoutRules
                 if (IsPrecededByDirectiveTrivia(triviaList, triviaIndex))
                 {
                     // allow single line comment that is preceded by some directive trivia (if, elif, else)
+                    continue;
+                }
+
+                if (IsMarkerComment(trivia.ToString()))
+                {
+                    // Ignore commented out code and marker comments consumed by other tools.
                     continue;
                 }
 

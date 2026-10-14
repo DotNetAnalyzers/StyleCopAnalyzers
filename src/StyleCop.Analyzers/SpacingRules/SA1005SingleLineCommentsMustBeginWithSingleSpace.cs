@@ -147,11 +147,6 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
-            if (IsMarkerComment(text))
-            {
-                return;
-            }
-
             // No need to handle documentation comments ("///") because they're not
             // reported as SingleLineCommentTrivia.
             int spaceCount = 0;
@@ -168,6 +163,11 @@ namespace StyleCop.Analyzers.SpacingRules
             // Special case: follow-on comment lines may be indented with more than
             // one space.
             if (spaceCount > 1 && !isFirstSingleLineTrivia)
+            {
+                return;
+            }
+
+            if (IsMarkerComment(text))
             {
                 return;
             }
