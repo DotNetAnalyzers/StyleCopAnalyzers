@@ -241,6 +241,22 @@ public class TypeName
         }
 
         [Fact]
+        [WorkItem(2859, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2859")]
+        public async Task TestParameterInDllImportMethodAsync()
+        {
+            var testCode = @"
+using System.Runtime.InteropServices;
+
+public class TypeName
+{
+    [DllImport(""user32.dll"")]
+    public static extern bool IsWindowVisible(bool abVisible);
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestParameterInNativeClassMethodAsync()
         {
             var testCode = @"

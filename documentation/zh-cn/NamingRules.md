@@ -8,7 +8,7 @@
 [SA1302](SA1302.md) | InterfaceNamesMustBeginWithI | C# 接口的名称未以大写字母 I 开头。
 [SA1303](SA1303.md) | ConstFieldNamesMustBeginWithUpperCaseLetter | C# 常量字段的名称应以大写字母开头。
 [SA1304](SA1304.md) | NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter | C# 非私有只读字段的名称应以大写字母开头。
-[SA1305](SA1305.md) | FieldNamesMustNotUseHungarianNotation | C# 字段或变量的名称使用了匈牙利命名法。
+[SA1305](SA1305.md) | FieldNamesMustNotUseHungarianNotation | C# 字段、变量或参数的名称使用了匈牙利命名法。
 [SA1306](SA1306.md) | FieldNamesMustBeginWithLowerCaseLetter | C# 字段的名称未以小写字母开头。
 [SA1307](SA1307.md) | AccessibleFieldsMustBeginWithUpperCaseLetter | C# 公共字段或内部字段的名称未以大写字母开头。
 [SA1308](SA1308.md) | VariableNamesMustNotBePrefixed | C# 字段名称带有 *m_* 或 *s_* 前缀。
