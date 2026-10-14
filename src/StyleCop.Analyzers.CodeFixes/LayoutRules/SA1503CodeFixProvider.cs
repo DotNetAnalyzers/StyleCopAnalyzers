@@ -15,6 +15,8 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Formatting;
+    using Microsoft.CodeAnalysis.Options;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
@@ -68,11 +70,21 @@ namespace StyleCop.Analyzers.LayoutRules
         private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, StatementSyntax node, CancellationToken cancellationToken)
         {
             var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, root.SyntaxTree, cancellationToken);
-            var newSyntaxRoot = AddBraces(root, new[] { node }, settings.Indentation);
+            var formattingAnnotation = new SyntaxAnnotation();
+            var newSyntaxRoot = AddBraces(root, new[] { node }, settings.Indentation, formattingAnnotation);
+            newSyntaxRoot = Formatter.Format(newSyntaxRoot, formattingAnnotation, document.Project.Solution.Workspace, GetFormattingOptions(document, settings.Indentation), cancellationToken);
             return Task.FromResult(document.WithSyntaxRoot(newSyntaxRoot));
         }
 
-        private static SyntaxNode AddBraces(SyntaxNode root, IReadOnlyCollection<SyntaxNode> nodes, IndentationSettings indentationSettings)
+        private static OptionSet GetFormattingOptions(Document document, IndentationSettings indentationSettings)
+        {
+            return document.Project.Solution.Workspace.Options
+                .WithChangedOption(FormattingOptions.IndentationSize, LanguageNames.CSharp, indentationSettings.IndentationSize)
+                .WithChangedOption(FormattingOptions.TabSize, LanguageNames.CSharp, indentationSettings.TabSize)
+                .WithChangedOption(FormattingOptions.UseTabs, LanguageNames.CSharp, indentationSettings.UseTabs);
+        }
+
+        private static SyntaxNode AddBraces(SyntaxNode root, IReadOnlyCollection<SyntaxNode> nodes, IndentationSettings indentationSettings, SyntaxAnnotation formattingAnnotation)
         {
             var annotation = new SyntaxAnnotation();
             var shiftAnnotation = new SyntaxAnnotation();
@@ -122,7 +134,8 @@ namespace StyleCop.Analyzers.LayoutRules
 
             return indentedRoot.ReplaceNodes(
                 indentedRoot.GetAnnotatedNodes(annotation),
-                (originalNode, rewrittenNode) => SyntaxFactory.Block((StatementSyntax)rewrittenNode.WithoutAnnotations(annotation)));
+                (originalNode, rewrittenNode) => SyntaxFactory.Block((StatementSyntax)rewrittenNode.WithoutAnnotations(annotation))
+                    .WithAdditionalAnnotations(formattingAnnotation));
         }
 
         private static bool NeedsShift(SyntaxNode node, IndentationSettings indentationSettings)
@@ -204,7 +217,9 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
 
                 var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, fixAllContext.CancellationToken);
-                return AddBraces(syntaxRoot, nodesNeedingBlocks, settings.Indentation);
+                var formattingAnnotation = new SyntaxAnnotation();
+                SyntaxNode newSyntaxRoot = AddBraces(syntaxRoot, nodesNeedingBlocks, settings.Indentation, formattingAnnotation);
+                return Formatter.Format(newSyntaxRoot, formattingAnnotation, document.Project.Solution.Workspace, GetFormattingOptions(document, settings.Indentation), fixAllContext.CancellationToken);
             }
         }
     }

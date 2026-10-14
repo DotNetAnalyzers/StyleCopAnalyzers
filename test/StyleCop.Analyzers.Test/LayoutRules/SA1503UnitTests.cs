@@ -321,6 +321,56 @@ public class Foo
         }
 
         /// <summary>
+        /// Verifies that the code fix will properly handle custom indentation in nested declarations.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3581, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3581")]
+        public async Task TestCodeFixProviderWithCustomIndentationInNestedDeclarationsAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+ public class TestClass
+ {
+  public void TestMethod(int i)
+  {
+   if (i == 0)
+    [|return;|]
+  }
+ }
+}";
+
+            var fixedCode = @"namespace TestNamespace
+{
+ public class TestClass
+ {
+  public void TestMethod(int i)
+  {
+   if (i == 0)
+   {
+    return;
+   }
+  }
+ }
+}";
+
+            var settings = @"{
+  ""settings"": {
+    ""indentation"": {
+      ""indentationSize"": 1
+    }
+  }
+}";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                Settings = settings,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that the codefix provider will work properly handle non-whitespace trivia.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
