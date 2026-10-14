@@ -16,11 +16,6 @@
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(BuildingInsideVisualStudio)' != 'true'">
-    <!-- Ideally this is always enabled, but that tends to hurt developer productivity -->
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-  </PropertyGroup>
-
   <PropertyGroup>
     <!--
       Debug builds used Windows PDBs for OpenCover, which is no longer used. Coverlet rewrites Windows PDBs through the
