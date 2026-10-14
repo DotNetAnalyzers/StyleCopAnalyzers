@@ -14,8 +14,8 @@ namespace StyleCop.Analyzers.Test.CSharp15.DocumentationRules
     public partial class SA1601CSharp15UnitTests : SA1601CSharp14UnitTests
     {
         /// <summary>
-        /// Verifies that each undocumented part of a partial union is reported exactly once. Like other partial types,
-        /// every part of a partial union needs documentation.
+        /// Verifies that each partial union with no documented part is reported exactly once per part, while a union
+        /// with one documented part is not reported. Like other partial types, documenting any one part is enough.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -38,7 +38,7 @@ public class Outer
 /// </summary>
 public partial union Animal(int, string);
 
-public partial union {|#2:Animal|}
+public partial union Animal
 {
 }
 ";
@@ -47,7 +47,6 @@ public partial union {|#2:Animal|}
             {
                 Diagnostic().WithLocation(0),
                 Diagnostic().WithLocation(1),
-                Diagnostic().WithLocation(2),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
