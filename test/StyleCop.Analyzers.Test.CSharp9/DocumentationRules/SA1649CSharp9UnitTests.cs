@@ -33,17 +33,33 @@ namespace StyleCop.Analyzers.Test.CSharp9.DocumentationRules
         }
 
         [Fact]
-        [WorkItem(3967, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3967")]
-        public async Task VerifyTopLevelStatementsFollowedByClassReportAsync()
+        [WorkItem(4068, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4068")]
+        public async Task VerifyTopLevelStatementsAndClassDoNotReportAsync()
         {
-            var testCode = @"System.Console.WriteLine();
+            var testCode = @"var x = new MyData();
 
-class {|#0:Helper|}
+internal class MyData
 {
 }
 ";
 
-            var fixedCode = @"System.Console.WriteLine();
+            var test = new StyleCopCodeFixVerifier<StyleCop.Analyzers.DocumentationRules.SA1649FileNameMustMatchTypeName, StyleCop.Analyzers.DocumentationRules.SA1649CodeFixProvider>.CSharpTest()
+            {
+                TestState =
+                {
+                    OutputKind = OutputKind.ConsoleApplication,
+                    Sources = { ("Program.cs", testCode) },
+                },
+            };
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(4068, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4068")]
+        public async Task VerifyTopLevelStatementsFollowedByClassDoNotReportAsync()
+        {
+            var testCode = @"System.Console.WriteLine();
 
 class Helper
 {
@@ -57,26 +73,16 @@ class Helper
                     OutputKind = OutputKind.ConsoleApplication,
                     Sources = { ("Program.cs", testCode) },
                 },
-                FixedSources = { ("Helper.cs", fixedCode) },
             };
 
-            test.TestState.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        [WorkItem(3967, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3967")]
-        public async Task VerifyTopLevelStatementsFollowedByEnumReportAsync()
+        [WorkItem(4068, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4068")]
+        public async Task VerifyTopLevelStatementsFollowedByEnumDoNotReportAsync()
         {
             var testCode = @"System.Console.WriteLine();
-
-enum {|#0:Helper|}
-{
-    Value,
-}
-";
-
-            var fixedCode = @"System.Console.WriteLine();
 
 enum Helper
 {
@@ -91,10 +97,8 @@ enum Helper
                     OutputKind = OutputKind.ConsoleApplication,
                     Sources = { ("Program.cs", testCode) },
                 },
-                FixedSources = { ("Helper.cs", fixedCode) },
             };
 
-            test.TestState.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }

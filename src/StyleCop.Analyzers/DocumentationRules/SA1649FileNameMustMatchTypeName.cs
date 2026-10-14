@@ -71,6 +71,11 @@ namespace StyleCop.Analyzers.DocumentationRules
                     return;
                 }
 
+                if (((CompilationUnitSyntax)syntaxRoot).Members.Any(SyntaxKind.GlobalStatement))
+                {
+                    return;
+                }
+
                 var modifiers = (firstTypeDeclaration as BaseTypeDeclarationSyntax)?.Modifiers ?? SyntaxFactory.TokenList();
                 if (modifiers.Any(SyntaxKind.PartialKeyword))
                 {
