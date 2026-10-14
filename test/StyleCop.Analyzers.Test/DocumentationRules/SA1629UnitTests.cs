@@ -364,6 +364,22 @@ public class TestClass
         }
 
         [Theory]
+        [WorkItem(2724, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2724")]
+        [InlineData("Exclamation")]
+        [InlineData("Question")]
+        public async Task TestIncludedDocumentationEndingWithExclamationMarkOrQuestionMarkAsync(string element)
+        {
+            var testCode = $@"
+/// <include file='QuotedInheritDoc.xml' path='/TestClass/{element}/*'/>
+public class TestClass
+{{
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
         [WorkItem(2860, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2860")]
         [InlineData("NoPeriodQuoted")]
         [InlineData("NoPeriodCurlyQuoted")]
@@ -447,6 +463,21 @@ public interface ITest
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2724, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2724")]
+        public async Task TestSentenceEndingWithPunctuationInsideInlineElementAsync()
+        {
+            var testCode = @"
+/// <summary><c>It works!</c></summary>
+/// <remarks><c>Is this right?</c></remarks>
+public class TestClass
+{
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -1187,6 +1218,8 @@ public class TestClass
 <TestClass>
   <Period><summary>Test class.</summary></Period>
   <PeriodParenthesis><summary>Test class (see remarks.)</summary></PeriodParenthesis>
+  <Exclamation><summary>Test class!</summary></Exclamation>
+  <Question><summary>Test class?</summary></Question>
   <DoubleQuote><summary>Test ""class.""</summary></DoubleQuote>
   <SingleQuote><summary>Test 'class.'</summary></SingleQuote>
   <CurlyDoubleQuote><summary>Test &#x201C;class.&#x201D;</summary></CurlyDoubleQuote>

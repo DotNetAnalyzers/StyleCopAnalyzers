@@ -286,7 +286,7 @@
   <data name="SA1628MessageFormat"><value>TODO: Message format</value></data>
   <data name="SA1628Title"><value>Documentation text should begin with a capital letter</value></data>
   <data name="SA1629CodeFix"><value>Add period</value></data>
-  <data name="SA1629Description"><value>A section of the XML header documentation for a C# element does not end with a period.</value></data>
+  <data name="SA1629Description"><value>A section of the XML header documentation for a C# element does not end with a period, exclamation mark, or question mark.</value></data>
   <data name="SA1629MessageFormat"><value>Documentation text should end with a period</value></data>
   <data name="SA1629Title"><value>Documentation text should end with a period</value></data>
   <data name="SA1630Description"><value>A section of the XML header documentation for a C# element does not contain any whitespace between words.</value></data>

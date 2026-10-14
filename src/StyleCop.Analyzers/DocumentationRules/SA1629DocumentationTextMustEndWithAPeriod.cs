@@ -19,15 +19,16 @@ namespace StyleCop.Analyzers.DocumentationRules
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
-    /// A section of the XML header documentation for a C# element does not end with a period (also known as a full
-    /// stop).
+    /// A section of the XML header documentation for a C# element does not end with a period, exclamation mark, or
+    /// question mark.
     /// </summary>
     /// <remarks>
     /// <para>C# syntax provides a mechanism for inserting documentation for classes and elements directly into the
     /// code, through the use of XML documentation headers.</para>
     ///
-    /// <para>A violation of this rule occurs when part of the documentation does not end with a period. For example,
-    /// the summary text in the documentation below does not end with a period:</para>
+    /// <para>A violation of this rule occurs when part of the documentation does not end with a period, exclamation
+    /// mark, or question mark. For example, the summary text in the documentation below does not end with valid
+    /// punctuation:</para>
     ///
     /// <code language="csharp">
     /// /// &lt;summary&gt;
