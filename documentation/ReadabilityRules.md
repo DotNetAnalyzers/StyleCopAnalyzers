@@ -1,4 +1,11 @@
 ### Readability Rules (SA1100-)
+
+Set category-level severity with this in your .editorconfig file:
+
+```ini
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.ReadabilityRules.severity = none
+```
+
 Rules which ensure that the code is well-formatted and readable.
 
 Identifier | Name | Description

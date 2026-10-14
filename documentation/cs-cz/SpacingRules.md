@@ -1,4 +1,10 @@
 ### Pravidla pro mezery (SA1000-)
+Závažnost celé kategorie nastavíte v souboru **.editorconfig** takto:
+
+```ini
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.SpacingRules.severity = none
+```
+
 Pravidla, která vynucují požadavky na mezery kolem klíčových slov a symbolů v kódu.
 
 Identifikátor | Název | Popis

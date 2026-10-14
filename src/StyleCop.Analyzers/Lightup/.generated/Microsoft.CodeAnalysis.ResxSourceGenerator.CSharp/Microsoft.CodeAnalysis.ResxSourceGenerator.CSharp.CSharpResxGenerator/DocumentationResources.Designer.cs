@@ -228,7 +228,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         public static string @SA1628Title => GetResourceString("SA1628Title")!;
         /// <summary>Add period</summary>
         public static string @SA1629CodeFix => GetResourceString("SA1629CodeFix")!;
-        /// <summary>A section of the XML header documentation for a C# element does not end with a period.</summary>
+        /// <summary>A section of the XML header documentation for a C# element does not end with a period, exclamation mark, or question mark.</summary>
         public static string @SA1629Description => GetResourceString("SA1629Description")!;
         /// <summary>Documentation text should end with a period</summary>
         public static string @SA1629MessageFormat => GetResourceString("SA1629MessageFormat")!;
@@ -394,6 +394,12 @@ namespace StyleCop.Analyzers.DocumentationRules
         public static string @StartingTextSetsWhether => GetResourceString("StartingTextSetsWhether")!;
         /// <summary>static</summary>
         public static string @StaticConstructorKeywordText => GetResourceString("StaticConstructorKeywordText")!;
+        /// <summary>Only one declaration of a partial type should contain &lt;summary&gt; documentation. Use &lt;content&gt; on the other parts.</summary>
+        public static string @SA1653Description => GetResourceString("SA1653Description")!;
+        /// <summary>Multiple partial declarations of '{0}' contain &lt;summary&gt; documentation; use &lt;content&gt; on the other parts</summary>
+        public static string @SA1653MessageFormat => GetResourceString("SA1653MessageFormat")!;
+        /// <summary>Only one partial declaration should contain summary documentation</summary>
+        public static string @SA1653Title => GetResourceString("SA1653Title")!;
         /// <summary>Initializes static members of the</summary>
         public static string @StaticConstructorStandardTextFirstPart => GetResourceString("StaticConstructorStandardTextFirstPart")!;
         /// <summary>{0}</summary>

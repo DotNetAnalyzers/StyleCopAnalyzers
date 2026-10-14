@@ -177,6 +177,15 @@
   <data name="StaticConstructorKeywordText" xml:space="preserve">
     <value>статические</value>
   </data>
+  <data name="SA1653Description" xml:space="preserve">
+    <value>Только одно объявление частичного типа должно содержать документацию &lt;summary&gt;. Используйте &lt;content&gt; для остальных частей.</value>
+  </data>
+  <data name="SA1653MessageFormat" xml:space="preserve">
+    <value>Несколько частичных объявлений '{0}' содержат документацию &lt;summary&gt;; используйте &lt;content&gt; для остальных частей</value>
+  </data>
+  <data name="SA1653Title" xml:space="preserve">
+    <value>Только одно частичное объявление должно содержать краткое описание</value>
+  </data>
   <data name="StaticConstructorStandardTextFirstPart" xml:space="preserve">
     <value>Инициализирует статические члены {0} </value>
   </data>
@@ -499,7 +508,7 @@
     <value>Добавить точку</value>
   </data>
   <data name="SA1629Description" xml:space="preserve">
-    <value>Раздел заголовка XML-документации элемента C# не заканчивается точкой.</value>
+    <value>Раздел заголовка XML-документации элемента C# не заканчивается точкой, восклицательным или вопросительным знаком.</value>
   </data>
   <data name="SA1629MessageFormat" xml:space="preserve">
     <value>Текст документации должен заканчиваться точкой</value>

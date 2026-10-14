@@ -48,11 +48,11 @@ namespace StyleCop.Analyzers.NamingRules
         public static string @SA1304MessageFormat => GetResourceString("SA1304MessageFormat")!;
         /// <summary>Non-private readonly fields should begin with upper-case letter</summary>
         public static string @SA1304Title => GetResourceString("SA1304Title")!;
-        /// <summary>The name of a field or variable in C# uses Hungarian notation.</summary>
+        /// <summary>The name of a field, variable, or parameter in C# uses Hungarian notation.</summary>
         public static string @SA1305Description => GetResourceString("SA1305Description")!;
         /// <summary>{0} '{1}' should not use Hungarian notation</summary>
         public static string @SA1305MessageFormat => GetResourceString("SA1305MessageFormat")!;
-        /// <summary>Field names should not use Hungarian notation</summary>
+        /// <summary>Names should not use Hungarian notation</summary>
         public static string @SA1305Title => GetResourceString("SA1305Title")!;
         /// <summary>The name of a field in C# does not begin with a lower-case letter.</summary>
         public static string @SA1306Description => GetResourceString("SA1306Description")!;
@@ -120,6 +120,12 @@ namespace StyleCop.Analyzers.NamingRules
         public static string @SA1316MessageFormat => GetResourceString("SA1316MessageFormat")!;
         /// <summary>Tuple element names should use correct casing</summary>
         public static string @SA1316Title => GetResourceString("SA1316Title")!;
+        /// <summary>Letters in an identifier should be basic Latin letters (A-Z or a-z).</summary>
+        public static string @SA1317Description => GetResourceString("SA1317Description")!;
+        /// <summary>Identifier '{0}' should be named only with Latin letters. Position {1}.</summary>
+        public static string @SA1317MessageFormat => GetResourceString("SA1317MessageFormat")!;
+        /// <summary>Identifier should be named only with Latin letters</summary>
+        public static string @SA1317Title => GetResourceString("SA1317Title")!;
         /// <summary>A field name in C# does not begin with an underscore.</summary>
         public static string @SX1309Description => GetResourceString("SX1309Description")!;
         /// <summary>Field '{0}' should begin with an underscore</summary>

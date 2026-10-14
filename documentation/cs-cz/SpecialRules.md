@@ -1,4 +1,10 @@
 ### Speciální pravidla (SA0000-)
+Závažnost celé kategorie nastavíte v souboru **.editorconfig** takto:
+
+```ini
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.SpecialRules.severity = none
+```
+
 Pravidla, která poskytují speciální funkce, jako jsou řešení problémů, chyby konfigurace atd.
 
 Identifikátor | Název | Popis

@@ -1,4 +1,10 @@
 ### 可维护性规则 (SA1400-)
+在 **.editorconfig** 文件中使用以下设置为整个类别配置严重级别：
+
+```ini
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.MaintainabilityRules.severity = none
+```
+
 这些规则提高代码的可维护性。
 
 标识符 | 名称 | 说明

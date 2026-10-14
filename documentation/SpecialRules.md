@@ -1,4 +1,11 @@
 ### Special Rules (SA0000-)
+
+Set category-level severity with this in your .editorconfig file:
+
+```ini
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.SpecialRules.severity = none
+```
+
 Rules which provide special functionality like workarounds, configuration errors, etc.
 
 Identifier | Name | Description

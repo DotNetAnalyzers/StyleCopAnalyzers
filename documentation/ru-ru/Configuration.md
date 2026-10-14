@@ -31,6 +31,8 @@ root = true
 dotnet_diagnostic.SA1633.severity = none
 dotnet_diagnostic.SA1309.severity = none
 
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.DocumentationRules.severity = none
+
 # Settings
 stylecop.documentation.companyName = Contoso
 csharp_using_directive_placement = outside_namespace
@@ -38,6 +40,7 @@ csharp_using_directive_placement = outside_namespace
 
 * Уровень серьёзности правила задаётся стандартным свойством `dotnet_diagnostic.<идентификатор правила>.severity`
   (`error`, `warning`, `suggestion`, `silent`, `none`). См. [Настройка анализаторов кода](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/configuration-files).
+* Для настройки уровня серьёзности всей категории используйте префикс `dotnet_analyzer_diagnostic.category-` и полное имя категории, например `StyleCop.CSharp.DocumentationRules`. Отображаемые названия, такие как `Правила документирования`, не являются идентификаторами категорий.
 * Файлы **.editorconfig** применяются к каждому исходному файлу в соответствии с заголовками разделов (например,
   `[*.cs]`) и иерархией папок.
 * Файл **.globalconfig** подхватывается автоматически, если он называется именно **.globalconfig** и расположен в папке

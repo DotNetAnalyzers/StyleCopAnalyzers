@@ -1,4 +1,10 @@
 ### 文档规则 (SA1600-)
+在 **.editorconfig** 文件中使用以下设置为整个类别配置严重级别：
+
+```ini
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.DocumentationRules.severity = none
+```
+
 这些规则验证代码文档的内容和格式。
 
 标识符 | 名称 | 说明
@@ -56,3 +62,4 @@
 [SA1650](SA1650.md) | ElementDocumentationMustBeSpelledCorrectly | 元素的文档包含一个或多个拼写错误或无法识别的单词。
 [SA1651](SA1651.md) | DoNotUsePlaceholderElements | 元素的文档包含一个或多个 `<placeholder>` 元素。
 [SA1652](SA1652.md) | EnableXmlDocumentationOutput | 此规则已移至 [SA0001](SA0001.md)。
+[SA1653](SA1653.md) | OnlyOnePartialDeclarationShouldContainSummaryDocumentation | 分部类型的多个声明包含摘要文档注释。

@@ -12,6 +12,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Testing;
 using StyleCop.Analyzers.Lightup;
 using Xunit;
+using NullableAnnotation = Microsoft.CodeAnalysis.NullableAnnotation;
 
 public partial class NullableLightupCSharp8UnitTests
 {

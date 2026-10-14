@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-// Async approach not available in Parallel.ForEach nor a valid option when blocking WPF pumps, nor is it important for this program.
+// Synchronous waits are used in Parallel.ForEach and for per-document analyzer statistics.
 #pragma warning disable VSTHRD002
 
 namespace StyleCopTester
@@ -17,7 +17,6 @@ namespace StyleCopTester
     using System.Text.RegularExpressions;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Windows.Threading;
     using Microsoft.Build.Locator;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
@@ -34,7 +33,7 @@ namespace StyleCopTester
     /// </summary>
     internal static class Program
     {
-        private static void Main(string[] args)
+        private static async Task Main(string[] args)
         {
             CancellationTokenSource cts = new CancellationTokenSource();
             Console.CancelKeyPress +=
@@ -44,35 +43,8 @@ namespace StyleCopTester
                     cts.Cancel();
                 };
 
-            // Since Console apps do not have a SynchronizationContext, we're leveraging the built-in support
-            // in WPF to pump the messages via the Dispatcher.
-            // See the following for additional details:
-            //   http://blogs.msdn.com/b/pfxteam/archive/2012/01/21/10259307.aspx
-            //   https://github.com/DotNetAnalyzers/StyleCopAnalyzers/pull/1362
-            SynchronizationContext previousContext = SynchronizationContext.Current;
-            try
-            {
-                var context = new DispatcherSynchronizationContext();
-                SynchronizationContext.SetSynchronizationContext(context);
+            CancellationToken cancellationToken = cts.Token;
 
-                DispatcherFrame dispatcherFrame = new DispatcherFrame();
-                Task mainTask = MainAsync(args, cts.Token);
-                Task dispatcherFrameContinuation = mainTask.ContinueWith(
-                    task => dispatcherFrame.Continue = false,
-                    TaskScheduler.Default);
-
-                Dispatcher.PushFrame(dispatcherFrame);
-                dispatcherFrameContinuation.GetAwaiter().GetResult();
-                mainTask.GetAwaiter().GetResult();
-            }
-            finally
-            {
-                SynchronizationContext.SetSynchronizationContext(previousContext);
-            }
-        }
-
-        private static async Task MainAsync(string[] args, CancellationToken cancellationToken)
-        {
             // A valid call must have at least one parameter (a solution file). Optionally it can include /all or /id:SAXXXX.
             if (args.Length < 1)
             {

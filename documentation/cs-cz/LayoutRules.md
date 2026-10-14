@@ -1,4 +1,10 @@
 ### Pravidla rozložení (SA1500-)
+Závažnost celé kategorie nastavíte v souboru **.editorconfig** takto:
+
+```ini
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.LayoutRules.severity = none
+```
+
 Pravidla, která vynucují rozložení kódu a mezery mezi řádky.
 
 Identifikátor | Název | Popis

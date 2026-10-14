@@ -1,4 +1,11 @@
 ### Documentation Rules (SA1600-)
+
+Set category-level severity with this in your .editorconfig file:
+
+```ini
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.DocumentationRules.severity = none
+```
+
 Rules which verify the content and formatting of code documentation.
 
 Identifier | Name | Description
@@ -56,3 +63,4 @@ Identifier | Name | Description
 [SA1650](SA1650.md) | ElementDocumentationMustBeSpelledCorrectly | The element documentation for the element contains one or more spelling mistakes or unrecognized words. 
 [SA1651](SA1651.md) | DoNotUsePlaceholderElements | The documentation for the element contains one or more `<placeholder>` elements. 
 [SA1652](SA1652.md) | EnableXmlDocumentationOutput | This rule was moved to [SA0001](SA0001.md)
+[SA1653](SA1653.md) | OnlyOnePartialDeclarationShouldContainSummaryDocumentation | More than one declaration of a partial type contains summary documentation.

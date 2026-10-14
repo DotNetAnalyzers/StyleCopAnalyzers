@@ -439,7 +439,7 @@
     <value>Add period</value>
   </data>
   <data name="SA1629Description" xml:space="preserve">
-    <value>A section of the XML header documentation for a C# element does not end with a period.</value>
+    <value>A section of the XML header documentation for a C# element does not end with a period, exclamation mark, or question mark.</value>
   </data>
   <data name="SA1629MessageFormat" xml:space="preserve">
     <value>Documentation text should end with a period</value>
@@ -686,6 +686,15 @@
   </data>
   <data name="StaticConstructorKeywordText" xml:space="preserve">
     <value>static</value>
+  </data>
+  <data name="SA1653Description" xml:space="preserve">
+    <value>Only one declaration of a partial type should contain &lt;summary&gt; documentation. Use &lt;content&gt; on the other parts.</value>
+  </data>
+  <data name="SA1653MessageFormat" xml:space="preserve">
+    <value>Multiple partial declarations of '{0}' contain &lt;summary&gt; documentation; use &lt;content&gt; on the other parts</value>
+  </data>
+  <data name="SA1653Title" xml:space="preserve">
+    <value>Only one partial declaration should contain summary documentation</value>
   </data>
   <data name="StaticConstructorStandardTextFirstPart" xml:space="preserve">
     <value>Initializes static members of the </value>

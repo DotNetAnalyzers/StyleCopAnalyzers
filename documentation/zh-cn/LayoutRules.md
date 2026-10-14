@@ -1,4 +1,10 @@
 ### 布局规则 (SA1500-)
+在 **.editorconfig** 文件中使用以下设置为整个类别配置严重级别：
+
+```ini
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.LayoutRules.severity = none
+```
+
 这些规则规定代码布局和行间距。
 
 标识符 | 名称 | 说明

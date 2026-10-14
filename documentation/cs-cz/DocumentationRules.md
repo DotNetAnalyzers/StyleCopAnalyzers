@@ -1,4 +1,10 @@
 ### Pravidla dokumentace (SA1600-)
+Závažnost celé kategorie nastavíte v souboru **.editorconfig** takto:
+
+```ini
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.DocumentationRules.severity = none
+```
+
 Pravidla, která ověřují obsah a formátování dokumentace kódu.
 
 Identifikátor | Název | Popis
@@ -56,3 +62,4 @@ Identifikátor | Název | Popis
 [SA1650](SA1650.md) | ElementDocumentationMustBeSpelledCorrectly | Dokumentace prvku obsahuje jednu nebo více překlepů nebo neznámých slov.
 [SA1651](SA1651.md) | DoNotUsePlaceholderElements | Dokumentace prvku obsahuje jednu nebo více značek `<placeholder>`.
 [SA1652](SA1652.md) | EnableXmlDocumentationOutput | Toto pravidlo bylo přesunuto do [SA0001](SA0001.md)
+[SA1653](SA1653.md) | OnlyOnePartialDeclarationShouldContainSummaryDocumentation | Více než jedna deklarace částečného typu obsahuje souhrnnou dokumentaci.

@@ -1,4 +1,10 @@
 ### Правила оформления (SA1500-)
+Задайте уровень серьёзности для всей категории в файле **.editorconfig**:
+
+```ini
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.LayoutRules.severity = none
+```
+
 Правила, определяющие оформление кода и использование пустых строк.
 
 Идентификатор | Имя | Описание
