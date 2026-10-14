@@ -132,7 +132,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 elements.Add(enumMemberDeclaration);
             }
 
-            CheckElements(context, elements.ToImmutable());
+            CheckElements(context, elements.ToImmutable(), preferMostCommonIndentation: true);
         }
 
         private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)

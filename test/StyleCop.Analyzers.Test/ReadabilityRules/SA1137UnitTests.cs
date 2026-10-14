@@ -123,6 +123,79 @@ class C
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that enum members use the most common indentation rather than a first-member outlier.
+        /// </summary>
+        /// <returns>A task representing an asynchronous operation.</returns>
+        [Fact]
+        public async Task VerifyEnumMemberIndentationOutlierAsync()
+        {
+            var testCode = @"
+using System;
+enum E
+{
+  First,
+    Second,
+    Third,
+}
+";
+            var fixedCode = @"
+using System;
+enum E
+{
+    First,
+    Second,
+    Third,
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(5, 1), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that outdented attribute lists do not outweigh the indentation of type members.
+        /// </summary>
+        /// <returns>A task representing an asynchronous operation.</returns>
+        [Fact]
+        public async Task VerifyAttributeListsDoNotOutweighTypeMembersAsync()
+        {
+            var testCode = @"
+using System;
+class C
+{
+  [A]
+  [A]
+  [A]
+    int first;
+    int second;
+}
+[AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
+class AAttribute : Attribute { }
+";
+            var fixedCode = @"
+using System;
+class C
+{
+    [A]
+    [A]
+    [A]
+    int first;
+    int second;
+}
+[AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
+class AAttribute : Attribute { }
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(5, 1),
+                Diagnostic().WithLocation(6, 1),
+                Diagnostic().WithLocation(7, 1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Theory]
         [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestNamespaceDeclarationAsync(string baseTypeKind)
