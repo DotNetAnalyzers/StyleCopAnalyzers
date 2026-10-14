@@ -15,12 +15,12 @@ StyleCop.Analyzers 为 C# 代码中违反代码风格和一致性规则的情况
 
 有关已实现的规则和代码修复，请参阅[规则实现状态](RuleStatus.md)。
 
-- [特殊规则 (SA0000-)](SpecialRules.md)
-- [空格规则 (SA1000-)](SpacingRules.md)
-- [可读性规则 (SA1100-)](ReadabilityRules.md)
-- [排序规则 (SA1200-)](OrderingRules.md)
-- [命名规则 (SA1300-)](NamingRules.md)
-- [可维护性规则 (SA1400-)](MaintainabilityRules.md)
-- [布局规则 (SA1500-)](LayoutRules.md)
-- [文档规则 (SA1600-)](DocumentationRules.md)
+- [特殊规则 (SA0000-)](SpecialRules.md) (`StyleCop.CSharp.SpecialRules`)
+- [空格规则 (SA1000-)](SpacingRules.md) (`StyleCop.CSharp.SpacingRules`)
+- [可读性规则 (SA1100-)](ReadabilityRules.md) (`StyleCop.CSharp.ReadabilityRules`)
+- [排序规则 (SA1200-)](OrderingRules.md) (`StyleCop.CSharp.OrderingRules`)
+- [命名规则 (SA1300-)](NamingRules.md) (`StyleCop.CSharp.NamingRules`)
+- [可维护性规则 (SA1400-)](MaintainabilityRules.md) (`StyleCop.CSharp.MaintainabilityRules`)
+- [布局规则 (SA1500-)](LayoutRules.md) (`StyleCop.CSharp.LayoutRules`)
+- [文档规则 (SA1600-)](DocumentationRules.md) (`StyleCop.CSharp.DocumentationRules`)
 - [替代规则 (SX0000-)](AlternativeRules.md)

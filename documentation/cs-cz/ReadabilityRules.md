@@ -1,4 +1,10 @@
 ### Pravidla čitelnosti (SA1100-)
+Závažnost celé kategorie nastavíte v souboru **.editorconfig** takto:
+
+```ini
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.ReadabilityRules.severity = none
+```
+
 Pravidla, která zajišťují, že je kód správně formátovaný a čitelný.
 
 Identifikátor | Název | Popis

@@ -1,4 +1,10 @@
 ### 特殊规则 (SA0000-)
+在 **.editorconfig** 文件中使用以下设置为整个类别配置严重级别：
+
+```ini
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.SpecialRules.severity = none
+```
+
 这些规则提供特殊功能，例如变通方案、配置错误检查等。
 
 标识符 | 名称 | 说明

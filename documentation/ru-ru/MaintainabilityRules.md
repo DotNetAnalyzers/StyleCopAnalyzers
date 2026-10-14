@@ -1,4 +1,10 @@
 ### Правила удобства сопровождения (SA1400-)
+Задайте уровень серьёзности для всей категории в файле **.editorconfig**:
+
+```ini
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.MaintainabilityRules.severity = none
+```
+
 Правила, повышающие удобство сопровождения кода.
 
 Идентификатор | Имя | Описание

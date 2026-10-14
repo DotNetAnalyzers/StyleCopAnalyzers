@@ -26,6 +26,7 @@ root = true
 # Závažnosti pravidel
 dotnet_diagnostic.SA1633.severity = none
 dotnet_diagnostic.SA1309.severity = none
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.DocumentationRules.severity = none
 
 # Nastavení
 stylecop.documentation.companyName = Contoso
@@ -34,6 +35,7 @@ csharp_using_directive_placement = outside_namespace
 
 * Závažnost pravidla používá standardní vlastnost `dotnet_diagnostic.<rule ID>.severity` (`error`, `warning`, `suggestion`,
   `silent`, `none`). Viz [konfigurace analyzátorů kódu](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/configuration-files).
+* Závažnost celé kategorie nastavíte pomocí prefixu `dotnet_analyzer_diagnostic.category-` a úplného názvu kategorie, například `StyleCop.CSharp.DocumentationRules`. Zobrazované názvy jako `Pravidla dokumentace` nejsou platné identifikátory kategorií.
 * Soubory **.editorconfig** se uplatňují pro jednotlivé zdrojové soubory podle záhlaví oddílů (například `[*.cs]`) a hierarchie složek.
 * Soubor **.globalconfig** se automaticky použije, pokud se jmenuje přesně **.globalconfig** a je umístěn ve složce
   projektu nebo nad ní. Jiné názvy souborů vyžadují přidání souboru do položky MSBuild `GlobalAnalyzerConfigFiles`.

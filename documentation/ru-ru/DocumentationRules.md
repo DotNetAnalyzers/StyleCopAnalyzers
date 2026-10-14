@@ -1,4 +1,10 @@
 ### Правила документирования (SA1600-)
+Задайте уровень серьёзности для всей категории в файле **.editorconfig**:
+
+```ini
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.DocumentationRules.severity = none
+```
+
 Правила, проверяющие содержимое и оформление документации кода.
 
 Идентификатор | Имя | Описание

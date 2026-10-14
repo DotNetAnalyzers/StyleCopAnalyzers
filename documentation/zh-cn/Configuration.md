@@ -28,6 +28,7 @@ root = true
 # Rule severities
 dotnet_diagnostic.SA1633.severity = none
 dotnet_diagnostic.SA1309.severity = none
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.DocumentationRules.severity = none
 
 # Settings
 stylecop.documentation.companyName = Contoso
@@ -36,6 +37,7 @@ csharp_using_directive_placement = outside_namespace
 
 * 规则严重级别使用标准的 `dotnet_diagnostic.<rule ID>.severity` 属性（`error`、`warning`、`suggestion`、`silent`、`none`）。
   请参阅[配置代码分析器](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/configuration-files)。
+* 若要配置整个类别的严重级别，请使用 `dotnet_analyzer_diagnostic.category-` 前缀和完整类别名称，例如 `StyleCop.CSharp.DocumentationRules`。像“文档规则”这样的显示名称不是有效的类别标识符。
 * **.editorconfig** 文件根据节标题（例如 `[*.cs]`）和文件夹层次结构，分别应用于各个源文件。
 * 当 **.globalconfig** 文件的名称恰好为 **.globalconfig**，且位于项目文件夹或其上级文件夹中时，会自动被加载。
   其他文件名需要将文件添加到 `GlobalAnalyzerConfigFiles` MSBuild 项中。

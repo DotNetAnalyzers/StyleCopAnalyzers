@@ -1,4 +1,10 @@
 ### 可读性规则 (SA1100-)
+在 **.editorconfig** 文件中使用以下设置为整个类别配置严重级别：
+
+```ini
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.ReadabilityRules.severity = none
+```
+
 这些规则确保代码格式良好、易于阅读。
 
 标识符 | 名称 | 说明

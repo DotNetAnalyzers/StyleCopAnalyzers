@@ -1,4 +1,10 @@
 ### 命名规则 (SA1300-)
+在 **.editorconfig** 文件中使用以下设置为整个类别配置严重级别：
+
+```ini
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.NamingRules.severity = none
+```
+
 这些规则规定成员、类型和变量的命名要求。
 
 标识符 | 名称 | 说明
