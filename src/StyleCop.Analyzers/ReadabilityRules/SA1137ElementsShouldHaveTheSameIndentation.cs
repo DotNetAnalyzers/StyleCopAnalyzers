@@ -467,7 +467,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 elements = elements.RemoveAt(desiredFirst).Insert(0, newFirstElement);
             }
 
-            if (!preferMostCommonIndentation)
+            if (!preferMostCommonIndentation || desiredFirst < 0)
             {
                 bool first = true;
                 string? firstExpectedIndentation = null;

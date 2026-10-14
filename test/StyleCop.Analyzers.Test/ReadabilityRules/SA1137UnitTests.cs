@@ -196,6 +196,51 @@ class AAttribute : Attribute { }
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that the first attribute list establishes indentation when no member starts on its own line.
+        /// </summary>
+        /// <param name="typeKind">The type declaration keyword.</param>
+        /// <param name="firstMember">The first member declaration.</param>
+        /// <param name="secondMember">The second member declaration.</param>
+        /// <param name="thirdMember">The third member declaration.</param>
+        /// <returns>A task representing an asynchronous operation.</returns>
+        [Theory]
+        [InlineData("class", "int first;", "int second;", "int third;")]
+        [InlineData("enum", "First,", "Second,", "Third,")]
+        public async Task VerifyInlineAttributedMembersUseFirstAttributeIndentationAsync(string typeKind, string firstMember, string secondMember, string thirdMember)
+        {
+            var testCode = $@"
+using System;
+{typeKind} C
+{{
+  [A] {firstMember}
+{{|#0:    |}}[A] {secondMember}
+{{|#1:    |}}[A] {thirdMember}
+}}
+[AttributeUsage(AttributeTargets.Field)]
+class AAttribute : Attribute {{ }}
+";
+            var fixedCode = $@"
+using System;
+{typeKind} C
+{{
+  [A] {firstMember}
+  [A] {secondMember}
+  [A] {thirdMember}
+}}
+[AttributeUsage(AttributeTargets.Field)]
+class AAttribute : Attribute {{ }}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Theory]
         [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestNamespaceDeclarationAsync(string baseTypeKind)
