@@ -62,14 +62,14 @@ See [Microsoft.CodeAnalysis release/dev16.3@c955f3c99b5698c906e0700ef691b5b1571c
 * [ ] `Microsoft.CodeAnalysis.ITypeSymbol.ToDisplayString(Microsoft.CodeAnalysis.NullableFlowState topLevelNullability, Microsoft.CodeAnalysis.SymbolDisplayFormat format = null) -> string`
 * [ ] `Microsoft.CodeAnalysis.ITypeSymbol.ToMinimalDisplayParts(Microsoft.CodeAnalysis.SemanticModel semanticModel, Microsoft.CodeAnalysis.NullableFlowState topLevelNullability, int position, Microsoft.CodeAnalysis.SymbolDisplayFormat format = null) -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.SymbolDisplayPart>`
 * [ ] `Microsoft.CodeAnalysis.ITypeSymbol.ToMinimalDisplayString(Microsoft.CodeAnalysis.SemanticModel semanticModel, Microsoft.CodeAnalysis.NullableFlowState topLevelNullability, int position, Microsoft.CodeAnalysis.SymbolDisplayFormat format = null) -> string`
-* [ ] `Microsoft.CodeAnalysis.NullabilityInfo`
-* [ ] `Microsoft.CodeAnalysis.NullabilityInfo.Annotation.get -> Microsoft.CodeAnalysis.NullableAnnotation`
-* [ ] `Microsoft.CodeAnalysis.NullabilityInfo.Equals(Microsoft.CodeAnalysis.NullabilityInfo other) -> bool`
-* [ ] `Microsoft.CodeAnalysis.NullabilityInfo.FlowState.get -> Microsoft.CodeAnalysis.NullableFlowState`
-* [ ] `Microsoft.CodeAnalysis.NullableAnnotation`
-* [ ] `Microsoft.CodeAnalysis.NullableAnnotation.Annotated = 2 -> Microsoft.CodeAnalysis.NullableAnnotation`
-* [ ] `Microsoft.CodeAnalysis.NullableAnnotation.None = 0 -> Microsoft.CodeAnalysis.NullableAnnotation`
-* [ ] `Microsoft.CodeAnalysis.NullableAnnotation.NotAnnotated = 1 -> Microsoft.CodeAnalysis.NullableAnnotation`
+* [x] `Microsoft.CodeAnalysis.NullabilityInfo`
+* [x] `Microsoft.CodeAnalysis.NullabilityInfo.Annotation.get -> Microsoft.CodeAnalysis.NullableAnnotation`
+* [x] `Microsoft.CodeAnalysis.NullabilityInfo.Equals(Microsoft.CodeAnalysis.NullabilityInfo other) -> bool`
+* [x] `Microsoft.CodeAnalysis.NullabilityInfo.FlowState.get -> Microsoft.CodeAnalysis.NullableFlowState`
+* [x] `Microsoft.CodeAnalysis.NullableAnnotation`
+* [x] `Microsoft.CodeAnalysis.NullableAnnotation.Annotated = 2 -> Microsoft.CodeAnalysis.NullableAnnotation`
+* [x] `Microsoft.CodeAnalysis.NullableAnnotation.None = 0 -> Microsoft.CodeAnalysis.NullableAnnotation`
+* [x] `Microsoft.CodeAnalysis.NullableAnnotation.NotAnnotated = 1 -> Microsoft.CodeAnalysis.NullableAnnotation`
 * [ ] `Microsoft.CodeAnalysis.NullableContext`
 * [ ] `Microsoft.CodeAnalysis.NullableContext.AnnotationsContextInherited = 8 -> Microsoft.CodeAnalysis.NullableContext`
 * [ ] `Microsoft.CodeAnalysis.NullableContext.AnnotationsEnabled = 2 -> Microsoft.CodeAnalysis.NullableContext`
@@ -85,10 +85,10 @@ See [Microsoft.CodeAnalysis release/dev16.3@c955f3c99b5698c906e0700ef691b5b1571c
 * [ ] `Microsoft.CodeAnalysis.NullableContextOptions.Enable = Microsoft.CodeAnalysis.NullableContextOptions.Warnings | Microsoft.CodeAnalysis.NullableContextOptions.Annotations -> Microsoft.CodeAnalysis.NullableContextOptions`
 * [ ] `Microsoft.CodeAnalysis.NullableContextOptions.Warnings = 1 -> Microsoft.CodeAnalysis.NullableContextOptions`
 * [ ] `Microsoft.CodeAnalysis.NullableContextOptionsExtensions`
-* [ ] `Microsoft.CodeAnalysis.NullableFlowState`
-* [ ] `Microsoft.CodeAnalysis.NullableFlowState.MaybeNull = 2 -> Microsoft.CodeAnalysis.NullableFlowState`
-* [ ] `Microsoft.CodeAnalysis.NullableFlowState.None = 0 -> Microsoft.CodeAnalysis.NullableFlowState`
-* [ ] `Microsoft.CodeAnalysis.NullableFlowState.NotNull = 1 -> Microsoft.CodeAnalysis.NullableFlowState`
+* [x] `Microsoft.CodeAnalysis.NullableFlowState`
+* [x] `Microsoft.CodeAnalysis.NullableFlowState.MaybeNull = 2 -> Microsoft.CodeAnalysis.NullableFlowState`
+* [x] `Microsoft.CodeAnalysis.NullableFlowState.None = 0 -> Microsoft.CodeAnalysis.NullableFlowState`
+* [x] `Microsoft.CodeAnalysis.NullableFlowState.NotNull = 1 -> Microsoft.CodeAnalysis.NullableFlowState`
 * [ ] `Microsoft.CodeAnalysis.SuppressionDescriptor`
 * [ ] `Microsoft.CodeAnalysis.SuppressionDescriptor.Equals(Microsoft.CodeAnalysis.SuppressionDescriptor other) -> bool`
 * [ ] `Microsoft.CodeAnalysis.SuppressionDescriptor.Id.get -> string`
@@ -109,8 +109,8 @@ See [Microsoft.CodeAnalysis release/dev16.3@c955f3c99b5698c906e0700ef691b5b1571c
 * [ ] `Microsoft.CodeAnalysis.SymbolEqualityComparer`
 * [ ] `Microsoft.CodeAnalysis.SymbolEqualityComparer.Equals(Microsoft.CodeAnalysis.ISymbol x, Microsoft.CodeAnalysis.ISymbol y) -> bool`
 * [ ] `Microsoft.CodeAnalysis.SymbolEqualityComparer.GetHashCode(Microsoft.CodeAnalysis.ISymbol obj) -> int`
-* [ ] `Microsoft.CodeAnalysis.TypeInfo.ConvertedNullability.get -> Microsoft.CodeAnalysis.NullabilityInfo`
-* [ ] `Microsoft.CodeAnalysis.TypeInfo.Nullability.get -> Microsoft.CodeAnalysis.NullabilityInfo`
+* [x] `Microsoft.CodeAnalysis.TypeInfo.ConvertedNullability.get -> Microsoft.CodeAnalysis.NullabilityInfo`
+* [x] `Microsoft.CodeAnalysis.TypeInfo.Nullability.get -> Microsoft.CodeAnalysis.NullabilityInfo`
 * [ ] `abstract Microsoft.CodeAnalysis.Compilation.ClassifyCommonConversion(Microsoft.CodeAnalysis.ITypeSymbol source, Microsoft.CodeAnalysis.ITypeSymbol destination) -> Microsoft.CodeAnalysis.Operations.CommonConversion`
 * [ ] `abstract Microsoft.CodeAnalysis.Compilation.ContainsSymbolsWithName(string name, Microsoft.CodeAnalysis.SymbolFilter filter = Microsoft.CodeAnalysis.SymbolFilter.TypeAndMember, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> bool`
 * [ ] `abstract Microsoft.CodeAnalysis.Compilation.GetSymbolsWithName(string name, Microsoft.CodeAnalysis.SymbolFilter filter = Microsoft.CodeAnalysis.SymbolFilter.TypeAndMember, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Collections.Generic.IEnumerable<Microsoft.CodeAnalysis.ISymbol>`
@@ -350,8 +350,8 @@ See [Microsoft.CodeAnalysis release/dev16.3@c955f3c99b5698c906e0700ef691b5b1571c
 * [ ] `static Microsoft.CodeAnalysis.AnalyzerConfig.TryCreateSectionNameMatcher(string sectionName) -> Microsoft.CodeAnalysis.AnalyzerConfig.SectionNameMatcher?`
 * [ ] `static Microsoft.CodeAnalysis.AnalyzerConfigSet.Create<TList>(TList analyzerConfigs) -> Microsoft.CodeAnalysis.AnalyzerConfigSet`
 * [ ] `static Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptions.KeyComparer.get -> System.StringComparer`
-* [ ] `override Microsoft.CodeAnalysis.NullabilityInfo.Equals(object other) -> bool`
-* [ ] `override Microsoft.CodeAnalysis.NullabilityInfo.GetHashCode() -> int`
+* [x] `override Microsoft.CodeAnalysis.NullabilityInfo.Equals(object other) -> bool`
+* [x] `override Microsoft.CodeAnalysis.NullabilityInfo.GetHashCode() -> int`
 * [ ] `static Microsoft.CodeAnalysis.Diagnostics.Suppression.Create(Microsoft.CodeAnalysis.SuppressionDescriptor descriptor, Microsoft.CodeAnalysis.Diagnostic suppressedDiagnostic) -> Microsoft.CodeAnalysis.Diagnostics.Suppression`
 * [ ] `static Microsoft.CodeAnalysis.FlowAnalysis.ControlFlowGraph.Create(Microsoft.CodeAnalysis.Operations.IBlockOperation body, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> Microsoft.CodeAnalysis.FlowAnalysis.ControlFlowGraph`
 * [ ] `static Microsoft.CodeAnalysis.FlowAnalysis.ControlFlowGraph.Create(Microsoft.CodeAnalysis.Operations.IConstructorBodyOperation constructorBody, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> Microsoft.CodeAnalysis.FlowAnalysis.ControlFlowGraph`
