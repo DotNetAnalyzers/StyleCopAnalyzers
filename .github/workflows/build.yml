@@ -138,7 +138,7 @@ jobs:
     - name: Build solution
       env:
         NUGET_PACKAGES: ${{ runner.temp }}/nuget-packages
-      run: dotnet build -c ${{ matrix.configuration }} -maxcpucount:1 -p:PathMap="${{ github.workspace }}=/_/" -v:minimal -bl:msbuild.binlog
+      run: dotnet build -c ${{ matrix.configuration }} -maxcpucount:1 -warnAsError -warnNotAsError:NU1901,NU1902,NU1903,NU1904 -p:PathMap="${{ github.workspace }}=/_/" -v:minimal -bl:msbuild.binlog
 
     - name: Upload build log
       if: failure()
@@ -276,7 +276,7 @@ jobs:
     - name: Build StyleCop.Analyzers (runs the source generators)
       env:
         NUGET_PACKAGES: ${{ runner.temp }}/nuget-packages
-      run: dotnet build src/StyleCop.Analyzers/StyleCop.Analyzers.csproj -c Debug --no-incremental -maxcpucount:1
+      run: dotnet build src/StyleCop.Analyzers/StyleCop.Analyzers.csproj -c Debug --no-incremental -warnAsError -warnNotAsError:NU1901,NU1902,NU1903,NU1904 -maxcpucount:1
 
     # The generators write CRLF (and the resx generator writes mixed line endings on Linux) while the repository stores
     # LF. These files have the 'text' attribute, so git normalizes line endings before comparing: only real content
