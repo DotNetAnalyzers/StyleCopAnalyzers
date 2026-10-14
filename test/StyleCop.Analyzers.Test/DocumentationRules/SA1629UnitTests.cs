@@ -177,10 +177,12 @@ public class TestClass
         {
             var testCode = @"
 /// <summary>
-/// It works!
+/// She said ""It's done!""
 /// </summary>
 /// <remarks>
-/// Is this right?
+/// Unmapped! Not to be used in queries!
+/// She asked, ""Is it done?""
+/// Is it really finished?)
 /// </remarks>
 public class TestClass
 {
