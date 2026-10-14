@@ -152,7 +152,7 @@ namespace StyleCop.Analyzers.NamingRules
                     {
                         if (symbol.IsOverride
                             || NamedTypeHelpers.IsImplementingAnInterfaceMember(symbol)
-                            || HasDllImportAttribute(symbol))
+                            || (symbol is IMethodSymbol methodSymbol && methodSymbol.GetDllImportData() != null))
                         {
                             return;
                         }
@@ -200,21 +200,6 @@ namespace StyleCop.Analyzers.NamingRules
             public static void HandleSingleVariableDesignation(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
             {
                 CheckIdentifier(context, ((SingleVariableDesignationSyntaxWrapper)context.Node).Identifier, settings);
-            }
-
-            private static bool HasDllImportAttribute(ISymbol symbol)
-            {
-                foreach (var attribute in symbol.GetAttributes())
-                {
-                    var attributeClass = attribute.AttributeClass;
-                    if (attributeClass?.MetadataName == "DllImportAttribute"
-                        && attributeClass.ContainingNamespace.ToDisplayString() == "System.Runtime.InteropServices")
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
             }
 
             private static void CheckIdentifier(SyntaxNodeAnalysisContext context, SyntaxToken identifier, StyleCopSettings settings, string declarationType = "variable")

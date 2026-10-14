@@ -257,6 +257,42 @@ public class TypeName
         }
 
         [Fact]
+        [WorkItem(2859, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2859")]
+        public async Task TestParameterInMethodWithDllImportLookalikeAttributeAsync()
+        {
+            var testCode = @"
+using System;
+using System.Runtime.InteropServices;
+
+namespace System.Runtime.InteropServices
+{
+    public sealed class DllImportAttribute : Attribute
+    {
+        public DllImportAttribute(string libraryName)
+        {
+        }
+    }
+}
+
+public class TypeName
+{
+    [DllImport(""user32.dll"")]
+    public static bool IsWindowVisible(bool abVisible)
+    {
+        return false;
+    }
+}";
+
+            DiagnosticResult[] expected =
+            {
+                DiagnosticResult.CompilerError("CS0601").WithSpan(17, 6, 17, 15),
+                Diagnostic().WithArguments("parameter", "abVisible").WithLocation(18, 45),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestParameterInNativeClassMethodAsync()
         {
             var testCode = @"
