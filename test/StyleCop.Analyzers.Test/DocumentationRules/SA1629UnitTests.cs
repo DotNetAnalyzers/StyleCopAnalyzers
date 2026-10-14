@@ -172,6 +172,42 @@ public class TestClass
         }
 
         [Fact]
+        [WorkItem(2724, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2724")]
+        public async Task TestSentenceEndingWithExclamationMarkOrQuestionMarkAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// It works!
+/// </summary>
+/// <remarks>
+/// Is this right?
+/// </remarks>
+public class TestClass
+{
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestSentenceWithoutPunctuationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// It works
+/// </summary>
+public class TestClass
+{
+}
+";
+
+            var expected = Diagnostic().WithLocation(3, 13);
+
+            await VerifyCSharpDiagnosticAsync(testCode, new[] { expected }, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(2950, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2950")]
         public async Task TestEnumMemberAsync()
         {

@@ -96,7 +96,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 var textWithoutTrailingWhitespace = node.Value.TrimEnd(' ', '\r', '\n');
                 if (!string.IsNullOrEmpty(textWithoutTrailingWhitespace))
                 {
-                    if (!EndsWithPeriod(textWithoutTrailingWhitespace))
+                    if (!EndsWithValidPunctuation(textWithoutTrailingWhitespace))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, diagnosticLocations[0], NoCodeFixProperties));
 
@@ -127,7 +127,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                         if (!string.IsNullOrEmpty(textWithoutTrailingWhitespace))
                         {
-                            if (IsMissingRequiredPeriod(textWithoutTrailingWhitespace, startingWithFinalParagraph))
+                            if (IsMissingRequiredPunctuation(textWithoutTrailingWhitespace, startingWithFinalParagraph))
                             {
                                 int spanStart = textToken.SpanStart + textWithoutTrailingWhitespace.Length;
                                 ImmutableDictionary<string, string> properties = null;
@@ -165,7 +165,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     var lastTextElement = XmlCommentHelper.TryGetLastTextElementWithContent(xmlElement.Content[i]);
 
                     if (lastTextElement is null // Treat empty XML elements as a "word not ending with a period"
-                        || IsMissingRequiredPeriod(lastTextElement.TextTokens.Last().Text.TrimEnd(' ', '\r', '\n'), startingWithFinalParagraph))
+                        || IsMissingRequiredPunctuation(lastTextElement.TextTokens.Last().Text.TrimEnd(' ', '\r', '\n'), startingWithFinalParagraph))
                     {
                         var location = Location.Create(xmlElement.SyntaxTree, new TextSpan(xmlElement.Content[i].Span.End, 1));
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
@@ -204,21 +204,20 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
         }
 
-        private static bool IsMissingRequiredPeriod(string textWithoutTrailingWhitespace, bool startingWithFinalParagraph)
+        private static bool IsMissingRequiredPunctuation(string textWithoutTrailingWhitespace, bool startingWithFinalParagraph)
         {
-            return !EndsWithPeriod(textWithoutTrailingWhitespace)
+            return !EndsWithValidPunctuation(textWithoutTrailingWhitespace)
                 && (startingWithFinalParagraph || !textWithoutTrailingWhitespace.EndsWith(":", StringComparison.Ordinal))
                 && !textWithoutTrailingWhitespace.EndsWith("-or-", StringComparison.Ordinal);
         }
 
         /// <summary>
-        /// Determines whether the text ends with a period, optionally followed by closing quotation marks and then an
-        /// optional closing parenthesis. For example, <c>.</c>, <c>.)</c>, <c>."</c>, <c>.'</c>, <c>.”</c>,
-        /// <c>.’”</c>, and <c>.")</c> are all accepted.
+        /// Determines whether the text ends with a period, exclamation mark, or question mark, optionally followed by
+        /// closing quotation marks and then an optional closing parenthesis.
         /// </summary>
-        /// <param name="text">The text, without trailing whitespace.</param>
-        /// <returns><see langword="true"/> if the text ends with a period; otherwise, <see langword="false"/>.</returns>
-        private static bool EndsWithPeriod(string text)
+        /// <param name="text">The text without trailing whitespace.</param>
+        /// <returns><see langword="true"/> if the text ends with valid punctuation; otherwise, <see langword="false"/>.</returns>
+        private static bool EndsWithValidPunctuation(string text)
         {
             int end = text.Length;
             if (end > 0 && text[end - 1] == ')')
@@ -231,7 +230,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 end--;
             }
 
-            return end > 0 && text[end - 1] == '.';
+            return end > 0 && text[end - 1] is '.' or '!' or '?';
 
             static bool IsClosingQuote(char c)
             {
