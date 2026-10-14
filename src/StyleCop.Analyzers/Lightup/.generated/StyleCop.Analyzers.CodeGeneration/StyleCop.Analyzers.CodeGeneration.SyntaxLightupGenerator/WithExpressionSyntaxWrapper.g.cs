@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,7 +15,7 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct WithExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.WithExpressionSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<ExpressionSyntax, ExpressionSyntax> ExpressionAccessor;
         private static readonly Func<ExpressionSyntax, SyntaxToken> WithKeywordAccessor;
@@ -21,7 +24,7 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithWithKeywordAccessor;
         private static readonly Func<ExpressionSyntax, InitializerExpressionSyntax, ExpressionSyntax> WithInitializerAccessor;
 
-        private readonly ExpressionSyntax node;
+        private readonly ExpressionSyntax? node;
 
         static WithExpressionSyntaxWrapper()
         {
@@ -34,19 +37,19 @@ namespace StyleCop.Analyzers.Lightup
             WithInitializerAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, InitializerExpressionSyntax>(WrappedType, nameof(Initializer));
         }
 
-        private WithExpressionSyntaxWrapper(ExpressionSyntax node)
+        private WithExpressionSyntaxWrapper(ExpressionSyntax? node)
         {
             this.node = node;
         }
 
-        public ExpressionSyntax SyntaxNode => this.node;
+        public ExpressionSyntax? SyntaxNode => this.node;
 
 
         public ExpressionSyntax Expression
         {
             get
             {
-                return ExpressionAccessor(this.SyntaxNode);
+                return ExpressionAccessor(this.node!);
             }
         }
 
@@ -54,7 +57,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return WithKeywordAccessor(this.SyntaxNode);
+                return WithKeywordAccessor(this.node!);
             }
         }
 
@@ -62,11 +65,11 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return InitializerAccessor(this.SyntaxNode);
+                return InitializerAccessor(this.node!);
             }
         }
 
-        public static explicit operator WithExpressionSyntaxWrapper(SyntaxNode node)
+        public static explicit operator WithExpressionSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -81,29 +84,29 @@ namespace StyleCop.Analyzers.Lightup
             return new WithExpressionSyntaxWrapper((ExpressionSyntax)node);
         }
 
-        public static implicit operator ExpressionSyntax(WithExpressionSyntaxWrapper wrapper)
+        public static implicit operator ExpressionSyntax? (WithExpressionSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public WithExpressionSyntaxWrapper WithExpression(ExpressionSyntax expression)
         {
-            return new WithExpressionSyntaxWrapper(WithExpressionAccessor(this.SyntaxNode, expression));
+            return new WithExpressionSyntaxWrapper(WithExpressionAccessor(this.node!, expression));
         }
 
         public WithExpressionSyntaxWrapper WithWithKeyword(SyntaxToken withKeyword)
         {
-            return new WithExpressionSyntaxWrapper(WithWithKeywordAccessor(this.SyntaxNode, withKeyword));
+            return new WithExpressionSyntaxWrapper(WithWithKeywordAccessor(this.node!, withKeyword));
         }
 
         public WithExpressionSyntaxWrapper WithInitializer(InitializerExpressionSyntax initializer)
         {
-            return new WithExpressionSyntaxWrapper(WithInitializerAccessor(this.SyntaxNode, initializer));
+            return new WithExpressionSyntaxWrapper(WithInitializerAccessor(this.node!, initializer));
         }
     }
 }

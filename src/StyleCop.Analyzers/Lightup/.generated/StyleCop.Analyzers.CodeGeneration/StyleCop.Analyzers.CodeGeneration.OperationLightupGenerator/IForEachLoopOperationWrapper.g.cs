@@ -1,21 +1,24 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct IForEachLoopOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IForEachLoopOperation";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
         private static readonly Func<IOperation, IOperation> LoopControlVariableAccessor;
         private static readonly Func<IOperation, IOperation> CollectionAccessor;
         private static readonly Func<IOperation, ImmutableArray<IOperation>> NextVariablesAccessor;
         private static readonly Func<IOperation, bool> IsAsynchronousAccessor;
-        private readonly IOperation operation;
+        private readonly IOperation? operation;
         static IForEachLoopOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(IForEachLoopOperationWrapper));
@@ -25,17 +28,17 @@ namespace StyleCop.Analyzers.Lightup
             IsAsynchronousAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, bool>(WrappedType, nameof(IsAsynchronous));
         }
 
-        private IForEachLoopOperationWrapper(IOperation operation)
+        private IForEachLoopOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
-        public IOperation LoopControlVariable => LoopControlVariableAccessor(this.WrappedOperation);
-        public IOperation Collection => CollectionAccessor(this.WrappedOperation);
-        public ImmutableArray<IOperation> NextVariables => NextVariablesAccessor(this.WrappedOperation);
-        public bool IsAsynchronous => IsAsynchronousAccessor(this.WrappedOperation);
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
+        public IOperation LoopControlVariable => LoopControlVariableAccessor(this.operation!);
+        public IOperation Collection => CollectionAccessor(this.operation!);
+        public ImmutableArray<IOperation> NextVariables => NextVariablesAccessor(this.operation!);
+        public bool IsAsynchronous => IsAsynchronousAccessor(this.operation!);
 
         public static explicit operator IForEachLoopOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IForEachLoopOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
@@ -47,7 +50,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public static explicit operator IForEachLoopOperationWrapper(ILoopOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator ILoopOperationWrapper(IForEachLoopOperationWrapper wrapper) => ILoopOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static IForEachLoopOperationWrapper FromOperation(IOperation operation)
+        public static IForEachLoopOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -62,7 +65,7 @@ namespace StyleCop.Analyzers.Lightup
             return new IForEachLoopOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }

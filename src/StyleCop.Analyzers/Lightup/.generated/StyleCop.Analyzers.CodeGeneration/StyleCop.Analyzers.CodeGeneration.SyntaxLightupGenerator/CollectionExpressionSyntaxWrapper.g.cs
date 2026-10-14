@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,7 +15,7 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct CollectionExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.CollectionExpressionSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<ExpressionSyntax, SyntaxToken> OpenBracketTokenAccessor;
         private static readonly Func<ExpressionSyntax, SeparatedSyntaxListWrapper<CollectionElementSyntaxWrapper>> ElementsAccessor;
@@ -21,7 +24,7 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<ExpressionSyntax, SeparatedSyntaxListWrapper<CollectionElementSyntaxWrapper>, ExpressionSyntax> WithElementsAccessor;
         private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithCloseBracketTokenAccessor;
 
-        private readonly ExpressionSyntax node;
+        private readonly ExpressionSyntax? node;
 
         static CollectionExpressionSyntaxWrapper()
         {
@@ -34,19 +37,19 @@ namespace StyleCop.Analyzers.Lightup
             WithCloseBracketTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, SyntaxToken>(WrappedType, nameof(CloseBracketToken));
         }
 
-        private CollectionExpressionSyntaxWrapper(ExpressionSyntax node)
+        private CollectionExpressionSyntaxWrapper(ExpressionSyntax? node)
         {
             this.node = node;
         }
 
-        public ExpressionSyntax SyntaxNode => this.node;
+        public ExpressionSyntax? SyntaxNode => this.node;
 
 
         public SyntaxToken OpenBracketToken
         {
             get
             {
-                return OpenBracketTokenAccessor(this.SyntaxNode);
+                return OpenBracketTokenAccessor(this.node!);
             }
         }
 
@@ -54,7 +57,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ElementsAccessor(this.SyntaxNode);
+                return ElementsAccessor(this.node!);
             }
         }
 
@@ -62,11 +65,11 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return CloseBracketTokenAccessor(this.SyntaxNode);
+                return CloseBracketTokenAccessor(this.node!);
             }
         }
 
-        public static explicit operator CollectionExpressionSyntaxWrapper(SyntaxNode node)
+        public static explicit operator CollectionExpressionSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -81,29 +84,29 @@ namespace StyleCop.Analyzers.Lightup
             return new CollectionExpressionSyntaxWrapper((ExpressionSyntax)node);
         }
 
-        public static implicit operator ExpressionSyntax(CollectionExpressionSyntaxWrapper wrapper)
+        public static implicit operator ExpressionSyntax? (CollectionExpressionSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public CollectionExpressionSyntaxWrapper WithOpenBracketToken(SyntaxToken openBracketToken)
         {
-            return new CollectionExpressionSyntaxWrapper(WithOpenBracketTokenAccessor(this.SyntaxNode, openBracketToken));
+            return new CollectionExpressionSyntaxWrapper(WithOpenBracketTokenAccessor(this.node!, openBracketToken));
         }
 
         public CollectionExpressionSyntaxWrapper WithElements(SeparatedSyntaxListWrapper<CollectionElementSyntaxWrapper> elements)
         {
-            return new CollectionExpressionSyntaxWrapper(WithElementsAccessor(this.SyntaxNode, elements));
+            return new CollectionExpressionSyntaxWrapper(WithElementsAccessor(this.node!, elements));
         }
 
         public CollectionExpressionSyntaxWrapper WithCloseBracketToken(SyntaxToken closeBracketToken)
         {
-            return new CollectionExpressionSyntaxWrapper(WithCloseBracketTokenAccessor(this.SyntaxNode, closeBracketToken));
+            return new CollectionExpressionSyntaxWrapper(WithCloseBracketTokenAccessor(this.node!, closeBracketToken));
         }
     }
 }

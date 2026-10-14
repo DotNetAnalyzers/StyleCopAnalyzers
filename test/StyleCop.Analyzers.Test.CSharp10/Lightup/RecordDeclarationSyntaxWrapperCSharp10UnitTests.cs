@@ -24,8 +24,11 @@ namespace StyleCop.Analyzers.Test.CSharp10.Lightup
             Assert.True(wrapper.Keyword.IsKind(SyntaxKind.RecordKeyword));
             Assert.True(wrapper.ClassOrStructKeyword.IsKind(SyntaxKind.StructKeyword));
             Assert.Equal("S", wrapper.Identifier.ValueText);
+            Assert.NotNull(wrapper.TypeParameterList);
             Assert.Single(wrapper.TypeParameterList.Parameters);
+            Assert.NotNull(wrapper.ParameterList);
             Assert.Single(wrapper.ParameterList.Parameters);
+            Assert.NotNull(wrapper.BaseList);
             Assert.Single(wrapper.BaseList.Types);
             Assert.Single(wrapper.ConstraintClauses);
             Assert.True(wrapper.SemicolonToken.IsKind(SyntaxKind.None));

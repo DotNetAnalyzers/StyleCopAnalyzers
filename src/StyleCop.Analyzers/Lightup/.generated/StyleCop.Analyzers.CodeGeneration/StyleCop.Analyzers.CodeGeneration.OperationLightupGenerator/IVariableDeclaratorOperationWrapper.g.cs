@@ -1,42 +1,45 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct IVariableDeclaratorOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IVariableDeclaratorOperation";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
         private static readonly Func<IOperation, ILocalSymbol> SymbolAccessor;
-        private static readonly Func<IOperation, IOperation> InitializerAccessor;
+        private static readonly Func<IOperation, IOperation?> InitializerAccessor;
         private static readonly Func<IOperation, ImmutableArray<IOperation>> IgnoredArgumentsAccessor;
-        private readonly IOperation operation;
+        private readonly IOperation? operation;
         static IVariableDeclaratorOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(IVariableDeclaratorOperationWrapper));
             SymbolAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, ILocalSymbol>(WrappedType, nameof(Symbol));
-            InitializerAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation>(WrappedType, nameof(Initializer));
+            InitializerAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation?>(WrappedType, nameof(Initializer));
             IgnoredArgumentsAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, ImmutableArray<IOperation>>(WrappedType, nameof(IgnoredArguments));
         }
 
-        private IVariableDeclaratorOperationWrapper(IOperation operation)
+        private IVariableDeclaratorOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
-        public ILocalSymbol Symbol => SymbolAccessor(this.WrappedOperation);
-        public IVariableInitializerOperationWrapper Initializer => IVariableInitializerOperationWrapper.FromOperation(InitializerAccessor(this.WrappedOperation));
-        public ImmutableArray<IOperation> IgnoredArguments => IgnoredArgumentsAccessor(this.WrappedOperation);
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
+        public ILocalSymbol Symbol => SymbolAccessor(this.operation!);
+        public IVariableInitializerOperationWrapper Initializer => IVariableInitializerOperationWrapper.FromOperation(InitializerAccessor(this.operation!));
+        public ImmutableArray<IOperation> IgnoredArguments => IgnoredArgumentsAccessor(this.operation!);
 
         public static explicit operator IVariableDeclaratorOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IVariableDeclaratorOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static IVariableDeclaratorOperationWrapper FromOperation(IOperation operation)
+        public static IVariableDeclaratorOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -51,7 +54,7 @@ namespace StyleCop.Analyzers.Lightup
             return new IVariableDeclaratorOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }

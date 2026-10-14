@@ -1,33 +1,36 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct IEmptyOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IEmptyOperation";
-        private static readonly Type WrappedType;
-        private readonly IOperation operation;
+        private static readonly Type? WrappedType;
+        private readonly IOperation? operation;
         static IEmptyOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(IEmptyOperationWrapper));
         }
 
-        private IEmptyOperationWrapper(IOperation operation)
+        private IEmptyOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
 
         public static explicit operator IEmptyOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IEmptyOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static IEmptyOperationWrapper FromOperation(IOperation operation)
+        public static IEmptyOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -42,7 +45,7 @@ namespace StyleCop.Analyzers.Lightup
             return new IEmptyOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }

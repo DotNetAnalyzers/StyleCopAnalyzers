@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,7 +15,7 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct UnsafeExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.UnsafeExpressionSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<ExpressionSyntax, SyntaxToken> KeywordAccessor;
         private static readonly Func<ExpressionSyntax, SyntaxToken> OpenParenTokenAccessor;
@@ -23,7 +26,7 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<ExpressionSyntax, ExpressionSyntax, ExpressionSyntax> WithExpressionAccessor;
         private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithCloseParenTokenAccessor;
 
-        private readonly ExpressionSyntax node;
+        private readonly ExpressionSyntax? node;
 
         static UnsafeExpressionSyntaxWrapper()
         {
@@ -38,19 +41,19 @@ namespace StyleCop.Analyzers.Lightup
             WithCloseParenTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, SyntaxToken>(WrappedType, nameof(CloseParenToken));
         }
 
-        private UnsafeExpressionSyntaxWrapper(ExpressionSyntax node)
+        private UnsafeExpressionSyntaxWrapper(ExpressionSyntax? node)
         {
             this.node = node;
         }
 
-        public ExpressionSyntax SyntaxNode => this.node;
+        public ExpressionSyntax? SyntaxNode => this.node;
 
 
         public SyntaxToken Keyword
         {
             get
             {
-                return KeywordAccessor(this.SyntaxNode);
+                return KeywordAccessor(this.node!);
             }
         }
 
@@ -58,7 +61,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return OpenParenTokenAccessor(this.SyntaxNode);
+                return OpenParenTokenAccessor(this.node!);
             }
         }
 
@@ -66,7 +69,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ExpressionAccessor(this.SyntaxNode);
+                return ExpressionAccessor(this.node!);
             }
         }
 
@@ -74,11 +77,11 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return CloseParenTokenAccessor(this.SyntaxNode);
+                return CloseParenTokenAccessor(this.node!);
             }
         }
 
-        public static explicit operator UnsafeExpressionSyntaxWrapper(SyntaxNode node)
+        public static explicit operator UnsafeExpressionSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -93,34 +96,34 @@ namespace StyleCop.Analyzers.Lightup
             return new UnsafeExpressionSyntaxWrapper((ExpressionSyntax)node);
         }
 
-        public static implicit operator ExpressionSyntax(UnsafeExpressionSyntaxWrapper wrapper)
+        public static implicit operator ExpressionSyntax? (UnsafeExpressionSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public UnsafeExpressionSyntaxWrapper WithKeyword(SyntaxToken keyword)
         {
-            return new UnsafeExpressionSyntaxWrapper(WithKeywordAccessor(this.SyntaxNode, keyword));
+            return new UnsafeExpressionSyntaxWrapper(WithKeywordAccessor(this.node!, keyword));
         }
 
         public UnsafeExpressionSyntaxWrapper WithOpenParenToken(SyntaxToken openParenToken)
         {
-            return new UnsafeExpressionSyntaxWrapper(WithOpenParenTokenAccessor(this.SyntaxNode, openParenToken));
+            return new UnsafeExpressionSyntaxWrapper(WithOpenParenTokenAccessor(this.node!, openParenToken));
         }
 
         public UnsafeExpressionSyntaxWrapper WithExpression(ExpressionSyntax expression)
         {
-            return new UnsafeExpressionSyntaxWrapper(WithExpressionAccessor(this.SyntaxNode, expression));
+            return new UnsafeExpressionSyntaxWrapper(WithExpressionAccessor(this.node!, expression));
         }
 
         public UnsafeExpressionSyntaxWrapper WithCloseParenToken(SyntaxToken closeParenToken)
         {
-            return new UnsafeExpressionSyntaxWrapper(WithCloseParenTokenAccessor(this.SyntaxNode, closeParenToken));
+            return new UnsafeExpressionSyntaxWrapper(WithCloseParenTokenAccessor(this.node!, closeParenToken));
         }
     }
 }

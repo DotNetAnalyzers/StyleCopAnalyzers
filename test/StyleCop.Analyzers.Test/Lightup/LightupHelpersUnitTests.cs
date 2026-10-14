@@ -15,6 +15,18 @@ namespace StyleCop.Analyzers.Test.Lightup
     public class LightupHelpersUnitTests
     {
         [Fact]
+        public void TestGeneratedOperationNull()
+        {
+            var wrapper = IReturnOperationWrapper.FromOperation(null);
+            Assert.Null(wrapper.WrappedOperation);
+            Assert.False(IReturnOperationWrapper.IsInstance(null));
+            Assert.Throws<NullReferenceException>(() => wrapper.ReturnedValue);
+            Assert.Throws<NullReferenceException>(() => wrapper.Type);
+            Assert.Null(((IOperationWrapper)wrapper).WrappedOperation);
+            Assert.Null(((IReturnOperationWrapper)default(IOperationWrapper)).WrappedOperation);
+        }
+
+        [Fact]
         public void TestCanWrapNullNode()
         {
             Assert.True(LightupHelpers.CanWrapNode(null, typeof(PatternSyntaxWrapper)));

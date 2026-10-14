@@ -1,21 +1,24 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct IUsingOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IUsingOperation";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
         private static readonly Func<IOperation, IOperation> ResourcesAccessor;
         private static readonly Func<IOperation, IOperation> BodyAccessor;
         private static readonly Func<IOperation, ImmutableArray<ILocalSymbol>> LocalsAccessor;
         private static readonly Func<IOperation, bool> IsAsynchronousAccessor;
-        private readonly IOperation operation;
+        private readonly IOperation? operation;
         static IUsingOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(IUsingOperationWrapper));
@@ -25,21 +28,21 @@ namespace StyleCop.Analyzers.Lightup
             IsAsynchronousAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, bool>(WrappedType, nameof(IsAsynchronous));
         }
 
-        private IUsingOperationWrapper(IOperation operation)
+        private IUsingOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
-        public IOperation Resources => ResourcesAccessor(this.WrappedOperation);
-        public IOperation Body => BodyAccessor(this.WrappedOperation);
-        public ImmutableArray<ILocalSymbol> Locals => LocalsAccessor(this.WrappedOperation);
-        public bool IsAsynchronous => IsAsynchronousAccessor(this.WrappedOperation);
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
+        public IOperation Resources => ResourcesAccessor(this.operation!);
+        public IOperation Body => BodyAccessor(this.operation!);
+        public ImmutableArray<ILocalSymbol> Locals => LocalsAccessor(this.operation!);
+        public bool IsAsynchronous => IsAsynchronousAccessor(this.operation!);
 
         public static explicit operator IUsingOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IUsingOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static IUsingOperationWrapper FromOperation(IOperation operation)
+        public static IUsingOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -54,7 +57,7 @@ namespace StyleCop.Analyzers.Lightup
             return new IUsingOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }

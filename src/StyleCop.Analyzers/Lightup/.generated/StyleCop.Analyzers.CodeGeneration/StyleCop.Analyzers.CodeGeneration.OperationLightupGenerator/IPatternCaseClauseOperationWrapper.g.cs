@@ -1,38 +1,41 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct IPatternCaseClauseOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IPatternCaseClauseOperation";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
         private static readonly Func<IOperation, ILabelSymbol> LabelAccessor;
         private static readonly Func<IOperation, IOperation> PatternAccessor;
-        private static readonly Func<IOperation, IOperation> GuardAccessor;
-        private readonly IOperation operation;
+        private static readonly Func<IOperation, IOperation?> GuardAccessor;
+        private readonly IOperation? operation;
         static IPatternCaseClauseOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(IPatternCaseClauseOperationWrapper));
             LabelAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, ILabelSymbol>(WrappedType, nameof(Label));
             PatternAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation>(WrappedType, nameof(Pattern));
-            GuardAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation>(WrappedType, nameof(Guard));
+            GuardAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation?>(WrappedType, nameof(Guard));
         }
 
-        private IPatternCaseClauseOperationWrapper(IOperation operation)
+        private IPatternCaseClauseOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
-        public ILabelSymbol Label => LabelAccessor(this.WrappedOperation);
-        public IPatternOperationWrapper Pattern => IPatternOperationWrapper.FromOperation(PatternAccessor(this.WrappedOperation));
-        public IOperation Guard => GuardAccessor(this.WrappedOperation);
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
+        public ILabelSymbol Label => LabelAccessor(this.operation!);
+        public IPatternOperationWrapper Pattern => IPatternOperationWrapper.FromOperation(PatternAccessor(this.operation!));
+        public IOperation? Guard => GuardAccessor(this.operation!);
 
         public static explicit operator IPatternCaseClauseOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IPatternCaseClauseOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
@@ -40,7 +43,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public static explicit operator IPatternCaseClauseOperationWrapper(ICaseClauseOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator ICaseClauseOperationWrapper(IPatternCaseClauseOperationWrapper wrapper) => ICaseClauseOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static IPatternCaseClauseOperationWrapper FromOperation(IOperation operation)
+        public static IPatternCaseClauseOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -55,7 +58,7 @@ namespace StyleCop.Analyzers.Lightup
             return new IPatternCaseClauseOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }

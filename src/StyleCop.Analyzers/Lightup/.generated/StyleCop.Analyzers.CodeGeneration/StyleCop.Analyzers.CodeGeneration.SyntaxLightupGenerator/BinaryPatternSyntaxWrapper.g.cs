@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,7 +15,7 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct BinaryPatternSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.BinaryPatternSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode> LeftAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> OperatorTokenAccessor;
@@ -21,7 +24,7 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithOperatorTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode, CSharpSyntaxNode> WithRightAccessor;
 
-        private readonly CSharpSyntaxNode node;
+        private readonly CSharpSyntaxNode? node;
 
         static BinaryPatternSyntaxWrapper()
         {
@@ -34,19 +37,19 @@ namespace StyleCop.Analyzers.Lightup
             WithRightAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, CSharpSyntaxNode>(WrappedType, nameof(Right));
         }
 
-        private BinaryPatternSyntaxWrapper(CSharpSyntaxNode node)
+        private BinaryPatternSyntaxWrapper(CSharpSyntaxNode? node)
         {
             this.node = node;
         }
 
-        public CSharpSyntaxNode SyntaxNode => this.node;
+        public CSharpSyntaxNode? SyntaxNode => this.node;
 
 
         public PatternSyntaxWrapper Left
         {
             get
             {
-                return (PatternSyntaxWrapper)LeftAccessor(this.SyntaxNode);
+                return (PatternSyntaxWrapper)LeftAccessor(this.node!);
             }
         }
 
@@ -54,7 +57,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return OperatorTokenAccessor(this.SyntaxNode);
+                return OperatorTokenAccessor(this.node!);
             }
         }
 
@@ -62,7 +65,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return (PatternSyntaxWrapper)RightAccessor(this.SyntaxNode);
+                return (PatternSyntaxWrapper)RightAccessor(this.node!);
             }
         }
 
@@ -76,7 +79,7 @@ namespace StyleCop.Analyzers.Lightup
             return (BinaryPatternSyntaxWrapper)node.SyntaxNode;
         }
 
-        public static explicit operator BinaryPatternSyntaxWrapper(SyntaxNode node)
+        public static explicit operator BinaryPatternSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -101,29 +104,29 @@ namespace StyleCop.Analyzers.Lightup
             return ExpressionOrPatternSyntaxWrapper.FromUpcast(wrapper.node);
         }
 
-        public static implicit operator CSharpSyntaxNode(BinaryPatternSyntaxWrapper wrapper)
+        public static implicit operator CSharpSyntaxNode? (BinaryPatternSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public BinaryPatternSyntaxWrapper WithLeft(PatternSyntaxWrapper left)
         {
-            return new BinaryPatternSyntaxWrapper(WithLeftAccessor(this.SyntaxNode, left));
+            return new BinaryPatternSyntaxWrapper(WithLeftAccessor(this.node!, left.SyntaxNode!));
         }
 
         public BinaryPatternSyntaxWrapper WithOperatorToken(SyntaxToken operatorToken)
         {
-            return new BinaryPatternSyntaxWrapper(WithOperatorTokenAccessor(this.SyntaxNode, operatorToken));
+            return new BinaryPatternSyntaxWrapper(WithOperatorTokenAccessor(this.node!, operatorToken));
         }
 
         public BinaryPatternSyntaxWrapper WithRight(PatternSyntaxWrapper right)
         {
-            return new BinaryPatternSyntaxWrapper(WithRightAccessor(this.SyntaxNode, right));
+            return new BinaryPatternSyntaxWrapper(WithRightAccessor(this.node!, right.SyntaxNode!));
         }
     }
 }

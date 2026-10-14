@@ -1,39 +1,42 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct ILabeledOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.ILabeledOperation";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
         private static readonly Func<IOperation, ILabelSymbol> LabelAccessor;
-        private static readonly Func<IOperation, IOperation> OperationAccessor;
-        private readonly IOperation operation;
+        private static readonly Func<IOperation, IOperation?> OperationAccessor;
+        private readonly IOperation? operation;
         static ILabeledOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(ILabeledOperationWrapper));
             LabelAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, ILabelSymbol>(WrappedType, nameof(Label));
-            OperationAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation>(WrappedType, nameof(Operation));
+            OperationAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation?>(WrappedType, nameof(Operation));
         }
 
-        private ILabeledOperationWrapper(IOperation operation)
+        private ILabeledOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
-        public ILabelSymbol Label => LabelAccessor(this.WrappedOperation);
-        public IOperation Operation => OperationAccessor(this.WrappedOperation);
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
+        public ILabelSymbol Label => LabelAccessor(this.operation!);
+        public IOperation? Operation => OperationAccessor(this.operation!);
 
         public static explicit operator ILabeledOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(ILabeledOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static ILabeledOperationWrapper FromOperation(IOperation operation)
+        public static ILabeledOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -48,7 +51,7 @@ namespace StyleCop.Analyzers.Lightup
             return new ILabeledOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }

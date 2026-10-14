@@ -1,32 +1,35 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct IFieldInitializerOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IFieldInitializerOperation";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
         private static readonly Func<IOperation, ImmutableArray<IFieldSymbol>> InitializedFieldsAccessor;
-        private readonly IOperation operation;
+        private readonly IOperation? operation;
         static IFieldInitializerOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(IFieldInitializerOperationWrapper));
             InitializedFieldsAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, ImmutableArray<IFieldSymbol>>(WrappedType, nameof(InitializedFields));
         }
 
-        private IFieldInitializerOperationWrapper(IOperation operation)
+        private IFieldInitializerOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
-        public ImmutableArray<IFieldSymbol> InitializedFields => InitializedFieldsAccessor(this.WrappedOperation);
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
+        public ImmutableArray<IFieldSymbol> InitializedFields => InitializedFieldsAccessor(this.operation!);
 
         public static explicit operator IFieldInitializerOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IFieldInitializerOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
@@ -35,7 +38,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public static explicit operator IFieldInitializerOperationWrapper(ISymbolInitializerOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator ISymbolInitializerOperationWrapper(IFieldInitializerOperationWrapper wrapper) => ISymbolInitializerOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static IFieldInitializerOperationWrapper FromOperation(IOperation operation)
+        public static IFieldInitializerOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -50,7 +53,7 @@ namespace StyleCop.Analyzers.Lightup
             return new IFieldInitializerOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }

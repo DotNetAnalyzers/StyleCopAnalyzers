@@ -1,41 +1,44 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct IWhileLoopOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IWhileLoopOperation";
-        private static readonly Type WrappedType;
-        private static readonly Func<IOperation, IOperation> ConditionAccessor;
+        private static readonly Type? WrappedType;
+        private static readonly Func<IOperation, IOperation?> ConditionAccessor;
         private static readonly Func<IOperation, bool> ConditionIsTopAccessor;
         private static readonly Func<IOperation, bool> ConditionIsUntilAccessor;
-        private static readonly Func<IOperation, IOperation> IgnoredConditionAccessor;
-        private readonly IOperation operation;
+        private static readonly Func<IOperation, IOperation?> IgnoredConditionAccessor;
+        private readonly IOperation? operation;
         static IWhileLoopOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(IWhileLoopOperationWrapper));
-            ConditionAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation>(WrappedType, nameof(Condition));
+            ConditionAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation?>(WrappedType, nameof(Condition));
             ConditionIsTopAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, bool>(WrappedType, nameof(ConditionIsTop));
             ConditionIsUntilAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, bool>(WrappedType, nameof(ConditionIsUntil));
-            IgnoredConditionAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation>(WrappedType, nameof(IgnoredCondition));
+            IgnoredConditionAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation?>(WrappedType, nameof(IgnoredCondition));
         }
 
-        private IWhileLoopOperationWrapper(IOperation operation)
+        private IWhileLoopOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
-        public IOperation Condition => ConditionAccessor(this.WrappedOperation);
-        public bool ConditionIsTop => ConditionIsTopAccessor(this.WrappedOperation);
-        public bool ConditionIsUntil => ConditionIsUntilAccessor(this.WrappedOperation);
-        public IOperation IgnoredCondition => IgnoredConditionAccessor(this.WrappedOperation);
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
+        public IOperation? Condition => ConditionAccessor(this.operation!);
+        public bool ConditionIsTop => ConditionIsTopAccessor(this.operation!);
+        public bool ConditionIsUntil => ConditionIsUntilAccessor(this.operation!);
+        public IOperation? IgnoredCondition => IgnoredConditionAccessor(this.operation!);
 
         public static explicit operator IWhileLoopOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IWhileLoopOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
@@ -47,7 +50,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public static explicit operator IWhileLoopOperationWrapper(ILoopOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator ILoopOperationWrapper(IWhileLoopOperationWrapper wrapper) => ILoopOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static IWhileLoopOperationWrapper FromOperation(IOperation operation)
+        public static IWhileLoopOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -62,7 +65,7 @@ namespace StyleCop.Analyzers.Lightup
             return new IWhileLoopOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }

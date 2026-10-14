@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,14 +15,14 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct UnaryPatternSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.UnaryPatternSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> OperatorTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode> PatternAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithOperatorTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode, CSharpSyntaxNode> WithPatternAccessor;
 
-        private readonly CSharpSyntaxNode node;
+        private readonly CSharpSyntaxNode? node;
 
         static UnaryPatternSyntaxWrapper()
         {
@@ -30,19 +33,19 @@ namespace StyleCop.Analyzers.Lightup
             WithPatternAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, CSharpSyntaxNode>(WrappedType, nameof(Pattern));
         }
 
-        private UnaryPatternSyntaxWrapper(CSharpSyntaxNode node)
+        private UnaryPatternSyntaxWrapper(CSharpSyntaxNode? node)
         {
             this.node = node;
         }
 
-        public CSharpSyntaxNode SyntaxNode => this.node;
+        public CSharpSyntaxNode? SyntaxNode => this.node;
 
 
         public SyntaxToken OperatorToken
         {
             get
             {
-                return OperatorTokenAccessor(this.SyntaxNode);
+                return OperatorTokenAccessor(this.node!);
             }
         }
 
@@ -50,7 +53,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return (PatternSyntaxWrapper)PatternAccessor(this.SyntaxNode);
+                return (PatternSyntaxWrapper)PatternAccessor(this.node!);
             }
         }
 
@@ -64,7 +67,7 @@ namespace StyleCop.Analyzers.Lightup
             return (UnaryPatternSyntaxWrapper)node.SyntaxNode;
         }
 
-        public static explicit operator UnaryPatternSyntaxWrapper(SyntaxNode node)
+        public static explicit operator UnaryPatternSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -89,24 +92,24 @@ namespace StyleCop.Analyzers.Lightup
             return ExpressionOrPatternSyntaxWrapper.FromUpcast(wrapper.node);
         }
 
-        public static implicit operator CSharpSyntaxNode(UnaryPatternSyntaxWrapper wrapper)
+        public static implicit operator CSharpSyntaxNode? (UnaryPatternSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public UnaryPatternSyntaxWrapper WithOperatorToken(SyntaxToken operatorToken)
         {
-            return new UnaryPatternSyntaxWrapper(WithOperatorTokenAccessor(this.SyntaxNode, operatorToken));
+            return new UnaryPatternSyntaxWrapper(WithOperatorTokenAccessor(this.node!, operatorToken));
         }
 
         public UnaryPatternSyntaxWrapper WithPattern(PatternSyntaxWrapper pattern)
         {
-            return new UnaryPatternSyntaxWrapper(WithPatternAccessor(this.SyntaxNode, pattern));
+            return new UnaryPatternSyntaxWrapper(WithPatternAccessor(this.node!, pattern.SyntaxNode!));
         }
     }
 }

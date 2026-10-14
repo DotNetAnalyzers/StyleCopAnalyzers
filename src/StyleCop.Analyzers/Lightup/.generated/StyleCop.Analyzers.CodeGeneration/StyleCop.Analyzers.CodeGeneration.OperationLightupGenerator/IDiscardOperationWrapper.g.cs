@@ -1,34 +1,37 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct IDiscardOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IDiscardOperation";
-        private static readonly Type WrappedType;
-        private readonly IOperation operation;
+        private static readonly Type? WrappedType;
+        private readonly IOperation? operation;
         static IDiscardOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(IDiscardOperationWrapper));
         }
 
-        private IDiscardOperationWrapper(IOperation operation)
+        private IDiscardOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
         public object DiscardSymbol => throw new NotImplementedException("Property 'IDiscardOperation.DiscardSymbol' has unsupported type 'IDiscardSymbol'");
 
         public static explicit operator IDiscardOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IDiscardOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static IDiscardOperationWrapper FromOperation(IOperation operation)
+        public static IDiscardOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -43,7 +46,7 @@ namespace StyleCop.Analyzers.Lightup
             return new IDiscardOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
@@ -10,11 +12,11 @@ namespace StyleCop.Analyzers.Lightup
 
     internal static class OperationWrapperHelper
     {
-        private static readonly ImmutableDictionary<Type, Type> WrappedTypes;
+        private static readonly ImmutableDictionary<Type, Type?> WrappedTypes;
         static OperationWrapperHelper()
         {
             var codeAnalysisAssembly = typeof(SyntaxNode).GetTypeInfo().Assembly;
-            var builder = ImmutableDictionary.CreateBuilder<Type, Type>();
+            var builder = ImmutableDictionary.CreateBuilder<Type, Type?>();
             builder.Add(typeof(IOperationWrapper), typeof(IOperation));
             builder.Add(typeof(ILoopOperationWrapper), codeAnalysisAssembly.GetType(ILoopOperationWrapper.WrappedTypeName));
             builder.Add(typeof(IMemberReferenceOperationWrapper), codeAnalysisAssembly.GetType(IMemberReferenceOperationWrapper.WrappedTypeName));
@@ -146,9 +148,9 @@ namespace StyleCop.Analyzers.Lightup
         /// </summary>
         /// <param name = "wrapperType">Type of the wrapper for which the wrapped type should be retrieved.</param>
         /// <returns>The wrapped type, or null if there is no info.</returns>
-        internal static Type GetWrappedType(Type wrapperType)
+        internal static Type? GetWrappedType(Type wrapperType)
         {
-            if (WrappedTypes.TryGetValue(wrapperType, out Type wrappedType))
+            if (WrappedTypes.TryGetValue(wrapperType, out Type? wrappedType))
             {
                 return wrappedType;
             }

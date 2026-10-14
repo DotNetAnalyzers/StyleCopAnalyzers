@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,7 +15,7 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct CommonForEachStatementSyntaxWrapper : ISyntaxWrapper<StatementSyntax>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<StatementSyntax, SyntaxToken> AwaitKeywordAccessor;
         private static readonly Func<StatementSyntax, SyntaxToken> ForEachKeywordAccessor;
@@ -29,7 +32,7 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<StatementSyntax, SyntaxToken, StatementSyntax> WithCloseParenTokenAccessor;
         private static readonly Func<StatementSyntax, StatementSyntax, StatementSyntax> WithStatementAccessor;
 
-        private readonly StatementSyntax node;
+        private readonly StatementSyntax? node;
 
         static CommonForEachStatementSyntaxWrapper()
         {
@@ -50,19 +53,19 @@ namespace StyleCop.Analyzers.Lightup
             WithStatementAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<StatementSyntax, StatementSyntax>(WrappedType, nameof(Statement));
         }
 
-        private CommonForEachStatementSyntaxWrapper(StatementSyntax node)
+        private CommonForEachStatementSyntaxWrapper(StatementSyntax? node)
         {
             this.node = node;
         }
 
-        public StatementSyntax SyntaxNode => this.node;
+        public StatementSyntax? SyntaxNode => this.node;
 
 
         public SyntaxToken AwaitKeyword
         {
             get
             {
-                return AwaitKeywordAccessor(this.SyntaxNode);
+                return AwaitKeywordAccessor(this.node!);
             }
         }
 
@@ -70,7 +73,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ForEachKeywordAccessor(this.SyntaxNode);
+                return ForEachKeywordAccessor(this.node!);
             }
         }
 
@@ -78,7 +81,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return OpenParenTokenAccessor(this.SyntaxNode);
+                return OpenParenTokenAccessor(this.node!);
             }
         }
 
@@ -86,7 +89,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return InKeywordAccessor(this.SyntaxNode);
+                return InKeywordAccessor(this.node!);
             }
         }
 
@@ -94,7 +97,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ExpressionAccessor(this.SyntaxNode);
+                return ExpressionAccessor(this.node!);
             }
         }
 
@@ -102,7 +105,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return CloseParenTokenAccessor(this.SyntaxNode);
+                return CloseParenTokenAccessor(this.node!);
             }
         }
 
@@ -110,11 +113,11 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return StatementAccessor(this.SyntaxNode);
+                return StatementAccessor(this.node!);
             }
         }
 
-        public static explicit operator CommonForEachStatementSyntaxWrapper(SyntaxNode node)
+        public static explicit operator CommonForEachStatementSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -129,52 +132,52 @@ namespace StyleCop.Analyzers.Lightup
             return new CommonForEachStatementSyntaxWrapper((StatementSyntax)node);
         }
 
-        public static implicit operator StatementSyntax(CommonForEachStatementSyntaxWrapper wrapper)
+        public static implicit operator StatementSyntax? (CommonForEachStatementSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public CommonForEachStatementSyntaxWrapper WithAwaitKeyword(SyntaxToken awaitKeyword)
         {
-            return new CommonForEachStatementSyntaxWrapper(WithAwaitKeywordAccessor(this.SyntaxNode, awaitKeyword));
+            return new CommonForEachStatementSyntaxWrapper(WithAwaitKeywordAccessor(this.node!, awaitKeyword));
         }
 
         public CommonForEachStatementSyntaxWrapper WithForEachKeyword(SyntaxToken forEachKeyword)
         {
-            return new CommonForEachStatementSyntaxWrapper(WithForEachKeywordAccessor(this.SyntaxNode, forEachKeyword));
+            return new CommonForEachStatementSyntaxWrapper(WithForEachKeywordAccessor(this.node!, forEachKeyword));
         }
 
         public CommonForEachStatementSyntaxWrapper WithOpenParenToken(SyntaxToken openParenToken)
         {
-            return new CommonForEachStatementSyntaxWrapper(WithOpenParenTokenAccessor(this.SyntaxNode, openParenToken));
+            return new CommonForEachStatementSyntaxWrapper(WithOpenParenTokenAccessor(this.node!, openParenToken));
         }
 
         public CommonForEachStatementSyntaxWrapper WithInKeyword(SyntaxToken inKeyword)
         {
-            return new CommonForEachStatementSyntaxWrapper(WithInKeywordAccessor(this.SyntaxNode, inKeyword));
+            return new CommonForEachStatementSyntaxWrapper(WithInKeywordAccessor(this.node!, inKeyword));
         }
 
         public CommonForEachStatementSyntaxWrapper WithExpression(ExpressionSyntax expression)
         {
-            return new CommonForEachStatementSyntaxWrapper(WithExpressionAccessor(this.SyntaxNode, expression));
+            return new CommonForEachStatementSyntaxWrapper(WithExpressionAccessor(this.node!, expression));
         }
 
         public CommonForEachStatementSyntaxWrapper WithCloseParenToken(SyntaxToken closeParenToken)
         {
-            return new CommonForEachStatementSyntaxWrapper(WithCloseParenTokenAccessor(this.SyntaxNode, closeParenToken));
+            return new CommonForEachStatementSyntaxWrapper(WithCloseParenTokenAccessor(this.node!, closeParenToken));
         }
 
         public CommonForEachStatementSyntaxWrapper WithStatement(StatementSyntax statement)
         {
-            return new CommonForEachStatementSyntaxWrapper(WithStatementAccessor(this.SyntaxNode, statement));
+            return new CommonForEachStatementSyntaxWrapper(WithStatementAccessor(this.node!, statement));
         }
 
-        internal static CommonForEachStatementSyntaxWrapper FromUpcast(StatementSyntax node)
+        internal static CommonForEachStatementSyntaxWrapper FromUpcast(StatementSyntax? node)
         {
             return new CommonForEachStatementSyntaxWrapper(node);
         }

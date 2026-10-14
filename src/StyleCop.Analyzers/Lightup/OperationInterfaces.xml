@@ -27,15 +27,16 @@
 
   <AbstractNode Name="IOperation" Namespace="">
     <OperationKind Include="false" />
-    <Property Name="Parent" Type="IOperation" />
+    <Property Name="Parent" Type="IOperation?" />
     <Property Name="Kind" Type="OperationKind" />
     <Property Name="Syntax" Type="SyntaxNode" />
-    <Property Name="Type" Type="ITypeSymbol" />
-    <Property Name="ConstantValue" Type="Optional&lt;object&gt;" />
-    <Property Name="Children" Type="IEnumerable&lt;IOperation&gt;" />
-    <Property Name="Language" Type="string" />
+    <Property Name="Type" Type="ITypeSymbol?" />
+    <Property Name="ConstantValue" Type="Optional&lt;object?&gt;" />
+    <!-- These members return null on hosts predating the corresponding IOperation properties. -->
+    <Property Name="Children" Type="IEnumerable&lt;IOperation&gt;?" />
+    <Property Name="Language" Type="string?" />
     <Property Name="IsImplicit" Type="bool" />
-    <Property Name="SemanticModel" Type="SemanticModel" />
+    <Property Name="SemanticModel" Type="SemanticModel?" />
   </AbstractNode>
   <Node Name="IInvalidOperation" Base="IOperation" SkipClassGeneration="true">
     <Comments>
@@ -195,7 +196,7 @@
         </summary>
       </Comments>
     </Property>
-    <Property Name="Info" Type="ForEachLoopOperationInfo" Internal="true" SkipGeneration="true" />
+    <Property Name="Info" Type="ForEachLoopOperationInfo?" Internal="true" SkipGeneration="true" />
     <Property Name="IsAsynchronous" Type="bool">
       <Comments>
         <summary>
@@ -230,7 +231,7 @@
         </summary>
       </Comments>
     </Property>
-    <Property Name="Condition" Type="IOperation">
+    <Property Name="Condition" Type="IOperation?">
       <Comments>
         <summary>Condition of the loop. For C#, this comes from the second clause of the for statement.</summary>
       </Comments>
@@ -300,7 +301,7 @@
         </para>
       </summary>
     </Comments>
-    <Property Name="Condition" Type="IOperation">
+    <Property Name="Condition" Type="IOperation?">
       <Comments>
         <summary>Condition of the loop.</summary>
       </Comments>
@@ -318,7 +319,7 @@
         <summary>True if the loop has 'Until' loop semantics and the loop is executed while <see cref="Condition" /> is false.</summary>
       </Comments>
     </Property>
-    <Property Name="IgnoredCondition" Type="IOperation">
+    <Property Name="IgnoredCondition" Type="IOperation?">
       <Comments>
         <summary>
           Additional conditional supplied for loop in error cases, which is ignored by the compiler.
@@ -345,7 +346,7 @@
         <summary>Label that can be the target of branches.</summary>
       </Comments>
     </Property>
-    <Property Name="Operation" Type="IOperation">
+    <Property Name="Operation" Type="IOperation?">
       <Comments>
         <summary>Operation that has been labeled. In VB, this is always null.</summary>
       </Comments>
@@ -400,7 +401,7 @@
         </para>
       </summary>
     </Comments>
-    <Property Name="ReturnedValue" Type="IOperation">
+    <Property Name="ReturnedValue" Type="IOperation?">
       <Comments>
         <summary>Value to be returned.</summary>
       </Comments>
@@ -427,7 +428,7 @@
         <summary>Body of the lock, to be executed while holding the lock.</summary>
       </Comments>
     </Property>
-    <Property Name="LockTakenSymbol" Type="ILocalSymbol" Internal="true"/>
+    <Property Name="LockTakenSymbol" Type="ILocalSymbol?" Internal="true"/>
   </Node>
   <Node Name="ITryOperation" Base="IOperation" ChildrenOrder="Body,Catches,Finally">
     <Comments>
@@ -450,12 +451,12 @@
         <summary>Catch clauses of the try.</summary>
       </Comments>
     </Property>
-    <Property Name="Finally" Type="IBlockOperation">
+    <Property Name="Finally" Type="IBlockOperation?">
       <Comments>
         <summary>Finally handler of the try.</summary>
       </Comments>
     </Property>
-    <Property Name="ExitLabel" Type="ILabelSymbol">
+    <Property Name="ExitLabel" Type="ILabelSymbol?">
       <Comments>
         <summary>Exit label for the try. This will always be null for C#.</summary>
       </Comments>
@@ -530,12 +531,12 @@
         <summary>Local function symbol.</summary>
       </Comments>
     </Property>
-    <Property Name="Body" Type="IBlockOperation">
+    <Property Name="Body" Type="IBlockOperation?">
       <Comments>
         <summary>Body of the local function.</summary>
       </Comments>
     </Property>
-    <Property Name="IgnoredBody" Type="IBlockOperation">
+    <Property Name="IgnoredBody" Type="IBlockOperation?">
       <Comments>
         <summary>An extra body for the local function, if both a block body and expression body are specified in source.</summary>
         <remarks>This is only ever non-null in error situations.</remarks>
@@ -617,7 +618,7 @@
         <summary>Value to be converted.</summary>
       </Comments>
     </Property>
-    <Property Name="OperatorMethod" Type="IMethodSymbol" SkipGeneration="true">
+    <Property Name="OperatorMethod" Type="IMethodSymbol?" SkipGeneration="true">
       <Comments>
         <summary>Operator method used by the operation, null if the operation does not use an operator method.</summary>
       </Comments>
@@ -669,7 +670,7 @@
         <summary>Method to be invoked.</summary>
       </Comments>
     </Property>
-    <Property Name="Instance" Type="IOperation">
+    <Property Name="Instance" Type="IOperation?">
       <Comments>
         <summary>'This' or 'Me' instance to be supplied to the method, or null if the method is static.</summary>
       </Comments>
@@ -764,7 +765,7 @@
         </para>
       </summary>
     </Comments>
-    <Property Name="Instance" Type="IOperation">
+    <Property Name="Instance" Type="IOperation?">
       <Comments>
         <summary>Instance of the type. Null if the reference is to a static/shared member.</summary>
       </Comments>
@@ -908,7 +909,7 @@
         </summary>
       </Comments>
     </Property>
-    <Property Name="OperatorMethod" Type="IMethodSymbol">
+    <Property Name="OperatorMethod" Type="IMethodSymbol?">
       <Comments>
         <summary>Operator method used by the operation, null if the operation does not use an operator method.</summary>
       </Comments>
@@ -968,12 +969,12 @@
         </summary>
       </Comments>
     </Property>
-    <Property Name="OperatorMethod" Type="IMethodSymbol">
+    <Property Name="OperatorMethod" Type="IMethodSymbol?">
       <Comments>
         <summary>Operator method used by the operation, null if the operation does not use an operator method.</summary>
       </Comments>
     </Property>
-    <Property Name="UnaryOperatorMethod" Type="IMethodSymbol" Internal="true">
+    <Property Name="UnaryOperatorMethod" Type="IMethodSymbol?" Internal="true">
       <Comments>
         <summary>
           True/False operator method used for short circuiting.
@@ -1008,7 +1009,7 @@
         </summary>
       </Comments>
     </Property>
-    <Property Name="WhenFalse" Type="IOperation">
+    <Property Name="WhenFalse" Type="IOperation?">
       <Comments>
         <summary>
           Operation to be executed if the <see cref="Condition" /> is false.
@@ -1091,12 +1092,12 @@
         </para>
       </summary>
     </Comments>
-    <Property Name="Constructor" Type="IMethodSymbol">
+    <Property Name="Constructor" Type="IMethodSymbol?">
       <Comments>
         <summary>Constructor to be invoked on the created instance.</summary>
       </Comments>
     </Property>
-    <Property Name="Initializer" Type="IObjectOrCollectionInitializerOperation">
+    <Property Name="Initializer" Type="IObjectOrCollectionInitializerOperation?">
       <Comments>
         <summary>Object or collection initializer, if any.</summary>
       </Comments>
@@ -1122,7 +1123,7 @@
         </para>
       </summary>
     </Comments>
-    <Property Name="Initializer" Type="IObjectOrCollectionInitializerOperation">
+    <Property Name="Initializer" Type="IObjectOrCollectionInitializerOperation?">
       <Comments>
         <summary>Object or collection initializer, if any.</summary>
       </Comments>
@@ -1144,7 +1145,7 @@
         <summary>Sizes of the dimensions of the created array instance.</summary>
       </Comments>
     </Property>
-    <Property Name="Initializer" Type="IArrayInitializerOperation">
+    <Property Name="Initializer" Type="IArrayInitializerOperation?">
       <Comments>
         <summary>Values of elements of the created array instance.</summary>
       </Comments>
@@ -1301,7 +1302,7 @@
         </summary>
       </Comments>
     </Property>
-    <Property Name="OperatorMethod" Type="IMethodSymbol">
+    <Property Name="OperatorMethod" Type="IMethodSymbol?">
       <Comments>
         <summary>Operator method used by the operation, null if the operation does not use an operator method.</summary>
       </Comments>
@@ -1522,7 +1523,7 @@
         <summary>Tuple elements.</summary>
       </Comments>
     </Property>
-    <Property Name="NaturalType" Type="ITypeSymbol">
+    <Property Name="NaturalType" Type="ITypeSymbol?">
       <Comments>
         <summary>
           Natural type of the tuple, or null if tuple doesn't have a natural type.
@@ -1543,7 +1544,7 @@
         </para>
       </summary>
     </Comments>
-    <Property Name="Initializer" Type="IObjectOrCollectionInitializerOperation">
+    <Property Name="Initializer" Type="IObjectOrCollectionInitializerOperation?">
       <Comments>
         <summary>Object or collection initializer, if any.</summary>
       </Comments>
@@ -1565,7 +1566,7 @@
         </para>
       </summary>
     </Comments>
-    <Property Name="Instance" Type="IOperation">
+    <Property Name="Instance" Type="IOperation?">
       <Comments>
         <summary>Instance receiver. In VB, this can be null.</summary>
       </Comments>
@@ -1580,7 +1581,7 @@
         <summary>Type arguments.</summary>
       </Comments>
     </Property>
-    <Property Name="ContainingType" Type="ITypeSymbol">
+    <Property Name="ContainingType" Type="ITypeSymbol?">
       <Comments>
         <summary>
           The containing type of the referenced member, if different from type of the <see cref="Instance" />.
@@ -1803,7 +1804,7 @@
         <summary>Target of the assignment.</summary>
       </Comments>
     </Property>
-    <Property Name="OperatorMethod" Type="IMethodSymbol">
+    <Property Name="OperatorMethod" Type="IMethodSymbol?">
       <Comments>
         <summary>Operator method used by the operation, null if the operation does not use an operator method.</summary>
       </Comments>
@@ -1821,7 +1822,7 @@
         </para>
       </summary>
     </Comments>
-    <Property Name="Exception" Type="IOperation">
+    <Property Name="Exception" Type="IOperation?">
       <Comments>
         <summary>Instance of an exception being thrown.</summary>
       </Comments>
@@ -1992,7 +1993,7 @@
         <summary>Symbol declared by this variable declaration</summary>
       </Comments>
     </Property>
-    <Property Name="Initializer" Type="IVariableInitializerOperation">
+    <Property Name="Initializer" Type="IVariableInitializerOperation?">
       <Comments>
         <summary>Optional initializer of the variable.</summary>
         <remarks>
@@ -2037,7 +2038,7 @@
         </remarks>
       </Comments>
     </Property>
-    <Property Name="Initializer" Type="IVariableInitializerOperation">
+    <Property Name="Initializer" Type="IVariableInitializerOperation?">
       <Comments>
         <summary>Optional initializer of the variable.</summary>
         <remarks>In C#, this will always be null.</remarks>
@@ -2068,7 +2069,7 @@
         <summary>Kind of argument.</summary>
       </Comments>
     </Property>
-    <Property Name="Parameter" Type="IParameterSymbol">
+    <Property Name="Parameter" Type="IParameterSymbol?">
       <Comments>
         <summary>Parameter the argument matches.</summary>
       </Comments>
@@ -2100,7 +2101,7 @@
         </para>
       </summary>
     </Comments>
-    <Property Name="ExceptionDeclarationOrExpression" Type="IOperation">
+    <Property Name="ExceptionDeclarationOrExpression" Type="IOperation?">
       <Comments>
         <summary>
           Optional source for exception. This could be any of the following operation:
@@ -2123,7 +2124,7 @@
         </summary>
       </Comments>
     </Property>
-    <Property Name="Filter" Type="IOperation">
+    <Property Name="Filter" Type="IOperation?">
       <Comments>
         <summary>Filter operation to be executed to determine whether to handle the exception.</summary>
       </Comments>
@@ -2160,7 +2161,7 @@
         <summary>Locals declared within the switch case section scoped to the section.</summary>
       </Comments>
     </Property>
-    <Property Name="Condition" Type="IOperation" Internal="true" SkipGeneration="true">
+    <Property Name="Condition" Type="IOperation?" Internal="true" SkipGeneration="true">
       <Comments>
         <summary>
           Optional combined logical condition that accounts for all <see cref="Clauses"/>.
@@ -2191,7 +2192,7 @@
         <summary>Kind of the clause.</summary>
       </Comments>
     </Property>
-    <Property Name="Label" Type="ILabelSymbol">
+    <Property Name="Label" Type="ILabelSymbol?">
       <Comments>
         <summary>Label associated with the case clause, if any.</summary>
       </Comments>
@@ -2234,7 +2235,7 @@
         <summary>Pattern associated with case clause.</summary>
       </Comments>
     </Property>
-    <Property Name="Guard" Type="IOperation">
+    <Property Name="Guard" Type="IOperation?">
       <Comments>
         <summary>Guard associated with the pattern case clause.</summary>
       </Comments>
@@ -2347,12 +2348,12 @@
         <summary>Expression of the interpolation.</summary>
       </Comments>
     </Property>
-    <Property Name="Alignment" Type="IOperation">
+    <Property Name="Alignment" Type="IOperation?">
       <Comments>
         <summary>Optional alignment of the interpolation.</summary>
       </Comments>
     </Property>
-    <Property Name="FormatString" Type="IOperation">
+    <Property Name="FormatString" Type="IOperation?">
       <Comments>
         <summary>Optional format string of the interpolation.</summary>
       </Comments>
@@ -2405,7 +2406,7 @@
         </para>
       </summary>
     </Comments>
-    <Property Name="MatchedType" Type="ITypeSymbol">
+    <Property Name="MatchedType" Type="ITypeSymbol?">
       <Comments>
         <summary>
           The type explicitly specified, or null if it was inferred (e.g. using <code>var</code> in C#).
@@ -2421,7 +2422,7 @@
         </summary>
       </Comments>
     </Property>
-    <Property Name="DeclaredSymbol" Type="ISymbol">
+    <Property Name="DeclaredSymbol" Type="ISymbol?">
       <Comments>
         <summary>Symbol declared by the pattern, if any.</summary>
       </Comments>
@@ -2467,12 +2468,12 @@
         </para>
       </summary>
     </Comments>
-    <Property Name="BlockBody" Type="IBlockOperation">
+    <Property Name="BlockBody" Type="IBlockOperation?">
       <Comments>
         <summary>Method body corresponding to BaseMethodDeclarationSyntax.Body or AccessorDeclarationSyntax.Body</summary>
       </Comments>
     </Property>
-    <Property Name="ExpressionBody" Type="IBlockOperation">
+    <Property Name="ExpressionBody" Type="IBlockOperation?">
       <Comments>
         <summary>Method body corresponding to BaseMethodDeclarationSyntax.ExpressionBody or AccessorDeclarationSyntax.ExpressionBody</summary>
       </Comments>
@@ -2512,7 +2513,7 @@
         <summary>Local declarations contained within the <see cref="Initializer" />.</summary>
       </Comments>
     </Property>
-    <Property Name="Initializer" Type="IOperation">
+    <Property Name="Initializer" Type="IOperation?">
       <Comments>
         <summary>Constructor initializer, if any.</summary>
       </Comments>
@@ -2647,12 +2648,12 @@
         </para>
       </summary>
     </Comments>
-    <Property Name="LeftOperand" Type="IOperation">
+    <Property Name="LeftOperand" Type="IOperation?">
       <Comments>
         <summary>Left operand.</summary>
       </Comments>
     </Property>
-    <Property Name="RightOperand" Type="IOperation">
+    <Property Name="RightOperand" Type="IOperation?">
       <Comments>
         <summary>Right operand.</summary>
       </Comments>
@@ -2667,7 +2668,7 @@
         </summary>
       </Comments>
     </Property>
-    <Property Name="Method" Type="IMethodSymbol">
+    <Property Name="Method" Type="IMethodSymbol?">
       <Comments>
         <summary>
           Factory method used to create this Range value. Can be null if appropriate
@@ -2727,7 +2728,7 @@
         <summary>The type accepted for the recursive pattern.</summary>
       </Comments>
     </Property>
-    <Property Name="DeconstructSymbol" Type="ISymbol">
+    <Property Name="DeconstructSymbol" Type="ISymbol?">
       <Comments>
         <summary>
           The symbol, if any, used for the fetching values for subpatterns. This is either a <code>Deconstruct</code>
@@ -2746,7 +2747,7 @@
         <summary>This contains the (symbol, property) pairs within a property subpattern.</summary>
       </Comments>
     </Property>
-    <Property Name="DeclaredSymbol" Type="ISymbol">
+    <Property Name="DeclaredSymbol" Type="ISymbol?">
       <Comments>
         <summary>Symbol declared by the pattern.</summary>
       </Comments>
@@ -2792,7 +2793,7 @@
         <summary>The pattern to match.</summary>
       </Comments>
     </Property>
-    <Property Name="Guard" Type="IOperation">
+    <Property Name="Guard" Type="IOperation?">
       <Comments>
         <summary>Guard (when clause expression) associated with the switch arm, if any.</summary>
       </Comments>
@@ -2867,7 +2868,7 @@
         </para>
       </summary>
     </Comments>
-    <Property Name="Initializer" Type="IObjectOrCollectionInitializerOperation">
+    <Property Name="Initializer" Type="IObjectOrCollectionInitializerOperation?">
       <Comments>
         <summary>Object or collection initializer, if any.</summary>
       </Comments>
@@ -3037,7 +3038,7 @@
         <summary>Operand to be cloned.</summary>
       </Comments>
     </Property>
-    <Property Name="CloneMethod" Type="IMethodSymbol">
+    <Property Name="CloneMethod" Type="IMethodSymbol?">
       <Comments>
         <summary>Clone method to be invoked on the value.</summary>
       </Comments>

@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,12 +15,12 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct FieldExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.FieldExpressionSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<ExpressionSyntax, SyntaxToken> TokenAccessor;
         private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithTokenAccessor;
 
-        private readonly ExpressionSyntax node;
+        private readonly ExpressionSyntax? node;
 
         static FieldExpressionSyntaxWrapper()
         {
@@ -26,23 +29,23 @@ namespace StyleCop.Analyzers.Lightup
             WithTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, SyntaxToken>(WrappedType, nameof(Token));
         }
 
-        private FieldExpressionSyntaxWrapper(ExpressionSyntax node)
+        private FieldExpressionSyntaxWrapper(ExpressionSyntax? node)
         {
             this.node = node;
         }
 
-        public ExpressionSyntax SyntaxNode => this.node;
+        public ExpressionSyntax? SyntaxNode => this.node;
 
 
         public SyntaxToken Token
         {
             get
             {
-                return TokenAccessor(this.SyntaxNode);
+                return TokenAccessor(this.node!);
             }
         }
 
-        public static explicit operator FieldExpressionSyntaxWrapper(SyntaxNode node)
+        public static explicit operator FieldExpressionSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -57,19 +60,19 @@ namespace StyleCop.Analyzers.Lightup
             return new FieldExpressionSyntaxWrapper((ExpressionSyntax)node);
         }
 
-        public static implicit operator ExpressionSyntax(FieldExpressionSyntaxWrapper wrapper)
+        public static implicit operator ExpressionSyntax? (FieldExpressionSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public FieldExpressionSyntaxWrapper WithToken(SyntaxToken token)
         {
-            return new FieldExpressionSyntaxWrapper(WithTokenAccessor(this.SyntaxNode, token));
+            return new FieldExpressionSyntaxWrapper(WithTokenAccessor(this.node!, token));
         }
     }
 }

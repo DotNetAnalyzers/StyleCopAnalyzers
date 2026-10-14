@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,7 +15,7 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct ImplicitStackAllocArrayCreationExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<ExpressionSyntax, SyntaxToken> StackAllocKeywordAccessor;
         private static readonly Func<ExpressionSyntax, SyntaxToken> OpenBracketTokenAccessor;
@@ -23,7 +26,7 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithCloseBracketTokenAccessor;
         private static readonly Func<ExpressionSyntax, InitializerExpressionSyntax, ExpressionSyntax> WithInitializerAccessor;
 
-        private readonly ExpressionSyntax node;
+        private readonly ExpressionSyntax? node;
 
         static ImplicitStackAllocArrayCreationExpressionSyntaxWrapper()
         {
@@ -38,19 +41,19 @@ namespace StyleCop.Analyzers.Lightup
             WithInitializerAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, InitializerExpressionSyntax>(WrappedType, nameof(Initializer));
         }
 
-        private ImplicitStackAllocArrayCreationExpressionSyntaxWrapper(ExpressionSyntax node)
+        private ImplicitStackAllocArrayCreationExpressionSyntaxWrapper(ExpressionSyntax? node)
         {
             this.node = node;
         }
 
-        public ExpressionSyntax SyntaxNode => this.node;
+        public ExpressionSyntax? SyntaxNode => this.node;
 
 
         public SyntaxToken StackAllocKeyword
         {
             get
             {
-                return StackAllocKeywordAccessor(this.SyntaxNode);
+                return StackAllocKeywordAccessor(this.node!);
             }
         }
 
@@ -58,7 +61,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return OpenBracketTokenAccessor(this.SyntaxNode);
+                return OpenBracketTokenAccessor(this.node!);
             }
         }
 
@@ -66,7 +69,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return CloseBracketTokenAccessor(this.SyntaxNode);
+                return CloseBracketTokenAccessor(this.node!);
             }
         }
 
@@ -74,11 +77,11 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return InitializerAccessor(this.SyntaxNode);
+                return InitializerAccessor(this.node!);
             }
         }
 
-        public static explicit operator ImplicitStackAllocArrayCreationExpressionSyntaxWrapper(SyntaxNode node)
+        public static explicit operator ImplicitStackAllocArrayCreationExpressionSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -93,34 +96,34 @@ namespace StyleCop.Analyzers.Lightup
             return new ImplicitStackAllocArrayCreationExpressionSyntaxWrapper((ExpressionSyntax)node);
         }
 
-        public static implicit operator ExpressionSyntax(ImplicitStackAllocArrayCreationExpressionSyntaxWrapper wrapper)
+        public static implicit operator ExpressionSyntax? (ImplicitStackAllocArrayCreationExpressionSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public ImplicitStackAllocArrayCreationExpressionSyntaxWrapper WithStackAllocKeyword(SyntaxToken stackAllocKeyword)
         {
-            return new ImplicitStackAllocArrayCreationExpressionSyntaxWrapper(WithStackAllocKeywordAccessor(this.SyntaxNode, stackAllocKeyword));
+            return new ImplicitStackAllocArrayCreationExpressionSyntaxWrapper(WithStackAllocKeywordAccessor(this.node!, stackAllocKeyword));
         }
 
         public ImplicitStackAllocArrayCreationExpressionSyntaxWrapper WithOpenBracketToken(SyntaxToken openBracketToken)
         {
-            return new ImplicitStackAllocArrayCreationExpressionSyntaxWrapper(WithOpenBracketTokenAccessor(this.SyntaxNode, openBracketToken));
+            return new ImplicitStackAllocArrayCreationExpressionSyntaxWrapper(WithOpenBracketTokenAccessor(this.node!, openBracketToken));
         }
 
         public ImplicitStackAllocArrayCreationExpressionSyntaxWrapper WithCloseBracketToken(SyntaxToken closeBracketToken)
         {
-            return new ImplicitStackAllocArrayCreationExpressionSyntaxWrapper(WithCloseBracketTokenAccessor(this.SyntaxNode, closeBracketToken));
+            return new ImplicitStackAllocArrayCreationExpressionSyntaxWrapper(WithCloseBracketTokenAccessor(this.node!, closeBracketToken));
         }
 
         public ImplicitStackAllocArrayCreationExpressionSyntaxWrapper WithInitializer(InitializerExpressionSyntax initializer)
         {
-            return new ImplicitStackAllocArrayCreationExpressionSyntaxWrapper(WithInitializerAccessor(this.SyntaxNode, initializer));
+            return new ImplicitStackAllocArrayCreationExpressionSyntaxWrapper(WithInitializerAccessor(this.node!, initializer));
         }
     }
 }

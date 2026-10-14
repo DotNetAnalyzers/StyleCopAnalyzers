@@ -1,33 +1,36 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct IInvalidOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IInvalidOperation";
-        private static readonly Type WrappedType;
-        private readonly IOperation operation;
+        private static readonly Type? WrappedType;
+        private readonly IOperation? operation;
         static IInvalidOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(IInvalidOperationWrapper));
         }
 
-        private IInvalidOperationWrapper(IOperation operation)
+        private IInvalidOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
 
         public static explicit operator IInvalidOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IInvalidOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static IInvalidOperationWrapper FromOperation(IOperation operation)
+        public static IInvalidOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -42,7 +45,7 @@ namespace StyleCop.Analyzers.Lightup
             return new IInvalidOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }

@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,12 +15,12 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct DefaultConstraintSyntaxWrapper : ISyntaxWrapper<TypeParameterConstraintSyntax>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.DefaultConstraintSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<TypeParameterConstraintSyntax, SyntaxToken> DefaultKeywordAccessor;
         private static readonly Func<TypeParameterConstraintSyntax, SyntaxToken, TypeParameterConstraintSyntax> WithDefaultKeywordAccessor;
 
-        private readonly TypeParameterConstraintSyntax node;
+        private readonly TypeParameterConstraintSyntax? node;
 
         static DefaultConstraintSyntaxWrapper()
         {
@@ -26,23 +29,23 @@ namespace StyleCop.Analyzers.Lightup
             WithDefaultKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeParameterConstraintSyntax, SyntaxToken>(WrappedType, nameof(DefaultKeyword));
         }
 
-        private DefaultConstraintSyntaxWrapper(TypeParameterConstraintSyntax node)
+        private DefaultConstraintSyntaxWrapper(TypeParameterConstraintSyntax? node)
         {
             this.node = node;
         }
 
-        public TypeParameterConstraintSyntax SyntaxNode => this.node;
+        public TypeParameterConstraintSyntax? SyntaxNode => this.node;
 
 
         public SyntaxToken DefaultKeyword
         {
             get
             {
-                return DefaultKeywordAccessor(this.SyntaxNode);
+                return DefaultKeywordAccessor(this.node!);
             }
         }
 
-        public static explicit operator DefaultConstraintSyntaxWrapper(SyntaxNode node)
+        public static explicit operator DefaultConstraintSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -57,19 +60,19 @@ namespace StyleCop.Analyzers.Lightup
             return new DefaultConstraintSyntaxWrapper((TypeParameterConstraintSyntax)node);
         }
 
-        public static implicit operator TypeParameterConstraintSyntax(DefaultConstraintSyntaxWrapper wrapper)
+        public static implicit operator TypeParameterConstraintSyntax? (DefaultConstraintSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public DefaultConstraintSyntaxWrapper WithDefaultKeyword(SyntaxToken defaultKeyword)
         {
-            return new DefaultConstraintSyntaxWrapper(WithDefaultKeywordAccessor(this.SyntaxNode, defaultKeyword));
+            return new DefaultConstraintSyntaxWrapper(WithDefaultKeywordAccessor(this.node!, defaultKeyword));
         }
     }
 }

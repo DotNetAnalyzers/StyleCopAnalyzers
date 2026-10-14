@@ -1,19 +1,22 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct IAssignmentOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IAssignmentOperation";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
         private static readonly Func<IOperation, IOperation> TargetAccessor;
         private static readonly Func<IOperation, IOperation> ValueAccessor;
-        private readonly IOperation operation;
+        private readonly IOperation? operation;
         static IAssignmentOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(IAssignmentOperationWrapper));
@@ -21,19 +24,19 @@ namespace StyleCop.Analyzers.Lightup
             ValueAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation>(WrappedType, nameof(Value));
         }
 
-        private IAssignmentOperationWrapper(IOperation operation)
+        private IAssignmentOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
-        public IOperation Target => TargetAccessor(this.WrappedOperation);
-        public IOperation Value => ValueAccessor(this.WrappedOperation);
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
+        public IOperation Target => TargetAccessor(this.operation!);
+        public IOperation Value => ValueAccessor(this.operation!);
 
         public static explicit operator IAssignmentOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IAssignmentOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static IAssignmentOperationWrapper FromOperation(IOperation operation)
+        public static IAssignmentOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -48,12 +51,12 @@ namespace StyleCop.Analyzers.Lightup
             return new IAssignmentOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }
 
-        internal static IAssignmentOperationWrapper FromUpcast(IOperation operation)
+        internal static IAssignmentOperationWrapper FromUpcast(IOperation? operation)
         {
             return new IAssignmentOperationWrapper(operation);
         }

@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,7 +15,7 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct IgnoredDirectiveTriviaSyntaxWrapper : ISyntaxWrapper<DirectiveTriviaSyntax>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.IgnoredDirectiveTriviaSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<DirectiveTriviaSyntax, SyntaxToken> ColonTokenAccessor;
         private static readonly Func<DirectiveTriviaSyntax, SyntaxToken> ContentAccessor;
@@ -22,7 +25,7 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<DirectiveTriviaSyntax, SyntaxToken, DirectiveTriviaSyntax> WithEndOfDirectiveTokenAccessor;
         private static readonly Func<DirectiveTriviaSyntax, bool, DirectiveTriviaSyntax> WithIsActiveAccessor;
 
-        private readonly DirectiveTriviaSyntax node;
+        private readonly DirectiveTriviaSyntax? node;
 
         static IgnoredDirectiveTriviaSyntaxWrapper()
         {
@@ -36,19 +39,19 @@ namespace StyleCop.Analyzers.Lightup
             WithIsActiveAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<DirectiveTriviaSyntax, bool>(WrappedType, nameof(IsActive));
         }
 
-        private IgnoredDirectiveTriviaSyntaxWrapper(DirectiveTriviaSyntax node)
+        private IgnoredDirectiveTriviaSyntaxWrapper(DirectiveTriviaSyntax? node)
         {
             this.node = node;
         }
 
-        public DirectiveTriviaSyntax SyntaxNode => this.node;
+        public DirectiveTriviaSyntax? SyntaxNode => this.node;
 
 
         public SyntaxToken HashToken
         {
             get
             {
-                return this.SyntaxNode.HashToken;
+                return this.node!.HashToken;
             }
         }
 
@@ -56,7 +59,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ColonTokenAccessor(this.SyntaxNode);
+                return ColonTokenAccessor(this.node!);
             }
         }
 
@@ -64,7 +67,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ContentAccessor(this.SyntaxNode);
+                return ContentAccessor(this.node!);
             }
         }
 
@@ -72,7 +75,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return this.SyntaxNode.EndOfDirectiveToken;
+                return this.node!.EndOfDirectiveToken;
             }
         }
 
@@ -80,11 +83,11 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return this.SyntaxNode.IsActive;
+                return this.node!.IsActive;
             }
         }
 
-        public static explicit operator IgnoredDirectiveTriviaSyntaxWrapper(SyntaxNode node)
+        public static explicit operator IgnoredDirectiveTriviaSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -99,39 +102,39 @@ namespace StyleCop.Analyzers.Lightup
             return new IgnoredDirectiveTriviaSyntaxWrapper((DirectiveTriviaSyntax)node);
         }
 
-        public static implicit operator DirectiveTriviaSyntax(IgnoredDirectiveTriviaSyntaxWrapper wrapper)
+        public static implicit operator DirectiveTriviaSyntax? (IgnoredDirectiveTriviaSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public IgnoredDirectiveTriviaSyntaxWrapper WithHashToken(SyntaxToken hashToken)
         {
-            return new IgnoredDirectiveTriviaSyntaxWrapper(WithHashTokenAccessor(this.SyntaxNode, hashToken));
+            return new IgnoredDirectiveTriviaSyntaxWrapper(WithHashTokenAccessor(this.node!, hashToken));
         }
 
         public IgnoredDirectiveTriviaSyntaxWrapper WithColonToken(SyntaxToken colonToken)
         {
-            return new IgnoredDirectiveTriviaSyntaxWrapper(WithColonTokenAccessor(this.SyntaxNode, colonToken));
+            return new IgnoredDirectiveTriviaSyntaxWrapper(WithColonTokenAccessor(this.node!, colonToken));
         }
 
         public IgnoredDirectiveTriviaSyntaxWrapper WithContent(SyntaxToken content)
         {
-            return new IgnoredDirectiveTriviaSyntaxWrapper(WithContentAccessor(this.SyntaxNode, content));
+            return new IgnoredDirectiveTriviaSyntaxWrapper(WithContentAccessor(this.node!, content));
         }
 
         public IgnoredDirectiveTriviaSyntaxWrapper WithEndOfDirectiveToken(SyntaxToken endOfDirectiveToken)
         {
-            return new IgnoredDirectiveTriviaSyntaxWrapper(WithEndOfDirectiveTokenAccessor(this.SyntaxNode, endOfDirectiveToken));
+            return new IgnoredDirectiveTriviaSyntaxWrapper(WithEndOfDirectiveTokenAccessor(this.node!, endOfDirectiveToken));
         }
 
         public IgnoredDirectiveTriviaSyntaxWrapper WithIsActive(bool isActive)
         {
-            return new IgnoredDirectiveTriviaSyntaxWrapper(WithIsActiveAccessor(this.SyntaxNode, isActive));
+            return new IgnoredDirectiveTriviaSyntaxWrapper(WithIsActiveAccessor(this.node!, isActive));
         }
     }
 }

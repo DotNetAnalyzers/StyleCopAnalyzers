@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,7 +15,7 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct SwitchExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<ExpressionSyntax, ExpressionSyntax> GoverningExpressionAccessor;
         private static readonly Func<ExpressionSyntax, SyntaxToken> SwitchKeywordAccessor;
@@ -25,7 +28,7 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<ExpressionSyntax, SeparatedSyntaxListWrapper<SwitchExpressionArmSyntaxWrapper>, ExpressionSyntax> WithArmsAccessor;
         private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithCloseBraceTokenAccessor;
 
-        private readonly ExpressionSyntax node;
+        private readonly ExpressionSyntax? node;
 
         static SwitchExpressionSyntaxWrapper()
         {
@@ -42,19 +45,19 @@ namespace StyleCop.Analyzers.Lightup
             WithCloseBraceTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, SyntaxToken>(WrappedType, nameof(CloseBraceToken));
         }
 
-        private SwitchExpressionSyntaxWrapper(ExpressionSyntax node)
+        private SwitchExpressionSyntaxWrapper(ExpressionSyntax? node)
         {
             this.node = node;
         }
 
-        public ExpressionSyntax SyntaxNode => this.node;
+        public ExpressionSyntax? SyntaxNode => this.node;
 
 
         public ExpressionSyntax GoverningExpression
         {
             get
             {
-                return GoverningExpressionAccessor(this.SyntaxNode);
+                return GoverningExpressionAccessor(this.node!);
             }
         }
 
@@ -62,7 +65,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return SwitchKeywordAccessor(this.SyntaxNode);
+                return SwitchKeywordAccessor(this.node!);
             }
         }
 
@@ -70,7 +73,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return OpenBraceTokenAccessor(this.SyntaxNode);
+                return OpenBraceTokenAccessor(this.node!);
             }
         }
 
@@ -78,7 +81,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ArmsAccessor(this.SyntaxNode);
+                return ArmsAccessor(this.node!);
             }
         }
 
@@ -86,11 +89,11 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return CloseBraceTokenAccessor(this.SyntaxNode);
+                return CloseBraceTokenAccessor(this.node!);
             }
         }
 
-        public static explicit operator SwitchExpressionSyntaxWrapper(SyntaxNode node)
+        public static explicit operator SwitchExpressionSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -105,39 +108,39 @@ namespace StyleCop.Analyzers.Lightup
             return new SwitchExpressionSyntaxWrapper((ExpressionSyntax)node);
         }
 
-        public static implicit operator ExpressionSyntax(SwitchExpressionSyntaxWrapper wrapper)
+        public static implicit operator ExpressionSyntax? (SwitchExpressionSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public SwitchExpressionSyntaxWrapper WithGoverningExpression(ExpressionSyntax governingExpression)
         {
-            return new SwitchExpressionSyntaxWrapper(WithGoverningExpressionAccessor(this.SyntaxNode, governingExpression));
+            return new SwitchExpressionSyntaxWrapper(WithGoverningExpressionAccessor(this.node!, governingExpression));
         }
 
         public SwitchExpressionSyntaxWrapper WithSwitchKeyword(SyntaxToken switchKeyword)
         {
-            return new SwitchExpressionSyntaxWrapper(WithSwitchKeywordAccessor(this.SyntaxNode, switchKeyword));
+            return new SwitchExpressionSyntaxWrapper(WithSwitchKeywordAccessor(this.node!, switchKeyword));
         }
 
         public SwitchExpressionSyntaxWrapper WithOpenBraceToken(SyntaxToken openBraceToken)
         {
-            return new SwitchExpressionSyntaxWrapper(WithOpenBraceTokenAccessor(this.SyntaxNode, openBraceToken));
+            return new SwitchExpressionSyntaxWrapper(WithOpenBraceTokenAccessor(this.node!, openBraceToken));
         }
 
         public SwitchExpressionSyntaxWrapper WithArms(SeparatedSyntaxListWrapper<SwitchExpressionArmSyntaxWrapper> arms)
         {
-            return new SwitchExpressionSyntaxWrapper(WithArmsAccessor(this.SyntaxNode, arms));
+            return new SwitchExpressionSyntaxWrapper(WithArmsAccessor(this.node!, arms));
         }
 
         public SwitchExpressionSyntaxWrapper WithCloseBraceToken(SyntaxToken closeBraceToken)
         {
-            return new SwitchExpressionSyntaxWrapper(WithCloseBraceTokenAccessor(this.SyntaxNode, closeBraceToken));
+            return new SwitchExpressionSyntaxWrapper(WithCloseBraceTokenAccessor(this.node!, closeBraceToken));
         }
     }
 }

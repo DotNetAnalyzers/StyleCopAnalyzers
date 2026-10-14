@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,7 +15,7 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct ParenthesizedVariableDesignationSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> OpenParenTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, SeparatedSyntaxListWrapper<VariableDesignationSyntaxWrapper>> VariablesAccessor;
@@ -21,7 +24,7 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<CSharpSyntaxNode, SeparatedSyntaxListWrapper<VariableDesignationSyntaxWrapper>, CSharpSyntaxNode> WithVariablesAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithCloseParenTokenAccessor;
 
-        private readonly CSharpSyntaxNode node;
+        private readonly CSharpSyntaxNode? node;
 
         static ParenthesizedVariableDesignationSyntaxWrapper()
         {
@@ -34,19 +37,19 @@ namespace StyleCop.Analyzers.Lightup
             WithCloseParenTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(CloseParenToken));
         }
 
-        private ParenthesizedVariableDesignationSyntaxWrapper(CSharpSyntaxNode node)
+        private ParenthesizedVariableDesignationSyntaxWrapper(CSharpSyntaxNode? node)
         {
             this.node = node;
         }
 
-        public CSharpSyntaxNode SyntaxNode => this.node;
+        public CSharpSyntaxNode? SyntaxNode => this.node;
 
 
         public SyntaxToken OpenParenToken
         {
             get
             {
-                return OpenParenTokenAccessor(this.SyntaxNode);
+                return OpenParenTokenAccessor(this.node!);
             }
         }
 
@@ -54,7 +57,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return VariablesAccessor(this.SyntaxNode);
+                return VariablesAccessor(this.node!);
             }
         }
 
@@ -62,7 +65,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return CloseParenTokenAccessor(this.SyntaxNode);
+                return CloseParenTokenAccessor(this.node!);
             }
         }
 
@@ -71,7 +74,7 @@ namespace StyleCop.Analyzers.Lightup
             return (ParenthesizedVariableDesignationSyntaxWrapper)node.SyntaxNode;
         }
 
-        public static explicit operator ParenthesizedVariableDesignationSyntaxWrapper(SyntaxNode node)
+        public static explicit operator ParenthesizedVariableDesignationSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -91,29 +94,29 @@ namespace StyleCop.Analyzers.Lightup
             return VariableDesignationSyntaxWrapper.FromUpcast(wrapper.node);
         }
 
-        public static implicit operator CSharpSyntaxNode(ParenthesizedVariableDesignationSyntaxWrapper wrapper)
+        public static implicit operator CSharpSyntaxNode? (ParenthesizedVariableDesignationSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public ParenthesizedVariableDesignationSyntaxWrapper WithOpenParenToken(SyntaxToken openParenToken)
         {
-            return new ParenthesizedVariableDesignationSyntaxWrapper(WithOpenParenTokenAccessor(this.SyntaxNode, openParenToken));
+            return new ParenthesizedVariableDesignationSyntaxWrapper(WithOpenParenTokenAccessor(this.node!, openParenToken));
         }
 
         public ParenthesizedVariableDesignationSyntaxWrapper WithVariables(SeparatedSyntaxListWrapper<VariableDesignationSyntaxWrapper> variables)
         {
-            return new ParenthesizedVariableDesignationSyntaxWrapper(WithVariablesAccessor(this.SyntaxNode, variables));
+            return new ParenthesizedVariableDesignationSyntaxWrapper(WithVariablesAccessor(this.node!, variables));
         }
 
         public ParenthesizedVariableDesignationSyntaxWrapper WithCloseParenToken(SyntaxToken closeParenToken)
         {
-            return new ParenthesizedVariableDesignationSyntaxWrapper(WithCloseParenTokenAccessor(this.SyntaxNode, closeParenToken));
+            return new ParenthesizedVariableDesignationSyntaxWrapper(WithCloseParenTokenAccessor(this.node!, closeParenToken));
         }
     }
 }

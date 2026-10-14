@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,13 +15,13 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct PrimaryConstructorBaseTypeSyntaxWrapper : ISyntaxWrapper<BaseTypeSyntax>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.PrimaryConstructorBaseTypeSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<BaseTypeSyntax, ArgumentListSyntax> ArgumentListAccessor;
         private static readonly Func<BaseTypeSyntax, TypeSyntax, BaseTypeSyntax> WithTypeAccessor;
         private static readonly Func<BaseTypeSyntax, ArgumentListSyntax, BaseTypeSyntax> WithArgumentListAccessor;
 
-        private readonly BaseTypeSyntax node;
+        private readonly BaseTypeSyntax? node;
 
         static PrimaryConstructorBaseTypeSyntaxWrapper()
         {
@@ -28,19 +31,19 @@ namespace StyleCop.Analyzers.Lightup
             WithArgumentListAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<BaseTypeSyntax, ArgumentListSyntax>(WrappedType, nameof(ArgumentList));
         }
 
-        private PrimaryConstructorBaseTypeSyntaxWrapper(BaseTypeSyntax node)
+        private PrimaryConstructorBaseTypeSyntaxWrapper(BaseTypeSyntax? node)
         {
             this.node = node;
         }
 
-        public BaseTypeSyntax SyntaxNode => this.node;
+        public BaseTypeSyntax? SyntaxNode => this.node;
 
 
         public TypeSyntax Type
         {
             get
             {
-                return this.SyntaxNode.Type;
+                return this.node!.Type;
             }
         }
 
@@ -48,11 +51,11 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ArgumentListAccessor(this.SyntaxNode);
+                return ArgumentListAccessor(this.node!);
             }
         }
 
-        public static explicit operator PrimaryConstructorBaseTypeSyntaxWrapper(SyntaxNode node)
+        public static explicit operator PrimaryConstructorBaseTypeSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -67,24 +70,24 @@ namespace StyleCop.Analyzers.Lightup
             return new PrimaryConstructorBaseTypeSyntaxWrapper((BaseTypeSyntax)node);
         }
 
-        public static implicit operator BaseTypeSyntax(PrimaryConstructorBaseTypeSyntaxWrapper wrapper)
+        public static implicit operator BaseTypeSyntax? (PrimaryConstructorBaseTypeSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public PrimaryConstructorBaseTypeSyntaxWrapper WithType(TypeSyntax type)
         {
-            return new PrimaryConstructorBaseTypeSyntaxWrapper(WithTypeAccessor(this.SyntaxNode, type));
+            return new PrimaryConstructorBaseTypeSyntaxWrapper(WithTypeAccessor(this.node!, type));
         }
 
         public PrimaryConstructorBaseTypeSyntaxWrapper WithArgumentList(ArgumentListSyntax argumentList)
         {
-            return new PrimaryConstructorBaseTypeSyntaxWrapper(WithArgumentListAccessor(this.SyntaxNode, argumentList));
+            return new PrimaryConstructorBaseTypeSyntaxWrapper(WithArgumentListAccessor(this.node!, argumentList));
         }
     }
 }

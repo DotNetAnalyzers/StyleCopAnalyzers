@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,21 +15,21 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct PatternSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.PatternSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
-        private readonly CSharpSyntaxNode node;
+        private readonly CSharpSyntaxNode? node;
 
         static PatternSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(PatternSyntaxWrapper));
         }
 
-        private PatternSyntaxWrapper(CSharpSyntaxNode node)
+        private PatternSyntaxWrapper(CSharpSyntaxNode? node)
         {
             this.node = node;
         }
 
-        public CSharpSyntaxNode SyntaxNode => this.node;
+        public CSharpSyntaxNode? SyntaxNode => this.node;
 
 
         public static explicit operator PatternSyntaxWrapper(ExpressionOrPatternSyntaxWrapper node)
@@ -34,7 +37,7 @@ namespace StyleCop.Analyzers.Lightup
             return (PatternSyntaxWrapper)node.SyntaxNode;
         }
 
-        public static explicit operator PatternSyntaxWrapper(SyntaxNode node)
+        public static explicit operator PatternSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -54,17 +57,17 @@ namespace StyleCop.Analyzers.Lightup
             return ExpressionOrPatternSyntaxWrapper.FromUpcast(wrapper.node);
         }
 
-        public static implicit operator CSharpSyntaxNode(PatternSyntaxWrapper wrapper)
+        public static implicit operator CSharpSyntaxNode? (PatternSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
-        internal static PatternSyntaxWrapper FromUpcast(CSharpSyntaxNode node)
+        internal static PatternSyntaxWrapper FromUpcast(CSharpSyntaxNode? node)
         {
             return new PatternSyntaxWrapper(node);
         }

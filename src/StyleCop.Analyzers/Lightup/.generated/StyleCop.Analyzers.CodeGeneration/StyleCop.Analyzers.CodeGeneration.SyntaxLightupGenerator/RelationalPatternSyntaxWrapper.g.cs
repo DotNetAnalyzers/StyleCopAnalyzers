@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,14 +15,14 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct RelationalPatternSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.RelationalPatternSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> OperatorTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, ExpressionSyntax> ExpressionAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithOperatorTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, ExpressionSyntax, CSharpSyntaxNode> WithExpressionAccessor;
 
-        private readonly CSharpSyntaxNode node;
+        private readonly CSharpSyntaxNode? node;
 
         static RelationalPatternSyntaxWrapper()
         {
@@ -30,19 +33,19 @@ namespace StyleCop.Analyzers.Lightup
             WithExpressionAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, ExpressionSyntax>(WrappedType, nameof(Expression));
         }
 
-        private RelationalPatternSyntaxWrapper(CSharpSyntaxNode node)
+        private RelationalPatternSyntaxWrapper(CSharpSyntaxNode? node)
         {
             this.node = node;
         }
 
-        public CSharpSyntaxNode SyntaxNode => this.node;
+        public CSharpSyntaxNode? SyntaxNode => this.node;
 
 
         public SyntaxToken OperatorToken
         {
             get
             {
-                return OperatorTokenAccessor(this.SyntaxNode);
+                return OperatorTokenAccessor(this.node!);
             }
         }
 
@@ -50,7 +53,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ExpressionAccessor(this.SyntaxNode);
+                return ExpressionAccessor(this.node!);
             }
         }
 
@@ -64,7 +67,7 @@ namespace StyleCop.Analyzers.Lightup
             return (RelationalPatternSyntaxWrapper)node.SyntaxNode;
         }
 
-        public static explicit operator RelationalPatternSyntaxWrapper(SyntaxNode node)
+        public static explicit operator RelationalPatternSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -89,24 +92,24 @@ namespace StyleCop.Analyzers.Lightup
             return ExpressionOrPatternSyntaxWrapper.FromUpcast(wrapper.node);
         }
 
-        public static implicit operator CSharpSyntaxNode(RelationalPatternSyntaxWrapper wrapper)
+        public static implicit operator CSharpSyntaxNode? (RelationalPatternSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public RelationalPatternSyntaxWrapper WithOperatorToken(SyntaxToken operatorToken)
         {
-            return new RelationalPatternSyntaxWrapper(WithOperatorTokenAccessor(this.SyntaxNode, operatorToken));
+            return new RelationalPatternSyntaxWrapper(WithOperatorTokenAccessor(this.node!, operatorToken));
         }
 
         public RelationalPatternSyntaxWrapper WithExpression(ExpressionSyntax expression)
         {
-            return new RelationalPatternSyntaxWrapper(WithExpressionAccessor(this.SyntaxNode, expression));
+            return new RelationalPatternSyntaxWrapper(WithExpressionAccessor(this.node!, expression));
         }
     }
 }

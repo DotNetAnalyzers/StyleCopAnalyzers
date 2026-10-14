@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,7 +15,7 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct FunctionPointerParameterSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.FunctionPointerParameterSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<CSharpSyntaxNode, SyntaxList<AttributeListSyntax>> AttributeListsAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxTokenList> ModifiersAccessor;
@@ -21,7 +24,7 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<CSharpSyntaxNode, SyntaxTokenList, CSharpSyntaxNode> WithModifiersAccessor;
         private static readonly Func<CSharpSyntaxNode, TypeSyntax, CSharpSyntaxNode> WithTypeAccessor;
 
-        private readonly CSharpSyntaxNode node;
+        private readonly CSharpSyntaxNode? node;
 
         static FunctionPointerParameterSyntaxWrapper()
         {
@@ -34,19 +37,19 @@ namespace StyleCop.Analyzers.Lightup
             WithTypeAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, TypeSyntax>(WrappedType, nameof(Type));
         }
 
-        private FunctionPointerParameterSyntaxWrapper(CSharpSyntaxNode node)
+        private FunctionPointerParameterSyntaxWrapper(CSharpSyntaxNode? node)
         {
             this.node = node;
         }
 
-        public CSharpSyntaxNode SyntaxNode => this.node;
+        public CSharpSyntaxNode? SyntaxNode => this.node;
 
 
         public SyntaxList<AttributeListSyntax> AttributeLists
         {
             get
             {
-                return AttributeListsAccessor(this.SyntaxNode);
+                return AttributeListsAccessor(this.node!);
             }
         }
 
@@ -54,7 +57,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return ModifiersAccessor(this.SyntaxNode);
+                return ModifiersAccessor(this.node!);
             }
         }
 
@@ -62,7 +65,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return TypeAccessor(this.SyntaxNode);
+                return TypeAccessor(this.node!);
             }
         }
 
@@ -71,7 +74,7 @@ namespace StyleCop.Analyzers.Lightup
             return (FunctionPointerParameterSyntaxWrapper)node.SyntaxNode;
         }
 
-        public static explicit operator FunctionPointerParameterSyntaxWrapper(SyntaxNode node)
+        public static explicit operator FunctionPointerParameterSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -91,29 +94,29 @@ namespace StyleCop.Analyzers.Lightup
             return BaseParameterSyntaxWrapper.FromUpcast(wrapper.node);
         }
 
-        public static implicit operator CSharpSyntaxNode(FunctionPointerParameterSyntaxWrapper wrapper)
+        public static implicit operator CSharpSyntaxNode? (FunctionPointerParameterSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public FunctionPointerParameterSyntaxWrapper WithAttributeLists(SyntaxList<AttributeListSyntax> attributeLists)
         {
-            return new FunctionPointerParameterSyntaxWrapper(WithAttributeListsAccessor(this.SyntaxNode, attributeLists));
+            return new FunctionPointerParameterSyntaxWrapper(WithAttributeListsAccessor(this.node!, attributeLists));
         }
 
         public FunctionPointerParameterSyntaxWrapper WithModifiers(SyntaxTokenList modifiers)
         {
-            return new FunctionPointerParameterSyntaxWrapper(WithModifiersAccessor(this.SyntaxNode, modifiers));
+            return new FunctionPointerParameterSyntaxWrapper(WithModifiersAccessor(this.node!, modifiers));
         }
 
         public FunctionPointerParameterSyntaxWrapper WithType(TypeSyntax type)
         {
-            return new FunctionPointerParameterSyntaxWrapper(WithTypeAccessor(this.SyntaxNode, type));
+            return new FunctionPointerParameterSyntaxWrapper(WithTypeAccessor(this.node!, type));
         }
     }
 }

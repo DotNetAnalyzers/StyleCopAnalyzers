@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,31 +15,31 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct ExtensionBlockDeclarationSyntaxWrapper : ISyntaxWrapper<TypeDeclarationSyntax>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.ExtensionBlockDeclarationSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
-        private static readonly Func<TypeDeclarationSyntax, ParameterListSyntax> ParameterListAccessor;
+        private static readonly Func<TypeDeclarationSyntax, ParameterListSyntax?> ParameterListAccessor;
         private static readonly Func<TypeDeclarationSyntax, SyntaxList<AttributeListSyntax>, TypeDeclarationSyntax> WithAttributeListsAccessor;
         private static readonly Func<TypeDeclarationSyntax, SyntaxTokenList, TypeDeclarationSyntax> WithModifiersAccessor;
         private static readonly Func<TypeDeclarationSyntax, SyntaxToken, TypeDeclarationSyntax> WithKeywordAccessor;
-        private static readonly Func<TypeDeclarationSyntax, TypeParameterListSyntax, TypeDeclarationSyntax> WithTypeParameterListAccessor;
-        private static readonly Func<TypeDeclarationSyntax, ParameterListSyntax, TypeDeclarationSyntax> WithParameterListAccessor;
+        private static readonly Func<TypeDeclarationSyntax, TypeParameterListSyntax?, TypeDeclarationSyntax> WithTypeParameterListAccessor;
+        private static readonly Func<TypeDeclarationSyntax, ParameterListSyntax?, TypeDeclarationSyntax> WithParameterListAccessor;
         private static readonly Func<TypeDeclarationSyntax, SyntaxList<TypeParameterConstraintClauseSyntax>, TypeDeclarationSyntax> WithConstraintClausesAccessor;
         private static readonly Func<TypeDeclarationSyntax, SyntaxToken, TypeDeclarationSyntax> WithOpenBraceTokenAccessor;
         private static readonly Func<TypeDeclarationSyntax, SyntaxList<MemberDeclarationSyntax>, TypeDeclarationSyntax> WithMembersAccessor;
         private static readonly Func<TypeDeclarationSyntax, SyntaxToken, TypeDeclarationSyntax> WithCloseBraceTokenAccessor;
         private static readonly Func<TypeDeclarationSyntax, SyntaxToken, TypeDeclarationSyntax> WithSemicolonTokenAccessor;
 
-        private readonly TypeDeclarationSyntax node;
+        private readonly TypeDeclarationSyntax? node;
 
         static ExtensionBlockDeclarationSyntaxWrapper()
         {
             WrappedType = SyntaxWrapperHelper.GetWrappedType(typeof(ExtensionBlockDeclarationSyntaxWrapper));
-            ParameterListAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<TypeDeclarationSyntax, ParameterListSyntax>(WrappedType, nameof(ParameterList));
+            ParameterListAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<TypeDeclarationSyntax, ParameterListSyntax?>(WrappedType, nameof(ParameterList));
             WithAttributeListsAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, SyntaxList<AttributeListSyntax>>(WrappedType, nameof(AttributeLists));
             WithModifiersAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, SyntaxTokenList>(WrappedType, nameof(Modifiers));
             WithKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, SyntaxToken>(WrappedType, nameof(Keyword));
-            WithTypeParameterListAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, TypeParameterListSyntax>(WrappedType, nameof(TypeParameterList));
-            WithParameterListAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, ParameterListSyntax>(WrappedType, nameof(ParameterList));
+            WithTypeParameterListAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, TypeParameterListSyntax?>(WrappedType, nameof(TypeParameterList));
+            WithParameterListAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, ParameterListSyntax?>(WrappedType, nameof(ParameterList));
             WithConstraintClausesAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, SyntaxList<TypeParameterConstraintClauseSyntax>>(WrappedType, nameof(ConstraintClauses));
             WithOpenBraceTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, SyntaxToken>(WrappedType, nameof(OpenBraceToken));
             WithMembersAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, SyntaxList<MemberDeclarationSyntax>>(WrappedType, nameof(Members));
@@ -44,19 +47,19 @@ namespace StyleCop.Analyzers.Lightup
             WithSemicolonTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeDeclarationSyntax, SyntaxToken>(WrappedType, nameof(SemicolonToken));
         }
 
-        private ExtensionBlockDeclarationSyntaxWrapper(TypeDeclarationSyntax node)
+        private ExtensionBlockDeclarationSyntaxWrapper(TypeDeclarationSyntax? node)
         {
             this.node = node;
         }
 
-        public TypeDeclarationSyntax SyntaxNode => this.node;
+        public TypeDeclarationSyntax? SyntaxNode => this.node;
 
 
         public SyntaxList<AttributeListSyntax> AttributeLists
         {
             get
             {
-                return this.SyntaxNode.AttributeLists;
+                return this.node!.AttributeLists;
             }
         }
 
@@ -64,7 +67,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return this.SyntaxNode.Modifiers;
+                return this.node!.Modifiers;
             }
         }
 
@@ -72,23 +75,23 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return this.SyntaxNode.Keyword;
+                return this.node!.Keyword;
             }
         }
 
-        public TypeParameterListSyntax TypeParameterList
+        public TypeParameterListSyntax? TypeParameterList
         {
             get
             {
-                return this.SyntaxNode.TypeParameterList;
+                return this.node!.TypeParameterList;
             }
         }
 
-        public ParameterListSyntax ParameterList
+        public ParameterListSyntax? ParameterList
         {
             get
             {
-                return ParameterListAccessor(this.SyntaxNode);
+                return ParameterListAccessor(this.node!);
             }
         }
 
@@ -96,7 +99,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return this.SyntaxNode.ConstraintClauses;
+                return this.node!.ConstraintClauses;
             }
         }
 
@@ -104,7 +107,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return this.SyntaxNode.OpenBraceToken;
+                return this.node!.OpenBraceToken;
             }
         }
 
@@ -112,7 +115,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return this.SyntaxNode.Members;
+                return this.node!.Members;
             }
         }
 
@@ -120,7 +123,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return this.SyntaxNode.CloseBraceToken;
+                return this.node!.CloseBraceToken;
             }
         }
 
@@ -128,11 +131,11 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return this.SyntaxNode.SemicolonToken;
+                return this.node!.SemicolonToken;
             }
         }
 
-        public static explicit operator ExtensionBlockDeclarationSyntaxWrapper(SyntaxNode node)
+        public static explicit operator ExtensionBlockDeclarationSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -147,64 +150,64 @@ namespace StyleCop.Analyzers.Lightup
             return new ExtensionBlockDeclarationSyntaxWrapper((TypeDeclarationSyntax)node);
         }
 
-        public static implicit operator TypeDeclarationSyntax(ExtensionBlockDeclarationSyntaxWrapper wrapper)
+        public static implicit operator TypeDeclarationSyntax? (ExtensionBlockDeclarationSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public ExtensionBlockDeclarationSyntaxWrapper WithAttributeLists(SyntaxList<AttributeListSyntax> attributeLists)
         {
-            return new ExtensionBlockDeclarationSyntaxWrapper(WithAttributeListsAccessor(this.SyntaxNode, attributeLists));
+            return new ExtensionBlockDeclarationSyntaxWrapper(WithAttributeListsAccessor(this.node!, attributeLists));
         }
 
         public ExtensionBlockDeclarationSyntaxWrapper WithModifiers(SyntaxTokenList modifiers)
         {
-            return new ExtensionBlockDeclarationSyntaxWrapper(WithModifiersAccessor(this.SyntaxNode, modifiers));
+            return new ExtensionBlockDeclarationSyntaxWrapper(WithModifiersAccessor(this.node!, modifiers));
         }
 
         public ExtensionBlockDeclarationSyntaxWrapper WithKeyword(SyntaxToken keyword)
         {
-            return new ExtensionBlockDeclarationSyntaxWrapper(WithKeywordAccessor(this.SyntaxNode, keyword));
+            return new ExtensionBlockDeclarationSyntaxWrapper(WithKeywordAccessor(this.node!, keyword));
         }
 
-        public ExtensionBlockDeclarationSyntaxWrapper WithTypeParameterList(TypeParameterListSyntax typeParameterList)
+        public ExtensionBlockDeclarationSyntaxWrapper WithTypeParameterList(TypeParameterListSyntax? typeParameterList)
         {
-            return new ExtensionBlockDeclarationSyntaxWrapper(WithTypeParameterListAccessor(this.SyntaxNode, typeParameterList));
+            return new ExtensionBlockDeclarationSyntaxWrapper(WithTypeParameterListAccessor(this.node!, typeParameterList));
         }
 
-        public ExtensionBlockDeclarationSyntaxWrapper WithParameterList(ParameterListSyntax parameterList)
+        public ExtensionBlockDeclarationSyntaxWrapper WithParameterList(ParameterListSyntax? parameterList)
         {
-            return new ExtensionBlockDeclarationSyntaxWrapper(WithParameterListAccessor(this.SyntaxNode, parameterList));
+            return new ExtensionBlockDeclarationSyntaxWrapper(WithParameterListAccessor(this.node!, parameterList));
         }
 
         public ExtensionBlockDeclarationSyntaxWrapper WithConstraintClauses(SyntaxList<TypeParameterConstraintClauseSyntax> constraintClauses)
         {
-            return new ExtensionBlockDeclarationSyntaxWrapper(WithConstraintClausesAccessor(this.SyntaxNode, constraintClauses));
+            return new ExtensionBlockDeclarationSyntaxWrapper(WithConstraintClausesAccessor(this.node!, constraintClauses));
         }
 
         public ExtensionBlockDeclarationSyntaxWrapper WithOpenBraceToken(SyntaxToken openBraceToken)
         {
-            return new ExtensionBlockDeclarationSyntaxWrapper(WithOpenBraceTokenAccessor(this.SyntaxNode, openBraceToken));
+            return new ExtensionBlockDeclarationSyntaxWrapper(WithOpenBraceTokenAccessor(this.node!, openBraceToken));
         }
 
         public ExtensionBlockDeclarationSyntaxWrapper WithMembers(SyntaxList<MemberDeclarationSyntax> members)
         {
-            return new ExtensionBlockDeclarationSyntaxWrapper(WithMembersAccessor(this.SyntaxNode, members));
+            return new ExtensionBlockDeclarationSyntaxWrapper(WithMembersAccessor(this.node!, members));
         }
 
         public ExtensionBlockDeclarationSyntaxWrapper WithCloseBraceToken(SyntaxToken closeBraceToken)
         {
-            return new ExtensionBlockDeclarationSyntaxWrapper(WithCloseBraceTokenAccessor(this.SyntaxNode, closeBraceToken));
+            return new ExtensionBlockDeclarationSyntaxWrapper(WithCloseBraceTokenAccessor(this.node!, closeBraceToken));
         }
 
         public ExtensionBlockDeclarationSyntaxWrapper WithSemicolonToken(SyntaxToken semicolonToken)
         {
-            return new ExtensionBlockDeclarationSyntaxWrapper(WithSemicolonTokenAccessor(this.SyntaxNode, semicolonToken));
+            return new ExtensionBlockDeclarationSyntaxWrapper(WithSemicolonTokenAccessor(this.node!, semicolonToken));
         }
     }
 }

@@ -51,7 +51,7 @@ namespace StyleCop.Analyzers.Test.Lightup
             var syntaxNode = default(SyntaxNode);
             var wrapper = (ForEachVariableStatementSyntaxWrapper)syntaxNode;
 
-            StatementSyntax syntax = wrapper;
+            StatementSyntax? syntax = wrapper;
             Assert.Null(syntax);
 
             wrapper = (ForEachVariableStatementSyntaxWrapper)(CommonForEachStatementSyntaxWrapper)syntaxNode;

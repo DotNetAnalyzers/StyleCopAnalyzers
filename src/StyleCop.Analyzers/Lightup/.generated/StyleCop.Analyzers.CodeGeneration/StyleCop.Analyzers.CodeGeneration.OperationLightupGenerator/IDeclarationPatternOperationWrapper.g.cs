@@ -1,38 +1,41 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct IDeclarationPatternOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IDeclarationPatternOperation";
-        private static readonly Type WrappedType;
-        private static readonly Func<IOperation, ITypeSymbol> MatchedTypeAccessor;
+        private static readonly Type? WrappedType;
+        private static readonly Func<IOperation, ITypeSymbol?> MatchedTypeAccessor;
         private static readonly Func<IOperation, bool> MatchesNullAccessor;
-        private static readonly Func<IOperation, ISymbol> DeclaredSymbolAccessor;
-        private readonly IOperation operation;
+        private static readonly Func<IOperation, ISymbol?> DeclaredSymbolAccessor;
+        private readonly IOperation? operation;
         static IDeclarationPatternOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(IDeclarationPatternOperationWrapper));
-            MatchedTypeAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, ITypeSymbol>(WrappedType, nameof(MatchedType));
+            MatchedTypeAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, ITypeSymbol?>(WrappedType, nameof(MatchedType));
             MatchesNullAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, bool>(WrappedType, nameof(MatchesNull));
-            DeclaredSymbolAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, ISymbol>(WrappedType, nameof(DeclaredSymbol));
+            DeclaredSymbolAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, ISymbol?>(WrappedType, nameof(DeclaredSymbol));
         }
 
-        private IDeclarationPatternOperationWrapper(IOperation operation)
+        private IDeclarationPatternOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
-        public ITypeSymbol MatchedType => MatchedTypeAccessor(this.WrappedOperation);
-        public bool MatchesNull => MatchesNullAccessor(this.WrappedOperation);
-        public ISymbol DeclaredSymbol => DeclaredSymbolAccessor(this.WrappedOperation);
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
+        public ITypeSymbol? MatchedType => MatchedTypeAccessor(this.operation!);
+        public bool MatchesNull => MatchesNullAccessor(this.operation!);
+        public ISymbol? DeclaredSymbol => DeclaredSymbolAccessor(this.operation!);
 
         public static explicit operator IDeclarationPatternOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(IDeclarationPatternOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
@@ -41,7 +44,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public static explicit operator IDeclarationPatternOperationWrapper(IPatternOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IPatternOperationWrapper(IDeclarationPatternOperationWrapper wrapper) => IPatternOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static IDeclarationPatternOperationWrapper FromOperation(IOperation operation)
+        public static IDeclarationPatternOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -56,7 +59,7 @@ namespace StyleCop.Analyzers.Lightup
             return new IDeclarationPatternOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }

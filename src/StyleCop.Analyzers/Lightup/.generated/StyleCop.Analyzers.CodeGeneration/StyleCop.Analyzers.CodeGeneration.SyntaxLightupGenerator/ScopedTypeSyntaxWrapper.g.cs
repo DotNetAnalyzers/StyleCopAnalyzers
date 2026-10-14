@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,14 +15,14 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct ScopedTypeSyntaxWrapper : ISyntaxWrapper<TypeSyntax>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.ScopedTypeSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<TypeSyntax, SyntaxToken> ScopedKeywordAccessor;
         private static readonly Func<TypeSyntax, TypeSyntax> TypeAccessor;
         private static readonly Func<TypeSyntax, SyntaxToken, TypeSyntax> WithScopedKeywordAccessor;
         private static readonly Func<TypeSyntax, TypeSyntax, TypeSyntax> WithTypeAccessor;
 
-        private readonly TypeSyntax node;
+        private readonly TypeSyntax? node;
 
         static ScopedTypeSyntaxWrapper()
         {
@@ -30,19 +33,19 @@ namespace StyleCop.Analyzers.Lightup
             WithTypeAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeSyntax, TypeSyntax>(WrappedType, nameof(Type));
         }
 
-        private ScopedTypeSyntaxWrapper(TypeSyntax node)
+        private ScopedTypeSyntaxWrapper(TypeSyntax? node)
         {
             this.node = node;
         }
 
-        public TypeSyntax SyntaxNode => this.node;
+        public TypeSyntax? SyntaxNode => this.node;
 
 
         public SyntaxToken ScopedKeyword
         {
             get
             {
-                return ScopedKeywordAccessor(this.SyntaxNode);
+                return ScopedKeywordAccessor(this.node!);
             }
         }
 
@@ -50,11 +53,11 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return TypeAccessor(this.SyntaxNode);
+                return TypeAccessor(this.node!);
             }
         }
 
-        public static explicit operator ScopedTypeSyntaxWrapper(SyntaxNode node)
+        public static explicit operator ScopedTypeSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -69,24 +72,24 @@ namespace StyleCop.Analyzers.Lightup
             return new ScopedTypeSyntaxWrapper((TypeSyntax)node);
         }
 
-        public static implicit operator TypeSyntax(ScopedTypeSyntaxWrapper wrapper)
+        public static implicit operator TypeSyntax? (ScopedTypeSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public ScopedTypeSyntaxWrapper WithScopedKeyword(SyntaxToken scopedKeyword)
         {
-            return new ScopedTypeSyntaxWrapper(WithScopedKeywordAccessor(this.SyntaxNode, scopedKeyword));
+            return new ScopedTypeSyntaxWrapper(WithScopedKeywordAccessor(this.node!, scopedKeyword));
         }
 
         public ScopedTypeSyntaxWrapper WithType(TypeSyntax type)
         {
-            return new ScopedTypeSyntaxWrapper(WithTypeAccessor(this.SyntaxNode, type));
+            return new ScopedTypeSyntaxWrapper(WithTypeAccessor(this.node!, type));
         }
     }
 }

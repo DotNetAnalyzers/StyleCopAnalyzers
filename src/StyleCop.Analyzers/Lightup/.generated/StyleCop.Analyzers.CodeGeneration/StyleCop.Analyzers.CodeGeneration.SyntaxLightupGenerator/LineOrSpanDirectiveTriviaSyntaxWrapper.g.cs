@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,14 +15,14 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct LineOrSpanDirectiveTriviaSyntaxWrapper : ISyntaxWrapper<DirectiveTriviaSyntax>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.LineOrSpanDirectiveTriviaSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<DirectiveTriviaSyntax, SyntaxToken> LineKeywordAccessor;
         private static readonly Func<DirectiveTriviaSyntax, SyntaxToken> FileAccessor;
         private static readonly Func<DirectiveTriviaSyntax, SyntaxToken, DirectiveTriviaSyntax> WithLineKeywordAccessor;
         private static readonly Func<DirectiveTriviaSyntax, SyntaxToken, DirectiveTriviaSyntax> WithFileAccessor;
 
-        private readonly DirectiveTriviaSyntax node;
+        private readonly DirectiveTriviaSyntax? node;
 
         static LineOrSpanDirectiveTriviaSyntaxWrapper()
         {
@@ -30,19 +33,19 @@ namespace StyleCop.Analyzers.Lightup
             WithFileAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<DirectiveTriviaSyntax, SyntaxToken>(WrappedType, nameof(File));
         }
 
-        private LineOrSpanDirectiveTriviaSyntaxWrapper(DirectiveTriviaSyntax node)
+        private LineOrSpanDirectiveTriviaSyntaxWrapper(DirectiveTriviaSyntax? node)
         {
             this.node = node;
         }
 
-        public DirectiveTriviaSyntax SyntaxNode => this.node;
+        public DirectiveTriviaSyntax? SyntaxNode => this.node;
 
 
         public SyntaxToken LineKeyword
         {
             get
             {
-                return LineKeywordAccessor(this.SyntaxNode);
+                return LineKeywordAccessor(this.node!);
             }
         }
 
@@ -50,11 +53,11 @@ namespace StyleCop.Analyzers.Lightup
         {
             get
             {
-                return FileAccessor(this.SyntaxNode);
+                return FileAccessor(this.node!);
             }
         }
 
-        public static explicit operator LineOrSpanDirectiveTriviaSyntaxWrapper(SyntaxNode node)
+        public static explicit operator LineOrSpanDirectiveTriviaSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -69,27 +72,27 @@ namespace StyleCop.Analyzers.Lightup
             return new LineOrSpanDirectiveTriviaSyntaxWrapper((DirectiveTriviaSyntax)node);
         }
 
-        public static implicit operator DirectiveTriviaSyntax(LineOrSpanDirectiveTriviaSyntaxWrapper wrapper)
+        public static implicit operator DirectiveTriviaSyntax? (LineOrSpanDirectiveTriviaSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public LineOrSpanDirectiveTriviaSyntaxWrapper WithLineKeyword(SyntaxToken lineKeyword)
         {
-            return new LineOrSpanDirectiveTriviaSyntaxWrapper(WithLineKeywordAccessor(this.SyntaxNode, lineKeyword));
+            return new LineOrSpanDirectiveTriviaSyntaxWrapper(WithLineKeywordAccessor(this.node!, lineKeyword));
         }
 
         public LineOrSpanDirectiveTriviaSyntaxWrapper WithFile(SyntaxToken file)
         {
-            return new LineOrSpanDirectiveTriviaSyntaxWrapper(WithFileAccessor(this.SyntaxNode, file));
+            return new LineOrSpanDirectiveTriviaSyntaxWrapper(WithFileAccessor(this.node!, file));
         }
 
-        internal static LineOrSpanDirectiveTriviaSyntaxWrapper FromUpcast(DirectiveTriviaSyntax node)
+        internal static LineOrSpanDirectiveTriviaSyntaxWrapper FromUpcast(DirectiveTriviaSyntax? node)
         {
             return new LineOrSpanDirectiveTriviaSyntaxWrapper(node);
         }

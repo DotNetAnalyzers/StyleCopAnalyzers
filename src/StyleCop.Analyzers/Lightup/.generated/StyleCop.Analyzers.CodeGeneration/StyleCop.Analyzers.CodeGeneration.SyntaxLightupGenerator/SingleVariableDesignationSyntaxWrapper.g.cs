@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,12 +15,12 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct SingleVariableDesignationSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.SingleVariableDesignationSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> IdentifierAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithIdentifierAccessor;
 
-        private readonly CSharpSyntaxNode node;
+        private readonly CSharpSyntaxNode? node;
 
         static SingleVariableDesignationSyntaxWrapper()
         {
@@ -26,19 +29,19 @@ namespace StyleCop.Analyzers.Lightup
             WithIdentifierAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(Identifier));
         }
 
-        private SingleVariableDesignationSyntaxWrapper(CSharpSyntaxNode node)
+        private SingleVariableDesignationSyntaxWrapper(CSharpSyntaxNode? node)
         {
             this.node = node;
         }
 
-        public CSharpSyntaxNode SyntaxNode => this.node;
+        public CSharpSyntaxNode? SyntaxNode => this.node;
 
 
         public SyntaxToken Identifier
         {
             get
             {
-                return IdentifierAccessor(this.SyntaxNode);
+                return IdentifierAccessor(this.node!);
             }
         }
 
@@ -47,7 +50,7 @@ namespace StyleCop.Analyzers.Lightup
             return (SingleVariableDesignationSyntaxWrapper)node.SyntaxNode;
         }
 
-        public static explicit operator SingleVariableDesignationSyntaxWrapper(SyntaxNode node)
+        public static explicit operator SingleVariableDesignationSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -67,19 +70,19 @@ namespace StyleCop.Analyzers.Lightup
             return VariableDesignationSyntaxWrapper.FromUpcast(wrapper.node);
         }
 
-        public static implicit operator CSharpSyntaxNode(SingleVariableDesignationSyntaxWrapper wrapper)
+        public static implicit operator CSharpSyntaxNode? (SingleVariableDesignationSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public SingleVariableDesignationSyntaxWrapper WithIdentifier(SyntaxToken identifier)
         {
-            return new SingleVariableDesignationSyntaxWrapper(WithIdentifierAccessor(this.SyntaxNode, identifier));
+            return new SingleVariableDesignationSyntaxWrapper(WithIdentifierAccessor(this.node!, identifier));
         }
     }
 }

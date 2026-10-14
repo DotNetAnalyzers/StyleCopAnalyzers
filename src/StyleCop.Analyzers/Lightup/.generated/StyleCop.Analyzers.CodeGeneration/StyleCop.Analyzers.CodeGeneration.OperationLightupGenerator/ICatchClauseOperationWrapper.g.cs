@@ -1,48 +1,51 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct ICatchClauseOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.ICatchClauseOperation";
-        private static readonly Type WrappedType;
-        private static readonly Func<IOperation, IOperation> ExceptionDeclarationOrExpressionAccessor;
+        private static readonly Type? WrappedType;
+        private static readonly Func<IOperation, IOperation?> ExceptionDeclarationOrExpressionAccessor;
         private static readonly Func<IOperation, ITypeSymbol> ExceptionTypeAccessor;
         private static readonly Func<IOperation, ImmutableArray<ILocalSymbol>> LocalsAccessor;
-        private static readonly Func<IOperation, IOperation> FilterAccessor;
+        private static readonly Func<IOperation, IOperation?> FilterAccessor;
         private static readonly Func<IOperation, IOperation> HandlerAccessor;
-        private readonly IOperation operation;
+        private readonly IOperation? operation;
         static ICatchClauseOperationWrapper()
         {
             WrappedType = OperationWrapperHelper.GetWrappedType(typeof(ICatchClauseOperationWrapper));
-            ExceptionDeclarationOrExpressionAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation>(WrappedType, nameof(ExceptionDeclarationOrExpression));
+            ExceptionDeclarationOrExpressionAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation?>(WrappedType, nameof(ExceptionDeclarationOrExpression));
             ExceptionTypeAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, ITypeSymbol>(WrappedType, nameof(ExceptionType));
             LocalsAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, ImmutableArray<ILocalSymbol>>(WrappedType, nameof(Locals));
-            FilterAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation>(WrappedType, nameof(Filter));
+            FilterAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation?>(WrappedType, nameof(Filter));
             HandlerAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation>(WrappedType, nameof(Handler));
         }
 
-        private ICatchClauseOperationWrapper(IOperation operation)
+        private ICatchClauseOperationWrapper(IOperation? operation)
         {
             this.operation = operation;
         }
 
-        public IOperation WrappedOperation => this.operation;
-        public ITypeSymbol Type => this.WrappedOperation.Type;
-        public IOperation ExceptionDeclarationOrExpression => ExceptionDeclarationOrExpressionAccessor(this.WrappedOperation);
-        public ITypeSymbol ExceptionType => ExceptionTypeAccessor(this.WrappedOperation);
-        public ImmutableArray<ILocalSymbol> Locals => LocalsAccessor(this.WrappedOperation);
-        public IOperation Filter => FilterAccessor(this.WrappedOperation);
-        public IBlockOperationWrapper Handler => IBlockOperationWrapper.FromOperation(HandlerAccessor(this.WrappedOperation));
+        public IOperation? WrappedOperation => this.operation;
+        public ITypeSymbol? Type => this.operation!.Type;
+        public IOperation? ExceptionDeclarationOrExpression => ExceptionDeclarationOrExpressionAccessor(this.operation!);
+        public ITypeSymbol ExceptionType => ExceptionTypeAccessor(this.operation!);
+        public ImmutableArray<ILocalSymbol> Locals => LocalsAccessor(this.operation!);
+        public IOperation? Filter => FilterAccessor(this.operation!);
+        public IBlockOperationWrapper Handler => IBlockOperationWrapper.FromOperation(HandlerAccessor(this.operation!));
 
         public static explicit operator ICatchClauseOperationWrapper(IOperationWrapper wrapper) => FromOperation(wrapper.WrappedOperation);
         public static implicit operator IOperationWrapper(ICatchClauseOperationWrapper wrapper) => IOperationWrapper.FromUpcast(wrapper.WrappedOperation);
-        public static ICatchClauseOperationWrapper FromOperation(IOperation operation)
+        public static ICatchClauseOperationWrapper FromOperation(IOperation? operation)
         {
             if (operation == null)
             {
@@ -57,7 +60,7 @@ namespace StyleCop.Analyzers.Lightup
             return new ICatchClauseOperationWrapper(operation);
         }
 
-        public static bool IsInstance(IOperation operation)
+        public static bool IsInstance([NotNullWhen(true)] IOperation? operation)
         {
             return operation != null && LightupHelpers.CanWrapOperation(operation, WrappedType);
         }

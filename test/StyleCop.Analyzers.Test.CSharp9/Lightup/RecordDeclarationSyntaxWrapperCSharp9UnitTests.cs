@@ -64,8 +64,11 @@ public sealed record R<T>(int X, int Y) : System.Object where T : class
             Assert.True(wrapper.Keyword.IsKind(SyntaxKind.RecordKeyword));
             Assert.True(wrapper.ClassOrStructKeyword.IsKind(SyntaxKind.None));
             Assert.Equal("R", wrapper.Identifier.ValueText);
+            Assert.NotNull(wrapper.TypeParameterList);
             Assert.Single(wrapper.TypeParameterList.Parameters);
+            Assert.NotNull(wrapper.ParameterList);
             Assert.Equal(2, wrapper.ParameterList.Parameters.Count);
+            Assert.NotNull(wrapper.BaseList);
             Assert.Single(wrapper.BaseList.Types);
             Assert.Single(wrapper.ConstraintClauses);
             Assert.True(wrapper.OpenBraceToken.IsKind(SyntaxKind.OpenBraceToken));
@@ -87,6 +90,7 @@ public sealed record R<T>(int X, int Y) : System.Object where T : class
             Assert.Empty(wrapper.AttributeLists);
             Assert.Single(wrapper.Modifiers);
             Assert.Null(wrapper.TypeParameterList);
+            Assert.NotNull(wrapper.ParameterList);
             Assert.Single(wrapper.ParameterList.Parameters);
             Assert.Null(wrapper.BaseList);
             Assert.Empty(wrapper.ConstraintClauses);

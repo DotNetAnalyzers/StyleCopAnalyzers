@@ -1,10 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,12 +15,12 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly partial struct ExpressionElementSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionElementSyntax";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<CSharpSyntaxNode, ExpressionSyntax> ExpressionAccessor;
         private static readonly Func<CSharpSyntaxNode, ExpressionSyntax, CSharpSyntaxNode> WithExpressionAccessor;
 
-        private readonly CSharpSyntaxNode node;
+        private readonly CSharpSyntaxNode? node;
 
         static ExpressionElementSyntaxWrapper()
         {
@@ -26,19 +29,19 @@ namespace StyleCop.Analyzers.Lightup
             WithExpressionAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, ExpressionSyntax>(WrappedType, nameof(Expression));
         }
 
-        private ExpressionElementSyntaxWrapper(CSharpSyntaxNode node)
+        private ExpressionElementSyntaxWrapper(CSharpSyntaxNode? node)
         {
             this.node = node;
         }
 
-        public CSharpSyntaxNode SyntaxNode => this.node;
+        public CSharpSyntaxNode? SyntaxNode => this.node;
 
 
         public ExpressionSyntax Expression
         {
             get
             {
-                return ExpressionAccessor(this.SyntaxNode);
+                return ExpressionAccessor(this.node!);
             }
         }
 
@@ -47,7 +50,7 @@ namespace StyleCop.Analyzers.Lightup
             return (ExpressionElementSyntaxWrapper)node.SyntaxNode;
         }
 
-        public static explicit operator ExpressionElementSyntaxWrapper(SyntaxNode node)
+        public static explicit operator ExpressionElementSyntaxWrapper(SyntaxNode? node)
         {
             if (node == null)
             {
@@ -67,19 +70,19 @@ namespace StyleCop.Analyzers.Lightup
             return CollectionElementSyntaxWrapper.FromUpcast(wrapper.node);
         }
 
-        public static implicit operator CSharpSyntaxNode(ExpressionElementSyntaxWrapper wrapper)
+        public static implicit operator CSharpSyntaxNode? (ExpressionElementSyntaxWrapper wrapper)
         {
             return wrapper.node;
         }
 
-        public static bool IsInstance(SyntaxNode node)
+        public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public ExpressionElementSyntaxWrapper WithExpression(ExpressionSyntax expression)
         {
-            return new ExpressionElementSyntaxWrapper(WithExpressionAccessor(this.SyntaxNode, expression));
+            return new ExpressionElementSyntaxWrapper(WithExpressionAccessor(this.node!, expression));
         }
     }
 }
