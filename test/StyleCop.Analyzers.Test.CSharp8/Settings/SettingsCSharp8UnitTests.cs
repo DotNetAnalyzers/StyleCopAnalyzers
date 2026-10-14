@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.Settings
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.Test.CSharp7.Settings;
     using StyleCop.Analyzers.Test.Verifiers;
@@ -20,6 +21,18 @@ namespace StyleCop.Analyzers.Test.CSharp8.Settings
     public partial class SettingsCSharp8UnitTests : SettingsCSharp7UnitTests
     {
         private const string TestProjectName = "TestProject";
+
+        [Fact]
+        public void TestOptionsWrapperValues()
+        {
+            var configSet = AnalyzerConfigSet.Create(new[] { AnalyzerConfig.Parse(SourceText.From("[*]\npresent = value"), "/.editorconfig") });
+            var options = AnalyzerConfigOptionsWrapper.FromObject(new TestAnalyzerConfigOptions(configSet.GetOptionsForSourcePath("/Test.cs")));
+            Assert.True(options.TryGetValue("present", out var value));
+            Assert.Equal("value", value);
+            Assert.False(options.TryGetValue("missing", out value));
+            Assert.Null(value);
+            Assert.Empty(options.GetKeys());
+        }
 
         [Fact]
         public async Task VerifyEditorConfigSettingsAreReadCorrectlyAsync()

@@ -50,6 +50,29 @@ public partial class NullableLightupCSharp8UnitTests
         return VerifyDiagnosticsAsync(statement, expectedDiagnostics);
     }
 
+    [Theory]
+    [InlineData("BaseNamespaceDeclarationSyntaxWrapper ns = (NamespaceDeclarationSyntax?)null;")]
+    [InlineData("BaseObjectCreationExpressionSyntaxWrapper creation = (ObjectCreationExpressionSyntax?)null;")]
+    [InlineData("CommonForEachStatementSyntaxWrapper loop = (ForEachStatementSyntax?)null;")]
+    [InlineData("SyntaxWrapper<StatementSyntax>.Default.Wrap(null);")]
+    [InlineData("SyntaxWrapper<StatementSyntax>.Default.Wrap(node).ToString();", "CS8602")]
+    [InlineData("SyntaxWrapper<StatementSyntax>.Default.Unwrap(null).ToString();", "CS8602")]
+    [InlineData("SyntaxWrapper<PatternSyntaxWrapper>.Default.Unwrap(default).ToString();", "CS8602")]
+    [InlineData("AnalyzerConfigOptionsWrapper.FromObject(null);")]
+    [InlineData("AnalyzerConfigOptionsProviderWrapper.FromObject(null);")]
+    [InlineData("if (AnalyzerConfigOptionsWrapper.IsInstance(node)) { node.ToString(); }")]
+    [InlineData("if (AnalyzerConfigOptionsProviderWrapper.IsInstance(node)) { node.ToString(); }")]
+    [InlineData("var options = AnalyzerConfigOptionsWrapper.FromObject(null); if (options.TryGetValue(\"key\", out var value)) { value.ToString(); }")]
+    [InlineData("var options = AnalyzerConfigOptionsWrapper.FromObject(null); options.TryGetValue(\"key\", out var value); value.ToString();", "CS8602")]
+    [InlineData("TryGetValueAccessor<object, string, string> accessor = null!; if (accessor(new object(), \"key\", out var value)) { value.ToString(); }")]
+    [InlineData("TryGetValueAccessor<object, string, string> accessor = null!; accessor(new object(), \"key\", out var value); value.ToString();", "CS8602")]
+    [InlineData("WrapperHelper.GetWrappedType(typeof(AnalyzerConfigOptionsWrapper)).ToString();", "CS8602")]
+    [InlineData("WrapperHelper.GetWrappedType(null);", "CS8625")]
+    public Task TestHandwrittenContractsAsync(string statement, params string[] expectedDiagnostics)
+    {
+        return VerifyDiagnosticsAsync(statement, expectedDiagnostics);
+    }
+
     [Fact]
     public async Task TestAnnotationsMatchAvailableRoslynPropertiesAsync()
     {

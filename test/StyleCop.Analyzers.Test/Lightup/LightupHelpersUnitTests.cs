@@ -15,6 +15,32 @@ namespace StyleCop.Analyzers.Test.Lightup
     public class LightupHelpersUnitTests
     {
         [Fact]
+        public void TestDefaultAnalyzerConfigOptions()
+        {
+            var options = AnalyzerConfigOptionsWrapper.FromObject(null);
+            Assert.False(AnalyzerConfigOptionsWrapper.IsInstance(null));
+            Assert.Empty(options.GetKeys());
+            Assert.NotNull(AnalyzerConfigOptionsWrapper.KeyComparer);
+
+            var provider = AnalyzerConfigOptionsProviderWrapper.FromObject(null);
+            Assert.False(AnalyzerConfigOptionsProviderWrapper.IsInstance(null));
+            if (WrapperHelper.GetWrappedType(typeof(AnalyzerConfigOptionsWrapper)) is null)
+            {
+                Assert.False(options.TryGetValue("missing", out var value));
+                Assert.Null(value);
+                Assert.Empty(provider.GlobalOptions.GetKeys());
+                Assert.Empty(provider.GetOptions(SyntaxFactory.ParseSyntaxTree(string.Empty)).GetKeys());
+                Assert.Throws<ArgumentNullException>(() => provider.GetOptions((SyntaxTree)null));
+            }
+            else
+            {
+                Assert.Throws<NullReferenceException>(() => options.TryGetValue("missing", out _));
+                Assert.Throws<NullReferenceException>(() => provider.GlobalOptions);
+                Assert.Throws<NullReferenceException>(() => provider.GetOptions(SyntaxFactory.ParseSyntaxTree(string.Empty)));
+            }
+        }
+
+        [Fact]
         public void TestGeneratedOperationNull()
         {
             var wrapper = IReturnOperationWrapper.FromOperation(null);

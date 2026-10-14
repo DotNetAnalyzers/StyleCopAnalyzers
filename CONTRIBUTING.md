@@ -44,6 +44,9 @@ and lists remain value types. Operation annotations follow the pinned modern Ros
 where an older host can return null for an unavailable member (such as `IOperation.Language`).
 Default wrapper structs represent null nodes/operations, so their underlying-node properties and
 reference conversions are nullable; accessing other members retains the existing exceptions.
+When migrating handwritten light-ups, also annotate nullable runtime types and unavailable-property
+results. Use conditional out-parameter annotations for `TryGetValue` and flow annotations for
+`IsInstance`; preserve existing null/default-wrapper exceptions and old-host fallbacks.
 Nullable contract probes and comparisons against available Roslyn properties live in
 `NullableLightupCSharp8UnitTests` and run in each subsequent compiler's inherited tests.
 The original Roslyn 1.2.1 references are not augmented with nullable annotations, so direct calls

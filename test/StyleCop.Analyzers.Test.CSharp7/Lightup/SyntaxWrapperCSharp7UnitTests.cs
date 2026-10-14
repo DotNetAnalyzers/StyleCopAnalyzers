@@ -31,5 +31,14 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             Assert.Same(syntaxNode, syntaxWrapper.Wrap(syntaxNode).SyntaxNode);
             Assert.Same(syntaxNode, syntaxWrapper.Unwrap((DiscardDesignationSyntaxWrapper)syntaxNode));
         }
+
+        [Fact]
+        public void TestWrapNullSyntaxWrapperNode()
+        {
+            var syntaxWrapper = SyntaxWrapper<DiscardDesignationSyntaxWrapper>.Default;
+
+            Assert.Null(syntaxWrapper.Wrap(null).SyntaxNode);
+            Assert.Null(syntaxWrapper.Unwrap(default));
+        }
     }
 }

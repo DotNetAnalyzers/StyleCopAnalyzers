@@ -10,7 +10,7 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly struct IImportScopeWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.IImportScope";
-        private static readonly Type WrappedType;
+        private static readonly Type? WrappedType;
 
         private static readonly Func<object?, ImmutableArray<IAliasSymbol>> AliasesAccessor;
 
