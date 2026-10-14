@@ -18,6 +18,76 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     /// </summary>
     public class SA1137UnitTests
     {
+        /// <summary>
+        /// Verifies that an incorrectly indented first member does not establish the indentation for its siblings.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Fact]
+        [WorkItem(3874, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3874")]
+        public async Task VerifyFirstMemberOutlierIndentationAsync()
+        {
+            var testCode = @"
+namespace MySpace
+{
+    internal sealed class SomeClass
+    {
+{|#0:      |}internal const string Name = ""Name"";
+
+        private readonly object cache;
+
+        private SomeClass()
+        {
+            // Some code
+        }
+    }
+}
+";
+            var fixedCode = @"
+namespace MySpace
+{
+    internal sealed class SomeClass
+    {
+        internal const string Name = ""Name"";
+
+        private readonly object cache;
+
+        private SomeClass()
+        {
+            // Some code
+        }
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the first member determines the expected indentation when indentation levels are tied.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Fact]
+        [WorkItem(3874, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3874")]
+        public async Task VerifyTiedMemberIndentationUsesFirstMemberAsync()
+        {
+            var testCode = @"
+class C
+{
+  int first;
+{|#0:    |}int second;
+}
+";
+            var fixedCode = @"
+class C
+{
+  int first;
+  int second;
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Theory]
         [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestNamespaceDeclarationAsync(string baseTypeKind)
