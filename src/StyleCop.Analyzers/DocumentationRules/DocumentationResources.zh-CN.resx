@@ -380,7 +380,7 @@
     <value>添加句点</value>
   </data>
   <data name="SA1629Description" xml:space="preserve">
-    <value>C# 元素的 XML 文档注释中的某个部分没有以句点结尾。</value>
+    <value>C# 元素的 XML 文档注释中的某个部分没有以句点、感叹号或问号结尾。</value>
   </data>
   <data name="SA1629MessageFormat" xml:space="preserve">
     <value>文档文本应以句点结尾</value>

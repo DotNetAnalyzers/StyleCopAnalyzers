@@ -228,7 +228,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         public static string @SA1628Title => GetResourceString("SA1628Title")!;
         /// <summary>Add period</summary>
         public static string @SA1629CodeFix => GetResourceString("SA1629CodeFix")!;
-        /// <summary>A section of the XML header documentation for a C# element does not end with a period.</summary>
+        /// <summary>A section of the XML header documentation for a C# element does not end with a period, exclamation mark, or question mark.</summary>
         public static string @SA1629Description => GetResourceString("SA1629Description")!;
         /// <summary>Documentation text should end with a period</summary>
         public static string @SA1629MessageFormat => GetResourceString("SA1629MessageFormat")!;

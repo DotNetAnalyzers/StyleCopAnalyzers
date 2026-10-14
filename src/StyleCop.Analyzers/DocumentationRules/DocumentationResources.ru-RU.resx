@@ -499,7 +499,7 @@
     <value>Добавить точку</value>
   </data>
   <data name="SA1629Description" xml:space="preserve">
-    <value>Раздел заголовка XML-документации элемента C# не заканчивается точкой.</value>
+    <value>Раздел заголовка XML-документации элемента C# не заканчивается точкой, восклицательным или вопросительным знаком.</value>
   </data>
   <data name="SA1629MessageFormat" xml:space="preserve">
     <value>Текст документации должен заканчиваться точкой</value>

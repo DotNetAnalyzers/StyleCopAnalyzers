@@ -439,7 +439,7 @@
     <value>Add period</value>
   </data>
   <data name="SA1629Description" xml:space="preserve">
-    <value>A section of the XML header documentation for a C# element does not end with a period.</value>
+    <value>A section of the XML header documentation for a C# element does not end with a period, exclamation mark, or question mark.</value>
   </data>
   <data name="SA1629MessageFormat" xml:space="preserve">
     <value>Documentation text should end with a period</value>
