@@ -5,15 +5,13 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.NamingRules
 {
-    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.NamingRules;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.NamingRules.SA1317IdentifierShouldBeNamedOnlyWithLatinLetters,
-        StyleCop.Analyzers.NamingRules.SA1317CodeFixProvider>;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<
+        StyleCop.Analyzers.NamingRules.SA1317IdentifierShouldBeNamedOnlyWithLatinLetters>;
 
     public partial class SA1317CSharp9UnitTests : SA1317CSharp8UnitTests
     {
@@ -29,8 +27,6 @@ namespace StyleCop.Analyzers.Test.CSharp9.NamingRules
         public async Task TestRecordNameContainsNonLatinLettersAsync()
         {
             var testCode = @"public record RеcоrdNаmе {}";
-
-            Console.WriteLine("Test");
 
             var expected = new DiagnosticResult[]
                 {

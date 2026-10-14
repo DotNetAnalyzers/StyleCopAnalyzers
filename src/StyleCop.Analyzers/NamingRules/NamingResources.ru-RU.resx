@@ -163,6 +163,15 @@
   <data name="SA1316Title" xml:space="preserve">
     <value>В именах элементов кортежа должен использоваться правильный регистр букв</value>
   </data>
+  <data name="SA1317Description" xml:space="preserve">
+    <value>Буквы в идентификаторе должны быть буквами базовой латиницы (A-Z или a-z).</value>
+  </data>
+  <data name="SA1317MessageFormat" xml:space="preserve">
+    <value>Имя идентификатора '{0}' должно содержать только латинские буквы. Позиция {1}.</value>
+  </data>
+  <data name="SA1317Title" xml:space="preserve">
+    <value>В именах идентификаторов должны использоваться только латинские буквы</value>
+  </data>
   <data name="SX1309Description" xml:space="preserve">
     <value>Имя поля C# не начинается с символа подчеркивания.</value>
   </data>

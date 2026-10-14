@@ -13,8 +13,6 @@ namespace StyleCop.Analyzers.Helpers
 
     internal static class TaskHelper
     {
-        public static readonly Task CompletedTask = Task.FromResult(0);
-
         public static bool IsTaskReturningMethod(SemanticModel semanticModel, MethodDeclarationSyntax methodDeclarationSyntax, CancellationToken cancellationToken)
         {
             return IsTaskType(semanticModel, methodDeclarationSyntax.ReturnType, cancellationToken);

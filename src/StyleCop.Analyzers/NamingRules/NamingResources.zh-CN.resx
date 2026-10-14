@@ -171,6 +171,15 @@
   <data name="SA1316Title" xml:space="preserve">
     <value>元组元素名称应使用正确的大小写</value>
   </data>
+  <data name="SA1317Description" xml:space="preserve">
+    <value>标识符中的字母应为基本拉丁字母（A-Z 或 a-z）。</value>
+  </data>
+  <data name="SA1317MessageFormat" xml:space="preserve">
+    <value>标识符“{0}”应仅使用拉丁字母命名。位置 {1}。</value>
+  </data>
+  <data name="SA1317Title" xml:space="preserve">
+    <value>标识符应仅使用拉丁字母命名</value>
+  </data>
   <data name="SX1309Description" xml:space="preserve">
     <value>C# 字段名称未以下划线开头。</value>
   </data>

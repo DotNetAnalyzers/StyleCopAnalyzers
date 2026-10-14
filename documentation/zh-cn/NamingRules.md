@@ -19,3 +19,4 @@
 [SA1313](SA1313.md) | ParameterNamesMustBeginWithLowerCaseLetter | C# 参数的名称未以小写字母开头。
 [SA1314](SA1314.md) | TypeParameterNamesMustBeginWithT | C# 类型参数的名称未以大写字母 T 开头。
 [SA1316](SA1316.md) | TupleElementNamesShouldUseCorrectCasing | 元组类型中的元素名称应使用正确的大小写。
+[SA1317](SA1317.md) | IdentifierShouldBeNamedOnlyWithLatinLetters | 标识符应仅使用拉丁字母命名。

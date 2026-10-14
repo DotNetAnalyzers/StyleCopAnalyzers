@@ -277,7 +277,7 @@
     <value>Tuple element names should use correct casing</value>
   </data>
   <data name="SA1317Description" xml:space="preserve">
-    <value>An identifier should be named only with Latin letters.</value>
+    <value>Letters in an identifier should be basic Latin letters (A-Z or a-z).</value>
   </data>
   <data name="SA1317MessageFormat" xml:space="preserve">
     <value>Identifier '{0}' should be named only with Latin letters. Position {1}.</value>
