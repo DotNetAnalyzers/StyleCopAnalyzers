@@ -30,7 +30,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// the member is enough. The compiler uses the documentation from the implementing declaration when it has one, and
     /// otherwise the documentation from the defining declaration. An undocumented part of a partial member is therefore
     /// only reported when no part of that member has a documentation header, in which case each undocumented part is
-    /// reported. Partial types are not affected: each part of a partial type must have a documentation header.</para>
+    /// reported. The same applies to partial types: documenting any one part of the type is enough.</para>
     ///
     /// <para>When documentation is provided on more than one part of the partial class, the documentation for the two
     /// classes may be merged together to form a single source of documentation. For example, consider the following two
@@ -60,7 +60,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     ///
     /// <para>For these reasons, it can be problematic to provide SDK documentation on more than one part of the partial
     /// class. However, it is still advisable to document each part of the class, to increase the readability and
-    /// maintainability of the code, and StyleCop will require that each part of the class contain header
+    /// maintainability of the code, but StyleCop only requires that one part of the class contain header
     /// documentation.</para>
     ///
     /// <para>This problem is solved through the use of the <c>&lt;content&gt;</c> tag, which can replace the
@@ -136,7 +136,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
                 if (SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
                 {
-                    if (!XmlCommentHelper.HasDocumentation(declaration))
+                    if (!XmlCommentHelper.HasDocumentation(declaration) && !HasDocumentedTypePart(context, declaration))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
                     }
@@ -315,6 +315,28 @@ namespace StyleCop.Analyzers.DocumentationRules
                     SyntaxNode otherNode = reference.GetSyntax(context.CancellationToken);
                     MemberDeclarationSyntax otherDeclaration = otherNode.FirstAncestorOrSelf<MemberDeclarationSyntax>();
                     if (otherDeclaration != null && XmlCommentHelper.HasDocumentation(otherDeclaration))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            private static bool HasDocumentedTypePart(SyntaxNodeAnalysisContext context, TypeDeclarationSyntax declaration)
+            {
+                ISymbol? symbol = context.SemanticModel.GetDeclaredSymbol(declaration, context.CancellationToken);
+                if (symbol == null)
+                {
+                    return false;
+                }
+
+                foreach (SyntaxReference reference in symbol.DeclaringSyntaxReferences)
+                {
+                    SyntaxNode otherNode = reference.GetSyntax(context.CancellationToken);
+                    if (otherNode != declaration
+                        && otherNode is TypeDeclarationSyntax otherDeclaration
+                        && XmlCommentHelper.HasDocumentation(otherDeclaration))
                     {
                         return true;
                     }
