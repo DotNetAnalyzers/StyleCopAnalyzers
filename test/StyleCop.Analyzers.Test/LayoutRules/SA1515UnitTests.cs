@@ -124,6 +124,56 @@ namespace Foo
         }
 
         /// <summary>
+        /// Verifies that marker comments used by other tools are exempt from SA1515.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3546, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3546")]
+        public async Task TestMarkerCommentsAsync()
+        {
+            var testCode = @"class TestClass
+{
+    public void TestMethod()
+    {
+        TestMethod();
+        // ReSharper disable IdentifierTypo
+        TestMethod();
+        // ReSharper disable once S3246 // Generic type parameters should be co/contravariant when possible
+        TestMethod();
+        // ReSharper restore InconsistentNaming
+        TestMethod();
+        // @formatter:keep_existing_linebreaks true
+        TestMethod();
+        // @formatter:wrap_chained_method_calls restore
+        TestMethod();
+        //language=regexp
+        TestMethod();
+        // language=regexp
+        TestMethod();
+        //NOSONAR
+        TestMethod();
+        // NOSONAR
+        TestMethod();
+        // An ordinary comment should still be reported.
+        TestMethod();
+        // ReSharper disablement is not a marker directive.
+        TestMethod();
+        //NOSONARish is not a marker directive.
+        TestMethod();
+    }
+}";
+
+            DiagnosticResult[] expectedDiagnostic =
+            {
+                Diagnostic().WithLocation(24, 9),
+                Diagnostic().WithLocation(26, 9),
+                Diagnostic().WithLocation(28, 9),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that an invalid single line comment line within a disabled conditional directive will not produce a diagnostic.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>

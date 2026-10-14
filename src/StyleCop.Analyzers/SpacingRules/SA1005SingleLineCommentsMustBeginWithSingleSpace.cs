@@ -167,8 +167,33 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
+            if (IsMarkerComment(text))
+            {
+                return;
+            }
+
             // Single line comment should begin with a space.
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation()));
+        }
+
+        private static bool IsMarkerComment(string commentText)
+        {
+            var markerStartIndex = 2;
+            while ((markerStartIndex < commentText.Length) && char.IsWhiteSpace(commentText[markerStartIndex]))
+            {
+                markerStartIndex++;
+            }
+
+            var remainingLength = commentText.Length - markerStartIndex;
+            if ((remainingLength >= 9)
+                && (string.Compare(commentText, markerStartIndex, "language=", 0, 9, StringComparison.Ordinal) == 0))
+            {
+                return true;
+            }
+
+            return (remainingLength >= 7)
+                && (string.Compare(commentText, markerStartIndex, "NOSONAR", 0, 7, StringComparison.OrdinalIgnoreCase) == 0)
+                && ((remainingLength == 7) || char.IsWhiteSpace(commentText[markerStartIndex + 7]));
         }
     }
 }
