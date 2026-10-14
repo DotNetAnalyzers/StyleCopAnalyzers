@@ -108,6 +108,73 @@ TypeName
             await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKeyword), currentTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        public async Task TestPartialTypeDocumentedOnOnePartAsync(string typeKeyword)
+        {
+            var testCode = @"
+/// <summary>
+/// Some Documentation
+/// </summary>
+public partial {0} TypeName
+{{
+}}
+
+public partial {0} TypeName
+{{
+}}
+
+public partial {0} TypeName
+{{
+}}";
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKeyword), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        public async Task TestPartialTypeDocumentedOnLaterPartAsync(string typeKeyword)
+        {
+            var testCode = @"
+public partial {0} TypeName
+{{
+}}
+
+/// <content>
+/// Some Documentation
+/// </content>
+public partial {0} TypeName
+{{
+}}";
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKeyword), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        public async Task TestPartialTypeWithoutAnyDocumentationOnAnyPartAsync(string typeKeyword)
+        {
+            var testCode = @"
+public partial {0} TypeName
+{{
+}}
+
+public partial {0} TypeName
+{{
+}}";
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(2, 17 + typeKeyword.Length),
+                Diagnostic().WithLocation(6, 17 + typeKeyword.Length),
+            };
+
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKeyword), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestPartialMethodWithDocumentationAsync()
         {
