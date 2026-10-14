@@ -628,6 +628,15 @@
   <data name="StaticConstructorKeywordText" xml:space="preserve">
     <value>静态</value>
   </data>
+  <data name="SA1653Description" xml:space="preserve">
+    <value>分部类型只能有一个声明包含 &lt;summary&gt; 文档注释。其他部分应使用 &lt;content&gt;。</value>
+  </data>
+  <data name="SA1653MessageFormat" xml:space="preserve">
+    <value>“{0}”的多个分部声明包含 &lt;summary&gt; 文档注释；其他部分应使用 &lt;content&gt;</value>
+  </data>
+  <data name="SA1653Title" xml:space="preserve">
+    <value>只有一个分部声明应包含摘要文档注释</value>
+  </data>
   <data name="StaticConstructorStandardTextFirstPart" xml:space="preserve">
     <value>初始化 </value>
   </data>

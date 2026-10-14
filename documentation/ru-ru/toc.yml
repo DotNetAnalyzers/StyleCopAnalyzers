@@ -232,6 +232,7 @@ items:
     - href: SA1650.md
     - href: SA1651.md
     - href: SA1652.md
+    - href: SA1653.md
   - name: Альтернативные правила
     href: AlternativeRules.md
     items:

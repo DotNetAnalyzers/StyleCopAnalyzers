@@ -11,6 +11,7 @@ SA1316 | StyleCop.CSharp.NamingRules | Warning | SA1316TupleElementNamesShouldUs
 SA1317 | StyleCop.CSharp.NamingRules | Warning | SA1317IdentifierShouldBeNamedOnlyWithLatinLetters, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1317.html)
 SA1414 | StyleCop.CSharp.ReadabilityRules | Warning | SA1414TupleTypesInSignaturesShouldHaveElementNames, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1414.html)
 SA1518 | StyleCop.CSharp.LayoutRules | Warning | SA1518UseLineEndingsCorrectlyAtEndOfFile, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1518.html)
+SA1653 | StyleCop.CSharp.DocumentationRules | Warning | SA1653OnlyOnePartialDeclarationShouldContainSummaryDocumentation, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1653.html)
 
 ### Changed Rules
 

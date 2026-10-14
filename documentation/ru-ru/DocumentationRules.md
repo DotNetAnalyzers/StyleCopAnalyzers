@@ -62,3 +62,4 @@ dotnet_analyzer_diagnostic.category-StyleCop.CSharp.DocumentationRules.severity 
 [SA1650](SA1650.md) | ElementDocumentationMustBeSpelledCorrectly | Документация элемента содержит одну или несколько орфографических ошибок либо нераспознанных слов.
 [SA1651](SA1651.md) | DoNotUsePlaceholderElements | Документация элемента содержит один или несколько элементов `<placeholder>`.
 [SA1652](SA1652.md) | EnableXmlDocumentationOutput | Это правило перенесено в [SA0001](SA0001.md).
+[SA1653](SA1653.md) | OnlyOnePartialDeclarationShouldContainSummaryDocumentation | Несколько объявлений частичного типа содержат краткое описание.
