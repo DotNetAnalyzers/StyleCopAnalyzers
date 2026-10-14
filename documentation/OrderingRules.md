@@ -1,4 +1,11 @@
 ### Ordering Rules (SA1200-)
+
+Set category-level severity with this in your .editorconfig file:
+
+```ini
+dotnet_diagnostic.category-StyleCop.CSharp.OrderingRules.severity = none
+```
+
 Rules which enforce a standard ordering scheme for code contents.
 
 Identifier | Name | Description

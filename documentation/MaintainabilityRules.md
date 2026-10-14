@@ -1,4 +1,11 @@
 ### Maintainability Rules (SA1400-)
+
+Set category-level severity with this in your .editorconfig file:
+
+```ini
+dotnet_diagnostic.category-StyleCop.CSharp.MaintainabilityRules.severity = none
+```
+
 Rules which improve code maintainability.
 
 Identifier | Name | Description

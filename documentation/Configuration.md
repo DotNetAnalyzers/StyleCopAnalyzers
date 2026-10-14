@@ -27,6 +27,8 @@ root = true
 dotnet_diagnostic.SA1633.severity = none
 dotnet_diagnostic.SA1309.severity = none
 
+dotnet_diagnostic.category-StyleCop.CSharp.DocumentationRules.severity = none
+
 # Settings
 stylecop.documentation.companyName = Contoso
 csharp_using_directive_placement = outside_namespace
@@ -34,6 +36,9 @@ csharp_using_directive_placement = outside_namespace
 
 * Rule severity uses the standard `dotnet_diagnostic.<rule ID>.severity` property (`error`, `warning`, `suggestion`,
   `silent`, `none`). See [Configure code analyzers](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/configuration-files).
+* Category-based configuration uses the fully qualified analyzer category name, such as `StyleCop.CSharp.DocumentationRules`,
+  in the `dotnet_diagnostic.category-<category>.severity` property. The human-readable rule area names like
+  `Documentation Rules` are not valid category identifiers.
 * **.editorconfig** files apply per source file, using their section headers (such as `[*.cs]`) and folder hierarchy.
 * **.globalconfig** is picked up automatically when it is named exactly **.globalconfig** and is located in or above the
   project folder. Other file names require adding the file to the `GlobalAnalyzerConfigFiles` MSBuild item. Global
