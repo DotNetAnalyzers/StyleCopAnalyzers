@@ -16,6 +16,7 @@ try {
                 "Don't fix what isn't broken." = '不要修改没有问题的代码。'
                 'Provided by Visual Studio' = '由 Visual Studio 提供'
                 'Cannot generate appropriate names.' = '无法生成合适的名称。'
+                'The user must choose which partial declaration retains the summary.' = '用户必须选择哪个分部声明保留摘要。'
                 'No message is available for Debug.Fail' = '没有可用于 Debug.Fail 的消息'
                 'The "Encapsulate Field" fix is provided by Visual Studio.' = '“封装字段”修复由 Visual Studio 提供。'
             }
@@ -32,6 +33,7 @@ try {
                 "Don't fix what isn't broken." = 'Не следует исправлять то, что не является ошибкой.'
                 'Provided by Visual Studio' = 'Предоставляется Visual Studio'
                 'Cannot generate appropriate names.' = 'Невозможно подобрать подходящие имена.'
+                'The user must choose which partial declaration retains the summary.' = 'Пользователь должен выбрать частичное объявление, в котором останется краткое описание.'
                 'No message is available for Debug.Fail' = 'Сообщение для Debug.Fail отсутствует'
                 'The "Encapsulate Field" fix is provided by Visual Studio.' = 'Исправление «Инкапсулировать поле» предоставляется Visual Studio.'
             }
@@ -48,6 +50,7 @@ try {
                 "Don't fix what isn't broken." = 'Neopravujte to, co není rozbité.'
                 'Provided by Visual Studio' = 'Poskytuje Visual Studio.'
                 'Cannot generate appropriate names.' = 'Nelze vytvořit vhodné názvy.'
+                'The user must choose which partial declaration retains the summary.' = 'Uživatel musí vybrat částečnou deklaraci, která si ponechá souhrn.'
                 'No message is available for Debug.Fail' = 'Pro Debug.Fail není k dispozici žádná zpráva.'
                 'The "Encapsulate Field" fix is provided by Visual Studio.' = 'Opravu „Zapouzdřit pole“ poskytuje Visual Studio.'
             }
