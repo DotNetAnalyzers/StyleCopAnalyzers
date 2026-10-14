@@ -14,6 +14,464 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         protected override bool IsConfiguredAsTopLevelTypeByDefault => true;
 
         [Fact]
+        [WorkItem(3109, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3109")]
+        public async Task TestExtractedTypeIncludesOnlyRelevantUsingDirectivesAsync()
+        {
+            var testCode = @"using System;
+using System.Collections.Generic;
+
+public class Foo
+{
+    public List<int> Values { get; } = new List<int>();
+}
+
+public class {|#0:Bar|}
+{
+    public DateTime Value { get; set; }
+}
+";
+
+            var fixedCode = new[]
+            {
+                ("/0/Test0.cs", @"using System;
+using System.Collections.Generic;
+
+public class Foo
+{
+    public List<int> Values { get; } = new List<int>();
+}
+"),
+                ("Bar.cs", @"using System;
+
+public class Bar
+{
+    public DateTime Value { get; set; }
+}
+"),
+            };
+
+            var expected = this.Diagnostic().WithLocation(0);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestExtractedTypeRemovesUnnecessaryNamespaceUsingAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    using System;
+
+    public class Foo
+    {
+        public DateTime Value { get; set; }
+    }
+
+    public class {|#0:TestClass|}
+    {
+    }
+}
+";
+
+            var fixedCode = new[]
+            {
+                ("/0/Test0.cs", @"namespace TestNamespace
+{
+    using System;
+
+    public class Foo
+    {
+        public DateTime Value { get; set; }
+    }
+}
+"),
+                ("TestClass.cs", @"namespace TestNamespace
+{
+    public class TestClass
+    {
+    }
+}
+"),
+            };
+
+            var expected = this.Diagnostic().WithLocation(0);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestExtractedTypePreservesHeaderWhenRemovingAllUsingsAsync()
+        {
+            var testCode = @"// File header
+using System.Collections.Generic;
+using System.Linq;
+
+public class Foo
+{
+}
+
+// Type comment
+public class {|#0:TestClass|}
+{
+}
+";
+
+            var fixedCode = new[]
+            {
+                ("/0/Test0.cs", @"// File header
+using System.Collections.Generic;
+using System.Linq;
+
+public class Foo
+{
+}
+"),
+                ("TestClass.cs", @"// File header
+
+// Type comment
+public class TestClass
+{
+}
+"),
+            };
+
+            var expected = this.Diagnostic().WithLocation(0);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestExtractedTypePreservesDirectivesBetweenHeaderAndTypeCommentAsync()
+        {
+            var testCode = @"// File header
+using System.Collections.Generic;
+using System.Linq;
+
+public class Foo
+{
+}
+
+#pragma warning disable CS0169
+// Type comment
+public class {|#0:TestClass|}
+{
+}
+#pragma warning restore CS0169
+";
+
+            var fixedCode = new[]
+            {
+                ("/0/Test0.cs", @"// File header
+using System.Collections.Generic;
+using System.Linq;
+
+public class Foo
+{
+}
+#pragma warning restore CS0169
+"),
+                ("TestClass.cs", @"// File header
+
+#pragma warning disable CS0169
+// Type comment
+public class TestClass
+{
+}
+#pragma warning restore CS0169
+"),
+            };
+
+            var expected = this.Diagnostic().WithLocation(0);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestExtractedTypePreservesConsecutiveFileHeaderCommentsWhenRemovingUsingAsync()
+        {
+            var testCode = @"// File header
+// Additional header line
+using System.Collections.Generic;
+using System.Linq;
+
+public class Foo
+{
+    public List<int> Values { get; } = Enumerable.Empty<int>().ToList();
+}
+
+public class {|#0:TestClass|}
+{
+    public List<int> Values { get; } = new List<int>();
+}
+";
+
+            var fixedCode = new[]
+            {
+                ("/0/Test0.cs", @"// File header
+// Additional header line
+using System.Collections.Generic;
+using System.Linq;
+
+public class Foo
+{
+    public List<int> Values { get; } = Enumerable.Empty<int>().ToList();
+}
+"),
+                ("TestClass.cs", @"// File header
+// Additional header line
+
+using System.Collections.Generic;
+
+public class TestClass
+{
+    public List<int> Values { get; } = new List<int>();
+}
+"),
+            };
+
+            var expected = this.Diagnostic().WithLocation(0);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestExtractedTypePreservesDirectivesInsideUsingAsync()
+        {
+            var testCode = @"using
+#if true
+System.Collections.Generic;
+#endif
+
+public class Foo
+{
+}
+
+public class {|#0:TestClass|}
+{
+}
+";
+
+            var fixedCode = new[]
+            {
+                ("/0/Test0.cs", @"using
+#if true
+System.Collections.Generic;
+#endif
+
+public class Foo
+{
+}
+"),
+                ("TestClass.cs", @"using
+#if true
+System.Collections.Generic;
+#endif
+
+public class TestClass
+{
+}
+"),
+            };
+
+            var expected = this.Diagnostic().WithLocation(0);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestExtractedTypePreservesCommentBeforeRetainedUsingAsync()
+        {
+            var testCode = @"// File header
+
+// Import comment
+using System;
+using System.Collections.Generic;
+
+public class Foo
+{
+    public List<int> Values { get; } = new List<int>();
+}
+
+public class {|#0:TestClass|}
+{
+    public DateTime Value { get; set; }
+}
+";
+
+            var fixedCode = new[]
+            {
+                ("/0/Test0.cs", @"// File header
+
+// Import comment
+using System;
+using System.Collections.Generic;
+
+public class Foo
+{
+    public List<int> Values { get; } = new List<int>();
+}
+"),
+                ("TestClass.cs", @"// File header
+
+// Import comment
+using System;
+
+public class TestClass
+{
+    public DateTime Value { get; set; }
+}
+"),
+            };
+
+            var expected = this.Diagnostic().WithLocation(0);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestExtractedTypePreservesDocumentationCommentAfterRemovingNamespaceUsingAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    using System;
+
+    public class Foo
+    {
+        public DateTime Value { get; set; }
+    }
+
+    /// <summary>
+    /// The extracted type.
+    /// </summary>
+    public class {|#0:TestClass|}
+    {
+    }
+}
+";
+
+            var fixedCode = new[]
+            {
+                ("/0/Test0.cs", @"namespace TestNamespace
+{
+    using System;
+
+    public class Foo
+    {
+        public DateTime Value { get; set; }
+    }
+}
+"),
+                ("TestClass.cs", @"namespace TestNamespace
+{
+    /// <summary>
+    /// The extracted type.
+    /// </summary>
+    public class TestClass
+    {
+    }
+}
+"),
+            };
+
+            var expected = this.Diagnostic().WithLocation(0);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestExtractedTypePreservesConditionalUsingDirectivesAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+#if true
+    using System;
+#endif
+
+    public class Foo
+    {
+    }
+
+    public class {|#0:TestClass|}
+    {
+    }
+}
+";
+
+            var fixedCode = new[]
+            {
+                ("/0/Test0.cs", @"namespace TestNamespace
+{
+#if true
+    using System;
+#endif
+
+    public class Foo
+    {
+    }
+}
+"),
+                ("TestClass.cs", @"namespace TestNamespace
+{
+#if true
+    using System;
+#endif
+
+    public class TestClass
+    {
+    }
+}
+"),
+            };
+
+            var expected = this.Diagnostic().WithLocation(0);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestExtractedTypePreservesNestedNamespaceFormattingWhenNamesMatchAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    namespace TestNamespace
+    {
+        using System;
+
+        public class Foo
+        {
+            public DateTime Value { get; set; }
+        }
+
+        public class {|#0:TestClass|}
+        {
+        }
+    }
+}
+";
+
+            var fixedCode = new[]
+            {
+                ("/0/Test0.cs", @"namespace TestNamespace
+{
+    namespace TestNamespace
+    {
+        using System;
+
+        public class Foo
+        {
+            public DateTime Value { get; set; }
+        }
+    }
+}
+"),
+                ("TestClass.cs", @"namespace TestNamespace
+{
+    namespace TestNamespace
+    {
+        public class TestClass
+        {
+        }
+    }
+}
+"),
+            };
+
+            var expected = this.Diagnostic().WithLocation(0);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(3876, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3876")]
         public async Task TestExtractedTypeDoesNotGainBlankLineAfterNamespaceAsync()
         {
@@ -204,7 +662,7 @@ namespace TestNamespace
 
         [Fact]
         [WorkItem(3876, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3876")]
-        public async Task TestExtractedTypeInSecondNamespaceKeepsBlankLineAfterUsingAsync()
+        public async Task TestExtractedTypeInSecondNamespaceKeepsBlankLineAfterOpeningBraceAsync()
         {
             var testCode = @"using System;
 
@@ -239,9 +697,7 @@ namespace TestNamespace
 {
 }
 "),
-                ("TestClass2.cs", @"using System;
-
-namespace TestNamespace
+                ("TestClass2.cs", @"namespace TestNamespace
 {
 
     public class TestClass2

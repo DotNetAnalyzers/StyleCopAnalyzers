@@ -164,12 +164,178 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             extractedDocumentNode = RemoveBlankLinesLeftByRemovedSiblings(extractedDocumentNode);
 
             Solution updatedSolution = document.Project.Solution.AddDocument(extractedDocumentId, extractedDocumentName, extractedDocumentNode, document.Folders);
+            List<DocumentId> extractedDocumentIds = new List<DocumentId> { extractedDocumentId };
 
             // Make sure to also add the file to linked projects
             foreach (var linkedDocumentId in document.GetLinkedDocumentIds())
             {
                 DocumentId linkedExtractedDocumentId = DocumentId.CreateNewId(linkedDocumentId.ProjectId);
                 updatedSolution = updatedSolution.AddDocument(linkedExtractedDocumentId, extractedDocumentName, extractedDocumentNode, document.Folders);
+                extractedDocumentIds.Add(linkedExtractedDocumentId);
+            }
+
+            foreach (var linkedExtractedDocumentId in extractedDocumentIds)
+            {
+                Document extractedDocument = updatedSolution.GetDocument(linkedExtractedDocumentId);
+                SemanticModel semanticModel = await extractedDocument.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+                SyntaxNode linkedExtractedRoot = await extractedDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+                List<SyntaxNode> unnecessaryUsings = new List<SyntaxNode>();
+                foreach (var diagnosticInTree in semanticModel.GetDiagnostics(cancellationToken: cancellationToken))
+                {
+                    if (!string.Equals(diagnosticInTree.Id, "CS8019", StringComparison.Ordinal))
+                    {
+                        continue;
+                    }
+
+                    SyntaxNode unnecessaryUsing = linkedExtractedRoot.FindNode(diagnosticInTree.Location.SourceSpan, getInnermostNodeForTie: true);
+                    while (unnecessaryUsing != null && !(unnecessaryUsing is UsingDirectiveSyntax))
+                    {
+                        unnecessaryUsing = unnecessaryUsing.Parent;
+                    }
+
+                    if (unnecessaryUsing != null && !unnecessaryUsing.ContainsDirectives)
+                    {
+                        unnecessaryUsings.Add(unnecessaryUsing);
+                    }
+                }
+
+                if (unnecessaryUsings.Count > 0)
+                {
+                    List<SyntaxNode> namespacesToNormalize = new List<SyntaxNode>();
+                    foreach (var unnecessaryUsing in unnecessaryUsings)
+                    {
+                        if (!(unnecessaryUsing.Parent is NamespaceDeclarationSyntax namespaceDeclaration))
+                        {
+                            continue;
+                        }
+
+                        bool allUsingsRemoved = true;
+                        foreach (var usingDirective in namespaceDeclaration.Usings)
+                        {
+                            if (!ContainsNode(unnecessaryUsings, usingDirective))
+                            {
+                                allUsingsRemoved = false;
+                                break;
+                            }
+                        }
+
+                        if (allUsingsRemoved && !ContainsNode(namespacesToNormalize, namespaceDeclaration))
+                        {
+                            namespacesToNormalize.Add(namespaceDeclaration);
+                        }
+                    }
+
+                    List<SyntaxNode> usingNodesToTrim = new List<SyntaxNode>();
+                    List<int> usingBlankLinesToKeep = new List<int>();
+                    foreach (var unnecessaryUsing in unnecessaryUsings)
+                    {
+                        var siblings = new List<SyntaxNode>();
+                        foreach (var sibling in unnecessaryUsing.Parent.ChildNodes())
+                        {
+                            siblings.Add(sibling);
+                        }
+
+                        int index = IndexOfNode(siblings, unnecessaryUsing);
+                        if (index < 0 || index + 1 >= siblings.Count || ContainsNode(unnecessaryUsings, siblings[index + 1]))
+                        {
+                            continue;
+                        }
+
+                        SyntaxNode nextSibling = siblings[index + 1];
+                        if (!ContainsNode(usingNodesToTrim, nextSibling))
+                        {
+                            usingNodesToTrim.Add(nextSibling);
+                            int blankLines = CountLeadingBlankLines(nextSibling.GetLeadingTrivia());
+                            bool hasRemainingSiblingBeforeTarget = false;
+                            for (int i = 0; i < index; i++)
+                            {
+                                if (!ContainsNode(unnecessaryUsings, siblings[i]))
+                                {
+                                    hasRemainingSiblingBeforeTarget = true;
+                                    break;
+                                }
+                            }
+
+                            if (!hasRemainingSiblingBeforeTarget && !(unnecessaryUsing.Parent is CompilationUnitSyntax))
+                            {
+                                blankLines = CountLeadingBlankLines(unnecessaryUsing.GetLeadingTrivia());
+                            }
+                            else if (!hasRemainingSiblingBeforeTarget)
+                            {
+                                blankLines = 0;
+                            }
+
+                            usingBlankLinesToKeep.Add(blankLines);
+                        }
+                    }
+
+                    List<SyntaxNode> nodesToAnnotate = new List<SyntaxNode>(unnecessaryUsings.Count + usingNodesToTrim.Count + namespacesToNormalize.Count);
+                    nodesToAnnotate.AddRange(unnecessaryUsings);
+                    nodesToAnnotate.AddRange(namespacesToNormalize);
+                    foreach (var nodeToTrim in usingNodesToTrim)
+                    {
+                        if (!ContainsNode(nodesToAnnotate, nodeToTrim))
+                        {
+                            nodesToAnnotate.Add(nodeToTrim);
+                        }
+                    }
+
+                    var removeAnnotation = new SyntaxAnnotation("SA1402RemoveUsing");
+                    linkedExtractedRoot = linkedExtractedRoot.ReplaceNodes(
+                        nodesToAnnotate,
+                        (original, rewritten) =>
+                        {
+                            if (ContainsNode(unnecessaryUsings, original))
+                            {
+                                rewritten = rewritten.WithAdditionalAnnotations(removeAnnotation);
+                            }
+
+                            if (ContainsNode(namespacesToNormalize, original))
+                            {
+                                rewritten = rewritten.WithAdditionalAnnotations(new SyntaxAnnotation("SA1402NormalizeNamespace"));
+                            }
+
+                            int trimIndex = IndexOfNode(usingNodesToTrim, original);
+                            if (trimIndex >= 0)
+                            {
+                                var trimAnnotation = new SyntaxAnnotation(TrimAnnotationKind, usingBlankLinesToKeep[trimIndex].ToString());
+                                rewritten = rewritten.WithAdditionalAnnotations(trimAnnotation);
+                            }
+
+                            return rewritten;
+                        });
+
+                    List<SyntaxNode> nodesToRemove = new List<SyntaxNode>();
+                    foreach (var annotated in linkedExtractedRoot.GetAnnotatedNodes(removeAnnotation))
+                    {
+                        nodesToRemove.Add(annotated);
+                    }
+
+                    linkedExtractedRoot = linkedExtractedRoot.RemoveNodes(nodesToRemove, SyntaxRemoveOptions.KeepExteriorTrivia);
+                    linkedExtractedRoot = RemoveBlankLinesLeftByRemovedSiblings(linkedExtractedRoot);
+                    List<SyntaxNode> annotatedNamespaces = new List<SyntaxNode>();
+                    foreach (var annotatedNamespace in linkedExtractedRoot.GetAnnotatedNodes("SA1402NormalizeNamespace"))
+                    {
+                        annotatedNamespaces.Add(annotatedNamespace);
+                    }
+
+                    foreach (var annotatedNamespace in annotatedNamespaces)
+                    {
+                        if (annotatedNamespace is NamespaceDeclarationSyntax namespaceDeclaration && namespaceDeclaration.Members.Count > 0)
+                        {
+                            SyntaxNode firstMember = namespaceDeclaration.Members[0];
+                            linkedExtractedRoot = linkedExtractedRoot.ReplaceNode(firstMember, TrimLeadingBlankLines(firstMember, 0));
+                        }
+                    }
+
+                    int leadingHeaderCommentCount = GetLeadingHeaderCommentCount(root);
+                    if (leadingHeaderCommentCount > 0)
+                    {
+                        linkedExtractedRoot = NormalizeLeadingCommentSeparator(linkedExtractedRoot, leadingHeaderCommentCount);
+                    }
+
+                    updatedSolution = updatedSolution.WithDocumentSyntaxRoot(linkedExtractedDocumentId, linkedExtractedRoot);
+                }
             }
 
             // Remove the type from its original location
@@ -230,6 +396,129 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
                 root = root.ReplaceNode(kept, updated);
             }
+        }
+
+        private static SyntaxNode NormalizeLeadingCommentSeparator(SyntaxNode root, int headerCommentCount)
+        {
+            SyntaxNode? firstChild = null;
+            foreach (var child in root.ChildNodes())
+            {
+                firstChild = child;
+                break;
+            }
+
+            if (firstChild == null)
+            {
+                return root;
+            }
+
+            var leading = firstChild.GetLeadingTrivia();
+            List<int> commentIndices = new List<int>();
+            for (int i = 0; i < leading.Count; i++)
+            {
+                if (leading[i].IsKind(SyntaxKind.SingleLineCommentTrivia)
+                    || leading[i].IsKind(SyntaxKind.MultiLineCommentTrivia)
+                    || leading[i].IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia)
+                    || leading[i].IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia))
+                {
+                    commentIndices.Add(i);
+                }
+            }
+
+            if (commentIndices.Count < headerCommentCount)
+            {
+                return root;
+            }
+
+            string? lineEnding = null;
+            int lastHeaderCommentIndex = commentIndices[headerCommentCount - 1];
+            for (int i = 0; i < leading.Count; i++)
+            {
+                if (leading[i].IsKind(SyntaxKind.EndOfLineTrivia))
+                {
+                    lineEnding ??= leading[i].ToString();
+                }
+            }
+
+            if (lineEnding == null)
+            {
+                return root;
+            }
+
+            int remainderStart = lastHeaderCommentIndex + 1;
+            while (remainderStart < leading.Count)
+            {
+                if (leading[remainderStart].IsKind(SyntaxKind.EndOfLineTrivia))
+                {
+                    remainderStart++;
+                }
+                else if (leading[remainderStart].IsKind(SyntaxKind.WhitespaceTrivia)
+                    && remainderStart + 1 < leading.Count
+                    && leading[remainderStart + 1].IsKind(SyntaxKind.EndOfLineTrivia))
+                {
+                    remainderStart += 2;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            List<SyntaxTrivia> normalizedLeading = new List<SyntaxTrivia>(leading.Count + 1);
+            for (int i = 0; i <= lastHeaderCommentIndex; i++)
+            {
+                normalizedLeading.Add(leading[i]);
+            }
+
+            normalizedLeading.Add(SyntaxFactory.EndOfLine(lineEnding));
+            normalizedLeading.Add(SyntaxFactory.EndOfLine(lineEnding));
+            for (int i = remainderStart; i < leading.Count; i++)
+            {
+                normalizedLeading.Add(leading[i]);
+            }
+
+            return root.ReplaceNode(firstChild, firstChild.WithLeadingTrivia(SyntaxFactory.TriviaList(normalizedLeading)));
+        }
+
+        private static int GetLeadingHeaderCommentCount(SyntaxNode sourceRoot)
+        {
+            SyntaxNode? firstChild = null;
+            foreach (var child in sourceRoot.ChildNodes())
+            {
+                firstChild = child;
+                break;
+            }
+
+            if (!(firstChild is UsingDirectiveSyntax usingDirective))
+            {
+                return 0;
+            }
+
+            int count = 0;
+            int endOfLineCount = 0;
+            foreach (var trivia in usingDirective.GetLeadingTrivia())
+            {
+                if (trivia.IsKind(SyntaxKind.SingleLineCommentTrivia)
+                    || trivia.IsKind(SyntaxKind.MultiLineCommentTrivia))
+                {
+                    count++;
+                    endOfLineCount = 0;
+                }
+                else if (trivia.IsKind(SyntaxKind.EndOfLineTrivia))
+                {
+                    endOfLineCount++;
+                    if (endOfLineCount > 1)
+                    {
+                        break;
+                    }
+                }
+                else if (!trivia.IsKind(SyntaxKind.WhitespaceTrivia) && trivia.IsDirective)
+                {
+                    break;
+                }
+            }
+
+            return count;
         }
 
         /// <summary>
