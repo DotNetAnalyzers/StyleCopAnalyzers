@@ -88,6 +88,41 @@ class C
             await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that first-member precedence applies when tied indentation levels are interleaved.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Fact]
+        public async Task VerifyInterleavedTiedMemberIndentationUsesFirstMemberAsync()
+        {
+            var testCode = @"
+class C
+{
+  int first;
+{|#0:    |}int second;
+{|#1:    |}int third;
+  int fourth;
+}
+";
+            var fixedCode = @"
+class C
+{
+  int first;
+  int second;
+  int third;
+  int fourth;
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Theory]
         [MemberData(nameof(CommonMemberData.BaseTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         public async Task TestNamespaceDeclarationAsync(string baseTypeKind)

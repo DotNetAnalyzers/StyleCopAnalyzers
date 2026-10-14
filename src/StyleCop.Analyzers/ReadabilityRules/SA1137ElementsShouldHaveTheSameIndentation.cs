@@ -535,7 +535,21 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 if (count > highestCount)
                 {
                     highestCount = count;
+                }
+            }
+
+            foreach (T element in elements)
+            {
+                if (hasNonAttributeElement && element.IsKind(SyntaxKind.AttributeList))
+                {
+                    continue;
+                }
+
+                string indentation = GetIndentationForAnalysis(element);
+                if (indentationCounts[indentation] == highestCount)
+                {
                     expectedIndentation = indentation;
+                    break;
                 }
             }
 
