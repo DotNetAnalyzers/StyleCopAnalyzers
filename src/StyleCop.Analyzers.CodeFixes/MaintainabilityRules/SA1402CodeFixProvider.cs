@@ -193,7 +193,9 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                         unnecessaryUsing = unnecessaryUsing.Parent;
                     }
 
-                    if (unnecessaryUsing != null)
+                    if (unnecessaryUsing != null
+                        && !ContainsDirective(unnecessaryUsing.GetLeadingTrivia())
+                        && !ContainsDirective(unnecessaryUsing.GetTrailingTrivia()))
                     {
                         unnecessaryUsings.Add(unnecessaryUsing);
                     }
@@ -201,17 +203,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
                 if (unnecessaryUsings.Count > 0)
                 {
-                    List<string> namespaceNamesToNormalize = new List<string>();
-                    List<SyntaxTriviaList> namespaceLeadingTriviaToKeep = new List<SyntaxTriviaList>();
+                    List<SyntaxNode> namespacesToNormalize = new List<SyntaxNode>();
                     foreach (var unnecessaryUsing in unnecessaryUsings)
                     {
-                        SyntaxNode? namespaceNode = unnecessaryUsing.Parent;
-                        while (namespaceNode != null && !(namespaceNode is NamespaceDeclarationSyntax))
-                        {
-                            namespaceNode = namespaceNode.Parent;
-                        }
-
-                        if (!(namespaceNode is NamespaceDeclarationSyntax namespaceDeclaration))
+                        if (!(unnecessaryUsing.Parent is NamespaceDeclarationSyntax namespaceDeclaration))
                         {
                             continue;
                         }
@@ -226,11 +221,9 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                             }
                         }
 
-                        string namespaceName = namespaceDeclaration.Name.ToString();
-                        if (allUsingsRemoved && !namespaceNamesToNormalize.Contains(namespaceName))
+                        if (allUsingsRemoved && !ContainsNode(namespacesToNormalize, namespaceDeclaration))
                         {
-                            namespaceNamesToNormalize.Add(namespaceName);
-                            namespaceLeadingTriviaToKeep.Add(namespaceDeclaration.Usings[0].GetLeadingTrivia());
+                            namespacesToNormalize.Add(namespaceDeclaration);
                         }
                     }
 
@@ -278,8 +271,9 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                         }
                     }
 
-                    List<SyntaxNode> nodesToAnnotate = new List<SyntaxNode>(unnecessaryUsings.Count + usingNodesToTrim.Count);
+                    List<SyntaxNode> nodesToAnnotate = new List<SyntaxNode>(unnecessaryUsings.Count + usingNodesToTrim.Count + namespacesToNormalize.Count);
                     nodesToAnnotate.AddRange(unnecessaryUsings);
+                    nodesToAnnotate.AddRange(namespacesToNormalize);
                     foreach (var nodeToTrim in usingNodesToTrim)
                     {
                         if (!ContainsNode(nodesToAnnotate, nodeToTrim))
@@ -296,6 +290,11 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                             if (ContainsNode(unnecessaryUsings, original))
                             {
                                 rewritten = rewritten.WithAdditionalAnnotations(removeAnnotation);
+                            }
+
+                            if (ContainsNode(namespacesToNormalize, original))
+                            {
+                                rewritten = rewritten.WithAdditionalAnnotations(new SyntaxAnnotation("SA1402NormalizeNamespace"));
                             }
 
                             int trimIndex = IndexOfNode(usingNodesToTrim, original);
@@ -316,27 +315,26 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
                     linkedExtractedRoot = linkedExtractedRoot.RemoveNodes(nodesToRemove, SyntaxRemoveOptions.KeepExteriorTrivia);
                     linkedExtractedRoot = RemoveBlankLinesLeftByRemovedSiblings(linkedExtractedRoot);
-                    if (namespaceNamesToNormalize.Count > 0)
+                    List<SyntaxNode> annotatedNamespaces = new List<SyntaxNode>();
+                    foreach (var annotatedNamespace in linkedExtractedRoot.GetAnnotatedNodes("SA1402NormalizeNamespace"))
                     {
-                        List<SyntaxNode> namespaceNodesToNormalize = new List<SyntaxNode>();
-                        foreach (var candidate in linkedExtractedRoot.DescendantNodes())
-                        {
-                            if (candidate is NamespaceDeclarationSyntax namespaceDeclaration
-                                && namespaceDeclaration.Usings.Count == 0
-                                && namespaceNamesToNormalize.Contains(namespaceDeclaration.Name.ToString()))
-                            {
-                                namespaceNodesToNormalize.Add(namespaceDeclaration);
-                            }
-                        }
-
-                        linkedExtractedRoot = linkedExtractedRoot.ReplaceNodes(
-                            namespaceNodesToNormalize,
-                            (original, rewritten) => NormalizeNamespaceDeclaration(
-                                (NamespaceDeclarationSyntax)rewritten,
-                                namespaceLeadingTriviaToKeep[namespaceNamesToNormalize.IndexOf(((NamespaceDeclarationSyntax)original).Name.ToString())]));
+                        annotatedNamespaces.Add(annotatedNamespace);
                     }
 
-                    linkedExtractedRoot = NormalizeLeadingCommentSeparator(linkedExtractedRoot);
+                    foreach (var annotatedNamespace in annotatedNamespaces)
+                    {
+                        if (annotatedNamespace is NamespaceDeclarationSyntax namespaceDeclaration && namespaceDeclaration.Members.Count > 0)
+                        {
+                            SyntaxNode firstMember = namespaceDeclaration.Members[0];
+                            linkedExtractedRoot = linkedExtractedRoot.ReplaceNode(firstMember, TrimLeadingBlankLines(firstMember, 0));
+                        }
+                    }
+
+                    if (HasLeadingHeaderComment(root))
+                    {
+                        linkedExtractedRoot = NormalizeLeadingCommentSeparator(linkedExtractedRoot);
+                    }
+
                     updatedSolution = updatedSolution.WithDocumentSyntaxRoot(linkedExtractedDocumentId, linkedExtractedRoot);
                 }
             }
@@ -416,7 +414,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             }
 
             var leading = firstChild.GetLeadingTrivia();
-            int lastCommentIndex = -1;
+            List<int> commentIndices = new List<int>();
             for (int i = 0; i < leading.Count; i++)
             {
                 if (leading[i].IsKind(SyntaxKind.SingleLineCommentTrivia)
@@ -424,17 +422,18 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                     || leading[i].IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia)
                     || leading[i].IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia))
                 {
-                    lastCommentIndex = i;
+                    commentIndices.Add(i);
                 }
             }
 
-            if (lastCommentIndex < 0)
+            if (commentIndices.Count == 0 || commentIndices.Count > 2)
             {
                 return root;
             }
 
             string? lineEnding = null;
             SyntaxTrivia trailingWhitespace = default;
+            int lastCommentIndex = commentIndices[commentIndices.Count - 1];
             for (int i = lastCommentIndex + 1; i < leading.Count; i++)
             {
                 if (leading[i].IsKind(SyntaxKind.EndOfLineTrivia))
@@ -458,13 +457,20 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             }
 
             var normalizedLeading = new List<SyntaxTrivia>(lastCommentIndex + 4);
-            for (int i = 0; i <= lastCommentIndex; i++)
+            int headerCommentIndex = commentIndices[0];
+            for (int i = 0; i <= headerCommentIndex; i++)
             {
                 normalizedLeading.Add(leading[i]);
             }
 
             normalizedLeading.Add(SyntaxFactory.EndOfLine(lineEnding));
             normalizedLeading.Add(SyntaxFactory.EndOfLine(lineEnding));
+            if (commentIndices.Count == 2)
+            {
+                normalizedLeading.Add(leading[commentIndices[1]]);
+                normalizedLeading.Add(SyntaxFactory.EndOfLine(lineEnding));
+            }
+
             if (trailingWhitespace.RawKind != 0)
             {
                 normalizedLeading.Add(trailingWhitespace);
@@ -473,16 +479,43 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             return root.ReplaceNode(firstChild, firstChild.WithLeadingTrivia(SyntaxFactory.TriviaList(normalizedLeading)));
         }
 
-        private static NamespaceDeclarationSyntax NormalizeNamespaceDeclaration(NamespaceDeclarationSyntax namespaceDeclaration, SyntaxTriviaList leadingTriviaToKeep)
+        private static bool ContainsDirective(SyntaxTriviaList triviaList)
         {
-            if (namespaceDeclaration.Members.Count > 0)
+            foreach (var trivia in triviaList)
             {
-                SyntaxNode firstMember = namespaceDeclaration.Members[0];
-                SyntaxNode normalizedMember = firstMember.WithLeadingTrivia(leadingTriviaToKeep);
-                namespaceDeclaration = (NamespaceDeclarationSyntax)namespaceDeclaration.ReplaceNode(firstMember, normalizedMember);
+                if (trivia.IsDirective)
+                {
+                    return true;
+                }
             }
 
-            return namespaceDeclaration;
+            return false;
+        }
+
+        private static bool HasLeadingHeaderComment(SyntaxNode sourceRoot)
+        {
+            SyntaxNode? firstChild = null;
+            foreach (var child in sourceRoot.ChildNodes())
+            {
+                firstChild = child;
+                break;
+            }
+
+            if (!(firstChild is UsingDirectiveSyntax usingDirective))
+            {
+                return false;
+            }
+
+            foreach (var trivia in usingDirective.GetLeadingTrivia())
+            {
+                if (trivia.IsKind(SyntaxKind.SingleLineCommentTrivia)
+                    || trivia.IsKind(SyntaxKind.MultiLineCommentTrivia))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>
