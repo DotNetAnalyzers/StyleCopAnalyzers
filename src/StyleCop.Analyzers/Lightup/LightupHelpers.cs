@@ -189,6 +189,57 @@ namespace StyleCop.Analyzers.Lightup
             return expression.Compile();
         }
 
+        internal static Func<TSource, NullabilityInfo> CreateNullabilityInfoAccessor<TSource>(Type type, string propertyName)
+        {
+            if (type == null)
+            {
+                return static _ => default;
+            }
+
+            if (!typeof(TSource).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
+            {
+                throw new InvalidOperationException();
+            }
+
+            var property = type.GetTypeInfo().GetDeclaredProperty(propertyName);
+            if (property == null)
+            {
+                return static _ => default;
+            }
+
+            var nullabilityInfoType = property.PropertyType;
+            var annotationProperty = nullabilityInfoType.GetTypeInfo().GetDeclaredProperty(nameof(NullabilityInfo.Annotation));
+            var flowStateProperty = nullabilityInfoType.GetTypeInfo().GetDeclaredProperty(nameof(NullabilityInfo.FlowState));
+            if (annotationProperty == null || flowStateProperty == null
+                || !annotationProperty.PropertyType.GetTypeInfo().IsEnum
+                || !flowStateProperty.PropertyType.GetTypeInfo().IsEnum)
+            {
+                throw new InvalidOperationException();
+            }
+
+            var sourceParameter = Expression.Parameter(typeof(TSource), "source");
+            var nullabilityInfoVariable = Expression.Variable(nullabilityInfoType, "nullabilityInfo");
+            Expression instance =
+                type.GetTypeInfo().IsAssignableFrom(typeof(TSource).GetTypeInfo())
+                ? (Expression)sourceParameter
+                : Expression.Convert(sourceParameter, type);
+            var constructor = typeof(NullabilityInfo).GetTypeInfo().DeclaredConstructors
+                .Single(c => c.GetParameters().Length == 2);
+            var body = Expression.Block(
+                new[] { nullabilityInfoVariable },
+                Expression.Assign(nullabilityInfoVariable, Expression.Property(instance, property)),
+                Expression.New(
+                    constructor,
+                    Expression.Convert(
+                        Expression.Convert(Expression.Property(nullabilityInfoVariable, annotationProperty), typeof(int)),
+                        typeof(NullableAnnotation)),
+                    Expression.Convert(
+                        Expression.Convert(Expression.Property(nullabilityInfoVariable, flowStateProperty), typeof(int)),
+                        typeof(NullableFlowState))));
+
+            return Expression.Lambda<Func<TSource, NullabilityInfo>>(body, sourceParameter).Compile();
+        }
+
         internal static Func<TOperation, ImmutableArray<IOperation>> CreateOperationListPropertyAccessor<TOperation>(Type type, string propertyName)
         {
             ImmutableArray<IOperation> FallbackAccessor(TOperation syntax)

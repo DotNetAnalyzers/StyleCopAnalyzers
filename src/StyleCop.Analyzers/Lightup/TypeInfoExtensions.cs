@@ -6,9 +6,6 @@
 namespace StyleCop.Analyzers.Lightup;
 
 using System;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
 using Microsoft.CodeAnalysis;
 using CodeAnalysisTypeInfo = Microsoft.CodeAnalysis.TypeInfo;
 
@@ -19,8 +16,8 @@ internal static class TypeInfoExtensions
 
     static TypeInfoExtensions()
     {
-        ConvertedNullabilityAccessor = CreateNullabilityAccessor(nameof(ConvertedNullability));
-        NullabilityAccessor = CreateNullabilityAccessor(nameof(Nullability));
+        ConvertedNullabilityAccessor = LightupHelpers.CreateNullabilityInfoAccessor<CodeAnalysisTypeInfo>(typeof(CodeAnalysisTypeInfo), nameof(ConvertedNullability));
+        NullabilityAccessor = LightupHelpers.CreateNullabilityInfoAccessor<CodeAnalysisTypeInfo>(typeof(CodeAnalysisTypeInfo), nameof(Nullability));
     }
 
     public static NullabilityInfo ConvertedNullability(this CodeAnalysisTypeInfo typeInfo)
@@ -31,40 +28,5 @@ internal static class TypeInfoExtensions
     public static NullabilityInfo Nullability(this CodeAnalysisTypeInfo typeInfo)
     {
         return NullabilityAccessor(typeInfo);
-    }
-
-    private static Func<CodeAnalysisTypeInfo, NullabilityInfo> CreateNullabilityAccessor(string propertyName)
-    {
-        var property = typeof(CodeAnalysisTypeInfo).GetTypeInfo().GetDeclaredProperty(propertyName);
-        if (property == null)
-        {
-            return static _ => default;
-        }
-
-        var nullabilityInfoType = property.PropertyType;
-        var annotationProperty = nullabilityInfoType.GetTypeInfo().GetDeclaredProperty(nameof(NullabilityInfo.Annotation));
-        var flowStateProperty = nullabilityInfoType.GetTypeInfo().GetDeclaredProperty(nameof(NullabilityInfo.FlowState));
-        if (annotationProperty == null || flowStateProperty == null)
-        {
-            throw new InvalidOperationException();
-        }
-
-        var typeInfoParameter = Expression.Parameter(typeof(CodeAnalysisTypeInfo), "typeInfo");
-        var nullabilityInfoVariable = Expression.Variable(nullabilityInfoType, "nullabilityInfo");
-        var constructor = typeof(NullabilityInfo).GetTypeInfo().DeclaredConstructors
-            .Single(c => c.GetParameters().Length == 2);
-        var body = Expression.Block(
-            new[] { nullabilityInfoVariable },
-            Expression.Assign(nullabilityInfoVariable, Expression.Property(typeInfoParameter, property)),
-            Expression.New(
-                constructor,
-                Expression.Convert(
-                    Expression.Convert(Expression.Property(nullabilityInfoVariable, annotationProperty), typeof(int)),
-                    typeof(NullableAnnotation)),
-                Expression.Convert(
-                    Expression.Convert(Expression.Property(nullabilityInfoVariable, flowStateProperty), typeof(int)),
-                    typeof(NullableFlowState))));
-
-        return Expression.Lambda<Func<CodeAnalysisTypeInfo, NullabilityInfo>>(body, typeInfoParameter).Compile();
     }
 }

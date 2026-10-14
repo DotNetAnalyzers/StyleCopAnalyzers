@@ -42,6 +42,13 @@ public class TypeInfoExtensionsCSharp8UnitTests
         Assert.Equal(
             new NullabilityInfo(NullableAnnotation.Annotated, NullableFlowState.MaybeNull),
             typeInfo.ConvertedNullability());
+
+        object nullabilityInfo = typeInfo.Nullability();
+        object equalNullabilityInfo = new NullabilityInfo(NullableAnnotation.Annotated, NullableFlowState.MaybeNull);
+        object differentNullabilityInfo = new NullabilityInfo(NullableAnnotation.NotAnnotated, NullableFlowState.NotNull);
+        Assert.True(nullabilityInfo.Equals(equalNullabilityInfo));
+        Assert.False(nullabilityInfo.Equals(differentNullabilityInfo));
+        Assert.Equal(nullabilityInfo.GetHashCode(), equalNullabilityInfo.GetHashCode());
     }
 
     [Fact]
