@@ -8,12 +8,13 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using StyleCop.Analyzers.Lightup;
+using StyleCop.Analyzers.Test.CSharp7.Lightup;
 using Xunit;
 using NullabilityInfo = StyleCop.Analyzers.Lightup.NullabilityInfo;
 using NullableAnnotation = StyleCop.Analyzers.Lightup.NullableAnnotation;
 using NullableFlowState = StyleCop.Analyzers.Lightup.NullableFlowState;
 
-public class TypeInfoExtensionsCSharp8UnitTests
+public partial class TypeInfoExtensionsCSharp8UnitTests : TypeInfoExtensionsCSharp7UnitTests
 {
     [Fact]
     public void NullabilityPropertiesExposeNullableAnnotationsAndFlowState()
@@ -78,24 +79,5 @@ public class TypeInfoExtensionsCSharp8UnitTests
         Assert.Equal(
             new NullabilityInfo(NullableAnnotation.Annotated, NullableFlowState.MaybeNull),
             typeInfo.ConvertedNullability());
-    }
-
-    [Fact]
-    public void NullabilityPropertiesDefaultWhenNullableContextIsDisabled()
-    {
-        var syntaxTree = CSharpSyntaxTree.ParseText(
-            "class C { object M(object value) => value; }",
-            new CSharpParseOptions(LanguageVersion.CSharp8));
-        var compilation = CSharpCompilation.Create(
-            "Test",
-            new[] { syntaxTree },
-            new[] { MetadataReference.CreateFromFile(typeof(object).Assembly.Location) });
-        var expression = syntaxTree.GetRoot().DescendantNodes().OfType<IdentifierNameSyntax>().Single();
-        var typeInfo = compilation.GetSemanticModel(syntaxTree).GetTypeInfo(expression);
-
-        Assert.Equal(NullableAnnotation.None, typeInfo.Nullability().Annotation);
-        Assert.Equal(NullableFlowState.None, typeInfo.Nullability().FlowState);
-        Assert.Equal(NullableAnnotation.None, typeInfo.ConvertedNullability().Annotation);
-        Assert.Equal(NullableFlowState.None, typeInfo.ConvertedNullability().FlowState);
     }
 }

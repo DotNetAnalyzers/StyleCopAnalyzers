@@ -12,7 +12,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using StyleCop.Analyzers.Lightup;
 using Xunit;
 
-public class TypeInfoExtensionsTests
+public partial class TypeInfoExtensionsUnitTests
 {
     [Fact]
     public void NullabilityPropertiesDefaultWhenNullableContextIsDisabled()
