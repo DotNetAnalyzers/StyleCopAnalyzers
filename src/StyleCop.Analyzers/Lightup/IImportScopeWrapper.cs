@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct IImportScopeWrapper
@@ -14,7 +15,7 @@ namespace StyleCop.Analyzers.Lightup
 
         private static readonly Func<object?, ImmutableArray<IAliasSymbol>> AliasesAccessor;
 
-        private readonly object node;
+        private readonly object? node;
 
         static IImportScopeWrapper()
         {
@@ -31,7 +32,7 @@ namespace StyleCop.Analyzers.Lightup
         public ImmutableArray<IAliasSymbol> Aliases => AliasesAccessor(this.node);
 
         // NOTE: Referenced via reflection
-        public static IImportScopeWrapper FromObject(object node)
+        public static IImportScopeWrapper FromObject(object? node)
         {
             if (node == null)
             {
@@ -46,7 +47,7 @@ namespace StyleCop.Analyzers.Lightup
             return new IImportScopeWrapper(node);
         }
 
-        public static bool IsInstance(object obj)
+        public static bool IsInstance([NotNullWhen(true)] object? obj)
         {
             return obj != null && LightupHelpers.CanWrapObject(obj, WrappedType);
         }
