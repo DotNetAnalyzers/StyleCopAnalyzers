@@ -3,7 +3,7 @@
 Set category-level severity with this in your .editorconfig file:
 
 ```ini
-dotnet_diagnostic.category-StyleCop.CSharp.MaintainabilityRules.severity = none
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.MaintainabilityRules.severity = none
 ```
 
 Rules which improve code maintainability.

@@ -3,7 +3,7 @@
 Set category-level severity with this in your .editorconfig file:
 
 ```ini
-dotnet_diagnostic.category-StyleCop.CSharp.LayoutRules.severity = none
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.LayoutRules.severity = none
 ```
 
 Rules which enforce code layout and line spacing.
