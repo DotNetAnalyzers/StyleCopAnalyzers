@@ -134,8 +134,13 @@ namespace StyleCop.Analyzers.LayoutRules
 
             return indentedRoot.ReplaceNodes(
                 indentedRoot.GetAnnotatedNodes(annotation),
-                (originalNode, rewrittenNode) => SyntaxFactory.Block((StatementSyntax)rewrittenNode.WithoutAnnotations(annotation))
-                    .WithAdditionalAnnotations(formattingAnnotation));
+                (originalNode, rewrittenNode) =>
+                {
+                    var block = SyntaxFactory.Block((StatementSyntax)rewrittenNode.WithoutAnnotations(annotation));
+                    return block
+                        .WithOpenBraceToken(block.OpenBraceToken.WithAdditionalAnnotations(formattingAnnotation))
+                        .WithCloseBraceToken(block.CloseBraceToken.WithAdditionalAnnotations(formattingAnnotation));
+                });
         }
 
         private static bool NeedsShift(SyntaxNode node, IndentationSettings indentationSettings)
