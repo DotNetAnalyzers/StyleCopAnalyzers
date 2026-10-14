@@ -25,3 +25,4 @@ Identifikátor | Název | Popis
 [SA1313](SA1313.md) | ParameterNamesMustBeginWithLowerCaseLetter | Název parametru v jazyce C# nezačíná malým písmenem.
 [SA1314](SA1314.md) | TypeParameterNamesMustBeginWithT | Název parametrického typu v jazyce C# nezačíná velkým písmenem T.
 [SA1316](SA1316.md) | TupleElementNamesShouldUseCorrectCasing | Názvy prvků v typu tuple by měly mít správné velká písmena.
+[SA1317](SA1317.md) | IdentifierShouldBeNamedOnlyWithLatinLetters | Názvy identifikátorů mají obsahovat pouze latinská písmena.
