@@ -1,4 +1,10 @@
 ### Правила упорядочивания (SA1200-)
+Задайте уровень серьёзности для всей категории в файле **.editorconfig**:
+
+```ini
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.OrderingRules.severity = none
+```
+
 Правила, обеспечивающие стандартный порядок содержимого кода.
 
 Идентификатор | Имя | Описание

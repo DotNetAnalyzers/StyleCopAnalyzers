@@ -1,4 +1,10 @@
 ### Правила удобочитаемости (SA1100-)
+Задайте уровень серьёзности для всей категории в файле **.editorconfig**:
+
+```ini
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.ReadabilityRules.severity = none
+```
+
 Правила, обеспечивающие хорошее форматирование и читаемость кода.
 
 Идентификатор | Имя | Описание

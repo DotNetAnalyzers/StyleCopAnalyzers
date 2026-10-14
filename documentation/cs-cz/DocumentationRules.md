@@ -1,4 +1,10 @@
 ### Pravidla dokumentace (SA1600-)
+Závažnost celé kategorie nastavíte v souboru **.editorconfig** takto:
+
+```ini
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.DocumentationRules.severity = none
+```
+
 Pravidla, která ověřují obsah a formátování dokumentace kódu.
 
 Identifikátor | Název | Popis

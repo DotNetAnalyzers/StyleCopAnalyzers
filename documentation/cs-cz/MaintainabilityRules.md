@@ -1,4 +1,10 @@
 ### Pravidla udržovatelnosti (SA1400-)
+Závažnost celé kategorie nastavíte v souboru **.editorconfig** takto:
+
+```ini
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.MaintainabilityRules.severity = none
+```
+
 Pravidla, která zlepšují udržovatelnost kódu.
 
 Identifikátor | Název | Popis

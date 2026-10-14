@@ -1,4 +1,11 @@
 ### Spacing Rules (SA1000-)
+
+Set category-level severity with this in your .editorconfig file:
+
+```ini
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.SpacingRules.severity = none
+```
+
 Rules which enforce spacing requirements around keywords and symbols in the code.
 
 Identifier | Name | Description

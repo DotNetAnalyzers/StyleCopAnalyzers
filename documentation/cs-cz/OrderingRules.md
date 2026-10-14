@@ -1,4 +1,10 @@
 ### Pravidla uspořádání (SA1200-)
+Závažnost celé kategorie nastavíte v souboru **.editorconfig** takto:
+
+```ini
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.OrderingRules.severity = none
+```
+
 Pravidla, která vynucují standardní systém uspořádání obsahu kódu.
 
 Identifikátor | Název | Popis

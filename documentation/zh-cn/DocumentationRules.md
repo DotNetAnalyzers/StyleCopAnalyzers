@@ -1,4 +1,10 @@
 ### 文档规则 (SA1600-)
+在 **.editorconfig** 文件中使用以下设置为整个类别配置严重级别：
+
+```ini
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.DocumentationRules.severity = none
+```
+
 这些规则验证代码文档的内容和格式。
 
 标识符 | 名称 | 说明

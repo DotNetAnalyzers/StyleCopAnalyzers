@@ -1,4 +1,10 @@
 ### Pravidla pojmenování (SA1300-)
+Závažnost celé kategorie nastavíte v souboru **.editorconfig** takto:
+
+```ini
+dotnet_analyzer_diagnostic.category-StyleCop.CSharp.NamingRules.severity = none
+```
+
 Pravidla, která vynucují požadavky na pojmenování členů, typů a proměnných.
 
 Identifikátor | Název | Popis
