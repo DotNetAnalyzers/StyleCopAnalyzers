@@ -64,13 +64,13 @@
     <value>非私有只读字段应以大写字母开头</value>
   </data>
   <data name="SA1305Description" xml:space="preserve">
-    <value>C# 字段或变量的名称使用了匈牙利命名法。</value>
+    <value>C# 字段、变量或参数的名称使用了匈牙利命名法。</value>
   </data>
   <data name="SA1305MessageFormat" xml:space="preserve">
     <value>{0}“{1}”不应使用匈牙利命名法</value>
   </data>
   <data name="SA1305Title" xml:space="preserve">
-    <value>字段名称不应使用匈牙利命名法</value>
+    <value>名称不应使用匈牙利命名法</value>
   </data>
   <data name="SA1306Description" xml:space="preserve">
     <value>C# 字段的名称未以小写字母开头。</value>

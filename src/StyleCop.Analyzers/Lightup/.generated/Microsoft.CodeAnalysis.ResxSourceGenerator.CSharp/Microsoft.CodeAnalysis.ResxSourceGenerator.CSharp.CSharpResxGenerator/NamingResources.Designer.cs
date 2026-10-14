@@ -48,11 +48,11 @@ namespace StyleCop.Analyzers.NamingRules
         public static string @SA1304MessageFormat => GetResourceString("SA1304MessageFormat")!;
         /// <summary>Non-private readonly fields should begin with upper-case letter</summary>
         public static string @SA1304Title => GetResourceString("SA1304Title")!;
-        /// <summary>The name of a field or variable in C# uses Hungarian notation.</summary>
+        /// <summary>The name of a field, variable, or parameter in C# uses Hungarian notation.</summary>
         public static string @SA1305Description => GetResourceString("SA1305Description")!;
         /// <summary>{0} '{1}' should not use Hungarian notation</summary>
         public static string @SA1305MessageFormat => GetResourceString("SA1305MessageFormat")!;
-        /// <summary>Field names should not use Hungarian notation</summary>
+        /// <summary>Names should not use Hungarian notation</summary>
         public static string @SA1305Title => GetResourceString("SA1305Title")!;
         /// <summary>The name of a field in C# does not begin with a lower-case letter.</summary>
         public static string @SA1306Description => GetResourceString("SA1306Description")!;

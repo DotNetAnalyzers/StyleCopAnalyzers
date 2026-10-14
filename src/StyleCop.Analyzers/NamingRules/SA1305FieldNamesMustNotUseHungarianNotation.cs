@@ -150,7 +150,9 @@ namespace StyleCop.Analyzers.NamingRules
                     var symbol = semanticModel.GetDeclaredSymbol(memberDeclaration);
                     if (symbol != null)
                     {
-                        if (symbol.IsOverride || NamedTypeHelpers.IsImplementingAnInterfaceMember(symbol))
+                        if (symbol.IsOverride
+                            || NamedTypeHelpers.IsImplementingAnInterfaceMember(symbol)
+                            || (symbol is IMethodSymbol methodSymbol && methodSymbol.GetDllImportData() != null))
                         {
                             return;
                         }
