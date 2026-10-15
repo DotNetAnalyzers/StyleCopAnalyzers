@@ -130,6 +130,37 @@ namespace TestNamespace
             await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that extern alias directives in the compilation unit are moved into the namespace.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(1931, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1931")]
+        public async Task TestInvalidExternAliasDirectivesInCompilationUnitAsync()
+        {
+            var testCode = @"{|#0:extern alias corlib;|} // alias comment
+
+namespace TestNamespace
+{
+    using Core = corlib::System;
+}
+";
+
+            var fixedTestCode = @"namespace TestNamespace
+{
+    extern alias corlib; // alias comment
+    using Core = corlib::System;
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(0),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestInvalidUsingStatementsInCompilationUnitWithPragmaAsync()
         {

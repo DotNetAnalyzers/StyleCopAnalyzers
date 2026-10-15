@@ -85,6 +85,37 @@ namespace TestNamespace
         }
 
         /// <summary>
+        /// Verifies that extern alias directives in a namespace are moved to the compilation unit.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(1931, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1931")]
+        public async Task TestInvalidExternAliasDirectivesInNamespaceAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    {|#0:extern alias corlib;|} // alias comment
+    {|#1:using Core = corlib::System;|}
+}
+";
+            var fixedTestCode = @"extern alias corlib; // alias comment
+using Core = corlib::System;
+
+namespace TestNamespace
+{
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(0),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that simplified using statements in a namespace are expanded during the code fix operation.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
