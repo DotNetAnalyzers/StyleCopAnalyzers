@@ -36,6 +36,23 @@ Check the csproj files for current versions; this table is from Oct 2026.
   `Helpers/CommonMemberData.cs`. Settings: pass a
   `stylecop.json` string through the verifier overloads that take `settings`.
 
+## Keep before/after snippets readable
+
+Tests both lock in behavior and show reviewers the impact and intended policy of a change. Prefer complete,
+visually readable input and expected-output snippets over minimizing duplicated test text.
+
+Keep interpolation and concatenation simple (for example, substituting a property versus indexer declaration).
+If several local strings, conditional branches, or replacements are needed before the input and expected
+strings can be defined, split the cases into separate test methods. Prefer four explicit methods over a
+two-boolean matrix that assembles different syntax; two methods with one simple parameter each can also work.
+Reviewers should be able to see the before and after code without mentally executing the test's string-building
+logic. Preserve every case and assertion when simplifying parameterization.
+
+For interpolated C# snippets, prefer interpolated raw strings (`$$"""`) so C# braces remain `{` and `}`,
+while interpolation uses `{{expression}}`. Keep leading/trailing newlines
+and indentation intentional so changing the test literal does not change its source or expected output.
+This applies to the test implementation; the code inside the string may still target an older C# version.
+
 ## Running tests locally
 
 Both target frameworks build on Windows (`net10.0` and `net472`); on Linux and macOS only `net10.0` builds.
