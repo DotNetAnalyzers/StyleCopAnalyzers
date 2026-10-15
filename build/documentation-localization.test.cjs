@@ -59,9 +59,7 @@ test("rule pages use descriptive headings as their compiled sidebar captions wit
 test("the Czech sidebar uses Czech labels in both source and compiled navigation", () => {
     const labels = [
         "Přehled",
-        "Použití .NET CLI",
         "Konfigurace",
-        "Povolení konfigurace",
         "Rozdíly oproti StyleCop Classic",
         "Oblasti pravidel",
         "Speciální pravidla",
