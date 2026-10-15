@@ -27,7 +27,7 @@ namespace StyleCop.Analyzers.Settings
   // will not take effect until additional steps are taken to enable it. See the
   // following page for additional information:
   //
-  // https://dotnetanalyzers.github.io/StyleCopAnalyzers/EnableConfiguration.html
+  // https://dotnetanalyzers.github.io/StyleCopAnalyzers/Configuration.html#using-stylecopjson
 
   ""$schema"": ""https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json"",
   ""settings"": {
