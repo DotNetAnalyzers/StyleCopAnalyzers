@@ -1,11 +1,10 @@
 ﻿# Nastavení analyzátorů StyleCop
 
-StyleCop Analyzers má dva druhy konfigurace: **která pravidla se spouštějí a jak jsou důležitá** a **nastavení**, která
-upřesňují jednotlivá pravidla (například název společnosti používaný v záhlaví souborů).
+StyleCop Analyzers má dva druhy konfigurace: **která pravidla se spouštějí a jak jsou důležitá** a **nastavení**, která upřesňují jednotlivá pravidla (například název společnosti používaný v záhlaví souborů).
 
-**Doporučení:** pro obojí používejte soubor **.editorconfig** nebo **.globalconfig**. Všechny nastavení lze zadat
-právě tam, takže stačí jeden soubor. **stylecop.json** a soubory sady pravidel nadále fungují v existujících projektech
-a níže je také popsána migrace z nich.
+**Doporučení:** pro obojí používejte soubor **.editorconfig** nebo **.globalconfig**.
+Všechna nastavení lze zadat právě tam, takže stačí jeden soubor.
+**stylecop.json** a soubory sady pravidel nadále fungují v existujících projektech a níže je také popsána migrace z nich.
 
 | Mechanismus | Závažnosti pravidel | Nastavení |
 | --- | --- | --- |
@@ -46,6 +45,30 @@ csharp_using_directive_placement = outside_namespace
   [stavu implementace pravidel](RuleStatus.md) a na stránce jednotlivých pravidel.
 * SA0001 nelze zakázat pomocí **.editorconfig** (omezení Roslynu). Použijte soubor sady pravidel nebo `NoWarn`.
 * Názvy vlastností nerozlišují velká a malá písmena. Logické hodnoty jsou `true` nebo `false` a `unset` ignoruje hodnotu nastavenou v nadřazeném souboru.
+
+## Použití stylecop.json
+
+Pokud se rozhodnete konfigurovat analyzátory pomocí souboru stylecop.json, musíte jej do projektu zahrnout jako dodatečný soubor.
+
+Upravte soubor projektu následovně, aby se použila nastavení a vlastní pravidla:
+
+```xml
+<ItemGroup>
+    <AdditionalFiles Include="stylecop.json" />
+</ItemGroup>
+```
+
+Soubor `stylecop.json` můžete vytvořit podle následující šablony:
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+  "settings": {
+  }
+}
+```
+
+Mnoho editorů JSON nabízí ověřování a automatické doplňování na základě schématu uvedeného ve vlastnosti `$schema`.
 
 ## Reference nastavení
 

@@ -2,12 +2,8 @@ order: -1
 items:
 - name: Přehled
   href: index.md
-- name: Použití .NET CLI
-  href: DotNetCli.md
 - name: Konfigurace
   href: Configuration.md
-- name: Povolení konfigurace
-  href: EnableConfiguration.md
 - name: Rozdíly oproti StyleCop Classic
   href: KnownChanges.md
 - name: Oblasti pravidel

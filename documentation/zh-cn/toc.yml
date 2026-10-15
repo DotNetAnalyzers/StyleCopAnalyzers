@@ -2,12 +2,8 @@ order: -1
 items:
 - name: 概览
   href: index.md
-- name: 使用 .NET CLI
-  href: DotNetCli.md
 - name: 配置
   href: Configuration.md
-- name: 启用配置
-  href: EnableConfiguration.md
 - name: 与 StyleCop Classic 的差异
   href: KnownChanges.md
 - name: 规则类别

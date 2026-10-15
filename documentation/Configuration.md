@@ -1,11 +1,10 @@
 # Configuring StyleCop Analyzers
 
-StyleCop Analyzers has two kinds of configuration: **which rules run and how severe they are**, and **settings** that
-fine-tune individual rules (for example the company name used in file headers).
+StyleCop Analyzers has two kinds of configuration: **which rules run and how severe they are**, and **settings** that fine-tune individual rules (for example the company name used in file headers).
 
-**Recommendation:** use an **.editorconfig** file, or a **.globalconfig** file, for both. Every setting can be set
-there, so one file is enough. **stylecop.json** and rule set files continue to work for existing projects, and are
-documented below along with how to migrate from them.
+**Recommendation:** use an **.editorconfig** file, or a **.globalconfig** file, for both.
+Every setting can be set there, so one file is enough.
+**stylecop.json** and rule set files continue to work for existing projects, and are documented below along with how to migrate from them.
 
 | Mechanism | Rule severities | Settings |
 | --- | --- | --- |
@@ -48,6 +47,30 @@ csharp_using_directive_placement = outside_namespace
   [rule implementation status](RuleStatus.md) and in each rule's page.
 * SA0001 cannot be disabled through **.editorconfig** (a Roslyn limitation). Use a rule set file or `NoWarn`.
 * Property names are case-insensitive. Boolean values are `true` or `false`, and `unset` ignores a value set in a parent file.
+
+## Using stylecop.json
+
+If you choose to configure the analyzers via the stylecop.json file, you need to include it in your project as an additional file.
+
+Update the project file as follows to apply settings and custom rules:
+
+```xml
+<ItemGroup>
+    <AdditionalFiles Include="stylecop.json" />
+</ItemGroup>
+```
+
+The `stylecop.json` file itself may be started with the following template:
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+  "settings": {
+  }
+}
+```
+
+Many JSON editors will offer validation and auto-completion based on the schema specified in the `$schema` property.
 
 ## Settings reference
 

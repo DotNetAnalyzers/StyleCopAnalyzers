@@ -2,25 +2,27 @@
 #breadcrumb { display: none; }
 </style>
 
+# Обзор
+
 StyleCop.Analyzers выдаёт предупреждения и предлагает исправления кода при нарушении правил стиля и единообразия в коде C#.
+Эти анализаторы распространяются в виде пакета NuGet.
 
-## Начало работы
+[![Пакет NuGet](https://img.shields.io/nuget/vpre/StyleCop.Analyzers?label=StyleCop.Analyzers)](https://nuget.org/packages/StyleCop.Analyzers)
 
-- [Использование StyleCop.Analyzers с .NET CLI](DotNetCli.md)
-- [Настройка](Configuration.md)
-- [Подключение конфигурации](EnableConfiguration.md)
-- [Отличия от StyleCop Classic](KnownChanges.md)
+Нажмите на значок выше и следуйте инструкциям для вашей среды, чтобы установить пакет анализаторов.
+Это активирует анализаторы для вашего проекта.
 
-## Категории правил
+Для этих анализаторов доступно множество [параметров настройки](Configuration.md).
 
-Сведения о реализованных правилах и исправлениях кода приведены на странице [Состояние реализации правил](RuleStatus.md).
+## Включение обработки XML-документации
 
-- [Специальные правила (SA0000-)](SpecialRules.md) (`StyleCop.CSharp.SpecialRules`)
-- [Правила расстановки пробелов (SA1000-)](SpacingRules.md) (`StyleCop.CSharp.SpacingRules`)
-- [Правила читаемости (SA1100-)](ReadabilityRules.md) (`StyleCop.CSharp.ReadabilityRules`)
-- [Правила упорядочивания (SA1200-)](OrderingRules.md) (`StyleCop.CSharp.OrderingRules`)
-- [Правила именования (SA1300-)](NamingRules.md) (`StyleCop.CSharp.NamingRules`)
-- [Правила сопровождаемости (SA1400-)](MaintainabilityRules.md) (`StyleCop.CSharp.MaintainabilityRules`)
-- [Правила оформления (SA1500-)](LayoutRules.md) (`StyleCop.CSharp.LayoutRules`)
-- [Правила документирования (SA1600-)](DocumentationRules.md) (`StyleCop.CSharp.DocumentationRules`)
-- [Альтернативные правила (SX0000-)](AlternativeRules.md)
+Анализаторы XML-документации могут запускаться только при включённой обработке XML-комментариев документации.
+Дополнительные сведения приведены в [SA0001](SA0001.md).
+
+Добавьте в файл проекта следующее:
+
+```xml
+<PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+</PropertyGroup>
+```

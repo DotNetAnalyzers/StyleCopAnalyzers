@@ -2,12 +2,8 @@ order: -1
 items:
 - name: Обзор
   href: index.md
-- name: Использование .NET CLI
-  href: DotNetCli.md
 - name: Настройка
   href: Configuration.md
-- name: Включение настройки
-  href: EnableConfiguration.md
 - name: Отличия от StyleCop Classic
   href: KnownChanges.md
 - name: Категории правил
