@@ -51,6 +51,32 @@ csharp_using_directive_placement = outside_namespace
 * 属性名称不区分大小写。
   布尔值为 `true` 或 `false`，`unset` 可忽略父级文件中设置的值。
 
+<a id="using-stylecopjson"></a>
+
+## 使用 stylecop.json
+
+如果选择通过 stylecop.json 文件配置分析器，需要将其作为附加文件包含在项目中。
+
+按如下方式更新项目文件，以应用设置和自定义规则：
+
+```xml
+<ItemGroup>
+    <AdditionalFiles Include="stylecop.json" />
+</ItemGroup>
+```
+
+可以使用以下模板创建 `stylecop.json` 文件：
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+  "settings": {
+  }
+}
+```
+
+许多 JSON 编辑器会根据 `$schema` 属性指定的架构提供验证和自动补全功能。
+
 <a id="settings-reference"></a>
 
 ## 设置参考

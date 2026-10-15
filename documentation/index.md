@@ -2,25 +2,26 @@
 #breadcrumb { display: none; }
 </style>
 
+# Overview
+
 StyleCop.Analyzers provides warnings and code fixes for style and consistency rule violations in C# code.
+These analyzers are distributed via a NuGet package.
 
-## Getting started
+[![NuGet package](https://img.shields.io/nuget/vpre/StyleCop.Analyzers?label=StyleCop.Analyzers)](https://nuget.org/packages/StyleCop.Analyzers)
 
-- [Using StyleCop.Analyzers with the .NET CLI](DotNetCli.md)
-- [Configuration](Configuration.md)
-- [Enabling configuration](EnableConfiguration.md)
-- [Differences from StyleCop Classic](KnownChanges.md)
+Click the badge above and follow the instructions that match your environment to install the analyzers package.
+This will activate the analyzers for your project.
 
-## Rule areas
+There are many [configuration options](Configuration.md) for these analyzers.
 
-See [Rule implementation status](RuleStatus.md) for which rules and code fixes are implemented.
+## Enabling XML documentation processing
 
-- [Special rules (SA0000-)](SpecialRules.md) (`StyleCop.CSharp.SpecialRules`)
-- [Spacing rules (SA1000-)](SpacingRules.md) (`StyleCop.CSharp.SpacingRules`)
-- [Readability rules (SA1100-)](ReadabilityRules.md) (`StyleCop.CSharp.ReadabilityRules`)
-- [Ordering rules (SA1200-)](OrderingRules.md) (`StyleCop.CSharp.OrderingRules`)
-- [Naming rules (SA1300-)](NamingRules.md) (`StyleCop.CSharp.NamingRules`)
-- [Maintainability rules (SA1400-)](MaintainabilityRules.md) (`StyleCop.CSharp.MaintainabilityRules`)
-- [Layout rules (SA1500-)](LayoutRules.md) (`StyleCop.CSharp.LayoutRules`)
-- [Documentation rules (SA1600-)](DocumentationRules.md) (`StyleCop.CSharp.DocumentationRules`)
-- [Alternative rules (SX0000-)](AlternativeRules.md)
+Analyzers for XML documentation can only run if the XML documentation comment processing is enabled. See [SA0001](SA0001.md) for more information.
+
+Update the project file to include the following:
+
+```xml
+<PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+</PropertyGroup>
+```

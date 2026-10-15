@@ -2,25 +2,27 @@
 #breadcrumb { display: none; }
 </style>
 
+# Přehled
+
 StyleCop.Analyzers poskytuje varování a opravy kódu pro pravidla stylu a konzistence v kódu C#.
+Tyto analyzátory jsou distribuovány prostřednictvím balíčku NuGet.
 
-## Začínáme
+[![Balíček NuGet](https://img.shields.io/nuget/vpre/StyleCop.Analyzers?label=StyleCop.Analyzers)](https://nuget.org/packages/StyleCop.Analyzers)
 
-- [Použití StyleCop.Analyzers s .NET CLI](DotNetCli.md)
-- [Konfigurace](Configuration.md)
-- [Povolení konfigurace](EnableConfiguration.md)
-- [Rozdíly od StyleCop Classic](KnownChanges.md)
+Klikněte na odznak výše a podle pokynů pro vaše prostředí nainstalujte balíček analyzátorů.
+Tím se analyzátory aktivují pro váš projekt.
 
-## Oblasti pravidel
+Pro tyto analyzátory je k dispozici mnoho [možností konfigurace](Configuration.md).
 
-Viz [Stav implementace pravidel](RuleStatus.md) pro informace o tom, která pravidla a opravy kódu jsou implementována.
+## Povolení zpracování XML dokumentace
 
-- [Speciální pravidla (SA0000-)](SpecialRules.md) (`StyleCop.CSharp.SpecialRules`)
-- [Pravidla pro mezery (SA1000-)](SpacingRules.md) (`StyleCop.CSharp.SpacingRules`)
-- [Pravidla čitelnosti (SA1100-)](ReadabilityRules.md) (`StyleCop.CSharp.ReadabilityRules`)
-- [Pravidla uspořádání (SA1200-)](OrderingRules.md) (`StyleCop.CSharp.OrderingRules`)
-- [Pravidla pojmenování (SA1300-)](NamingRules.md) (`StyleCop.CSharp.NamingRules`)
-- [Pravidla udržovatelnosti (SA1400-)](MaintainabilityRules.md) (`StyleCop.CSharp.MaintainabilityRules`)
-- [Pravidla rozložení (SA1500-)](LayoutRules.md) (`StyleCop.CSharp.LayoutRules`)
-- [Pravidla dokumentace (SA1600-)](DocumentationRules.md) (`StyleCop.CSharp.DocumentationRules`)
-- [Alternativní pravidla (SX0000-)](AlternativeRules.md)
+Analyzátory pro dokumentaci XML mohou běžet pouze tehdy, pokud je povoleno zpracování komentářů XML dokumentace.
+Více informací najdete v [SA0001](SA0001.md).
+
+Upravte soubor projektu tak, aby obsahoval následující:
+
+```xml
+<PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+</PropertyGroup>
+```

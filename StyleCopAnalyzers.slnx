@@ -11,8 +11,7 @@
     <File Path="documentation/AlternativeRules.md" />
     <File Path="documentation/Configuration.md" />
     <File Path="documentation/DocumentationRules.md" />
-    <File Path="documentation/DotNetCli.md" />
-    <File Path="documentation/EnableConfiguration.md" />
+    <File Path="documentation/index.md" />
     <File Path="documentation/KnownChanges.md" />
     <File Path="documentation/LayoutRules.md" />
     <File Path="documentation/MaintainabilityRules.md" />
