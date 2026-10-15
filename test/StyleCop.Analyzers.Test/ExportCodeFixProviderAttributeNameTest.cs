@@ -27,6 +27,15 @@ namespace StyleCop.Analyzers.Test
             }
         }
 
+        [Fact]
+        public void TestElementOrderCodeFixProviderIsExported()
+        {
+            var codeFixProviderType = typeof(StyleCop.Analyzers.OrderingRules.ElementOrderCodeFixProvider);
+
+            Assert.Null(codeFixProviderType.GetCustomAttributes<NoCodeFixAttribute>(false).FirstOrDefault());
+            Assert.NotNull(codeFixProviderType.GetCustomAttributes<ExportCodeFixProviderAttribute>(false).FirstOrDefault());
+        }
+
         [Theory]
         [MemberData(nameof(CodeFixProviderTypeData))]
         public void TestExportCodeFixProviderAttribute(Type codeFixProvider)
