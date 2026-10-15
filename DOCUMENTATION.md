@@ -58,7 +58,7 @@ Rules which offer a non-standard extension to the default StyleCop behavior.
 
 Describes the configuration options for StyleCop.Analyzers
 
-**[How to enable the configuration](documentation/EnableConfiguration.md)**
+**[How to enable stylecop.json](documentation/Configuration.md#using-stylecopjson)**
 
 Describes how to enable the **stylecop.json** file for usage.
 
