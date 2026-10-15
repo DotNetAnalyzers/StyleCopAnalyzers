@@ -14,6 +14,335 @@ using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
 public class SA1504ArrowAccessorCSharp7UnitTests
 {
     /// <summary>
+    /// Verifies that expanding an arrow accessor preserves the other accessor's comments and blank lines.
+    /// </summary>
+    /// <param name="member">The property or indexer declaration.</param>
+    /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+    [Theory]
+    [InlineData("string Title")]
+    [InlineData("string this[int index]")]
+    [WorkItem(4310, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4310")]
+    public async Task TestMultipleLineFixExpandsArrowGetterAndPreservesSetterTriviaAsync(string member)
+    {
+        var testCode = $$"""
+
+public class StyleCopAnalyzerFixerIssue
+{
+    private string title;
+
+    public {{member}}
+    {
+        {|#0:get|} => this.title;
+        set
+        {
+            if (this.title == null)
+            {
+                throw new System.InvalidOperationException("Blabla");
+            }
+
+            // Comment 1
+            System.Console.WriteLine("Method invocation 1");
+
+            // Comment 2
+            System.Console.WriteLine("Method invocation 2");
+
+            this.title = value;
+        }
+    }
+}
+""";
+        var fixedCode = $$"""
+
+public class StyleCopAnalyzerFixerIssue
+{
+    private string title;
+
+    public {{member}}
+    {
+        get
+        {
+            return this.title;
+        }
+
+        set
+        {
+            if (this.title == null)
+            {
+                throw new System.InvalidOperationException("Blabla");
+            }
+
+            // Comment 1
+            System.Console.WriteLine("Method invocation 1");
+
+            // Comment 2
+            System.Console.WriteLine("Method invocation 2");
+
+            this.title = value;
+        }
+    }
+}
+""";
+        await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Verifies that expanding an arrow setter preserves the getter's comments and blank lines.
+    /// </summary>
+    /// <param name="member">The property or indexer declaration.</param>
+    /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+    [Theory]
+    [InlineData("string Title")]
+    [InlineData("string this[int index]")]
+    [WorkItem(4310, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4310")]
+    public async Task TestMultipleLineFixExpandsArrowSetterAndPreservesGetterTriviaAsync(string member)
+    {
+        var testCode = $$"""
+
+public class StyleCopAnalyzerFixerIssue
+{
+    private string title;
+
+    public {{member}}
+    {
+        {|#0:get|}
+        {
+            if (this.title == null)
+            {
+                throw new System.InvalidOperationException("Blabla");
+            }
+
+            // Comment 1
+            System.Console.WriteLine("Method invocation 1");
+
+            // Comment 2
+            System.Console.WriteLine("Method invocation 2");
+
+            return this.title;
+        }
+        set => this.title = value;
+    }
+}
+""";
+        var fixedCode = $$"""
+
+public class StyleCopAnalyzerFixerIssue
+{
+    private string title;
+
+    public {{member}}
+    {
+        get
+        {
+            if (this.title == null)
+            {
+                throw new System.InvalidOperationException("Blabla");
+            }
+
+            // Comment 1
+            System.Console.WriteLine("Method invocation 1");
+
+            // Comment 2
+            System.Console.WriteLine("Method invocation 2");
+
+            return this.title;
+        }
+
+        set
+        {
+            this.title = value;
+        }
+    }
+}
+""";
+
+        await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Verifies that expanding an arrow getter preserves comments around the expression and semicolon.
+    /// </summary>
+    /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+    [Fact]
+    [WorkItem(4310, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4310")]
+    public async Task TestMultipleLineFixPreservesArrowGetterTriviaAsync()
+    {
+        var testCode = @"
+public class Foo
+{
+    private int value;
+
+    public int Value
+    {
+        {|#0:get|} /* keyword */ => // Arrow
+            // Before expression
+
+            this.value /* Before semicolon */; // End
+        set { this.value = value; }
+    }
+}";
+        var fixedCode = @"
+public class Foo
+{
+    private int value;
+
+    public int Value
+    {
+        get /* keyword */
+        {
+            // Arrow
+            // Before expression
+
+            return this.value /* Before semicolon */; // End
+        }
+
+        set
+        {
+            this.value = value;
+        }
+    }
+}";
+        await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Verifies that expanding an arrow setter preserves comments around the expression and semicolon.
+    /// </summary>
+    /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+    [Fact]
+    [WorkItem(4310, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4310")]
+    public async Task TestMultipleLineFixPreservesArrowSetterTriviaAsync()
+    {
+        var testCode = @"
+public class Foo
+{
+    private int value;
+
+    public int Value
+    {
+        {|#0:get|} { return this.value; }
+        set /* keyword */ => // Arrow
+            // Before expression
+
+            this.value = value /* Before semicolon */; // End
+    }
+}";
+        var fixedCode = @"
+public class Foo
+{
+    private int value;
+
+    public int Value
+    {
+        get
+        {
+            return this.value;
+        }
+
+        set /* keyword */
+        {
+            // Arrow
+            // Before expression
+
+            this.value = value /* Before semicolon */; // End
+        }
+    }
+}";
+        await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Verifies that expanding a throwing arrow getter preserves comments.
+    /// </summary>
+    /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+    [Fact]
+    [WorkItem(4310, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4310")]
+    public async Task TestMultipleLineFixPreservesThrowingArrowGetterTriviaAsync()
+    {
+        var testCode = @"
+public class Foo
+{
+    private int value;
+
+    public int Value
+    {
+        {|#0:get|} /* keyword */ => // Arrow
+            // Before expression
+
+            throw new System.InvalidOperationException() /* Before semicolon */; // End
+        set { this.value = value; }
+    }
+}";
+        var fixedCode = @"
+public class Foo
+{
+    private int value;
+
+    public int Value
+    {
+        get /* keyword */
+        {
+            // Arrow
+            // Before expression
+
+            throw new System.InvalidOperationException() /* Before semicolon */; // End
+        }
+
+        set
+        {
+            this.value = value;
+        }
+    }
+}";
+        await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Verifies that expanding a throwing arrow setter preserves comments.
+    /// </summary>
+    /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+    [Fact]
+    [WorkItem(4310, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4310")]
+    public async Task TestMultipleLineFixPreservesThrowingArrowSetterTriviaAsync()
+    {
+        var testCode = @"
+public class Foo
+{
+    private int value;
+
+    public int Value
+    {
+        {|#0:get|} { return this.value; }
+        set /* keyword */ => // Arrow
+            // Before expression
+
+            throw new System.InvalidOperationException() /* Before semicolon */; // End
+    }
+}";
+        var fixedCode = @"
+public class Foo
+{
+    private int value;
+
+    public int Value
+    {
+        get
+        {
+            return this.value;
+        }
+
+        set /* keyword */
+        {
+            // Arrow
+            // Before expression
+
+            throw new System.InvalidOperationException() /* Before semicolon */; // End
+        }
+    }
+}";
+        await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+    }
+
+    /// <summary>
     /// Verifies that a single-line expression-bodied accessor and a multi-line block-bodied accessor are reported.
     /// </summary>
     /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
