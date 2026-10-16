@@ -67,6 +67,23 @@ namespace StyleCop.Analyzers.OrderingRules
                     continue;
                 }
 
+                if (isSA1200)
+                {
+                    var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+                    if (semanticModel == null)
+                    {
+                        continue;
+                    }
+
+                    var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(context.Document.Project.AnalyzerOptions, semanticModel.SyntaxTree, context.CancellationToken);
+                    var placement = DeterminePlacement(compilationUnit, settings);
+                    if (placement != UsingDirectivesPlacement.Preserve
+                        && !CanRelocateExternAliases(compilationUnit, placement))
+                    {
+                        continue;
+                    }
+                }
+
                 // Force preserving the placement of using directives when we are fixing a diagnostic not directly
                 // related to placement of using directives inside/outside namespaces.
                 bool forcePreservePlacement = !isSA1200;
@@ -122,12 +139,18 @@ namespace StyleCop.Analyzers.OrderingRules
             if (usingDirectivesPlacement == UsingDirectivesPlacement.InsideNamespace)
             {
                 newSyntaxRoot = AddUsingsToNamespace(newSyntaxRoot, endOfLine, usingsHelper, usingsIndentation, replaceMap.Any());
+                newSyntaxRoot = MoveExternAliasesToNamespace(newSyntaxRoot, endOfLine, usingsIndentation, compilationUnit.Usings);
             }
 
             if (usingDirectivesPlacement != UsingDirectivesPlacement.Preserve)
             {
                 bool onlyGlobal = usingDirectivesPlacement == UsingDirectivesPlacement.InsideNamespace;
                 newSyntaxRoot = AddUsingsToCompilationRoot(newSyntaxRoot, endOfLine, usingsHelper, replaceMap.Any(), onlyGlobal);
+
+                if (usingDirectivesPlacement == UsingDirectivesPlacement.OutsideNamespace)
+                {
+                    newSyntaxRoot = MoveExternAliasesToCompilationRoot(newSyntaxRoot, endOfLine);
+                }
             }
 
             // Final cleanup
@@ -307,6 +330,147 @@ namespace StyleCop.Analyzers.OrderingRules
             newSyntaxRoot = newCompilationUnit.WithUsings(groupedUsings);
 
             return newSyntaxRoot;
+        }
+
+        private static SyntaxNode MoveExternAliasesToNamespace(SyntaxNode syntaxRoot, SyntaxTrivia endOfLine, string indentation, SyntaxList<UsingDirectiveSyntax> originalUsings)
+        {
+            var compilationUnit = (CompilationUnitSyntax)syntaxRoot;
+            if (compilationUnit.Externs.Count == 0)
+            {
+                return syntaxRoot;
+            }
+
+            var rootNamespace = (BaseNamespaceDeclarationSyntaxWrapper)compilationUnit.Members.First(member => BaseNamespaceDeclarationSyntaxWrapper.IsInstance(member));
+            var withLeadingBlankLine = rootNamespace.SyntaxNode.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration);
+            var externsToMove = compilationUnit.Externs.Where(externAlias => !externAlias.IsUsedByGlobalUsing(originalUsings)).ToList();
+            if (externsToMove.Count == 0)
+            {
+                return syntaxRoot;
+            }
+
+            var retainedExterns = compilationUnit.Externs.Where(externAlias => externAlias.IsUsedByGlobalUsing(originalUsings));
+            var externs = NormalizeExternAliases(SyntaxFactory.List(externsToMove), indentation, endOfLine, withLeadingBlankLine, blankLineAfterLast: false);
+            var newRootNamespace = rootNamespace.WithExterns(externs.AddRange(rootNamespace.Externs)).SyntaxNode!;
+            var firstToken = newRootNamespace.GetFirstToken(includeZeroWidth: true);
+            var index = TriviaHelper.IndexOfFirstNonBlankLineTrivia(firstToken.LeadingTrivia);
+            if (index != 0)
+            {
+                var leadingTrivia = index == -1 ? SyntaxFactory.TriviaList() : SyntaxFactory.TriviaList(firstToken.LeadingTrivia.Skip(index));
+                newRootNamespace = newRootNamespace.ReplaceToken(firstToken, firstToken.WithLeadingTrivia(leadingTrivia));
+            }
+
+            var newCompilationUnit = (CompilationUnitSyntax)compilationUnit.ReplaceNode(rootNamespace.SyntaxNode, newRootNamespace);
+            return newCompilationUnit.WithExterns(SyntaxFactory.List(retainedExterns));
+        }
+
+        private static SyntaxNode MoveExternAliasesToCompilationRoot(SyntaxNode syntaxRoot, SyntaxTrivia endOfLine)
+        {
+            var compilationUnit = (CompilationUnitSyntax)syntaxRoot;
+            var namespaceDeclaration = compilationUnit.Members.FirstOrDefault(member => BaseNamespaceDeclarationSyntaxWrapper.IsInstance(member));
+            if (namespaceDeclaration == null)
+            {
+                return syntaxRoot;
+            }
+
+            var rootNamespace = (BaseNamespaceDeclarationSyntaxWrapper)namespaceDeclaration;
+            if (rootNamespace.Externs.Count == 0)
+            {
+                return syntaxRoot;
+            }
+
+            var externs = NormalizeExternAliases(rootNamespace.Externs, string.Empty, endOfLine, withLeadingBlankLine: false, blankLineAfterLast: compilationUnit.Usings.Count == 0);
+            var newRootNamespace = rootNamespace.WithExterns(default);
+
+            var newCompilationUnit = (CompilationUnitSyntax)compilationUnit.ReplaceNode(rootNamespace.SyntaxNode, newRootNamespace.SyntaxNode);
+            return newCompilationUnit.WithExterns(newCompilationUnit.Externs.AddRange(externs));
+        }
+
+        private static SyntaxList<ExternAliasDirectiveSyntax> NormalizeExternAliases(SyntaxList<ExternAliasDirectiveSyntax> externs, string indentation, SyntaxTrivia endOfLine, bool withLeadingBlankLine, bool blankLineAfterLast)
+        {
+            var result = new List<ExternAliasDirectiveSyntax>();
+            for (var index = 0; index < externs.Count; index++)
+            {
+                var directive = externs[index];
+                var normalized = directive.NormalizeWhitespace(indentation, endOfLine.ToString());
+                if (!string.IsNullOrEmpty(indentation) || (withLeadingBlankLine && index == 0))
+                {
+                    var firstToken = normalized.GetFirstToken();
+                    var leadingTrivia = firstToken.LeadingTrivia;
+                    if (withLeadingBlankLine && index == 0)
+                    {
+                        leadingTrivia = SyntaxFactory.TriviaList(endOfLine).AddRange(leadingTrivia);
+                    }
+
+                    if (!string.IsNullOrEmpty(indentation))
+                    {
+                        leadingTrivia = SyntaxFactory.TriviaList(SyntaxFactory.Whitespace(indentation)).AddRange(leadingTrivia);
+                    }
+
+                    normalized = normalized.ReplaceToken(firstToken, firstToken.WithLeadingTrivia(leadingTrivia));
+                }
+
+                var lastToken = normalized.GetLastToken();
+                var trailingTrivia = lastToken.TrailingTrivia;
+                if (trailingTrivia.Count == 0 || !trailingTrivia.Last().IsKind(SyntaxKind.EndOfLineTrivia))
+                {
+                    trailingTrivia = trailingTrivia.Add(endOfLine);
+                }
+
+                if (blankLineAfterLast && index == externs.Count - 1)
+                {
+                    trailingTrivia = trailingTrivia.Add(endOfLine);
+                }
+
+                normalized = normalized.ReplaceToken(lastToken, lastToken.WithTrailingTrivia(trailingTrivia));
+                result.Add(normalized);
+            }
+
+            return SyntaxFactory.List(result);
+        }
+
+        private static bool CanRelocateExternAliases(CompilationUnitSyntax compilationUnit, UsingDirectivesPlacement placement)
+        {
+            var rootNamespace = compilationUnit.Members.FirstOrDefault(member => BaseNamespaceDeclarationSyntaxWrapper.IsInstance(member));
+            if (rootNamespace == null)
+            {
+                return true;
+            }
+
+            var namespaceSyntax = (BaseNamespaceDeclarationSyntaxWrapper)rootNamespace;
+            SyntaxList<ExternAliasDirectiveSyntax> aliasesToMove;
+            IEnumerable<ExternAliasDirectiveSyntax> targetAliases;
+            if (placement == UsingDirectivesPlacement.InsideNamespace)
+            {
+                aliasesToMove = SyntaxFactory.List(compilationUnit.Externs.Where(alias => !alias.IsUsedByGlobalUsing(compilationUnit.Usings)));
+                targetAliases = namespaceSyntax.Externs;
+            }
+            else if (placement == UsingDirectivesPlacement.OutsideNamespace)
+            {
+                aliasesToMove = namespaceSyntax.Externs;
+                targetAliases = compilationUnit.Externs;
+            }
+            else
+            {
+                return true;
+            }
+
+            if (aliasesToMove.Count == 0)
+            {
+                return true;
+            }
+
+            var targetAliasNames = new HashSet<string>(targetAliases.Select(alias => alias.Identifier.ValueText), StringComparer.Ordinal);
+            var sourceMap = SourceMap.FromCompilationUnit(compilationUnit);
+            foreach (var alias in aliasesToMove)
+            {
+                if (targetAliasNames.Contains(alias.Identifier.ValueText)
+                    || sourceMap.GetContainingSpan(alias) != TreeTextSpan.Empty)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private static SyntaxNode StripMultipleBlankLines(SyntaxNode syntaxRoot)

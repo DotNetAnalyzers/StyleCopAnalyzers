@@ -15,11 +15,11 @@ namespace StyleCop.Analyzers.OrderingRules
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
-    /// A C# using directive is placed outside of a namespace element.
+    /// A C# using directive or extern alias directive is placed outside of a namespace element.
     /// </summary>
     /// <remarks>
-    /// <para>A violation of this rule occurs when a using directive or a using-alias directive is placed outside of a
-    /// namespace element, unless the file does not contain any namespace elements.</para>
+    /// <para>A violation of this rule occurs when a using directive, a using-alias directive, or an extern alias
+    /// directive is placed outside of a namespace element, unless the file does not contain any namespace elements.</para>
     ///
     /// <para>For example, the following code would result in two violations of this rule.</para>
     ///
@@ -198,7 +198,7 @@ namespace StyleCop.Analyzers.OrderingRules
         }
 
         /// <summary>
-        /// This method reports a diagnostic for any using directive placed outside a namespace declaration. No
+        /// This method reports a diagnostic for any using or extern alias directive placed outside a namespace declaration. No
         /// diagnostics are reported unless <see cref="OrderingSettings.UsingDirectivesPlacement"/> is
         /// <see cref="UsingDirectivesPlacement.InsideNamespace"/>.
         /// </summary>
@@ -246,9 +246,17 @@ namespace StyleCop.Analyzers.OrderingRules
 
                     continue;
 
+                case SyntaxKind.ExternAliasDirective:
+                    var externAlias = (ExternAliasDirectiveSyntax)child;
+                    if (syntax.Members.Count > 0 && !externAlias.IsUsedByGlobalUsing(syntax.Usings))
+                    {
+                        usingDirectives.Add(child);
+                    }
+
+                    continue;
+
                 case SyntaxKind.NamespaceDeclaration:
                 case SyntaxKindEx.FileScopedNamespaceDeclaration:
-                case SyntaxKind.ExternAliasDirective:
                 default:
                     continue;
                 }
@@ -256,13 +264,13 @@ namespace StyleCop.Analyzers.OrderingRules
 
             foreach (var directive in usingDirectives)
             {
-                // Using directive should appear within a namespace declaration
+                // Directive should appear within a namespace declaration
                 context.ReportDiagnostic(Diagnostic.Create(DescriptorInside, directive.GetLocation()));
             }
         }
 
         /// <summary>
-        /// This method reports a diagnostic for any using directive placed within a namespace declaration. No
+        /// This method reports a diagnostic for any using or extern alias directive placed within a namespace declaration. No
         /// diagnostics are reported unless <see cref="OrderingSettings.UsingDirectivesPlacement"/> is
         /// <see cref="UsingDirectivesPlacement.OutsideNamespace"/>.
         /// </summary>
@@ -276,9 +284,19 @@ namespace StyleCop.Analyzers.OrderingRules
             }
 
             BaseNamespaceDeclarationSyntaxWrapper syntax = (BaseNamespaceDeclarationSyntaxWrapper)context.Node;
+            foreach (ExternAliasDirectiveSyntax directive in syntax.Externs)
+            {
+                // Extern alias directive should appear outside a namespace declaration
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+#pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
+                context.ReportDiagnostic(Diagnostic.Create(DescriptorOutside, directive.GetLocation()));
+#pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
+#pragma warning restore IDE0079 // Remove unnecessary suppression
+            }
+
             foreach (UsingDirectiveSyntax directive in syntax.Usings)
             {
-                // Using directive should appear outside a namespace declaration
+                // Directive should appear outside a namespace declaration
 #pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
                 context.ReportDiagnostic(Diagnostic.Create(DescriptorOutside, directive.GetLocation()));

@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Helpers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -57,6 +58,39 @@ namespace StyleCop.Analyzers.Helpers
         /// otherwise, <see langword="false"/>.
         /// </returns>
         internal static bool HasNamespaceAliasQualifier(this UsingDirectiveSyntax usingDirective) => usingDirective.DescendantNodes().Any(node => node.IsKind(SyntaxKind.AliasQualifiedName));
+
+        /// <summary>
+        /// Checks if an extern alias directive is referenced by a global using directive.
+        /// </summary>
+        /// <param name="externAlias">The extern alias directive.</param>
+        /// <param name="usingDirectives">The using directives to check.</param>
+        /// <returns><see langword="true"/> if a global using directive references the alias; otherwise, <see langword="false"/>.</returns>
+        internal static bool IsUsedByGlobalUsing(this ExternAliasDirectiveSyntax externAlias, SyntaxList<UsingDirectiveSyntax> usingDirectives)
+        {
+            foreach (var usingDirective in usingDirectives)
+            {
+                if (!usingDirective.GlobalKeyword().IsKind(SyntaxKind.GlobalKeyword))
+                {
+                    continue;
+                }
+
+                var target = usingDirective.NamespaceOrType() ?? usingDirective.Name;
+                if (target == null)
+                {
+                    continue;
+                }
+
+                foreach (var aliasQualifiedName in target.DescendantNodesAndSelf().OfType<AliasQualifiedNameSyntax>())
+                {
+                    if (string.Equals(externAlias.Identifier.ValueText, aliasQualifiedName.Alias.Identifier.ValueText, StringComparison.Ordinal))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
 
         /// <summary>
         /// Get the <see cref="UsingGroup"/> for the give using directive.

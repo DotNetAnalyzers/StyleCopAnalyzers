@@ -35,6 +35,27 @@ namespace TestNamespace;
             await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(1931, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1931")]
+        public async Task TestInvalidExternAliasDirectivesInFileScopedNamespaceAsync()
+        {
+            var testCode = @"namespace TestNamespace;
+
+{|#0:extern alias corlib;|}
+";
+            var fixedTestCode = @"extern alias corlib;
+
+namespace TestNamespace;
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(0),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Theory]
         [InlineData("")]
         [InlineData("\n")]

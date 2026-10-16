@@ -40,6 +40,23 @@ using System.Threading;
             await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(1931, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1931")]
+        public async Task TestInvalidExternAliasDirectivesInCompilationUnitWithFileScopedNamespaceAsync()
+        {
+            var testCode = @"{|#0:extern alias corlib;|}
+
+namespace TestNamespace;
+";
+            var fixedTestCode = @"namespace TestNamespace;
+
+extern alias corlib;
+";
+
+            DiagnosticResult expected = Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(0);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Theory]
         [InlineData("")]
         [InlineData("\n")]
@@ -63,6 +80,50 @@ namespace TestNamespace
 }";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1931, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1931")]
+        public async Task TestExternAliasUsedByGlobalUsingRemainsOutsideNamespaceAsync()
+        {
+            var testCode = @"extern alias corlib;
+global using Core = corlib::System;
+
+namespace TestNamespace
+{
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1931, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1931")]
+        public async Task TestExternAliasUsedByGlobalUsingIsPreservedWhenMovingUsingsInsideNamespaceAsync()
+        {
+            var testCode = @"extern alias corlib;
+global using Core = corlib::System;
+{|#0:using System.IO;|}
+
+namespace TestNamespace
+{
+}
+";
+            var fixedTestCode = @"extern alias corlib;
+global using Core = corlib::System;
+
+namespace TestNamespace
+{
+    using System.IO;
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(0),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
