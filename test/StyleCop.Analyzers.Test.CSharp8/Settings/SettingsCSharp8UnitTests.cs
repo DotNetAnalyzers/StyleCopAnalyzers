@@ -20,6 +20,53 @@ namespace StyleCop.Analyzers.Test.CSharp8.Settings
     {
         private const string TestProjectName = "TestProject";
 
+        /// <summary>
+        /// Verifies guard settings from EditorConfig, including JSON precedence.
+        /// </summary>
+        /// <param name="option">The configured value.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData("off")]
+        [InlineData("sameLine")]
+        [InlineData("nextLine")]
+        public async Task VerifyBracelessIfStatementsEditorConfigAsync(string option)
+        {
+            var editorConfig = $"""
+                root = true
+
+                [*]
+                stylecop.layout.allowBracelessIfStatements = {option}
+                """;
+            var context = await this.CreateAnalysisContextFromEditorConfigAsync(editorConfig).ConfigureAwait(false);
+            var actual = context.GetStyleCopSettingsInTests(CancellationToken.None).LayoutRules.AllowBracelessIfStatements;
+            Assert.Equal(option, actual.ToString(), ignoreCase: true);
+
+            var json = """{ "settings": { "layoutRules": { "allowBracelessIfStatements": "off" } } }""";
+            context = await this.CreateAnalysisContextFromEditorConfigAsync(editorConfig, json).ConfigureAwait(false);
+            Assert.Equal(BracelessIfStatements.Off, context.GetStyleCopSettingsInTests(CancellationToken.None).LayoutRules.AllowBracelessIfStatements);
+        }
+
+        /// <summary>
+        /// Verifies that invalid EditorConfig values retain the default behavior.
+        /// </summary>
+        /// <param name="option">The invalid configured value.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData("true")]
+        [InlineData("1")]
+        [InlineData("sameLine, nextLine")]
+        public async Task VerifyInvalidBracelessIfStatementsEditorConfigAsync(string option)
+        {
+            var editorConfig = $"""
+                root = true
+
+                [*]
+                stylecop.layout.allowBracelessIfStatements = {option}
+                """;
+            var context = await this.CreateAnalysisContextFromEditorConfigAsync(editorConfig).ConfigureAwait(false);
+            Assert.Equal(BracelessIfStatements.Off, context.GetStyleCopSettingsInTests(CancellationToken.None).LayoutRules.AllowBracelessIfStatements);
+        }
+
         [Fact]
         public void TestOptionsWrapperValues()
         {

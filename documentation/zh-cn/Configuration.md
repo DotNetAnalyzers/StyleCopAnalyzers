@@ -102,6 +102,7 @@ csharp_using_directive_placement = outside_namespace
 | 可维护性 | `maintainabilityRules.topLevelTypes` | `stylecop.maintainability.topLevelTypes` | `class`、`interface`、`struct`、`enum`、`delegate` 的列表 | `class` |
 | 布局 | `layoutRules.newlineAtEndOfFile` | `stylecop.layout.newlineAtEndOfFile`（或 `insert_final_newline`） | `allow`、`require`、`omit` ⇄ `true`、`false` | `allow` |
 | 布局 | `layoutRules.allowConsecutiveUsings` | `stylecop.layout.allowConsecutiveUsings` | 布尔值 | `true` |
+| 布局 | `layoutRules.allowBracelessIfStatements` | `stylecop.layout.allowBracelessIfStatements` | `off`, `sameLine`, `nextLine` | `off` |
 | 布局 | `layoutRules.allowDoWhileOnClosingBrace` | `stylecop.layout.allowDoWhileOnClosingBrace` | 布尔值 | `false` |
 | 文档 | `documentationRules.documentExposedElements` | `stylecop.documentation.documentExposedElements` | 布尔值 | `true` |
 | 文档 | `documentationRules.documentInternalElements` | `stylecop.documentation.documentInternalElements` | 布尔值 | `true` |
@@ -156,6 +157,7 @@ stylecop.maintainability.topLevelTypes = class                 # class, interfac
 # Layout
 stylecop.layout.newlineAtEndOfFile = allow                     # allow | require | omit
 stylecop.layout.allowConsecutiveUsings = true
+stylecop.layout.allowBracelessIfStatements = off
 stylecop.layout.allowDoWhileOnClosingBrace = false
 
 # Documentation
@@ -748,12 +750,14 @@ stylecop.maintainability.topLevelTypes = class
 | --- | --- | --- | --- |
 | `newlineAtEndOfFile` | `"allow"` | 1.0.0 | 指定如何处理文件末尾的换行符。 |
 | `allowConsecutiveUsings` | `true` | 1.1.0 | 指定 SA1519 是否允许不带大括号的连续 using 语句。 |
+| `allowBracelessIfStatements` | `"off"` | >1.2.0 | Allows a single-line jump statement as the body of an `if` with no `else`, on the configured line |
 | `allowDoWhileOnClosingBrace` | `false` | >1.2.0 | 指定 SA1500 是否允许 `do`/`while` 循环的 `while` 表达式与右大括号位于同一行，即 Visual Studio 默认代码片段生成的形式。 |
 
 使用 **.editorconfig** 文件配置 StyleCop Analyzers 时，可使用 editorconfig.org 介绍的换行设置（`insert_final_newline`），以及以下附加属性：
 ```ini
 stylecop.layout.newlineAtEndOfFile = allow
 stylecop.layout.allowConsecutiveUsings = true
+stylecop.layout.allowBracelessIfStatements = off
 stylecop.layout.allowDoWhileOnClosingBrace = false
 ```
 
@@ -762,6 +766,42 @@ stylecop.layout.allowDoWhileOnClosingBrace = false
 > StyleCop 专用属性优先。
 
 <a id="lines-at-end-of-file"></a>
+
+### Braceless if statements
+
+The `allowBracelessIfStatements` property configures [SA1501](SA1501.md) and [SA1503](SA1503.md).
+`"off"` (default) preserves the existing behavior. `"sameLine"` allows a standalone `if` to omit braces
+when its single jump statement is on the same line as its closing `)`. `"nextLine"` allows the jump on
+the immediately following line. The jump itself must fit on one line.
+The entire `if` header, from `if` through the closing `)`, must fit on one line for either enabled option.
+With `"sameLine"`, the whole `if` statement must therefore fit on one line. Multiline conditions require braces.
+
+Supported jumps are `return` (with or without a value), `throw`, `break`, `continue`, `goto` (including
+`goto case` and `goto default`), and `yield break`. `yield return`, assignments, method calls, loops,
+and all branches of an `if`/`else if`/`else` chain still require braces. Existing braces remain allowed.
+SA1503 fixes add braces; they do not remove existing braces. With SA1503 disabled, SA1501 fixes expand
+disallowed same-line statements onto the next line. Correctly positioned guards are not changed.
+
+```json
+{
+  "settings": {
+    "layoutRules": {
+      "allowBracelessIfStatements": "sameLine"
+    }
+  }
+}
+```
+
+```csharp
+if (value == null) throw new ArgumentNullException(nameof(value));
+```
+
+With `"nextLine"`:
+
+```csharp
+if (value == null)
+    throw new ArgumentNullException(nameof(value));
+```
 
 ### 文件末尾的换行
 

@@ -40,6 +40,155 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         }
 
         /// <summary>
+        /// Verifies that same-line guards are allowed even when the braces rule is disabled.
+        /// </summary>
+        /// <param name="disableBracesRule">Whether SA1503 is disabled.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        [WorkItem(2252, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2252")]
+        public async Task TestBracelessSameLineGuardAsync(bool disableBracesRule)
+        {
+            var test = new CSharpTest
+            {
+                TestCode = """
+                    public class C
+                    {
+                        public void M(bool condition)
+                        {
+                            if (condition) return;
+                        }
+                    }
+                    """,
+                Settings = """{ "settings": { "layoutRules": { "allowBracelessIfStatements": "sameLine" } } }""",
+            };
+            if (disableBracesRule)
+            {
+                test.DisabledDiagnostics.Add(SA1503BracesMustNotBeOmitted.DiagnosticId);
+            }
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a jump cannot share a line with a multiline if condition.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Fact]
+        [WorkItem(2252, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2252")]
+        public async Task TestBracelessMultilineConditionAsync()
+        {
+            await new CSharpTest
+            {
+                TestCode = """
+                    public class C
+                    {
+                        public void M(bool condition)
+                        {
+                            if (
+                                condition) [|return;|] // Keep this comment.
+                        }
+                    }
+                    """,
+                FixedCode = """
+                    public class C
+                    {
+                        public void M(bool condition)
+                        {
+                            if (
+                                condition)
+                                return; // Keep this comment.
+
+                        }
+                    }
+                    """,
+                Settings = """{ "settings": { "layoutRules": { "allowBracelessIfStatements": "sameLine" } } }""",
+                DisabledDiagnostics = { SA1503BracesMustNotBeOmitted.DiagnosticId },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that expanding a guard respects the next-line option and preserves comments.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Fact]
+        [WorkItem(2252, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2252")]
+        public async Task TestBracelessNextLineGuardFixAsync()
+        {
+            await new CSharpTest
+            {
+                TestCode = """
+                    public class C
+                    {
+                        public void M(bool condition)
+                        {
+                            if (condition) [|return;|] // Keep this comment.
+                        }
+                    }
+                    """,
+                FixedCode = """
+                    public class C
+                    {
+                        public void M(bool condition)
+                        {
+                            if (condition)
+                                return; // Keep this comment.
+
+                        }
+                    }
+                    """,
+                Settings = """{ "settings": { "layoutRules": { "allowBracelessIfStatements": "nextLine" } } }""",
+                DisabledDiagnostics = { SA1503BracesMustNotBeOmitted.DiagnosticId },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that same-line conditional chains and non-jump statements remain violations.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Fact]
+        [WorkItem(2252, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2252")]
+        public async Task TestBracelessSameLineGuardExclusionsAsync()
+        {
+            await new CSharpTest
+            {
+                TestCode = """
+                    public class C
+                    {
+                        public void M(bool condition)
+                        {
+                            if (condition) return;
+                            if (condition) [|M(false);|]
+                            if (condition) [|return;|]
+                            else if (condition) [|return;|]
+                            else [|return;|]
+                        }
+                    }
+                    """,
+                FixedCode = """
+                    public class C
+                    {
+                        public void M(bool condition)
+                        {
+                            if (condition) return;
+                            if (condition)
+                                M(false);
+                            if (condition)
+                                return;
+                            else if (condition)
+                                return;
+                            else
+                                return;
+                        }
+                    }
+                    """,
+                Settings = """{ "settings": { "layoutRules": { "allowBracelessIfStatements": "sameLine" } } }""",
+                DisabledDiagnostics = { SA1503BracesMustNotBeOmitted.DiagnosticId },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that lock statement with single line block statement will trigger a warning.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>

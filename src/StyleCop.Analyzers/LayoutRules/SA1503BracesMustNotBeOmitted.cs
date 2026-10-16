@@ -72,7 +72,7 @@ namespace StyleCop.Analyzers.LayoutRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 #pragma warning restore SA1202 // Elements should be ordered by access
 
-        private static readonly Action<SyntaxNodeAnalysisContext> IfStatementAction = HandleIfStatement;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> IfStatementAction = HandleIfStatement;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> UsingStatementAction = HandleUsingStatement;
 
         /// <inheritdoc/>
@@ -98,12 +98,17 @@ namespace StyleCop.Analyzers.LayoutRules
             });
         }
 
-        private static void HandleIfStatement(SyntaxNodeAnalysisContext context)
+        private static void HandleIfStatement(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             var ifStatement = (IfStatementSyntax)context.Node;
             if (ifStatement.Parent.IsKind(SyntaxKind.ElseClause))
             {
                 // this will be analyzed as a clause of the outer if statement
+                return;
+            }
+
+            if (BracelessIfStatementHelper.IsAllowed(ifStatement.Statement, settings.LayoutRules.AllowBracelessIfStatements))
+            {
                 return;
             }
 

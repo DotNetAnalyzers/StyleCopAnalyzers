@@ -14,6 +14,54 @@ namespace StyleCop.Analyzers.Test.CSharp8.LayoutRules
 
     public partial class SA1503CSharp8UnitTests : SA1503CSharp7UnitTests
     {
+        /// <summary>
+        /// Verifies that EditorConfig exemptions survive individual fixes and Fix All.
+        /// </summary>
+        /// <param name="option">The permitted statement placement.</param>
+        /// <param name="separator">The whitespace before the jump statement.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData("sameLine", " ")]
+        [InlineData("nextLine", "\r\n            ")]
+        [WorkItem(2252, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2252")]
+        public async Task TestBracelessGuardEditorConfigAsync(string option, string separator)
+        {
+            var test = new CSharpTest
+            {
+                TestCode = $$"""
+                    public class C
+                    {
+                        public void M(bool condition)
+                        {
+                            if (condition){{separator}}return;
+                            if (condition) [|M(false);|]
+                        }
+                    }
+                    """,
+                FixedCode = $$"""
+                    public class C
+                    {
+                        public void M(bool condition)
+                        {
+                            if (condition){{separator}}return;
+                            if (condition)
+                            {
+                                M(false);
+                            }
+                        }
+                    }
+                    """,
+            };
+            test.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", $"""
+                root = true
+
+                [*]
+                stylecop.layout.allowBracelessIfStatements = {option}
+                """));
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         [WorkItem(3074, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3074")]
         public async Task TestNoDiagnosticForUsingDeclarationStatementAsync()

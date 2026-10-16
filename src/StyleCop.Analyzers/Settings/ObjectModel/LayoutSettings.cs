@@ -52,6 +52,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.newlineAtEndOfFile = newlineAtEndOfFile.GetValueOrDefault(OptionSetting.Allow);
             this.allowConsecutiveUsings = reader.GetBoolean("allowConsecutiveUsings", "stylecop.layout.allowConsecutiveUsings").GetValueOrDefault(true);
             this.allowDoWhileOnClosingBrace = reader.GetBoolean("allowDoWhileOnClosingBrace", "stylecop.layout.allowDoWhileOnClosingBrace").GetValueOrDefault(false);
+            this.AllowBracelessIfStatements = reader.GetEnum<BracelessIfStatements>("allowBracelessIfStatements", "stylecop.layout.allowBracelessIfStatements").GetValueOrDefault(BracelessIfStatements.Off);
         }
 
         public OptionSetting NewlineAtEndOfFile =>
@@ -62,5 +63,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
         public bool AllowDoWhileOnClosingBrace =>
             this.allowDoWhileOnClosingBrace;
+
+        public BracelessIfStatements AllowBracelessIfStatements { get; }
     }
 }

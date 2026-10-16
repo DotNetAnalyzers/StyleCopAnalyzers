@@ -193,6 +193,16 @@
               ],
               "default": "allow"
             },
+            "allowBracelessIfStatements": {
+              "type": "string",
+              "description": "Allows a single-line jump statement as the body of an if statement with no else and a single-line header. off: Braces are required. sameLine: The whole if statement must fit on one line. nextLine: The jump must be on the immediately following line.",
+              "enum": [
+                "off",
+                "sameLine",
+                "nextLine"
+              ],
+              "default": "off"
+            },
             "allowConsecutiveUsings": {
               "type": "boolean",
               "description": "Specifies if SA1519 will allow consecutive using statements without braces",

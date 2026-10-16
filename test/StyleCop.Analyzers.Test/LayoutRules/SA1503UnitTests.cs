@@ -40,6 +40,340 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         }
 
         /// <summary>
+        /// Verifies the opt-in exemption for standalone guard statements.
+        /// </summary>
+        /// <param name="option">The permitted statement placement.</param>
+        /// <param name="separator">The whitespace before the jump statement.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData("sameLine", " ")]
+        [InlineData("nextLine", "\r\n            ")]
+        [WorkItem(2252, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2252")]
+        public async Task TestBracelessGuardAsync(string option, string separator)
+        {
+            var testCode = $$"""
+                public class C
+                {
+                    public void M(bool condition)
+                    {
+                        if (condition){{separator}}return;
+                    }
+                }
+                """;
+            var settings = $$"""
+                { "settings": { "layoutRules": { "allowBracelessIfStatements": "{{option}}" } } }
+                """;
+
+            await VerifyCSharpDiagnosticAsync(testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies nested guards, return values, and existing blocks.
+        /// </summary>
+        /// <param name="option">The permitted statement placement.</param>
+        /// <param name="separator">The whitespace before the jump statement.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData("sameLine", " ")]
+        [InlineData("nextLine", "\r\n                ")]
+        [WorkItem(2252, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2252")]
+        public async Task TestBracelessNestedGuardAsync(string option, string separator)
+        {
+            var testCode = $$"""
+                public class C
+                {
+                    public int M(bool condition)
+                    {
+                        if (condition)
+                        {
+                            if (condition){{separator}}return 1; // Keep this comment.
+                        }
+                        else
+                        {
+                            if (condition){{separator}}throw new System.Exception();
+                        }
+
+                        return 0;
+                    }
+                }
+                """;
+            var settings = $$"""
+                { "settings": { "layoutRules": { "allowBracelessIfStatements": "{{option}}" } } }
+                """;
+            await VerifyCSharpDiagnosticAsync(testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that multiline conditions still require braces.
+        /// </summary>
+        /// <param name="option">The permitted statement placement.</param>
+        /// <param name="separator">The whitespace before the jump statement.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData("sameLine", " ")]
+        [InlineData("nextLine", "\r\n            ")]
+        [WorkItem(2252, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2252")]
+        public async Task TestBracelessMultilineConditionAsync(string option, string separator)
+        {
+            var testCode = $$"""
+                public class C
+                {
+                    public void M(bool condition)
+                    {
+                        if (
+                            condition){{separator}}[|return;|] // Keep this comment.
+                    }
+                }
+                """;
+            var fixedCode = """
+                public class C
+                {
+                    public void M(bool condition)
+                    {
+                        if (
+                            condition)
+                        {
+                            return; // Keep this comment.
+                        }
+                    }
+                }
+                """;
+            var settings = $$"""{ "settings": { "layoutRules": { "allowBracelessIfStatements": "{{option}}" } } }""";
+            await VerifyCSharpFixAsync(testCode, settings, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that multiline jump statements still require braces.
+        /// </summary>
+        /// <param name="option">The permitted statement placement.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData("sameLine")]
+        [InlineData("nextLine")]
+        [WorkItem(2252, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2252")]
+        public async Task TestBracelessMultilineJumpAsync(string option)
+        {
+            await new CSharpTest
+            {
+                TestCode = """
+                    public class C
+                    {
+                        public int M(bool condition)
+                        {
+                            if (condition) [|return
+                                1;|]
+                            return 0;
+                        }
+                    }
+                    """,
+                FixedCode = """
+                    public class C
+                    {
+                        public int M(bool condition)
+                        {
+                            if (condition)
+                            {
+                                return
+                                1;
+                            }
+
+                            return 0;
+                        }
+                    }
+                    """,
+                Settings = $$"""{ "settings": { "layoutRules": { "allowBracelessIfStatements": "{{option}}" } } }""",
+                DisabledDiagnostics = { SA1519BracesMustNotBeOmittedFromMultiLineChildStatement.DiagnosticId },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that every supported jump statement can be used in a guard.
+        /// </summary>
+        /// <param name="option">The permitted statement placement.</param>
+        /// <param name="separator">The whitespace before the jump statement.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData("sameLine", " ")]
+        [InlineData("nextLine", "\r\n                ")]
+        [WorkItem(2252, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2252")]
+        public async Task TestBracelessJumpStatementsAsync(string option, string separator)
+        {
+            var testCode = $$"""
+                public class C
+                {
+                    public System.Collections.Generic.IEnumerable<int> M(bool condition, int value)
+                    {
+                        while (condition)
+                        {
+                            if (condition){{separator}}break;
+                            if (condition){{separator}}continue;
+                            if (condition){{separator}}throw new System.Exception();
+                            if (condition){{separator}}yield break;
+                            if (condition){{separator}}goto Done;
+                            yield return value;
+                        Done:
+                            switch (value)
+                            {
+                            case 0:
+                                if (condition){{separator}}goto case 1;
+                                break;
+                            case 1:
+                                if (condition){{separator}}goto default;
+                                break;
+                            default:
+                                break;
+                            }
+                        }
+                    }
+                }
+                """;
+            var settings = $$"""
+                { "settings": { "layoutRules": { "allowBracelessIfStatements": "{{option}}" } } }
+                """;
+
+            await VerifyCSharpDiagnosticAsync(testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that disabled exemptions and incorrect placement are fixed by adding braces.
+        /// </summary>
+        /// <param name="option">The permitted statement placement.</param>
+        /// <param name="separator">The whitespace before the jump statement.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData("off", " ")]
+        [InlineData("off", "\r\n            ")]
+        [InlineData("sameLine", "\r\n            ")]
+        [InlineData("nextLine", " ")]
+        [InlineData("nextLine", "\r\n\r\n            ")]
+        [WorkItem(2252, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2252")]
+        public async Task TestBracelessGuardWrongPlacementAsync(string option, string separator)
+        {
+            var testCode = $$"""
+                public class C
+                {
+                    public int M(bool condition)
+                    {
+                        if (condition){{separator}}[|return 1;|] // Keep this comment.
+                        return 0;
+                    }
+                }
+                """;
+            var fixedCode = """
+                public class C
+                {
+                    public int M(bool condition)
+                    {
+                        if (condition)
+                        {
+                            return 1; // Keep this comment.
+                        }
+
+                        return 0;
+                    }
+                }
+                """;
+            var settings = $$"""
+                { "settings": { "layoutRules": { "allowBracelessIfStatements": "{{option}}" } } }
+                """;
+
+            await VerifyCSharpFixAsync(testCode, settings, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that non-jump statements, loops, and conditional chains still require braces.
+        /// </summary>
+        /// <param name="option">The permitted statement placement.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData("sameLine")]
+        [InlineData("nextLine")]
+        [WorkItem(2252, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2252")]
+        public async Task TestBracelessGuardExclusionsAsync(string option)
+        {
+            var testCode = """
+                public class C
+                {
+                    public void M(bool condition)
+                    {
+                        if (condition)
+                            [|M(false);|]
+                        if (condition)
+                            [|condition = false;|]
+                        while (condition)
+                            [|break;|]
+                        if (condition)
+                            [|return;|]
+                        else if (condition)
+                            [|return;|]
+                        else
+                            [|return;|]
+                    }
+
+                    public System.Collections.Generic.IEnumerable<int> N(bool condition)
+                    {
+                        if (condition)
+                            [|yield return 1;|]
+                    }
+                }
+                """;
+            var fixedCode = """
+                public class C
+                {
+                    public void M(bool condition)
+                    {
+                        if (condition)
+                        {
+                            M(false);
+                        }
+
+                        if (condition)
+                        {
+                            condition = false;
+                        }
+
+                        while (condition)
+                        {
+                            break;
+                        }
+
+                        if (condition)
+                        {
+                            return;
+                        }
+                        else if (condition)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+
+                    public System.Collections.Generic.IEnumerable<int> N(bool condition)
+                    {
+                        if (condition)
+                        {
+                            yield return 1;
+                        }
+                    }
+                }
+                """;
+            var settings = $$"""
+                { "settings": { "layoutRules": { "allowBracelessIfStatements": "{{option}}" } } }
+                """;
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                Settings = settings,
+                DisabledDiagnostics = { SA1520UseBracesConsistently.DiagnosticId },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that a statement followed by a block without braces will produce a warning.
         /// </summary>
         /// <param name="statementText">The source code for the first part of a compound statement whose child can be
