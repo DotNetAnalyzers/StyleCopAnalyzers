@@ -33,10 +33,14 @@ namespace StyleCop.Analyzers.SpacingRules
         private static readonly string HelpLink = HelpLinkHelper.GetHelpLink(DiagnosticId);
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1017Title), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpacingResources.SA1017MessageFormat), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString MessageFollowed = new LocalizableResourceString(nameof(SpacingResources.SA1017MessageFollowed), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1017Description), SpacingResources.ResourceManager, typeof(SpacingResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
+        private static readonly DiagnosticDescriptor DescriptorFollowed =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFollowed, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<SyntaxTreeAnalysisContext, SyntaxTreeTokens> SyntaxTreeAction = HandleSyntaxTree;
 
@@ -86,7 +90,11 @@ namespace StyleCop.Analyzers.SpacingRules
                 && !token.IsLastInLine()
                 && !token.IsFollowedByWhitespace())
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.InsertFollowing));
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+#pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
+                context.ReportDiagnostic(Diagnostic.Create(DescriptorFollowed, token.GetLocation(), TokenSpacingProperties.InsertFollowing));
+#pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
+#pragma warning restore IDE0079 // Remove unnecessary suppression
             }
 
             if (token.IsFirstInLine())

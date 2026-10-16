@@ -50,6 +50,6 @@ public partial class SA1017CSharp8UnitTests : SA1017CSharp7UnitTests
 
             """;
 
-        await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0).WithMessage("Closing attribute brackets should be followed by a space"), fixedCode, CancellationToken.None).ConfigureAwait(false);
     }
 }

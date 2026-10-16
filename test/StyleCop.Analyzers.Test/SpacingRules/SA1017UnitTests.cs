@@ -111,9 +111,9 @@ class ClassNam3
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(0),
-                Diagnostic().WithLocation(1),
-                Diagnostic().WithLocation(2),
+                Diagnostic().WithLocation(0).WithMessage("Closing attribute brackets should not be preceded by a space"),
+                Diagnostic().WithLocation(1).WithMessage("Closing attribute brackets should not be preceded by a space"),
+                Diagnostic().WithLocation(2).WithMessage("Closing attribute brackets should not be preceded by a space"),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
@@ -181,7 +181,7 @@ class ClassName
 
                 """;
 
-            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0).WithMessage("Closing attribute brackets should be followed by a space"), fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -241,16 +241,16 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(0),
-                Diagnostic().WithLocation(1),
-                Diagnostic().WithLocation(2),
-                Diagnostic().WithLocation(3),
-                Diagnostic().WithLocation(4),
-                Diagnostic().WithLocation(5),
-                Diagnostic().WithLocation(6),
-                Diagnostic().WithLocation(7),
-                Diagnostic().WithLocation(8),
-                Diagnostic().WithLocation(8),
+                Diagnostic().WithLocation(0).WithMessage("Closing attribute brackets should be followed by a space"),
+                Diagnostic().WithLocation(1).WithMessage("Closing attribute brackets should be followed by a space"),
+                Diagnostic().WithLocation(2).WithMessage("Closing attribute brackets should be followed by a space"),
+                Diagnostic().WithLocation(3).WithMessage("Closing attribute brackets should be followed by a space"),
+                Diagnostic().WithLocation(4).WithMessage("Closing attribute brackets should be followed by a space"),
+                Diagnostic().WithLocation(5).WithMessage("Closing attribute brackets should be followed by a space"),
+                Diagnostic().WithLocation(6).WithMessage("Closing attribute brackets should be followed by a space"),
+                Diagnostic().WithLocation(7).WithMessage("Closing attribute brackets should be followed by a space"),
+                Diagnostic().WithLocation(8).WithMessage("Closing attribute brackets should be followed by a space"),
+                Diagnostic().WithLocation(8).WithMessage("Closing attribute brackets should not be preceded by a space"),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
