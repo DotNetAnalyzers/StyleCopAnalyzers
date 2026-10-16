@@ -238,6 +238,21 @@ namespace TestNamespace
 
         [Fact]
         [WorkItem(1931, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1931")]
+        public async Task TestCodeFixIsNotOfferedForDuplicateExternAliasOutsideNamespaceAsync()
+        {
+            var testCode = @"extern alias corlib;
+
+namespace TestNamespace
+{
+    extern alias corlib;
+}
+";
+
+            await VerifyCodeFixIsNotOfferedForExternAliasAsync(testCode, insideNamespacePlacement: false).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1931, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1931")]
         public async Task TestConditionalExternAliasIsDiagnosedAsync()
         {
             var testCode = @"#if true
@@ -267,6 +282,21 @@ namespace TestNamespace
 ";
 
             await VerifyCodeFixIsNotOfferedForExternAliasAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1931, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1931")]
+        public async Task TestCodeFixIsNotOfferedForConditionalExternAliasOutsideNamespaceAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+#if true
+    extern alias corlib;
+#endif
+}
+";
+
+            await VerifyCodeFixIsNotOfferedForExternAliasAsync(testCode, insideNamespacePlacement: false).ConfigureAwait(false);
         }
 
         [Fact]
@@ -616,13 +646,32 @@ namespace NamespaceName
             await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private static async Task VerifyCodeFixIsNotOfferedForExternAliasAsync(string source)
+        private static async Task VerifyCodeFixIsNotOfferedForExternAliasAsync(string source, bool insideNamespacePlacement = true)
         {
             using var workspace = new AdhocWorkspace();
             var project = workspace.AddProject("Test", LanguageNames.CSharp);
             var document = workspace.AddDocument(project.Id, "Test.cs", SourceText.From(source));
+            if (!insideNamespacePlacement)
+            {
+                const string settings = @"{
+  ""settings"": {
+    ""orderingRules"": {
+      ""usingDirectivesPlacement"": ""outsideNamespace""
+    }
+  }
+}";
+                var solution = document.Project.Solution.AddAdditionalDocument(DocumentId.CreateNewId(project.Id), "stylecop.json", SourceText.From(settings));
+                if (!workspace.TryApplyChanges(solution))
+                {
+                    throw new InvalidOperationException();
+                }
+
+                document = workspace.CurrentSolution.GetDocument(document.Id) ?? throw new InvalidOperationException();
+            }
+
             var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false) ?? throw new InvalidOperationException();
-            var externAlias = syntaxRoot.DescendantNodes().OfType<ExternAliasDirectiveSyntax>().First();
+            var aliases = syntaxRoot.DescendantNodes().OfType<ExternAliasDirectiveSyntax>();
+            var externAlias = insideNamespacePlacement ? aliases.First() : aliases.Last();
             var diagnostic = Microsoft.CodeAnalysis.Diagnostic.Create(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside, externAlias.GetLocation());
             var codeActions = new List<CodeAction>();
             var context = new CodeFixContext(document, diagnostic, (action, _) => codeActions.Add(action), CancellationToken.None);
