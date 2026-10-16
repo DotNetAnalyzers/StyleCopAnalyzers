@@ -310,6 +310,18 @@ namespace StyleCop.Analyzers.ReadabilityRules
         public static string @SA1142MessageFormat => GetResourceString("SA1142MessageFormat")!;
         /// <summary>Refer to tuple fields by name</summary>
         public static string @SA1142Title => GetResourceString("SA1142Title")!;
+        /// <summary>Place conditional expression on one line</summary>
+        public static string @SA1143CodeFixSingleLine => GetResourceString("SA1143CodeFixSingleLine")!;
+        /// <summary>Place conditional expressions on separate indented lines</summary>
+        public static string @SA1143CodeFixMultiLine => GetResourceString("SA1143CodeFixMultiLine")!;
+        /// <summary>Align chained conditional expressions on separate lines</summary>
+        public static string @SA1143CodeFixChain => GetResourceString("SA1143CodeFixChain")!;
+        /// <summary>A conditional expression should occupy one line, use indented lines beginning with '?' and ':', or use aligned lines for chained conditions.</summary>
+        public static string @SA1143Description => GetResourceString("SA1143Description")!;
+        /// <summary>Conditional expressions must be formatted consistently</summary>
+        public static string @SA1143MessageFormat => GetResourceString("SA1143MessageFormat")!;
+        /// <summary>Conditional expressions must be formatted consistently</summary>
+        public static string @SA1143Title => GetResourceString("SA1143Title")!;
         /// <summary>Remove 'this.' prefix</summary>
         public static string @SX1101CodeFix => GetResourceString("SX1101CodeFix")!;
         /// <summary>A call to an instance member of the local class or a base class is prefixed with `this.`.</summary>

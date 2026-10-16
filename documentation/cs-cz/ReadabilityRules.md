@@ -49,3 +49,4 @@ Identifikátor | Název | Popis
 [SA1139](SA1139.md) | UseLiteralsSuffixNotationInsteadOfCasting | Použijte notaci přípon literálů místo přetypování.
 [SA1141](SA1141.md) | UseTupleSyntax | Použijte syntaxi tuple místo základního typu `ValueTuple`.
 [SA1142](SA1142.md) | ReferToTupleElementsByName | Prvek tuple byl odkazován podle metadatového názvu, když je k dispozici jméno prvku.
+[SA1143](SA1143.md) | ConditionalExpressionsMustBeFormattedConsistently | A conditional expression does not use a supported single-line or indented multiline layout.

@@ -561,6 +561,24 @@
   <data name="SA1142Title" xml:space="preserve">
     <value>Refer to tuple fields by name</value>
   </data>
+  <data name="SA1143CodeFixSingleLine" xml:space="preserve">
+    <value>Place conditional expression on one line</value>
+  </data>
+  <data name="SA1143CodeFixMultiLine" xml:space="preserve">
+    <value>Place conditional expressions on separate indented lines</value>
+  </data>
+  <data name="SA1143CodeFixChain" xml:space="preserve">
+    <value>Align chained conditional expressions on separate lines</value>
+  </data>
+  <data name="SA1143Description" xml:space="preserve">
+    <value>A conditional expression should occupy one line, use indented lines beginning with '?' and ':', or use aligned lines for chained conditions.</value>
+  </data>
+  <data name="SA1143MessageFormat" xml:space="preserve">
+    <value>Conditional expressions must be formatted consistently</value>
+  </data>
+  <data name="SA1143Title" xml:space="preserve">
+    <value>Conditional expressions must be formatted consistently</value>
+  </data>
   <data name="SX1101CodeFix" xml:space="preserve">
     <value>Remove 'this.' prefix</value>
   </data>
