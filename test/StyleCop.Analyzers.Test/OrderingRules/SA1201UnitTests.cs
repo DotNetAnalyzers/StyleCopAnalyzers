@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
         StyleCop.Analyzers.OrderingRules.SA1201ElementsMustAppearInTheCorrectOrder,
         StyleCop.Analyzers.OrderingRules.ElementOrderCodeFixProvider>;
 
-    public class SA1201UnitTests
+    public partial class SA1201UnitTests
     {
         public static IEnumerable<object[]> ValueTypesAndReferenceTypes
         {

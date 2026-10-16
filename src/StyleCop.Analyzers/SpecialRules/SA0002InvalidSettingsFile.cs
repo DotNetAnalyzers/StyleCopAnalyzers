@@ -4,11 +4,14 @@
 namespace StyleCop.Analyzers.SpecialRules
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
     using LightJson.Serialization;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Lightup;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// The <em>stylecop.json</em> settings file could not be loaded due to a deserialization failure.
@@ -59,6 +62,28 @@ namespace StyleCop.Analyzers.SpecialRules
             try
             {
                 context.GetStyleCopSettings(firstSyntaxTree, DeserializationFailureBehavior.ThrowException, context.CancellationToken);
+
+                var optionsProvider = context.Options.AnalyzerConfigOptionsProvider();
+                HashSet<string>? validatedOrders = null;
+                foreach (var tree in context.Compilation.SyntaxTrees)
+                {
+                    if (tree == firstSyntaxTree)
+                    {
+                        continue;
+                    }
+
+                    context.CancellationToken.ThrowIfCancellationRequested();
+                    var reader = new SettingsReader(null, optionsProvider.GetOptions(tree));
+                    if (reader.GetString("memberKindOrder", "stylecop.ordering.memberKindOrder") is { } memberKindOrder)
+                    {
+                        // JSON settings are shared, and kind validation is independent of other per-file options.
+                        validatedOrders ??= new HashSet<string>(StringComparer.Ordinal);
+                        if (validatedOrders.Add(memberKindOrder))
+                        {
+                            context.GetStyleCopSettings(tree, DeserializationFailureBehavior.ThrowException, context.CancellationToken);
+                        }
+                    }
+                }
             }
             catch (Exception ex) when (ex is JsonParseException || ex is InvalidSettingsException)
             {

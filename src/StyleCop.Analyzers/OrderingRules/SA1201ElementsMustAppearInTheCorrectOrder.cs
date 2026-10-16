@@ -122,6 +122,9 @@ namespace StyleCop.Analyzers.OrderingRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
+        private static readonly DiagnosticDescriptor InterruptedGroupDescriptor =
+            new DiagnosticDescriptor(DiagnosticId, Title, new LocalizableResourceString(nameof(OrderingResources.SA1201InterruptedGroupMessageFormat), OrderingResources.ResourceManager, typeof(OrderingResources)), AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
         // extern alias and usings are missing here because the compiler itself is enforcing the right order.
         private static readonly ImmutableArray<SyntaxKind> OuterOrder = ImmutableArray.Create(
             SyntaxKindEx.FileScopedNamespaceDeclaration,
@@ -180,7 +183,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-            ImmutableArray.Create(Descriptor);
+            ImmutableArray.Create(Descriptor, InterruptedGroupDescriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -208,7 +211,76 @@ namespace StyleCop.Analyzers.OrderingRules
 
             var typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
+            if (settings.OrderingRules.MemberKindOrder is { } configuredOrder)
+            {
+                HandleConfiguredMemberList(context, typeDeclaration.Members, configuredOrder);
+                return;
+            }
+
             HandleMemberList(context, elementOrder, kindIndex, typeDeclaration.Members, TypeMemberOrder);
+        }
+
+        private static void HandleConfiguredMemberList(SyntaxNodeAnalysisContext context, SyntaxList<MemberDeclarationSyntax> members, MemberKindOrder order)
+        {
+            var previousNamedIndex = -1;
+            var previousRank = -1;
+            var previousPriority = 0;
+            var firstUnnamedIndex = -1;
+
+            for (var i = 0; i < members.Count; i++)
+            {
+                context.CancellationToken.ThrowIfCancellationRequested();
+                var member = members[i];
+                var priority = order.GetPrecedingPriority(member);
+                if (member.IsKind(SyntaxKind.IncompleteMember) || priority != previousPriority)
+                {
+                    previousNamedIndex = -1;
+                    firstUnnamedIndex = -1;
+                }
+
+                previousPriority = priority;
+                if (member.IsKind(SyntaxKind.IncompleteMember))
+                {
+                    continue;
+                }
+
+                var rank = order.GetRank(member);
+                if (rank < 0)
+                {
+                    if (previousNamedIndex >= 0 && firstUnnamedIndex < 0)
+                    {
+                        firstUnnamedIndex = i;
+                    }
+
+                    continue;
+                }
+
+                if (previousNamedIndex >= 0)
+                {
+                    if (rank < previousRank)
+                    {
+                        var previousKind = members[previousNamedIndex].Kind();
+                        context.ReportDiagnostic(Diagnostic.Create(
+                            Descriptor,
+                            NamedTypeHelpers.GetNameOrIdentifierLocation(member),
+                            Capitalize(MemberNames.GetValueOrDefault(member.Kind(), "<unknown>")),
+                            MemberNames.GetValueOrDefault(previousKind, "<unknown>")));
+                    }
+                    else if (rank == previousRank && firstUnnamedIndex >= 0)
+                    {
+                        var interruption = members[firstUnnamedIndex];
+                        context.ReportDiagnostic(Diagnostic.Create(
+                            InterruptedGroupDescriptor,
+                            NamedTypeHelpers.GetNameOrIdentifierLocation(interruption),
+                            additionalLocations: ImmutableArray.Create(NamedTypeHelpers.GetNameOrIdentifierLocation(member)),
+                            messageArgs: new object[] { MemberKindOrder.GetKindName(interruption.Kind()), MemberKindOrder.GetKindName(member.Kind()) }));
+                    }
+                }
+
+                previousNamedIndex = i;
+                previousRank = rank;
+                firstUnnamedIndex = -1;
+            }
         }
 
         private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context, StyleCopSettings settings)

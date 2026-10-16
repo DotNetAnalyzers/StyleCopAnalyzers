@@ -76,6 +76,11 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                 value => bool.TryParse(value, out var separate) ? (separate ? OptionSetting.Require : OptionSetting.Allow) : null);
 
             this.elementOrder = reader.GetEnumList<OrderingTrait>("elementOrder", "stylecop.ordering.elementOrder") ?? ImmutableArray<OrderingTrait>.Empty;
+            if (reader.GetStringList("memberKindOrder", "stylecop.ordering.memberKindOrder", emptyValueIsEmptyList: true) is { } memberKindOrder)
+            {
+                this.MemberKindOrder = new MemberKindOrder(memberKindOrder, this.ElementOrder);
+            }
+
             this.systemUsingDirectivesFirst = reader.GetBoolean("systemUsingDirectivesFirst", "dotnet_sort_system_directives_first").GetValueOrDefault(true);
             this.usingDirectivesPlacement = usingDirectivesPlacement.GetValueOrDefault(UsingDirectivesPlacement.InsideNamespace);
             this.blankLinesBetweenUsingGroups = blankLinesBetweenUsingGroups.GetValueOrDefault(OptionSetting.Allow);
@@ -97,5 +102,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
         public OptionSetting BlankLinesBetweenUsingGroups =>
             this.blankLinesBetweenUsingGroups;
+
+        internal MemberKindOrder? MemberKindOrder { get; }
     }
 }

@@ -164,7 +164,12 @@ namespace StyleCop.Analyzers
         internal static StyleCopSettings GetStyleCopSettings(this CompilationAnalysisContext context, SyntaxTree tree, DeserializationFailureBehavior failureBehavior, CancellationToken cancellationToken)
         {
             var settingsFile = GetSettingsFile(context.Options, GetJsonValue, cancellationToken);
-            return GetSettings(context.Options, GetOrCreateSettingsStorage(context, tree), tree, settingsFile, failureBehavior);
+
+            // Validation must not reuse fallback settings cached by another analyzer after an error.
+            var storage = failureBehavior == DeserializationFailureBehavior.ThrowException
+                ? new StrongBox<StyleCopSettings>()
+                : GetOrCreateSettingsStorage(context, tree);
+            return GetSettings(context.Options, storage, tree, settingsFile, failureBehavior);
 
             Lazy<JsonValue> GetJsonValue(SourceText settingsText)
             {
@@ -217,7 +222,15 @@ namespace StyleCop.Analyzers
                 if (tree != null)
                 {
                     var analyzerConfigOptions = options.AnalyzerConfigOptionsProvider().GetOptions(tree);
-                    settings = new StyleCopSettings(new JsonObject(), analyzerConfigOptions);
+                    try
+                    {
+                        settings = new StyleCopSettings(new JsonObject(), analyzerConfigOptions);
+                    }
+                    catch (InvalidSettingsException) when (failureBehavior == DeserializationFailureBehavior.ReturnDefaultSettings)
+                    {
+                        // SA0002 reports the invalid configuration through the throwing path.
+                        settings = new StyleCopSettings();
+                    }
                 }
                 else
                 {
