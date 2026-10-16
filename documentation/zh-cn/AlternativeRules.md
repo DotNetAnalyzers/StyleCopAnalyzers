@@ -7,3 +7,4 @@
 [SX1101](SX1101.md) | DoNotPrefixLocalMembersWithThis | C# 代码文件中对当前类或基类的实例成员的调用带有 'this.' 前缀。
 [SX1309](SX1309.md) | FieldNamesMustBeginWithUnderscore | 字段名称未以下划线开头。
 [SX1309S](SX1309S.md) | StaticFieldNamesMustBeginWithUnderscore | 静态字段名称未以下划线开头。
+[SX1412](SX1412.md) | StoreFilesAsUtf8WithoutByteOrderMark | 文件编码不是不带字节顺序标记的 UTF-8。

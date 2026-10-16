@@ -6,3 +6,4 @@ Identifier | Name | Description
 [SX1101](SX1101.md) | DoNotPrefixLocalMembersWithThis | A call to an instance member of the local class or a base class is prefixed with 'this.', within a C# code file. 
 [SX1309](SX1309.md) | FieldNamesMustBeginWithUnderscore | A field name does not begin with an underscore.
 [SX1309S](SX1309S.md) | StaticFieldNamesMustBeginWithUnderscore | A static field name does not begin with an underscore.
+[SX1412](SX1412.md) | StoreFilesAsUtf8WithoutByteOrderMark | The encoding of the file is not UTF-8 without byte order mark.
