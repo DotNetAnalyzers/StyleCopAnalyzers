@@ -466,6 +466,9 @@ for example, member-kind groups are checked separately within each contiguous ac
 If both files specify `memberKindOrder`, the complete **stylecop.json** value takes precedence; the lists
 are not merged.
 
+Static and readonly ordering still apply between members of the same kind across permitted gaps, subject to higher-priority traits.
+Initializer safety may prevent moving an initialized member before an earlier initialized member, but does not prevent inserting it immediately after that member to close a gap.
+
 ### Using Directives
 
 The following properties are used in **stylecop.json** to configure using directives in StyleCop Analyzers.

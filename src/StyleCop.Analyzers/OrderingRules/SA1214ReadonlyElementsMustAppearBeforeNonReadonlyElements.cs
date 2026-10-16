@@ -68,6 +68,13 @@ namespace StyleCop.Analyzers.OrderingRules
             }
 
             var typeDeclaration = (TypeDeclarationSyntax)context.Node;
+            if (settings.OrderingRules.MemberKindOrder is { } order
+                && elementOrder.IndexOf(OrderingTrait.Kind) is var kindIndex
+                && kindIndex >= 0 && kindIndex < readonlyIndex)
+            {
+                HandleConfiguredMemberList(context, typeDeclaration.Members, order);
+                return;
+            }
 
             // This variable is null when the previous member is not a field.
             FieldDeclarationSyntax? previousField = null;
@@ -150,6 +157,38 @@ namespace StyleCop.Analyzers.OrderingRules
                 previousFieldStatic = currentFieldStatic;
                 previousFieldReadonly = currentFieldReadonly;
                 previousAccessLevel = currentAccessLevel;
+            }
+        }
+
+        private static void HandleConfiguredMemberList(SyntaxNodeAnalysisContext context, SyntaxList<MemberDeclarationSyntax> members, MemberKindOrder order)
+        {
+            var precedingPriority = 0;
+            var previousPriority = -1;
+            var previousReadonly = true;
+            foreach (var member in members)
+            {
+                context.CancellationToken.ThrowIfCancellationRequested();
+                var priority = order.GetPrecedingPriority(member);
+                if (priority != precedingPriority || member.IsKind(SyntaxKind.IncompleteMember))
+                {
+                    previousPriority = -1;
+                }
+
+                precedingPriority = priority;
+                if (!(member is FieldDeclarationSyntax field))
+                {
+                    continue;
+                }
+
+                var higherPriority = order.GetPriorityBefore(member, OrderingTrait.Readonly);
+                var isReadonly = field.Modifiers.Any(SyntaxKind.ConstKeyword) || field.Modifiers.Any(SyntaxKind.ReadOnlyKeyword);
+                if (previousPriority == higherPriority && !previousReadonly && isReadonly)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(member)));
+                }
+
+                previousPriority = higherPriority;
+                previousReadonly = isReadonly;
             }
         }
     }

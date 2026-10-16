@@ -179,6 +179,15 @@ namespace StyleCop.Analyzers.OrderingRules
                     || FieldDependencyHelper.DependsOn(member, previous, fieldDependencies)
                     || FieldDependencyHelper.DependsOn(previous, member, fieldDependencies))
                 {
+                    if (!previous.IsKind(SyntaxKind.IncompleteMember)
+                        && gapIndex >= 0
+                        && rank >= 0
+                        && order.GetRank(previous) == rank
+                        && order.GetPrecedingPriority(previous) == priority)
+                    {
+                        targetIndex = gapIndex;
+                    }
+
                     break;
                 }
 

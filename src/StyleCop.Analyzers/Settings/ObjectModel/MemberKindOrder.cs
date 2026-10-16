@@ -18,6 +18,7 @@ internal sealed class MemberKindOrder
     private readonly ImmutableArray<SyntaxKind> kinds;
     private readonly ImmutableArray<OrderingTrait> precedingTraits;
     private readonly ImmutableArray<OrderingTrait> followingTraits;
+    private readonly ImmutableArray<OrderingTrait> elementOrder;
 
     internal MemberKindOrder(ImmutableArray<string> names, ImmutableArray<OrderingTrait> elementOrder)
     {
@@ -53,6 +54,7 @@ internal sealed class MemberKindOrder
         }
 
         this.kinds = builder.ToImmutable();
+        this.elementOrder = elementOrder;
         var kindIndex = elementOrder.IndexOf(OrderingTrait.Kind);
         this.precedingTraits = kindIndex < 0 ? elementOrder : elementOrder.RemoveRange(kindIndex, elementOrder.Length - kindIndex);
         this.followingTraits = kindIndex < 0 ? ImmutableArray<OrderingTrait>.Empty : elementOrder.RemoveRange(0, kindIndex + 1);
@@ -89,7 +91,44 @@ internal sealed class MemberKindOrder
 
     internal int GetRank(MemberDeclarationSyntax member) => this.kinds.IndexOf(Normalize(member.Kind()));
 
-    internal int GetPrecedingPriority(MemberDeclarationSyntax member) => this.precedingTraits.IsEmpty ? 0 : new MemberOrderHelper(member, this.precedingTraits).Priority;
+    internal int GetPrecedingPriority(MemberDeclarationSyntax member) => this.precedingTraits.IsEmpty ? 0 : GetPriority(member, this.precedingTraits);
 
-    internal int GetFollowingPriority(MemberDeclarationSyntax member) => this.followingTraits.IsEmpty ? 0 : new MemberOrderHelper(member, this.followingTraits).Priority;
+    internal int GetFollowingPriority(MemberDeclarationSyntax member) => this.followingTraits.IsEmpty ? 0 : GetPriority(member, this.followingTraits);
+
+    internal int GetPriorityBefore(MemberDeclarationSyntax member, OrderingTrait orderingTrait) => GetPriority(member, this.elementOrder, orderingTrait);
+
+    private static int GetPriority(MemberDeclarationSyntax member, ImmutableArray<OrderingTrait> traits, OrderingTrait? stopAt = null)
+    {
+        var modifiers = member.GetModifiers();
+        var isConstant = modifiers.Any(SyntaxKind.ConstKeyword);
+        var priority = 0;
+        foreach (var trait in traits)
+        {
+            if (trait == stopAt)
+            {
+                break;
+            }
+
+            switch (trait)
+            {
+            case OrderingTrait.Accessibility:
+                priority = (priority << 3) | (int)MemberOrderHelper.GetAccessLevelForOrdering(member, modifiers);
+                break;
+
+            case OrderingTrait.Constant:
+                priority = (priority << 1) | (isConstant ? 1 : 0);
+                break;
+
+            case OrderingTrait.Static:
+                priority = (priority << 1) | (isConstant || modifiers.Any(SyntaxKind.StaticKeyword) ? 1 : 0);
+                break;
+
+            case OrderingTrait.Readonly:
+                priority = (priority << 1) | (isConstant || modifiers.Any(SyntaxKind.ReadOnlyKeyword) ? 1 : 0);
+                break;
+            }
+        }
+
+        return priority;
+    }
 }

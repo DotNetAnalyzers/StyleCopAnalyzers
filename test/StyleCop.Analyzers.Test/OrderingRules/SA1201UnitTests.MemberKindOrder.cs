@@ -20,6 +20,250 @@ using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
 public partial class SA1201UnitTests
 {
     [Fact]
+    public async Task TestConfiguredGroupFixCanStopAfterInitializerAsync()
+    {
+        var test = new CSharpTest
+        {
+            Settings = """{ "settings": { "orderingRules": { "memberKindOrder": ["property"] } } }""",
+            TestCode = """
+                public class C
+                {
+                    public int P { get; } = 1;
+                    public int {|#0:F|};
+
+                    public int {|#1:Q|} { get; } = 2;
+                }
+                """,
+            FixedCode = """
+                public class C
+                {
+                    public int P { get; } = 1;
+                    public int Q { get; } = 2;
+
+                    public int F;
+                }
+                """,
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithLocation(1).WithMessage(
+            "Members of kind 'field' have no configured order, but must not appear between declarations of kind 'property', which has a configured order"));
+        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestConfiguredStaticOrderAcrossGapAsync()
+    {
+        var test = new ConfiguredOrderingTest
+        {
+            Settings = """{ "settings": { "orderingRules": { "memberKindOrder": ["property"] } } }""",
+            TestCode = """
+                public class C
+                {
+                    public void Instance() { }
+                    public int P { get; }
+
+                    public static void {|#0:Static|}() { }
+                }
+                """,
+            FixedCode = """
+                public class C
+                {
+                    public static void Static() { }
+
+                    public void Instance() { }
+                    public int P { get; }
+                }
+                """,
+        };
+        test.ExpectedDiagnostics.Add(new DiagnosticResult(new SA1204StaticElementsMustAppearBeforeInstanceElements().SupportedDiagnostics[0]).WithLocation(0));
+        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestConfiguredReadonlyOrderAcrossGapAsync()
+    {
+        var test = new ConfiguredOrderingTest
+        {
+            Settings = """{ "settings": { "orderingRules": { "memberKindOrder": ["property"] } } }""",
+            TestCode = """
+                public class C
+                {
+                    public int Mutable;
+                    public int P { get; }
+
+                    public readonly int {|#0:Readonly|};
+                }
+                """,
+            FixedCode = """
+                public class C
+                {
+                    public readonly int Readonly;
+
+                    public int Mutable;
+                    public int P { get; }
+                }
+                """,
+        };
+        test.ExpectedDiagnostics.Add(new DiagnosticResult(new SA1214ReadonlyElementsMustAppearBeforeNonReadonlyElements().SupportedDiagnostics[0]).WithLocation(0));
+        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
+    [Theory]
+    [InlineData("""["accessibility", "kind", "static", "readonly"]""", "private int P { get; }")]
+    [InlineData("""["kind", "accessibility", "static", "readonly"]""", "public int P { get; }")]
+    public async Task TestConfiguredGapOrderingRespectsHigherTraitsAsync(string traits, string property)
+    {
+        await new ConfiguredTraitOrderingTest
+        {
+            Settings = $$"""{ "settings": { "orderingRules": { "memberKindOrder": ["property"], "elementOrder": {{traits}} } } }""",
+            TestCode = $$"""
+                public class C
+                {
+                    public void Instance() { }
+                    public int Mutable;
+                    {{property}}
+                    private static void Static() { }
+                    private readonly int Readonly;
+                }
+                """,
+        }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestConfiguredGapOrderingDoesNotCrossPrecedingTraitBoundaryAsync()
+    {
+        await new ConfiguredTraitOrderingTest
+        {
+            Settings = """
+                { "settings": { "orderingRules": {
+                    "memberKindOrder": ["property"],
+                    "elementOrder": ["accessibility", "kind", "static", "readonly"]
+                } } }
+                """,
+            TestCode = """
+                public class C
+                {
+                    public void Instance() { }
+                    public int Mutable;
+                    private int P { get; }
+                    public static void Static() { }
+                    public readonly int Readonly;
+                }
+                """,
+        }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestConfiguredGapOrderingAcceptsCorrectTraitOrderAsync()
+    {
+        await new ConfiguredTraitOrderingTest
+        {
+            Settings = """{ "settings": { "orderingRules": { "memberKindOrder": ["property"] } } }""",
+            TestCode = """
+                public class C
+                {
+                    public static void Static() { }
+                    public readonly int Readonly;
+                    public int P { get; }
+                    public void Instance() { }
+                    public int Mutable;
+                }
+                """,
+        }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestConfiguredReadonlyGapRespectsStaticPriorityAsync()
+    {
+        await new ConfiguredTraitOrderingTest
+        {
+            Settings = """{ "settings": { "orderingRules": { "memberKindOrder": ["property"] } } }""",
+            TestCode = """
+                public class C
+                {
+                    public static int Mutable;
+                    public int P { get; }
+                    public readonly int Readonly;
+                }
+                """,
+        }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
+    [Theory]
+    [InlineData("""["static", "readonly", "kind"]""")]
+    [InlineData("""["static", "readonly"]""")]
+    public async Task TestConfiguredGapOrderingWithKindBelowTraitsAsync(string traits)
+    {
+        await new ConfiguredTraitOrderingTest
+        {
+            Settings = $$"""{ "settings": { "orderingRules": { "memberKindOrder": ["property"], "elementOrder": {{traits}} } } }""",
+            TestCode = """
+                public class C
+                {
+                    public static int Mutable;
+                    public int P { get; }
+                    public readonly int Readonly;
+                }
+                """,
+        }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestConfiguredGapOrderingResetsAtIncompleteMembersAsync()
+    {
+        await new ConfiguredTraitOrderingTest
+        {
+            Settings = """{ "settings": { "orderingRules": { "memberKindOrder": ["property"] } } }""",
+            TestCode = """
+                public class C
+                {
+                    public int Mutable;
+                    public void Instance() { }
+                    public string
+                    public readonly int Readonly;
+                    public static void Static() { }
+                }
+                """,
+
+            // The incomplete declaration deliberately models code being typed.
+            CompilerDiagnostics = CompilerDiagnostics.None,
+        }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestConfiguredStaticGapRespectsReadonlyPriorityForConstantsAsync()
+    {
+        var test = new ConfiguredTraitOrderingTest
+        {
+            Settings = """
+                { "settings": { "orderingRules": {
+                    "memberKindOrder": ["property"],
+                    "elementOrder": ["kind", "readonly", "static"]
+                } } }
+                """,
+            TestCode = """
+                public class C
+                {
+                    public readonly int Readonly;
+                    public int P { get; }
+
+                    public const int {|#0:Constant|} = 0;
+                }
+                """,
+            FixedCode = """
+                public class C
+                {
+                    public const int Constant = 0;
+
+                    public readonly int Readonly;
+                    public int P { get; }
+                }
+                """,
+        };
+        test.ExpectedDiagnostics.Add(new DiagnosticResult(new SA1204StaticElementsMustAppearBeforeInstanceElements().SupportedDiagnostics[0]).WithLocation(0));
+        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
+    [Fact]
     public async Task TestConfiguredMemberKindOrderAsync()
     {
         var test = new CSharpTest
@@ -717,6 +961,18 @@ public partial class SA1201UnitTests
     protected static DiagnosticResult Diagnostic()
     {
         return new DiagnosticResult(new StyleCop.Analyzers.OrderingRules.SA1201ElementsMustAppearInTheCorrectOrder().SupportedDiagnostics[0]);
+    }
+
+    private sealed class ConfiguredTraitOrderingTest : CSharpTest
+    {
+        protected override IEnumerable<DiagnosticAnalyzer> GetDiagnosticAnalyzers()
+        {
+            return new DiagnosticAnalyzer[]
+            {
+                new SA1204StaticElementsMustAppearBeforeInstanceElements(),
+                new SA1214ReadonlyElementsMustAppearBeforeNonReadonlyElements(),
+            };
+        }
     }
 
     private sealed class ConfiguredOrderingTest : CSharpTest

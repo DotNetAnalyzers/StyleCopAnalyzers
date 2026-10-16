@@ -464,6 +464,9 @@ Stávající nastavení `elementOrder` nadále určuje prioritu vlastností.
 Pokud například `accessibility` předchází `kind`, skupiny druhů členů se kontrolují samostatně v každé souvislé skupině přístupnosti.
 Pokud oba soubory určují `memberKindOrder`, má přednost celá hodnota **stylecop.json**; seznamy se neslučují.
 
+Pravidla pro pořadí statických členů a polí pouze pro čtení nadále platí mezi členy stejného druhu i přes povolené mezery, s ohledem na vlastnosti s vyšší prioritou.
+Ochrana pořadí inicializace může zabránit přesunu inicializovaného člena před dřívější inicializovaný člen, ale nebrání jeho vložení bezprostředně za tento člen pro uzavření mezery.
+
 <a id="using-directives"></a>
 ### Direktivy using
 
