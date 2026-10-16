@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.Test.CSharp15.DocumentationRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp14.DocumentationRules;
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
@@ -13,6 +14,30 @@ namespace StyleCop.Analyzers.Test.CSharp15.DocumentationRules
 
     public partial class SA1649CSharp15UnitTests : SA1649CSharp14UnitTests
     {
+        /// <summary>
+        /// Verifies that unions are considered configured struct types.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2223, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2223")]
+        public async Task VerifyConfiguredUnionTypeIsUsedAsync()
+        {
+            var settings = @"
+{
+  ""settings"": {
+    ""maintainabilityRules"": {
+      ""topLevelTypes"": [ ""struct"" ]
+    }
+  }
+}
+";
+            var testCode = @"public interface FirstType { }
+public union SecondType(int, string);
+";
+
+            await VerifyCSharpDiagnosticAsync("SecondType.cs", testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task VerifyWrongFileNameForUnionDeclarationAsync()
         {

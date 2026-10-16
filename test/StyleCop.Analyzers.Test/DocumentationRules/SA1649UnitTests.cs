@@ -46,6 +46,118 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 }
 ";
 
+        protected const string TopLevelTypesSettings = @"
+{
+  ""settings"": {
+    ""maintainabilityRules"": {
+      ""topLevelTypes"": [ ""class"", ""interface"", ""struct"" ]
+    }
+  }
+}
+";
+
+        protected const string StyleCopTopLevelTypesSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""fileNamingConvention"": ""stylecop""
+    },
+    ""maintainabilityRules"": {
+      ""topLevelTypes"": [ ""class"", ""interface"", ""struct"" ]
+    }
+  }
+}
+";
+
+        protected const string MetadataTopLevelTypesSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""fileNamingConvention"": ""metadata""
+    },
+    ""maintainabilityRules"": {
+      ""topLevelTypes"": [ ""class"", ""interface"", ""struct"" ]
+    }
+  }
+}
+";
+
+        /// <summary>
+        /// Verifies that the first type selected by the top-level types setting is used for the file name.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2223, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2223")]
+        public async Task VerifyConfiguredTopLevelTypeIsUsedAsync()
+        {
+            var settings = @"
+{
+  ""settings"": {
+    ""maintainabilityRules"": {
+      ""topLevelTypes"": [ ""interface"" ]
+    }
+  }
+}
+";
+            var testCode = @"public class FirstType { }
+public interface SecondType { }
+";
+
+            await VerifyCSharpDiagnosticAsync("SecondType.cs", testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a configured class is preferred to an earlier interface.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2223, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2223")]
+        public async Task VerifyConfiguredClassIsUsedAsync()
+        {
+            var settings = @"
+{
+  ""settings"": {
+    ""maintainabilityRules"": {
+      ""topLevelTypes"": [ ""class"" ]
+    }
+  }
+}
+";
+            var testCode = @"public interface FirstType { }
+public class SecondType { }
+";
+
+            await VerifyCSharpDiagnosticAsync("SecondType.cs", testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that configured structs, enums, and delegates are preferred to an earlier class.
+        /// </summary>
+        /// <param name="topLevelType">The configured top-level type kind.</param>
+        /// <param name="secondTypeDeclaration">The declaration of the configured type.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("struct", "public struct SecondType { }")]
+        [InlineData("enum", "public enum SecondType { }")]
+        [InlineData("delegate", "public delegate void SecondType();")]
+        [WorkItem(2223, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2223")]
+        public async Task VerifyConfiguredTopLevelTypeKindsAreUsedAsync(string topLevelType, string secondTypeDeclaration)
+        {
+            var settings = $@"
+{{
+  ""settings"": {{
+    ""maintainabilityRules"": {{
+      ""topLevelTypes"": [ ""{topLevelType}"" ]
+    }}
+  }}
+}}
+";
+            var testCode = @"public class FirstType { }
+" + secondTypeDeclaration;
+
+            await VerifyCSharpDiagnosticAsync("SecondType.cs", testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Verifies that Unicode escapes in type identifiers are evaluated when matching file names.
         /// </summary>
@@ -313,7 +425,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 ";
 
             var expectedDiagnostic = Diagnostic().WithLocation(0);
-            await VerifyCSharpFixAsync("TestType2.cs", testCode, StyleCopSettings, expectedDiagnostic, "TestType.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync("TestType2.cs", testCode, TopLevelTypesSettings, expectedDiagnostic, "TestType.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -347,7 +459,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 ";
 
             var expectedDiagnostic = Diagnostic().WithLocation(0);
-            await VerifyCSharpFixAsync("TestType2.cs", testCode, StyleCopSettings, expectedDiagnostic, "TestType{T}.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync("TestType2.cs", testCode, StyleCopTopLevelTypesSettings, expectedDiagnostic, "TestType{T}.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -381,42 +493,42 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 ";
 
             var expectedDiagnostic = Diagnostic().WithLocation(0);
-            await VerifyCSharpFixAsync("TestType2.cs", testCode, MetadataSettings, expectedDiagnostic, "TestType`1.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync("TestType2.cs", testCode, MetadataTopLevelTypesSettings, expectedDiagnostic, "TestType`1.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         [WorkItem(3234, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3234")]
-        public async Task VerifyMultipleEnumTypesIgnoredAsync()
+        [WorkItem(2223, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2223")]
+        public async Task VerifyFirstEnumTypeIsUsedAsync()
         {
-            var testCode = $@"namespace TestNamespace
-{{
-    public enum TestType
-    {{
-    }}
+            var testCode = @"namespace TestNamespace
+{
+    public enum {|#0:TestType|}
+    {
+    }
 
     public enum TestType2
-    {{
-    }}
-}}
+    {
+    }
+}
 ";
 
-            // File names are not checked for 'enum' if more than one is present
-            await VerifyCSharpDiagnosticAsync("TestType2.cs", testCode, testSettings: null, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync("TestType2.cs", testCode, testSettings: null, new[] { Diagnostic().WithLocation(0) }, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         [WorkItem(3234, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3234")]
-        public async Task VerifyMultipleDelegateTypesIgnoredAsync()
+        [WorkItem(2223, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2223")]
+        public async Task VerifyFirstDelegateTypeIsUsedAsync()
         {
-            var testCode = $@"namespace TestNamespace
-{{
-    public delegate void TestType();
+            var testCode = @"namespace TestNamespace
+{
+    public delegate void {|#0:TestType|}();
     public delegate void TestType2();
-}}
+}
 ";
 
-            // File names are not checked for 'delegate' if more than one is present
-            await VerifyCSharpDiagnosticAsync("TestType2.cs", testCode, testSettings: null, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync("TestType2.cs", testCode, testSettings: null, new[] { Diagnostic().WithLocation(0) }, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
