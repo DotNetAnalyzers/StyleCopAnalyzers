@@ -204,5 +204,83 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3167, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3167")]
+        public async Task TestNullCoalescingAndLogicalOperatorPrecedenceAsync()
+        {
+            var testCode = @"public class Foo
+{
+    public void Bar(bool? a, bool b)
+    {
+        if (a ?? {|#0:false && b|})
+        {
+        }
+    }
+}";
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+
+            var fixedCode = @"public class Foo
+{
+    public void Bar(bool? a, bool b)
+    {
+        if (a ?? (false && b))
+        {
+        }
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3167, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3167")]
+        public async Task TestNullCoalescingAndLogicalOrPrecedenceAsync()
+        {
+            var testCode = @"public class Foo
+{
+    public void Bar(bool? a, bool b)
+    {
+        if (a ?? {|#0:false || b|})
+        {
+        }
+    }
+}";
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+
+            var fixedCode = @"public class Foo
+{
+    public void Bar(bool? a, bool b)
+    {
+        if (a ?? (false || b))
+        {
+        }
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestParenthesizedNullCoalescingAndLogicalOperatorsAsync()
+        {
+            var testCode = @"public class Foo
+{
+    public void Bar(bool? a, bool? b, bool c)
+    {
+        if (a ?? (false && c))
+        {
+        }
+
+        if ((a ?? false) && c)
+        {
+        }
+
+        bool? value = a ?? b ?? a;
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
