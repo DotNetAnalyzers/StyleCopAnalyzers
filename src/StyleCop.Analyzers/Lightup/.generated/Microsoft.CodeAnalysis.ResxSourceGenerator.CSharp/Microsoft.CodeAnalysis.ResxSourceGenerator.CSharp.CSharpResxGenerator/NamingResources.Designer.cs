@@ -112,6 +112,12 @@ namespace StyleCop.Analyzers.NamingRules
         public static string @SA1314MessageFormat => GetResourceString("SA1314MessageFormat")!;
         /// <summary>Type parameter names should begin with T</summary>
         public static string @SA1314Title => GetResourceString("SA1314Title")!;
+        /// <summary>Parameter names in methods that override a base method or implement an interface member should match the inherited parameter names.</summary>
+        public static string @SA1315Description => GetResourceString("SA1315Description")!;
+        /// <summary>Parameter '{0}' should match an inherited parameter name</summary>
+        public static string @SA1315MessageFormat => GetResourceString("SA1315MessageFormat")!;
+        /// <summary>Parameter names should match inherited names</summary>
+        public static string @SA1315Title => GetResourceString("SA1315Title")!;
         /// <summary>Correct tuple element name casing</summary>
         public static string @SA1316CodeFix => GetResourceString("SA1316CodeFix")!;
         /// <summary>Element names within a tuple type should have the correct casing.</summary>

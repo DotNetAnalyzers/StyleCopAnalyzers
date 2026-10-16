@@ -24,5 +24,6 @@ dotnet_analyzer_diagnostic.category-StyleCop.CSharp.NamingRules.severity = none
 [SA1312](SA1312.md) | VariableNamesMustBeginWithLowerCaseLetter | Имя переменной C# не начинается со строчной буквы.
 [SA1313](SA1313.md) | ParameterNamesMustBeginWithLowerCaseLetter | Имя параметра C# не начинается со строчной буквы.
 [SA1314](SA1314.md) | TypeParameterNamesMustBeginWithT | Имя параметра типа C# не начинается с прописной буквы T.
+[SA1315](SA1315.md) | ParametersShouldMatchInheritedNames | Имена параметров методов, переопределяющих метод базового класса или реализующих член интерфейса, должны совпадать с именами унаследованных параметров.
 [SA1316](SA1316.md) | TupleElementNamesShouldUseCorrectCasing | Имена элементов типа-кортежа должны использовать правильный регистр.
 [SA1317](SA1317.md) | IdentifierShouldBeNamedOnlyWithLatinLetters | В именах идентификаторов должны использоваться только латинские буквы.
