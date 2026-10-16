@@ -801,7 +801,24 @@ SA1503 fixes add braces; they do not remove existing braces. With SA1503 disable
 disallowed same-line statements onto the next line. Correctly positioned guards are not changed.
 
 ```json
-{ "settings": { "layoutRules": { "allowBracelessIfStatements": "sameLine" } } }
+{
+  "settings": {
+    "layoutRules": {
+      "allowBracelessIfStatements": "sameLine"
+    }
+  }
+}
+```
+
+```csharp
+if (value == null) throw new ArgumentNullException(nameof(value));
+```
+
+With `"nextLine"`:
+
+```csharp
+if (value == null)
+    throw new ArgumentNullException(nameof(value));
 ```
 
 ### Строки в конце файла
