@@ -49,7 +49,9 @@ namespace StyleCop.Analyzers.NamingRules;
                     continue;
                 }
 
-                foreach (string newName in serializedNames.Split(','))
+                string[] newNames = serializedNames.Split(',');
+                bool hasMultipleChoices = newNames.Length > 1;
+                foreach (string newName in newNames)
                 {
                     if (newName.Length == 0
                         || !await RenameHelper.IsValidNewMemberNameAsync(semanticModel, parameterSymbol, newName, context.CancellationToken).ConfigureAwait(false))
@@ -61,7 +63,7 @@ namespace StyleCop.Analyzers.NamingRules;
                         CodeAction.Create(
                             string.Format(NamingResources.RenameToCodeFix, newName),
                             cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken),
-                            nameof(SA1315CodeFixProvider) + newName),
+                            nameof(SA1315CodeFixProvider) + (hasMultipleChoices ? newName : string.Empty)),
                         diagnostic);
                 }
             }

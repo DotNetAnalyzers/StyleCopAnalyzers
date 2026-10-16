@@ -7,7 +7,7 @@ Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
 SA1141 | StyleCop.CSharp.ReadabilityRules | Warning | SA1141UseTupleSyntax, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1141.html)
 SA1142 | StyleCop.CSharp.ReadabilityRules | Warning | SA1142ReferToTupleElementsByName, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1142.html)
-SA1315 | StyleCop.CSharp.NamingRules | Warning | SA1315ParametersShouldMatchInheritedNames, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1315.html)
+SA1315 | StyleCop.CSharp.NamingRules | Warning | SA1315ParametersShouldMatchInheritedNames, [Documentation](../../documentation/SA1315.md)
 SA1316 | StyleCop.CSharp.NamingRules | Warning | SA1316TupleElementNamesShouldUseCorrectCasing, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1316.html)
 SA1317 | StyleCop.CSharp.NamingRules | Warning | SA1317IdentifierShouldBeNamedOnlyWithLatinLetters, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1317.html)
 SA1414 | StyleCop.CSharp.ReadabilityRules | Warning | SA1414TupleTypesInSignaturesShouldHaveElementNames, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1414.html)

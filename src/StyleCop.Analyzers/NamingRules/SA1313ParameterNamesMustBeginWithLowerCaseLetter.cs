@@ -160,14 +160,15 @@ namespace StyleCop.Analyzers.NamingRules
                     return false;
                 }
 
-                var implementedInterfaces = containingType.Interfaces;
+                var implementedInterfaces = containingType.AllInterfaces;
                 foreach (var implementedInterface in implementedInterfaces)
                 {
                     foreach (var member in implementedInterface.GetMembers(methodSymbol.Name).OfType<IMethodSymbol>())
                     {
-                        if (methodSymbol.Equals(containingType.FindImplementationForInterfaceMember(member)))
+                        if (methodSymbol.Equals(containingType.FindImplementationForInterfaceMember(member))
+                            && member.Parameters[index].Name == syntax.Identifier.ValueText)
                         {
-                            return member.Parameters[index].Name == syntax.Identifier.ValueText;
+                            return true;
                         }
                     }
                 }
