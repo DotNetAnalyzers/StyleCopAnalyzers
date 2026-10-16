@@ -133,7 +133,7 @@ namespace StyleCop.Analyzers.Status.Generator
 
                 IEnumerable<DiagnosticDescriptor> descriptorInfos = this.GetDescriptor(classSymbol);
 
-                foreach (var descriptorInfo in descriptorInfos)
+                foreach (var descriptorInfo in descriptorInfos.GroupBy(descriptor => descriptor.Id).Select(group => group.First()))
                 {
                     var (codeFixStatus, fixAllStatus) = this.GetCodeFixAndFixAllStatus(descriptorInfo.Id, classSymbol, out noCodeFixReason);
                     string status = this.GetStatus(classSymbol, syntaxRoot, semanticModel, descriptorInfo);
