@@ -152,6 +152,8 @@ namespace StyleCop.Analyzers.SpacingRules
         public static string @SA1017Description => GetResourceString("SA1017Description")!;
         /// <summary>Closing attribute brackets should not be preceded by a space</summary>
         public static string @SA1017MessageFormat => GetResourceString("SA1017MessageFormat")!;
+        /// <summary>Closing attribute brackets should be followed by a space</summary>
+        public static string @SA1017MessageFollowed => GetResourceString("SA1017MessageFollowed")!;
         /// <summary>Closing attribute brackets should be spaced correctly</summary>
         public static string @SA1017Title => GetResourceString("SA1017Title")!;
         /// <summary>Fix spacing</summary>

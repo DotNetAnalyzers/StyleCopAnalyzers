@@ -18,6 +18,9 @@ namespace StyleCop.Analyzers.SpacingRules
     ///
     /// <para>A closing attribute bracket should never be preceded by whitespace, unless the bracket is the first
     /// character on the line.</para>
+    ///
+    /// <para>The last attribute bracket on a parameter or type parameter should be followed by whitespace,
+    /// unless the parameter declaration continues on the next line.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SA1017ClosingAttributeBracketsMustBeSpacedCorrectly : DiagnosticAnalyzer
@@ -30,10 +33,14 @@ namespace StyleCop.Analyzers.SpacingRules
         private static readonly string HelpLink = HelpLinkHelper.GetHelpLink(DiagnosticId);
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1017Title), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpacingResources.SA1017MessageFormat), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString MessageFollowed = new LocalizableResourceString(nameof(SpacingResources.SA1017MessageFollowed), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1017Description), SpacingResources.ResourceManager, typeof(SpacingResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
+        private static readonly DiagnosticDescriptor DescriptorFollowed =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFollowed, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<SyntaxTreeAnalysisContext, SyntaxTreeTokens> SyntaxTreeAction = HandleSyntaxTree;
 
@@ -76,6 +83,18 @@ namespace StyleCop.Analyzers.SpacingRules
             if (!token.Parent.IsKind(SyntaxKind.AttributeList))
             {
                 return;
+            }
+
+            if ((token.Parent.Parent.IsKind(SyntaxKind.Parameter) || token.Parent.Parent.IsKind(SyntaxKind.TypeParameter))
+                && !token.GetNextToken().IsKind(SyntaxKind.OpenBracketToken)
+                && !token.IsLastInLine()
+                && !token.IsFollowedByWhitespace())
+            {
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+#pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
+                context.ReportDiagnostic(Diagnostic.Create(DescriptorFollowed, token.GetLocation(), TokenSpacingProperties.InsertFollowing));
+#pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
+#pragma warning restore IDE0079 // Remove unnecessary suppression
             }
 
             if (token.IsFirstInLine())
