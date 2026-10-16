@@ -561,6 +561,24 @@
   <data name="SA1142Title" xml:space="preserve">
     <value>通过名称引用元组字段</value>
   </data>
+  <data name="SA1143CodeFixSingleLine" xml:space="preserve">
+    <value>将条件表达式放在同一行</value>
+  </data>
+  <data name="SA1143CodeFixMultiLine" xml:space="preserve">
+    <value>将条件表达式的各部分放在单独的缩进行中</value>
+  </data>
+  <data name="SA1143CodeFixChain" xml:space="preserve">
+    <value>将连续的条件表达式放在单独的行中并对齐</value>
+  </data>
+  <data name="SA1143Description" xml:space="preserve">
+    <value>条件表达式应位于同一行，或使用以“?”和“:”开头的缩进行，或对连续条件使用对齐的行。</value>
+  </data>
+  <data name="SA1143MessageFormat" xml:space="preserve">
+    <value>条件表达式的格式必须一致</value>
+  </data>
+  <data name="SA1143Title" xml:space="preserve">
+    <value>条件表达式的格式必须一致</value>
+  </data>
   <data name="SX1101CodeFix" xml:space="preserve">
     <value>删除 'this.' 前缀</value>
   </data>

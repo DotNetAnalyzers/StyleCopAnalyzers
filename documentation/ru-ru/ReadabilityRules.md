@@ -49,3 +49,4 @@ dotnet_analyzer_diagnostic.category-StyleCop.CSharp.ReadabilityRules.severity = 
 [SA1139](SA1139.md) | UseLiteralsSuffixNotationInsteadOfCasting | Используйте суффиксы числовых литералов вместо приведения типов.
 [SA1141](SA1141.md) | UseTupleSyntax | Используйте синтаксис кортежей вместо лежащего в его основе типа реализации ValueTuple.
 [SA1142](SA1142.md) | ReferToTupleElementsByName | На элемент кортежа была сделана ссылка по имени его метаданных, когда доступно имя элемента.
+[SA1143](SA1143.md) | ConditionalExpressionsMustBeFormattedConsistently | Условное выражение не использует поддерживаемый однострочный или многострочный формат с отступами.

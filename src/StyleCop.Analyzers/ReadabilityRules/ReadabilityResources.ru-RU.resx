@@ -561,6 +561,24 @@
   <data name="SA1142Title" xml:space="preserve">
     <value>Обращайтесь к элементам кортежа по имени</value>
   </data>
+  <data name="SA1143CodeFixSingleLine" xml:space="preserve">
+    <value>Разместить условное выражение в одной строке</value>
+  </data>
+  <data name="SA1143CodeFixMultiLine" xml:space="preserve">
+    <value>Разместить части условного выражения в отдельных строках с отступом</value>
+  </data>
+  <data name="SA1143CodeFixChain" xml:space="preserve">
+    <value>Выровнять цепочку условных выражений по отдельным строкам</value>
+  </data>
+  <data name="SA1143Description" xml:space="preserve">
+    <value>Условное выражение должно занимать одну строку, использовать строки с отступом, начинающиеся с «?» и «:», или использовать выровненные строки для цепочки условий.</value>
+  </data>
+  <data name="SA1143MessageFormat" xml:space="preserve">
+    <value>Условные выражения должны быть единообразно оформлены</value>
+  </data>
+  <data name="SA1143Title" xml:space="preserve">
+    <value>Условные выражения должны быть единообразно оформлены</value>
+  </data>
   <data name="SX1101CodeFix" xml:space="preserve">
     <value>Удалить префикс 'this.'</value>
   </data>
