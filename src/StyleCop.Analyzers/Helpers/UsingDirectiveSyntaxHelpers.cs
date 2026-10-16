@@ -74,12 +74,13 @@ namespace StyleCop.Analyzers.Helpers
                     continue;
                 }
 
-                if (usingDirective.Name == null)
+                var target = usingDirective.NamespaceOrType() ?? usingDirective.Name;
+                if (target == null)
                 {
                     continue;
                 }
 
-                foreach (var aliasQualifiedName in usingDirective.Name.DescendantNodesAndSelf().OfType<AliasQualifiedNameSyntax>())
+                foreach (var aliasQualifiedName in target.DescendantNodesAndSelf().OfType<AliasQualifiedNameSyntax>())
                 {
                     if (string.Equals(externAlias.Identifier.ValueText, aliasQualifiedName.Alias.Identifier.ValueText, StringComparison.Ordinal))
                     {

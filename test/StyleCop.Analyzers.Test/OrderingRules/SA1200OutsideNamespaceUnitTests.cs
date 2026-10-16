@@ -115,6 +115,46 @@ namespace TestNamespace
             await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(1931, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1931")]
+        public async Task TestExternAliasWithDuplicateCompilationUnitAliasIsDiagnosedAsync()
+        {
+            var testCode = @"extern alias corlib;
+
+namespace TestNamespace
+{
+    {|#0:extern alias corlib;|}
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(0),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1931, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1931")]
+        public async Task TestConditionalExternAliasIsDiagnosedAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+#if true
+    {|#0:extern alias corlib;|}
+#endif
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(0),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Verifies that simplified using statements in a namespace are expanded during the code fix operation.
         /// </summary>

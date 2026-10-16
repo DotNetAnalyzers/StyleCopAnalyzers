@@ -67,6 +67,23 @@ namespace StyleCop.Analyzers.OrderingRules
                     continue;
                 }
 
+                if (isSA1200)
+                {
+                    var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+                    if (semanticModel == null)
+                    {
+                        continue;
+                    }
+
+                    var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(context.Document.Project.AnalyzerOptions, semanticModel.SyntaxTree, context.CancellationToken);
+                    var placement = DeterminePlacement(compilationUnit, settings);
+                    if (placement != UsingDirectivesPlacement.Preserve
+                        && !CanRelocateExternAliases(compilationUnit, placement))
+                    {
+                        continue;
+                    }
+                }
+
                 // Force preserving the placement of using directives when we are fixing a diagnostic not directly
                 // related to placement of using directives inside/outside namespaces.
                 bool forcePreservePlacement = !isSA1200;
@@ -349,7 +366,13 @@ namespace StyleCop.Analyzers.OrderingRules
         private static SyntaxNode MoveExternAliasesToCompilationRoot(SyntaxNode syntaxRoot, SyntaxTrivia endOfLine)
         {
             var compilationUnit = (CompilationUnitSyntax)syntaxRoot;
-            var rootNamespace = (BaseNamespaceDeclarationSyntaxWrapper)compilationUnit.Members.First(member => BaseNamespaceDeclarationSyntaxWrapper.IsInstance(member));
+            var namespaceDeclaration = compilationUnit.Members.FirstOrDefault(member => BaseNamespaceDeclarationSyntaxWrapper.IsInstance(member));
+            if (namespaceDeclaration == null)
+            {
+                return syntaxRoot;
+            }
+
+            var rootNamespace = (BaseNamespaceDeclarationSyntaxWrapper)namespaceDeclaration;
             if (rootNamespace.Externs.Count == 0)
             {
                 return syntaxRoot;
@@ -403,6 +426,51 @@ namespace StyleCop.Analyzers.OrderingRules
             }
 
             return SyntaxFactory.List(result);
+        }
+
+        private static bool CanRelocateExternAliases(CompilationUnitSyntax compilationUnit, UsingDirectivesPlacement placement)
+        {
+            var rootNamespace = compilationUnit.Members.FirstOrDefault(member => BaseNamespaceDeclarationSyntaxWrapper.IsInstance(member));
+            if (rootNamespace == null)
+            {
+                return true;
+            }
+
+            var namespaceSyntax = (BaseNamespaceDeclarationSyntaxWrapper)rootNamespace;
+            SyntaxList<ExternAliasDirectiveSyntax> aliasesToMove;
+            IEnumerable<ExternAliasDirectiveSyntax> targetAliases;
+            if (placement == UsingDirectivesPlacement.InsideNamespace)
+            {
+                aliasesToMove = SyntaxFactory.List(compilationUnit.Externs.Where(alias => !alias.IsUsedByGlobalUsing(compilationUnit.Usings)));
+                targetAliases = namespaceSyntax.Externs;
+            }
+            else if (placement == UsingDirectivesPlacement.OutsideNamespace)
+            {
+                aliasesToMove = namespaceSyntax.Externs;
+                targetAliases = compilationUnit.Externs;
+            }
+            else
+            {
+                return true;
+            }
+
+            if (aliasesToMove.Count == 0)
+            {
+                return true;
+            }
+
+            var targetAliasNames = new HashSet<string>(targetAliases.Select(alias => alias.Identifier.ValueText), StringComparer.Ordinal);
+            var sourceMap = SourceMap.FromCompilationUnit(compilationUnit);
+            foreach (var alias in aliasesToMove)
+            {
+                if (targetAliasNames.Contains(alias.Identifier.ValueText)
+                    || sourceMap.GetContainingSpan(alias) != TreeTextSpan.Empty)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private static SyntaxNode StripMultipleBlankLines(SyntaxNode syntaxRoot)

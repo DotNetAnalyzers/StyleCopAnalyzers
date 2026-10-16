@@ -248,7 +248,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
                 case SyntaxKind.ExternAliasDirective:
                     var externAlias = (ExternAliasDirectiveSyntax)child;
-                    if (!externAlias.IsUsedByGlobalUsing(syntax.Usings))
+                    if (syntax.Members.Count > 0 && !externAlias.IsUsedByGlobalUsing(syntax.Usings))
                     {
                         usingDirectives.Add(child);
                     }

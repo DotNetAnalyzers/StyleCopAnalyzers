@@ -3,9 +3,17 @@
 
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CodeActions;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Testing;
+    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.OrderingRules;
     using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
@@ -159,6 +167,122 @@ namespace TestNamespace
             };
 
             await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1931, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1931")]
+        public async Task TestExternAliasWithoutNamespaceDoesNotProduceDiagnosticAsync()
+        {
+            var testCode = @"extern alias corlib;
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestCodeFixWithUsingDirectiveWithoutNamespaceDoesNotThrowAsync()
+        {
+            var testCode = @"{|#0:using System.Threading;|}
+{|#1:using System;|}
+";
+            var fixedCode = @"{|#0:using System;|}
+{|#1:using System.Threading;|}
+";
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(0),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(1),
+            };
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                NumberOfFixAllIterations = 2,
+            };
+            test.ExpectedDiagnostics.AddRange(expected);
+            test.FixedState.ExpectedDiagnostics.AddRange(expected);
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1931, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1931")]
+        public async Task TestExternAliasWithDuplicateNamespaceAliasIsDiagnosedAsync()
+        {
+            var testCode = @"{|#0:extern alias corlib;|}
+
+namespace TestNamespace
+{
+    extern alias corlib;
+}
+";
+
+            DiagnosticResult expected = Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(0);
+            await VerifyCSharpDiagnosticAsync(testCode, new[] { expected }, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1931, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1931")]
+        public async Task TestCodeFixIsNotOfferedForDuplicateExternAliasAsync()
+        {
+            var testCode = @"extern alias corlib;
+
+namespace TestNamespace
+{
+    extern alias corlib;
+}
+";
+
+            await VerifyCodeFixIsNotOfferedForExternAliasAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1931, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1931")]
+        public async Task TestConditionalExternAliasIsDiagnosedAsync()
+        {
+            var testCode = @"#if true
+{|#0:extern alias corlib;|}
+#endif
+
+namespace TestNamespace
+{
+}
+";
+
+            DiagnosticResult expected = Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(0);
+            await VerifyCSharpDiagnosticAsync(testCode, new[] { expected }, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1931, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1931")]
+        public async Task TestCodeFixIsNotOfferedForConditionalExternAliasAsync()
+        {
+            var testCode = @"#if true
+extern alias corlib;
+#endif
+
+namespace TestNamespace
+{
+}
+";
+
+            await VerifyCodeFixIsNotOfferedForExternAliasAsync(testCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1931, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1931")]
+        public async Task TestDisabledConditionalExternAliasDoesNotProduceDiagnosticAsync()
+        {
+            var testCode = @"#if false
+extern alias corlib;
+#endif
+
+namespace TestNamespace
+{
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -490,6 +614,22 @@ namespace NamespaceName
             };
 
             await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        private static async Task VerifyCodeFixIsNotOfferedForExternAliasAsync(string source)
+        {
+            using var workspace = new AdhocWorkspace();
+            var project = workspace.AddProject("Test", LanguageNames.CSharp);
+            var document = workspace.AddDocument(project.Id, "Test.cs", SourceText.From(source));
+            var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false) ?? throw new InvalidOperationException();
+            var externAlias = syntaxRoot.DescendantNodes().OfType<ExternAliasDirectiveSyntax>().First();
+            var diagnostic = Microsoft.CodeAnalysis.Diagnostic.Create(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside, externAlias.GetLocation());
+            var codeActions = new List<CodeAction>();
+            var context = new CodeFixContext(document, diagnostic, (action, _) => codeActions.Add(action), CancellationToken.None);
+
+            await new UsingCodeFixProvider().RegisterCodeFixesAsync(context).ConfigureAwait(false);
+
+            Assert.Empty(codeActions);
         }
     }
 }
