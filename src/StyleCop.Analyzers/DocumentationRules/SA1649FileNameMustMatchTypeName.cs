@@ -65,7 +65,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             {
                 var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
 
-                var firstTypeDeclaration = GetFirstTypeDeclaration(syntaxRoot);
+                var firstTypeDeclaration = GetFirstTypeDeclaration(syntaxRoot, settings);
                 if (firstTypeDeclaration == null)
                 {
                     return;
@@ -103,27 +103,68 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
             }
 
-            private static MemberDeclarationSyntax GetFirstTypeDeclaration(SyntaxNode root)
+            private static MemberDeclarationSyntax? GetFirstTypeDeclaration(SyntaxNode root, StyleCopSettings settings)
             {
-                // Prefer to find the first type which is a true TypeDeclarationSyntax
-                MemberDeclarationSyntax firstTypeDeclaration = root.DescendantNodes(descendIntoChildren: node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration) || node.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration))
-                    .OfType<TypeDeclarationSyntax>()
-                    .Where(HasName)
-                    .FirstOrDefault();
-
-                // If no TypeDeclarationSyntax is found, expand the search to any type declaration as long as only one
-                // is present
-                var expandedTypeDeclarations = root.DescendantNodes(descendIntoChildren: node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration) || node.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration))
-                    .OfType<MemberDeclarationSyntax>()
-                    .Where(node => node is BaseTypeDeclarationSyntax || node.IsKind(SyntaxKind.DelegateDeclaration))
-                    .Where(HasName)
-                    .ToList();
-                if (expandedTypeDeclarations.Count == 1)
+                MemberDeclarationSyntax? firstTypeDeclaration = null;
+                var topLevelTypes = settings.MaintainabilityRules.TopLevelTypes;
+                foreach (var typeDeclaration in root.DescendantNodes(descendIntoChildren: node =>
+                    node.IsKind(SyntaxKind.CompilationUnit)
+                    || node.IsKind(SyntaxKind.NamespaceDeclaration)
+                    || node.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration)
+                    || node is BaseTypeDeclarationSyntax).OfType<MemberDeclarationSyntax>())
                 {
-                    firstTypeDeclaration = expandedTypeDeclarations[0];
+                    if (!(typeDeclaration is BaseTypeDeclarationSyntax) && !typeDeclaration.IsKind(SyntaxKind.DelegateDeclaration))
+                    {
+                        continue;
+                    }
+
+                    if (!HasName(typeDeclaration))
+                    {
+                        continue;
+                    }
+
+                    if (firstTypeDeclaration == null)
+                    {
+                        firstTypeDeclaration = typeDeclaration;
+                    }
+
+                    if (IsTopLevelType(typeDeclaration)
+                        && IsConfiguredTopLevelType(typeDeclaration, topLevelTypes))
+                    {
+                        return typeDeclaration;
+                    }
                 }
 
                 return firstTypeDeclaration;
+            }
+
+            private static bool IsTopLevelType(MemberDeclarationSyntax node)
+            {
+                return node.Parent.IsKind(SyntaxKind.CompilationUnit)
+                    || node.Parent.IsKind(SyntaxKind.NamespaceDeclaration)
+                    || node.Parent.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration);
+            }
+
+            private static bool IsConfiguredTopLevelType(MemberDeclarationSyntax node, ImmutableArray<TopLevelType> topLevelTypes)
+            {
+                switch (node.Kind())
+                {
+                case SyntaxKind.ClassDeclaration:
+                case SyntaxKindEx.RecordDeclaration:
+                    return topLevelTypes.Contains(TopLevelType.Class);
+                case SyntaxKind.InterfaceDeclaration:
+                    return topLevelTypes.Contains(TopLevelType.Interface);
+                case SyntaxKind.StructDeclaration:
+                case SyntaxKindEx.RecordStructDeclaration:
+                case SyntaxKindEx.UnionDeclaration:
+                    return topLevelTypes.Contains(TopLevelType.Struct);
+                case SyntaxKind.EnumDeclaration:
+                    return topLevelTypes.Contains(TopLevelType.Enum);
+                case SyntaxKind.DelegateDeclaration:
+                    return topLevelTypes.Contains(TopLevelType.Delegate);
+                default:
+                    return false;
+                }
             }
 
             private static bool HasName(MemberDeclarationSyntax node)

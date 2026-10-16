@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.DocumentationRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp9.DocumentationRules;
     using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
@@ -43,7 +44,34 @@ public delegate void IgnoredDelegate();
 ";
 
             var expectedDiagnostic = Diagnostic().WithLocation(0);
-            await VerifyCSharpFixAsync("TestType2.cs", testCode, StyleCopSettings, expectedDiagnostic, "TestType.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync("TestType2.cs", testCode, StyleCopTopLevelTypesSettings, expectedDiagnostic, "TestType.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that record declarations are matched to their configured top-level type kinds.
+        /// </summary>
+        /// <param name="topLevelType">The configured top-level type kind.</param>
+        /// <param name="recordDeclaration">The record declaration to use.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("class", "public record SecondType { }")]
+        [InlineData("struct", "public record struct SecondType { }")]
+        [WorkItem(2223, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2223")]
+        public async Task VerifyConfiguredRecordTypeIsUsedAsync(string topLevelType, string recordDeclaration)
+        {
+            var settings = $@"
+{{
+  ""settings"": {{
+    ""maintainabilityRules"": {{
+      ""topLevelTypes"": [ ""{topLevelType}"" ]
+    }}
+  }}
+}}
+";
+            var testCode = @"public interface FirstType { }
+" + recordDeclaration;
+
+            await VerifyCSharpDiagnosticAsync("SecondType.cs", testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
