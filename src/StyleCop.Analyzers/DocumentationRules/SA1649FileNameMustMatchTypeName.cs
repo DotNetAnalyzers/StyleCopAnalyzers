@@ -110,8 +110,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 foreach (var typeDeclaration in root.DescendantNodes(descendIntoChildren: node =>
                     node.IsKind(SyntaxKind.CompilationUnit)
                     || node.IsKind(SyntaxKind.NamespaceDeclaration)
-                    || node.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration)
-                    || node is BaseTypeDeclarationSyntax).OfType<MemberDeclarationSyntax>())
+                    || node.IsKind(SyntaxKindEx.FileScopedNamespaceDeclaration)).OfType<MemberDeclarationSyntax>())
                 {
                     if (!(typeDeclaration is BaseTypeDeclarationSyntax) && !typeDeclaration.IsKind(SyntaxKind.DelegateDeclaration))
                     {
