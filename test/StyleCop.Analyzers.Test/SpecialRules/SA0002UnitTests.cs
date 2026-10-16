@@ -32,6 +32,20 @@ namespace NamespaceName { }
             await VerifyCSharpDiagnosticAsync(TestCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory]
+        [InlineData("""["unknown"]""", "memberKindOrder cannot contain kind 'unknown'")]
+        [InlineData("""["property", "property"]""", "memberKindOrder cannot contain duplicate kind 'property'")]
+        [InlineData("""[""]""", "memberKindOrder cannot contain kind ''")]
+        public async Task TestInvalidMemberKindOrderAsync(string value, string error)
+        {
+            await new CSharpTest
+            {
+                TestCode = TestCode,
+                Settings = $$"""{ "settings": { "orderingRules": { "memberKindOrder": {{value}} } } }""",
+                ExpectedDiagnostics = { Diagnostic().WithArguments(error) },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         [WorkItem(3453, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3453")]
         public async Task TestNoSourceFilesAsync()

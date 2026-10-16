@@ -14,6 +14,33 @@ namespace StyleCop.Analyzers.Test.CSharp15.OrderingRules
 
     public partial class SA1201CSharp15UnitTests : SA1201CSharp14UnitTests
     {
+        [Fact]
+        public async Task TestConfiguredUnionKindOrderAsync()
+        {
+            var test = new CSharpTest
+            {
+                Settings = """{ "settings": { "orderingRules": { "memberKindOrder": ["struct", "method"] } } }""",
+                TestCode = """
+                    public class C
+                    {
+                        public void M() { }
+
+                        public union {|#0:U|}(int, string);
+                    }
+                    """,
+                FixedCode = """
+                    public class C
+                    {
+                        public union U(int, string);
+
+                        public void M() { }
+                    }
+                    """,
+            };
+            test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithArguments("A union", "a method"));
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Verifies that a union declaration is ordered like a struct, so it may precede a class and may be mixed with
         /// structs.

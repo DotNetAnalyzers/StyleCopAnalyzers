@@ -81,6 +81,31 @@
               },
               "uniqueItems": true
             },
+            "memberKindOrder": {
+              "type": "array",
+              "description": "Orders contiguous groups of named member kinds inside types. Unlisted kinds may occur between, but not within, these groups.",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "field",
+                  "constructor",
+                  "destructor",
+                  "delegate",
+                  "event",
+                  "enum",
+                  "interface",
+                  "extension",
+                  "property",
+                  "indexer",
+                  "conversionOperator",
+                  "operator",
+                  "method",
+                  "struct",
+                  "class"
+                ]
+              },
+              "uniqueItems": true
+            },
             "systemUsingDirectivesFirst": {
               "type": "boolean",
               "description": "When true, System using directives should be placed before other using directives.",

@@ -120,7 +120,7 @@ internal readonly struct SettingsReader
         return AnalyzerConfigHelper.TryGetEnumListValue<T>(this.options, editorConfigKey);
     }
 
-    public ImmutableArray<string>? GetStringList(string jsonKey, string editorConfigKey, Func<string, bool>? filter = null)
+    public ImmutableArray<string>? GetStringList(string jsonKey, string editorConfigKey, Func<string, bool>? filter = null, bool emptyValueIsEmptyList = false)
     {
         ImmutableArray<string> result;
         if (this.TryGetJson(jsonKey, out var kvp))
@@ -136,7 +136,7 @@ internal readonly struct SettingsReader
         }
         else if (AnalyzerConfigHelper.TryGetStringListValue(this.options, editorConfigKey) is { } list)
         {
-            result = list;
+            result = emptyValueIsEmptyList && list.Length == 1 && list[0].Length == 0 ? ImmutableArray<string>.Empty : list;
         }
         else
         {

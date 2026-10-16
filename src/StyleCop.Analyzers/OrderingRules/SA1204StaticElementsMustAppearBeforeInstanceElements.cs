@@ -4,6 +4,7 @@
 namespace StyleCop.Analyzers.OrderingRules
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
     using Microsoft.CodeAnalysis;
@@ -109,7 +110,48 @@ namespace StyleCop.Analyzers.OrderingRules
 
             var typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
+            if (settings.OrderingRules.MemberKindOrder is { } order
+                && elementOrder.IndexOf(OrderingTrait.Kind) is var kindIndex
+                && kindIndex >= 0 && kindIndex < staticIndex)
+            {
+                HandleConfiguredMemberList(context, typeDeclaration.Members, order);
+                return;
+            }
+
             HandleMemberList(context, elementOrder, staticIndex, typeDeclaration.Members);
+        }
+
+        private static void HandleConfiguredMemberList(SyntaxNodeAnalysisContext context, SyntaxList<MemberDeclarationSyntax> members, MemberKindOrder order)
+        {
+            var previousByKind = new Dictionary<SyntaxKind, int>();
+            var precedingPriority = 0;
+            foreach (var member in members)
+            {
+                context.CancellationToken.ThrowIfCancellationRequested();
+                var priority = order.GetPrecedingPriority(member);
+                if (priority != precedingPriority || member.IsKind(SyntaxKind.IncompleteMember))
+                {
+                    previousByKind.Clear();
+                }
+
+                precedingPriority = priority;
+                var kind = MemberKindOrder.Normalize(member.Kind());
+                var modifiers = member.GetModifiers();
+                var isStatic = modifiers.Any(SyntaxKind.ConstKeyword) || modifiers.Any(SyntaxKind.StaticKeyword);
+                var higherPriority = order.GetPriorityBefore(member, OrderingTrait.Static);
+
+                // The low bit records staticness; the remaining bits record higher-priority traits.
+                if (previousByKind.TryGetValue(kind, out var previous)
+                    && (previous >> 1) == higherPriority && (previous & 1) == 0 && isStatic)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(
+                        Descriptor,
+                        NamedTypeHelpers.GetNameOrIdentifierLocation(member),
+                        AccessLevelHelper.GetName(MemberOrderHelper.GetAccessLevelForOrdering(member, modifiers))));
+                }
+
+                previousByKind[kind] = (higherPriority << 1) | (isStatic ? 1 : 0);
+            }
         }
 
         private static void HandleMemberList(SyntaxNodeAnalysisContext context, ImmutableArray<OrderingTrait> elementOrder, int staticIndex, SyntaxList<MemberDeclarationSyntax> members)

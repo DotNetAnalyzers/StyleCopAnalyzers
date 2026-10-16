@@ -14,6 +14,57 @@ namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
 
     public partial class SA1201CSharp10UnitTests : SA1201CSharp9UnitTests
     {
+        [Theory]
+        [InlineData("record")]
+        [InlineData("record class")]
+        public async Task TestConfiguredOrderTreatsRecordsAsClassesAsync(string record)
+        {
+            var test = new CSharpTest
+            {
+                Settings = """{ "settings": { "orderingRules": { "memberKindOrder": ["class", "struct"] } } }""",
+                TestCode = $$"""
+                    public class C
+                    {
+                        public {{record}} R { }
+                        public class Nested { }
+                        public record struct S { }
+                        public struct Other { }
+                    }
+                    """,
+            };
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("record", "A record")]
+        [InlineData("record class", "A record")]
+        [InlineData("record struct", "A record struct")]
+        public async Task TestConfiguredRecordKindCodeFixAsync(string record, string displayName)
+        {
+            var test = new CSharpTest
+            {
+                Settings = """{ "settings": { "orderingRules": { "memberKindOrder": ["class", "struct", "method"] } } }""",
+                TestCode = $$"""
+                    public class C
+                    {
+                        public void M() { }
+
+                        public {{record}} {|#0:R|} { }
+                    }
+                    """,
+                FixedCode = $$"""
+                    public class C
+                    {
+                        public {{record}} R { }
+
+                        public void M() { }
+                    }
+                    """,
+            };
+            test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithArguments(displayName, "a method"));
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestOuterOrderCorrectOrderWithFileScopedNamespaceAsync()
         {

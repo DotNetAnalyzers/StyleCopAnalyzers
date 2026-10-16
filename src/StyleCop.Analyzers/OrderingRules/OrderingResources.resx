@@ -144,6 +144,9 @@
   <data name="SA1201MessageFormat" xml:space="preserve">
     <value>{0} should not follow {1}</value>
   </data>
+  <data name="SA1201InterruptedGroupMessageFormat" xml:space="preserve">
+    <value>Members of kind '{0}' have no configured order, but must not appear between declarations of kind '{1}', which has a configured order</value>
+  </data>
   <data name="SA1201Title" xml:space="preserve">
     <value>Elements should appear in the correct order</value>
   </data>

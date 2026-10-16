@@ -84,6 +84,7 @@ setting are in the sections that follow.
 | Indentation | `indentation.useTabs` | `indent_style` | `true`/`false` ⇄ `tab`/`space` | `false` / `space` |
 | Readability | `readabilityRules.allowBuiltInTypeAliases` | `stylecop.readability.allowBuiltInTypeAliases` | boolean | `false` |
 | Ordering | `orderingRules.elementOrder` | `stylecop.ordering.elementOrder` | list of `kind`, `accessibility`, `constant`, `static`, `readonly` | `kind, accessibility, constant, static, readonly` |
+| Ordering | `orderingRules.memberKindOrder` | `stylecop.ordering.memberKindOrder` | list of member kinds (see [Member Kind Order](#member-kind-order)) | predefined SA1201 order |
 | Ordering | `orderingRules.systemUsingDirectivesFirst` | `dotnet_sort_system_directives_first` | boolean | `true` |
 | Ordering | `orderingRules.usingDirectivesPlacement` | `stylecop.ordering.usingDirectivesPlacement` (or `csharp_using_directive_placement`) | `insideNamespace`, `outsideNamespace`, `preserve` ⇄ `inside_namespace`, `outside_namespace` | `insideNamespace` |
 | Ordering | `orderingRules.blankLinesBetweenUsingGroups` | `stylecop.ordering.blankLinesBetweenUsingGroups` (or `dotnet_separate_import_directive_groups`) | `allow`, `require`, `omit` ⇄ `false`, `true` | `allow` |
@@ -400,6 +401,73 @@ rules remain enforced.
 > ```ini
 > stylecop.ordering.elementOrder = kind, accessibility, constant, static, readonly
 > ```
+
+### Member Kind Order
+
+`memberKindOrder` customizes the `kind` trait for members inside classes, structs, interfaces, records, and
+extension blocks. It does not change the ordering of declarations at file or namespace scope.
+When this setting is absent, [SA1201](SA1201.md) retains its predefined order.
+
+| Property | Default Value | Summary |
+| --- | --- | --- |
+| `memberKindOrder` | The predefined SA1201 order | Specifies the relative order of contiguous groups of member kinds |
+
+```json
+{
+  "settings": {
+    "orderingRules": {
+      "memberKindOrder": [
+        "enum",
+        "field",
+        "property",
+        "constructor",
+        "method"
+      ]
+    }
+  }
+}
+```
+
+The equivalent **.editorconfig** or **.globalconfig** property is:
+
+```ini
+stylecop.ordering.memberKindOrder = enum, field, property, constructor, method
+```
+
+Supported values are `field`, `constructor`, `destructor`, `delegate`, `event`, `enum`, `interface`,
+`extension`, `property`, `indexer`, `conversionOperator`, `operator`, `method`, `struct`, and `class`.
+Values must be unique; unrecognized or duplicate values are reported by SA0002.
+Records and record classes use `class`; record structs and unions use `struct`.
+Both event declaration forms use `event`. These are declaration kinds, not semantic categories: for example,
+an `ICommand` property uses `property`, not a separate command kind.
+
+The list need not be exhaustive. Named kinds must occur in the specified order, and each named kind must
+form a contiguous group. Unnamed kinds may appear before, after, or between these groups, but may not split
+a named group. With the example above:
+
+* Property, destructor, property is invalid because the destructor splits the property group.
+* Field, destructor, property is valid.
+* Class, destructor, class is valid because neither kind has a specified order.
+* Property, destructor, field is invalid because fields must precede properties.
+
+SA1201 reports the first unnamed declaration in each gap that splits a named group. Its code fix brings the
+later named declaration into the group, preserving the order of intervening unnamed declarations.
+As with the default ordering fix, moves involving preprocessor directives or field-initializer dependencies
+may require manual correction. Configured moves also preserve the execution order of field, event, and
+auto-property initializers: the fix does not move one runtime initializer across another in the same
+static or instance initialization sequence.
+
+An empty JSON array, or an empty EditorConfig value, leaves all member kinds unconstrained. This does not
+disable other ordering traits. Omitting `kind` from `elementOrder` disables SA1201's member-kind checks,
+regardless of `memberKindOrder`.
+
+The existing `elementOrder` setting still controls trait precedence. If `accessibility` precedes `kind`,
+for example, member-kind groups are checked separately within each contiguous accessibility group.
+If both files specify `memberKindOrder`, the complete **stylecop.json** value takes precedence; the lists
+are not merged.
+
+Static and readonly ordering still apply between members of the same kind across permitted gaps, subject to higher-priority traits.
+Initializer safety may prevent moving an initialized member before an earlier initialized member, but does not prevent inserting it immediately after that member to close a gap.
 
 ### Using Directives
 

@@ -9,6 +9,12 @@ const root = path.join(__dirname, "..");
 const read = (...parts) => fs.readFileSync(path.join(root, ...parts), "utf8");
 const pages = fs.readdirSync(path.join(root, "documentation")).filter(file => file.endsWith(".md")).sort();
 
+test("the generated status inventory contains each diagnostic ID once", () => {
+    const report = JSON.parse(read("docs", "StyleCop.Analyzers.Status.json"));
+    const ids = report.diagnostics.map(diagnostic => diagnostic.Id);
+    assert.equal(new Set(ids).size, ids.length);
+});
+
 for (const [locale, characters] of [["ru-ru", /[А-Яа-яЁё]/], ["zh-cn", /[\u3400-\u9fff]/]]) {
     test(`every English page has a ${locale} translation with the same code examples`, () => {
         const translatedPages = fs.readdirSync(path.join(root, "documentation", locale))

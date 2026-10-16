@@ -68,14 +68,17 @@ namespace StyleCop.Analyzers.OrderingRules
             var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
             var elementOrder = settings.OrderingRules.ElementOrder;
 
-            var memberDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<MemberDeclarationSyntax>();
+            var location = diagnostic.Id == SA1201ElementsMustAppearInTheCorrectOrder.DiagnosticId && diagnostic.AdditionalLocations.Count > 0
+                ? diagnostic.AdditionalLocations[0]
+                : diagnostic.Location;
+            var memberDeclaration = syntaxRoot.FindNode(location.SourceSpan).FirstAncestorOrSelf<MemberDeclarationSyntax>();
             if (memberDeclaration == null)
             {
                 return document;
             }
 
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-            var updatedRoot = UpdateSyntaxRoot(memberDeclaration, elementOrder, syntaxRoot, settings.Indentation, semanticModel, cancellationToken);
+            var updatedRoot = UpdateSyntaxRoot(memberDeclaration, elementOrder, syntaxRoot, settings.Indentation, settings.OrderingRules.MemberKindOrder, semanticModel, cancellationToken);
             if (updatedRoot == syntaxRoot)
             {
                 return document;
@@ -89,6 +92,7 @@ namespace StyleCop.Analyzers.OrderingRules
             ImmutableArray<OrderingTrait> elementOrder,
             SyntaxNode syntaxRoot,
             IndentationSettings indentationSettings,
+            MemberKindOrder? configuredOrder,
             SemanticModel? semanticModel = null,
             CancellationToken cancellationToken = default,
             Dictionary<string, Dictionary<string, ImmutableHashSet<string>>>? fieldDependenciesByType = null)
@@ -98,7 +102,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
             if (parentDeclaration is TypeDeclarationSyntax syntax)
             {
-                return HandleTypeDeclaration(memberToMove, syntax, elementOrder, syntaxRoot, indentationSettings, semanticModel, cancellationToken, fieldDependenciesByType);
+                return HandleTypeDeclaration(memberToMove, syntax, elementOrder, syntaxRoot, indentationSettings, configuredOrder, semanticModel, cancellationToken, fieldDependenciesByType);
             }
 
             if (BaseNamespaceDeclarationSyntaxWrapper.IsInstance(parentDeclaration))
@@ -120,6 +124,7 @@ namespace StyleCop.Analyzers.OrderingRules
             ImmutableArray<OrderingTrait> elementOrder,
             SyntaxNode syntaxRoot,
             IndentationSettings indentationSettings,
+            MemberKindOrder? configuredOrder,
             SemanticModel? semanticModel,
             CancellationToken cancellationToken,
             Dictionary<string, Dictionary<string, ImmutableHashSet<string>>>? fieldDependenciesByType)
@@ -134,7 +139,159 @@ namespace StyleCop.Analyzers.OrderingRules
                 fieldDependencies = FieldDependencyHelper.ComputeFieldDependencies(semanticModel, typeDeclarationNode.Members, cancellationToken);
             }
 
+            if (configuredOrder != null && elementOrder.Contains(OrderingTrait.Kind))
+            {
+                return OrderConfiguredMember(memberOrder.Member, typeDeclarationNode.Members, configuredOrder, syntaxRoot, indentationSettings, fieldDependencies, cancellationToken);
+            }
+
             return OrderMember(memberOrder, typeDeclarationNode.Members, elementOrder, syntaxRoot, indentationSettings, fieldDependencies);
+        }
+
+        private static SyntaxNode OrderConfiguredMember(
+            MemberDeclarationSyntax member,
+            SyntaxList<MemberDeclarationSyntax> members,
+            MemberKindOrder order,
+            SyntaxNode syntaxRoot,
+            IndentationSettings indentationSettings,
+            Dictionary<string, ImmutableHashSet<string>>? fieldDependencies,
+            CancellationToken cancellationToken)
+        {
+            if (member.ContainsDirectives || member.IsKind(SyntaxKind.IncompleteMember))
+            {
+                return syntaxRoot;
+            }
+
+            var memberIndex = members.IndexOf(member);
+            var rank = order.GetRank(member);
+            var priority = order.GetPrecedingPriority(member);
+            var followingPriority = order.GetFollowingPriority(member);
+            var hasInitializer = HasRuntimeInitializer(member);
+            var targetIndex = -1;
+            var gapIndex = -1;
+            for (var i = memberIndex - 1; i >= 0; i--)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var previous = members[i];
+                if (previous.IsKind(SyntaxKind.IncompleteMember)
+                    || (hasInitializer
+                        && HasRuntimeInitializer(previous)
+                        && member.GetModifiers().Any(SyntaxKind.StaticKeyword) == previous.GetModifiers().Any(SyntaxKind.StaticKeyword))
+                    || FieldDependencyHelper.DependsOn(member, previous, fieldDependencies)
+                    || FieldDependencyHelper.DependsOn(previous, member, fieldDependencies))
+                {
+                    if (!previous.IsKind(SyntaxKind.IncompleteMember)
+                        && gapIndex >= 0
+                        && rank >= 0
+                        && order.GetRank(previous) == rank
+                        && order.GetPrecedingPriority(previous) == priority)
+                    {
+                        targetIndex = gapIndex;
+                    }
+
+                    break;
+                }
+
+                var previousPriority = order.GetPrecedingPriority(previous);
+                if (previousPriority != priority)
+                {
+                    if (previousPriority > priority)
+                    {
+                        break;
+                    }
+
+                    targetIndex = i;
+                    gapIndex = -1;
+                    continue;
+                }
+
+                var previousRank = order.GetRank(previous);
+                if (rank >= 0)
+                {
+                    if (previousRank < 0)
+                    {
+                        gapIndex = i;
+                        continue;
+                    }
+
+                    if (previousRank > rank)
+                    {
+                        targetIndex = i;
+                        gapIndex = -1;
+                        continue;
+                    }
+
+                    if (previousRank == rank)
+                    {
+                        if (gapIndex >= 0)
+                        {
+                            targetIndex = gapIndex;
+                        }
+
+                        if (order.GetFollowingPriority(previous) < followingPriority)
+                        {
+                            targetIndex = i;
+                            gapIndex = -1;
+                            continue;
+                        }
+                    }
+
+                    break;
+                }
+
+                // Unspecified kinds have no relative kind order, but the remaining traits
+                // still apply between declarations of the same kind.
+                if (MemberKindOrder.Normalize(previous.Kind()) == MemberKindOrder.Normalize(member.Kind()))
+                {
+                    if (order.GetFollowingPriority(previous) >= followingPriority)
+                    {
+                        break;
+                    }
+
+                    targetIndex = i;
+                }
+            }
+
+            if (targetIndex < 0)
+            {
+                return syntaxRoot;
+            }
+
+            for (var i = targetIndex; i < memberIndex; i++)
+            {
+                if (members[i].ContainsDirectives)
+                {
+                    return syntaxRoot;
+                }
+            }
+
+            var span = TextSpan.FromBounds(members[targetIndex].FullSpan.Start, member.FullSpan.End);
+            if (syntaxRoot.DescendantTrivia(span).Any(trivia => trivia.IsKind(SyntaxKind.RegionDirectiveTrivia) || trivia.IsKind(SyntaxKind.EndRegionDirectiveTrivia)))
+            {
+                return syntaxRoot;
+            }
+
+            return MoveMember(syntaxRoot, member, members[targetIndex], indentationSettings);
+        }
+
+        private static bool HasRuntimeInitializer(MemberDeclarationSyntax member)
+        {
+            if (member is PropertyDeclarationSyntax property)
+            {
+                return property.Initializer != null;
+            }
+
+            if (member is BaseFieldDeclarationSyntax field && !field.Modifiers.Any(SyntaxKind.ConstKeyword))
+            {
+                foreach (var variable in field.Declaration.Variables)
+                {
+                    if (variable.Initializer != null)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         private static SyntaxNode HandleCompilationUnitDeclaration(MemberOrderHelper memberOrder, CompilationUnitSyntax compilationUnitDeclaration, ImmutableArray<OrderingTrait> elementOrder, SyntaxNode syntaxRoot, IndentationSettings indentationSettings)
@@ -380,7 +537,8 @@ namespace StyleCop.Analyzers.OrderingRules
                         continue;
                     }
 
-                    if (diagnostic.Id == SA1201ElementsMustAppearInTheCorrectOrder.DiagnosticId)
+                    if (diagnostic.Id == SA1201ElementsMustAppearInTheCorrectOrder.DiagnosticId
+                        || settings.OrderingRules.MemberKindOrder != null)
                     {
                         // Moving one member can create a new ordering violation between previously adjacent siblings.
                         foreach (var sibling in memberDeclaration.Parent.ChildNodes().OfType<MemberDeclarationSyntax>())
@@ -402,7 +560,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 foreach (var member in trackedMembers)
                 {
                     var memberDeclaration = syntaxRoot.GetCurrentNode(member);
-                    syntaxRoot = UpdateSyntaxRoot(memberDeclaration, elementOrder, syntaxRoot, settings.Indentation, semanticModel, fixAllContext.CancellationToken, fieldDependenciesByType);
+                    syntaxRoot = UpdateSyntaxRoot(memberDeclaration, elementOrder, syntaxRoot, settings.Indentation, settings.OrderingRules.MemberKindOrder, semanticModel, fixAllContext.CancellationToken, fieldDependenciesByType);
                 }
 
                 return syntaxRoot;

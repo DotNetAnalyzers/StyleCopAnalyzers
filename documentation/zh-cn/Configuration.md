@@ -91,6 +91,7 @@ csharp_using_directive_placement = outside_namespace
 | 缩进 | `indentation.useTabs` | `indent_style` | `true`/`false` ⇄ `tab`/`space` | `false` / `space` |
 | 可读性 | `readabilityRules.allowBuiltInTypeAliases` | `stylecop.readability.allowBuiltInTypeAliases` | 布尔值 | `false` |
 | 排序 | `orderingRules.elementOrder` | `stylecop.ordering.elementOrder` | `kind`、`accessibility`、`constant`、`static`、`readonly` 的列表 | `kind, accessibility, constant, static, readonly` |
+| 排序 | `orderingRules.memberKindOrder` | `stylecop.ordering.memberKindOrder` | 成员种类列表（参阅[成员种类顺序](#member-kind-order)） | SA1201 的预定义顺序 |
 | 排序 | `orderingRules.systemUsingDirectivesFirst` | `dotnet_sort_system_directives_first` | 布尔值 | `true` |
 | 排序 | `orderingRules.usingDirectivesPlacement` | `stylecop.ordering.usingDirectivesPlacement`（或 `csharp_using_directive_placement`） | `insideNamespace`、`outsideNamespace`、`preserve` ⇄ `inside_namespace`、`outside_namespace` | `insideNamespace` |
 | 排序 | `orderingRules.blankLinesBetweenUsingGroups` | `stylecop.ordering.blankLinesBetweenUsingGroups`（或 `dotnet_separate_import_directive_groups`） | `allow`、`require`、`omit` ⇄ `false`、`true` | `allow` |
@@ -443,6 +444,71 @@ stylecop.readability.allowBuiltInTypeAliases = true
 > ```ini
 > stylecop.ordering.elementOrder = kind, accessibility, constant, static, readonly
 > ```
+
+<a id="member-kind-order"></a>
+
+### 成员种类顺序
+
+`memberKindOrder` 可自定义类、结构、接口、记录和扩展块内部成员的 `kind` 特征。
+此设置不改变文件或命名空间级别的声明顺序。
+未指定此设置时，[SA1201](SA1201.md) 保留其预定义顺序。
+
+| 属性 | 默认值 | 摘要 |
+| --- | --- | --- |
+| `memberKindOrder` | SA1201 的预定义顺序 | 指定各成员种类的连续分组之间的相对顺序 |
+
+```json
+{
+  "settings": {
+    "orderingRules": {
+      "memberKindOrder": [
+        "enum",
+        "field",
+        "property",
+        "constructor",
+        "method"
+      ]
+    }
+  }
+}
+```
+
+等效的 **.editorconfig** 或 **.globalconfig** 属性为：
+
+```ini
+stylecop.ordering.memberKindOrder = enum, field, property, constructor, method
+```
+
+支持的值为 `field`、`constructor`、`destructor`、`delegate`、`event`、`enum`、`interface`、`extension`、`property`、`indexer`、`conversionOperator`、`operator`、`method`、`struct` 和 `class`。
+值必须唯一；无法识别的值或重复值会由 SA0002 报告。
+记录和记录类使用 `class`；记录结构和联合使用 `struct`。
+两种事件声明形式均使用 `event`。
+这些是声明种类，而不是语义类别：例如，`ICommand` 属性使用 `property`，并没有单独的命令种类。
+
+列表不必包含所有种类。
+列出的种类必须按指定顺序排列，每种已列出的种类都必须形成连续分组。
+未列出的种类可以出现在这些分组之前、之后或之间，但不能拆分已列出种类的分组。
+对于上面的示例：
+
+* 属性、析构函数、属性：无效，因为析构函数拆分了属性分组。
+* 字段、析构函数、属性：有效。
+* 类、析构函数、类：有效，因为这两种种类均未指定顺序。
+* 属性、析构函数、字段：无效，因为字段必须位于属性之前。
+
+SA1201 会报告拆分已列出种类分组的每个间隔中的第一个未列出种类的声明。
+代码修复会将后面的已列出种类的声明移入分组，同时保留中间未列出种类的声明的顺序。
+与默认排序修复一样，涉及预处理器指令或字段初始化器依赖关系的移动可能需要手动修正。
+自定义排序修复还会保留字段、事件和自动属性初始化器的执行顺序：在同一静态或实例初始化序列中，不会将一个运行时初始化器移到另一个的前面。
+
+空 JSON 数组或空 EditorConfig 值会使所有成员种类的顺序不受约束，但不会禁用其他排序特征。
+从 `elementOrder` 中省略 `kind` 会禁用 SA1201 的成员种类检查，不受 `memberKindOrder` 的影响。
+
+现有的 `elementOrder` 设置仍控制特征的优先级。
+例如，如果 `accessibility` 位于 `kind` 之前，则会在每个连续的可访问性分组中分别检查成员种类分组。
+如果两个文件都指定了 `memberKindOrder`，则完整的 **stylecop.json** 值优先；列表不会合并。
+
+在遵循更高优先级特征的前提下，静态成员和只读字段的排序规则仍适用于同一种类中被允许的间隔分开的成员。
+初始化顺序保护可能阻止将带初始化器的成员移到更早的带初始化器的成员之前，但不会阻止将其插入到该成员之后以消除间隔。
 
 <a id="using-directives"></a>
 

@@ -15,6 +15,60 @@ namespace StyleCop.Analyzers.Test.CSharp14.OrderingRules
     public partial class SA1201CSharp14UnitTests : SA1201CSharp13UnitTests
     {
         [Fact]
+        public async Task TestConfiguredExtensionKindOrderAsync()
+        {
+            var test = new CSharpTest
+            {
+                Settings = """{ "settings": { "orderingRules": { "memberKindOrder": ["method", "property", "extension"] } } }""",
+                TestCode = """
+                    public static class C
+                    {
+                        public static void M() { }
+                        extension(string text)
+                        {
+                            public void M() { }
+                            public int Length => text.Length;
+                        }
+                    }
+                    """,
+            };
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestConfiguredExtensionKindCodeFixAsync()
+        {
+            var test = new CSharpTest
+            {
+                Settings = """{ "settings": { "orderingRules": { "memberKindOrder": ["extension", "method"] } } }""",
+                TestCode = """
+                    public static class C
+                    {
+                        public static void M() { }
+
+                        {|#0:extension|}(string text)
+                        {
+                            public int Length => text.Length;
+                        }
+                    }
+                    """,
+                FixedCode = """
+                    public static class C
+                    {
+                        extension(string text)
+                        {
+                            public int Length => text.Length;
+                        }
+
+                        public static void M() { }
+                    }
+                    """,
+            };
+            test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithArguments("An extension", "a method"));
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(3955, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3955")]
         public async Task TestExtensionBlockAfterFieldAsync()
         {

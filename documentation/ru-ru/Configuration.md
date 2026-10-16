@@ -92,6 +92,7 @@ csharp_using_directive_placement = outside_namespace
 | Отступы | `indentation.useTabs` | `indent_style` | `true`/`false` ⇄ `tab`/`space` | `false` / `space` |
 | Читаемость | `readabilityRules.allowBuiltInTypeAliases` | `stylecop.readability.allowBuiltInTypeAliases` | логическое | `false` |
 | Упорядочивание | `orderingRules.elementOrder` | `stylecop.ordering.elementOrder` | список из `kind`, `accessibility`, `constant`, `static`, `readonly` | `kind, accessibility, constant, static, readonly` |
+| Упорядочивание | `orderingRules.memberKindOrder` | `stylecop.ordering.memberKindOrder` | список видов членов (см. [Порядок видов членов](#member-kind-order)) | стандартный порядок SA1201 |
 | Упорядочивание | `orderingRules.systemUsingDirectivesFirst` | `dotnet_sort_system_directives_first` | логическое | `true` |
 | Упорядочивание | `orderingRules.usingDirectivesPlacement` | `stylecop.ordering.usingDirectivesPlacement` (или `csharp_using_directive_placement`) | `insideNamespace`, `outsideNamespace`, `preserve` ⇄ `inside_namespace`, `outside_namespace` | `insideNamespace` |
 | Упорядочивание | `orderingRules.blankLinesBetweenUsingGroups` | `stylecop.ordering.blankLinesBetweenUsingGroups` (или `dotnet_separate_import_directive_groups`) | `allow`, `require`, `omit` ⇄ `false`, `true` | `allow` |
@@ -460,6 +461,71 @@ stylecop.readability.allowBuiltInTypeAliases = true
 > ```ini
 > stylecop.ordering.elementOrder = kind, accessibility, constant, static, readonly
 > ```
+
+<a id="member-kind-order"></a>
+
+### Порядок видов членов
+
+`memberKindOrder` настраивает признак `kind` для членов классов, структур, интерфейсов, записей и блоков расширений.
+Этот параметр не меняет порядок объявлений на уровне файла или пространства имён.
+Если параметр отсутствует, [SA1201](SA1201.md) использует стандартный порядок.
+
+| Свойство | Значение по умолчанию | Описание |
+| --- | --- | --- |
+| `memberKindOrder` | Стандартный порядок SA1201 | Задаёт относительный порядок непрерывных групп членов одного вида |
+
+```json
+{
+  "settings": {
+    "orderingRules": {
+      "memberKindOrder": [
+        "enum",
+        "field",
+        "property",
+        "constructor",
+        "method"
+      ]
+    }
+  }
+}
+```
+
+Эквивалентный параметр **.editorconfig** или **.globalconfig**:
+
+```ini
+stylecop.ordering.memberKindOrder = enum, field, property, constructor, method
+```
+
+Поддерживаются значения `field`, `constructor`, `destructor`, `delegate`, `event`, `enum`, `interface`, `extension`, `property`, `indexer`, `conversionOperator`, `operator`, `method`, `struct` и `class`.
+Значения должны быть уникальными; неизвестные или повторяющиеся значения приводят к SA0002.
+Записи и классы-записи используют `class`, структуры-записи и объединения используют `struct`.
+Обе формы объявления событий используют `event`.
+Это виды объявлений, а не семантические категории: например, свойство типа `ICommand` использует `property`, а не отдельный вид команды.
+
+Список может быть неполным.
+Указанные виды должны следовать в заданном порядке, причём каждый вид должен образовывать непрерывную группу.
+Неуказанные виды могут находиться до, после или между этими группами, но не могут разрывать их.
+Для приведённого примера:
+
+* Свойство, деструктор, свойство: недопустимо, поскольку деструктор разрывает группу свойств.
+* Поле, деструктор, свойство: допустимо.
+* Класс, деструктор, класс: допустимо, поскольку порядок ни одного из этих видов не задан.
+* Свойство, деструктор, поле: недопустимо, поскольку поля должны предшествовать свойствам.
+
+SA1201 отмечает первое неуказанное объявление в каждом промежутке, разрывающем группу.
+Исправление кода перемещает более позднее объявление указанного вида в группу, сохраняя порядок промежуточных неуказанных объявлений.
+Как и при стандартном порядке, перемещения через директивы препроцессора или зависимости инициализаторов полей могут требовать ручного исправления.
+Настраиваемое исправление также сохраняет порядок выполнения инициализаторов полей, событий и автоматических свойств: оно не перемещает один инициализатор через другой в одной последовательности статической инициализации или инициализации экземпляра.
+
+Пустой массив JSON или пустое значение EditorConfig не ограничивает порядок видов членов, но не отключает другие признаки упорядочивания.
+Если `kind` отсутствует в `elementOrder`, проверки видов членов SA1201 отключены независимо от `memberKindOrder`.
+
+Параметр `elementOrder` по-прежнему определяет приоритет признаков.
+Например, если `accessibility` предшествует `kind`, группы видов членов проверяются отдельно внутри каждой непрерывной группы с одинаковой доступностью.
+Если оба файла задают `memberKindOrder`, полное значение **stylecop.json** имеет приоритет; списки не объединяются.
+
+Правила порядка статических членов и полей только для чтения по-прежнему действуют между членами одного вида через допустимые промежутки с учётом признаков с более высоким приоритетом.
+Защита порядка инициализации может запретить перемещение инициализированного члена перед более ранним инициализированным членом, но не мешает вставить его сразу после этого члена, чтобы устранить промежуток.
 
 <a id="using-directives"></a>
 
