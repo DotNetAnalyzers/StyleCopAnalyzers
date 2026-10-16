@@ -39,6 +39,9 @@
   <data name="SA1201MessageFormat" xml:space="preserve">
     <value>{0} 不应位于 {1} 之后</value>
   </data>
+  <data name="SA1201InterruptedGroupMessageFormat" xml:space="preserve">
+    <value>未为种类为 '{0}' 的成员配置顺序，但这些成员不应出现在已配置顺序的 '{1}' 种类的声明之间</value>
+  </data>
   <data name="SA1201Title" xml:space="preserve">
     <value>元素应按正确的顺序排列</value>
   </data>

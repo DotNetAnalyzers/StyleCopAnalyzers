@@ -82,6 +82,7 @@ nastavení jsou v následujících oddílech.
 | Odsazení | `indentation.useTabs` | `indent_style` | `true`/`false` ⇄ `tab`/`space` | `false` / `space` |
 | Čitelnost | `readabilityRules.allowBuiltInTypeAliases` | `stylecop.readability.allowBuiltInTypeAliases` | logická hodnota | `false` |
 | Řazení | `orderingRules.elementOrder` | `stylecop.ordering.elementOrder` | seznam položek `kind`, `accessibility`, `constant`, `static`, `readonly` | `kind, accessibility, constant, static, readonly` |
+| Řazení | `orderingRules.memberKindOrder` | `stylecop.ordering.memberKindOrder` | seznam druhů členů (viz [Pořadí druhů členů](#member-kind-order)) | předdefinované pořadí SA1201 |
 | Řazení | `orderingRules.systemUsingDirectivesFirst` | `dotnet_sort_system_directives_first` | logická hodnota | `true` |
 | Řazení | `orderingRules.usingDirectivesPlacement` | `stylecop.ordering.usingDirectivesPlacement` (nebo `csharp_using_directive_placement`) | `insideNamespace`, `outsideNamespace`, `preserve` ⇄ `inside_namespace`, `outside_namespace` | `insideNamespace` |
 | Řazení | `orderingRules.blankLinesBetweenUsingGroups` | `stylecop.ordering.blankLinesBetweenUsingGroups` (nebo `dotnet_separate_import_directive_groups`) | `allow`, `require`, `omit` ⇄ `false`, `true` | `allow` |
@@ -401,6 +402,67 @@ uplatňuje.
 > ```ini
 > stylecop.ordering.elementOrder = kind, accessibility, constant, static, readonly
 > ```
+
+<a id="member-kind-order"></a>
+### Pořadí druhů členů
+
+`memberKindOrder` přizpůsobuje vlastnost `kind` pro členy tříd, struktur, rozhraní, záznamů a bloků rozšíření.
+Nemění pořadí deklarací na úrovni souboru nebo oboru názvů.
+Pokud toto nastavení chybí, [SA1201](SA1201.md) zachová předdefinované pořadí.
+
+| Vlastnost | Výchozí hodnota | Popis |
+| --- | --- | --- |
+| `memberKindOrder` | Předdefinované pořadí SA1201 | Určuje vzájemné pořadí souvislých skupin druhů členů |
+
+```json
+{
+  "settings": {
+    "orderingRules": {
+      "memberKindOrder": [
+        "enum",
+        "field",
+        "property",
+        "constructor",
+        "method"
+      ]
+    }
+  }
+}
+```
+
+Odpovídající vlastnost v **.editorconfig** nebo **.globalconfig**:
+
+```ini
+stylecop.ordering.memberKindOrder = enum, field, property, constructor, method
+```
+
+Podporované hodnoty jsou `field`, `constructor`, `destructor`, `delegate`, `event`, `enum`, `interface`, `extension`, `property`, `indexer`, `conversionOperator`, `operator`, `method`, `struct` a `class`.
+Hodnoty musí být jedinečné; neznámé nebo duplicitní hodnoty hlásí SA0002.
+Záznamy a třídy záznamů používají `class`; struktury záznamů a sjednocení používají `struct`.
+Obě formy deklarace událostí používají `event`.
+Jde o druhy deklarací, nikoli sémantické kategorie: například vlastnost typu `ICommand` používá `property`, nikoli samostatný druh příkazu.
+
+Seznam nemusí být úplný.
+Uvedené druhy musí být v zadaném pořadí a každý uvedený druh musí tvořit souvislou skupinu.
+Neuvedené druhy mohou být před těmito skupinami, za nimi nebo mezi nimi, ale nesmějí rozdělit skupinu uvedeného druhu.
+Pro uvedený příklad platí:
+
+* Vlastnost, destruktor, vlastnost: neplatné, protože destruktor rozděluje skupinu vlastností.
+* Pole, destruktor, vlastnost: platné.
+* Třída, destruktor, třída: platné, protože ani jeden druh nemá zadané pořadí.
+* Vlastnost, destruktor, pole: neplatné, protože pole musí předcházet vlastnostem.
+
+SA1201 hlásí první deklaraci neuvedeného druhu v každé mezeře, která rozděluje skupinu uvedeného druhu.
+Oprava kódu přesune pozdější deklaraci uvedeného druhu do skupiny a zachová pořadí mezilehlých deklarací neuvedených druhů.
+Stejně jako u výchozí opravy pořadí mohou přesuny přes direktivy preprocesoru nebo závislosti inicializátorů polí vyžadovat ruční opravu.
+Oprava vlastního pořadí také zachovává pořadí vykonávání inicializátorů polí, událostí a automatických vlastností: nepřesune jeden běhový inicializátor přes jiný ve stejné posloupnosti statické nebo instanční inicializace.
+
+Prázdné pole JSON nebo prázdná hodnota EditorConfig neomezuje pořadí druhů členů, ale nevypíná ostatní vlastnosti řazení.
+Vynechání `kind` z `elementOrder` vypne kontroly druhů členů SA1201 bez ohledu na `memberKindOrder`.
+
+Stávající nastavení `elementOrder` nadále určuje prioritu vlastností.
+Pokud například `accessibility` předchází `kind`, skupiny druhů členů se kontrolují samostatně v každé souvislé skupině přístupnosti.
+Pokud oba soubory určují `memberKindOrder`, má přednost celá hodnota **stylecop.json**; seznamy se neslučují.
 
 <a id="using-directives"></a>
 ### Direktivy using
