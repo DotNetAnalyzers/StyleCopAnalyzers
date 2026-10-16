@@ -151,6 +151,15 @@
   <data name="SA1314Title" xml:space="preserve">
     <value>Имена параметров типа должны начинаться с T</value>
   </data>
+  <data name="SA1315Description" xml:space="preserve">
+    <value>Имена параметров методов, переопределяющих метод базового класса или реализующих член интерфейса, должны совпадать с именами унаследованных параметров.</value>
+  </data>
+  <data name="SA1315MessageFormat" xml:space="preserve">
+    <value>Имя параметра '{0}' должно совпадать с именем унаследованного параметра</value>
+  </data>
+  <data name="SA1315Title" xml:space="preserve">
+    <value>Имена параметров должны совпадать с унаследованными именами</value>
+  </data>
   <data name="SA1316CodeFix" xml:space="preserve">
     <value>Исправить регистр букв в именах элементов кортежа</value>
   </data>
