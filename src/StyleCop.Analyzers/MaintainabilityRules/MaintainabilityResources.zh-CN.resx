@@ -159,6 +159,18 @@
   <data name="SA1412Title" xml:space="preserve">
     <value>使用带字节顺序标记的 UTF-8 保存文件</value>
   </data>
+  <data name="SX1412CodeFix" xml:space="preserve">
+    <value>将文件编码更改为不带字节顺序标记的 UTF-8</value>
+  </data>
+  <data name="SX1412Description" xml:space="preserve">
+    <value>源文件应使用不带字节顺序标记的 UTF-8 编码保存。</value>
+  </data>
+  <data name="SX1412MessageFormat" xml:space="preserve">
+    <value>使用不带字节顺序标记的 UTF-8 保存文件</value>
+  </data>
+  <data name="SX1412Title" xml:space="preserve">
+    <value>使用不带字节顺序标记的 UTF-8 保存文件</value>
+  </data>
   <data name="SA1413CodeFix" xml:space="preserve">
     <value>添加尾随逗号</value>
   </data>

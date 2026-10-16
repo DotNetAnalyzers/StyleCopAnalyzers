@@ -6,3 +6,4 @@
 [SX1101](SX1101.md) | DoNotPrefixLocalMembersWithThis | В файле кода C# обращение к члену экземпляра текущего или базового класса имеет префикс 'this.'.
 [SX1309](SX1309.md) | FieldNamesMustBeginWithUnderscore | Имя поля не начинается с подчёркивания.
 [SX1309S](SX1309S.md) | StaticFieldNamesMustBeginWithUnderscore | Имя статического поля не начинается с подчёркивания.
+[SX1412](SX1412.md) | StoreFilesAsUtf8WithoutByteOrderMark | Файл сохранён не в кодировке UTF-8 без маркера порядка байтов.
