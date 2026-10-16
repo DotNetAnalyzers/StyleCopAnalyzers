@@ -18,6 +18,9 @@ namespace StyleCop.Analyzers.SpacingRules
     ///
     /// <para>A closing attribute bracket should never be preceded by whitespace, unless the bracket is the first
     /// character on the line.</para>
+    ///
+    /// <para>The last attribute bracket on a parameter or type parameter should be followed by whitespace,
+    /// unless the parameter declaration continues on the next line.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SA1017ClosingAttributeBracketsMustBeSpacedCorrectly : DiagnosticAnalyzer
@@ -76,6 +79,14 @@ namespace StyleCop.Analyzers.SpacingRules
             if (!token.Parent.IsKind(SyntaxKind.AttributeList))
             {
                 return;
+            }
+
+            if ((token.Parent.Parent.IsKind(SyntaxKind.Parameter) || token.Parent.Parent.IsKind(SyntaxKind.TypeParameter))
+                && !token.GetNextToken().IsKind(SyntaxKind.OpenBracketToken)
+                && !token.IsLastInLine()
+                && !token.IsFollowedByWhitespace())
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.InsertFollowing));
             }
 
             if (token.IsFirstInLine())

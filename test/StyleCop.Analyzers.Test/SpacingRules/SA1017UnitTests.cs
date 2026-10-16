@@ -141,5 +141,152 @@ class ClassName
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies spacing between parameter attributes and parameter types or modifiers.
+        /// </summary>
+        /// <param name="parameter">The parameter declaration following the attribute.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("int value")]
+        [InlineData("ref int value")]
+        [InlineData("out int value")]
+        [InlineData("params int[] values")]
+        [InlineData("this string value")]
+        [WorkItem(3118, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3118")]
+        public async Task TestMissingSpaceAfterParameterAttributeAsync(string parameter)
+        {
+            var testCode = $$"""
+                static class TestClass
+                {
+                    static void Method([My{|#0:]|}{{parameter}})
+                    {
+                        throw new System.NotImplementedException();
+                    }
+                }
+
+                class MyAttribute : System.Attribute { }
+
+                """;
+            var fixedCode = $$"""
+                static class TestClass
+                {
+                    static void Method([My] {{parameter}})
+                    {
+                        throw new System.NotImplementedException();
+                    }
+                }
+
+                class MyAttribute : System.Attribute { }
+
+                """;
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies spacing after attributes in different parameter declarations.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3118, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3118")]
+        public async Task TestMissingSpaceAfterAttributesInParameterDeclarationsAsync()
+        {
+            var testCode = """
+                delegate void Callback([My{|#0:]|}int value);
+
+                class TestClass<[My{|#1:]|}T>
+                {
+                    TestClass([My{|#2:]|}int value) { }
+
+                    int this[[My{|#3:]|}int index] => 0;
+
+                    void Method<[My{|#4:]|}U>([My][My{|#5:]|}int value) { }
+
+                    void MultilineAttribute([My
+                    {|#6:]|}int value) { }
+
+                    void Comment([My{|#7:]|}/* keep */int value) { }
+
+                    void BothSides([My {|#8:]|}int value) { }
+                }
+
+                [System.AttributeUsage(System.AttributeTargets.All, AllowMultiple = true)]
+                class MyAttribute : System.Attribute { }
+
+                """;
+            var fixedCode = """
+                delegate void Callback([My] int value);
+
+                class TestClass<[My] T>
+                {
+                    TestClass([My] int value) { }
+
+                    int this[[My] int index] => 0;
+
+                    void Method<[My] U>([My][My] int value) { }
+
+                    void MultilineAttribute([My
+                    ] int value) { }
+
+                    void Comment([My] /* keep */int value) { }
+
+                    void BothSides([My] int value) { }
+                }
+
+                [System.AttributeUsage(System.AttributeTargets.All, AllowMultiple = true)]
+                class MyAttribute : System.Attribute { }
+
+                """;
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+                Diagnostic().WithLocation(2),
+                Diagnostic().WithLocation(3),
+                Diagnostic().WithLocation(4),
+                Diagnostic().WithLocation(5),
+                Diagnostic().WithLocation(6),
+                Diagnostic().WithLocation(7),
+                Diagnostic().WithLocation(8),
+                Diagnostic().WithLocation(8),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that attribute spacing preserves line breaks and adjacent attribute lists.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3118, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3118")]
+        public async Task TestValidSpacingAfterParameterAttributesAsync()
+        {
+            var testCode = """
+                [My]class TestClass<[My] T>
+                {
+                    void Method([My] int value) { }
+
+                    void Multiple([My][My] int value) { }
+
+                    void Multiline(
+                        [My]
+                        int value) { }
+
+                    void Comment([My] /* keep */int value) { }
+
+                    void MultilineComment([My]/* keep
+                        */int value) { }
+                }
+
+                [System.AttributeUsage(System.AttributeTargets.All, AllowMultiple = true)]
+                class MyAttribute : System.Attribute { }
+
+                """;
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
