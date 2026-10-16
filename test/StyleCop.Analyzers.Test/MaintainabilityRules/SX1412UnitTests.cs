@@ -31,6 +31,20 @@ public class SX1412UnitTests
     }
 
     [Fact]
+    public async Task TestFileWithStrictUtf8EncodingWithoutByteOrderMarkAsync()
+    {
+        SourceText source = SourceText.From("class TypeName { }", new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true));
+        var test = new CSharpTest
+        {
+            TestSources = { source },
+            FixedSources = { source },
+        };
+
+        test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
+        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
+    [Fact]
     public async Task TestFileWithUtf8EncodingWithByteOrderMarkAsync()
     {
         const string source = "class TypeName { }";

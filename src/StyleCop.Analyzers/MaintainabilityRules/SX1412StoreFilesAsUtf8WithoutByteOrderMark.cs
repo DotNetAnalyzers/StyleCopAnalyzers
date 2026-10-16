@@ -53,7 +53,9 @@ internal class SX1412StoreFilesAsUtf8WithoutByteOrderMark : DiagnosticAnalyzer
         }
 
         Encoding encoding = context.Tree.Encoding;
-        if (encoding == null || !Utf8WithoutByteOrderMark.Equals(encoding))
+        if (encoding == null
+            || !string.Equals(encoding.WebName, Utf8WithoutByteOrderMark.WebName, StringComparison.OrdinalIgnoreCase)
+            || encoding.GetPreamble().Length != 0)
         {
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, new TextSpan(0, 0))));
         }
