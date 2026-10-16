@@ -324,6 +324,9 @@
   <data name="SA1017MessageFormat" xml:space="preserve">
     <value>Закрывающие скобки атрибута не должны предваряться пробелом</value>
   </data>
+  <data name="SA1017MessageFollowed" xml:space="preserve">
+    <value>После закрывающей скобки атрибута должен стоять пробел</value>
+  </data>
   <data name="SA1017Title" xml:space="preserve">
     <value>Пробелы вокруг закрывающих скобок атрибутов должны быть расставлены правильно</value>
   </data>

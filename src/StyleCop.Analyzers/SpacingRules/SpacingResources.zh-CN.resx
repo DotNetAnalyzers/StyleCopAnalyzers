@@ -324,6 +324,9 @@
   <data name="SA1017MessageFormat" xml:space="preserve">
     <value>特性右方括号前不应有空格</value>
   </data>
+  <data name="SA1017MessageFollowed" xml:space="preserve">
+    <value>特性右方括号后应有空格</value>
+  </data>
   <data name="SA1017Title" xml:space="preserve">
     <value>特性右方括号周围的空格应正确</value>
   </data>
