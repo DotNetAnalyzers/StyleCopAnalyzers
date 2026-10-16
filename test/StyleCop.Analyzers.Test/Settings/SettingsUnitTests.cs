@@ -43,10 +43,31 @@ namespace StyleCop.Analyzers.Test.Settings
             Assert.Equal(OptionSetting.Allow, styleCopSettings.LayoutRules.NewlineAtEndOfFile);
             Assert.True(styleCopSettings.LayoutRules.AllowConsecutiveUsings);
             Assert.False(styleCopSettings.LayoutRules.AllowDoWhileOnClosingBrace);
+            Assert.Equal(BracelessIfStatements.Off, styleCopSettings.LayoutRules.AllowBracelessIfStatements);
 
             Assert.NotNull(styleCopSettings.SpacingRules);
             Assert.NotNull(styleCopSettings.ReadabilityRules);
             Assert.NotNull(styleCopSettings.MaintainabilityRules);
+        }
+
+        /// <summary>
+        /// Verifies all values of the braceless guard setting in JSON.
+        /// </summary>
+        /// <param name="option">The configured value.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData("off")]
+        [InlineData("sameLine")]
+        [InlineData("nextLine")]
+        public async Task VerifyBracelessIfStatementsSettingAsync(string option)
+        {
+            var settings = $$"""
+                { "settings": { "layoutRules": { "allowBracelessIfStatements": "{{option}}" } } }
+                """;
+            var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
+            var actual = context.GetStyleCopSettingsInTests(CancellationToken.None).LayoutRules.AllowBracelessIfStatements;
+
+            Assert.Equal(option, actual.ToString(), ignoreCase: true);
         }
 
         [Fact]

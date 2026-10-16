@@ -103,6 +103,7 @@ csharp_using_directive_placement = outside_namespace
 | Сопровождаемость | `maintainabilityRules.topLevelTypes` | `stylecop.maintainability.topLevelTypes` | список из `class`, `interface`, `struct`, `enum`, `delegate` | `class` |
 | Оформление | `layoutRules.newlineAtEndOfFile` | `stylecop.layout.newlineAtEndOfFile` (или `insert_final_newline`) | `allow`, `require`, `omit` ⇄ `true`, `false` | `allow` |
 | Оформление | `layoutRules.allowConsecutiveUsings` | `stylecop.layout.allowConsecutiveUsings` | логическое | `true` |
+| Оформление | `layoutRules.allowBracelessIfStatements` | `stylecop.layout.allowBracelessIfStatements` | `off`, `sameLine`, `nextLine` | `off` |
 | Оформление | `layoutRules.allowDoWhileOnClosingBrace` | `stylecop.layout.allowDoWhileOnClosingBrace` | логическое | `false` |
 | Документирование | `documentationRules.documentExposedElements` | `stylecop.documentation.documentExposedElements` | логическое | `true` |
 | Документирование | `documentationRules.documentInternalElements` | `stylecop.documentation.documentInternalElements` | логическое | `true` |
@@ -159,6 +160,7 @@ stylecop.maintainability.topLevelTypes = class                 # class, interfac
 # Layout
 stylecop.layout.newlineAtEndOfFile = allow                     # allow | require | omit
 stylecop.layout.allowConsecutiveUsings = true
+stylecop.layout.allowBracelessIfStatements = off
 stylecop.layout.allowDoWhileOnClosingBrace = false
 
 # Documentation
@@ -765,6 +767,7 @@ stylecop.maintainability.topLevelTypes = class
 | --- | --- | --- | --- |
 | `newlineAtEndOfFile` | `"allow"` | 1.0.0 | Задаёт обработку символов перевода строки в конце файла. |
 | `allowConsecutiveUsings` | `true` | 1.1.0 | Определяет, разрешает ли SA1519 последовательные операторы using без фигурных скобок. |
+| `allowBracelessIfStatements` | `"off"` | >1.2.0 | Allows a single-line jump statement as the body of an `if` with no `else`, on the configured line |
 | `allowDoWhileOnClosingBrace` | `false` | >1.2.0 | Определяет, разрешает ли SA1500 размещать выражение `while` цикла `do`/`while` в одной строке с закрывающей фигурной скобкой, как в стандартном фрагменте кода Visual Studio. |
 
 При настройке StyleCop Analyzers с помощью **.editorconfig** можно использовать параметр перевода строки
@@ -773,6 +776,7 @@ stylecop.maintainability.topLevelTypes = class
 ```ini
 stylecop.layout.newlineAtEndOfFile = allow
 stylecop.layout.allowConsecutiveUsings = true
+stylecop.layout.allowBracelessIfStatements = off
 stylecop.layout.allowDoWhileOnClosingBrace = false
 ```
 
@@ -780,6 +784,25 @@ stylecop.layout.allowDoWhileOnClosingBrace = false
 > поэтому для него используйте `stylecop.layout.newlineAtEndOfFile`. Специальное свойство StyleCop имеет приоритет.
 
 <a id="lines-at-end-of-file"></a>
+
+### Braceless if statements
+
+The `allowBracelessIfStatements` property configures [SA1501](SA1501.md) and [SA1503](SA1503.md).
+`"off"` (default) preserves the existing behavior. `"sameLine"` allows a standalone `if` to omit braces
+when its single jump statement is on the same line as its closing `)`. `"nextLine"` allows the jump on
+the immediately following line. The jump itself must fit on one line.
+The entire `if` header, from `if` through the closing `)`, must fit on one line for either enabled option.
+With `"sameLine"`, the whole `if` statement must therefore fit on one line. Multiline conditions require braces.
+
+Supported jumps are `return` (with or without a value), `throw`, `break`, `continue`, `goto` (including
+`goto case` and `goto default`), and `yield break`. `yield return`, assignments, method calls, loops,
+and all branches of an `if`/`else if`/`else` chain still require braces. Existing braces remain allowed.
+SA1503 fixes add braces; they do not remove existing braces. With SA1503 disabled, SA1501 fixes expand
+disallowed same-line statements onto the next line. Correctly positioned guards are not changed.
+
+```json
+{ "settings": { "layoutRules": { "allowBracelessIfStatements": "sameLine" } } }
+```
 
 ### Строки в конце файла
 

@@ -93,6 +93,7 @@ nastavení jsou v následujících oddílech.
 | Udržovatelnost | `maintainabilityRules.topLevelTypes` | `stylecop.maintainability.topLevelTypes` | seznam typů `class`, `interface`, `struct`, `enum`, `delegate` | `class` |
 | Rozložení | `layoutRules.newlineAtEndOfFile` | `stylecop.layout.newlineAtEndOfFile` (nebo `insert_final_newline`) | `allow`, `require`, `omit` ⇄ `true`, `false` | `allow` |
 | Rozložení | `layoutRules.allowConsecutiveUsings` | `stylecop.layout.allowConsecutiveUsings` | logická hodnota | `true` |
+| Rozložení | `layoutRules.allowBracelessIfStatements` | `stylecop.layout.allowBracelessIfStatements` | `off`, `sameLine`, `nextLine` | `off` |
 | Rozložení | `layoutRules.allowDoWhileOnClosingBrace` | `stylecop.layout.allowDoWhileOnClosingBrace` | logická hodnota | `false` |
 | Dokumentace | `documentationRules.documentExposedElements` | `stylecop.documentation.documentExposedElements` | logická hodnota | `true` |
 | Dokumentace | `documentationRules.documentInternalElements` | `stylecop.documentation.documentInternalElements` | logická hodnota | `true` |
@@ -145,6 +146,7 @@ stylecop.maintainability.topLevelTypes = class                 # class, interfac
 # Rozložení
 stylecop.layout.newlineAtEndOfFile = allow                     # allow | require | omit
 stylecop.layout.allowConsecutiveUsings = true
+stylecop.layout.allowBracelessIfStatements = off
 stylecop.layout.allowDoWhileOnClosingBrace = false
 
 # Dokumentace
@@ -670,17 +672,38 @@ Následující vlastnosti slouží ke konfiguraci pravidel rozložení StyleCop 
 | --- | --- | --- | --- |
 | `newlineAtEndOfFile` | `"allow"` | 1.0.0 | Určuje způsob zpracování znaku nového řádku na konci souboru. |
 | `allowConsecutiveUsings` | `true` | 1.1.0 | Určuje, zda SA1519 povolí po sobě jdoucí příkazy `using` bez složených závorek. |
+| `allowBracelessIfStatements` | `"off"` | >1.2.0 | Allows a single-line jump statement as the body of an `if` with no `else`, on the configured line |
 | `allowDoWhileOnClosingBrace` | `false` | >1.2.0 | Určuje, zda SA1500 povolí umístit výraz `while` cyklu `do`/`while` na stejný řádek jako uzavírací složenou závorku, jak to vytváří výchozí fragment kódu ve Visual Studiu. |
 
 Při konfiguraci StyleCop Analyzers pomocí souboru **.editorconfig** lze použít nastavení nového řádku (`insert_final_newline`) popsané na webu editorconfig.org a také následující vlastnosti:
 ```ini
 stylecop.layout.newlineAtEndOfFile = allow
 stylecop.layout.allowConsecutiveUsings = true
+stylecop.layout.allowBracelessIfStatements = off
 stylecop.layout.allowDoWhileOnClosingBrace = false
 ```
 
 > :memo: `insert_final_newline = true` odpovídá hodnotě `"require"` a `false` hodnotě `"omit"`. Ani jedna z nich nevyjadřuje
 > `"allow"`, proto pro tuto hodnotu použijte `stylecop.layout.newlineAtEndOfFile`. Vlastnost specifická pro StyleCop má přednost.
+
+### Braceless if statements
+
+The `allowBracelessIfStatements` property configures [SA1501](SA1501.md) and [SA1503](SA1503.md).
+`"off"` (default) preserves the existing behavior. `"sameLine"` allows a standalone `if` to omit braces
+when its single jump statement is on the same line as its closing `)`. `"nextLine"` allows the jump on
+the immediately following line. The jump itself must fit on one line.
+The entire `if` header, from `if` through the closing `)`, must fit on one line for either enabled option.
+With `"sameLine"`, the whole `if` statement must therefore fit on one line. Multiline conditions require braces.
+
+Supported jumps are `return` (with or without a value), `throw`, `break`, `continue`, `goto` (including
+`goto case` and `goto default`), and `yield break`. `yield return`, assignments, method calls, loops,
+and all branches of an `if`/`else if`/`else` chain still require braces. Existing braces remain allowed.
+SA1503 fixes add braces; they do not remove existing braces. With SA1503 disabled, SA1501 fixes expand
+disallowed same-line statements onto the next line. Correctly positioned guards are not changed.
+
+```json
+{ "settings": { "layoutRules": { "allowBracelessIfStatements": "sameLine" } } }
+```
 
 ### Řádky na konci souboru
 

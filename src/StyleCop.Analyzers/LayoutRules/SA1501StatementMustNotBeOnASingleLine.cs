@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// A C# statement containing opening and closing braces is written completely on a single line.
@@ -137,12 +138,17 @@ namespace StyleCop.Analyzers.LayoutRules
             }
         }
 
-        private static void HandleIfStatement(SyntaxNodeAnalysisContext context)
+        private static void HandleIfStatement(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             var ifStatement = (IfStatementSyntax)context.Node;
             if (ifStatement.Parent.IsKind(SyntaxKind.ElseClause))
             {
                 // this will be analyzed as a clause of the outer if statement
+                return;
+            }
+
+            if (BracelessIfStatementHelper.IsAllowed(ifStatement.Statement, settings.LayoutRules.AllowBracelessIfStatements))
+            {
                 return;
             }
 
