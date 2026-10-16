@@ -903,12 +903,31 @@ vlastností.
 | `documentPrivateElements` | **false** | 1.0.0 | Určuje, zda je třeba dokumentovat soukromé prvky. Při hodnotě `true` vyžadují dokumentaci všechny typy a členy kromě výslovně deklarovaných soukromých polí. |
 | `documentPrivateFields` | **false** | 1.0.0 | Určuje, zda je třeba dokumentovat soukromá pole. Při hodnotě `true` vyžadují dokumentaci všechna pole bez ohledu na přístupnost. |
 
-Tyto vlastnosti ovlivňují chování následujících pravidel, která hlásí chybějící dokumentaci. Pravidla hlásící nesprávnou
-nebo neúplnou dokumentaci se nadále vztahují na všechny komentáře dokumentace v kódu.
+Tyto vlastnosti ovlivňují následující pravidla hlásící chybějící dokumentaci, i když již část dokumentace existuje:
 
 * [SA1600 Elements should be documented](SA1600.md)
 * [SA1601 Partial elements should be documented](SA1601.md)
 * [SA1602 Enumeration items should be documented](SA1602.md)
+* [SA1604 Element documentation should have summary](SA1604.md)
+* [SA1605 Partial element documentation should have summary](SA1605.md)
+* [SA1609 Property documentation should have value](SA1609.md)
+* [SA1611 Element parameters should be documented](SA1611.md)
+* [SA1615 Element return value should be documented](SA1615.md)
+* [SA1618 Generic type parameters should be documented](SA1618.md)
+* [SA1619 Generic type parameters should be documented partial class](SA1619.md)
+
+U prvku, který nevyžaduje dokumentaci, samotný tag `<summary>` nevyžaduje doplnění tagů
+`<param>`, `<returns>`, `<typeparam>` ani `<value>`. Poskytnutá dokumentace se však nadále kontroluje:
+prázdný tag `<param>` hlásí SA1614 a prázdný tag `<returns>` hlásí SA1616. Nadále se uplatňují také
+kontroly interpunkce (SA1629) a standardního znění souhrnu.
+
+Přístupnost se vyhodnocuje v kontextu obsahujících typů: veřejný člen interní třídy je přístupný interně,
+nikoli veřejně. Nastavení nejsou nezávislé výjimky:
+`documentPrivateElements: true` vyžaduje dokumentaci všech typů a členů kromě výslovně deklarovaných
+soukromých polí, i když je `documentInternalElements` nebo `documentExposedElements` nastaveno na false.
+`documentPrivateFields: true` vyžaduje dokumentaci všech polí. Rozhraní a jejich členy řídí samostatně
+`documentInterfaces`; samotné vypnutí dokumentace interních prvků nevyjímá interní rozhraní,
+pokud má `documentInterfaces` hodnotu `true` (`all`).
 
 Následující příklad ukazuje konfigurační soubor, který vyžaduje dokumentaci všech veřejně přístupných členů a všech
 rozhraní (bez ohledu na jejich přístupnost), ale nevyžaduje dokumentaci ostatních interních ani soukromých členů.

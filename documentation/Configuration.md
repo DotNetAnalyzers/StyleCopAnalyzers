@@ -898,11 +898,31 @@ StyleCop Analyzers includes rules which require developers to document the major
 | `documentPrivateElements` | **false** | 1.0.0 | Specifies whether private elements need to be documented. When true, all types and members except for declared private fields require documentation. |
 | `documentPrivateFields` | **false** | 1.0.0 | Specifies whether private fields need to be documented. When true, all fields require documentation, regardless of accessibility. |
 
-These properties affect the behavior of the following rules which report missing documentation. Rules which report incorrect or incomplete documentation continue to apply to all documentation comments in the code.
+These properties affect the following rules which report missing documentation, even when some documentation is already present:
 
 * [SA1600 Elements should be documented](SA1600.md)
 * [SA1601 Partial elements should be documented](SA1601.md)
 * [SA1602 Enumeration items should be documented](SA1602.md)
+* [SA1604 Element documentation should have summary](SA1604.md)
+* [SA1605 Partial element documentation should have summary](SA1605.md)
+* [SA1609 Property documentation should have value](SA1609.md)
+* [SA1611 Element parameters should be documented](SA1611.md)
+* [SA1615 Element return value should be documented](SA1615.md)
+* [SA1618 Generic type parameters should be documented](SA1618.md)
+* [SA1619 Generic type parameters should be documented partial class](SA1619.md)
+
+For an element which does not require documentation, providing only a `<summary>` does not require adding
+`<param>`, `<returns>`, `<typeparam>`, or `<value>` tags. However, supplied documentation is still validated:
+an empty `<param>` or `<returns>` tag is reported by SA1614 or SA1616, respectively. Punctuation (SA1629)
+and standard summary wording checks also continue to apply.
+
+Accessibility is evaluated in the context of containing types: a public member of an internal class is
+internally accessible, not publicly exposed. The settings are not independent exclusions:
+`documentPrivateElements: true` requires documentation for all types and members except declared private
+fields, even when `documentInternalElements` or `documentExposedElements` is false.
+`documentPrivateFields: true` requires documentation for all fields. Interfaces and their members are
+controlled separately by `documentInterfaces`; disabling documentation for internal elements alone does
+not exempt internal interfaces when `documentInterfaces` is `true` (`all`).
 
 The following example shows a configuration file which requires developers to document all publicly-accessible members and all interfaces (regardless of accessibility), but does not require other internal or private members to be documented.
 
