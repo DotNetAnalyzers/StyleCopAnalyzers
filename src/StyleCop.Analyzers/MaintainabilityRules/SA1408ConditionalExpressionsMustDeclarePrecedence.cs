@@ -68,7 +68,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<SyntaxKind> HandledBinaryExpressionKinds =
-            ImmutableArray.Create(SyntaxKind.LogicalAndExpression, SyntaxKind.LogicalOrExpression);
+            ImmutableArray.Create(SyntaxKind.LogicalAndExpression, SyntaxKind.LogicalOrExpression, SyntaxKind.CoalesceExpression);
 
         private static readonly ImmutableArray<SyntaxKind> HandledBinaryPatternKinds =
             ImmutableArray.Create(SyntaxKindEx.AndPattern, SyntaxKindEx.OrPattern);
@@ -97,7 +97,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             if (binSyntax.Left is BinaryExpressionSyntax left)
             {
                 // Check if the operations are of the same kind
-                if (IsLogicalOperator(left.OperatorToken))
+                if (IsConditionalOperator(left.OperatorToken))
                 {
                     if (!IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
                     {
@@ -109,7 +109,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             if (binSyntax.Right is BinaryExpressionSyntax right)
             {
                 // Check if the operations are of the same kind
-                if (IsLogicalOperator(right.OperatorToken))
+                if (IsConditionalOperator(right.OperatorToken))
                 {
                     if (!IsSameFamily(binSyntax.OperatorToken, right.OperatorToken))
                     {
@@ -147,10 +147,16 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             return IsAndOperator(operatorToken) || IsOrOperator(operatorToken);
         }
 
+        private static bool IsConditionalOperator(SyntaxToken operatorToken)
+        {
+            return IsLogicalOperator(operatorToken) || operatorToken.IsKind(SyntaxKind.QuestionQuestionToken);
+        }
+
         private static bool IsSameFamily(SyntaxToken operatorToken1, SyntaxToken operatorToken2)
         {
             return (IsAndOperator(operatorToken1) && IsAndOperator(operatorToken2))
-             || (IsOrOperator(operatorToken1) && IsOrOperator(operatorToken2));
+             || (IsOrOperator(operatorToken1) && IsOrOperator(operatorToken2))
+             || (operatorToken1.IsKind(SyntaxKind.QuestionQuestionToken) && operatorToken2.IsKind(SyntaxKind.QuestionQuestionToken));
         }
 
         private static bool IsAndOperator(SyntaxToken operatorToken)
