@@ -281,13 +281,19 @@ namespace StyleCop.Analyzers.LayoutRules
             SyntaxToken previousToken = token.GetPreviousToken(includeZeroWidth: true);
             if (!previousToken.IsMissing)
             {
-                if (previousToken.GetLineSpan().StartLinePosition.Line == line)
+                if (previousToken.GetLineSpan().EndLinePosition.Line == line)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));
 
                     // no need to report more than one instance for this token
                     return;
                 }
+            }
+
+            if (token.IsKind(SyntaxKind.CloseBraceToken) && token.Parent.IsKind(SyntaxKindEx.SwitchExpression))
+            {
+                // The brace must start its own line, but the expression may continue after it.
+                return;
             }
 
             SyntaxToken nextToken = token.GetNextToken(includeZeroWidth: true);

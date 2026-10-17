@@ -90,7 +90,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 else
                 {
                     // Check if we need to apply a fix before the brace
-                    if (LocationHelpers.GetLineSpan(previousToken).StartLinePosition.Line == braceLine)
+                    if (LocationHelpers.GetLineSpan(previousToken).EndLinePosition.Line == braceLine)
                     {
                         if (!braceTokens.Contains(previousToken))
                         {
@@ -107,6 +107,7 @@ namespace StyleCop.Analyzers.LayoutRules
                     }
 
                     // Check if we need to apply a fix after the brace. No fix is needed when:
+                    // - The closing brace belongs to a switch expression and the next token is not another brace being fixed
                     // - The closing brace is followed by a semi-colon or closing paren
                     // - The closing brace is the last token in the file
                     // - The closing brace is followed by the while expression of a do/while loop and the
@@ -117,7 +118,9 @@ namespace StyleCop.Analyzers.LayoutRules
                     var allowDoWhileOnClosingBrace = settings.LayoutRules.AllowDoWhileOnClosingBrace && nextToken.IsKind(SyntaxKind.WhileKeyword) && (braceToken.Parent?.IsKind(SyntaxKind.Block) ?? false) && (braceToken.Parent!.Parent?.IsKind(SyntaxKind.DoStatement) ?? false);
 
                     if ((nextTokenLine == braceLine) &&
-                        (!braceToken.IsKind(SyntaxKind.CloseBraceToken) || !IsValidFollowingToken(nextToken)) &&
+                        (!braceToken.IsKind(SyntaxKind.CloseBraceToken)
+                            || ((!braceToken.Parent.IsKind(SyntaxKindEx.SwitchExpression) || braceTokens.Contains(nextToken))
+                                && !IsValidFollowingToken(nextToken))) &&
                         !isMultiDimensionArrayInitializer &&
                         !allowDoWhileOnClosingBrace)
                     {

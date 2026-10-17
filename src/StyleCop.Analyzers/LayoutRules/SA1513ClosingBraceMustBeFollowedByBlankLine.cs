@@ -197,6 +197,12 @@ namespace StyleCop.Analyzers.LayoutRules
                     return;
                 }
 
+                if (token.Parent.IsKind(SyntaxKindEx.SwitchExpression))
+                {
+                    // Switch expression braces do not delimit statements; the expression can continue after them.
+                    return;
+                }
+
                 var nextToken = token.GetNextToken(true, true);
 
                 if (nextToken.HasLeadingTrivia
