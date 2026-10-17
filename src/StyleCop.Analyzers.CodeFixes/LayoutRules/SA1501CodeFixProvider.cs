@@ -106,15 +106,18 @@ namespace StyleCop.Analyzers.LayoutRules
                 nextToken = nextToken.GetNextToken();
             }
 
-            var nextTokenStartLine = nextToken.GetLine();
-            var statementEndLine = statement.GetLastToken().GetEndLine();
-
-            if (nextTokenStartLine == statementEndLine)
+            if (!nextToken.IsKind(SyntaxKind.None))
             {
-                var indentationLevel = DetermineIndentationLevel(indentationSettings, tokenReplaceMap, statement);
-                var indentationTrivia = IndentationHelper.GenerateWhitespaceTrivia(indentationSettings, indentationLevel);
+                var nextTokenStartLine = nextToken.GetLine();
+                var statementEndLine = statement.GetLastToken().GetEndLine();
 
-                AddToReplaceMap(tokenReplaceMap, nextToken, nextToken.WithLeadingTrivia(indentationTrivia));
+                if (nextTokenStartLine == statementEndLine)
+                {
+                    var indentationLevel = DetermineIndentationLevel(indentationSettings, tokenReplaceMap, statement);
+                    var indentationTrivia = IndentationHelper.GenerateWhitespaceTrivia(indentationSettings, indentationLevel);
+
+                    AddToReplaceMap(tokenReplaceMap, nextToken, nextToken.WithLeadingTrivia(indentationTrivia));
+                }
             }
         }
 
