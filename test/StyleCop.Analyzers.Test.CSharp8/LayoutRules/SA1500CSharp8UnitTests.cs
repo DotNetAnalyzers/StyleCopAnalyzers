@@ -161,6 +161,83 @@ public class Item
         }
 
         /// <summary>
+        /// Verifies that Fix All separates nested switch expression closing braces.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(4332, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4332")]
+        public async Task TestNestedSwitchExpressionClosingBracesAsync()
+        {
+            var testCode = """
+                public class TestClass
+                {
+                    public int Test(int n) =>
+                        n switch
+                        {
+                            _ => n switch
+                            {
+                                _ => 1 {|#0:}|} {|#1:}|};
+                }
+                """;
+
+            var fixedCode = """
+                public class TestClass
+                {
+                    public int Test(int n) =>
+                        n switch
+                        {
+                            _ => n switch
+                            {
+                                _ => 1
+                            }
+                        };
+                }
+                """;
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a closing brace cannot share the final line of a multiline string arm.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(4332, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4332")]
+        public async Task TestMultilineStringArmClosingBraceAsync()
+        {
+            var testCode = """
+                public class TestClass
+                {
+                    public string Test(int n) =>
+                        n switch
+                        {
+                            _ => @"first
+                second" {|#0:}|} ?? "fallback";
+                }
+                """;
+
+            var fixedCode = """
+                public class TestClass
+                {
+                    public string Test(int n) =>
+                        n switch
+                        {
+                            _ => @"first
+                second"
+                        } ?? "fallback";
+                }
+                """;
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that operators and comments may continue a switch expression without a new line.
         /// </summary>
         /// <param name="continuation">The continuation after the switch expression.</param>

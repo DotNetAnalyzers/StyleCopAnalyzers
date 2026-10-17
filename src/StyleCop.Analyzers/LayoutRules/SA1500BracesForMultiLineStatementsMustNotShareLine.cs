@@ -281,7 +281,7 @@ namespace StyleCop.Analyzers.LayoutRules
             SyntaxToken previousToken = token.GetPreviousToken(includeZeroWidth: true);
             if (!previousToken.IsMissing)
             {
-                if (previousToken.GetLineSpan().StartLinePosition.Line == line)
+                if (previousToken.GetLineSpan().EndLinePosition.Line == line)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));
 
