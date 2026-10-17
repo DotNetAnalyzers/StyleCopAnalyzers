@@ -153,6 +153,37 @@ class Test : Base { }";
         }
 
         [Fact]
+        [WorkItem(1464, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1464")]
+        public async Task TestCodeFixRemovesInheritdocAsync()
+        {
+            var testCode = @"/// <inheritdoc />
+class Test { }";
+            var fixedCode = @"class Test { }";
+
+            await StyleCopCodeFixVerifier<SA1648InheritDocMustBeUsedWithInheritingClass, SA1648CodeFixProvider>.VerifyCSharpFixAsync(
+                testCode,
+                StyleCopCodeFixVerifier<SA1648InheritDocMustBeUsedWithInheritingClass, SA1648CodeFixProvider>.Diagnostic().WithLocation(1, 5),
+                fixedCode,
+                CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1464, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1464")]
+        public async Task TestCodeFixPreservesOtherDocumentationAsync()
+        {
+            var testCode = @"/// <summary>Test summary.</summary><inheritdoc />
+class Test { }";
+            var fixedCode = @"/// <summary>Test summary.</summary>
+class Test { }";
+
+            await StyleCopCodeFixVerifier<SA1648InheritDocMustBeUsedWithInheritingClass, SA1648CodeFixProvider>.VerifyCSharpFixAsync(
+                testCode,
+                StyleCopCodeFixVerifier<SA1648InheritDocMustBeUsedWithInheritingClass, SA1648CodeFixProvider>.Diagnostic().WithLocation(1, 37),
+                fixedCode,
+                CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestClassImplementsInterfaceAsync()
         {
             var testCode = @"interface IBase { }

@@ -350,6 +350,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         public static string @SA1647Title => GetResourceString("SA1647Title")!;
         /// <summary>&lt;inheritdoc&gt; has been used on an element that doesn't inherit from a base class or implement an interface.</summary>
         public static string @SA1648Description => GetResourceString("SA1648Description")!;
+        /// <summary>Remove invalid inheritdoc comment</summary>
+        public static string @SA1648CodeFix => GetResourceString("SA1648CodeFix")!;
         /// <summary>inheritdoc should be used with inheriting class</summary>
         public static string @SA1648MessageFormat => GetResourceString("SA1648MessageFormat")!;
         /// <summary>inheritdoc should be used with inheriting class</summary>

@@ -621,6 +621,9 @@
   <data name="SA1648Description" xml:space="preserve">
     <value>&lt;inheritdoc&gt; has been used on an element that doesn't inherit from a base class or implement an interface.</value>
   </data>
+  <data name="SA1648CodeFix" xml:space="preserve">
+    <value>Remove invalid inheritdoc comment</value>
+  </data>
   <data name="SA1648MessageFormat" xml:space="preserve">
     <value>inheritdoc should be used with inheriting class</value>
   </data>
