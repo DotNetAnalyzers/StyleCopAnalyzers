@@ -136,7 +136,7 @@ internal class SA1143ConditionalExpressionsMustBeFormattedConsistently : Diagnos
             }
 
             // Blank lines and lines inside multi-line literals have no meaningful indentation.
-            if (position == line.End || branch.FindToken(position).SpanStart < position)
+            if (position == line.End || IsInsideLiteralContent(branch, position))
             {
                 continue;
             }
@@ -150,6 +150,19 @@ internal class SA1143ConditionalExpressionsMustBeFormattedConsistently : Diagnos
         }
 
         return true;
+    }
+
+    private static bool IsInsideLiteralContent(ExpressionSyntax branch, int position)
+    {
+        var token = branch.FindToken(position);
+        if (token.SpanStart < position)
+        {
+            return true;
+        }
+
+        // An interpolation hole or closing quote starting a line follows string text that includes its indentation.
+        var previous = token.GetPreviousToken();
+        return previous.IsKind(SyntaxKind.InterpolatedStringTextToken) && previous.Span.End == position;
     }
 
     private static bool IsChain(ConditionalExpressionSyntax expression, SourceText text, int tabSize)
