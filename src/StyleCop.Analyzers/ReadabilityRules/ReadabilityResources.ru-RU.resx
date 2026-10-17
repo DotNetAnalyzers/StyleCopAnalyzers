@@ -282,6 +282,9 @@
   <data name="SA1114Title" xml:space="preserve">
     <value>Список параметров должен следовать за объявлением</value>
   </data>
+  <data name="SA1115CodeFix" xml:space="preserve">
+    <value>Удалить пустые строки между параметрами</value>
+  </data>
   <data name="SA1115Description" xml:space="preserve">
     <value>Параметр в вызове или объявлении метода или индексатора C# не начинается в той же строке, что и предыдущий параметр, или в следующей строке.</value>
   </data>

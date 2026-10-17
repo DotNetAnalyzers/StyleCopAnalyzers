@@ -9,7 +9,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
     using StyleCop.Analyzers.Test.CSharp8.ReadabilityRules;
     using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.ReadabilityRules.SA1115ParameterMustFollowComma>;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<StyleCop.Analyzers.ReadabilityRules.SA1115ParameterMustFollowComma, StyleCop.Analyzers.ReadabilityRules.SA1115CodeFixProvider>;
 
     public partial class SA1115CSharp9UnitTests : SA1115CSharp8UnitTests
     {
@@ -29,9 +29,20 @@ public class TestClass
     }
 }
 ";
+            var fixedCode = @"using System;
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        Func<int, int, int> func = static (int first,
+            int second) => first + second;
+    }
+}
+";
 
             var expected = Diagnostic().WithLocation(0);
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -46,9 +57,15 @@ public class TestClass
     {{|#0:int b|}})
 {{
 }}";
+            var fixedCode = $@"
+{typeKeyword} Foo(
+    int a,
+    int b)
+{{
+}}";
 
             var expected = this.GetExpectedResultTestPrimaryConstructorEmptyLineBetweenParameters();
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -82,9 +99,19 @@ public class TestClass
     {{|#0:b|}})
 {{
 }}";
+            var fixedCode = $@"
+{typeKeyword} Foo(int a, int b)
+{{
+}}
+
+{typeKeyword} Bar(int a, int b) : Foo(
+    a,
+    b)
+{{
+}}";
 
             var expected = this.GetExpectedResultTestPrimaryConstructorBaseListEmptyLineBetweenArguments();
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
