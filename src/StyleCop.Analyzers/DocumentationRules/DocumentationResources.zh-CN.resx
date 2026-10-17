@@ -562,6 +562,9 @@
   <data name="SA1648Description" xml:space="preserve">
     <value>在既不继承基类也不实现接口的元素上使用了 &lt;inheritdoc&gt;。</value>
   </data>
+  <data name="SA1648CodeFix" xml:space="preserve">
+    <value>删除无效的 inheritdoc 注释</value>
+  </data>
   <data name="SA1648MessageFormat" xml:space="preserve">
     <value>inheritdoc 应用于具有继承关系的类</value>
   </data>

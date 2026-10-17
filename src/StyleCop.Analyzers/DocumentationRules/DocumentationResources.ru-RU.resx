@@ -699,6 +699,9 @@
   <data name="SA1648Description" xml:space="preserve">
     <value>Тег &lt;inheritdoc&gt; использован для элемента, который не наследуется от базового класса и не реализует интерфейс.</value>
   </data>
+  <data name="SA1648CodeFix" xml:space="preserve">
+    <value>Удалить недопустимый комментарий inheritdoc</value>
+  </data>
   <data name="SA1648MessageFormat" xml:space="preserve">
     <value>Тег inheritdoc должен использоваться с наследующим классом</value>
   </data>
