@@ -91,7 +91,6 @@ internal class SA1143ConditionalExpressionsMustBeFormattedConsistently : Diagnos
             var question = expression.QuestionToken.GetLineSpan().StartLinePosition;
             var colon = expression.ColonToken.GetLineSpan().StartLinePosition;
             if (!IsSingleLine(expression.Condition)
-                || !IsSingleLine(expression.WhenTrue)
                 || question.Line <= expression.Condition.GetLineSpan().EndLinePosition.Line
                 || colon.Line <= expression.WhenTrue.GetLineSpan().EndLinePosition.Line
                 || expression.WhenTrue.GetLineSpan().StartLinePosition.Line != question.Line
@@ -104,14 +103,10 @@ internal class SA1143ConditionalExpressionsMustBeFormattedConsistently : Diagnos
                 return false;
             }
 
-            if (IsSingleLine(expression.WhenFalse))
+            if (IsSingleLine(expression.WhenFalse)
+                || !(expression.WhenFalse is ConditionalExpressionSyntax next))
             {
                 return true;
-            }
-
-            if (!(expression.WhenFalse is ConditionalExpressionSyntax next))
-            {
-                return false;
             }
 
             expression = next;

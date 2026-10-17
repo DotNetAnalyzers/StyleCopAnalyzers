@@ -59,6 +59,8 @@ public class SA1143UnitTests
     [InlineData("condition\n            ? 1\n            : 2")]
     [InlineData("(condition)\n            ? 1\n            : 2")]
     [InlineData("condition\n            ? (condition ? 1 : 2)\n            : 3")]
+    [InlineData("condition\n            ? 1 +\n                2\n            : 3")]
+    [InlineData("condition\n            ? 1\n            : 2 +\n                3")]
     [InlineData("condition\n            ? 1\n            : condition ? 2 : 3")]
     [InlineData("condition\n            ? 1\n            : condition\n                ? 2\n                : 3")]
     [InlineData("condition ? 1 :\n               condition ? 2 :\n               3")]
@@ -70,6 +72,35 @@ public class SA1143UnitTests
                 int M(bool condition)
                 {
                     return {{expression}};
+                }
+            }
+            """;
+        await VerifyCSharpDiagnosticAsync(source, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Verifies that conditional branches can contain multiline arithmetic expressions.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    [Fact]
+    public async Task TestMultilineArithmeticBranchesAsync()
+    {
+        const string source = """
+            class C
+            {
+                int M(bool condition, int a, int b, int c, int d, int e, int f)
+                {
+                    var first = condition
+                        ? a * b +
+                            c * d +
+                            e * f
+                        : 0;
+                    var second = condition
+                        ? 0
+                        : a * b +
+                            c * d +
+                            e * f;
+                    return first + second;
                 }
             }
             """;
@@ -111,9 +142,7 @@ public class SA1143UnitTests
     [InlineData("condition\n            {|#0:?|} 1\n             : 2")]
     [InlineData("condition\n            {|#0:?|}\n            1\n            : 2")]
     [InlineData("condition\n            {|#0:?|} 1\n            :\n            2")]
-    [InlineData("condition\n            {|#0:?|} 1 +\n                2\n            : 3")]
     [InlineData("condition &&\n            condition\n            {|#0:?|} 1\n            : 2")]
-    [InlineData("condition\n            {|#0:?|} 1\n            : 2 +\n                3")]
     [InlineData("condition\n            {|#0:?|} 1\n            : condition ? 2 :\n                3")]
     [InlineData("condition\n            /* keep */ {|#0:?|} 1\n            : 2")]
     [InlineData("condition {|#0:?|} 1 :\n            condition ? 2 :\n            3")]
