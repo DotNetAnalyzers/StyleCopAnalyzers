@@ -19,7 +19,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// <remarks>
     /// <para>To prevent method calls from becoming excessively complicated and unreadable, only the first parameter to
     /// a method or indexer call is allowed to span across multiple lines. Certain expression forms, including
-    /// anonymous methods and tuple expressions, are also allowed to span multiple lines. A violation of this rule
+    /// anonymous methods, tuple expressions, and strings, are also allowed to span multiple lines. A violation of this rule
     /// occurs whenever a parameter other than the first parameter spans across multiple lines, and its expression is
     /// not one of the forms allowed to span multiple lines.</para>
     ///
@@ -87,6 +87,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
             SyntaxKindEx.ImplicitObjectCreationExpression,
             SyntaxKindEx.CollectionExpression,
             SyntaxKindEx.TupleExpression,
+            SyntaxKind.StringLiteralExpression,
+            SyntaxKind.InterpolatedStringExpression,
+            SyntaxKindEx.Utf8StringLiteralExpression,
         };
 
         /// <inheritdoc/>
