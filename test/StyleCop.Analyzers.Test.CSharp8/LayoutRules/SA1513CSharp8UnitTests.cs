@@ -14,6 +14,74 @@ namespace StyleCop.Analyzers.Test.CSharp8.LayoutRules
 
     public partial class SA1513CSharp8UnitTests : SA1513CSharp7UnitTests
     {
+        /// <summary>
+        /// Verifies that a switch expression does not require a blank line before a null-coalescing operator.
+        /// </summary>
+        /// <param name="whitespace">The whitespace before the null-coalescing operator.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData(" ")]
+        [InlineData("\r\n        ")]
+        [WorkItem(4332, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4332")]
+        public async Task TestSwitchExpressionFollowedByNullCoalescingOperatorAsync(string whitespace)
+        {
+            var testCode = $$"""
+
+                #nullable enable
+                using System;
+
+                public class TestClass
+                {
+                    public string Test(int n)
+                    {
+                        var s0 = n switch
+                        {
+                            0 => GetNonNullString(),
+                            1 => GetNullableString(),
+                            _ => throw new NotSupportedException(),
+                        }{{whitespace}}?? throw new InvalidOperationException("Could not resolve valid string.");
+                        return s0;
+                    }
+
+                    private static string GetNonNullString() => throw new NotImplementedException();
+
+                    private static string? GetNullableString() => throw new NotImplementedException();
+                }
+
+                """;
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that operators and comments may continue a switch expression without a blank line.
+        /// </summary>
+        /// <param name="continuation">The continuation after the switch expression.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData(" + 1")]
+        [InlineData(" /* comment */ + 1")]
+        [InlineData("\r\n        // comment\r\n        + 1")]
+        [InlineData(" == 1 ? 2 : 3")]
+        [WorkItem(4332, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4332")]
+        public async Task TestSwitchExpressionContinuationAsync(string continuation)
+        {
+            var testCode = $$"""
+
+                public class TestClass
+                {
+                    public int Test(int n) =>
+                        n switch
+                        {
+                            _ => 0,
+                        }{{continuation}};
+                }
+
+                """;
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         [WorkItem(3003, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3003")]
         public async Task TestSwitchExpressionArmPropertyPatternNoBlankLineRequiredAsync()

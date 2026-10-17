@@ -290,6 +290,12 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
             }
 
+            if (token.IsKind(SyntaxKind.CloseBraceToken) && token.Parent.IsKind(SyntaxKindEx.SwitchExpression))
+            {
+                // The brace must start its own line, but the expression may continue after it.
+                return;
+            }
+
             SyntaxToken nextToken = token.GetNextToken(includeZeroWidth: true);
             if (!nextToken.IsMissing)
             {

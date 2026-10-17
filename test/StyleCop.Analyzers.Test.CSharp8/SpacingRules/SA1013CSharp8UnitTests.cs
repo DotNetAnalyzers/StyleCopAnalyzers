@@ -19,6 +19,97 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
     public partial class SA1013CSharp8UnitTests : SA1013CSharp7UnitTests
     {
         /// <summary>
+        /// Verifies that accessing a switch expression result does not require trailing whitespace.
+        /// </summary>
+        /// <param name="access">The member or element access after the parenthesized expression.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData(".ToString()")]
+        [InlineData("[0]")]
+        [InlineData("?.ToString()")]
+        [InlineData("?[0]")]
+        [WorkItem(4332, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4332")]
+        public async Task TestSwitchExpressionResultAccessAsync(string access)
+        {
+            var testCode = $$"""
+
+                public class TestClass
+                {
+                    public object Test(int n) =>
+                        (n switch
+                        {
+                            0 => "first",
+                            _ => "second",
+                        }){{access}};
+                }
+
+                """;
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that both sides of a closing switch expression brace still require whitespace.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(4332, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4332")]
+        public async Task TestSwitchExpressionClosingBraceRequiresWhitespaceAsync()
+        {
+            var testCode = """
+                public class TestClass
+                {
+                    public string Test(int n) =>
+                        n switch
+                        {
+                            _ => "first",{|#0:}|}?? "fallback";
+                }
+                """;
+
+            var fixedCode = """
+                public class TestClass
+                {
+                    public string Test(int n) =>
+                        n switch
+                        {
+                            _ => "first", } ?? "fallback";
+                }
+                """;
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0).WithArguments(string.Empty, "preceded"),
+                Diagnostic().WithLocation(0).WithArguments(string.Empty, "followed"),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that switch expression braces allow one or more whitespace characters.
+        /// </summary>
+        /// <param name="whitespace">The whitespace surrounding the braces.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData(" ")]
+        [InlineData("  ")]
+        [InlineData("\t")]
+        [InlineData("\r\n")]
+        [WorkItem(4332, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4332")]
+        public async Task TestSwitchExpressionClosingBraceAllowsWhitespaceAsync(string whitespace)
+        {
+            var testCode = $$"""
+                public class TestClass
+                {
+                    public string Test(int n) =>
+                        n switch{{whitespace}}{ {{whitespace}}_ => "first",{{whitespace}}}{{whitespace}}?? "fallback";
+                }
+                """;
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies the behavior of closing braces in case patterns.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>

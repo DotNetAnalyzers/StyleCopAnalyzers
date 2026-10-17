@@ -14,6 +14,65 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 
     public partial class SA1012CSharp8UnitTests : SA1012CSharp7UnitTests
     {
+        /// <summary>
+        /// Verifies that both sides of an opening switch expression brace still require whitespace.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(4332, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4332")]
+        public async Task TestSwitchExpressionOpeningBraceRequiresWhitespaceAsync()
+        {
+            var testCode = """
+                public class TestClass
+                {
+                    public int Test(int n) =>
+                        n switch{|#0:{|}_ => 0,
+                        };
+                }
+                """;
+
+            var fixedCode = """
+                public class TestClass
+                {
+                    public int Test(int n) =>
+                        n switch { _ => 0,
+                        };
+                }
+                """;
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(0).WithArguments(string.Empty, "preceded"),
+                Diagnostic().WithLocation(0).WithArguments(string.Empty, "followed"),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that switch expression braces allow one or more whitespace characters.
+        /// </summary>
+        /// <param name="whitespace">The whitespace surrounding the braces.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData(" ")]
+        [InlineData("  ")]
+        [InlineData("\t")]
+        [InlineData("\r\n")]
+        [WorkItem(4332, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4332")]
+        public async Task TestSwitchExpressionOpeningBraceAllowsWhitespaceAsync(string whitespace)
+        {
+            var testCode = $$"""
+                public class TestClass
+                {
+                    public int Test(int n) =>
+                        n switch{{whitespace}}{ {{whitespace}}_ => 0,{{whitespace}}};
+                }
+                """;
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         [WorkItem(3141, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3141")]
         public async Task TestInPropertyPatternsAsync()
