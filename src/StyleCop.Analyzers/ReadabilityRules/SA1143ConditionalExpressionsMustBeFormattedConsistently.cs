@@ -91,7 +91,6 @@ internal class SA1143ConditionalExpressionsMustBeFormattedConsistently : Diagnos
             var question = expression.QuestionToken.GetLineSpan().StartLinePosition;
             var colon = expression.ColonToken.GetLineSpan().StartLinePosition;
             if (!IsSingleLine(expression.Condition)
-                || !IsSingleLine(expression.WhenTrue)
                 || question.Line <= expression.Condition.GetLineSpan().EndLinePosition.Line
                 || colon.Line <= expression.WhenTrue.GetLineSpan().EndLinePosition.Line
                 || expression.WhenTrue.GetLineSpan().StartLinePosition.Line != question.Line
@@ -104,6 +103,12 @@ internal class SA1143ConditionalExpressionsMustBeFormattedConsistently : Diagnos
                 return false;
             }
 
+            var operatorColumn = GetColumn(text, expression.QuestionToken.SpanStart, tabSize);
+            if (!IsContinuationIndented(expression.WhenTrue, text, operatorColumn, tabSize))
+            {
+                return false;
+            }
+
             if (IsSingleLine(expression.WhenFalse))
             {
                 return true;
@@ -111,11 +116,53 @@ internal class SA1143ConditionalExpressionsMustBeFormattedConsistently : Diagnos
 
             if (!(expression.WhenFalse is ConditionalExpressionSyntax next))
             {
-                return false;
+                return IsContinuationIndented(expression.WhenFalse, text, operatorColumn, tabSize);
             }
 
             expression = next;
         }
+    }
+
+    private static bool IsContinuationIndented(ExpressionSyntax branch, SourceText text, int operatorColumn, int tabSize)
+    {
+        var span = branch.GetLineSpan();
+        for (var lineNumber = span.StartLinePosition.Line + 1; lineNumber <= span.EndLinePosition.Line; lineNumber++)
+        {
+            var line = text.Lines[lineNumber];
+            var position = line.Start;
+            while (position < line.End && (text[position] == ' ' || text[position] == '\t'))
+            {
+                position++;
+            }
+
+            // Blank lines and lines inside multi-line literals have no meaningful indentation.
+            if (position == line.End || IsInsideLiteralContent(branch, position))
+            {
+                continue;
+            }
+
+            var column = GetColumn(text, position, tabSize);
+            var isBrace = text[position] == '{' || text[position] == '}';
+            if (column < operatorColumn || (column == operatorColumn && !isBrace))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool IsInsideLiteralContent(ExpressionSyntax branch, int position)
+    {
+        var token = branch.FindToken(position);
+        if (token.SpanStart < position)
+        {
+            return true;
+        }
+
+        // An interpolation hole or closing quote starting a line follows string text that includes its indentation.
+        var previous = token.GetPreviousToken();
+        return previous.IsKind(SyntaxKind.InterpolatedStringTextToken) && previous.Span.End == position;
     }
 
     private static bool IsChain(ConditionalExpressionSyntax expression, SourceText text, int tabSize)
