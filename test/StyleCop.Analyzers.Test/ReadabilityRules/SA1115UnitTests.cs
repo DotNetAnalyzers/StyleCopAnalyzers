@@ -7,10 +7,291 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.ReadabilityRules.SA1115ParameterMustFollowComma>;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<StyleCop.Analyzers.ReadabilityRules.SA1115ParameterMustFollowComma, StyleCop.Analyzers.ReadabilityRules.SA1115CodeFixProvider>;
 
     public class SA1115UnitTests
     {
+        [Fact]
+        public async Task TestCodeFixDeclarationsAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    public Foo(int first,
+
+        {|#0:int second|}) { }
+
+    public void Method(int first,
+
+        {|#1:int second|},
+
+        {|#2:int third|}) { }
+
+    public int this[int first,
+
+        {|#3:int second|}] => 0;
+
+    public static Foo operator +(Foo first,
+
+        {|#4:Foo second|}) => first;
+
+    public delegate void Callback(int first,
+
+        {|#5:int second|});
+}";
+            var fixedCode = @"
+class Foo
+{
+    public Foo(int first,
+        int second) { }
+
+    public void Method(int first,
+        int second,
+        int third) { }
+
+    public int this[int first,
+        int second] => 0;
+
+    public static Foo operator +(Foo first,
+        Foo second) => first;
+
+    public delegate void Callback(int first,
+        int second);
+}";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+                Diagnostic().WithLocation(2),
+                Diagnostic().WithLocation(3),
+                Diagnostic().WithLocation(4),
+                Diagnostic().WithLocation(5),
+            };
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestCodeFixArgumentsAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    public Foo(int first, int second) { }
+    public Foo() : this(1,
+
+        {|#0:2|}) { }
+
+    public int this[int first, int second]
+    {
+        get { return 0; }
+        set { }
+    }
+
+    public void Method()
+    {
+        var instance = new Foo(1,
+
+            {|#1:2|});
+        var value = instance?[1,
+
+            {|#2:2|}];
+        var array = new int[1,
+
+            {|#3:2|}];
+        array[0,
+
+            {|#4:1|}] = 0;
+        var initialized = new Foo { [1,
+
+            {|#5:2|}] = 0 };
+        System.Console.WriteLine(""{0}{1}"",
+
+            {|#6:instance[1,
+
+                {|#7:2|}]|});
+    }
+}";
+            var fixedCode = @"
+class Foo
+{
+    public Foo(int first, int second) { }
+    public Foo() : this(1,
+        2) { }
+
+    public int this[int first, int second]
+    {
+        get { return 0; }
+        set { }
+    }
+
+    public void Method()
+    {
+        var instance = new Foo(1,
+            2);
+        var value = instance?[1,
+            2];
+        var array = new int[1,
+            2];
+        array[0,
+            1] = 0;
+        var initialized = new Foo { [1,
+            2] = 0 };
+        System.Console.WriteLine(""{0}{1}"",
+            instance[1,
+                2]);
+    }
+}";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+                Diagnostic().WithLocation(2),
+                Diagnostic().WithLocation(3),
+                Diagnostic().WithLocation(4),
+                Diagnostic().WithLocation(5),
+                Diagnostic().WithLocation(6),
+                Diagnostic().WithLocation(7),
+            };
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestCodeFixAttributesAndAnonymousFunctionsAsync()
+        {
+            var testCode = @"
+[System.AttributeUsage(System.AttributeTargets.All,
+
+    {|#0:AllowMultiple = true|})]
+class ExampleAttribute : System.Attribute
+{
+}
+
+[Example,
+
+    {|#1:Example|}]
+class Foo
+{
+    public void Method()
+    {
+        System.Action<int, int> lambda = (first,
+
+            {|#2:second|}) => { };
+        System.Action<int, int> anonymous = delegate(int first,
+
+            {|#3:int second|}) { };
+    }
+}";
+            var fixedCode = @"
+[System.AttributeUsage(System.AttributeTargets.All,
+    AllowMultiple = true)]
+class ExampleAttribute : System.Attribute
+{
+}
+
+[Example,
+    Example]
+class Foo
+{
+    public void Method()
+    {
+        System.Action<int, int> lambda = (first,
+            second) => { };
+        System.Action<int, int> anonymous = delegate(int first,
+            int second) { };
+    }
+}";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(0),
+                Diagnostic().WithLocation(1),
+                Diagnostic().WithLocation(2),
+                Diagnostic().WithLocation(3),
+            };
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("\r\n")]
+        [InlineData("\n")]
+        [InlineData("\r")]
+        public async Task TestCodeFixPreservesTriviaAsync(string newLine)
+        {
+            var testCode = @"
+class Foo
+{
+    public void Method(
+        int first, // trailing comment
+
+        // leading comment
+
+        /* multi-line comment
+
+           preserve this blank line */
+
+#if true
+
+        // active branch
+#else
+
+        disabled text
+#endif
+
+        {|#0:int second|})
+    {
+    }
+}";
+            var fixedCode = @"
+class Foo
+{
+    public void Method(
+        int first, // trailing comment
+        // leading comment
+        /* multi-line comment
+
+           preserve this blank line */
+#if true
+        // active branch
+#else
+
+        disabled text
+#endif
+        int second)
+    {
+    }
+}";
+
+            testCode = testCode.Replace("\r\n", "\n").Replace("\n", newLine);
+            fixedCode = fixedCode.Replace("\r\n", "\n").Replace("\n", newLine);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestCodeFixWhitespaceOnlyLinesAsync()
+        {
+            var testCode = "class Foo\n{\n\tvoid Method(int first,\n \t \n\t\n\t\t{|#0:int second|}) { }\n}";
+            var fixedCode = "class Foo\n{\n\tvoid Method(int first,\n\t\tint second) { }\n}";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestCodeFixNotOfferedWithoutRemovableBlankLinesAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Method(int first, /* trailing comment
+
+        preserve this blank line */
+        {|#0:int second|}) { }
+}";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestMethodDeclarationEmptyLinesBetweenParametersAsync()
         {

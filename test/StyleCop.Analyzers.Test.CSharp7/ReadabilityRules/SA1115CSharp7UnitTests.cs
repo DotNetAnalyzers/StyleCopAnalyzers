@@ -8,7 +8,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.ReadabilityRules;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.ReadabilityRules.SA1115ParameterMustFollowComma>;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<StyleCop.Analyzers.ReadabilityRules.SA1115ParameterMustFollowComma, StyleCop.Analyzers.ReadabilityRules.SA1115CodeFixProvider>;
 
     public partial class SA1115CSharp7UnitTests : SA1115UnitTests
     {
@@ -30,11 +30,24 @@ int k)
         }
     }
 }";
+            var fixedCode = @"
+class Foo
+{
+    public void Method()
+    {
+        void Bar(int i, int z,
+string s,
+int j,
+int k)
+        {
+        }
+    }
+}";
 
             DiagnosticResult expected1 = Diagnostic().WithLocation(8, 1);
             DiagnosticResult expected2 = Diagnostic().WithLocation(10, 1);
 
-            await VerifyCSharpDiagnosticAsync(testCode, new[] { expected1, expected2 }, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, new[] { expected1, expected2 }, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]

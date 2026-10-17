@@ -7,8 +7,9 @@ namespace StyleCop.Analyzers.Test.CSharp15.ReadabilityRules
     using System.Threading.Tasks;
     using StyleCop.Analyzers.Test.CSharp14.ReadabilityRules;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<
-        StyleCop.Analyzers.ReadabilityRules.SA1115ParameterMustFollowComma>;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.ReadabilityRules.SA1115ParameterMustFollowComma,
+        StyleCop.Analyzers.ReadabilityRules.SA1115CodeFixProvider>;
 
     public partial class SA1115CSharp15UnitTests : SA1115CSharp14UnitTests
     {
@@ -27,10 +28,15 @@ public union Pet(
 
     {|#0:string|});
 ";
+            var fixedCode = @"
+public union Pet(
+    int,
+    string);
+";
 
             var expected = Diagnostic().WithLocation(0);
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -124,6 +124,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         public static string @SA1114MessageFormat => GetResourceString("SA1114MessageFormat")!;
         /// <summary>Parameter list should follow declaration</summary>
         public static string @SA1114Title => GetResourceString("SA1114Title")!;
+        /// <summary>Remove blank lines between parameters</summary>
+        public static string @SA1115CodeFix => GetResourceString("SA1115CodeFix")!;
         /// <summary>A parameter within a C# method or indexer call or declaration does not begin on the same line as the previous parameter, or on the next line.</summary>
         public static string @SA1115Description => GetResourceString("SA1115Description")!;
         /// <summary>The parameter should begin on the line after the previous parameter</summary>
