@@ -186,6 +186,15 @@
   <data name="SA1653Title" xml:space="preserve">
     <value>Только одно частичное объявление должно содержать краткое описание</value>
   </data>
+  <data name="SA1654Description" xml:space="preserve">
+    <value>В атрибутах cref XML-документации для аргументов обобщенных типов следует использовать фигурные скобки вместо экранированных угловых скобок.</value>
+  </data>
+  <data name="SA1654MessageFormat" xml:space="preserve">
+    <value>Используйте фигурные скобки для аргументов обобщенных типов в атрибутах cref вместо экранированных угловых скобок</value>
+  </data>
+  <data name="SA1654Title" xml:space="preserve">
+    <value>Правильно оформляйте скобки обобщенных типов</value>
+  </data>
   <data name="StaticConstructorStandardTextFirstPart" xml:space="preserve">
     <value>Инициализирует статические члены {0} </value>
   </data>
@@ -719,6 +728,9 @@
   </data>
   <data name="SA1651CodeFix" xml:space="preserve">
     <value>Завершить оформление текста заполнителя</value>
+  </data>
+  <data name="SA1654CodeFix" xml:space="preserve">
+    <value>Использовать фигурные скобки для аргументов обобщенного типа</value>
   </data>
   <data name="SA1651Description" xml:space="preserve">
     <value>Документация элемента содержит элемент &lt;placeholder&gt;.</value>
