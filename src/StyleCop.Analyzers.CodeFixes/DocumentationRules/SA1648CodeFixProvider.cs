@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using StyleCop.Analyzers.Helpers;
 
@@ -34,10 +35,17 @@ internal class SA1648CodeFixProvider : CodeFixProvider
     }
 
     /// <inheritdoc/>
-    public override Task RegisterCodeFixesAsync(CodeFixContext context)
+    public override async Task RegisterCodeFixesAsync(CodeFixContext context)
     {
+        SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
         foreach (Diagnostic diagnostic in context.Diagnostics)
         {
+            if (root.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true) is XmlEmptyElementSyntax xmlEmptyElement
+                && xmlEmptyElement.Name.ToString() == "include")
+            {
+                continue;
+            }
+
             context.RegisterCodeFix(
                 CodeAction.Create(
                     DocumentationResources.SA1648CodeFix,
@@ -45,8 +53,6 @@ internal class SA1648CodeFixProvider : CodeFixProvider
                     nameof(SA1648CodeFixProvider)),
                 diagnostic);
         }
-
-        return SpecializedTasks.CompletedTask;
     }
 
     private static async Task<Document> RemoveInheritdocAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)

@@ -184,6 +184,34 @@ class Test { }";
         }
 
         [Fact]
+        [WorkItem(1464, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1464")]
+        public async Task TestCodeFixIsNotOfferedForIncludeWithOtherDocumentationAsync()
+        {
+            var testCode = @"/// <include file='Documentation.xml' path='/Test/*'/>
+class Test { }";
+            string includedDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<Test>
+  <summary>Test summary.</summary>
+  <inheritdoc/>
+</Test>
+";
+
+            var test = new StyleCopCodeFixVerifier<SA1648InheritDocMustBeUsedWithInheritingClass, SA1648CodeFixProvider>.CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = testCode,
+                XmlReferences =
+                {
+                    { "Documentation.xml", includedDocumentation },
+                },
+            };
+            test.ExpectedDiagnostics.Add(
+                StyleCopCodeFixVerifier<SA1648InheritDocMustBeUsedWithInheritingClass, SA1648CodeFixProvider>.Diagnostic().WithLocation(1, 5));
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestClassImplementsInterfaceAsync()
         {
             var testCode = @"interface IBase { }
