@@ -11,6 +11,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
 
@@ -49,17 +50,44 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
-            var textChange = GetTextChange(text, diagnostic);
-            return document.WithText(text.WithChanges(textChange));
+            return document.WithText(ApplyTextChanges(text, GetTextChanges(root, diagnostic)));
         }
 
-        private static TextChange GetTextChange(SourceText text, Diagnostic diagnostic)
+        private static List<TextChange> GetTextChanges(SyntaxNode root, Diagnostic diagnostic)
         {
-            var span = diagnostic.Location.SourceSpan;
-            string crefText = text.ToString(span);
-            string fixedCrefText = crefText.Replace("&lt;", "{").Replace("&gt;", "}");
-            return new TextChange(span, fixedCrefText);
+            var changes = new List<TextChange>();
+            foreach (var token in root.DescendantTokens(descendIntoTrivia: true))
+            {
+                if (diagnostic.Location.SourceSpan.Contains(token.Span)
+                    && token.Parent is TypeArgumentListSyntax
+                    && ((token.Text.Length > 0 && token.Text[0] == '&') || token.Text == ">")
+                    && token.ValueText == "<")
+                {
+                    changes.Add(new TextChange(token.Span, "{"));
+                }
+                else if (diagnostic.Location.SourceSpan.Contains(token.Span)
+                    && token.Parent is TypeArgumentListSyntax
+                    && ((token.Text.Length > 0 && token.Text[0] == '&') || token.Text == ">")
+                    && token.ValueText == ">")
+                {
+                    changes.Add(new TextChange(token.Span, "}"));
+                }
+            }
+
+            return changes;
+        }
+
+        private static SourceText ApplyTextChanges(SourceText text, List<TextChange> changes)
+        {
+            changes.Sort((left, right) => right.Span.Start.CompareTo(left.Span.Start));
+            foreach (var change in changes)
+            {
+                text = text.WithChanges(change);
+            }
+
+            return text;
         }
 
         private class FixAll : DocumentBasedFixAllProvider
@@ -75,17 +103,16 @@ namespace StyleCop.Analyzers.DocumentationRules
                     return null;
                 }
 
+                var root = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
                 var text = await document.GetTextAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
                 var changes = new List<TextChange>();
                 foreach (var diagnostic in diagnostics)
                 {
-                    changes.Add(GetTextChange(text, diagnostic));
+                    changes.AddRange(GetTextChanges(root, diagnostic));
                 }
 
-                changes.Sort((left, right) => left.Span.Start.CompareTo(right.Span.Start));
-
                 var tree = await document.GetSyntaxTreeAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
-                return await tree.WithChangedText(text.WithChanges(changes)).GetRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                return await tree.WithChangedText(ApplyTextChanges(text, changes)).GetRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
             }
         }
     }

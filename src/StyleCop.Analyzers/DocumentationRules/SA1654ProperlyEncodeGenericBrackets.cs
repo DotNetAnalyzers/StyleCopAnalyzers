@@ -44,20 +44,11 @@ internal class SA1654ProperlyEncodeGenericBrackets : DiagnosticAnalyzer
     private static void HandleXmlCrefAttribute(SyntaxNodeAnalysisContext context)
     {
         var attribute = (XmlCrefAttributeSyntax)context.Node;
-        bool hasEncodedLessThan = false;
-        bool hasEncodedGreaterThan = false;
         foreach (var token in attribute.Cref.DescendantTokens())
         {
-            if (token.Text == "&lt;")
-            {
-                hasEncodedLessThan = true;
-            }
-            else if (token.Text == "&gt;")
-            {
-                hasEncodedGreaterThan = true;
-            }
-
-            if (hasEncodedLessThan && hasEncodedGreaterThan)
+            if (token.Parent is TypeArgumentListSyntax
+                && (token.ValueText == "<" || token.ValueText == ">")
+                && ((token.Text.Length > 0 && token.Text[0] == '&') || token.Text == ">"))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, attribute.Cref.GetLocation()));
                 return;
