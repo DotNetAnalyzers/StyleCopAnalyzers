@@ -3,8 +3,11 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.LayoutRules
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.LayoutRules;
     using Xunit;
@@ -14,6 +17,34 @@ namespace StyleCop.Analyzers.Test.CSharp9.LayoutRules
 
     public partial class SA1501CSharp9UnitTests : SA1501CSharp8UnitTests
     {
+        [Fact]
+        [WorkItem(987, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/987")]
+        public async Task TestTopLevelStatementAtEndOfFileAsync()
+        {
+            var testCode = @"if (true) {|#0:{|} System.Console.WriteLine(); }";
+            var fixedCode = @"if (true)
+{
+    System.Console.WriteLine();
+}" + "\r\n";
+
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+            };
+
+            test.SolutionTransforms.Add((solution, projectId) =>
+            {
+                var project = solution.GetProject(projectId) ?? throw new InvalidOperationException("Test project was not found.");
+                var compilationOptions = project.CompilationOptions as CSharpCompilationOptions
+                    ?? throw new InvalidOperationException("Expected C# compilation options.");
+                return solution.WithProjectCompilationOptions(projectId, compilationOptions.WithOutputKind(OutputKind.ConsoleApplication));
+            });
+
+            test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         [WorkItem(3978, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3978")]
         public async Task TestLocalFunctionWithAttributeOnSingleLineAsync()
