@@ -1201,6 +1201,52 @@ public class Foo : Exception
         }
 
         /// <summary>
+        /// Verifies that Fix All preserves spacing fixes in directives nested in a token's leading trivia.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(1458, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1458")]
+        public async Task TestFixAllPreservesNestedDirectiveFixesAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    public int TestMethod()
+    {
+        return
+#if! NOT
+~ 0
+#endif
+;
+    }
+}
+";
+            var fixedCode = @"public class TestClass
+{
+    public int TestMethod()
+    {
+        return
+#if !NOT
+~0
+#endif
+;
+    }
+}
+";
+
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                NumberOfFixAllIterations = 1,
+            };
+
+            test.ExpectedDiagnostics.Add(Diagnostic(DescriptorPrecededByWhitespace).WithLocation(6, 4).WithArguments("!"));
+            test.ExpectedDiagnostics.Add(Diagnostic(DescriptorNotFollowedByWhitespace).WithLocation(6, 4).WithArguments("!"));
+            test.ExpectedDiagnostics.Add(Diagnostic(DescriptorNotFollowedByWhitespace).WithLocation(7, 1).WithArguments("~"));
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that the code fix preserves a line break before a constructor initializer.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
