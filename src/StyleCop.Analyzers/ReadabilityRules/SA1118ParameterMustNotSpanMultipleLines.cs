@@ -144,8 +144,24 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static bool IsArgumentOnExceptionList(ExpressionSyntax argumentExpression)
         {
-            return argumentExpression != null
-                && ArgumentExceptionSyntaxKinds.Any(argumentExpression.IsKind);
+            if (argumentExpression == null)
+            {
+                return false;
+            }
+
+            if (ArgumentExceptionSyntaxKinds.Any(argumentExpression.IsKind))
+            {
+                return true;
+            }
+
+            if (argumentExpression.IsKind(SyntaxKindEx.SwitchExpression))
+            {
+                var switchExpression = (SwitchExpressionSyntaxWrapper)argumentExpression;
+                return argumentExpression.GetLineSpan().StartLinePosition.Line
+                    == switchExpression.SwitchKeyword.GetLineSpan().StartLinePosition.Line;
+            }
+
+            return false;
         }
     }
 }
