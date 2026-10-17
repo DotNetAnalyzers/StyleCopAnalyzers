@@ -63,3 +63,4 @@ dotnet_analyzer_diagnostic.category-StyleCop.CSharp.DocumentationRules.severity 
 [SA1651](SA1651.md) | DoNotUsePlaceholderElements | 元素的文档包含一个或多个 `<placeholder>` 元素。
 [SA1652](SA1652.md) | EnableXmlDocumentationOutput | 此规则已移至 [SA0001](SA0001.md)。
 [SA1653](SA1653.md) | OnlyOnePartialDeclarationShouldContainSummaryDocumentation | 分部类型的多个声明包含摘要文档注释。
+[SA1654](SA1654.md) | ProperlyEncodeGenericBrackets | cref 属性中的泛型类型参数应使用大括号，而不是转义的尖括号。
