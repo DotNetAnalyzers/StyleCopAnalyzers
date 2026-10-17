@@ -1,0 +1,12 @@
+{
+  "name": "issue-links",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "node --test"
+  },
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "mdast-util-from-markdown": "2.1.0"
+  }
+}
