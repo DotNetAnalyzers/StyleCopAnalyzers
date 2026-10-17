@@ -36,6 +36,7 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind UnsignedRightShiftAssignmentExpression = (SyntaxKind)8726;
         public const SyntaxKind IndexExpression = (SyntaxKind)8741;
         public const SyntaxKind DefaultLiteralExpression = (SyntaxKind)8755;
+        public const SyntaxKind Utf8StringLiteralExpression = (SyntaxKind)8756;
         public const SyntaxKind LocalFunctionStatement = (SyntaxKind)8830;
         public const SyntaxKind FileScopedNamespaceDeclaration = (SyntaxKind)8845;
         public const SyntaxKind TupleType = (SyntaxKind)8924;

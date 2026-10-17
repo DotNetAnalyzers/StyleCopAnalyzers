@@ -32,6 +32,70 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             },
         };
 
+        /// <summary>
+        /// Verifies that verbatim strings, including interpolated strings, can span multiple lines.
+        /// </summary>
+        /// <param name="expression">The string expression to pass as an argument.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("@\"first\nsecond\"")]
+        [InlineData("$@\"first {1}\nsecond\"")]
+        [InlineData("$@\"{1 +\n2}\"")]
+        [WorkItem(4330, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4330")]
+        public async Task TestMultilineVerbatimStringArgumentAsync(string expression)
+        {
+            await VerifyMultilineStringArgumentAsync(expression).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that verbatim strings in attribute arguments can span multiple lines.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(4330, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4330")]
+        public async Task TestMultilineVerbatimStringAttributeArgumentAsync()
+        {
+            var testCode = """
+                [Example(0, @"first
+                second", Text = @"third
+                fourth")]
+                class ExampleAttribute : System.Attribute
+                {
+                    public ExampleAttribute(int value, string text) { }
+                    public string Text { get; set; }
+                }
+                """;
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the string exemption does not extend to concatenation expressions.
+        /// </summary>
+        /// <param name="prefix">The prefix of the string literal.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("@")]
+        [InlineData("$@")]
+        [WorkItem(4330, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4330")]
+        public async Task TestMultilineStringConcatenationArgumentAsync(string prefix)
+        {
+            var testCode = $$"""
+                class C
+                {
+                    void M(int value, string text) { }
+                    void Test()
+                    {
+                        M(0, {|#0:{{prefix}}"first
+                second" +
+                            "third"|});
+                    }
+                }
+                """;
+
+            await VerifyCSharpDiagnosticAsync(testCode, Diagnostic().WithLocation(0), CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestMethodCallWithTwoParametersSecondSpansMoreThanOneLineAsync()
         {
@@ -452,6 +516,31 @@ class Foo
 }}";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected static async Task VerifyMultilineStringArgumentAsync(string expression)
+        {
+            var testCode = $$"""
+                class C
+                {
+                    C(int value, string text) { }
+                    string this[int value, string text] { get { return text; } }
+                    void M(int value, string text) { }
+                    void Test()
+                    {
+                        M(0, {{expression}});
+                        M(0, text: {{expression}});
+                        var instance = new C(0, {{expression}});
+                        var result = this[0, {{expression}}];
+                    }
+                }
+                """;
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                TestState = { MarkupHandling = MarkupMode.None },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
