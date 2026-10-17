@@ -15,6 +15,7 @@ SA1414 | StyleCop.CSharp.ReadabilityRules | Warning | SA1414TupleTypesInSignatur
 SX1412 | StyleCop.CSharp.MaintainabilityRules | Warning | SX1412StoreFilesAsUtf8WithoutByteOrderMark, [Documentation](../../documentation/SX1412.md)
 SA1518 | StyleCop.CSharp.LayoutRules | Warning | SA1518UseLineEndingsCorrectlyAtEndOfFile, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1518.html)
 SA1653 | StyleCop.CSharp.DocumentationRules | Warning | SA1653OnlyOnePartialDeclarationShouldContainSummaryDocumentation, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1653.html)
+SA1654 | StyleCop.CSharp.DocumentationRules | Warning | SA1654ProperlyEncodeGenericBrackets, [Documentation](../../documentation/SA1654.md)
 
 ### Changed Rules
 

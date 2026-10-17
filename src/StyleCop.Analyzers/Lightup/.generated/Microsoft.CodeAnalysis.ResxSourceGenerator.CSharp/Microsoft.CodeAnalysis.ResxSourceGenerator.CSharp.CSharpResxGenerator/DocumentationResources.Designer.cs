@@ -400,6 +400,14 @@ namespace StyleCop.Analyzers.DocumentationRules
         public static string @SA1653MessageFormat => GetResourceString("SA1653MessageFormat")!;
         /// <summary>Only one partial declaration should contain summary documentation</summary>
         public static string @SA1653Title => GetResourceString("SA1653Title")!;
+        /// <summary>Generic type arguments in cref attributes should use braces instead of escaped angle brackets.</summary>
+        public static string @SA1654Description => GetResourceString("SA1654Description")!;
+        /// <summary>Use braces for generic type arguments</summary>
+        public static string @SA1654CodeFix => GetResourceString("SA1654CodeFix")!;
+        /// <summary>Use braces for generic type arguments in cref attributes instead of escaped angle brackets</summary>
+        public static string @SA1654MessageFormat => GetResourceString("SA1654MessageFormat")!;
+        /// <summary>Properly encode generic brackets</summary>
+        public static string @SA1654Title => GetResourceString("SA1654Title")!;
         /// <summary>Initializes static members of the</summary>
         public static string @StaticConstructorStandardTextFirstPart => GetResourceString("StaticConstructorStandardTextFirstPart")!;
         /// <summary>{0}</summary>
