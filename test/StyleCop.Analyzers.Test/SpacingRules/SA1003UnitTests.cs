@@ -1233,13 +1233,17 @@ public class Foo : Exception
 }
 ";
 
-            DiagnosticResult[] expected =
+            var test = new CSharpTest
             {
-                Diagnostic(DescriptorPrecededByWhitespace).WithLocation(6, 4).WithArguments("!"),
-                Diagnostic(DescriptorNotFollowedByWhitespace).WithLocation(6, 4).WithArguments("!"),
-                Diagnostic(DescriptorNotFollowedByWhitespace).WithLocation(7, 1).WithArguments("~"),
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                NumberOfFixAllIterations = 1,
             };
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+
+            test.ExpectedDiagnostics.Add(Diagnostic(DescriptorPrecededByWhitespace).WithLocation(6, 4).WithArguments("!"));
+            test.ExpectedDiagnostics.Add(Diagnostic(DescriptorNotFollowedByWhitespace).WithLocation(6, 4).WithArguments("!"));
+            test.ExpectedDiagnostics.Add(Diagnostic(DescriptorNotFollowedByWhitespace).WithLocation(7, 1).WithArguments("~"));
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
