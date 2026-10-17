@@ -103,14 +103,53 @@ internal class SA1143ConditionalExpressionsMustBeFormattedConsistently : Diagnos
                 return false;
             }
 
-            if (IsSingleLine(expression.WhenFalse)
-                || !(expression.WhenFalse is ConditionalExpressionSyntax next))
+            var operatorColumn = GetColumn(text, expression.QuestionToken.SpanStart, tabSize);
+            if (!IsContinuationIndented(expression.WhenTrue, text, operatorColumn, tabSize))
+            {
+                return false;
+            }
+
+            if (IsSingleLine(expression.WhenFalse))
             {
                 return true;
             }
 
+            if (!(expression.WhenFalse is ConditionalExpressionSyntax next))
+            {
+                return IsContinuationIndented(expression.WhenFalse, text, operatorColumn, tabSize);
+            }
+
             expression = next;
         }
+    }
+
+    private static bool IsContinuationIndented(ExpressionSyntax branch, SourceText text, int operatorColumn, int tabSize)
+    {
+        var span = branch.GetLineSpan();
+        for (var lineNumber = span.StartLinePosition.Line + 1; lineNumber <= span.EndLinePosition.Line; lineNumber++)
+        {
+            var line = text.Lines[lineNumber];
+            var position = line.Start;
+            while (position < line.End && (text[position] == ' ' || text[position] == '\t'))
+            {
+                position++;
+            }
+
+            // Blank lines and lines inside multi-line literals have no meaningful indentation.
+            if (position == line.End || branch.FindToken(position).SpanStart < position)
+            {
+                continue;
+            }
+
+            var column = GetColumn(text, position, tabSize);
+            var isBrace = text[position] == '{' || text[position] == '}';
+            if (column < operatorColumn || (column == operatorColumn && !isBrace))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private static bool IsChain(ConditionalExpressionSyntax expression, SourceText text, int tabSize)
