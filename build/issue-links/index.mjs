@@ -1,6 +1,7 @@
 import { fromMarkdown } from "mdast-util-from-markdown";
 
 const documentation = "https://dotnetanalyzers.github.io/StyleCopAnalyzers/";
+const diagnosticId = /^S[AX]\d{4}[a-z]?$/i;
 
 export function linkDiagnostics(body) {
     const replacements = [];
@@ -15,16 +16,16 @@ export function linkDiagnostics(body) {
             for (const match of node.value.matchAll(/<\/?a\b[^>]*>/gi)) {
                 anchorDepth = match[0].startsWith("</") ? Math.max(0, anchorDepth - 1) : anchorDepth + 1;
             }
-        } else if (!anchorDepth && node.type === "inlineCode" && /^SA\d{4}$/.test(node.value)) {
+        } else if (!anchorDepth && node.type === "inlineCode" && diagnosticId.test(node.value)) {
             const start = node.position.start.offset;
             const end = node.position.end.offset;
-            replacements.push({ start, end, text: `[${body.slice(start, end)}](${documentation}${node.value}.html)` });
+            replacements.push({ start, end, text: `[${body.slice(start, end)}](${documentation}${node.value.toUpperCase()}.html)` });
         } else if (!anchorDepth && node.type === "text") {
             const offset = node.position.start.offset;
             const source = body.slice(offset, node.position.end.offset);
             // GitHub also autolinks bare URLs, which CommonMark treats as text.
-            for (const match of source.matchAll(/(?:https?:\/\/|www\.)[^\s<>]+|[\w.+-]+@[\w.-]+\.[a-zA-Z]{2,}|\bSA\d{4}\b/g)) {
-                if (!/^SA\d{4}$/.test(match[0])) {
+            for (const match of source.matchAll(/(?:https?:\/\/|www\.)[^\s<>]+|[\w.+-]+@[\w.-]+\.[a-zA-Z]{2,}|\bS[AX]\d{4}[a-z]?\b/gi)) {
+                if (!diagnosticId.test(match[0])) {
                     continue;
                 }
 
@@ -32,7 +33,7 @@ export function linkDiagnostics(body) {
                 replacements.push({
                     start,
                     end: start + match[0].length,
-                    text: `[${match[0]}](${documentation}${match[0]}.html)`,
+                    text: `[${match[0]}](${documentation}${match[0].toUpperCase()}.html)`,
                 });
             }
         }
