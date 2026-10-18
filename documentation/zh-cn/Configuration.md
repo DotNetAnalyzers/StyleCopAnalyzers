@@ -1053,7 +1053,7 @@ StyleCop Analyzers 包含默认要求开发人员为代码库的大部分内容�
 
 | 属性 | 默认值 | 最低版本 | 摘要 |
 | --- | --- | --- | --- |
-| `documentInterfaces` | **true** | 1.0.0 | 指定是否需要为接口成员编写文档。为 true 时，无论可访问性如何，所有接口成员都需要文档。 |
+| `documentInterfaces` | **all** | 1.0.0 | 控制接口声明及其公共成员的文档要求：`"all"`（或 `true`）要求所有接口都有文档，无论接口的可访问性如何；`"exposed"` 仅要求可从外部访问的接口有文档；`"none"`（或 `false`）不要求文档。非公共接口成员遵循 `documentPrivateElements` 设置。 |
 | `documentExposedElements` | **true** | 1.0.0 | 指定是否需要为公开的元素编写文档。为 true 时，所有公开可访问的类型和成员都需要文档。 |
 | `documentInternalElements` | **true** | 1.0.0 | 指定是否需要为内部元素编写文档。为 true 时，所有内部可访问的类型和成员都需要文档。 |
 | `documentPrivateElements` | **false** | 1.0.0 | 指定是否需要为私有元素编写文档。为 true 时，除声明为私有的字段外，所有类型和成员都需要文档。 |
@@ -1082,6 +1082,10 @@ StyleCop Analyzers 包含默认要求开发人员为代码库的大部分内容�
 `documentPrivateElements: true` 仍要求为所有类型和成员编写文档，但显式声明为 private 的字段除外。
 `documentPrivateFields: true` 要求为所有字段编写文档。接口及其成员由 `documentInterfaces` 单独控制；
 当 `documentInterfaces` 为 `true`（`all`）时，仅禁用内部元素的文档要求并不会免除内部接口的文档要求。
+
+要仅要求可从外部访问的代码有文档，请将 `documentInterfaces` 设置为 `"exposed"`、
+`documentExposedElements` 设置为 `true`，并将 `documentInternalElements` 设置为 `false`。
+`"exposed"` 模式考虑接口及其包含类型的有效可访问性，并同时适用于接口成员和接口声明。
 
 以下示例展示要求开发人员为所有公共可访问的成员以及所有接口（无论可访问性如何）编写文档，但不要求为其他内部或私有成员编写文档的配置文件。
 

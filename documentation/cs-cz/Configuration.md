@@ -962,7 +962,7 @@ vlastností.
 
 | Vlastnost | Výchozí hodnota | Minimální verze | Popis |
 | --- | --- | --- | --- |
-| `documentInterfaces` | **true** | 1.0.0 | Určuje, zda je třeba dokumentovat členy rozhraní. Při hodnotě `true` vyžadují dokumentaci všichni členové rozhraní bez ohledu na přístupnost. |
+| `documentInterfaces` | **all** | 1.0.0 | Řídí dokumentaci deklarací rozhraní a veřejných členů rozhraní: `"all"` (nebo `true`) vyžaduje dokumentaci bez ohledu na přístupnost rozhraní; `"exposed"` ji vyžaduje pouze pro rozhraní přístupná zvenčí; `"none"` (nebo `false`) ji nevyžaduje. Neveřejné členy rozhraní se řídí nastavením `documentPrivateElements`. |
 | `documentExposedElements` | **true** | 1.0.0 | Určuje, zda je třeba dokumentovat zpřístupněné prvky. Při hodnotě `true` vyžadují dokumentaci všechny veřejně zpřístupněné typy a členy. |
 | `documentInternalElements` | **true** | 1.0.0 | Určuje, zda je třeba dokumentovat interní prvky. Při hodnotě `true` vyžadují dokumentaci všechny interně zpřístupněné typy a členy. |
 | `documentPrivateElements` | **false** | 1.0.0 | Určuje, zda je třeba dokumentovat soukromé prvky. Při hodnotě `true` vyžadují dokumentaci všechny typy a členy kromě výslovně deklarovaných soukromých polí. |
@@ -993,6 +993,10 @@ soukromých polí, i když je `documentInternalElements` nebo `documentExposedEl
 `documentPrivateFields: true` vyžaduje dokumentaci všech polí. Rozhraní a jejich členy řídí samostatně
 `documentInterfaces`; samotné vypnutí dokumentace interních prvků nevyjímá interní rozhraní,
 pokud má `documentInterfaces` hodnotu `true` (`all`).
+
+Chcete-li vyžadovat dokumentaci pouze pro kód přístupný zvenčí, nastavte `documentInterfaces` na `"exposed"`,
+`documentExposedElements` na `true` a `documentInternalElements` na `false`. Režim `"exposed"` zohledňuje
+efektivní přístupnost rozhraní i obsahujících typů a platí pro členy i deklarace rozhraní.
 
 Následující příklad ukazuje konfigurační soubor, který vyžaduje dokumentaci všech veřejně přístupných členů a všech
 rozhraní (bez ohledu na jejich přístupnost), ale nevyžaduje dokumentaci ostatních interních ani soukromých členů.
