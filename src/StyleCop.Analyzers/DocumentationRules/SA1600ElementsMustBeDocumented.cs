@@ -68,7 +68,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     return true;
                 case InterfaceDocumentationMode.Exposed:
                     // DocumentInterfaces => only externally visible (exposed) interfaces should be documented
-                    return declaredAccessibility != Accessibility.Internal;
+                    return effectiveAccessibility is Accessibility.Public or Accessibility.Protected or Accessibility.ProtectedOrInternal;
                 default:
                     // DocumentInterfaces => no interfaces should be exposed
                     return false;
@@ -87,8 +87,10 @@ namespace StyleCop.Analyzers.DocumentationRules
                 switch (documentationSettings.DocumentInterfaces)
                 {
                 case InterfaceDocumentationMode.All:
-                case InterfaceDocumentationMode.Exposed:
                     return true;
+
+                case InterfaceDocumentationMode.Exposed:
+                    return effectiveAccessibility is Accessibility.Public or Accessibility.Protected or Accessibility.ProtectedOrInternal;
 
                 default:
                     // DocumentInterfaces => no interface members should be documented

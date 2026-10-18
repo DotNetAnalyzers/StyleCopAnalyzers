@@ -960,7 +960,7 @@ StyleCop Analyzers includes rules which require developers to document the major
 
 | Property | Default Value | Minimum Version | Summary |
 | --- | --- | --- | --- |
-| `documentInterfaces` | **true** | 1.0.0 | Specifies whether interface members need to be documented. When true, all interface members require documentation, regardless of accessibility. |
+| `documentInterfaces` | **all** | 1.0.0 | Controls documentation for interface declarations and public interface members: `"all"` (or `true`) requires documentation regardless of interface accessibility; `"exposed"` requires it only for externally visible interfaces; `"none"` (or `false`) does not require it. Non-public interface members follow `documentPrivateElements`. |
 | `documentExposedElements` | **true** | 1.0.0 | Specifies whether exposed elements need to be documented. When true, all publicly-exposed types and members require documentation. |
 | `documentInternalElements` | **true** | 1.0.0 | Specifies whether internal elements need to be documented. When true, all internally-exposed types and members require documentation. |
 | `documentPrivateElements` | **false** | 1.0.0 | Specifies whether private elements need to be documented. When true, all types and members except for declared private fields require documentation. |
@@ -991,6 +991,11 @@ fields, even when `documentInternalElements` or `documentExposedElements` is fal
 `documentPrivateFields: true` requires documentation for all fields. Interfaces and their members are
 controlled separately by `documentInterfaces`; disabling documentation for internal elements alone does
 not exempt internal interfaces when `documentInterfaces` is `true` (`all`).
+
+To require documentation only for publicly exposed code, set `documentInterfaces` to `"exposed"`,
+`documentExposedElements` to `true`, and `documentInternalElements` to `false`. The `"exposed"` interface
+mode considers the effective accessibility of both the interface and its containing types, and applies
+to interface members as well as interface declarations.
 
 The following example shows a configuration file which requires developers to document all publicly-accessible members and all interfaces (regardless of accessibility), but does not require other internal or private members to be documented.
 

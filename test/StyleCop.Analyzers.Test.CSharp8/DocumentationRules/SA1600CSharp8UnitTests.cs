@@ -18,6 +18,53 @@ namespace StyleCop.Analyzers.Test.CSharp8.DocumentationRules
         // Using 'Default' here makes sure that later test projects also run these tests with their own language version, without having to override this property
         protected override LanguageVersion LanguageVersion => LanguageVersion.Default;
 
+        /// <summary>
+        /// The editorconfig exposed mode exempts internal interface members, including default implementations.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        [Fact]
+        [WorkItem(4342, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4342")]
+        public async Task TestExposedInterfaceDocumentationFromEditorConfigAsync()
+        {
+            var testCode = """
+                internal interface IInternal
+                {
+                    public void ExplicitPublicMethod();
+                    void DefaultMethod() { }
+                    private void PrivateMethod() { }
+                    public int Property => 0;
+                    event System.Action Changed { add { } remove { } }
+                    public static int Field;
+                    public class Nested { }
+                    interface INested { void Method(); }
+                }
+
+                /// <summary>Exposed interface summary.</summary>
+                public interface IExposed
+                {
+                    public void {|#0:RequiredMethod|}();
+                    private void PrivateMethod() { }
+                }
+                """;
+            var test = new CSharpTest(this.LanguageVersion)
+            {
+                TestCode = testCode,
+                FixedCode = testCode,
+                DisabledDiagnostics = { "CS1591" },
+                ExpectedDiagnostics = { Diagnostic().WithLocation(0) },
+            };
+            test.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", """
+                root = true
+
+                [*.cs]
+                stylecop.documentation.documentInterfaces = exposed
+                stylecop.documentation.documentInternalElements = false
+                stylecop.documentation.documentExposedElements = false
+                """));
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         [WorkItem(3002, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3002")]
         public async Task TestDefaultInterfaceMemberRequiresDocumentationAsync()
