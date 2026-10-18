@@ -44,6 +44,34 @@ namespace System.Threading
         }
 
         [Fact]
+        public async Task TestNoDiagnosticForUsingAliasWithExternAliasQualifiedNamespaceAsync()
+        {
+            const string testCode = @"
+namespace System.Threading
+{
+    extern alias corlib;
+
+    using NA = corlib::System;
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestNoDiagnosticForExternAliasQualifiedNamespaceUsingAsync()
+        {
+            const string testCode = @"
+namespace System.Threading
+{
+    extern alias corlib;
+
+    using corlib::System.Collections;
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestUnqualifiedAliasedUsingsAsync()
         {
             const string testCode = @"
