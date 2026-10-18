@@ -2,60 +2,32 @@
 
 <img src="artwork/stylecop-analyzers.svg" alt="StyleCop.Analyzers icon" width="128" align="right">
 
-[![NuGet](https://img.shields.io/nuget/v/StyleCop.Analyzers.svg)](https://www.nuget.org/packages/StyleCop.Analyzers)[![NuGet Beta](https://img.shields.io/nuget/vpre/StyleCop.Analyzers.svg)](https://www.nuget.org/packages/StyleCop.Analyzers)
-
+[![NuGet](https://img.shields.io/nuget/v/StyleCop.Analyzers.svg)](https://www.nuget.org/packages/StyleCop.Analyzers) [![NuGet Beta](https://img.shields.io/nuget/vpre/StyleCop.Analyzers.svg)](https://www.nuget.org/packages/StyleCop.Analyzers)
+[![Build status](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/actions/workflows/build.yml) [![codecov.io](https://codecov.io/github/DotNetAnalyzers/StyleCopAnalyzers/coverage.svg?branch=master)](https://app.codecov.io/github/DotNetAnalyzers/StyleCopAnalyzers?branch=master)
 [![Join the chat at https://gitter.im/DotNetAnalyzers/StyleCopAnalyzers](https://badges.gitter.im/join_chat.svg)](https://gitter.im/DotNetAnalyzers/StyleCopAnalyzers?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-[![Build status](https://ci.appveyor.com/api/projects/status/8jw2lq431kgg44jl/branch/master?svg=true)](https://ci.appveyor.com/project/sharwell/stylecopanalyzers/branch/master)
-
-[![codecov.io](https://codecov.io/github/DotNetAnalyzers/StyleCopAnalyzers/coverage.svg?branch=master)](https://app.codecov.io/github/DotNetAnalyzers/StyleCopAnalyzers?branch=master)
 
 This repository contains an implementation of the StyleCop rules using the .NET Compiler Platform. Where possible, code fixes are also provided to simplify the process of correcting violations.
 
-## Using StyleCop.Analyzers
-
-The preferable way to use the analyzers is to add the nuget package [StyleCop.Analyzers](https://www.nuget.org/packages/StyleCop.Analyzers/)
-to the project where you want to enforce StyleCop rules.
-
-The severity of individual rules may be configured using [rule set files](https://docs.microsoft.com/en-us/visualstudio/code-quality/using-rule-sets-to-group-code-analysis-rules)
-in Visual Studio 2015 or newer. **Settings.StyleCop** is not supported, but a **stylecop.json** file may be used to
-customize the behavior of certain rules. See [Configuration](https://dotnetanalyzers.github.io/StyleCopAnalyzers/Configuration.html) for more information.
-
-For documentation and reasoning on the rules themselves, see the [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/).
-
-For users upgrading from StyleCop Classic, see [Known changes](https://dotnetanalyzers.github.io/StyleCopAnalyzers/KnownChanges.html)
-for information about known differences which you may notice when switching to StyleCop Analyzers.
-
-### C# language versions
-Not all versions of StyleCop.Analyzers support all features of each C# language version. The table below shows the minimum version of StyleCop.Analyzers required for proper support of a C# language version.
-
-| C# version | StyleCop.Analyzers version | Visual Studio version |
-|------------|----------------------------|-----------------------|
-| 1.0 - 6.0  | v1.0.2 or higher           | VS2015+               |
-| 7.0 - 7.3  | v1.1.0-beta or higher      | VS2017+               |
-|    8.0     | v1.2.0-beta or higher      | VS2019                |
-
 ## Installation
 
-StyleCopAnalyzers can be installed using the NuGet command line or the NuGet Package Manager in Visual Studio 2015.
+See our [getting started guide](https://dotnetanalyzers.github.io/StyleCopAnalyzers/).
 
-**Install using the command line:**
-```bash
-Install-Package StyleCop.Analyzers
-```
+## Using StyleCop.Analyzers
 
-**Install using the package manager:**
-![Install via nuget](https://cloud.githubusercontent.com/assets/1408396/8233513/491f301a-159c-11e5-8b7a-1e16a0695da6.png)
+The severity of individual rules may be customized in the standard way for roslyn analyzers.
+Many [configuration options](https://dotnetanalyzers.github.io/StyleCopAnalyzers/Configuration.html) allow you to further tailor StyleCop.Analyzers to your team's tastes.
 
-## Team Considerations
+### C# language versions
 
-If you use older versions of Visual Studio in addition to Visual Studio 2015 or Visual Studio 2017, you may still install these analyzers. They will be automatically disabled when you open the project back up in Visual Studio 2013 or earlier.
+We generally recommend using the latest version of the StyleCop.Analyzers, especially if you're using recent C# language versions.
+
+| C# version | StyleCop.Analyzers version |
+|------------|----------------------------|
+| 1.0 - 6.0  | v1.0.2                     |
+| 7.0 - 7.3  | v1.1.0                     |
+|    8.0     | v1.2.0-beta                |
+| 9.0 - 15.0 | v1.3.0-beta                |
 
 ## Contributing
 
-See [Contributing](CONTRIBUTING.md)
-
-## Current status
-
-An up-to-date list of which StyleCop rules are implemented and which have code fixes can be found in the
-[rule implementation status](https://dotnetanalyzers.github.io/StyleCopAnalyzers/RuleStatus.html).
+See our [contribution guide](CONTRIBUTING.md).
