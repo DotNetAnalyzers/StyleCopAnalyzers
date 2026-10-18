@@ -128,7 +128,19 @@ namespace StyleCop.Analyzers.Helpers
         /// <returns>True if the name part of the using directive starts with an alias.</returns>
         internal static bool StartsWithAlias(this UsingDirectiveSyntax usingDirective, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
-            var firstPart = usingDirective.Name.DescendantNodes().FirstOrDefault() ?? usingDirective.Name;
+            var target = usingDirective.NamespaceOrType() ?? usingDirective.Name;
+            while (target is QualifiedNameSyntax qualifiedName)
+            {
+                target = qualifiedName.Left;
+            }
+
+            if (target is AliasQualifiedNameSyntax aliasQualifiedName
+                && !aliasQualifiedName.Alias.Identifier.IsKind(SyntaxKind.GlobalKeyword))
+            {
+                return true;
+            }
+
+            var firstPart = target.DescendantNodes().FirstOrDefault() ?? target;
             return semanticModel.GetAliasInfo(firstPart, cancellationToken) != null;
         }
 
