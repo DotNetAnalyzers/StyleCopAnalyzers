@@ -81,27 +81,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
-            var target = usingDirective.NamespaceOrType() ?? usingDirective.Name;
-            if (target == null)
+            if (usingDirective.Name == null)
             {
                 // This happens for e.g. "using X = string;" or "using T = (X, Y);"
                 return;
             }
 
-            var name = usingDirective.Name ?? target as NameSyntax;
-            if (name == null)
-            {
-                return;
-            }
-
-            if (target is AliasQualifiedNameSyntax aliasQualifiedName
-                && !aliasQualifiedName.Alias.Identifier.IsKind(SyntaxKind.GlobalKeyword))
-            {
-                // Alias-qualified names (including extern aliases) are already qualified.
-                return;
-            }
-
-            var symbol = context.SemanticModel.GetSymbolInfo(target, context.CancellationToken).Symbol;
+            var symbol = context.SemanticModel.GetSymbolInfo(usingDirective.Name, context.CancellationToken).Symbol;
             if (symbol == null)
             {
                 // if there is no symbol, do not proceed.
@@ -114,7 +100,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 symbol = typeSymbol.TupleUnderlyingTypeOrSelf();
             }
 
-            string symbolString = symbol.ToQualifiedString(name);
+            string symbolString = symbol.ToQualifiedString(usingDirective.Name);
 
             string usingString = UsingDirectiveSyntaxToCanonicalString(usingDirective);
             if ((symbolString != usingString)
@@ -158,14 +144,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// </summary>
         private static bool AliasExpandedStringMatches(SyntaxNodeAnalysisContext context, UsingDirectiveSyntax usingDirective, string symbolString)
         {
-            var target = usingDirective.NamespaceOrType() ?? usingDirective.Name;
-            if (target == null)
-            {
-                return false;
-            }
-
             var builder = StringBuilderPool.Allocate();
-            AppendCanonicalString(builder, target, context.SemanticModel, context.CancellationToken);
+            AppendCanonicalString(builder, usingDirective.Name, context.SemanticModel, context.CancellationToken);
             string expanded = StringBuilderPool.ReturnAndFree(builder);
             return expanded == symbolString;
         }
@@ -184,14 +164,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static string UsingDirectiveSyntaxToCanonicalString(UsingDirectiveSyntax usingDirective)
         {
-            var target = usingDirective.NamespaceOrType() ?? usingDirective.Name;
-            if (target == null)
-            {
-                return string.Empty;
-            }
-
             var builder = StringBuilderPool.Allocate();
-            AppendCanonicalString(builder, target, semanticModel: null, cancellationToken: default);
+            AppendCanonicalString(builder, usingDirective.Name, semanticModel: null, cancellationToken: default);
             return StringBuilderPool.ReturnAndFree(builder);
         }
 
@@ -205,8 +179,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     var aliasSymbol = semanticModel.GetAliasInfo(aliasQualifiedName.Alias, cancellationToken);
                     if (aliasSymbol?.Target != null)
                     {
-                        builder.Append(QualifiedAliasTarget(aliasSymbol.Target));
-                        builder.Append('.');
+                        if (!(aliasSymbol.Target is INamespaceSymbol targetNamespace && targetNamespace.IsGlobalNamespace))
+                        {
+                            builder.Append(QualifiedAliasTarget(aliasSymbol.Target));
+                            builder.Append('.');
+                        }
+
                         AppendCanonicalString(builder, aliasQualifiedName.Name, semanticModel, cancellationToken);
                         return true;
                     }
