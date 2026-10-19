@@ -297,6 +297,9 @@
   <data name="SA1116CodeFix" xml:space="preserve">
     <value>Перенести первый аргумент на следующую строку</value>
   </data>
+  <data name="SA1117CodeFix" xml:space="preserve">
+    <value>Разместить каждый элемент на отдельной строке</value>
+  </data>
   <data name="SA1116Description" xml:space="preserve">
     <value>Параметры вызова или объявления метода или индексатора C# занимают несколько строк, но первый параметр не начинается на строке после открывающей скобки.</value>
   </data>

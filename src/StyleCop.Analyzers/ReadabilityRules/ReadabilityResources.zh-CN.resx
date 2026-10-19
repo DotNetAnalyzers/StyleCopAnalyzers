@@ -297,6 +297,9 @@
   <data name="SA1116CodeFix" xml:space="preserve">
     <value>将第一个实参移到下一行</value>
   </data>
+  <data name="SA1117CodeFix" xml:space="preserve">
+    <value>将每个项目单独放在一行</value>
+  </data>
   <data name="SA1116Description" xml:space="preserve">
     <value>C# 方法或索引器的调用或声明中的参数跨越多行，但第一个参数没有在左括号的下一行开始。</value>
   </data>

@@ -8,7 +8,9 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.ReadabilityRules.SA1117ParametersMustBeOnSameLineOrSeparateLines>;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.ReadabilityRules.SA1117ParametersMustBeOnSameLineOrSeparateLines,
+        StyleCop.Analyzers.ReadabilityRules.SA1117CodeFixProvider>;
 
     public class SA1117UnitTests
     {
@@ -304,6 +306,155 @@ class Foo
             DiagnosticResult expected = Diagnostic().WithLocation(0);
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1504, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1504")]
+        public async Task TestCodeFixAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar(int a, int b, int c) { }
+    public void Baz()
+    {
+        Bar(1,
+            2, {|#0:3|});
+    }
+}";
+            var fixedCode = @"
+class Foo
+{
+    public void Bar(int a, int b, int c) { }
+    public void Baz()
+    {
+        Bar(
+            1,
+            2,
+            3);
+    }
+}";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1504, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1504")]
+        public async Task TestCodeFixForParameterListAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar(
+        int a, int b,
+        {|#0:int c|}) { }
+}";
+            var fixedCode = @"
+class Foo
+{
+    public void Bar(
+        int a,
+        int b,
+        int c) { }
+}";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1504, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1504")]
+        public async Task TestCodeFixForArrayRankSpecifierAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar()
+    {
+        var values = new int[1,
+            2, {|#0:3|}];
+    }
+}";
+            var fixedCode = @"
+class Foo
+{
+    public void Bar()
+    {
+        var values = new int[
+            1,
+            2,
+            3];
+    }
+}";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1504, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1504")]
+        public async Task TestCodeFixForAttributeArgumentsAsync()
+        {
+            var testCode = @"
+class ExampleAttribute : System.Attribute
+{
+    public ExampleAttribute(int a, int b, int c) { }
+}
+
+[Example(1,
+    2, {|#0:3|})]
+class Foo
+{
+}";
+            var fixedCode = @"
+class ExampleAttribute : System.Attribute
+{
+    public ExampleAttribute(int a, int b, int c) { }
+}
+
+[Example(
+    1,
+    2,
+    3)]
+class Foo
+{
+}";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1504, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1504")]
+        public async Task TestCodeFixPreservesCommentsAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar(int a, int b, int c) { }
+    public void Baz()
+    {
+        Bar(1, // keep this comment
+            2, {|#0:3|});
+    }
+}";
+            var fixedCode = @"
+class Foo
+{
+    public void Bar(int a, int b, int c) { }
+    public void Baz()
+    {
+        Bar(
+            1,
+            // keep this comment
+            2,
+            3);
+    }
+}";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
