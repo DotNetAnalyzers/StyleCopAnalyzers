@@ -146,7 +146,7 @@ namespace StyleCop.Analyzers.NamingRules;
                 var properties = ImmutableDictionary<string, string>.Empty
                     .SetItem(InheritedParameterNamesProperty, serializedNames);
 
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, parameter.Locations[0], properties, parameter.Name));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, parameter.Locations[0], properties, parameter.Name, string.Join(", ", inheritedNames)));
             }
         }
     }

@@ -52,8 +52,8 @@ public class DerivedType : BaseType
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithArguments("firstActualName").WithLocation(0),
-                Diagnostic().WithArguments("secondActualName").WithLocation(1),
+                Diagnostic().WithArguments("firstActualName", "firstName").WithMessage("Parameter 'firstActualName' should match an inherited parameter name: firstName").WithLocation(0),
+                Diagnostic().WithArguments("secondActualName", "secondName").WithLocation(1),
             };
 
             await VerifyCSharpFixAsync(
@@ -93,7 +93,7 @@ public class TypeName : IType
 
             await VerifyCSharpFixAsync(
                 testCode,
-                Diagnostic().WithArguments("actualName").WithLocation(0),
+                Diagnostic().WithArguments("actualName", "inheritedName").WithLocation(0),
                 fixedCode,
                 CancellationToken.None).ConfigureAwait(false);
         }
@@ -128,9 +128,176 @@ public class TypeName : IType
 
             await VerifyCSharpFixAsync(
                 testCode,
-                Diagnostic().WithArguments("actualName").WithLocation(0),
+                Diagnostic().WithArguments("actualName", "inheritedName").WithLocation(0),
                 fixedCode,
                 CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that by-reference parameters and their uses can be renamed to the inherited name.
+        /// </summary>
+        /// <param name="modifier">The parameter modifier.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData("out")]
+        [InlineData("ref")]
+        public async Task TestByReferenceOverrideParameterNameMismatchAsync(string modifier)
+        {
+            var testCode = $$"""
+                public abstract class BaseType
+                {
+                    public abstract void Method({{modifier}} int inheritedName);
+                }
+
+                public class DerivedType : BaseType
+                {
+                    public override void Method({{modifier}} int {|#0:actualName|})
+                    {
+                        // Preserve this assignment and its comment.
+                        actualName = 1;
+                    }
+                }
+                """;
+
+            var fixedCode = $$"""
+                public abstract class BaseType
+                {
+                    public abstract void Method({{modifier}} int inheritedName);
+                }
+
+                public class DerivedType : BaseType
+                {
+                    public override void Method({{modifier}} int inheritedName)
+                    {
+                        // Preserve this assignment and its comment.
+                        inheritedName = 1;
+                    }
+                }
+                """;
+
+            await VerifyCSharpFixAsync(
+                testCode,
+                Diagnostic().WithArguments("actualName", "inheritedName").WithLocation(0),
+                fixedCode,
+                CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that interface implementations offer a rename for by-reference parameters.
+        /// </summary>
+        /// <param name="modifier">The parameter modifier.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData("out")]
+        [InlineData("ref")]
+        public async Task TestByReferenceInterfaceParameterNameMismatchAsync(string modifier)
+        {
+            var testCode = $$"""
+                public interface IType
+                {
+                    void Method({{modifier}} int inheritedName);
+                }
+
+                public class TypeName : IType
+                {
+                    public void Method({{modifier}} int {|#0:actualName|})
+                    {
+                        actualName = 1;
+                    }
+                }
+                """;
+
+            var fixedCode = $$"""
+                public interface IType
+                {
+                    void Method({{modifier}} int inheritedName);
+                }
+
+                public class TypeName : IType
+                {
+                    public void Method({{modifier}} int inheritedName)
+                    {
+                        inheritedName = 1;
+                    }
+                }
+                """;
+
+            await VerifyCSharpFixAsync(
+                testCode,
+                Diagnostic().WithArguments("actualName", "inheritedName").WithLocation(0),
+                fixedCode,
+                CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a local name conflict prevents the code fix, including for out parameters.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Fact]
+        public async Task TestNoCodeFixWhenInheritedNameConflictsWithLocalAsync()
+        {
+            var testCode = @"public interface IType
+{
+    void Method(out int inheritedName);
+}
+
+public class TypeName : IType
+{
+    public void Method(out int {|#0:actualName|})
+    {
+        int inheritedName = 1;
+        actualName = inheritedName;
+    }
+}";
+
+            await VerifyCSharpFixAsync(
+                testCode,
+                Diagnostic().WithArguments("actualName", "inheritedName").WithLocation(0),
+                testCode,
+                CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the message lists all distinct inherited names and each rename is available.
+        /// </summary>
+        /// <param name="codeActionIndex">The index of the rename action to apply.</param>
+        /// <param name="newName">The inherited name selected by the action.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData(0, "firstName")]
+        [InlineData(1, "secondName")]
+        public async Task TestMultipleInheritedNamesAsync(int codeActionIndex, string newName)
+        {
+            var testCode = @"public interface IFirst
+{
+    void Method(int firstName);
+}
+
+public interface ISecond
+{
+    void Method(int secondName);
+}
+
+public interface IThird
+{
+    void Method(int firstName);
+}
+
+public class TypeName : IFirst, ISecond, IThird
+{
+    public void Method(int {|#0:actualName|})
+    {
+    }
+}";
+
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = testCode.Replace("{|#0:actualName|}", newName),
+                CodeActionIndex = codeActionIndex,
+            };
+            test.ExpectedDiagnostics.Add(Diagnostic().WithArguments("actualName", "firstName, secondName").WithMessage("Parameter 'actualName' should match an inherited parameter name: firstName, secondName").WithLocation(0));
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -216,7 +383,7 @@ public class DerivedType : IntermediateType
 
             await VerifyCSharpFixAsync(
                 testCode,
-                Diagnostic().WithArguments("actualName").WithLocation(0),
+                Diagnostic().WithArguments("actualName", "inheritedName").WithLocation(0),
                 fixedCode,
                 CancellationToken.None).ConfigureAwait(false);
         }
@@ -288,7 +455,7 @@ public class DerivedType : BaseType, IType
 
             await VerifyCSharpFixAsync(
                 testCode,
-                Diagnostic().WithArguments("actualName").WithLocation(0),
+                Diagnostic().WithArguments("actualName", "baseName").WithLocation(0),
                 fixedCode,
                 CancellationToken.None).ConfigureAwait(false);
         }

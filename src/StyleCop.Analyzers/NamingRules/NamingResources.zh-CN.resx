@@ -163,7 +163,7 @@
     <value>重写基类方法或实现接口成员的方法，其参数名称应与继承的参数名称一致。</value>
   </data>
   <data name="SA1315MessageFormat" xml:space="preserve">
-    <value>参数“{0}”应与继承的参数名称一致</value>
+    <value>参数“{0}”应与继承的参数名称一致: {1}</value>
   </data>
   <data name="SA1315Title" xml:space="preserve">
     <value>参数名称应与继承的名称一致</value>
