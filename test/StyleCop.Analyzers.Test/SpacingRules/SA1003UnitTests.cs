@@ -1355,5 +1355,23 @@ public class MyType : MyBaseType
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that an incomplete postfix increment at the end of the file does not crash the analyzer.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestIncompletePostfixIncrementDoesNotCrashAsync()
+        {
+            // The next token after '++' is not attached to the syntax tree. Compiler diagnostics for this fragment
+            // differ between Roslyn versions; the assertion is that analysis does not throw.
+            var test = new CSharpTest
+            {
+                TestCode = "b++",
+                CompilerDiagnostics = CompilerDiagnostics.None,
+            };
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

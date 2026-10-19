@@ -24,17 +24,25 @@ namespace StyleCop.Analyzers.Helpers
         /// </returns>
         internal static bool IsFirstInLine(this SyntaxToken token, bool allowNonWhitespaceTrivia = true)
         {
-            var fullLineSpan = token.SyntaxTree.GetLineSpan(token.FullSpan);
-
+            // Incomplete editor text can produce a token that is not attached to a tree. The null check has to precede
+            // GetLineSpan, which dereferences SyntaxTree.
             bool firstInLine;
-            if (token.SyntaxTree == null || fullLineSpan.StartLinePosition.Character == 0)
+            if (token.SyntaxTree == null)
             {
                 firstInLine = true;
             }
             else
             {
-                var tokenLineSpan = token.SyntaxTree.GetLineSpan(token.Span);
-                firstInLine = tokenLineSpan.StartLinePosition.Line != fullLineSpan.StartLinePosition.Line;
+                var fullLineSpan = token.SyntaxTree.GetLineSpan(token.FullSpan);
+                if (fullLineSpan.StartLinePosition.Character == 0)
+                {
+                    firstInLine = true;
+                }
+                else
+                {
+                    var tokenLineSpan = token.SyntaxTree.GetLineSpan(token.Span);
+                    firstInLine = tokenLineSpan.StartLinePosition.Line != fullLineSpan.StartLinePosition.Line;
+                }
             }
 
             if (firstInLine && !allowNonWhitespaceTrivia)
@@ -87,9 +95,14 @@ namespace StyleCop.Analyzers.Helpers
         /// <returns>true if token is last in line, otherwise false.</returns>
         internal static bool IsLastInLine(this SyntaxToken token)
         {
+            if (token.SyntaxTree == null)
+            {
+                return true;
+            }
+
             var fullLineSpan = token.SyntaxTree.GetLineSpan(token.FullSpan);
 
-            if (token.SyntaxTree == null || fullLineSpan.EndLinePosition.Character == 0)
+            if (fullLineSpan.EndLinePosition.Character == 0)
             {
                 return true;
             }
