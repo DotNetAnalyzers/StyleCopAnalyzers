@@ -59,6 +59,15 @@ namespace StyleCop.Analyzers.NamingRules
                         continue;
                     }
 
+                    var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+                    var symbol = semanticModel.GetDeclaredSymbol(token.Parent, context.CancellationToken);
+                    if (symbol != null
+                        && !await RenameHelper.IsValidNewMemberNameAsync(semanticModel, symbol, newName, context.CancellationToken).ConfigureAwait(false))
+                    {
+                        // Removing the underscore would collide with an existing member.
+                        continue;
+                    }
+
                     context.RegisterCodeFix(
                         CodeAction.Create(
                             string.Format(NamingResources.RenameToCodeFix, newName),

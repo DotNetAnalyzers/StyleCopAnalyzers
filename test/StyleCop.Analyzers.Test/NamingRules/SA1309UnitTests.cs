@@ -349,5 +349,39 @@ public class Derived : Base<int>
             DiagnosticResult expected = Diagnostic().WithArguments("_int").WithLocation(3, 20);
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that removing the underscore is not offered when the resulting name already exists.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestFieldRenameIsNotOfferedWhenTheNameConflictsAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    public delegate void Test();
+
+    private Test {|#0:_testEvent|};
+
+    public event Test testEvent
+    {
+        add
+        {
+            _testEvent += value;
+        }
+
+        remove
+        {
+            _testEvent -= value;
+        }
+    }
+}
+";
+
+            DiagnosticResult expected = Diagnostic().WithArguments("_testEvent").WithLocation(0);
+
+            // The stripped name collides with the event, so the code fix must not be offered.
+            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
