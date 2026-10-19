@@ -179,8 +179,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     var aliasSymbol = semanticModel.GetAliasInfo(aliasQualifiedName.Alias, cancellationToken);
                     if (aliasSymbol?.Target != null)
                     {
-                        builder.Append(QualifiedAliasTarget(aliasSymbol.Target));
-                        builder.Append('.');
+                        if (!(aliasSymbol.Target is INamespaceSymbol targetNamespace && targetNamespace.IsGlobalNamespace))
+                        {
+                            builder.Append(QualifiedAliasTarget(aliasSymbol.Target));
+                            builder.Append('.');
+                        }
+
                         AppendCanonicalString(builder, aliasQualifiedName.Name, semanticModel, cancellationToken);
                         return true;
                     }

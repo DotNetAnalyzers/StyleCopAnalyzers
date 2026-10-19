@@ -43,6 +43,230 @@ namespace System.Threading
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that extern-alias-qualified namespace imports are already qualified.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        [Fact]
+        [WorkItem(4340, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4340")]
+        public async Task TestNoDiagnosticForUsingAliasWithExternAliasQualifiedNamespaceAsync()
+        {
+            const string testCode = @"
+namespace System.Threading
+{
+    extern alias corlib;
+
+    using NA = corlib::System;
+}";
+
+            await new CSharpTest
+            {
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net472.Default,
+                TestCode = testCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that extern-alias-qualified namespace imports are already qualified.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        [Fact]
+        [WorkItem(4340, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4340")]
+        public async Task TestNoDiagnosticForExternAliasQualifiedNamespaceUsingAsync()
+        {
+            const string testCode = @"
+namespace System.Threading
+{
+    extern alias corlib;
+
+    using corlib::System.Collections;
+}";
+
+            await new CSharpTest
+            {
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net472.Default,
+                TestCode = testCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that extern-alias-qualified type aliases and static imports are already qualified.
+        /// </summary>
+        /// <param name="directive">The using directive to verify.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        [Theory]
+        [InlineData("using SomeClass = corlib::System.String;")]
+        [InlineData("using static corlib::System.Math;")]
+        [InlineData("using Items = corlib::System.Collections.Generic.List<string>;")]
+        [InlineData("using Items = corlib::System.Collections.Generic.List<string>.Enumerator;")]
+        [WorkItem(4340, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4340")]
+        public async Task TestExternAliasQualifiedTypeAsync(string directive)
+        {
+            var testCode = $@"
+namespace TestNamespace
+{{
+    extern alias corlib;
+
+    {directive}
+}}";
+
+            await new CSharpTest
+            {
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net472.Default,
+                TestCode = testCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that namespace aliases do not hide unqualified generic type arguments.
+        /// </summary>
+        /// <param name="separator">The alias qualification separator.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        [Theory]
+        [InlineData(".")]
+        [InlineData("::")]
+        [WorkItem(4340, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4340")]
+        public async Task TestNamespaceAliasWithUnqualifiedTypeArgumentAsync(string separator)
+        {
+            var testCode = $@"
+using System;
+using Root = System;
+
+namespace N
+{{
+    {{|#0:using L = Root{separator}Collections.Generic.List<Exception>;|}}
+}}";
+            var fixedCode = @"
+using System;
+using Root = System;
+
+namespace N
+{
+    using L = System.Collections.Generic.List<System.Exception>;
+}";
+
+            var expected = Diagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorType)
+                .WithLocation(0).WithArguments("System.Collections.Generic.List<System.Exception>");
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that namespace aliases with qualified generic type arguments remain accepted.
+        /// </summary>
+        /// <param name="separator">The alias qualification separator.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        [Theory]
+        [InlineData(".")]
+        [InlineData("::")]
+        [WorkItem(4340, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4340")]
+        public async Task TestNamespaceAliasWithQualifiedTypeArgumentAsync(string separator)
+        {
+            var testCode = $@"
+using Root = System;
+
+namespace N
+{{
+    using L = Root{separator}Collections.Generic.List<System.Exception>;
+}}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an extern alias does not hide unqualified generic type arguments.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        [Fact]
+        [WorkItem(4340, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4340")]
+        public async Task TestExternAliasWithUnqualifiedTypeArgumentAsync()
+        {
+            var testCode = @"
+extern alias corlib;
+using System;
+
+namespace N
+{
+    {|#0:using L = corlib::System.Collections.Generic.List<Exception>;|}
+}";
+            var fixedCode = @"
+extern alias corlib;
+using System;
+
+namespace N
+{
+    using L = System.Collections.Generic.List<System.Exception>;
+}";
+
+            var expected = Diagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorType)
+                .WithLocation(0).WithArguments("System.Collections.Generic.List<System.Exception>");
+            await new CSharpTest
+            {
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net472.Default,
+                TestCode = testCode,
+                ExpectedDiagnostics = { expected },
+                FixedCode = fixedCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that extern aliases inside qualified generic types are expanded correctly.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        [Fact]
+        [WorkItem(4340, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4340")]
+        public async Task TestExternAliasInsideQualifiedTypeAsync()
+        {
+            var testCode = @"
+extern alias corlib;
+
+namespace N
+{
+    using L = System.Tuple<corlib::System.String>;
+}";
+
+            await new CSharpTest
+            {
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net472.Default,
+                TestCode = testCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an extern alias inside a generic argument does not qualify the containing type.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        [Fact]
+        [WorkItem(4340, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4340")]
+        public async Task TestExternAliasInsideUnqualifiedTypeAsync()
+        {
+            var testCode = @"
+extern alias corlib;
+using System;
+
+namespace N
+{
+    {|#0:using L = Tuple<corlib::System.String>;|}
+}";
+            var fixedCode = @"
+extern alias corlib;
+using System;
+
+namespace N
+{
+    using L = System.Tuple<System.String>;
+}";
+
+            var expected = Diagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorType)
+                .WithLocation(0).WithArguments("System.Tuple<System.String>");
+            await new CSharpTest
+            {
+                ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net472.Default,
+                TestCode = testCode,
+                ExpectedDiagnostics = { expected },
+                FixedCode = fixedCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestUnqualifiedAliasedUsingsAsync()
         {
