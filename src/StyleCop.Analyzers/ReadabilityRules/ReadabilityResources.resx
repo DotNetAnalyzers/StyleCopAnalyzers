@@ -282,6 +282,9 @@
   <data name="SA1114Title" xml:space="preserve">
     <value>Parameter list should follow declaration</value>
   </data>
+  <data name="SA1114CodeFix" xml:space="preserve">
+    <value>Remove blank lines after opening delimiter</value>
+  </data>
   <data name="SA1115CodeFix" xml:space="preserve">
     <value>Remove blank lines between parameters</value>
   </data>

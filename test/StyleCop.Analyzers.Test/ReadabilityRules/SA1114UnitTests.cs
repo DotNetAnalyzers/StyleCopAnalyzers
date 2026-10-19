@@ -7,10 +7,115 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.ReadabilityRules.SA1114ParameterListMustFollowDeclaration>;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<StyleCop.Analyzers.ReadabilityRules.SA1114ParameterListMustFollowDeclaration, StyleCop.Analyzers.ReadabilityRules.SA1114CodeFixProvider>;
 
     public class SA1114UnitTests
     {
+        [Fact]
+        [WorkItem(505, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/505")]
+        public async Task TestCodeFixRemovesBlankLinesAfterOpeningParenthesisAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar(
+
+        int value)
+    {
+    }
+}";
+            var fixedCode = @"
+class Foo
+{
+    public void Bar(
+        int value)
+    {
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(6, 9), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(505, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/505")]
+        public async Task TestCodeFixPreservesCommentsAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar(int value) { }
+    public void Call()
+    {
+        Bar(
+
+            // Keep this comment.
+            1);
+    }
+}";
+            var fixedCode = @"
+class Foo
+{
+    public void Bar(int value) { }
+    public void Call()
+    {
+        Bar(
+            // Keep this comment.
+            1);
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(10, 13), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(505, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/505")]
+        public async Task TestCodeFixHandlesOtherListKindsAsync()
+        {
+            var testCode = @"
+[System.Obsolete(
+
+    ""message"")]
+class Foo
+{
+    public void Bar(
+
+        int value) { }
+    public void Call()
+    {
+        Bar(
+
+            1);
+        var values = new int[
+
+            1];
+    }
+}";
+            var fixedCode = @"
+[System.Obsolete(
+    ""message"")]
+class Foo
+{
+    public void Bar(
+        int value) { }
+    public void Call()
+    {
+        Bar(
+            1);
+        var values = new int[
+            1];
+    }
+}";
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(4, 5),
+                Diagnostic().WithLocation(9, 9),
+                Diagnostic().WithLocation(14, 13),
+                Diagnostic().WithLocation(17, 13),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestMethodDeclarationParametersList2LinesAfterOpeningParenthesisAsync()
         {
