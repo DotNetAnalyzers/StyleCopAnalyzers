@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.SpacingRules;
     using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
@@ -1364,12 +1365,19 @@ public class MyType : MyBaseType
         public async Task TestIncompletePostfixIncrementDoesNotCrashAsync()
         {
             // The next token after '++' is not attached to the syntax tree. Compiler diagnostics for this fragment
-            // differ between Roslyn versions; the assertion is that analysis does not throw.
+            // differ between Roslyn versions; the assertion is that analysis does not throw. From C# 9 the missing
+            // token is visible to SA1003, which reports the operator and can insert the required space.
             var test = new CSharpTest
             {
                 TestCode = "b++",
                 CompilerDiagnostics = CompilerDiagnostics.None,
             };
+
+            if (LightupHelpers.SupportsCSharp9)
+            {
+                test.ExpectedDiagnostics.Add(Diagnostic(DescriptorFollowedByWhitespace).WithSpan(1, 2, 1, 4).WithArguments("++"));
+                test.FixedCode = "b++ ";
+            }
 
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
