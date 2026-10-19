@@ -55,6 +55,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 {
                 case SyntaxKind.ConstructorDeclaration:
                 case SyntaxKind.DestructorDeclaration:
+                    if (identifierToken.Parent.FirstAncestorOrSelf<BaseTypeDeclarationSyntax>() == null)
+                    {
+                        // Standard constructor or finalizer text names the containing type, which this declaration does not have.
+                        break;
+                    }
+
                     context.RegisterCodeFix(
                         CodeAction.Create(
                             DocumentationResources.ConstructorDocumentationCodeFix,

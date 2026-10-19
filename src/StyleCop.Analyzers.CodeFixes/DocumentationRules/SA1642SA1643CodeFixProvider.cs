@@ -58,6 +58,14 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 var node = root.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
 
+                var typeDeclaration = node.FirstAncestorOrSelf<BaseTypeDeclarationSyntax>();
+                if (typeDeclaration == null)
+                {
+                    // Standard text includes a see reference to the containing type. Incomplete code can contain a
+                    // constructor or finalizer that is not inside a type, and the fix cannot be offered then.
+                    continue;
+                }
+
                 if (node is XmlElementSyntax xmlElementSyntax)
                 {
                     context.RegisterCodeFix(
@@ -160,6 +168,11 @@ namespace StyleCop.Analyzers.DocumentationRules
             {
                 var unionDeclaration = (UnionDeclarationSyntaxWrapper)typeDeclaration;
                 return unionDeclaration.TypeParameterList;
+            }
+
+            if (typeDeclaration == null)
+            {
+                return null;
             }
 
             Debug.Assert(false, $"Unhandled type {typeDeclaration.Kind()}");

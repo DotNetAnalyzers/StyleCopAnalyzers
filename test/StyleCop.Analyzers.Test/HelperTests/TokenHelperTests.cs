@@ -12,6 +12,27 @@ namespace StyleCop.Analyzers.Test.HelperTests
     public class TokenHelperTests
     {
         [Fact]
+        public void TestIsFirstInLineWithoutSyntaxTree()
+        {
+            // A token that is not attached to a tree has a null SyntaxTree. Incomplete editor buffers produce these
+            // tokens, and the helper must not throw.
+            var token = default(SyntaxToken);
+
+            Assert.Null(token.SyntaxTree);
+            Assert.True(token.IsFirstInLine());
+            Assert.True(token.IsFirstInLine(allowNonWhitespaceTrivia: false));
+        }
+
+        [Fact]
+        public void TestIsLastInLineWithoutSyntaxTree()
+        {
+            var token = default(SyntaxToken);
+
+            Assert.Null(token.SyntaxTree);
+            Assert.True(token.IsLastInLine());
+        }
+
+        [Fact]
         public void TestIsFirstInLineSpecialCase()
         {
             string testCode = @"class MyClass {

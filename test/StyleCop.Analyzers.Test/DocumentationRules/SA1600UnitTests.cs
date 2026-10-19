@@ -831,6 +831,39 @@ public class TestClass
         }
 
         /// <summary>
+        /// Verifies that generating documentation for a finalizer outside a type does not crash.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestDestructorOutsideTypeDoesNotCrashCodeFixAsync()
+        {
+            var testCode = @"namespace FooNamespace
+{
+    {
+        ~Foo()
+        {
+        }
+    }
+}
+";
+
+            await new CSharpTest(this.LanguageVersion)
+            {
+                TestCode = testCode,
+                FixedCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(4, 10),
+                },
+
+                // The fragment is invalid on purpose. Compiler diagnostics differ between Roslyn versions; the assertion
+                // is that the code fix is not offered and does not throw.
+                CompilerDiagnostics = CompilerDiagnostics.None,
+                DisabledDiagnostics = { "CS1591" },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that a code fix is not offered for normal methods without documentation.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>

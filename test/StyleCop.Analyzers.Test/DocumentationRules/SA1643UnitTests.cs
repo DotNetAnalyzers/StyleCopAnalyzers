@@ -266,6 +266,35 @@ public class TestClass
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that a finalizer which is not inside a type does not crash the code fix.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestDestructorOutsideTypeDoesNotCrashCodeFixAsync()
+        {
+            var testCode = @"namespace FooNamespace
+{
+    {
+        /// <summary>
+        /// </summary>
+        ~Foo()
+        {
+        }
+    }
+}
+";
+
+            var test = CreateTest(new[] { Diagnostic().WithLocation(4, 13) });
+            test.TestCode = testCode;
+            test.FixedCode = testCode;
+
+            // The fragment is invalid on purpose. Compiler diagnostics differ between Roslyn versions; the assertion
+            // is that the code fix is not offered and does not throw.
+            test.CompilerDiagnostics = CompilerDiagnostics.None;
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
         private static async Task TestDestructorCorrectDocumentationAsync(string part1, string part2, string part3, bool generic)
         {
             // First test it all on one line
