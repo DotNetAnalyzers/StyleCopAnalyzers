@@ -13,6 +13,7 @@ namespace StyleCop.Analyzers.NamingRules
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.FindSymbols;
     using StyleCop.Analyzers.Helpers;
 
@@ -87,18 +88,97 @@ namespace StyleCop.Analyzers.NamingRules
                 }
 
                 var root = await referenceDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-                var tokens = treeGroup
-                    .Select(location => root.FindToken(location.SourceSpan.Start))
-                    .GroupBy(token => token.Span.Start)
-                    .Select(group => group.First())
+
+                // FindToken without this flag returns the token that owns the trivia, so a documentation cref
+                // would replace that token (for example, the class keyword) instead of the referenced name.
+                var seenStarts = new HashSet<int>();
+                var tokens = new List<SyntaxToken>();
+                foreach (var location in treeGroup)
+                {
+                    var token = root.FindToken(location.SourceSpan.Start, findInsideTrivia: true);
+                    if (token.Span.Start == location.SourceSpan.Start && seenStarts.Add(token.Span.Start))
+                    {
+                        tokens.Add(token);
+                    }
+                }
+
+                if (tokens.Count == 0)
+                {
+                    continue;
+                }
+
+                // Renaming the identifier in `new { value.nameA }` would also change the inferred property name.
+                // Keep that name explicit before the remaining references are renamed.
+                var renameAnnotation = new SyntaxAnnotation("SA1316Rename");
+                root = root.ReplaceTokens(tokens, (original, rewritten) => original.WithAdditionalAnnotations(renameAnnotation));
+                var declarators = root.GetAnnotatedTokens(renameAnnotation)
+                    .Select(GetInferredAnonymousMember)
+                    .OfType<AnonymousObjectMemberDeclaratorSyntax>()
+                    .Distinct()
                     .ToList();
-                var newRoot = root.ReplaceTokens(
-                    tokens,
-                    (original, rewritten) => SyntaxFactory.Identifier(fixedTupleElementName).WithTriviaFrom(original));
-                solution = solution.WithDocumentSyntaxRoot(referenceDocument.Id, newRoot);
+                if (declarators.Count > 0)
+                {
+                    root = root.ReplaceNodes(
+                        declarators,
+                        (original, rewritten) => PreserveInferredAnonymousName(rewritten, renameAnnotation, fixedTupleElementName));
+                }
+
+                var remaining = root.GetAnnotatedTokens(renameAnnotation).ToList();
+                if (remaining.Count > 0)
+                {
+                    root = root.ReplaceTokens(
+                        remaining,
+                        (original, rewritten) => SyntaxFactory.Identifier(fixedTupleElementName).WithTriviaFrom(original));
+                }
+
+                solution = solution.WithDocumentSyntaxRoot(referenceDocument.Id, root);
             }
 
             return solution;
+        }
+
+        private static AnonymousObjectMemberDeclaratorSyntax? GetInferredAnonymousMember(SyntaxToken token)
+        {
+            if (token.Parent is not IdentifierNameSyntax identifierName
+                || identifierName.Parent is not MemberAccessExpressionSyntax memberAccess
+                || memberAccess.Name != identifierName
+                || memberAccess.Parent is not AnonymousObjectMemberDeclaratorSyntax declarator
+                || declarator.NameEquals != null
+                || declarator.Expression != memberAccess)
+            {
+                return null;
+            }
+
+            return declarator;
+        }
+
+        private static SyntaxNode PreserveInferredAnonymousName(AnonymousObjectMemberDeclaratorSyntax declarator, SyntaxAnnotation annotation, string fixedTupleElementName)
+        {
+            SyntaxToken? nameToken = null;
+            foreach (var token in declarator.GetAnnotatedTokens(annotation))
+            {
+                if (GetInferredAnonymousMember(token) != null)
+                {
+                    nameToken = token;
+                    break;
+                }
+            }
+
+            if (nameToken == null)
+            {
+                return declarator;
+            }
+
+            var renamedExpression = declarator.Expression.ReplaceToken(
+                nameToken.Value,
+                SyntaxFactory.Identifier(fixedTupleElementName).WithTriviaFrom(nameToken.Value));
+            var equalsToken = SyntaxFactory.Token(
+                SyntaxFactory.TriviaList(SyntaxFactory.Space),
+                SyntaxKind.EqualsToken,
+                SyntaxFactory.TriviaList(SyntaxFactory.Space));
+            return declarator
+                .WithNameEquals(SyntaxFactory.NameEquals(SyntaxFactory.IdentifierName(nameToken.Value.ValueText)).WithEqualsToken(equalsToken))
+                .WithExpression(renamedExpression);
         }
     }
 }

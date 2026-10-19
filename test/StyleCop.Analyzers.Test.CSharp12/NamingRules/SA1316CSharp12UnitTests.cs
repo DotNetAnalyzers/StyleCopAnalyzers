@@ -44,5 +44,35 @@ class TestClass
 
             await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that a tuple element renamed in a using alias is also updated inside a documentation cref.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestTupleElementRenameUpdatesDocumentationCrefAsync()
+        {
+            var testCode = @"using Point = (int {|#0:x|}, int Y);
+
+/// <summary>
+/// See <see cref=""Point.x""/>.
+/// </summary>
+class TestClass
+{
+}
+";
+
+            var fixedCode = @"using Point = (int X, int Y);
+
+/// <summary>
+/// See <see cref=""Point.X""/>.
+/// </summary>
+class TestClass
+{
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
