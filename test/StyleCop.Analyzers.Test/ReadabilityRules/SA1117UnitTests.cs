@@ -341,6 +341,63 @@ class Foo
 
         [Fact]
         [WorkItem(1504, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1504")]
+        public async Task TestCodeFixIndentsMultilineArgumentAsync()
+        {
+            var testCode = @"
+using System;
+class Foo
+{
+    public void Bar(Action action, int a, int b) { }
+    public void Baz()
+    {
+        Bar(() =>
+        {
+            Console.WriteLine();
+        },
+        2, {|#0:3|});
+    }
+}";
+            var fixedCode = @"
+using System;
+class Foo
+{
+    public void Bar(Action action, int a, int b) { }
+    public void Baz()
+    {
+        Bar(
+            () =>
+            {
+                Console.WriteLine();
+            },
+            2,
+            3);
+    }
+}";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1504, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1504")]
+        public async Task TestCodeFixIsNotOfferedForOmittedArrayRankSizesAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar()
+    {
+        var values = new int[1][,,
+{|#0:|}];
+    }
+}";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1504, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1504")]
         public async Task TestCodeFixForParameterListAsync()
         {
             var testCode = @"

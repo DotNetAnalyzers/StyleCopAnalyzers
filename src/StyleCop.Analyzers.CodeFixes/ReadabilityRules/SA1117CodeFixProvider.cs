@@ -35,10 +35,18 @@ internal class SA1117CodeFixProvider : CodeFixProvider
     }
 
     /// <inheritdoc/>
-    public override Task RegisterCodeFixesAsync(CodeFixContext context)
+    public override async Task RegisterCodeFixesAsync(CodeFixContext context)
     {
+        SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
         foreach (var diagnostic in context.Diagnostics)
         {
+            SyntaxToken diagnosticToken = root.FindToken(diagnostic.Location.SourceSpan.Start);
+            SyntaxNode? list = GetContainingList(diagnosticToken);
+            if (list == null || HasZeroWidthElement(list))
+            {
+                continue;
+            }
+
             context.RegisterCodeFix(
                 CodeAction.Create(
                     ReadabilityResources.SA1117CodeFix,
@@ -46,8 +54,6 @@ internal class SA1117CodeFixProvider : CodeFixProvider
                     nameof(SA1117CodeFixProvider)),
                 diagnostic);
         }
-
-        return SpecializedTasks.CompletedTask;
     }
 
     private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
@@ -103,6 +109,7 @@ internal class SA1117CodeFixProvider : CodeFixProvider
         }
 
         var updatedLeadingTrivia = new Dictionary<SyntaxToken, SyntaxTriviaList>();
+        var tokensToIndent = new HashSet<SyntaxToken>();
         var tokensToUpdate = new List<SyntaxToken> { openDelimiter };
         for (int i = 0; i < elements.Count; i++)
         {
@@ -111,7 +118,16 @@ internal class SA1117CodeFixProvider : CodeFixProvider
             SyntaxToken precedingToken = i == 0 ? openDelimiter : separators[i - 1];
             SyntaxTriviaList originalLeadingTrivia = precedingToken.TrailingTrivia.AddRange(firstToken.LeadingTrivia);
             updatedLeadingTrivia.Add(firstToken, newLeadingTrivia.AddRange(RemoveInitialWhitespace(originalLeadingTrivia)));
-            tokensToUpdate.AddRange(element.DescendantTokens());
+            bool startsOnSameLine = !ContainsEndOfLine(originalLeadingTrivia);
+            foreach (SyntaxToken elementToken in element.DescendantTokens())
+            {
+                tokensToUpdate.Add(elementToken);
+                if (startsOnSameLine && elementToken != firstToken)
+                {
+                    tokensToIndent.Add(elementToken);
+                }
+            }
+
             if (i < separators.Count)
             {
                 tokensToUpdate.Add(separators[i]);
@@ -123,9 +139,11 @@ internal class SA1117CodeFixProvider : CodeFixProvider
             tokensToUpdate,
             (original, rewritten) => updatedLeadingTrivia.TryGetValue(original, out SyntaxTriviaList leadingTrivia)
                 ? rewritten.WithLeadingTrivia(leadingTrivia)
-                : separatorsToClear.Contains(original)
-                    ? rewritten.WithTrailingTrivia(default(SyntaxTriviaList))
-                    : rewritten);
+                : tokensToIndent.Contains(original)
+                    ? rewritten.WithLeadingTrivia(IndentationHelper.IndentLeadingTrivia(original, rewritten.LeadingTrivia, indentationStep, default(SyntaxTriviaList)))
+                    : separatorsToClear.Contains(original)
+                        ? rewritten.WithTrailingTrivia(default(SyntaxTriviaList))
+                        : rewritten);
         return document.WithSyntaxRoot(updatedRoot);
     }
 
@@ -148,6 +166,32 @@ internal class SA1117CodeFixProvider : CodeFixProvider
         }
 
         return null;
+    }
+
+    private static bool HasZeroWidthElement(SyntaxNode list)
+    {
+        foreach (SyntaxNode element in list.ChildNodes())
+        {
+            if (element.Span.IsEmpty)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool ContainsEndOfLine(SyntaxTriviaList trivia)
+    {
+        foreach (SyntaxTrivia item in trivia)
+        {
+            if (item.IsKind(SyntaxKind.EndOfLineTrivia))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static bool IsListElement(SyntaxNode list, SyntaxNode node)
