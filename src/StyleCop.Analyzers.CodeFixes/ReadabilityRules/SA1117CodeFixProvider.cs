@@ -90,9 +90,10 @@ internal class SA1117CodeFixProvider : CodeFixProvider
         SyntaxTrivia endOfLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(openDelimiter, sourceText, options);
         var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, tree, cancellationToken);
         string indentationStep = IndentationHelper.GenerateIndentationString(settings.Indentation, 1);
+        string targetIndentation = lineText.Substring(0, indentationLength) + indentationStep;
         SyntaxTriviaList newLeadingTrivia = SyntaxFactory.TriviaList(
             endOfLineTrivia,
-            SyntaxFactory.Whitespace(lineText.Substring(0, indentationLength) + indentationStep));
+            SyntaxFactory.Whitespace(targetIndentation));
 
         var separators = new List<SyntaxToken>();
         foreach (SyntaxToken childToken in list.ChildTokens())
@@ -109,6 +110,7 @@ internal class SA1117CodeFixProvider : CodeFixProvider
         }
 
         var updatedLeadingTrivia = new Dictionary<SyntaxToken, SyntaxTriviaList>();
+        var indentationDeltaByToken = new Dictionary<SyntaxToken, string>();
         var tokensToIndent = new HashSet<SyntaxToken>();
         var tokensToUpdate = new List<SyntaxToken> { openDelimiter };
         for (int i = 0; i < elements.Count; i++)
@@ -119,12 +121,17 @@ internal class SA1117CodeFixProvider : CodeFixProvider
             SyntaxTriviaList originalLeadingTrivia = precedingToken.TrailingTrivia.AddRange(firstToken.LeadingTrivia);
             updatedLeadingTrivia.Add(firstToken, newLeadingTrivia.AddRange(RemoveInitialWhitespace(originalLeadingTrivia)));
             bool startsOnSameLine = !ContainsEndOfLine(originalLeadingTrivia);
+            string originalIndentation = GetLineIndentation(sourceText, firstToken.SpanStart);
             foreach (SyntaxToken elementToken in element.DescendantTokens())
             {
                 tokensToUpdate.Add(elementToken);
-                if (startsOnSameLine && elementToken != firstToken)
+                if (startsOnSameLine && elementToken != firstToken && originalIndentation != targetIndentation)
                 {
                     tokensToIndent.Add(elementToken);
+                    string indentationDelta = targetIndentation.StartsWith(originalIndentation, StringComparison.Ordinal)
+                        ? targetIndentation.Substring(originalIndentation.Length)
+                        : string.Empty;
+                    indentationDeltaByToken.Add(elementToken, indentationDelta);
                 }
             }
 
@@ -140,7 +147,7 @@ internal class SA1117CodeFixProvider : CodeFixProvider
             (original, rewritten) => updatedLeadingTrivia.TryGetValue(original, out SyntaxTriviaList leadingTrivia)
                 ? rewritten.WithLeadingTrivia(leadingTrivia)
                 : tokensToIndent.Contains(original)
-                    ? rewritten.WithLeadingTrivia(IndentationHelper.IndentLeadingTrivia(original, rewritten.LeadingTrivia, indentationStep, default(SyntaxTriviaList)))
+                    ? IndentToken(rewritten, original, indentationDeltaByToken[original], sourceText, targetIndentation)
                     : separatorsToClear.Contains(original)
                         ? rewritten.WithTrailingTrivia(default(SyntaxTriviaList))
                         : rewritten);
@@ -179,6 +186,63 @@ internal class SA1117CodeFixProvider : CodeFixProvider
         }
 
         return false;
+    }
+
+    private static SyntaxToken IndentToken(SyntaxToken rewritten, SyntaxToken original, string indentationDelta, SourceText sourceText, string targetIndentation)
+    {
+        if (indentationDelta.Length > 0)
+        {
+            return rewritten.WithLeadingTrivia(IndentationHelper.IndentLeadingTrivia(original, rewritten.LeadingTrivia, indentationDelta, default(SyntaxTriviaList)));
+        }
+
+        return rewritten.WithLeadingTrivia(ShiftLeadingTrivia(rewritten.LeadingTrivia, GetLineIndentation(sourceText, original.SpanStart), targetIndentation));
+    }
+
+    private static string GetLineIndentation(SourceText sourceText, int position)
+    {
+        TextLine line = sourceText.Lines.GetLineFromPosition(position);
+        string lineText = sourceText.ToString(line.Span);
+        int indentationLength = 0;
+        while (indentationLength < lineText.Length && char.IsWhiteSpace(lineText[indentationLength]))
+        {
+            indentationLength++;
+        }
+
+        return lineText.Substring(0, indentationLength);
+    }
+
+    private static SyntaxTriviaList ShiftLeadingTrivia(SyntaxTriviaList leadingTrivia, string originalIndentation, string targetIndentation)
+    {
+        var result = new List<SyntaxTrivia>();
+        bool atLineStart = false;
+        for (int i = 0; i < leadingTrivia.Count; i++)
+        {
+            SyntaxTrivia trivia = leadingTrivia[i];
+            if (trivia.IsKind(SyntaxKind.EndOfLineTrivia))
+            {
+                result.Add(trivia);
+                atLineStart = true;
+            }
+            else if (trivia.IsKind(SyntaxKind.WhitespaceTrivia))
+            {
+                bool isBlankLine = i + 1 < leadingTrivia.Count && leadingTrivia[i + 1].IsKind(SyntaxKind.EndOfLineTrivia);
+                string whitespace = trivia.ToString();
+                if (atLineStart && !isBlankLine && whitespace.StartsWith(originalIndentation, StringComparison.Ordinal))
+                {
+                    whitespace = targetIndentation + whitespace.Substring(originalIndentation.Length);
+                }
+
+                result.Add(SyntaxFactory.Whitespace(whitespace));
+                atLineStart = false;
+            }
+            else
+            {
+                result.Add(trivia);
+                atLineStart = false;
+            }
+        }
+
+        return SyntaxFactory.TriviaList(result);
     }
 
     private static bool ContainsEndOfLine(SyntaxTriviaList trivia)
