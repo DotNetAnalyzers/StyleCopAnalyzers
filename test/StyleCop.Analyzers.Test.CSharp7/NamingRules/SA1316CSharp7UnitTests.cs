@@ -860,5 +860,35 @@ public class TestType : BaseType
 
             await VerifyCSharpFixAsync(testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that correcting a tuple element name also updates references to that element.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestTupleElementNameFixUpdatesReferencesAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public int TestMethod((int /* keep */ [|nameA|], int Other) value)
+    {
+        return value.nameA + value.Other;
+    }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    public int TestMethod((int /* keep */ NameA, int Other) value)
+    {
+        return value.NameA + value.Other;
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
