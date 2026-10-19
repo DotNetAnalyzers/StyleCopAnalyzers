@@ -114,7 +114,7 @@ namespace StyleCop.Analyzers.NamingRules
         public static string @SA1314Title => GetResourceString("SA1314Title")!;
         /// <summary>Parameter names in methods that override a base method or implement an interface member should match the inherited parameter names.</summary>
         public static string @SA1315Description => GetResourceString("SA1315Description")!;
-        /// <summary>Parameter '{0}' should match an inherited parameter name</summary>
+        /// <summary>Parameter '{0}' should match an inherited parameter name: {1}</summary>
         public static string @SA1315MessageFormat => GetResourceString("SA1315MessageFormat")!;
         /// <summary>Parameter names should match inherited names</summary>
         public static string @SA1315Title => GetResourceString("SA1315Title")!;
