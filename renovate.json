@@ -14,6 +14,7 @@
       "matchManagers": ["nuget"],
       "matchFileNames": ["**/StyleCop.Analyzers.Test*.csproj"],
       "matchPackageNames": [
+        "Microsoft.CodeAnalysis.VisualBasic.Workspaces",
         "Microsoft.CodeAnalysis.CSharp.Workspaces"
       ],
       "enabled": false
