@@ -4,12 +4,19 @@
 namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
 {
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CodeActions;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Testing;
+    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.NamingRules;
     using StyleCop.Analyzers.Test.Helpers;
+    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Helpers.LanguageVersionTestExtensions;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -1049,6 +1056,142 @@ public class TestClass
 ";
 
             await VerifyCSharpFixAsync(testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an inferred tuple element name is kept when the projected element is renamed.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestTupleElementRenamePreservesInferredTupleNameAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public int TestMethod((int [|nameA|], int Other) value)
+    {
+        var projected = (false, value.nameA);
+        return projected.nameA;
+    }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    public int TestMethod((int NameA, int Other) value)
+    {
+        var projected = (false, NameA: value.NameA);
+        return projected.NameA;
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_1.OrLaterDefault(), testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the fix is not offered when the corrected inferred name would select another tuple element.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestTupleElementRenameIsNotOfferedWhenInferredNameWouldCollideAsync()
+        {
+            const string source = @"
+public class TestClass
+{
+    public int TestMethod((int nameA, int Other) value)
+    {
+        var projected = (false, value.nameA, NameA: """");
+        return projected.nameA;
+    }
+}
+";
+
+            var workspace = await GenericAnalyzerTest.CreateWorkspaceAsync().ConfigureAwait(false);
+            var projectId = ProjectId.CreateNewId();
+            var references = await GenericAnalyzerTest.ReferenceAssemblies.ResolveAsync(LanguageNames.CSharp, CancellationToken.None).ConfigureAwait(false);
+            var solution = workspace.CurrentSolution
+                .AddProject(projectId, "TestProject", "TestProject", LanguageNames.CSharp)
+                .WithProjectCompilationOptions(projectId, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
+                .WithProjectParseOptions(projectId, new CSharpParseOptions(LanguageVersion.CSharp7_1))
+                .AddMetadataReferences(projectId, references);
+            var documentId = DocumentId.CreateNewId(projectId);
+            solution = solution.AddDocument(documentId, "Test.cs", SourceText.From(source));
+            var document = solution.GetDocument(documentId);
+            var compilation = await document.Project.GetCompilationAsync(CancellationToken.None).ConfigureAwait(false);
+            var analyzer = new SA1316TupleElementNamesShouldUseCorrectCasing();
+            var diagnostics = await compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(analyzer)).GetAnalyzerDiagnosticsAsync(CancellationToken.None).ConfigureAwait(false);
+            var diagnostic = Assert.Single(diagnostics);
+
+            var actions = new List<CodeAction>();
+            var context = new CodeFixContext(document, diagnostic, (action, _) => actions.Add(action), CancellationToken.None);
+            await new SA1316CodeFixProvider().RegisterCodeFixesAsync(context).ConfigureAwait(false);
+            Assert.Empty(actions);
+        }
+
+        /// <summary>
+        /// Verifies that an explicit tuple element name is left unchanged while its reference is updated.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestTupleElementRenameKeepsExplicitTupleNameAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public int TestMethod((int [|nameA|], int Other) value)
+    {
+        var projected = (Kept: value.nameA, false);
+        return projected.Kept;
+    }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    public int TestMethod((int NameA, int Other) value)
+    {
+        var projected = (Kept: value.NameA, false);
+        return projected.Kept;
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_1.OrLaterDefault(), testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a nested tuple-element access does not become the inferred element name.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestTupleElementRenameDoesNotNameTupleElementAfterNestedAccessAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public int TestMethod((int [|nameA|], int Other) value)
+    {
+        var projected = (value.nameA.ToString().Length, false);
+        return projected.Item1;
+    }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    public int TestMethod((int NameA, int Other) value)
+    {
+        var projected = (value.NameA.ToString().Length, false);
+        return projected.Item1;
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_1.OrLaterDefault(), testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
