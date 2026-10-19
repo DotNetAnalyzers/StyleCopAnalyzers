@@ -18,6 +18,7 @@ matching skill before you start:
 | [csharp-language-version-audit](.agents/skills/csharp-language-version-audit/SKILL.md) | auditing rules against a new C# version, and the test project for that version |
 | [issue-triage](.agents/skills/issue-triage/SKILL.md) | reviewing, de-duplicating or closing issues |
 | [maintaining-translations](.agents/skills/maintaining-translations/SKILL.md) | adding or reviewing localized resources, missing translations, terminology and English fallback |
+| [fuzz-analyzers](.agents/skills/fuzz-analyzers/SKILL.md) | running the local fuzz harness, triaging findings, and fixing real crashes or code-fix bugs it finds |
 
 Ground rules:
 
