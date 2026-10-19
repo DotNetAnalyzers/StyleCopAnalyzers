@@ -40,6 +40,11 @@ internal class SA1117CodeFixProvider : CodeFixProvider
         SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
         foreach (var diagnostic in context.Diagnostics)
         {
+            if (diagnostic.Location.SourceSpan.IsEmpty)
+            {
+                continue;
+            }
+
             SyntaxToken diagnosticToken = root.FindToken(diagnostic.Location.SourceSpan.Start);
             SyntaxNode? list = GetContainingList(diagnosticToken);
             if (list == null || HasZeroWidthElement(list))

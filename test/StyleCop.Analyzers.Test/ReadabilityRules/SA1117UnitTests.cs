@@ -437,6 +437,25 @@ class Foo
 
         [Fact]
         [WorkItem(1504, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1504")]
+        public async Task TestCodeFixIsNotOfferedForNestedOmittedArrayRankSizesAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Consume(int[][,,] values) { }
+    public void Bar()
+    {
+        Consume(new int[1][,,
+{|#0:|}]);
+    }
+}";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1504, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1504")]
         public async Task TestCodeFixForParameterListAsync()
         {
             var testCode = @"
