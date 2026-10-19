@@ -117,6 +117,64 @@ class Foo
         }
 
         [Fact]
+        [WorkItem(505, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/505")]
+        public async Task TestCodeFixIsNotOfferedForInvocationWithConditionalDirectiveAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    void M(int value) { }
+    void Call()
+    {
+        M(
+
+#if true
+            1
+#endif
+        );
+    }
+}";
+
+            var expected = Diagnostic().WithLocation(10, 13);
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = testCode,
+            };
+
+            test.ExpectedDiagnostics.Add(expected);
+            test.RemainingDiagnostics.Add(expected);
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(505, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/505")]
+        public async Task TestCodeFixRemovesBlankLineBeforeParameterDirectiveAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    void M(
+
+#if true
+        {|#0:int value|}
+#endif
+    ) { }
+}";
+            var fixedCode = @"
+class Foo
+{
+    void M(
+#if true
+        int value
+#endif
+    ) { }
+}";
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestMethodDeclarationParametersList2LinesAfterOpeningParenthesisAsync()
         {
             var testCode = @"

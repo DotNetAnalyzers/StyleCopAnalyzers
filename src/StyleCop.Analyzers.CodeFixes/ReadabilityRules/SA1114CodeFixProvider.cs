@@ -5,11 +5,13 @@ namespace StyleCop.Analyzers.ReadabilityRules;
 
 using System.Collections.Immutable;
 using System.Composition;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using StyleCop.Analyzers.Helpers;
 
 /// <summary>
@@ -36,7 +38,8 @@ internal class SA1114CodeFixProvider : CodeFixProvider
         foreach (var diagnostic in context.Diagnostics)
         {
             var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
-            if (token.LeadingTrivia.WithoutBlankLines().Count == token.LeadingTrivia.Count)
+            if (token.LeadingTrivia.WithoutBlankLines().Count == token.LeadingTrivia.Count
+                || (token.LeadingTrivia.Any(trivia => trivia.IsDirective) && IsArgumentListItem(token)))
             {
                 continue;
             }
@@ -48,6 +51,24 @@ internal class SA1114CodeFixProvider : CodeFixProvider
                     nameof(SA1114CodeFixProvider)),
                 diagnostic);
         }
+    }
+
+    private static bool IsArgumentListItem(SyntaxToken token)
+    {
+        for (var node = token.Parent; node != null; node = node.Parent)
+        {
+            if (node is BaseArgumentListSyntax or AttributeArgumentListSyntax or ArrayRankSpecifierSyntax)
+            {
+                return true;
+            }
+
+            if (node is BaseParameterListSyntax)
+            {
+                return false;
+            }
+        }
+
+        return false;
     }
 
     private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
