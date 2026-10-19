@@ -4,6 +4,7 @@
 namespace StyleCop.Analyzers.Tools.Fuzz;
 
 using System.Collections.Immutable;
+using System.Text.Json;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -29,7 +30,57 @@ internal static class SelfTests
         var throwing = new AnalysisEngine([new ThrowingAnalyzer()], []);
         var exceptionResult = await throwing.RunAsync(new Input("class C { }", "C.cs")).ConfigureAwait(false);
         Require(exceptionResult.Findings.Any(finding => finding.Kind == "AnalyzerException"), "Analyzer exceptions must not be swallowed by the driver.");
-        Console.WriteLine("Self-tests passed: compiler-error, no-op, action exception, additional-file change, invalid input, analyzer exception.");
+        VerifyCorpusLoad();
+        Console.WriteLine("Self-tests passed: compiler-error, no-op, action exception, additional-file change, invalid input, analyzer exception, saved-finding replay.");
+    }
+
+    private static void VerifyCorpusLoad()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "stylecop-fuzz-corpus-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var settings = "{ \"settings\": { } }";
+            var saved = new Input("class Original { }", "Original.cs", settings);
+            Directory.CreateDirectory(root);
+            File.WriteAllText(Path.Combine(root, "Spacing.cs"), "class Spacing { }");
+            File.WriteAllText(Path.Combine(root, "Spacing.json"), settings);
+
+            var signature = Path.Combine(root, "signature");
+            Directory.CreateDirectory(signature);
+            File.WriteAllText(Path.Combine(signature, "input.cs"), "class Minimized { }");
+            File.WriteAllText(Path.Combine(signature, "input.json"), JsonSerializer.Serialize(saved));
+            File.WriteAllText(Path.Combine(signature, "finding.json"), "{}");
+            File.WriteAllText(Path.Combine(signature, "fixed.cs"), "class Fixed { }");
+
+            var sidecar = Path.Combine(root, "sidecar");
+            Directory.CreateDirectory(sidecar);
+            File.WriteAllText(Path.Combine(sidecar, "input.cs"), "class Sidecar { }");
+            File.WriteAllText(Path.Combine(sidecar, "input.json"), settings);
+
+            var plain = Path.Combine(root, "plain");
+            Directory.CreateDirectory(plain);
+            File.WriteAllText(Path.Combine(plain, "fixed.cs"), "class NotAnArtifact { }");
+
+            var loaded = Corpus.Load(root);
+            Require(loaded.Count == 4, "A mixed directory must load each ordinary seed and one saved finding.");
+            Require(loaded.Any(input => input.Name == "Spacing.cs" && input.Source == "class Spacing { }" && input.Settings == settings), "An ordinary seed must keep its filename and settings sidecar.");
+            Require(loaded.Any(input => input.Name == "input.cs" && input.Source == "class Sidecar { }" && input.Settings == settings), "A settings sidecar must not be treated as a saved finding envelope.");
+            Require(loaded.Any(input => input.Name == "fixed.cs" && input.Source == "class NotAnArtifact { }"), "fixed.cs is a seed outside a saved finding.");
+            var bundle = loaded.Single(input => input.Name == "Original.cs");
+            Require(bundle.Source == "class Minimized { }", "Minimization edits in input.cs must be the replayed source.");
+            Require(bundle.Settings == settings, "A saved finding must restore settings from input.json.");
+            Require(!loaded.Any(input => input.Source == "class Fixed { }"), "fixed.cs from a saved finding must not be analyzed.");
+
+            var fromEnvelope = Corpus.Load(Path.Combine(signature, "input.json")).Single();
+            Require(fromEnvelope.Name == "Original.cs" && fromEnvelope.Source == "class Minimized { }" && fromEnvelope.Settings == settings, "Replaying input.json must honor the minimized sibling and the saved filename.");
+        }
+        finally
+        {
+            if (Directory.Exists(root))
+            {
+                Directory.Delete(root, recursive: true);
+            }
+        }
     }
 
     private static void Require(bool condition, string message)

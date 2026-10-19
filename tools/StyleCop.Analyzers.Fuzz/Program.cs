@@ -57,8 +57,9 @@ internal static class Program
                   repro <input-file-or-directory> <output-directory>
                   mutate <input-file-or-directory> <output-directory> [iterations=100] [random-seed=4338] [timeout-seconds=30]
                   self-test
-                Repro also accepts saved input.json files, preserving filename and stylecop.json.
-                A .cs seed may have a sibling .json containing stylecop.json.
+                Repro of a saved input.json restores its filename and stylecop.json.
+                Repro of a signature directory uses input.cs as the source, so minimization edits apply, and restores filename and settings from input.json. fixed.cs is not an input.
+                A .cs seed may have a sibling .json containing stylecop.json. Ordinary seeds stay seeds in a directory that also contains saved findings.
                 Every seed is replayed before mutations; iterations is the number of additional mutations.
                 Findings are candidates for manual triage, not automatically filed issues.
                 """);

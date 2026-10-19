@@ -48,11 +48,15 @@ dotnet run --project tools/StyleCop.Analyzers.Fuzz -c Debug --no-build -- \
   repro /tmp/stylecop-fuzz-out/<signature> /tmp/stylecop-fuzz-repro
 ```
 
-A sibling `.json` next to a `.cs` seed is used as `stylecop.json`. `mutate` exits 1 when it saved any
-finding. That is a triage list, not a harness failure. `repro` exits 1 when the saved input still reproduces.
+A sibling `.json` next to an ordinary `.cs` seed is used as `stylecop.json`. `mutate` exits 1 when it
+saved any finding. That is a triage list, not a harness failure. `repro` exits 1 when the saved input
+still reproduces.
 
 Each signature directory contains `input.cs`, `input.json`, `finding.json`, and `fixed.cs` when a fix ran.
-The harness keeps the shortest input for each signature.
+The harness keeps the shortest input for each signature. `repro` of that directory is one input: `input.cs`
+is the source, and `Name` and `Settings` come from the `input.json` envelope. `fixed.cs` is not analyzed.
+Passing `input.json` directly does the same when `finding.json` and `input.cs` are still beside it.
+Ordinary seeds in the same tree keep their filenames and settings sidecars.
 
 ## 3. Triage before changing product code
 
@@ -68,8 +72,11 @@ Ignore findings whose only problem is a diagnostic on incomplete or already-inva
 seeds such as `class Foo{0}` that came from test-literal extraction. Do not fix a finding you cannot reproduce
 with `repro` on current `master`.
 
-Minimize `input.cs` until deleting any further token makes the finding disappear. Keep the trivia, settings,
-and construct that matter.
+Minimize by editing `input.cs` in the signature directory, then run `repro` on that directory. The edited
+file is the source that is replayed. `Name` and `Settings` still come from `input.json`; edit those fields
+there to change the original filename or settings. Keep `finding.json`. Without it, the directory is no
+longer a saved finding: `input.cs` is loaded as a seed named `input.cs`, and `input.json` is misread as
+`stylecop.json`. Do not replay `fixed.cs`. Keep the trivia and construct that matter.
 
 ## 4. Fix only confirmed bugs
 

@@ -21,16 +21,19 @@ internal static class Corpus
 
     internal static List<Input> Load(string path)
     {
-        if (File.Exists(path) && Path.GetExtension(path) == ".json")
+        if (File.Exists(path))
         {
-            return [JsonSerializer.Deserialize<Input>(File.ReadAllText(path)) ?? throw new InvalidOperationException("Invalid saved input.")];
+            return [LoadFile(path)];
         }
 
-        IEnumerable<string> files = Directory.Exists(path) ? Directory.GetFiles(path, "*.cs", SearchOption.AllDirectories).Order(StringComparer.Ordinal) : [path];
-        return files.Select(file => new Input(
-            File.ReadAllText(file),
-            Path.GetFileName(file),
-            File.Exists(Path.ChangeExtension(file, ".json")) ? File.ReadAllText(Path.ChangeExtension(file, ".json")) : null)).ToList();
+        if (!Directory.Exists(path))
+        {
+            throw new FileNotFoundException("Corpus path was not found.", path);
+        }
+
+        var inputs = new List<Input>();
+        LoadDirectory(path, inputs);
+        return inputs;
     }
 
     internal static int Extract(string path, string output)
@@ -89,5 +92,113 @@ internal static class Corpus
             _ => source.Insert(token.Span.Start, "/*fuzz*/"),
         };
         return input with { Source = mutated };
+    }
+
+    private static void LoadDirectory(string directory, List<Input> inputs)
+    {
+        // A saved finding is one input. Its generated .cs files are not additional seeds, but ordinary
+        // seeds in the same tree keep their filenames and settings sidecars.
+        if (TryLoadFindingBundle(directory, out var bundle))
+        {
+            inputs.Add(bundle);
+        }
+
+        foreach (var file in Directory.GetFiles(directory, "*.cs").Order(StringComparer.Ordinal))
+        {
+            if (!IsGeneratedFindingArtifact(directory, file))
+            {
+                inputs.Add(LoadSeed(file));
+            }
+        }
+
+        foreach (var child in Directory.GetDirectories(directory).Order(StringComparer.Ordinal))
+        {
+            LoadDirectory(child, inputs);
+        }
+    }
+
+    private static Input LoadFile(string path)
+    {
+        if (!string.Equals(Path.GetExtension(path), ".json", StringComparison.OrdinalIgnoreCase))
+        {
+            return LoadSeed(path);
+        }
+
+        if (!TryReadSavedInput(path, out var saved))
+        {
+            throw new InvalidOperationException("Invalid saved input.");
+        }
+
+        // Replaying the envelope file still honors a minimized input.cs beside a finding bundle.
+        var directory = Path.GetDirectoryName(path) ?? string.Empty;
+        var sourcePath = Path.Combine(directory, "input.cs");
+        if (string.Equals(Path.GetFileName(path), "input.json", StringComparison.Ordinal)
+            && File.Exists(Path.Combine(directory, "finding.json"))
+            && File.Exists(sourcePath))
+        {
+            return saved with { Source = File.ReadAllText(sourcePath) };
+        }
+
+        return saved;
+    }
+
+    private static bool TryLoadFindingBundle(string directory, out Input input)
+    {
+        input = null!;
+        if (!File.Exists(Path.Combine(directory, "finding.json"))
+            || !TryReadSavedInput(Path.Combine(directory, "input.json"), out var saved))
+        {
+            return false;
+        }
+
+        var sourcePath = Path.Combine(directory, "input.cs");
+        input = File.Exists(sourcePath) ? saved with { Source = File.ReadAllText(sourcePath) } : saved;
+        return true;
+    }
+
+    private static bool IsGeneratedFindingArtifact(string directory, string file)
+    {
+        var name = Path.GetFileName(file);
+        return name is "input.cs" or "fixed.cs"
+            && File.Exists(Path.Combine(directory, "finding.json"))
+            && TryReadSavedInput(Path.Combine(directory, "input.json"), out _);
+    }
+
+    private static Input LoadSeed(string file)
+    {
+        var settingsPath = Path.ChangeExtension(file, ".json");
+        return new Input(
+            File.ReadAllText(file),
+            Path.GetFileName(file),
+            File.Exists(settingsPath) ? File.ReadAllText(settingsPath) : null);
+    }
+
+    private static bool TryReadSavedInput(string path, out Input input)
+    {
+        input = null!;
+        if (!File.Exists(path))
+        {
+            return false;
+        }
+
+        try
+        {
+            using var document = JsonDocument.Parse(File.ReadAllText(path));
+            if (document.RootElement.ValueKind != JsonValueKind.Object
+                || !document.RootElement.TryGetProperty("Source", out var source)
+                || source.ValueKind != JsonValueKind.String
+                || !document.RootElement.TryGetProperty("Name", out var name)
+                || name.ValueKind != JsonValueKind.String)
+            {
+                return false;
+            }
+
+            input = document.RootElement.Deserialize<Input>() ?? throw new InvalidOperationException("Invalid saved input.");
+            return true;
+        }
+        catch (JsonException)
+        {
+            return false;
+        }
     }
 }
