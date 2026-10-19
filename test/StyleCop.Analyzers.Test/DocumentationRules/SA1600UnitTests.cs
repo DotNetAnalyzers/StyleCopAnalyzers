@@ -124,8 +124,9 @@ using System;
         [InlineData("exposed", "", false)]
         [InlineData("exposed", "public", true)]
         [InlineData("none", "internal", false)]
-        [InlineData("none", "public", false)]
+        [InlineData("none", "public", true)]
         [WorkItem(4342, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4342")]
+        [WorkItem(4345, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4345")]
         public async Task TestInterfaceMembersWithDocumentationModeAsync(string mode, string accessibility, bool requiresDocumentation)
         {
             var testCode = $$"""
