@@ -19,6 +19,141 @@ namespace StyleCop.Analyzers.Test.CSharp8.DocumentationRules
         protected override LanguageVersion LanguageVersion => LanguageVersion.Default;
 
         /// <summary>
+        /// The editorconfig interface setting does not disable general documentation requirements.
+        /// </summary>
+        /// <param name="mode">The interface documentation mode.</param>
+        /// <param name="documentExposed">Whether exposed elements require documentation.</param>
+        /// <param name="documentInternal">Whether internal elements require documentation.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        [Theory]
+        [CombinatorialData]
+        [WorkItem(4345, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4345")]
+        public async Task TestInterfaceDocumentationSettingsFromEditorConfigAreAdditiveAsync(
+            [CombinatorialValues("false", "none", "exposed")] string mode,
+            bool documentExposed,
+            bool documentInternal)
+        {
+            var testCode = """
+                internal interface {|#0:IInternal|}
+                {
+                    void {|#1:Method|}() { }
+                    int {|#2:Property|} => 0;
+                    private void PrivateMethod() { }
+                }
+
+                public interface {|#3:IPublic|}
+                {
+                    void {|#4:Method|}() { }
+                    int {|#5:Property|} => 0;
+                    private void PrivateMethod() { }
+                }
+                """;
+            var test = new CSharpTest(this.LanguageVersion)
+            {
+                TestCode = testCode,
+                FixedCode = testCode,
+                DisabledDiagnostics = { "CS1591" },
+            };
+            test.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", $$"""
+                root = true
+
+                [*.cs]
+                stylecop.documentation.documentInterfaces = {{mode}}
+                stylecop.documentation.documentExposedElements = {{documentExposed.ToString().ToLowerInvariant()}}
+                stylecop.documentation.documentInternalElements = {{documentInternal.ToString().ToLowerInvariant()}}
+                """));
+            if (documentInternal)
+            {
+                test.ExpectedDiagnostics.AddRange(new[] { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1), Diagnostic().WithLocation(2) });
+            }
+
+            if (documentExposed || mode == "exposed")
+            {
+                test.ExpectedDiagnostics.AddRange(new[] { Diagnostic().WithLocation(3), Diagnostic().WithLocation(4), Diagnostic().WithLocation(5) });
+            }
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Non-public interface members follow general settings without making private methods require documentation by default.
+        /// </summary>
+        /// <param name="mode">The interface documentation mode.</param>
+        /// <param name="documentExposed">Whether exposed elements require documentation.</param>
+        /// <param name="documentInternal">Whether internal elements require documentation.</param>
+        /// <param name="documentPrivate">Whether private elements require documentation.</param>
+        /// <param name="documentPrivateFields">Whether private fields require documentation.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        [Theory]
+        [CombinatorialData]
+        [WorkItem(4345, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4345")]
+        public async Task TestNonPublicInterfaceMembersFollowDocumentationSettingsAsync(
+            [CombinatorialValues("all", "exposed", "none")] string mode,
+            bool documentExposed,
+            bool documentInternal,
+            bool documentPrivate,
+            bool documentPrivateFields)
+        {
+            var testCode = """
+                /// <summary>Interface summary.</summary>
+                public interface ITest
+                {
+                    private void {|#0:PrivateMethod|}() { }
+                    internal void {|#1:InternalMethod|}() { }
+                    protected void {|#2:ProtectedMethod|}() { }
+                    private static int {|#3:PrivateField|};
+                    internal static int {|#4:InternalField|};
+                    private event System.Action {|#5:PrivateEvent|} { add { } remove { } }
+                }
+                """;
+            var test = new CSharpTest(this.LanguageVersion)
+            {
+                TestCode = testCode,
+                FixedCode = testCode,
+                DisabledDiagnostics = { "CS1591" },
+                Settings = $$"""
+                    {
+                      "settings": {
+                        "documentationRules": {
+                          "documentInterfaces": "{{mode}}",
+                          "documentExposedElements": {{documentExposed.ToString().ToLowerInvariant()}},
+                          "documentInternalElements": {{documentInternal.ToString().ToLowerInvariant()}},
+                          "documentPrivateElements": {{documentPrivate.ToString().ToLowerInvariant()}},
+                          "documentPrivateFields": {{documentPrivateFields.ToString().ToLowerInvariant()}}
+                        }
+                      }
+                    }
+                    """,
+            };
+            if (documentPrivate)
+            {
+                test.ExpectedDiagnostics.AddRange(new[] { Diagnostic().WithLocation(0), Diagnostic().WithLocation(5) });
+            }
+
+            if (documentPrivate || documentInternal)
+            {
+                test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(1));
+            }
+
+            if (documentPrivate || documentExposed)
+            {
+                test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(2));
+            }
+
+            if (documentPrivateFields)
+            {
+                test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(3));
+            }
+
+            if (documentPrivate || documentInternal || documentPrivateFields)
+            {
+                test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(4));
+            }
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// The editorconfig exposed mode exempts internal interface members, including default implementations.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>

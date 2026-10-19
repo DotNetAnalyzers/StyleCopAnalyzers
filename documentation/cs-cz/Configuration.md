@@ -962,7 +962,7 @@ vlastností.
 
 | Vlastnost | Výchozí hodnota | Minimální verze | Popis |
 | --- | --- | --- | --- |
-| `documentInterfaces` | **all** | 1.0.0 | Řídí dokumentaci deklarací rozhraní a veřejných členů rozhraní: `"all"` (nebo `true`) vyžaduje dokumentaci bez ohledu na přístupnost rozhraní; `"exposed"` ji vyžaduje pouze pro rozhraní přístupná zvenčí; `"none"` (nebo `false`) ji nevyžaduje. Neveřejné členy rozhraní se řídí nastavením `documentPrivateElements`. |
+| `documentInterfaces` | **all** | 1.0.0 | Přidává požadavky na dokumentaci deklarací rozhraní a veřejných členů rozhraní: `"all"` (nebo `true`) vyžaduje dokumentaci bez ohledu na přístupnost rozhraní; `"exposed"` přidává tento požadavek pouze pro rozhraní přístupná zvenčí; `"none"` (nebo `false`) nepřidává žádný požadavek. Obecná nastavení dokumentace platí i nadále. |
 | `documentExposedElements` | **true** | 1.0.0 | Určuje, zda je třeba dokumentovat zpřístupněné prvky. Při hodnotě `true` vyžadují dokumentaci všechny veřejně zpřístupněné typy a členy. |
 | `documentInternalElements` | **true** | 1.0.0 | Určuje, zda je třeba dokumentovat interní prvky. Při hodnotě `true` vyžadují dokumentaci všechny interně zpřístupněné typy a členy. |
 | `documentPrivateElements` | **false** | 1.0.0 | Určuje, zda je třeba dokumentovat soukromé prvky. Při hodnotě `true` vyžadují dokumentaci všechny typy a členy kromě výslovně deklarovaných soukromých polí. |
@@ -990,9 +990,14 @@ Přístupnost se vyhodnocuje v kontextu obsahujících typů: veřejný člen in
 nikoli veřejně. Nastavení nejsou nezávislé výjimky:
 `documentPrivateElements: true` vyžaduje dokumentaci všech typů a členů kromě výslovně deklarovaných
 soukromých polí, i když je `documentInternalElements` nebo `documentExposedElements` nastaveno na false.
-`documentPrivateFields: true` vyžaduje dokumentaci všech polí. Rozhraní a jejich členy řídí samostatně
-`documentInterfaces`; samotné vypnutí dokumentace interních prvků nevyjímá interní rozhraní,
+`documentPrivateFields: true` vyžaduje dokumentaci všech polí. Další požadavky na dokumentaci rozhraní
+a jejich členů určuje `documentInterfaces`; samotné vypnutí dokumentace interních prvků nevyjímá interní rozhraní,
 pokud má `documentInterfaces` hodnotu `true` (`all`).
+
+Nastavení `documentInterfaces` přidává požadavky: `false` (nebo `"none"`) vypíná pouze zvláštní požadavek
+pro rozhraní. Pro rozhraní a jejich členy nadále platí `documentExposedElements`, `documentInternalElements`,
+`documentPrivateElements` a `documentPrivateFields`. V režimu `"exposed"` vyžadují rozhraní nepřístupná zvenčí
+dokumentaci, pokud je zapnuto příslušné obecné nastavení.
 
 Chcete-li vyžadovat dokumentaci pouze pro kód přístupný zvenčí, nastavte `documentInterfaces` na `"exposed"`,
 `documentExposedElements` na `true` a `documentInternalElements` na `false`. Režim `"exposed"` zohledňuje

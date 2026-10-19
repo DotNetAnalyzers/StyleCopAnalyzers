@@ -4,7 +4,7 @@
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
     /// <summary>
-    /// Specifies the documentation requirements for interfaces.
+    /// Specifies additional documentation requirements for interfaces.
     /// </summary>
     internal enum InterfaceDocumentationMode
     {
@@ -14,12 +14,12 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         All,
 
         /// <summary>
-        /// Only externally visible interfaces should be documented.
+        /// Externally visible interfaces require documentation in addition to the general settings.
         /// </summary>
         Exposed,
 
         /// <summary>
-        /// Interface documentation is not required.
+        /// No additional documentation requirements are imposed on interfaces.
         /// </summary>
         None,
     }
