@@ -988,6 +988,38 @@ public class TestClass
         }
 
         /// <summary>
+        /// Verifies that an escaped keyword used as an inferred anonymous property name stays escaped.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestTupleElementRenamePreservesEscapedKeywordAnonymousPropertyNameAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public int TestMethod((int [|@class|], int Other) value)
+    {
+        var projected = new { value.@class };
+        return projected.@class;
+    }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    public int TestMethod((int Class, int Other) value)
+    {
+        var projected = new { @class = value.Class };
+        return projected.@class;
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that a tuple element nested inside an anonymous projection does not become the property name.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>

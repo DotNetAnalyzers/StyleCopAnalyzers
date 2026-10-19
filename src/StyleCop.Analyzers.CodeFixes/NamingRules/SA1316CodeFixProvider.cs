@@ -176,8 +176,11 @@ namespace StyleCop.Analyzers.NamingRules
                 SyntaxFactory.TriviaList(SyntaxFactory.Space),
                 SyntaxKind.EqualsToken,
                 SyntaxFactory.TriviaList(SyntaxFactory.Space));
+
+            // ValueText drops the '@' from an escaped keyword, so `value.@class` would become `class = ...`.
+            var preservedName = nameToken.Value.WithoutTrivia().WithoutAnnotations(annotation);
             return declarator
-                .WithNameEquals(SyntaxFactory.NameEquals(SyntaxFactory.IdentifierName(nameToken.Value.ValueText)).WithEqualsToken(equalsToken))
+                .WithNameEquals(SyntaxFactory.NameEquals(SyntaxFactory.IdentifierName(preservedName)).WithEqualsToken(equalsToken))
                 .WithExpression(renamedExpression);
         }
     }
