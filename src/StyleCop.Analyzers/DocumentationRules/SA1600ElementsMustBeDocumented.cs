@@ -59,42 +59,15 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         public static bool NeedsComment(DocumentationSettings documentationSettings, SyntaxKind syntaxKind, SyntaxKind parentSyntaxKind, Accessibility declaredAccessibility, Accessibility effectiveAccessibility)
         {
-            if (syntaxKind == SyntaxKind.InterfaceDeclaration)
+            if (syntaxKind == SyntaxKind.InterfaceDeclaration
+                || (parentSyntaxKind == SyntaxKind.InterfaceDeclaration
+                    && declaredAccessibility is Accessibility.Public or Accessibility.NotApplicable))
             {
                 switch (documentationSettings.DocumentInterfaces)
                 {
                 case InterfaceDocumentationMode.All:
-                    // DocumentInterfaces => all interfaces should be documented
+                case InterfaceDocumentationMode.Exposed when effectiveAccessibility is Accessibility.Public or Accessibility.Protected or Accessibility.ProtectedOrInternal:
                     return true;
-                case InterfaceDocumentationMode.Exposed:
-                    // DocumentInterfaces => only externally visible (exposed) interfaces should be documented
-                    return effectiveAccessibility is Accessibility.Public or Accessibility.Protected or Accessibility.ProtectedOrInternal;
-                default:
-                    // DocumentInterfaces => no interfaces should be exposed
-                    return false;
-                }
-            }
-
-            if (parentSyntaxKind == SyntaxKind.InterfaceDeclaration)
-            {
-                bool isPublicInterfaceMember = declaredAccessibility is Accessibility.Public or Accessibility.NotApplicable;
-                if (!isPublicInterfaceMember)
-                {
-                    return documentationSettings.DocumentPrivateElements;
-                }
-
-                // At this point we know the declared accessibility is public
-                switch (documentationSettings.DocumentInterfaces)
-                {
-                case InterfaceDocumentationMode.All:
-                    return true;
-
-                case InterfaceDocumentationMode.Exposed:
-                    return effectiveAccessibility is Accessibility.Public or Accessibility.Protected or Accessibility.ProtectedOrInternal;
-
-                default:
-                    // DocumentInterfaces => no interface members should be documented
-                    return false;
                 }
             }
 

@@ -960,7 +960,7 @@ StyleCop Analyzers includes rules which require developers to document the major
 
 | Property | Default Value | Minimum Version | Summary |
 | --- | --- | --- | --- |
-| `documentInterfaces` | **all** | 1.0.0 | Controls documentation for interface declarations and public interface members: `"all"` (or `true`) requires documentation regardless of interface accessibility; `"exposed"` requires it only for externally visible interfaces; `"none"` (or `false`) does not require it. Non-public interface members follow `documentPrivateElements`. |
+| `documentInterfaces` | **all** | 1.0.0 | Adds documentation requirements for interface declarations and public interface members: `"all"` (or `true`) requires documentation regardless of interface accessibility; `"exposed"` adds this requirement only for externally visible interfaces; `"none"` (or `false`) adds no requirement. General documentation settings still apply. |
 | `documentExposedElements` | **true** | 1.0.0 | Specifies whether exposed elements need to be documented. When true, all publicly-exposed types and members require documentation. |
 | `documentInternalElements` | **true** | 1.0.0 | Specifies whether internal elements need to be documented. When true, all internally-exposed types and members require documentation. |
 | `documentPrivateElements` | **false** | 1.0.0 | Specifies whether private elements need to be documented. When true, all types and members except for declared private fields require documentation. |
@@ -988,9 +988,14 @@ Accessibility is evaluated in the context of containing types: a public member o
 internally accessible, not publicly exposed. The settings are not independent exclusions:
 `documentPrivateElements: true` requires documentation for all types and members except declared private
 fields, even when `documentInternalElements` or `documentExposedElements` is false.
-`documentPrivateFields: true` requires documentation for all fields. Interfaces and their members are
-controlled separately by `documentInterfaces`; disabling documentation for internal elements alone does
+`documentPrivateFields: true` requires documentation for all fields. Additional requirements for interfaces
+and their members are controlled by `documentInterfaces`; disabling documentation for internal elements alone does
 not exempt internal interfaces when `documentInterfaces` is `true` (`all`).
+
+`documentInterfaces` is additive: `false` (or `"none"`) disables only the extra interface-specific
+requirement. Interfaces and their members still follow `documentExposedElements`,
+`documentInternalElements`, `documentPrivateElements`, and `documentPrivateFields`. In `"exposed"`
+mode, non-exposed interfaces still require documentation when the applicable general setting is enabled.
 
 To require documentation only for publicly exposed code, set `documentInterfaces` to `"exposed"`,
 `documentExposedElements` to `true`, and `documentInternalElements` to `false`. The `"exposed"` interface

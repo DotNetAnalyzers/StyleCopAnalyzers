@@ -124,8 +124,9 @@ using System;
         [InlineData("exposed", "", false)]
         [InlineData("exposed", "public", true)]
         [InlineData("none", "internal", false)]
-        [InlineData("none", "public", false)]
+        [InlineData("none", "public", true)]
         [WorkItem(4342, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4342")]
+        [WorkItem(4345, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4345")]
         public async Task TestInterfaceMembersWithDocumentationModeAsync(string mode, string accessibility, bool requiresDocumentation)
         {
             var testCode = $$"""
@@ -161,6 +162,119 @@ using System;
             };
             test.ExpectedDiagnostics.AddRange(expected);
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Interface-specific documentation requirements add to the general accessibility settings.
+        /// </summary>
+        /// <param name="mode">The JSON value for the interface documentation mode.</param>
+        /// <param name="accessibility">The declared accessibility of the interface.</param>
+        /// <param name="documentExposed">Whether exposed elements require documentation.</param>
+        /// <param name="documentInternal">Whether internal elements require documentation.</param>
+        /// <param name="documentPrivate">Whether private elements require documentation.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        [Theory]
+        [CombinatorialData]
+        [WorkItem(4345, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4345")]
+        public async Task TestInterfaceDocumentationSettingsAreAdditiveAsync(
+            [CombinatorialValues("true", "false", "\"all\"", "\"exposed\"", "\"none\"")] string mode,
+            [CombinatorialValues("public", "internal")] string accessibility,
+            bool documentExposed,
+            bool documentInternal,
+            bool documentPrivate)
+        {
+            var testCode = $$"""
+                {{accessibility}} interface {|#0:ITest|}
+                {
+                    void {|#1:Method|}();
+                    int {|#2:Property|} { get; }
+                    int {|#3:this|}[int index] { get; }
+                    event System.Action {|#4:Changed|};
+                }
+                """;
+            var settings = $$"""
+                {
+                  "settings": {
+                    "documentationRules": {
+                      "documentInterfaces": {{mode}},
+                      "documentExposedElements": {{documentExposed.ToString().ToLowerInvariant()}},
+                      "documentInternalElements": {{documentInternal.ToString().ToLowerInvariant()}},
+                      "documentPrivateElements": {{documentPrivate.ToString().ToLowerInvariant()}}
+                    }
+                  }
+                }
+                """;
+            bool requiresDocumentation = mode is "true" or "\"all\""
+                || (mode == "\"exposed\"" && accessibility == "public")
+                || documentPrivate
+                || (accessibility == "public" ? documentExposed : documentInternal);
+            var test = new CSharpTest(this.LanguageVersion)
+            {
+                TestCode = testCode,
+                FixedCode = testCode,
+                Settings = settings,
+                DisabledDiagnostics = { "CS1591" },
+            };
+            if (requiresDocumentation)
+            {
+                test.ExpectedDiagnostics.AddRange(new[]
+                {
+                    Diagnostic().WithLocation(0),
+                    Diagnostic().WithLocation(1),
+                    Diagnostic().WithLocation(2),
+                    Diagnostic().WithLocation(3),
+                    Diagnostic().WithLocation(4),
+                });
+            }
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// General documentation settings also apply to non-exposed interfaces nested in non-public types.
+        /// </summary>
+        /// <param name="accessibility">The declared accessibility of the containing nested class.</param>
+        /// <param name="setting">The general setting requiring documentation.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData("internal", "documentInternalElements")]
+        [InlineData("private", "documentPrivateElements")]
+        [WorkItem(4345, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4345")]
+        public async Task TestNestedInterfaceDocumentationSettingsAreAdditiveAsync(string accessibility, string setting)
+        {
+            var testCode = $$"""
+                /// <summary>Containing type summary.</summary>
+                public class Container
+                {
+                    /// <summary>Nested type summary.</summary>
+                    {{accessibility}} class Nested
+                    {
+                        public interface {|#0:ITest|}
+                        {
+                            void {|#1:Method|}();
+                        }
+                    }
+                }
+                """;
+            var settings = $$"""
+                {
+                  "settings": {
+                    "documentationRules": {
+                      "documentInterfaces": "exposed",
+                      "documentExposedElements": false,
+                      "{{setting}}": true
+                    }
+                  }
+                }
+                """;
+            await new CSharpTest(this.LanguageVersion)
+            {
+                TestCode = testCode,
+                FixedCode = testCode,
+                Settings = settings,
+                DisabledDiagnostics = { "CS1591" },
+                ExpectedDiagnostics = { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1) },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -222,16 +336,22 @@ using System;
         }
 
         /// <summary>
-        /// Rules sharing the documentation requirement check agree on whether an interface is exposed.
+        /// Rules sharing the documentation requirement check also honor additive general settings.
         /// </summary>
         /// <param name="accessibility">The declared accessibility of the containing class.</param>
+        /// <param name="mode">The interface documentation mode.</param>
+        /// <param name="documentInternal">Whether internal elements require documentation.</param>
         /// <param name="requiresDocumentation">Whether the interfaces and their members require documentation.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [Theory]
-        [InlineData("public", true)]
-        [InlineData("internal", false)]
+        [InlineData("public", "exposed", false, true)]
+        [InlineData("internal", "exposed", false, false)]
+        [InlineData("public", "none", false, true)]
+        [InlineData("internal", "none", true, true)]
+        [InlineData("internal", "exposed", true, true)]
         [WorkItem(4342, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4342")]
-        public async Task TestExposedInterfaceDocumentationRequirementsAsync(string accessibility, bool requiresDocumentation)
+        [WorkItem(4345, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4345")]
+        public async Task TestInterfaceDocumentationRequirementsAreAdditiveAsync(string accessibility, string mode, bool documentInternal, bool requiresDocumentation)
         {
             var test = new InterfaceDocumentationTest(this.LanguageVersion)
             {
@@ -244,7 +364,8 @@ using System;
                         public interface {|#0:ITest|}<{|#1:T|}>
                         {
                             /// <remarks>Method remarks.</remarks>
-                            {|#9:int|} {|#2:Method|}<{|#3:TMethod|}>(int {|#4:value|});
+                            /// <param name="{|#10:documented|}">A documented parameter.</param>
+                            {|#9:int|} {|#2:Method|}<{|#3:TMethod|}>(int {|#4:value|}, int documented);
 
                             /// <remarks>Property remarks.</remarks>
                             int {|#5:Property|} { get; }
@@ -259,12 +380,12 @@ using System;
                         public partial interface IGenericPartial<{|#8:T|}> { }
                     }
                     """,
-                Settings = """
+                Settings = $$"""
                     {
                       "settings": {
                         "documentationRules": {
-                          "documentInterfaces": "exposed",
-                          "documentInternalElements": false
+                          "documentInterfaces": "{{mode}}",
+                          "documentInternalElements": {{documentInternal.ToString().ToLowerInvariant()}}
                         }
                       }
                     }
@@ -281,6 +402,9 @@ using System;
                     new DiagnosticResult(new SA1615ElementReturnValueMustBeDocumented().SupportedDiagnostics[0]).WithLocation(9),
                     new DiagnosticResult(new SA1618GenericTypeParametersMustBeDocumented().SupportedDiagnostics[0]).WithLocation(3).WithArguments("TMethod"),
                     new DiagnosticResult(new SA1611ElementParametersMustBeDocumented().SupportedDiagnostics[0]).WithLocation(4).WithArguments("value"),
+                    new DiagnosticResult(new SA1612ElementParameterDocumentationMustMatchElementParameters().SupportedDiagnostics[0])
+                        .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}")
+                        .WithLocation(10).WithArguments("documented", 2),
                     new DiagnosticResult(new SA1604ElementDocumentationMustHaveSummary().SupportedDiagnostics[0]).WithLocation(5),
                     new DiagnosticResult(new SA1609PropertyDocumentationMustHaveValue().SupportedDiagnostics[0]).WithLocation(5),
                     new DiagnosticResult(new SA1601PartialElementsMustBeDocumented().SupportedDiagnostics[0]).WithLocation(6),
@@ -1632,6 +1756,7 @@ public class OuterClass
                     new SA1605PartialElementDocumentationMustHaveSummary(),
                     new SA1609PropertyDocumentationMustHaveValue(),
                     new SA1611ElementParametersMustBeDocumented(),
+                    new SA1612ElementParameterDocumentationMustMatchElementParameters(),
                     new SA1615ElementReturnValueMustBeDocumented(),
                     new SA1618GenericTypeParametersMustBeDocumented(),
                     new SA1619GenericTypeParametersMustBeDocumentedPartialClass(),

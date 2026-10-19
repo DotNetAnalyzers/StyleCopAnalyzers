@@ -262,7 +262,7 @@
             },
             "documentInterfaces": {
               "type": [ "string", "boolean" ],
-              "description": "Specifies whether interface members need to be documented. When true, all interface members require documentation, regardless of accessibility.",
+              "description": "Adds documentation requirements for interfaces and their public members: all (or true) requires all interfaces; exposed requires externally visible interfaces; none (or false) adds no requirement. General documentation settings still apply.",
               "default": "all",
               "enum": [
                 "all",
