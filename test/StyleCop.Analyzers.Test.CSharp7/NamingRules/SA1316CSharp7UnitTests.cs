@@ -1091,6 +1091,40 @@ public class TestClass
         }
 
         /// <summary>
+        /// Verifies that a projection of an inferred tuple element is renamed along with its consumers.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestTupleElementRenameUpdatesChainedInferredTupleNamesAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public int TestMethod((int [|nameA|], int Other) value)
+    {
+        var first = (false, value.nameA);
+        var second = ("""", first.nameA, 0L);
+        return second.nameA;
+    }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    public int TestMethod((int NameA, int Other) value)
+    {
+        var first = (false, NameA: value.NameA);
+        var second = ("""", NameA: first.NameA, 0L);
+        return second.NameA;
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_1.OrLaterDefault(), testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that the fix is not offered when the corrected inferred name would select another tuple element.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
@@ -1114,6 +1148,46 @@ public class TestClass
             var solution = workspace.CurrentSolution
                 .AddProject(projectId, "TestProject", "TestProject", LanguageNames.CSharp)
                 .WithProjectCompilationOptions(projectId, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
+                .WithProjectParseOptions(projectId, new CSharpParseOptions(LanguageVersion.CSharp7_1))
+                .AddMetadataReferences(projectId, references);
+            var documentId = DocumentId.CreateNewId(projectId);
+            solution = solution.AddDocument(documentId, "Test.cs", SourceText.From(source));
+            var document = solution.GetDocument(documentId);
+            var compilation = await document.Project.GetCompilationAsync(CancellationToken.None).ConfigureAwait(false);
+            var analyzer = new SA1316TupleElementNamesShouldUseCorrectCasing();
+            var diagnostics = await compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(analyzer)).GetAnalyzerDiagnosticsAsync(CancellationToken.None).ConfigureAwait(false);
+            var diagnostic = Assert.Single(diagnostics);
+
+            var actions = new List<CodeAction>();
+            var context = new CodeFixContext(document, diagnostic, (action, _) => actions.Add(action), CancellationToken.None);
+            await new SA1316CodeFixProvider().RegisterCodeFixesAsync(context).ConfigureAwait(false);
+            Assert.Empty(actions);
+        }
+
+        /// <summary>
+        /// Verifies that the fix is not offered when duplicate inferred names were suppressed.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestTupleElementRenameIsNotOfferedWhenDuplicateInferredNamesAreSuppressedAsync()
+        {
+            const string source = @"
+public class TestClass
+{
+    public int TestMethod((int nameA, int Other) value)
+    {
+        var projected = (value.nameA, value.nameA);
+        return projected.Item1 + projected.Item2;
+    }
+}
+";
+
+            var workspace = await GenericAnalyzerTest.CreateWorkspaceAsync().ConfigureAwait(false);
+            var projectId = ProjectId.CreateNewId();
+            var references = await GenericAnalyzerTest.ReferenceAssemblies.ResolveAsync(LanguageNames.CSharp, CancellationToken.None).ConfigureAwait(false);
+            var solution = workspace.CurrentSolution
+                .AddProject(projectId, "TestProject", "TestProject", LanguageNames.CSharp)
+                .WithProjectCompilationOptions(projectId, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary).WithAssemblyIdentityComparer(DesktopAssemblyIdentityComparer.Default))
                 .WithProjectParseOptions(projectId, new CSharpParseOptions(LanguageVersion.CSharp7_1))
                 .AddMetadataReferences(projectId, references);
             var documentId = DocumentId.CreateNewId(projectId);

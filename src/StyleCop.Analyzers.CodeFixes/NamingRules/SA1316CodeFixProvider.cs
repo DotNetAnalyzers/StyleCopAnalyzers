@@ -344,40 +344,62 @@ namespace StyleCop.Analyzers.NamingRules
         private static async Task<List<Location>?> GetInferredTupleConsumerLocationsAsync(Solution solution, IReadOnlyList<Location> referenceLocations, string fixedTupleElementName, CancellationToken cancellationToken)
         {
             var consumers = new List<Location>();
-            foreach (var treeGroup in referenceLocations.GroupBy(location => location.SourceTree))
+            var pending = new Queue<Location>(referenceLocations);
+            var visited = new Dictionary<SyntaxTree, HashSet<int>>();
+            while (pending.Count > 0)
             {
-                var referenceDocument = solution.GetDocument(treeGroup.Key);
-                if (referenceDocument == null)
+                var location = pending.Dequeue();
+                if (location.SourceTree == null)
+                {
+                    continue;
+                }
+
+                if (!visited.TryGetValue(location.SourceTree, out var visitedStarts))
+                {
+                    visitedStarts = new HashSet<int>();
+                    visited.Add(location.SourceTree, visitedStarts);
+                }
+
+                if (!visitedStarts.Add(location.SourceSpan.Start))
+                {
+                    continue;
+                }
+
+                var referenceDocument = solution.GetDocument(location.SourceTree);
+                if (referenceDocument == null || referenceDocument.Project.Language != LanguageNames.CSharp)
                 {
                     return null;
                 }
 
                 var root = await referenceDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
                 var semanticModel = await referenceDocument.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-                foreach (var location in treeGroup)
+                var token = root.FindToken(location.SourceSpan.Start, findInsideTrivia: true);
+                if (token.Span.Start != location.SourceSpan.Start)
                 {
-                    var token = root.FindToken(location.SourceSpan.Start, findInsideTrivia: true);
-                    if (token.Span.Start != location.SourceSpan.Start)
-                    {
-                        continue;
-                    }
+                    continue;
+                }
 
-                    var argument = GetInferredTupleArgument(token);
-                    if (argument == null)
-                    {
-                        continue;
-                    }
+                var argument = GetInferredTupleArgument(token);
+                if (argument == null)
+                {
+                    continue;
+                }
 
-                    if (!TryGetInferredTupleElement(semanticModel, argument, fixedTupleElementName, cancellationToken, out var elementSymbol))
+                if (!TryGetInferredTupleElement(semanticModel, argument, fixedTupleElementName, cancellationToken, out var elementSymbol))
+                {
+                    return null;
+                }
+
+                var elementReferences = await SymbolFinder.FindReferencesAsync(elementSymbol, solution, cancellationToken).ConfigureAwait(false);
+                foreach (var consumer in elementReferences.SelectMany(reference => reference.Locations).Select(referenceLocation => referenceLocation.Location).Where(referenceLocation => referenceLocation.IsInSource))
+                {
+                    if (consumer.SourceTree == null || solution.GetDocument(consumer.SourceTree)?.Project.Language != LanguageNames.CSharp)
                     {
                         return null;
                     }
 
-                    var elementReferences = await SymbolFinder.FindReferencesAsync(elementSymbol, solution, cancellationToken).ConfigureAwait(false);
-                    consumers.AddRange(elementReferences
-                        .SelectMany(reference => reference.Locations)
-                        .Select(referenceLocation => referenceLocation.Location)
-                        .Where(referenceLocation => referenceLocation.IsInSource));
+                    consumers.Add(consumer);
+                    pending.Enqueue(consumer);
                 }
             }
 
@@ -411,6 +433,13 @@ namespace StyleCop.Analyzers.NamingRules
 
             var elements = tupleType.TupleElements();
             if (elements.IsDefault || index >= elements.Length)
+            {
+                return false;
+            }
+
+            // Duplicate inferred names are dropped, so the element may be ItemN rather than the identifier.
+            var inferredName = argument.Expression.TryGetInferredMemberName();
+            if (inferredName == null || elements[index].Name != inferredName)
             {
                 return false;
             }
