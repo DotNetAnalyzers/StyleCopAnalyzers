@@ -104,7 +104,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
             var compilationUnit = (CompilationUnitSyntax)context.Node;
 
-            HandleMemberList(context, elementOrder, accessibilityIndex, compilationUnit.Members);
+            HandleMemberList(context, elementOrder, settings.OrderingRules.AccessibilityOrder, accessibilityIndex, compilationUnit.Members);
         }
 
         private static void HandleBaseNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
@@ -118,7 +118,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
             var baseNamespaceDeclaration = (BaseNamespaceDeclarationSyntaxWrapper)context.Node;
 
-            HandleMemberList(context, elementOrder, accessibilityIndex, baseNamespaceDeclaration.Members);
+            HandleMemberList(context, elementOrder, settings.OrderingRules.AccessibilityOrder, accessibilityIndex, baseNamespaceDeclaration.Members);
         }
 
         private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
@@ -132,10 +132,10 @@ namespace StyleCop.Analyzers.OrderingRules
 
             var typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
-            HandleMemberList(context, elementOrder, accessibilityIndex, typeDeclaration.Members);
+            HandleMemberList(context, elementOrder, settings.OrderingRules.AccessibilityOrder, accessibilityIndex, typeDeclaration.Members);
         }
 
-        private static void HandleMemberList(SyntaxNodeAnalysisContext context, ImmutableArray<OrderingTrait> elementOrder, int accessibilityIndex, SyntaxList<MemberDeclarationSyntax> members)
+        private static void HandleMemberList(SyntaxNodeAnalysisContext context, ImmutableArray<OrderingTrait> elementOrder, ImmutableArray<AccessLevel> accessibilityOrder, int accessibilityIndex, SyntaxList<MemberDeclarationSyntax> members)
         {
             var handledMembers = new List<MemberInfo>();
             Dictionary<string, ImmutableHashSet<string>>? fieldDependencies = null;
@@ -155,11 +155,12 @@ namespace StyleCop.Analyzers.OrderingRules
 
                 var modifiers = member.GetModifiers();
                 AccessLevel currentAccessLevel = MemberOrderHelper.GetAccessLevelForOrdering(member, modifiers);
+                int currentAccessibilityPriority = MemberOrderHelper.GetAccessibilityPriority(accessibilityOrder, currentAccessLevel);
                 bool currentIsConst = modifiers.Any(SyntaxKind.ConstKeyword);
                 bool currentIsReadonly = modifiers.Any(SyntaxKind.ReadOnlyKeyword);
                 bool currentIsStatic = modifiers.Any(SyntaxKind.StaticKeyword);
 
-                var currentInfo = new MemberInfo(member, currentSyntaxKind, currentAccessLevel, currentIsConst, currentIsReadonly, currentIsStatic);
+                var currentInfo = new MemberInfo(member, currentSyntaxKind, currentAccessLevel, currentAccessibilityPriority, currentIsConst, currentIsReadonly, currentIsStatic);
 
                 if (handledMembers.Count > 0)
                 {
@@ -217,7 +218,7 @@ namespace StyleCop.Analyzers.OrderingRules
                             continue;
                         }
 
-                        if (currentAccessLevel > previousInfo.AccessLevel)
+                        if (currentAccessibilityPriority > previousInfo.AccessibilityPriority)
                         {
                             bool isExcused = false;
                             if (member is FieldDeclarationSyntax currentField && previousInfo.Member is FieldDeclarationSyntax previousField)
@@ -230,10 +231,11 @@ namespace StyleCop.Analyzers.OrderingRules
                                         if (m is FieldDeclarationSyntax f)
                                         {
                                             var access = MemberOrderHelper.GetAccessLevelForOrdering(f, f.GetModifiers());
+                                            int accessibilityPriority = MemberOrderHelper.GetAccessibilityPriority(accessibilityOrder, access);
                                             var spanStart = f.SpanStart;
                                             foreach (var v in f.Declaration.Variables)
                                             {
-                                                fieldVariableInfos[v.Identifier.ValueText] = new FieldVariableInfo(access, spanStart);
+                                                fieldVariableInfos[v.Identifier.ValueText] = new FieldVariableInfo(accessibilityPriority, spanStart);
                                             }
                                         }
                                     }
@@ -241,7 +243,7 @@ namespace StyleCop.Analyzers.OrderingRules
                                     fieldDependencies = FieldDependencyHelper.ComputeFieldDependencies(context.SemanticModel, members, context.CancellationToken);
                                 }
 
-                                isExcused = IsRequiredToAppearAfter(currentField, previousField, previousInfo.AccessLevel, fieldDependencies, fieldVariableInfos!);
+                                isExcused = IsRequiredToAppearAfter(currentField, previousField, previousInfo.AccessibilityPriority, fieldDependencies, fieldVariableInfos!);
                             }
 
                             if (isExcused)
@@ -272,7 +274,7 @@ namespace StyleCop.Analyzers.OrderingRules
         private static bool IsRequiredToAppearAfter(
             FieldDeclarationSyntax currentField,
             FieldDeclarationSyntax precedingField,
-            AccessLevel precedingAccessLevel,
+            int precedingAccessibilityPriority,
             Dictionary<string, ImmutableHashSet<string>> fieldDependencies,
             Dictionary<string, FieldVariableInfo> variableInfos)
         {
@@ -294,7 +296,7 @@ namespace StyleCop.Analyzers.OrderingRules
                     {
                         if (variableInfos.TryGetValue(dep, out var depInfo))
                         {
-                            if (precedingField.SpanStart < depInfo.SpanStart && precedingAccessLevel >= depInfo.AccessLevel)
+                            if (precedingField.SpanStart < depInfo.SpanStart && precedingAccessibilityPriority >= depInfo.AccessibilityPriority)
                             {
                                 return true;
                             }
@@ -308,24 +310,25 @@ namespace StyleCop.Analyzers.OrderingRules
 
         private readonly struct FieldVariableInfo
         {
-            public FieldVariableInfo(AccessLevel accessLevel, int spanStart)
+            public FieldVariableInfo(int accessibilityPriority, int spanStart)
             {
-                this.AccessLevel = accessLevel;
+                this.AccessibilityPriority = accessibilityPriority;
                 this.SpanStart = spanStart;
             }
 
-            public AccessLevel AccessLevel { get; }
+            public int AccessibilityPriority { get; }
 
             public int SpanStart { get; }
         }
 
         private readonly struct MemberInfo
         {
-            public MemberInfo(MemberDeclarationSyntax member, SyntaxKind kind, AccessLevel accessLevel, bool isConst, bool isReadonly, bool isStatic)
+            public MemberInfo(MemberDeclarationSyntax member, SyntaxKind kind, AccessLevel accessLevel, int accessibilityPriority, bool isConst, bool isReadonly, bool isStatic)
             {
                 this.Member = member;
                 this.Kind = kind;
                 this.AccessLevel = accessLevel;
+                this.AccessibilityPriority = accessibilityPriority;
                 this.IsConst = isConst;
                 this.IsReadonly = isReadonly;
                 this.IsStatic = isStatic;
@@ -336,6 +339,8 @@ namespace StyleCop.Analyzers.OrderingRules
             public SyntaxKind Kind { get; }
 
             public AccessLevel AccessLevel { get; }
+
+            public int AccessibilityPriority { get; }
 
             public bool IsConst { get; }
 

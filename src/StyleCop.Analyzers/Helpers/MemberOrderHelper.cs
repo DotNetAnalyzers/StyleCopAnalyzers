@@ -39,7 +39,8 @@ namespace StyleCop.Analyzers.Helpers
         /// </summary>
         /// <param name="member">The member to wrap.</param>
         /// <param name="elementOrder">The element ordering traits.</param>
-        internal MemberOrderHelper(MemberDeclarationSyntax member, ImmutableArray<OrderingTrait> elementOrder)
+        /// <param name="accessibilityOrder">The configured order of accessibility levels.</param>
+        internal MemberOrderHelper(MemberDeclarationSyntax member, ImmutableArray<OrderingTrait> elementOrder, ImmutableArray<AccessLevel> accessibilityOrder)
         {
             this.Member = member;
             var modifiers = member.GetModifiers();
@@ -66,7 +67,7 @@ namespace StyleCop.Analyzers.Helpers
                 case OrderingTrait.Accessibility:
                     // 3 bits are required to store this.
                     this.Priority <<= 3;
-                    this.Priority |= (int)GetAccessLevelForOrdering(member, modifiers) & 0x07;
+                    this.Priority |= GetAccessibilityPriority(accessibilityOrder, GetAccessLevelForOrdering(member, modifiers)) & 0x07;
                     break;
 
                 case OrderingTrait.Constant:
@@ -141,6 +142,11 @@ namespace StyleCop.Analyzers.Helpers
         /// The priority for this member.
         /// </value>
         internal int Priority { get; }
+
+        internal static int GetAccessibilityPriority(ImmutableArray<AccessLevel> accessibilityOrder, AccessLevel accessLevel)
+        {
+            return accessibilityOrder.Length - accessibilityOrder.IndexOf(accessLevel);
+        }
 
         internal static AccessLevel GetAccessLevelForOrdering(SyntaxNode member, SyntaxTokenList modifiers)
         {

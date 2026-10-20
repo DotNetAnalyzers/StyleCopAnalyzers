@@ -80,7 +80,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             var endOfLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(memberDeclaration.GetFirstToken(), sourceText, document.Project.Solution.Workspace.Options);
-            var updatedRoot = UpdateSyntaxRoot(memberDeclaration, elementOrder, syntaxRoot, settings.Indentation, endOfLineTrivia, settings.OrderingRules.MemberKindOrder, semanticModel, cancellationToken);
+            var updatedRoot = UpdateSyntaxRoot(memberDeclaration, elementOrder, syntaxRoot, settings.Indentation, endOfLineTrivia, settings.OrderingRules.MemberKindOrder, settings.OrderingRules.AccessibilityOrder, semanticModel, cancellationToken);
             if (updatedRoot == syntaxRoot)
             {
                 return document;
@@ -96,26 +96,27 @@ namespace StyleCop.Analyzers.OrderingRules
             IndentationSettings indentationSettings,
             SyntaxTrivia endOfLineTrivia,
             MemberKindOrder? configuredOrder,
+            ImmutableArray<AccessLevel> accessibilityOrder,
             SemanticModel? semanticModel = null,
             CancellationToken cancellationToken = default,
             Dictionary<string, Dictionary<string, ImmutableHashSet<string>>>? fieldDependenciesByType = null)
         {
             var parentDeclaration = memberDeclaration.Parent;
-            var memberToMove = new MemberOrderHelper(memberDeclaration, elementOrder);
+            var memberToMove = new MemberOrderHelper(memberDeclaration, elementOrder, accessibilityOrder);
 
             if (parentDeclaration is TypeDeclarationSyntax syntax)
             {
-                return HandleTypeDeclaration(memberToMove, syntax, elementOrder, syntaxRoot, indentationSettings, endOfLineTrivia, configuredOrder, semanticModel, cancellationToken, fieldDependenciesByType);
+                return HandleTypeDeclaration(memberToMove, syntax, elementOrder, syntaxRoot, indentationSettings, endOfLineTrivia, configuredOrder, accessibilityOrder, semanticModel, cancellationToken, fieldDependenciesByType);
             }
 
             if (BaseNamespaceDeclarationSyntaxWrapper.IsInstance(parentDeclaration))
             {
-                return HandleBaseNamespaceDeclaration(memberToMove, (BaseNamespaceDeclarationSyntaxWrapper)parentDeclaration, elementOrder, syntaxRoot, indentationSettings, endOfLineTrivia);
+                return HandleBaseNamespaceDeclaration(memberToMove, (BaseNamespaceDeclarationSyntaxWrapper)parentDeclaration, elementOrder, accessibilityOrder, syntaxRoot, indentationSettings, endOfLineTrivia);
             }
 
             if (parentDeclaration is CompilationUnitSyntax syntax1)
             {
-                return HandleCompilationUnitDeclaration(memberToMove, syntax1, elementOrder, syntaxRoot, indentationSettings, endOfLineTrivia);
+                return HandleCompilationUnitDeclaration(memberToMove, syntax1, elementOrder, accessibilityOrder, syntaxRoot, indentationSettings, endOfLineTrivia);
             }
 
             return syntaxRoot;
@@ -129,6 +130,7 @@ namespace StyleCop.Analyzers.OrderingRules
             IndentationSettings indentationSettings,
             SyntaxTrivia endOfLineTrivia,
             MemberKindOrder? configuredOrder,
+            ImmutableArray<AccessLevel> accessibilityOrder,
             SemanticModel? semanticModel,
             CancellationToken cancellationToken,
             Dictionary<string, Dictionary<string, ImmutableHashSet<string>>>? fieldDependenciesByType)
@@ -148,7 +150,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 return OrderConfiguredMember(memberOrder.Member, typeDeclarationNode.Members, configuredOrder, syntaxRoot, indentationSettings, endOfLineTrivia, fieldDependencies, cancellationToken);
             }
 
-            return OrderMember(memberOrder, typeDeclarationNode.Members, elementOrder, syntaxRoot, indentationSettings, endOfLineTrivia, fieldDependencies);
+            return OrderMember(memberOrder, typeDeclarationNode.Members, elementOrder, accessibilityOrder, syntaxRoot, indentationSettings, endOfLineTrivia, fieldDependencies);
         }
 
         private static SyntaxNode OrderConfiguredMember(
@@ -299,20 +301,21 @@ namespace StyleCop.Analyzers.OrderingRules
             return false;
         }
 
-        private static SyntaxNode HandleCompilationUnitDeclaration(MemberOrderHelper memberOrder, CompilationUnitSyntax compilationUnitDeclaration, ImmutableArray<OrderingTrait> elementOrder, SyntaxNode syntaxRoot, IndentationSettings indentationSettings, SyntaxTrivia endOfLineTrivia)
+        private static SyntaxNode HandleCompilationUnitDeclaration(MemberOrderHelper memberOrder, CompilationUnitSyntax compilationUnitDeclaration, ImmutableArray<OrderingTrait> elementOrder, ImmutableArray<AccessLevel> accessibilityOrder, SyntaxNode syntaxRoot, IndentationSettings indentationSettings, SyntaxTrivia endOfLineTrivia)
         {
-            return OrderMember(memberOrder, compilationUnitDeclaration.Members, elementOrder, syntaxRoot, indentationSettings, endOfLineTrivia, fieldDependencies: null);
+            return OrderMember(memberOrder, compilationUnitDeclaration.Members, elementOrder, accessibilityOrder, syntaxRoot, indentationSettings, endOfLineTrivia, fieldDependencies: null);
         }
 
-        private static SyntaxNode HandleBaseNamespaceDeclaration(MemberOrderHelper memberOrder, BaseNamespaceDeclarationSyntaxWrapper namespaceDeclaration, ImmutableArray<OrderingTrait> elementOrder, SyntaxNode syntaxRoot, IndentationSettings indentationSettings, SyntaxTrivia endOfLineTrivia)
+        private static SyntaxNode HandleBaseNamespaceDeclaration(MemberOrderHelper memberOrder, BaseNamespaceDeclarationSyntaxWrapper namespaceDeclaration, ImmutableArray<OrderingTrait> elementOrder, ImmutableArray<AccessLevel> accessibilityOrder, SyntaxNode syntaxRoot, IndentationSettings indentationSettings, SyntaxTrivia endOfLineTrivia)
         {
-            return OrderMember(memberOrder, namespaceDeclaration.Members, elementOrder, syntaxRoot, indentationSettings, endOfLineTrivia, fieldDependencies: null);
+            return OrderMember(memberOrder, namespaceDeclaration.Members, elementOrder, accessibilityOrder, syntaxRoot, indentationSettings, endOfLineTrivia, fieldDependencies: null);
         }
 
         private static SyntaxNode OrderMember(
             MemberOrderHelper memberOrder,
             SyntaxList<MemberDeclarationSyntax> members,
             ImmutableArray<OrderingTrait> elementOrder,
+            ImmutableArray<AccessLevel> accessibilityOrder,
             SyntaxNode syntaxRoot,
             IndentationSettings indentationSettings,
             SyntaxTrivia endOfLineTrivia,
@@ -334,7 +337,7 @@ namespace StyleCop.Analyzers.OrderingRules
                     break;
                 }
 
-                var orderHelper = new MemberOrderHelper(members[i], elementOrder);
+                var orderHelper = new MemberOrderHelper(members[i], elementOrder, accessibilityOrder);
                 if (orderHelper.Priority < memberOrder.Priority)
                 {
                     if (members[i].ContainsDirectives)
@@ -568,7 +571,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 {
                     var memberDeclaration = syntaxRoot.GetCurrentNode(member);
                     var endOfLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(memberDeclaration.GetFirstToken(), sourceText, document.Project.Solution.Workspace.Options);
-                    syntaxRoot = UpdateSyntaxRoot(memberDeclaration, elementOrder, syntaxRoot, settings.Indentation, endOfLineTrivia, settings.OrderingRules.MemberKindOrder, semanticModel, fixAllContext.CancellationToken, fieldDependenciesByType);
+                    syntaxRoot = UpdateSyntaxRoot(memberDeclaration, elementOrder, syntaxRoot, settings.Indentation, endOfLineTrivia, settings.OrderingRules.MemberKindOrder, settings.OrderingRules.AccessibilityOrder, semanticModel, fixAllContext.CancellationToken, fieldDependenciesByType);
                 }
 
                 return syntaxRoot;

@@ -84,6 +84,7 @@ setting are in the sections that follow.
 | Indentation | `indentation.useTabs` | `indent_style` | `true`/`false` ⇄ `tab`/`space` | `false` / `space` |
 | Readability | `readabilityRules.allowBuiltInTypeAliases` | `stylecop.readability.allowBuiltInTypeAliases` | boolean | `false` |
 | Ordering | `orderingRules.elementOrder` | `stylecop.ordering.elementOrder` | list of `kind`, `accessibility`, `constant`, `static`, `readonly` | `kind, accessibility, constant, static, readonly` |
+| Ordering | `orderingRules.accessibilityOrder` | `stylecop.ordering.accessibilityOrder` | list of all six access levels (see [Accessibility Order](#accessibility-order)) | `public, internal, protectedInternal, protected, privateProtected, private` |
 | Ordering | `orderingRules.memberKindOrder` | `stylecop.ordering.memberKindOrder` | list of member kinds (see [Member Kind Order](#member-kind-order)) | predefined SA1201 order |
 | Ordering | `orderingRules.systemUsingDirectivesFirst` | `dotnet_sort_system_directives_first` | boolean | `true` |
 | Ordering | `orderingRules.usingDirectivesPlacement` | `stylecop.ordering.usingDirectivesPlacement` (or `csharp_using_directive_placement`) | `insideNamespace`, `outsideNamespace`, `preserve` ⇄ `inside_namespace`, `outside_namespace` | `insideNamespace` |
@@ -132,6 +133,7 @@ stylecop.readability.allowBuiltInTypeAliases = false
 
 # Ordering
 stylecop.ordering.elementOrder = kind, accessibility, constant, static, readonly
+stylecop.ordering.accessibilityOrder = public, internal, protectedInternal, protected, privateProtected, private
 dotnet_sort_system_directives_first = true
 stylecop.ordering.usingDirectivesPlacement = insideNamespace   # insideNamespace | outsideNamespace | preserve
 stylecop.ordering.blankLinesBetweenUsingGroups = allow         # allow | require | omit
@@ -400,6 +402,28 @@ rules remain enforced.
 >
 > ```ini
 > stylecop.ordering.elementOrder = kind, accessibility, constant, static, readonly
+> ```
+
+### Accessibility Order
+
+`accessibilityOrder` specifies the order of access levels used by SA1202 and by ordering code fixes. Provide each of the
+six levels exactly once, from first (highest priority) to last (lowest priority). The default preserves the existing
+order:
+
+```json
+{
+  "settings": {
+    "orderingRules": {
+      "accessibilityOrder": [ "public", "internal", "protectedInternal", "protected", "privateProtected", "private" ]
+    }
+  }
+}
+```
+
+> :bulb: This property can also be set in an **.editorconfig** file:
+>
+> ```ini
+> stylecop.ordering.accessibilityOrder = public, internal, protectedInternal, protected, privateProtected, private
 > ```
 
 ### Member Kind Order

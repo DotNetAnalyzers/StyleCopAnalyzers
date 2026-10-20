@@ -24,8 +24,8 @@ for (const [locale, characters] of [["ru-ru", /[А-Яа-яЁё]/], ["zh-cn", /[\
             const english = read("documentation", file);
             const translated = read("documentation", locale, file);
             assert.match(translated, characters, file);
-            const codeBlocks = text => Array.from(text.matchAll(/^```[^\r\n]*\r?\n([\s\S]*?)^```/gm),
-                match => match[1].replaceAll("\r\n", "\n"));
+            const codeBlocks = text => Array.from(text.matchAll(/^(?:> ?)?```[^\r\n]*\r?\n([\s\S]*?)^(?:> ?)?```/gm),
+                match => match[1].replace(/^(?:> ?)/gm, "").replaceAll("\r\n", "\n"));
             assert.deepEqual(codeBlocks(translated), codeBlocks(english), `${file}: code examples must remain unchanged`);
         }
     });

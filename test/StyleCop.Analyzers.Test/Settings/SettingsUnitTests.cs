@@ -11,6 +11,7 @@ namespace StyleCop.Analyzers.Test.Settings
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
+    using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
@@ -18,6 +19,14 @@ namespace StyleCop.Analyzers.Test.Settings
     public class SettingsUnitTests
     {
         private const string TestProjectName = "TestProject";
+
+        private static readonly ImmutableArray<AccessLevel> DefaultAccessibilityOrder = ImmutableArray.Create(
+            AccessLevel.Public,
+            AccessLevel.Internal,
+            AccessLevel.ProtectedInternal,
+            AccessLevel.Protected,
+            AccessLevel.PrivateProtected,
+            AccessLevel.Private);
 
         /// <summary>
         /// Verifies that proper defaults are returned when there are no additional files.
@@ -36,6 +45,7 @@ namespace StyleCop.Analyzers.Test.Settings
             Assert.Empty(styleCopSettings.NamingRules.AllowedNamespaceComponents);
 
             Assert.NotNull(styleCopSettings.OrderingRules);
+            Assert.Equal(DefaultAccessibilityOrder, styleCopSettings.OrderingRules.AccessibilityOrder);
             Assert.Equal(UsingDirectivesPlacement.InsideNamespace, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
             Assert.Equal(OptionSetting.Allow, styleCopSettings.OrderingRules.BlankLinesBetweenUsingGroups);
 
@@ -48,6 +58,17 @@ namespace StyleCop.Analyzers.Test.Settings
             Assert.NotNull(styleCopSettings.SpacingRules);
             Assert.NotNull(styleCopSettings.ReadabilityRules);
             Assert.NotNull(styleCopSettings.MaintainabilityRules);
+        }
+
+        [Fact]
+        public async Task VerifyInvalidAccessibilityOrderUsesDefaultAsync()
+        {
+            var settings = @"{ ""settings"": { ""orderingRules"": { ""accessibilityOrder"": [ ""public"" ] } } }";
+            var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
+
+            var accessibilityOrder = context.GetStyleCopSettingsInTests(CancellationToken.None).OrderingRules.AccessibilityOrder;
+
+            Assert.Equal(DefaultAccessibilityOrder, accessibilityOrder);
         }
 
         /// <summary>
