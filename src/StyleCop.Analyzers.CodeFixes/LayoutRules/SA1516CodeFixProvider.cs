@@ -13,6 +13,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
@@ -76,36 +77,35 @@ namespace StyleCop.Analyzers.LayoutRules
             }
         }
 
-        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode syntaxRoot, Diagnostic diagnostic, bool insertBlankLine, CancellationToken cancellationToken)
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode syntaxRoot, Diagnostic diagnostic, bool insertBlankLine, CancellationToken cancellationToken)
         {
-            // Currently unused
-            _ = cancellationToken;
-
             var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
             node = GetRelevantNode(node);
 
             if (node == null)
             {
-                return Task.FromResult(document);
+                return document;
             }
 
             // Using the token replacement here to use the same strategy as the FixAll.
             var firstToken = node.GetFirstToken();
-            var newToken = ProcessToken(firstToken, insertBlankLine);
+            var sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+            var endOfLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(firstToken, sourceText, document.Project.Solution.Workspace.Options);
+            var newToken = ProcessToken(firstToken, insertBlankLine, endOfLineTrivia);
             var newSyntaxRoot = syntaxRoot.ReplaceToken(firstToken, newToken);
             var newDocument = document.WithSyntaxRoot(newSyntaxRoot);
 
-            return Task.FromResult(newDocument);
+            return newDocument;
         }
 
-        private static SyntaxToken ProcessToken(SyntaxToken token, bool insertBlankLine)
+        private static SyntaxToken ProcessToken(SyntaxToken token, bool insertBlankLine, SyntaxTrivia endOfLineTrivia)
         {
             var leadingTrivia = token.LeadingTrivia;
             SyntaxTriviaList newLeadingTrivia;
 
             if (insertBlankLine)
             {
-                newLeadingTrivia = leadingTrivia.Insert(0, SyntaxFactory.CarriageReturnLineFeed);
+                newLeadingTrivia = leadingTrivia.Insert(0, endOfLineTrivia);
             }
             else
             {
@@ -176,7 +176,9 @@ namespace StyleCop.Analyzers.LayoutRules
                     return null;
                 }
 
-                var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+                var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var sourceText = await document.GetTextAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var options = document.Project.Solution.Workspace.Options;
 
                 // Using token replacement, because node replacement will do nothing when replacing child nodes from a replaced parent node.
                 Dictionary<SyntaxToken, SyntaxToken> replaceMap = new Dictionary<SyntaxToken, SyntaxToken>();
@@ -196,7 +198,8 @@ namespace StyleCop.Analyzers.LayoutRules
                     {
                         var firstToken = node.GetFirstToken();
 
-                        replaceMap[firstToken] = ProcessToken(firstToken, insertBlankLine.Value);
+                        var endOfLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(firstToken, sourceText, options);
+                        replaceMap[firstToken] = ProcessToken(firstToken, insertBlankLine.Value, endOfLineTrivia);
                     }
                 }
 

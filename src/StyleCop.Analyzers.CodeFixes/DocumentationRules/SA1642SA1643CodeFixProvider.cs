@@ -16,7 +16,6 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Formatting;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
 
@@ -179,7 +178,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             return null;
         }
 
-        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, XmlElementSyntax node, CancellationToken cancellationToken)
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, XmlElementSyntax node, CancellationToken cancellationToken)
         {
             var typeDeclaration = node.FirstAncestorOrSelf<BaseTypeDeclarationSyntax>();
             var declarationSyntax = node.FirstAncestorOrSelf<BaseMethodDeclarationSyntax>();
@@ -201,7 +200,8 @@ namespace StyleCop.Analyzers.DocumentationRules
             SyntaxList<XmlNodeSyntax> list;
             if (IsMultiLine(node))
             {
-                string newLineText = document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
+                SyntaxToken declarationToken = node.GetFirstToken();
+                string newLineText = (await FormattingHelper.GetEndOfLineForCodeFixAsync(document, declarationToken, cancellationToken).ConfigureAwait(false)).ToFullString();
                 list = BuildStandardTextSyntaxList(typeDeclaration, newLineText, standardText[0], standardText[1] + trailingString);
             }
             else
@@ -219,7 +219,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             var newDocument = document.WithSyntaxRoot(newRoot);
 
-            return Task.FromResult(newDocument);
+            return newDocument;
         }
 
         private static bool IsMultiLine(XmlElementSyntax node)

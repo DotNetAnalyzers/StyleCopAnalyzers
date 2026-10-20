@@ -913,6 +913,42 @@ public struct Test2
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(3656, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3656")]
+        public async Task TestConstructorCodeFixPreservesLfLineEndingsAsync()
+        {
+            var testCode = "/// <summary>\n/// C.\n/// </summary>\npublic class C\n{\n    public C() { }\n}\n";
+            var fixedCode = "/// <summary>\n/// C.\n/// </summary>\npublic class C\n{\n    /// <summary>\n    /// Initializes a new instance of the <see cref=\"C\"/> class.\n    /// </summary>\n    public C() { }\n}\n";
+
+            await new CSharpTest(this.LanguageVersion)
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics = { Diagnostic().WithLocation(6, 12) },
+                FixedCode = fixedCode,
+                DisabledDiagnostics = { "CS1591" },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that documentation is inserted safely for an inline constructor declaration.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3656, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3656")]
+        public async Task TestInlineConstructorCodeFixAsync()
+        {
+            var testCode = "/// <summary>\n/// C.\n/// </summary>\npublic class C { public C() { } }\n";
+            var fixedCode = "/// <summary>\n/// C.\n/// </summary>\npublic class C { \n/// <summary>\n/// Initializes a new instance of the <see cref=\"C\"/> class.\n/// </summary>\n public C() { } }\n";
+
+            await new CSharpTest(this.LanguageVersion)
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics = { Diagnostic().WithLocation(4, 25) },
+                FixedCode = fixedCode,
+                DisabledDiagnostics = { "CS1591" },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestDestructorCodeFixAsync()
         {
             var testCode = @"
