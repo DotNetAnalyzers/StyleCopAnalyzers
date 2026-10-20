@@ -217,6 +217,9 @@
   <data name="SA1612Title" xml:space="preserve">
     <value>元素的参数文档应与实际参数匹配</value>
   </data>
+  <data name="SA1612CodeFix" xml:space="preserve">
+    <value>更正参数文档</value>
+  </data>
   <data name="SA1613Description" xml:space="preserve">
     <value>C# 元素的文档注释中的 &lt;param&gt; 标记缺少包含参数名称的 name 属性。</value>
   </data>
