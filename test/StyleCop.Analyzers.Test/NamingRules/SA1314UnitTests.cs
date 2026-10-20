@@ -240,5 +240,141 @@ public class Foo
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(2966, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2966")]
+        public async Task TestTypeParameterDoesNotStartWithTAndIsReferencedInCrefAsync()
+        {
+            var testCode = @"
+public class AuthorizationPolicy<{|#0:IDENT|}>
+{
+    /// <summary>
+    /// Initializes a new instance of the <see cref=""AuthorizationPolicy{IDENT}""/> class.
+    /// </summary>
+    public AuthorizationPolicy()
+    {
+    }
+}
+";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+
+            var fixedCode = @"
+public class AuthorizationPolicy<TIDENT>
+{
+    /// <summary>
+    /// Initializes a new instance of the <see cref=""AuthorizationPolicy{TIDENT}""/> class.
+    /// </summary>
+    public AuthorizationPolicy()
+    {
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2966, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2966")]
+        public async Task TestTypeParameterDoesNotStartWithTAndCrefUsesShadowingMethodParameterAsync()
+        {
+            var testCode = @"
+public class Foo<{|#0:IDENT|}>
+{
+#pragma warning disable SA1314
+    /// <summary><see cref=""Foo{IDENT}""/></summary>
+    public void Bar<IDENT>()
+    {
+    }
+#pragma warning restore SA1314
+}
+";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+
+            var fixedCode = @"
+public class Foo<TIDENT>
+{
+#pragma warning disable SA1314
+    /// <summary><see cref=""Foo{IDENT}""/></summary>
+    public void Bar<IDENT>()
+    {
+    }
+#pragma warning restore SA1314
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2966, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2966")]
+        public async Task TestTypeParameterDoesNotStartWithTAndNestedTypeCrefUsesItsOwnParameterAsync()
+        {
+            var testCode = @"
+public class Outer<{|#0:IDENT|}>
+{
+#pragma warning disable SA1314
+    /// <summary><see cref=""Nested{IDENT}""/></summary>
+    public class Nested<IDENT>
+    {
+    }
+#pragma warning restore SA1314
+}
+";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+
+            var fixedCode = @"
+public class Outer<TIDENT>
+{
+#pragma warning disable SA1314
+    /// <summary><see cref=""Nested{IDENT}""/></summary>
+    public class Nested<IDENT>
+    {
+    }
+#pragma warning restore SA1314
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2966, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2966")]
+        public async Task TestTypeParameterDoesNotStartWithTAndCrefInPartialTypeAsync()
+        {
+            var testCode = @"
+public partial class Foo<{|#0:IDENT|}>
+{
+}
+
+#pragma warning disable SA1314
+public partial class Foo<IDENT>
+{
+    /// <summary><see cref=""Foo{IDENT}""/></summary>
+    public IDENT Bar { get; }
+}
+#pragma warning restore SA1314
+";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+
+            var fixedCode = @"
+public partial class Foo<TIDENT>
+{
+}
+
+#pragma warning disable SA1314
+public partial class Foo<TIDENT>
+{
+    /// <summary><see cref=""Foo{TIDENT}""/></summary>
+    public TIDENT Bar { get; }
+}
+#pragma warning restore SA1314
+";
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
