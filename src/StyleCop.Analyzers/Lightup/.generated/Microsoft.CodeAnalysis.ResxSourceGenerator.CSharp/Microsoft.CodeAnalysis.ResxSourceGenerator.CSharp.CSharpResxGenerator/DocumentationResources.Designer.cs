@@ -398,12 +398,14 @@ namespace StyleCop.Analyzers.DocumentationRules
         public static string @StartingTextSetsWhether => GetResourceString("StartingTextSetsWhether")!;
         /// <summary>static</summary>
         public static string @StaticConstructorKeywordText => GetResourceString("StaticConstructorKeywordText")!;
-        /// <summary>Only one declaration of a partial type should contain &lt;summary&gt; documentation. Use &lt;content&gt; on the other parts.</summary>
+        /// <summary>Only one declaration of a partial type should contain &lt;summary&gt; documentation. Use &lt;content&gt; for distinct summaries or remove duplicates.</summary>
         public static string @SA1653Description => GetResourceString("SA1653Description")!;
-        /// <summary>Multiple partial declarations of '{0}' contain &lt;summary&gt; documentation; use &lt;content&gt; on the other parts</summary>
+        /// <summary>Multiple partial declarations of '{0}' contain &lt;summary&gt; documentation; use &lt;content&gt; for distinct summaries or remove duplicates</summary>
         public static string @SA1653MessageFormat => GetResourceString("SA1653MessageFormat")!;
         /// <summary>Only one partial declaration should contain summary documentation</summary>
         public static string @SA1653Title => GetResourceString("SA1653Title")!;
+        /// <summary>Fix summaries in partial declarations</summary>
+        public static string @SA1653CodeFix => GetResourceString("SA1653CodeFix")!;
         /// <summary>Generic type arguments in cref attributes should use braces instead of escaped angle brackets.</summary>
         public static string @SA1654Description => GetResourceString("SA1654Description")!;
         /// <summary>Use braces for generic type arguments</summary>

@@ -13,7 +13,6 @@ using StyleCop.Analyzers.Helpers;
 /// More than one declaration of a partial type contains summary documentation.
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-[NoCodeFix("The user must choose which partial declaration retains the summary.")]
 internal class SA1653OnlyOnePartialDeclarationShouldContainSummaryDocumentation : DiagnosticAnalyzer
 {
     /// <summary>
