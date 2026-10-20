@@ -82,6 +82,7 @@ nastavení jsou v následujících oddílech.
 | Odsazení | `indentation.useTabs` | `indent_style` | `true`/`false` ⇄ `tab`/`space` | `false` / `space` |
 | Čitelnost | `readabilityRules.allowBuiltInTypeAliases` | `stylecop.readability.allowBuiltInTypeAliases` | logická hodnota | `false` |
 | Řazení | `orderingRules.elementOrder` | `stylecop.ordering.elementOrder` | seznam položek `kind`, `accessibility`, `constant`, `static`, `readonly` | `kind, accessibility, constant, static, readonly` |
+| Řazení | `orderingRules.accessibilityOrder` | `stylecop.ordering.accessibilityOrder` | seznam všech šesti úrovní přístupu | `public, internal, protectedInternal, protected, privateProtected, private` |
 | Řazení | `orderingRules.memberKindOrder` | `stylecop.ordering.memberKindOrder` | seznam druhů členů (viz [Pořadí druhů členů](#member-kind-order)) | předdefinované pořadí SA1201 |
 | Řazení | `orderingRules.systemUsingDirectivesFirst` | `dotnet_sort_system_directives_first` | logická hodnota | `true` |
 | Řazení | `orderingRules.usingDirectivesPlacement` | `stylecop.ordering.usingDirectivesPlacement` (nebo `csharp_using_directive_placement`) | `insideNamespace`, `outsideNamespace`, `preserve` ⇄ `inside_namespace`, `outside_namespace` | `insideNamespace` |
@@ -130,6 +131,7 @@ stylecop.readability.allowBuiltInTypeAliases = false
 
 # Řazení
 stylecop.ordering.elementOrder = kind, accessibility, constant, static, readonly
+stylecop.ordering.accessibilityOrder = public, internal, protectedInternal, protected, privateProtected, private
 dotnet_sort_system_directives_first = true
 stylecop.ordering.usingDirectivesPlacement = insideNamespace   # insideNamespace | outsideNamespace | preserve
 stylecop.ordering.blankLinesBetweenUsingGroups = allow         # allow | require | omit
@@ -403,7 +405,27 @@ uplatňuje.
 > stylecop.ordering.elementOrder = kind, accessibility, constant, static, readonly
 > ```
 
+### Pořadí úrovní přístupu
+
+Vlastnost `accessibilityOrder` určuje pořadí úrovní přístupu pro SA1202 a opravy řazení prvků. Uveďte všech šest úrovní
+přesně jednou, od první (nejvyšší priorita) po poslední. Výchozí hodnota zachovává dosavadní pořadí:
+
+```json
+{
+  "settings": {
+    "orderingRules": {
+      "accessibilityOrder": [ "public", "internal", "protectedInternal", "protected", "privateProtected", "private" ]
+    }
+  }
+}
+```
+
+```ini
+stylecop.ordering.accessibilityOrder = public, internal, protectedInternal, protected, privateProtected, private
+```
+
 <a id="member-kind-order"></a>
+
 ### Pořadí druhů členů
 
 `memberKindOrder` přizpůsobuje vlastnost `kind` pro členy tříd, struktur, rozhraní, záznamů a bloků rozšíření.

@@ -92,6 +92,7 @@ csharp_using_directive_placement = outside_namespace
 | Отступы | `indentation.useTabs` | `indent_style` | `true`/`false` ⇄ `tab`/`space` | `false` / `space` |
 | Читаемость | `readabilityRules.allowBuiltInTypeAliases` | `stylecop.readability.allowBuiltInTypeAliases` | логическое | `false` |
 | Упорядочивание | `orderingRules.elementOrder` | `stylecop.ordering.elementOrder` | список из `kind`, `accessibility`, `constant`, `static`, `readonly` | `kind, accessibility, constant, static, readonly` |
+| Упорядочивание | `orderingRules.accessibilityOrder` | `stylecop.ordering.accessibilityOrder` | список из шести уровней доступа | `public, internal, protectedInternal, protected, privateProtected, private` |
 | Упорядочивание | `orderingRules.memberKindOrder` | `stylecop.ordering.memberKindOrder` | список видов членов (см. [Порядок видов членов](#member-kind-order)) | стандартный порядок SA1201 |
 | Упорядочивание | `orderingRules.systemUsingDirectivesFirst` | `dotnet_sort_system_directives_first` | логическое | `true` |
 | Упорядочивание | `orderingRules.usingDirectivesPlacement` | `stylecop.ordering.usingDirectivesPlacement` (или `csharp_using_directive_placement`) | `insideNamespace`, `outsideNamespace`, `preserve` ⇄ `inside_namespace`, `outside_namespace` | `insideNamespace` |
@@ -144,6 +145,7 @@ stylecop.readability.allowBuiltInTypeAliases = false
 
 # Ordering
 stylecop.ordering.elementOrder = kind, accessibility, constant, static, readonly
+stylecop.ordering.accessibilityOrder = public, internal, protectedInternal, protected, privateProtected, private
 dotnet_sort_system_directives_first = true
 stylecop.ordering.usingDirectivesPlacement = insideNamespace   # insideNamespace | outsideNamespace | preserve
 stylecop.ordering.blankLinesBetweenUsingGroups = allow         # allow | require | omit
@@ -461,6 +463,26 @@ stylecop.readability.allowBuiltInTypeAliases = true
 > ```ini
 > stylecop.ordering.elementOrder = kind, accessibility, constant, static, readonly
 > ```
+
+### Порядок уровней доступа
+
+Параметр `accessibilityOrder` задает порядок уровней доступа для SA1202 и исправлений порядка элементов. Укажите все
+шесть уровней ровно один раз, от первого (самого приоритетного) до последнего. Значение по умолчанию сохраняет
+существующий порядок:
+
+```json
+{
+  "settings": {
+    "orderingRules": {
+      "accessibilityOrder": [ "public", "internal", "protectedInternal", "protected", "privateProtected", "private" ]
+    }
+  }
+}
+```
+
+```ini
+stylecop.ordering.accessibilityOrder = public, internal, protectedInternal, protected, privateProtected, private
+```
 
 <a id="member-kind-order"></a>
 

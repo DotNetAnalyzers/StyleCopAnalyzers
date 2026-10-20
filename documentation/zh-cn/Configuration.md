@@ -91,6 +91,7 @@ csharp_using_directive_placement = outside_namespace
 | 缩进 | `indentation.useTabs` | `indent_style` | `true`/`false` ⇄ `tab`/`space` | `false` / `space` |
 | 可读性 | `readabilityRules.allowBuiltInTypeAliases` | `stylecop.readability.allowBuiltInTypeAliases` | 布尔值 | `false` |
 | 排序 | `orderingRules.elementOrder` | `stylecop.ordering.elementOrder` | `kind`、`accessibility`、`constant`、`static`、`readonly` 的列表 | `kind, accessibility, constant, static, readonly` |
+| 排序 | `orderingRules.accessibilityOrder` | `stylecop.ordering.accessibilityOrder` | 包含全部六种访问级别的列表 | `public, internal, protectedInternal, protected, privateProtected, private` |
 | 排序 | `orderingRules.memberKindOrder` | `stylecop.ordering.memberKindOrder` | 成员种类列表（参阅[成员种类顺序](#member-kind-order)） | SA1201 的预定义顺序 |
 | 排序 | `orderingRules.systemUsingDirectivesFirst` | `dotnet_sort_system_directives_first` | 布尔值 | `true` |
 | 排序 | `orderingRules.usingDirectivesPlacement` | `stylecop.ordering.usingDirectivesPlacement`（或 `csharp_using_directive_placement`） | `insideNamespace`、`outsideNamespace`、`preserve` ⇄ `inside_namespace`、`outside_namespace` | `insideNamespace` |
@@ -141,6 +142,7 @@ stylecop.readability.allowBuiltInTypeAliases = false
 
 # Ordering
 stylecop.ordering.elementOrder = kind, accessibility, constant, static, readonly
+stylecop.ordering.accessibilityOrder = public, internal, protectedInternal, protected, privateProtected, private
 dotnet_sort_system_directives_first = true
 stylecop.ordering.usingDirectivesPlacement = insideNamespace   # insideNamespace | outsideNamespace | preserve
 stylecop.ordering.blankLinesBetweenUsingGroups = allow         # allow | require | omit
@@ -444,6 +446,24 @@ stylecop.readability.allowBuiltInTypeAliases = true
 > ```ini
 > stylecop.ordering.elementOrder = kind, accessibility, constant, static, readonly
 > ```
+
+### 访问级别顺序
+
+`accessibilityOrder` 指定 SA1202 和元素排序代码修复所使用的访问级别顺序。请将六种访问级别各列出一次，从第一项（优先级最高）到最后一项。默认值保留现有顺序：
+
+```json
+{
+  "settings": {
+    "orderingRules": {
+      "accessibilityOrder": [ "public", "internal", "protectedInternal", "protected", "privateProtected", "private" ]
+    }
+  }
+}
+```
+
+```ini
+stylecop.ordering.accessibilityOrder = public, internal, protectedInternal, protected, privateProtected, private
+```
 
 <a id="member-kind-order"></a>
 

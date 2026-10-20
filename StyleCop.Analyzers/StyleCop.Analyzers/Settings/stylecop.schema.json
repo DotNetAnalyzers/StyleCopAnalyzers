@@ -81,6 +81,32 @@
               },
               "uniqueItems": true
             },
+            "accessibilityOrder": {
+              "type": "array",
+              "description": "Specifies the accessibility order used by SA1202 and ordering code fixes.",
+              "default": [
+                "public",
+                "internal",
+                "protectedInternal",
+                "protected",
+                "privateProtected",
+                "private"
+              ],
+              "items": {
+                "type": "string",
+                "enum": [
+                  "public",
+                  "internal",
+                  "protectedInternal",
+                  "protected",
+                  "privateProtected",
+                  "private"
+                ]
+              },
+              "minItems": 6,
+              "maxItems": 6,
+              "uniqueItems": true
+            },
             "memberKindOrder": {
               "type": "array",
               "description": "Orders contiguous groups of named member kinds inside types. Unlisted kinds may occur between, but not within, these groups.",

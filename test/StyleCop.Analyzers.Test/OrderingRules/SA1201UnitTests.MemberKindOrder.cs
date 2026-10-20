@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
+using StyleCop.Analyzers.Helpers;
 using StyleCop.Analyzers.OrderingRules;
 using StyleCop.Analyzers.Settings.ObjectModel;
 using Xunit;
@@ -19,6 +20,14 @@ using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
 
 public partial class SA1201UnitTests
 {
+    private static readonly ImmutableArray<AccessLevel> DefaultAccessibilityOrder = ImmutableArray.Create(
+        AccessLevel.Public,
+        AccessLevel.Internal,
+        AccessLevel.ProtectedInternal,
+        AccessLevel.Protected,
+        AccessLevel.PrivateProtected,
+        AccessLevel.Private);
+
     [Fact]
     public async Task TestConfiguredGroupFixCanStopAfterInitializerAsync()
     {
@@ -942,7 +951,7 @@ public partial class SA1201UnitTests
     [InlineData("class", SyntaxKind.ClassDeclaration)]
     public void TestMemberKindConfigurationNames(string name, SyntaxKind kind)
     {
-        var order = new MemberKindOrder(ImmutableArray.Create(name), ImmutableArray.Create(OrderingTrait.Kind));
+        var order = new MemberKindOrder(ImmutableArray.Create(name), ImmutableArray.Create(OrderingTrait.Kind), DefaultAccessibilityOrder);
         Assert.Equal(name, MemberKindOrder.GetKindName(kind));
         Assert.NotNull(order);
     }
@@ -955,7 +964,8 @@ public partial class SA1201UnitTests
     {
         Assert.Throws<InvalidSettingsException>(() => new MemberKindOrder(
             ImmutableArray.Create(first, second),
-            ImmutableArray.Create(OrderingTrait.Kind)));
+            ImmutableArray.Create(OrderingTrait.Kind),
+            DefaultAccessibilityOrder));
     }
 
     protected static DiagnosticResult Diagnostic()

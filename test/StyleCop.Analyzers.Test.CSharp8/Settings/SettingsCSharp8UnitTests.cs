@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.Settings
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
+    using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.Test.CSharp7.Settings;
@@ -126,6 +127,21 @@ stylecop.unrecognizedValue = 3
             Assert.NotNull(styleCopSettings.OrderingRules);
             Assert.Equal(UsingDirectivesPlacement.OutsideNamespace, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
             Assert.Equal(OptionSetting.Allow, styleCopSettings.OrderingRules.BlankLinesBetweenUsingGroups);
+        }
+
+        [Fact]
+        public async Task VerifyAccessibilityOrderFromEditorConfigAsync()
+        {
+            var settings = @"root = true
+
+[*]
+stylecop.ordering.accessibilityOrder = public, protected, protectedInternal, internal, privateProtected, private
+";
+            var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+
+            Assert.Equal(new[] { AccessLevel.Public, AccessLevel.Protected, AccessLevel.ProtectedInternal, AccessLevel.Internal, AccessLevel.PrivateProtected, AccessLevel.Private }, styleCopSettings.OrderingRules.AccessibilityOrder);
         }
 
         [Fact]
