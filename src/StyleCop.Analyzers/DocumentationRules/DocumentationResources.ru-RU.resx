@@ -178,13 +178,16 @@
     <value>статические</value>
   </data>
   <data name="SA1653Description" xml:space="preserve">
-    <value>Только одно объявление частичного типа должно содержать документацию &lt;summary&gt;. Используйте &lt;content&gt; для остальных частей.</value>
+    <value>Только одно объявление частичного типа должно содержать документацию &lt;summary&gt;. Используйте &lt;content&gt; для разных кратких описаний или удалите повторяющиеся.</value>
   </data>
   <data name="SA1653MessageFormat" xml:space="preserve">
-    <value>Несколько частичных объявлений '{0}' содержат документацию &lt;summary&gt;; используйте &lt;content&gt; для остальных частей</value>
+    <value>Несколько частичных объявлений '{0}' содержат документацию &lt;summary&gt;; используйте &lt;content&gt; для разных кратких описаний или удалите повторяющиеся</value>
   </data>
   <data name="SA1653Title" xml:space="preserve">
     <value>Только одно частичное объявление должно содержать краткое описание</value>
+  </data>
+  <data name="SA1653CodeFix" xml:space="preserve">
+    <value>Исправить краткие описания в частичных объявлениях</value>
   </data>
   <data name="SA1654Description" xml:space="preserve">
     <value>В атрибутах cref XML-документации для аргументов обобщенных типов следует использовать фигурные скобки вместо экранированных угловых скобок.</value>
