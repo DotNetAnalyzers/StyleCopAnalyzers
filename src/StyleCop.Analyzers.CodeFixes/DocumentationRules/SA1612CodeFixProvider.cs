@@ -109,7 +109,7 @@ internal class SA1612CodeFixProvider : CodeFixProvider
         int replacementCount = Math.Min(orderedElements.Count, existingElementCount);
         for (int i = existingElementCount - 1; i >= orderedElements.Count; i--)
         {
-            int index = content.IndexOf(parameterElements[i]);
+            int index = parameterIndexes[i];
             content = content.RemoveAt(index);
             if (index > 0 && content[index - 1] is XmlTextSyntax previousText && XmlCommentHelper.IsConsideredEmpty(previousText))
             {
@@ -126,7 +126,7 @@ internal class SA1612CodeFixProvider : CodeFixProvider
         {
             SyntaxTrivia exteriorTrivia = GetLastDocumentationCommentExteriorTrivia(documentation);
             string newLineText = document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
-            int insertionIndex = content.IndexOf(orderedElements[replacementCount - 1]) + 1;
+            int insertionIndex = parameterIndexes[replacementCount - 1] + 1;
             for (int i = replacementCount; i < orderedElements.Count; i++)
             {
                 XmlNodeSyntax newLine = XmlSyntaxFactory.NewLine(newLineText);
@@ -156,11 +156,8 @@ internal class SA1612CodeFixProvider : CodeFixProvider
     {
         SyntaxNode diagnosticNode = root.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
         documentation = diagnosticNode.FirstAncestorOrSelf<DocumentationCommentTriviaSyntax>();
-        SyntaxNode? declaration = documentation?.ParentTrivia.Token.Parent;
-        if (declaration == null)
-        {
-            declaration = GetDeclaration(diagnosticNode);
-        }
+        SyntaxNode? documentationOwner = documentation?.ParentTrivia.Token.Parent;
+        SyntaxNode? declaration = GetDeclaration(documentationOwner ?? diagnosticNode);
 
         documentation ??= declaration?.GetDocumentationCommentTriviaSyntax();
         parameters = declaration == null ? null : GetParameters(declaration)?.ToArray();
@@ -175,7 +172,8 @@ internal class SA1612CodeFixProvider : CodeFixProvider
             && parameterElements.All(element =>
             {
                 XmlNameAttributeSyntax? nameAttribute = XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>(element);
-                return !string.IsNullOrWhiteSpace(nameAttribute?.Identifier.Identifier.ValueText);
+                return !element.ContainsDiagnostics
+                    && !string.IsNullOrWhiteSpace(nameAttribute?.Identifier.Identifier.ValueText);
             });
     }
 

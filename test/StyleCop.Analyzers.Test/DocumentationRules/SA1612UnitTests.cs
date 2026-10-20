@@ -388,6 +388,158 @@ public class ClassName
         }
 
         [Fact]
+        [WorkItem(754, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/754")]
+        public async Task TestCodeFixAddsMultipleMissingParamDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <param name=""{|#0:bar|}"">Bar documentation.</param>
+    public void Method(string foo, string bar, string baz) { }
+}";
+            var fixedCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <param name=""foo""></param>
+    /// <param name=""bar"">Bar documentation.</param>
+    /// <param name=""baz""></param>
+    public void Method(string foo, string bar, string baz) { }
+}";
+            var expected = Diagnostic()
+                .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}")
+                .WithLocation(0)
+                .WithArguments("bar", 2);
+
+            await StyleCopCodeFixVerifier<SA1612ElementParameterDocumentationMustMatchElementParameters, SA1612CodeFixProvider>
+                .VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None)
+                .ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(754, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/754")]
+        public async Task TestCodeFixRemovesMultipleUnknownParamDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <param name=""{|#0:unknown1|}"">First invalid parameter.</param>
+    /// <param name=""{|#1:unknown2|}"">Second invalid parameter.</param>
+    /// <param name=""{|#2:foo|}"">Foo documentation.</param>
+    /// <param name=""{|#3:bar|}"">Bar documentation.</param>
+    public void Method(string foo, string bar) { }
+}";
+            var fixedCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <param name=""foo"">Foo documentation.</param>
+    /// <param name=""bar"">Bar documentation.</param>
+    public void Method(string foo, string bar) { }
+}";
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(0).WithArguments("unknown1"),
+                Diagnostic().WithLocation(1).WithArguments("unknown2"),
+                Diagnostic().WithMessageFormat("The parameter documentation for '{0}' should be at position {1}").WithLocation(2).WithArguments("foo", 1),
+                Diagnostic().WithMessageFormat("The parameter documentation for '{0}' should be at position {1}").WithLocation(3).WithArguments("bar", 2),
+            };
+
+            await StyleCopCodeFixVerifier<SA1612ElementParameterDocumentationMustMatchElementParameters, SA1612CodeFixProvider>
+                .VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None)
+                .ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("void Method(string foo) { }")]
+        [InlineData("[System.Obsolete] public void Method(string foo) { }")]
+        [WorkItem(754, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/754")]
+        public async Task TestCodeFixResolvesDeclarationFromDocumentationTriviaAsync(string declaration)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <param name=""{|#0:missing|}"">Invalid parameter.</param>
+    $$
+}".Replace("$$", declaration);
+            var fixedCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <param name=""foo""></param>
+    $$
+}".Replace("$$", declaration);
+
+            await StyleCopCodeFixVerifier<SA1612ElementParameterDocumentationMustMatchElementParameters, SA1612CodeFixProvider>
+                .VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0).WithArguments("missing"), fixedCode, CancellationToken.None)
+                .ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(754, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/754")]
+        public async Task TestCodeFixIsNotOfferedForMalformedParamDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <param name=""{|#0:missing|}"">Malformed documentation.</wrong>
+    /// <param name=""{|#1:foo|}"">Foo documentation.</param>
+    public void Method(string foo) { }
+}";
+            var test = new StyleCopCodeFixVerifier<SA1612ElementParameterDocumentationMustMatchElementParameters, SA1612CodeFixProvider>.CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = testCode,
+            };
+            test.ExpectedDiagnostics.AddRange(new[]
+            {
+                Diagnostic().WithLocation(0).WithArguments("missing"),
+                Diagnostic().WithMessageFormat("The parameter documentation for '{0}' should be at position {1}").WithLocation(1).WithArguments("foo", 1),
+            });
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestDelegateWithoutIdentifierWithTooManyDocumentationIsNotReportedAsync()
         {
             var testCode = @"
