@@ -91,6 +91,32 @@ namespace StyleCop.Analyzers.NamingRules
             return await RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken).ConfigureAwait(false);
         }
 
+        private static bool IsShadowedTypeParameterReference(SyntaxNode? documentationOwner, SyntaxNode declaration, string name)
+        {
+            for (var scope = documentationOwner; scope != null && scope != declaration; scope = scope.Parent)
+            {
+                if (scope is TypeDeclarationSyntax typeDeclaration
+                    && typeDeclaration.TypeParameterList?.Parameters.Any(parameter => parameter.Identifier.ValueText == name) == true)
+                {
+                    return true;
+                }
+
+                if (scope is MethodDeclarationSyntax methodDeclaration
+                    && methodDeclaration.TypeParameterList?.Parameters.Any(parameter => parameter.Identifier.ValueText == name) == true)
+                {
+                    return true;
+                }
+
+                if (scope is DelegateDeclarationSyntax delegateDeclaration
+                    && delegateDeclaration.TypeParameterList?.Parameters.Any(parameter => parameter.Identifier.ValueText == name) == true)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private static async Task<Solution> RenameTypeParameterReferencesInCrefsAsync(
             Solution solution,
             DocumentId declarationDocumentId,
@@ -106,6 +132,11 @@ namespace StyleCop.Analyzers.NamingRules
             {
                 var declaration = await declarationReference.GetSyntaxAsync(cancellationToken).ConfigureAwait(false);
                 var declarationDocument = solution.GetDocument(declaration.SyntaxTree);
+                if (declarationDocument == null || solution.GetDocument(declarationDocument.Id) == null)
+                {
+                    continue;
+                }
+
                 var semanticModel = await declarationDocument.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
                 foreach (var trivia in declaration.DescendantTrivia(descendIntoTrivia: true))
@@ -116,14 +147,7 @@ namespace StyleCop.Analyzers.NamingRules
                     }
 
                     var documentationOwner = documentationComment.ParentTrivia.Token.Parent;
-                    var ownerType = documentationOwner?.FirstAncestorOrSelf<TypeDeclarationSyntax>();
-                    if (ownerType == null
-                        || ownerType.SyntaxTree != declaration.SyntaxTree
-                        || ownerType.Span != declaration.Span
-                        || documentationOwner?.FirstAncestorOrSelf<MethodDeclarationSyntax>()?.TypeParameterList?.Parameters
-                            .Any(parameter => parameter.Identifier.ValueText == typeParameter.Name) == true
-                        || documentationOwner?.FirstAncestorOrSelf<DelegateDeclarationSyntax>()?.TypeParameterList?.Parameters
-                            .Any(parameter => parameter.Identifier.ValueText == typeParameter.Name) == true)
+                    if (IsShadowedTypeParameterReference(documentationOwner, declaration, typeParameter.Name))
                     {
                         continue;
                     }

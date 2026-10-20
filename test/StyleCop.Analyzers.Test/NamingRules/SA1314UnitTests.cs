@@ -376,5 +376,133 @@ public partial class Foo<TIDENT>
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(2966, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2966")]
+        public async Task TestTypeParameterDoesNotStartWithTAndNestedTypeCrefReferencesOuterParameterAsync()
+        {
+            var testCode = @"
+public class Outer<{|#0:IDENT|}>
+{
+    public class Nested
+    {
+        /// <summary><see cref=""Outer{IDENT}""/></summary>
+        public Outer<IDENT> Value { get; }
+    }
+}
+";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+
+            var fixedCode = @"
+public class Outer<TIDENT>
+{
+    public class Nested
+    {
+        /// <summary><see cref=""Outer{TIDENT}""/></summary>
+        public Outer<TIDENT> Value { get; }
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2966, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2966")]
+        public async Task TestTypeParameterDoesNotStartWithTAndCrefInGenericDelegateAsync()
+        {
+            var testCode = @"
+public class Outer<{|#0:IDENT|}>
+{
+    /// <summary><see cref=""Outer{IDENT}""/></summary>
+    public delegate void Handler<THandler>();
+}
+";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+
+            var fixedCode = @"
+public class Outer<TIDENT>
+{
+    /// <summary><see cref=""Outer{TIDENT}""/></summary>
+    public delegate void Handler<THandler>();
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2966, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2966")]
+        public async Task TestTypeParameterDoesNotStartWithTAndCrefInAnotherDocumentAsync()
+        {
+            var declaration = @"
+public partial class Outer<{|#0:IDENT|}>
+{
+}
+";
+            var reference = @"
+#pragma warning disable SA1314
+public partial class Outer<IDENT>
+{
+    /// <summary><see cref=""Outer{IDENT}""/></summary>
+    public Outer<IDENT> Value { get; }
+}
+#pragma warning restore SA1314
+";
+            var fixedDeclaration = @"
+public partial class Outer<TIDENT>
+{
+}
+";
+            var fixedReference = @"
+#pragma warning disable SA1314
+public partial class Outer<TIDENT>
+{
+    /// <summary><see cref=""Outer{TIDENT}""/></summary>
+    public Outer<TIDENT> Value { get; }
+}
+#pragma warning restore SA1314
+";
+
+            var test = new CSharpTest();
+            test.TestState.Sources.Add(declaration);
+            test.TestState.Sources.Add(reference);
+            test.FixedState.Sources.Add(fixedDeclaration);
+            test.FixedState.Sources.Add(fixedReference);
+            test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2966, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2966")]
+        public async Task TestTypeParameterDoesNotStartWithTAndCrefInGenericDelegateUsesItsOwnParameterAsync()
+        {
+            var testCode = @"
+public class Outer<{|#0:IDENT|}>
+{
+#pragma warning disable SA1314
+    /// <summary><see cref=""Outer{IDENT}""/></summary>
+    public delegate void Handler<IDENT>();
+#pragma warning restore SA1314
+}
+";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+
+            var fixedCode = @"
+public class Outer<TIDENT>
+{
+#pragma warning disable SA1314
+    /// <summary><see cref=""Outer{IDENT}""/></summary>
+    public delegate void Handler<IDENT>();
+#pragma warning restore SA1314
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
