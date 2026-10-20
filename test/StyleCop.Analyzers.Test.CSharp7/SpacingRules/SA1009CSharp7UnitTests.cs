@@ -60,6 +60,29 @@ public class Foo
 
         [Fact]
         [WorkItem(3835, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3835")]
+        public async Task TestMultilineTupleExpressionFollowedByMemberAccessAsync()
+        {
+            const string testCode = @"using System;
+
+public class Foo
+{
+    public void TestMethod()
+    {
+        string value =
+            (
+                1,
+                2
+            {|#0:)|}.ToString();
+    }
+}";
+
+            DiagnosticResult expected = Diagnostic(DescriptorNotPreceded).WithLocation(0);
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3835, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3835")]
         public async Task TestMultilineTupleExpressionWithOpeningParenthesisNotOnOwnLineAsync()
         {
             const string testCode = @"using System;

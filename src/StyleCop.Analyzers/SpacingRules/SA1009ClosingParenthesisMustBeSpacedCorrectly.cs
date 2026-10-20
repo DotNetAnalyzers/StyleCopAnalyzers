@@ -95,11 +95,15 @@ namespace StyleCop.Analyzers.SpacingRules
 
             bool firstInLine = token.IsFirstInLine();
             bool precededBySpace = firstInLine || token.IsPrecededByWhitespace(context.CancellationToken);
+            SyntaxToken nextToken = token.GetNextToken();
             bool allowTupleParenthesisOnSeparateLines = false;
             if (firstInLine && token.Parent.IsKind(SyntaxKindEx.TupleExpression))
             {
                 SyntaxToken openParenToken = token.Parent.GetFirstToken();
-                allowTupleParenthesisOnSeparateLines = openParenToken.IsFirstInLine() && openParenToken.IsLastInLine();
+                allowTupleParenthesisOnSeparateLines =
+                    openParenToken.IsFirstInLine()
+                    && openParenToken.IsLastInLine()
+                    && (nextToken.IsKind(SyntaxKind.SemicolonToken) || nextToken.IsKind(SyntaxKind.CommaToken));
             }
 
             bool followedBySpace = token.IsFollowedByWhitespace();
@@ -110,7 +114,6 @@ namespace StyleCop.Analyzers.SpacingRules
 
             bool suppressFollowingSpaceError = false;
 
-            SyntaxToken nextToken = token.GetNextToken();
             switch (nextToken.Kind())
             {
             case SyntaxKind.OpenParenToken:
