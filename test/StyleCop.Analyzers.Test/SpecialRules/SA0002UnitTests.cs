@@ -47,6 +47,17 @@ namespace NamespaceName { }
         }
 
         [Fact]
+        public async Task TestCombinedAccessibilityOrderValuesAreInvalidAsync()
+        {
+            await new CSharpTest
+            {
+                TestCode = TestCode,
+                Settings = """{ "settings": { "orderingRules": { "accessibilityOrder": ["internal, private", "public", "protectedInternal", "protected", "privateProtected", "private"] } } }""",
+                ExpectedDiagnostics = { Diagnostic().WithArguments("accessibilityOrder cannot contain value 'internal, private'.") },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(3453, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3453")]
         public async Task TestNoSourceFilesAsync()
         {

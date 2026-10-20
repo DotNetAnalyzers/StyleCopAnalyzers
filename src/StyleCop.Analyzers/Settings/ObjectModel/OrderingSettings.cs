@@ -131,6 +131,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             {
                 if (accessibilityName.Length == 0
                     || !char.IsLetter(accessibilityName[0])
+                    || accessibilityName.IndexOf(',') >= 0
                     || !Enum.TryParse(accessibilityName, ignoreCase: true, out AccessLevel accessLevel)
                     || !Enum.IsDefined(typeof(AccessLevel), accessLevel))
                 {
