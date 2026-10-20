@@ -73,6 +73,13 @@ namespace StyleCop.Analyzers.NamingRules
                     containingType,
                     typeParameter,
                     cancellationToken).ConfigureAwait(false);
+                foreach (var siblingTypeParameter in containingType.TypeParameters)
+                {
+                    if (siblingTypeParameter.Ordinal != typeParameter.Ordinal)
+                    {
+                        crefPlaceholderNames.Add(siblingTypeParameter.Name);
+                    }
+                }
             }
 
             while (!await RenameHelper.IsValidNewMemberNameAsync(semanticModel, declaredSymbol, newName, cancellationToken).ConfigureAwait(false)

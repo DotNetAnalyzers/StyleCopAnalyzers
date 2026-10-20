@@ -618,6 +618,39 @@ public class Foo<TIDENT>
 
         [Fact]
         [WorkItem(2966, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2966")]
+        public async Task TestTypeParameterDoesNotStartWithTAndAvoidsSiblingTypeParameterCollisionAsync()
+        {
+            var testCode = @"
+public class Foo<{|#0:IDENT|}, TIDENT1>
+{
+#pragma warning disable SA1314
+    /// <summary><see cref=""Foo{IDENT,TIDENT}.M(IDENT,TIDENT)""/></summary>
+    public void M(IDENT first, TIDENT1 second)
+    {
+    }
+#pragma warning restore SA1314
+}
+";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+
+            var fixedCode = @"
+public class Foo<TIDENT2, TIDENT1>
+{
+#pragma warning disable SA1314
+    /// <summary><see cref=""Foo{TIDENT2,TIDENT}.M(TIDENT2,TIDENT)""/></summary>
+    public void M(TIDENT2 first, TIDENT1 second)
+    {
+    }
+#pragma warning restore SA1314
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2966, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2966")]
         public async Task TestTypeParameterDoesNotStartWithTAndAvoidsCrefPlaceholderCollisionAsync()
         {
             var testCode = @"
