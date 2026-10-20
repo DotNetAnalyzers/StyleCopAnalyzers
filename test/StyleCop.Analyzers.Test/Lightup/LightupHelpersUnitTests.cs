@@ -94,6 +94,37 @@ namespace StyleCop.Analyzers.Test.Lightup
             Assert.ThrowsAny<InvalidOperationException>(() => LightupHelpers.CreateSyntaxPropertyAccessor<MethodDeclarationSyntax, BlockSyntax>(typeof(MethodDeclarationSyntax), nameof(MethodDeclarationSyntax.ExpressionBody)));
         }
 
+        [Theory]
+        [InlineData(null)]
+        [InlineData(typeof(SyntaxNode))]
+        public void TestCustomSyntaxPropertyFallback(Type? type)
+        {
+            Func<SyntaxNode, int> fallback = _ => -1;
+            Assert.Same(fallback, LightupHelpers.CreateSyntaxPropertyAccessor(type, "Missing", fallback));
+        }
+
+        [Theory]
+        [InlineData(null, "Missing")]
+        [InlineData(typeof(SyntaxNode), "Missing")]
+        [InlineData(typeof(SyntaxNode), nameof(SyntaxNode.RawKind))]
+        public void TestCustomSyntaxWithPropertyFallback(Type? type, string propertyName)
+        {
+            Func<SyntaxNode, int, SyntaxNode> fallback = (node, _) => node;
+            Assert.Same(fallback, LightupHelpers.CreateSyntaxWithPropertyAccessor(type, propertyName, fallback));
+        }
+
+        [Fact]
+        public void TestAvailableSyntaxPropertyIgnoresCustomFallback()
+        {
+            var parameter = SyntaxFactory.Parameter(SyntaxFactory.Identifier("value"));
+            var accessor = LightupHelpers.CreateSyntaxPropertyAccessor<ParameterSyntax, SyntaxToken>(
+                typeof(ParameterSyntax), nameof(ParameterSyntax.Identifier), _ => throw new InvalidOperationException());
+            var withAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ParameterSyntax, SyntaxToken>(
+                typeof(ParameterSyntax), nameof(ParameterSyntax.Identifier), (_, _) => throw new InvalidOperationException());
+            Assert.Equal(parameter.Identifier, accessor(parameter));
+            Assert.Equal("other", withAccessor(parameter, SyntaxFactory.Identifier("other")).Identifier.ValueText);
+        }
+
         [Fact]
         public void TestCreateSeparatedSyntaxListPropertyAccessor()
         {

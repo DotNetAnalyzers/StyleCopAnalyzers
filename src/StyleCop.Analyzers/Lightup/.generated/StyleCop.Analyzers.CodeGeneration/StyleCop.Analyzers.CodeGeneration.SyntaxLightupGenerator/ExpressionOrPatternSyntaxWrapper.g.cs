@@ -54,7 +54,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public static bool IsInstance([NotNullWhen(true)] SyntaxNode? node)
         {
-            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
+            return node != null && LightupHelpers.CanWrapExpressionOrPattern(node, WrappedType);
         }
 
         internal static ExpressionOrPatternSyntaxWrapper FromUpcast(CSharpSyntaxNode? node)
