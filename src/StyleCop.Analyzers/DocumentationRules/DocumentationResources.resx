@@ -276,6 +276,9 @@
   <data name="SA1612Title" xml:space="preserve">
     <value>Element parameter documentation should match element parameters</value>
   </data>
+  <data name="SA1612CodeFix" xml:space="preserve">
+    <value>Correct parameter documentation</value>
+  </data>
   <data name="SA1613Description" xml:space="preserve">
     <value>A &lt;param&gt; tag within a C# element's documentation header is missing a name attribute containing the name of the parameter.</value>
   </data>

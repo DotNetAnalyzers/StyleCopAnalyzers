@@ -232,6 +232,7 @@
   <data name="SA1612MissingParamForDocumentationMessageFormat"><value>The parameter '{0}' does not exist</value></data>
   <data name="SA1612ParamWrongOrderMessageFormat"><value>The parameter documentation for '{0}' should be at position {1}</value></data>
   <data name="SA1612Title"><value>Element parameter documentation should match element parameters</value></data>
+  <data name="SA1612CodeFix"><value>Correct parameter documentation</value></data>
   <data name="SA1613Description"><value>A &lt;param&gt; tag within a C# element's documentation header is missing a name attribute containing the name of the parameter.</value></data>
   <data name="SA1613MessageFormat"><value>Element parameter documentation should declare parameter name</value></data>
   <data name="SA1613Title"><value>Element parameter documentation should declare parameter name</value></data>

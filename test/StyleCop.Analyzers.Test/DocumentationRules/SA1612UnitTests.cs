@@ -46,6 +46,16 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             }
         }
 
+        public static IEnumerable<object[]> CodeFixDeclarations
+        {
+            get
+            {
+                yield return new[] { "public void Method(string foo, string bar, string baz) { }" };
+                yield return new[] { "public delegate void Method(string foo, string bar, string baz);" };
+                yield return new[] { "public object this[string foo, string bar, string baz] { get { return null; } set { } }" };
+            }
+        }
+
         [Fact]
         public async Task VerifyClassIsNotReportedAsync()
         {
@@ -322,6 +332,59 @@ $$
             var expected = GetExpectedDiagnostics(normallyExpected, declaration);
 
             await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(CodeFixDeclarations))]
+        [WorkItem(754, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/754")]
+        public Task TestCodeFixReordersAddsAndRemovesParamDocumentationAsync(string declaration)
+        {
+            return this.VerifyCodeFixReordersAddsAndRemovesParamDocumentationAsync(declaration);
+        }
+
+        [Fact]
+        [WorkItem(754, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/754")]
+        public async Task TestCodeFixRemovesSurplusParamDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <param name=""{|#0:missing|}"">Invalid parameter.</param>
+    /// <param name=""{|#1:foo|}"">Foo documentation.</param>
+    /// <param name=""{|#2:bar|}"">Bar documentation.</param>
+    public void Method(string foo, string bar) { }
+}";
+            var fixedCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <param name=""foo"">Foo documentation.</param>
+    /// <param name=""bar"">Bar documentation.</param>
+    public void Method(string foo, string bar) { }
+}";
+            var orderDiagnostic = Diagnostic()
+                .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}");
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(0).WithArguments("missing"),
+                orderDiagnostic.WithLocation(1).WithArguments("foo", 1),
+                orderDiagnostic.WithLocation(2).WithArguments("bar", 2),
+            };
+
+            await StyleCopCodeFixVerifier<SA1612ElementParameterDocumentationMustMatchElementParameters, SA1612CodeFixProvider>
+                .VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None)
+                .ConfigureAwait(false);
         }
 
         [Fact]
@@ -671,6 +734,55 @@ public class ClassName
 
             test.ExpectedDiagnostics.AddRange(expected);
             return test.RunAsync(cancellationToken);
+        }
+
+        protected async Task VerifyCodeFixReordersAddsAndRemovesParamDocumentationAsync(string declaration)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <param name=""{|#0:bar|}"">Bar documentation.</param>
+    /// <param name=""{|#1:missing|}"">Invalid parameter.</param>
+    /// <param name=""{|#2:foo|}"">Foo documentation.</param>
+    $$
+}".Replace("$$", declaration);
+            var fixedCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <param name=""foo"">Foo documentation.</param>
+    /// <param name=""bar"">Bar documentation.</param>
+    /// <param name=""baz""></param>
+    $$
+}".Replace("$$", declaration);
+            var orderDiagnostic = Diagnostic()
+                .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}");
+            var expected = new[]
+            {
+                orderDiagnostic.WithLocation(0).WithArguments("bar", 2),
+                Diagnostic().WithLocation(1).WithArguments("missing"),
+                orderDiagnostic.WithLocation(2).WithArguments("foo", 1),
+            };
+
+            if (declaration.Contains("record") && LightupHelpers.SupportsCSharp9 && !LightupHelpers.SupportsCSharp11)
+            {
+                expected = expected.Concat(expected).ToArray();
+            }
+
+            await StyleCopCodeFixVerifier<SA1612ElementParameterDocumentationMustMatchElementParameters, SA1612CodeFixProvider>
+                .VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None)
+                .ConfigureAwait(false);
         }
 
         private static DiagnosticResult[] GetExpectedDiagnostics(DiagnosticResult normallyExpected, string declaration)
