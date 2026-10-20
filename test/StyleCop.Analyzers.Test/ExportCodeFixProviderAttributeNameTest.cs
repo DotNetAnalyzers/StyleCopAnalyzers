@@ -28,6 +28,20 @@ namespace StyleCop.Analyzers.Test
         }
 
         [Fact]
+        public void TestSA1612CodeFixProviderIsRegistered()
+        {
+            var codeFixProviderType = typeof(TokenSpacingCodeFixProvider)
+                .Assembly
+                .GetTypes()
+                .FirstOrDefault(t => t.Name == "SA1612CodeFixProvider");
+
+            Assert.NotNull(codeFixProviderType);
+
+            var codeFixProvider = (CodeFixProvider)Activator.CreateInstance(codeFixProviderType, nonPublic: true)!;
+            Assert.Contains("SA1612", codeFixProvider.FixableDiagnosticIds);
+        }
+
+        [Fact]
         public void TestElementOrderCodeFixProviderIsExported()
         {
             var codeFixProviderType = typeof(StyleCop.Analyzers.OrderingRules.ElementOrderCodeFixProvider);

@@ -354,6 +354,9 @@
   <data name="SA1612Title" xml:space="preserve">
     <value>Документация параметров элемента должна соответствовать его параметрам</value>
   </data>
+  <data name="SA1612CodeFix" xml:space="preserve">
+    <value>Исправить документацию параметров</value>
+  </data>
   <data name="SA1613Description" xml:space="preserve">
     <value>В теге &lt;param&gt; заголовка документации элемента C# отсутствует атрибут name с именем параметра.</value>
   </data>

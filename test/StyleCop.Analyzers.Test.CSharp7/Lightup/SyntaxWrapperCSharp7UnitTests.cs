@@ -38,5 +38,17 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             Assert.Null(syntaxWrapper.Wrap(null).SyntaxNode);
             Assert.Null(syntaxWrapper.Unwrap(default));
         }
+
+        [Fact]
+        [WorkItem(3258, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3258")]
+        public void TestExpressionOrPatternFallbackForPattern()
+        {
+            var pattern = SyntaxFactory.ConstantPattern(SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression));
+            Assert.True(ExpressionOrPatternSyntaxWrapper.IsInstance(pattern));
+            Assert.Same(pattern, ((ExpressionOrPatternSyntaxWrapper)pattern).SyntaxNode);
+            ExpressionOrPatternSyntaxWrapper upcast = (PatternSyntaxWrapper)pattern;
+            Assert.Same(pattern, upcast.SyntaxNode);
+            Assert.Same(pattern, ((PatternSyntaxWrapper)upcast).SyntaxNode);
+        }
     }
 }

@@ -14,7 +14,6 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Formatting;
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
@@ -122,7 +121,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 content = XmlSyntaxFactory.List(XmlSyntaxFactory.PlaceholderElement(content));
             }
 
-            string newLineText = document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
+            string newLineText = (await FormattingHelper.GetEndOfLineForCodeFixAsync(document, propertyDeclarationSyntax.GetFirstToken(), cancellationToken).ConfigureAwait(false)).ToFullString();
 
             XmlElementSyntax valueElement = XmlSyntaxFactory.MultiLineElement(XmlCommentHelper.ValueXmlTag, newLineText, content);
 

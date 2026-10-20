@@ -11,7 +11,6 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Formatting;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
 
@@ -50,9 +49,10 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken token)
         {
-            var newLine = document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
-
             var sourceText = await document.GetTextAsync(token).ConfigureAwait(false);
+            var syntaxRoot = await document.GetSyntaxRootAsync(token).ConfigureAwait(false);
+            var syntaxToken = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
+            var newLine = FormattingHelper.GetEndOfLineForCodeFix(syntaxToken, sourceText, document.Project.Solution.Workspace.Options).ToFullString();
             var textChange = new TextChange(diagnostic.Location.SourceSpan, newLine);
 
             return document.WithText(sourceText.WithChanges(textChange));
@@ -73,20 +73,23 @@ namespace StyleCop.Analyzers.LayoutRules
                     return null;
                 }
 
-                var newLine = fixAllContext.Document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
-                var text = await document.GetTextAsync().ConfigureAwait(false);
+                var text = await document.GetTextAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var syntaxTree = await document.GetSyntaxTreeAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var syntaxRoot = await syntaxTree.GetRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var options = document.Project.Solution.Workspace.Options;
 
                 List<TextChange> changes = new List<TextChange>();
 
                 foreach (var diagnostic in diagnostics)
                 {
+                    var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
+                    var newLine = FormattingHelper.GetEndOfLineForCodeFix(token, text, options).ToFullString();
                     changes.Add(new TextChange(diagnostic.Location.SourceSpan, newLine));
                 }
 
                 changes.Sort((left, right) => left.Span.Start.CompareTo(right.Span.Start));
 
-                var tree = await document.GetSyntaxTreeAsync().ConfigureAwait(false);
-                return await tree.WithChangedText(text.WithChanges(changes)).GetRootAsync().ConfigureAwait(false);
+                return await syntaxTree.WithChangedText(text.WithChanges(changes)).GetRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
             }
         }
     }

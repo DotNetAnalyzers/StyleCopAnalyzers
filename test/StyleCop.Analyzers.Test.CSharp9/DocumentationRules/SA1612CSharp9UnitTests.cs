@@ -13,6 +13,13 @@ namespace StyleCop.Analyzers.Test.CSharp9.DocumentationRules
     public partial class SA1612CSharp9UnitTests : SA1612CSharp8UnitTests
     {
         [Fact]
+        [WorkItem(754, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/754")]
+        public Task TestCodeFixReconcilesRecordPrimaryConstructorParametersAsync()
+        {
+            return this.VerifyCodeFixReordersAddsAndRemovesParamDocumentationAsync("public record RecordType(string foo, string bar, string baz) { }");
+        }
+
+        [Fact]
         [WorkItem(3977, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3977")]
         public async Task TestLambdaDiscardParametersAsync()
         {

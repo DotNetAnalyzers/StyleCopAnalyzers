@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Reflection;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class LightupHelpers
     {
@@ -86,6 +87,14 @@ namespace StyleCop.Analyzers.Lightup
             }
 
             return canCast;
+        }
+
+        internal static bool CanWrapExpressionOrPattern(SyntaxNode node, Type? underlyingType)
+        {
+            // Older syntax hierarchies have two independent roots, not one interchangeable base type.
+            return underlyingType != null
+                ? CanWrapNode(node, underlyingType)
+                : node is ExpressionSyntax || PatternSyntaxWrapper.IsInstance(node);
         }
 
         internal static bool CanWrapNode(SyntaxNode? node, Type? underlyingType)
@@ -329,7 +338,7 @@ namespace StyleCop.Analyzers.Lightup
             return expression.Compile();
         }
 
-        internal static Func<TSyntax, TProperty> CreateSyntaxPropertyAccessor<TSyntax, TProperty>(Type? type, string propertyName)
+        internal static Func<TSyntax, TProperty> CreateSyntaxPropertyAccessor<TSyntax, TProperty>(Type? type, string propertyName, Func<TSyntax, TProperty>? fallbackAccessor = null)
         {
             TProperty FallbackAccessor(TSyntax syntax)
             {
@@ -345,7 +354,7 @@ namespace StyleCop.Analyzers.Lightup
 
             if (type == null)
             {
-                return FallbackAccessor;
+                return fallbackAccessor ?? FallbackAccessor;
             }
 
             if (!typeof(TSyntax).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
@@ -356,7 +365,7 @@ namespace StyleCop.Analyzers.Lightup
             var property = type.GetTypeInfo().GetDeclaredProperty(propertyName);
             if (property == null)
             {
-                return FallbackAccessor;
+                return fallbackAccessor ?? FallbackAccessor;
             }
 
             if (!typeof(TProperty).GetTypeInfo().IsAssignableFrom(property.PropertyType.GetTypeInfo()))
@@ -782,7 +791,7 @@ namespace StyleCop.Analyzers.Lightup
             return expression.Compile();
         }
 
-        internal static Func<TSyntax, TProperty?, TSyntax> CreateSyntaxWithPropertyAccessor<TSyntax, TProperty>(Type? type, string propertyName)
+        internal static Func<TSyntax, TProperty?, TSyntax> CreateSyntaxWithPropertyAccessor<TSyntax, TProperty>(Type? type, string propertyName, Func<TSyntax, TProperty?, TSyntax>? fallbackAccessor = null)
         {
             TSyntax FallbackAccessor(TSyntax syntax, TProperty? newValue)
             {
@@ -803,7 +812,7 @@ namespace StyleCop.Analyzers.Lightup
 
             if (type == null)
             {
-                return FallbackAccessor;
+                return fallbackAccessor ?? FallbackAccessor;
             }
 
             if (!typeof(TSyntax).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
@@ -814,7 +823,7 @@ namespace StyleCop.Analyzers.Lightup
             var property = type.GetTypeInfo().GetDeclaredProperty(propertyName);
             if (property == null)
             {
-                return FallbackAccessor;
+                return fallbackAccessor ?? FallbackAccessor;
             }
 
             if (!typeof(TProperty).GetTypeInfo().IsAssignableFrom(property.PropertyType.GetTypeInfo()))
@@ -826,7 +835,7 @@ namespace StyleCop.Analyzers.Lightup
                 .SingleOrDefault(m => !m.IsStatic && m.GetParameters().Length == 1 && m.GetParameters()[0].ParameterType.Equals(property.PropertyType));
             if (methodInfo is null)
             {
-                return FallbackAccessor;
+                return fallbackAccessor ?? FallbackAccessor;
             }
 
             var syntaxParameter = Expression.Parameter(typeof(TSyntax), "syntax");

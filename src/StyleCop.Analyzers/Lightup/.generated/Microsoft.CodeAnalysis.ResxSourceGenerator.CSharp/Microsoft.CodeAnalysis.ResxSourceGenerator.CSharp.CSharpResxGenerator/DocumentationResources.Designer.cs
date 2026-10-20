@@ -120,6 +120,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         public static string @SA1612ParamWrongOrderMessageFormat => GetResourceString("SA1612ParamWrongOrderMessageFormat")!;
         /// <summary>Element parameter documentation should match element parameters</summary>
         public static string @SA1612Title => GetResourceString("SA1612Title")!;
+        /// <summary>Correct parameter documentation</summary>
+        public static string @SA1612CodeFix => GetResourceString("SA1612CodeFix")!;
         /// <summary>A &lt;param&gt; tag within a C# element's documentation header is missing a name attribute containing the name of the parameter.</summary>
         public static string @SA1613Description => GetResourceString("SA1613Description")!;
         /// <summary>Element parameter documentation should declare parameter name</summary>

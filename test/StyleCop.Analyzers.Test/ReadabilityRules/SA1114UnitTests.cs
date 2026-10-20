@@ -395,10 +395,104 @@ class Foo
         }
 
         /// <summary>
-        /// Verifies that the comment exemption does not change the handling of conditional directives in arguments.
+        /// Verifies that conditional branches may supply the first argument without introducing blank lines.
+        /// </summary>
+        /// <param name="symbols">The preprocessor symbols to define.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("")]
+        [InlineData("#define TESTSYMBOL\r\n")]
+        [WorkItem(3284, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3284")]
+        public async Task TestMethodCallWithConditionalArgumentsAsync(string symbols)
+        {
+            var testCode = symbols + @"
+class Foo
+{
+    void TestMethod(int value) { }
+    void M()
+    {
+        int arg1 = 1, arg2 = 2;
+        TestMethod(
+#if TESTSYMBOL
+            arg1);
+#else
+            arg2);
+#endif
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that conditional directives are allowed before the first item in each kind of list.
+        /// </summary>
+        /// <param name="code">The code containing a list.</param>
+        /// <param name="directives">The conditional directives before the first item.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [CombinatorialData]
+        [WorkItem(3284, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3284")]
+        public async Task TestListsWithConditionalDirectivesAsync(
+            [CombinatorialValues(
+                "class Foo { void M($$int a) { } }",
+                "class Foo { public int this[$$int a] { get { return a; } } }",
+                "class Foo { void M() { M($$1); } void M(int a) { } }",
+                "class Foo { void M(int[] a) { var b = a[$$1]; } }",
+                "[System.Obsolete($$\"message\")] class Foo { }",
+                "[$$System.Obsolete] class Foo { }",
+                "class Foo { void M() { var a = new int[$$1]; } }",
+                "class Foo { void M() { var a = new Foo($$1); } Foo(int a) { } }")] string code,
+            [CombinatorialValues(
+                "#if true\r\n#endif",
+                "#if false\r\nInactive text\r\n#else\r\n#endif",
+                "#if false\r\nInactive text\r\n#elif true\r\n#endif",
+                "// Before\r\n#if true\r\n#if false\r\nInactive text\r\n#endif\r\n#endif\r\n// After")] string directives)
+        {
+            var testCode = code.Replace("$$", "\r\n" + directives + "\r\n");
+
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a blank line after a conditional directive still produces a diagnostic without an unsafe fix.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(3284, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3284")]
+        public async Task TestMethodCallWithBlankLineAfterConditionalDirectiveAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    void M(int a) { }
+    void M()
+    {
+        M(
+#if true
+
+            {|#0:1|}
+#endif
+        );
+    }
+}";
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = testCode,
+            };
+            var expected = Diagnostic().WithLocation(0);
+            test.ExpectedDiagnostics.Add(expected);
+            test.RemainingDiagnostics.Add(expected);
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a conditional directive does not produce a diagnostic when it precedes an argument.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3284, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3284")]
         public async Task TestMethodCallWithConditionalDirectiveAsync()
         {
             var testCode = @"
@@ -409,13 +503,13 @@ class Foo
     {
         M(
 #if true
-            {|#0:1|}
+            1
 #endif
         );
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, Diagnostic().WithLocation(0), CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]

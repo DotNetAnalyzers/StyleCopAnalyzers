@@ -14,6 +14,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.Options;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
@@ -55,21 +56,24 @@ namespace StyleCop.Analyzers.LayoutRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+            var options = document.Project.Solution.Workspace.Options;
 
             var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
             var braceToken = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-            var tokenReplacements = GenerateBraceFixes(settings, ImmutableArray.Create(braceToken));
+            var tokenReplacements = GenerateBraceFixes(settings, ImmutableArray.Create(braceToken), sourceText, options);
 
             var newSyntaxRoot = syntaxRoot.ReplaceTokens(tokenReplacements.Keys, (originalToken, rewrittenToken) => tokenReplacements[originalToken]);
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
 
-        private static Dictionary<SyntaxToken, SyntaxToken> GenerateBraceFixes(StyleCopSettings settings, ImmutableArray<SyntaxToken> braceTokens)
+        private static Dictionary<SyntaxToken, SyntaxToken> GenerateBraceFixes(StyleCopSettings settings, ImmutableArray<SyntaxToken> braceTokens, SourceText sourceText, OptionSet options)
         {
             var tokenReplacements = new Dictionary<SyntaxToken, SyntaxToken>();
 
             foreach (var braceToken in braceTokens)
             {
+                var endOfLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(braceToken, sourceText, options);
                 var braceLine = LocationHelpers.GetLineSpan(braceToken).StartLinePosition.Line;
                 var braceReplacementToken = braceToken;
 
@@ -98,7 +102,7 @@ namespace StyleCop.Analyzers.LayoutRules
                             var previousTokenNewTrailingTrivia = previousToken.TrailingTrivia
                             .WithoutTrailingWhitespace()
                             .AddRange(sharedTrivia)
-                            .Add(SyntaxFactory.CarriageReturnLineFeed);
+                            .Add(endOfLineTrivia);
 
                             AddReplacement(tokenReplacements, previousToken, previousToken.WithTrailingTrivia(previousTokenNewTrailingTrivia));
                         }
@@ -128,7 +132,7 @@ namespace StyleCop.Analyzers.LayoutRules
                         var newTrailingTrivia = braceReplacementToken.TrailingTrivia
                             .WithoutTrailingWhitespace()
                             .AddRange(sharedTrivia)
-                            .Add(SyntaxFactory.CarriageReturnLineFeed);
+                            .Add(endOfLineTrivia);
 
                         if (!braceTokens.Contains(nextToken))
                         {
@@ -284,7 +288,8 @@ namespace StyleCop.Analyzers.LayoutRules
                     return null;
                 }
 
-                SyntaxNode syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+                SyntaxNode syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var sourceText = await document.GetTextAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
 
                 var tokens = diagnostics
                     .Select(diagnostic => syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start))
@@ -293,7 +298,7 @@ namespace StyleCop.Analyzers.LayoutRules
 
                 var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, fixAllContext.CancellationToken);
 
-                var tokenReplacements = GenerateBraceFixes(settings, tokens);
+                var tokenReplacements = GenerateBraceFixes(settings, tokens, sourceText, document.Project.Solution.Workspace.Options);
 
                 return syntaxRoot.ReplaceTokens(tokenReplacements.Keys, (originalToken, rewrittenToken) => tokenReplacements[originalToken]);
             }

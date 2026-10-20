@@ -14,6 +14,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
@@ -113,6 +114,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static async Task<Document> GetTransformedDocumentForMultipleLinesAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+            var options = document.Project.Solution.Workspace.Options;
             var queryExpression = (QueryExpressionSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan).Parent;
             var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>();
 
@@ -129,7 +132,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 if (precedingToken.GetLine() == token.GetLine())
                 {
                     var triviaList = precedingToken.TrailingTrivia.AddRange(token.LeadingTrivia);
-                    var processedTriviaList = triviaList.WithoutTrailingWhitespace().Add(SyntaxFactory.CarriageReturnLineFeed);
+                    var endOfLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(precedingToken, sourceText, options);
+                    var processedTriviaList = triviaList.WithoutTrailingWhitespace().Add(endOfLineTrivia);
 
                     replaceMap.Add(precedingToken, precedingToken.WithTrailingTrivia(processedTriviaList));
                     replaceMap.Add(token, token.WithLeadingTrivia(indentationTrivia));

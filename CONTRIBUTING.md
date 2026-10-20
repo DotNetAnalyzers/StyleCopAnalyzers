@@ -55,6 +55,11 @@ Nullable contract probes and comparisons against available Roslyn properties liv
 The original Roslyn 1.2.1 references are not augmented with nullable annotations, so direct calls
 to those APIs remain nullable-oblivious even in migrated code.
 
+When Roslyn introduces a new syntax base type, light-up must still recognize its original concrete types
+on older hosts. A base spanning multiple existing hierarchies must accept each supported hierarchy without
+accepting unrelated nodes. Members moved to a base type must fall back to derived implementations on old
+hosts; select these fallbacks once during static initialization, not through reflection on each access.
+
 The language-audit probe uses the central tool version by default and still accepts
 `-p:RoslynVersion=<version>` to test another compiler.
 `NuGet.config` maps normal packages to nuget.org, Roslyn compiler packages to nuget.org or

@@ -20,7 +20,7 @@ namespace StyleCop.Analyzers.Helpers
         /// Retrieves the appropriate end-of-line trivia for use in code fixes at the specified token location.
         /// </summary>
         /// <remarks><para>This method attempts to preserve the existing line ending style near the specified
-        /// token. If no suitable end-of-line trivia is found, a default carriage return and line feed (CRLF) is
+        /// token. If no suitable end-of-line trivia is found, the workspace's newline formatting option is
         /// returned.</para></remarks>
         /// <param name="token">The syntax token for which to determine the end-of-line trivia.</param>
         /// <param name="options">The options to use for formatting. This value is only used if the document does not already contain line endings.</param>
@@ -36,6 +36,11 @@ namespace StyleCop.Analyzers.Helpers
 
             var text = await token.SyntaxTree.GetTextAsync(cancellationToken).ConfigureAwait(false);
             return GetEndOfLineForCodeFix(token, text, options);
+        }
+
+        public static Task<SyntaxTrivia> GetEndOfLineForCodeFixAsync(Document document, SyntaxToken token, CancellationToken cancellationToken)
+        {
+            return GetEndOfLineForCodeFixAsync(token, document.Project.Solution.Workspace.Options, cancellationToken);
         }
 
         /// <summary>
@@ -85,9 +90,25 @@ namespace StyleCop.Analyzers.Helpers
             }
         }
 
-        public static SyntaxTrivia GetNewLineTrivia(Document document)
+        /// <summary>
+        /// Retrieves an existing line ending from the source text, or the workspace formatting option when the
+        /// source text contains no line endings.
+        /// </summary>
+        /// <param name="text">The source text to inspect.</param>
+        /// <param name="options">The options to use when the source text contains no line endings.</param>
+        /// <returns>The line ending used by the source text or the workspace formatting option.</returns>
+        public static SyntaxTrivia GetEndOfLineForCodeFix(SourceText text, OptionSet options)
         {
-            return SyntaxFactory.SyntaxTrivia(SyntaxKind.EndOfLineTrivia, document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp));
+            foreach (var line in text.Lines)
+            {
+                int lineBreakLength = line.EndIncludingLineBreak - line.End;
+                if (lineBreakLength > 0)
+                {
+                    return SyntaxFactory.EndOfLine(text.ToString(TextSpan.FromBounds(line.End, line.EndIncludingLineBreak)));
+                }
+            }
+
+            return SyntaxFactory.SyntaxTrivia(SyntaxKind.EndOfLineTrivia, options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp));
         }
 
         /// <summary>
