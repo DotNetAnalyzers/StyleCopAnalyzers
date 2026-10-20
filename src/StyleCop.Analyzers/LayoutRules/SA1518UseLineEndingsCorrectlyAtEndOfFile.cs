@@ -149,14 +149,32 @@ namespace StyleCop.Analyzers.LayoutRules
 
             SourceText sourceText = context.Tree.GetText(context.CancellationToken);
             string trailingWhitespaceText = sourceText.ToString(reportedSpan);
-            int firstNewline = trailingWhitespaceText.IndexOf('\n');
-            int secondNewline = firstNewline >= 0 ? trailingWhitespaceText.IndexOf('\n', firstNewline + 1) : -1;
+            int newlineCount = 0;
+            bool endsWithNewline = false;
+            for (int i = 0; i < trailingWhitespaceText.Length; i++)
+            {
+                char character = trailingWhitespaceText[i];
+                if (character is '\r' or '\n')
+                {
+                    newlineCount++;
+                    endsWithNewline = i == trailingWhitespaceText.Length - 1;
+                    if (character == '\r' && i + 1 < trailingWhitespaceText.Length && trailingWhitespaceText[i + 1] == '\n')
+                    {
+                        i++;
+                        endsWithNewline = i == trailingWhitespaceText.Length - 1;
+                    }
+                }
+                else
+                {
+                    endsWithNewline = false;
+                }
+            }
 
             DiagnosticDescriptor descriptorToReport;
             switch (settings.LayoutRules.NewlineAtEndOfFile)
             {
             case OptionSetting.Omit:
-                if (firstNewline < 0)
+                if (newlineCount == 0)
                 {
                     return;
                 }
@@ -165,7 +183,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 break;
 
             case OptionSetting.Require:
-                if (firstNewline >= 0 && firstNewline == trailingWhitespaceText.Length - 1)
+                if (newlineCount == 1 && endsWithNewline)
                 {
                     return;
                 }
@@ -175,14 +193,10 @@ namespace StyleCop.Analyzers.LayoutRules
 
             case OptionSetting.Allow:
             default:
-                if (secondNewline < 0)
+                // A newline is allowed but not required, but it cannot be followed by whitespace.
+                if (newlineCount <= 1 && (newlineCount == 0 || endsWithNewline))
                 {
-                    // 1. A newline is allowed but not required
-                    // 2. If a newline is included, it cannot be followed by whitespace
-                    if (firstNewline < 0 || firstNewline == trailingWhitespaceText.Length - 1)
-                    {
-                        return;
-                    }
+                    return;
                 }
 
                 descriptorToReport = DescriptorAllow;

@@ -30,6 +30,21 @@ public class Foo
         private const string WhiteSpace = "\t  ";
 
         /// <summary>
+        /// Verifies that CR-only line endings are accepted by the code fix.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3656, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3656")]
+        public async Task TestCarriageReturnOnlyLineEndingsAtEndOfFileAsync()
+        {
+            var testCode = BaseCode.Replace("\n", "\r") + "\r\r";
+            var fixedCode = BaseCode.Replace("\n", "\r") + "\r";
+            var expected = Diagnostic(this.GetDescriptor(OptionSetting.Require)).WithSpan(15, 2, 17, 1);
+
+            await VerifyCSharpFixAsync(OptionSetting.Require, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that blank lines at the end of the file will produce a warning.
         /// </summary>
         /// <param name="newlineAtEndOfFile">The effective <see cref="OptionSetting"/> setting.</param>

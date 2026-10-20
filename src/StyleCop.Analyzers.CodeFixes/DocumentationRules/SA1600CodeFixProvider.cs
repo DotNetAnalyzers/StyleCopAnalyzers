@@ -197,19 +197,30 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static async Task<Document> InsertDocumentationCommentAsync(Document document, SyntaxNode root, SyntaxNode declaration, SyntaxTriviaList leadingTrivia, int insertionIndex, DocumentationCommentTriviaSyntax documentationComment, string newLineText, CancellationToken cancellationToken)
         {
+            var commentAnnotation = new SyntaxAnnotation();
+            documentationComment = documentationComment.WithAdditionalAnnotations(commentAnnotation);
             var trivia = SyntaxFactory.Trivia(documentationComment);
             SyntaxTriviaList newLeadingTrivia = leadingTrivia.Insert(insertionIndex, trivia);
             SyntaxNode newElement = declaration.WithLeadingTrivia(newLeadingTrivia);
             Document updatedDocument = document.WithSyntaxRoot(root.ReplaceNode(declaration, newElement));
             Document simplifiedDocument = await Simplifier.ReduceAsync(updatedDocument, cancellationToken: cancellationToken).ConfigureAwait(false);
             var simplifiedRoot = await simplifiedDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            int insertionPosition = insertionIndex < leadingTrivia.Count ? leadingTrivia[insertionIndex].SpanStart : declaration.SpanStart;
-            var insertedComment = simplifiedRoot.DescendantTrivia(descendIntoTrivia: false)
-                .First(candidate => candidate.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia) && candidate.FullSpan.Start == insertionPosition);
+            var insertedComment = simplifiedRoot.DescendantNodes(descendIntoTrivia: true)
+                .First(candidate => candidate.HasAnnotation(commentAnnotation));
 
             var sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
             var sourceLine = sourceText.Lines.GetLineFromPosition(declaration.SpanStart);
-            string indentation = sourceText.ToString(TextSpan.FromBounds(sourceLine.Start, declaration.SpanStart));
+            string sourceLinePrefix = sourceText.ToString(TextSpan.FromBounds(sourceLine.Start, declaration.SpanStart));
+            bool isInlineDeclaration = sourceLinePrefix.Trim().Length > 0;
+
+            int trailingWhitespaceStart = sourceLinePrefix.Length;
+            while (trailingWhitespaceStart > 0 && char.IsWhiteSpace(sourceLinePrefix[trailingWhitespaceStart - 1]))
+            {
+                trailingWhitespaceStart--;
+            }
+
+            string declarationIndentation = sourceLinePrefix.Substring(trailingWhitespaceStart);
+            string indentation = isInlineDeclaration ? string.Empty : sourceLinePrefix;
             string commentText = insertedComment.ToFullString();
             if (commentText.EndsWith(newLineText, StringComparison.Ordinal))
             {
@@ -217,6 +228,11 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             commentText = indentation + commentText.Replace(newLineText, newLineText + indentation) + newLineText;
+            if (isInlineDeclaration)
+            {
+                commentText = newLineText + commentText + declarationIndentation;
+            }
+
             var simplifiedText = await simplifiedDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);
             return simplifiedDocument.WithText(simplifiedText.WithChanges(new TextChange(insertedComment.FullSpan, commentText)));
         }
