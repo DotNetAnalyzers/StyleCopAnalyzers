@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
@@ -56,6 +57,8 @@ namespace StyleCop.Analyzers.LayoutRules
         private static async Task<SyntaxNode> GetTransformedDocumentAsync(Document document, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+            var options = document.Project.Solution.Workspace.Options;
 
             var documentationHeaders = diagnostics.Select(diagnostic => syntaxRoot.FindTrivia(diagnostic.Location.SourceSpan.Start)).ToArray();
             return syntaxRoot.ReplaceTokens(
@@ -72,7 +75,8 @@ namespace StyleCop.Analyzers.LayoutRules
                         index--;
                     }
 
-                    var newLeadingTrivia = rewrittenToken.LeadingTrivia.Insert(index + 1, SyntaxFactory.CarriageReturnLineFeed);
+                    var endOfLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(originalToken, sourceText, options);
+                    var newLeadingTrivia = rewrittenToken.LeadingTrivia.Insert(index + 1, endOfLineTrivia);
                     return rewrittenToken.WithLeadingTrivia(newLeadingTrivia);
                 });
         }

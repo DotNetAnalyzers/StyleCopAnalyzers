@@ -65,6 +65,7 @@ namespace StyleCop.Analyzers.OrderingRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
             var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
             var elementOrder = settings.OrderingRules.ElementOrder;
 
@@ -78,7 +79,8 @@ namespace StyleCop.Analyzers.OrderingRules
             }
 
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-            var updatedRoot = UpdateSyntaxRoot(memberDeclaration, elementOrder, syntaxRoot, settings.Indentation, settings.OrderingRules.MemberKindOrder, semanticModel, cancellationToken);
+            var endOfLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(memberDeclaration.GetFirstToken(), sourceText, document.Project.Solution.Workspace.Options);
+            var updatedRoot = UpdateSyntaxRoot(memberDeclaration, elementOrder, syntaxRoot, settings.Indentation, endOfLineTrivia, settings.OrderingRules.MemberKindOrder, semanticModel, cancellationToken);
             if (updatedRoot == syntaxRoot)
             {
                 return document;
@@ -92,6 +94,7 @@ namespace StyleCop.Analyzers.OrderingRules
             ImmutableArray<OrderingTrait> elementOrder,
             SyntaxNode syntaxRoot,
             IndentationSettings indentationSettings,
+            SyntaxTrivia endOfLineTrivia,
             MemberKindOrder? configuredOrder,
             SemanticModel? semanticModel = null,
             CancellationToken cancellationToken = default,
@@ -102,17 +105,17 @@ namespace StyleCop.Analyzers.OrderingRules
 
             if (parentDeclaration is TypeDeclarationSyntax syntax)
             {
-                return HandleTypeDeclaration(memberToMove, syntax, elementOrder, syntaxRoot, indentationSettings, configuredOrder, semanticModel, cancellationToken, fieldDependenciesByType);
+                return HandleTypeDeclaration(memberToMove, syntax, elementOrder, syntaxRoot, indentationSettings, endOfLineTrivia, configuredOrder, semanticModel, cancellationToken, fieldDependenciesByType);
             }
 
             if (BaseNamespaceDeclarationSyntaxWrapper.IsInstance(parentDeclaration))
             {
-                return HandleBaseNamespaceDeclaration(memberToMove, (BaseNamespaceDeclarationSyntaxWrapper)parentDeclaration, elementOrder, syntaxRoot, indentationSettings);
+                return HandleBaseNamespaceDeclaration(memberToMove, (BaseNamespaceDeclarationSyntaxWrapper)parentDeclaration, elementOrder, syntaxRoot, indentationSettings, endOfLineTrivia);
             }
 
             if (parentDeclaration is CompilationUnitSyntax syntax1)
             {
-                return HandleCompilationUnitDeclaration(memberToMove, syntax1, elementOrder, syntaxRoot, indentationSettings);
+                return HandleCompilationUnitDeclaration(memberToMove, syntax1, elementOrder, syntaxRoot, indentationSettings, endOfLineTrivia);
             }
 
             return syntaxRoot;
@@ -124,6 +127,7 @@ namespace StyleCop.Analyzers.OrderingRules
             ImmutableArray<OrderingTrait> elementOrder,
             SyntaxNode syntaxRoot,
             IndentationSettings indentationSettings,
+            SyntaxTrivia endOfLineTrivia,
             MemberKindOrder? configuredOrder,
             SemanticModel? semanticModel,
             CancellationToken cancellationToken,
@@ -141,10 +145,10 @@ namespace StyleCop.Analyzers.OrderingRules
 
             if (configuredOrder != null && elementOrder.Contains(OrderingTrait.Kind))
             {
-                return OrderConfiguredMember(memberOrder.Member, typeDeclarationNode.Members, configuredOrder, syntaxRoot, indentationSettings, fieldDependencies, cancellationToken);
+                return OrderConfiguredMember(memberOrder.Member, typeDeclarationNode.Members, configuredOrder, syntaxRoot, indentationSettings, endOfLineTrivia, fieldDependencies, cancellationToken);
             }
 
-            return OrderMember(memberOrder, typeDeclarationNode.Members, elementOrder, syntaxRoot, indentationSettings, fieldDependencies);
+            return OrderMember(memberOrder, typeDeclarationNode.Members, elementOrder, syntaxRoot, indentationSettings, endOfLineTrivia, fieldDependencies);
         }
 
         private static SyntaxNode OrderConfiguredMember(
@@ -153,6 +157,7 @@ namespace StyleCop.Analyzers.OrderingRules
             MemberKindOrder order,
             SyntaxNode syntaxRoot,
             IndentationSettings indentationSettings,
+            SyntaxTrivia endOfLineTrivia,
             Dictionary<string, ImmutableHashSet<string>>? fieldDependencies,
             CancellationToken cancellationToken)
         {
@@ -270,7 +275,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 return syntaxRoot;
             }
 
-            return MoveMember(syntaxRoot, member, members[targetIndex], indentationSettings);
+            return MoveMember(syntaxRoot, member, members[targetIndex], indentationSettings, endOfLineTrivia);
         }
 
         private static bool HasRuntimeInitializer(MemberDeclarationSyntax member)
@@ -294,14 +299,14 @@ namespace StyleCop.Analyzers.OrderingRules
             return false;
         }
 
-        private static SyntaxNode HandleCompilationUnitDeclaration(MemberOrderHelper memberOrder, CompilationUnitSyntax compilationUnitDeclaration, ImmutableArray<OrderingTrait> elementOrder, SyntaxNode syntaxRoot, IndentationSettings indentationSettings)
+        private static SyntaxNode HandleCompilationUnitDeclaration(MemberOrderHelper memberOrder, CompilationUnitSyntax compilationUnitDeclaration, ImmutableArray<OrderingTrait> elementOrder, SyntaxNode syntaxRoot, IndentationSettings indentationSettings, SyntaxTrivia endOfLineTrivia)
         {
-            return OrderMember(memberOrder, compilationUnitDeclaration.Members, elementOrder, syntaxRoot, indentationSettings, fieldDependencies: null);
+            return OrderMember(memberOrder, compilationUnitDeclaration.Members, elementOrder, syntaxRoot, indentationSettings, endOfLineTrivia, fieldDependencies: null);
         }
 
-        private static SyntaxNode HandleBaseNamespaceDeclaration(MemberOrderHelper memberOrder, BaseNamespaceDeclarationSyntaxWrapper namespaceDeclaration, ImmutableArray<OrderingTrait> elementOrder, SyntaxNode syntaxRoot, IndentationSettings indentationSettings)
+        private static SyntaxNode HandleBaseNamespaceDeclaration(MemberOrderHelper memberOrder, BaseNamespaceDeclarationSyntaxWrapper namespaceDeclaration, ImmutableArray<OrderingTrait> elementOrder, SyntaxNode syntaxRoot, IndentationSettings indentationSettings, SyntaxTrivia endOfLineTrivia)
         {
-            return OrderMember(memberOrder, namespaceDeclaration.Members, elementOrder, syntaxRoot, indentationSettings, fieldDependencies: null);
+            return OrderMember(memberOrder, namespaceDeclaration.Members, elementOrder, syntaxRoot, indentationSettings, endOfLineTrivia, fieldDependencies: null);
         }
 
         private static SyntaxNode OrderMember(
@@ -310,6 +315,7 @@ namespace StyleCop.Analyzers.OrderingRules
             ImmutableArray<OrderingTrait> elementOrder,
             SyntaxNode syntaxRoot,
             IndentationSettings indentationSettings,
+            SyntaxTrivia endOfLineTrivia,
             Dictionary<string, ImmutableHashSet<string>>? fieldDependencies)
         {
             if (memberOrder.Member.ContainsDirectives)
@@ -356,7 +362,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 return syntaxRoot;
             }
 
-            return MoveMember(syntaxRoot, memberOrder.Member, target.Member, indentationSettings);
+            return MoveMember(syntaxRoot, memberOrder.Member, target.Member, indentationSettings, endOfLineTrivia);
         }
 
         private static string GetTypeKey(TypeDeclarationSyntax typeDeclaration)
@@ -377,7 +383,7 @@ namespace StyleCop.Analyzers.OrderingRules
             return sb.ToString();
         }
 
-        private static SyntaxNode MoveMember(SyntaxNode syntaxRoot, MemberDeclarationSyntax member, MemberDeclarationSyntax targetMember, IndentationSettings indentationSettings)
+        private static SyntaxNode MoveMember(SyntaxNode syntaxRoot, MemberDeclarationSyntax member, MemberDeclarationSyntax targetMember, IndentationSettings indentationSettings, SyntaxTrivia endOfLineTrivia)
         {
             var firstToken = syntaxRoot.GetFirstToken();
             var fileHeader = GetFileHeader(firstToken.LeadingTrivia);
@@ -394,7 +400,7 @@ namespace StyleCop.Analyzers.OrderingRules
             if (!HasLeadingBlankLines(targetMember)
                 && HasLeadingBlankLines(member))
             {
-                memberToMove = memberToMove.WithTrailingTrivia(memberToMove.GetTrailingTrivia().Add(SyntaxFactory.CarriageReturnLineFeed));
+                memberToMove = memberToMove.WithTrailingTrivia(memberToMove.GetTrailingTrivia().Add(endOfLineTrivia));
                 memberToMove = memberToMove.WithLeadingTrivia(GetLeadingTriviaWithoutLeadingBlankLines(memberToMove));
             }
 
@@ -510,6 +516,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 }
 
                 var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var sourceText = await document.GetTextAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
                 var semanticModel = await document.GetSemanticModelAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
                 var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, fixAllContext.CancellationToken);
                 var elementOrder = settings.OrderingRules.ElementOrder;
@@ -560,7 +567,8 @@ namespace StyleCop.Analyzers.OrderingRules
                 foreach (var member in trackedMembers)
                 {
                     var memberDeclaration = syntaxRoot.GetCurrentNode(member);
-                    syntaxRoot = UpdateSyntaxRoot(memberDeclaration, elementOrder, syntaxRoot, settings.Indentation, settings.OrderingRules.MemberKindOrder, semanticModel, fixAllContext.CancellationToken, fieldDependenciesByType);
+                    var endOfLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(memberDeclaration.GetFirstToken(), sourceText, document.Project.Solution.Workspace.Options);
+                    syntaxRoot = UpdateSyntaxRoot(memberDeclaration, elementOrder, syntaxRoot, settings.Indentation, endOfLineTrivia, settings.OrderingRules.MemberKindOrder, semanticModel, fixAllContext.CancellationToken, fieldDependenciesByType);
                 }
 
                 return syntaxRoot;

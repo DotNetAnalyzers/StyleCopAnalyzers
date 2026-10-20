@@ -238,6 +238,17 @@ namespace Microsoft
         }
 
         [Fact]
+        [WorkItem(3656, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3656")]
+        public async Task TestCodeFixPreservesLfLineEndingsAsync()
+        {
+            var testCode = "class C\n{\n\n\n    void M() { }\n}\n";
+            var fixedCode = "class C\n{\n\n    void M() { }\n}\n";
+            var expected = Diagnostic().WithLocation(3, 1);
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestValidBlankLineInVariousPlacesAsync()
         {
             string testCode = @"using System;

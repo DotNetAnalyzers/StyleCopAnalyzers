@@ -58,7 +58,12 @@ namespace StyleCop.Analyzers.LayoutRules
         private static async Task<Document> FixEndOfFileAsync(Document document, Diagnostic diagnostic, OptionSetting newlineAtEndOfFile, CancellationToken cancellationToken)
         {
             var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
-            string replacement = newlineAtEndOfFile == OptionSetting.Omit ? string.Empty : "\r\n";
+            var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var lastToken = syntaxRoot.GetLastToken();
+            var endOfLineTrivia = lastToken.RawKind == 0
+                ? FormattingHelper.GetEndOfLineForCodeFix(text, document.Project.Solution.Workspace.Options)
+                : FormattingHelper.GetEndOfLineForCodeFix(lastToken, text, document.Project.Solution.Workspace.Options);
+            string replacement = newlineAtEndOfFile == OptionSetting.Omit ? string.Empty : endOfLineTrivia.ToFullString();
             return document.WithText(text.WithChanges(new TextChange(diagnostic.Location.SourceSpan, replacement)));
         }
 

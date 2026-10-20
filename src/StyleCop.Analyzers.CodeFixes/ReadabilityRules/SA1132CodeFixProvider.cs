@@ -139,7 +139,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
                             {
                             case SyntaxKind.SingleLineCommentTrivia:
                             case SyntaxKind.MultiLineCommentTrivia:
-                                triviaList = triviaList.Insert(0, SyntaxFactory.CarriageReturnLineFeed);
+                                var endOfLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(declaration.GetFirstToken(), sourceText, options);
+                                triviaList = triviaList.Insert(0, endOfLineTrivia);
                                 break;
                             }
                         }

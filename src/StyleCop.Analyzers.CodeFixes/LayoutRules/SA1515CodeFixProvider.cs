@@ -13,6 +13,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
@@ -51,12 +52,14 @@ namespace StyleCop.Analyzers.LayoutRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+            var endOfLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start), sourceText, document.Project.Solution.Workspace.Options);
 
             var singleLineComment = syntaxRoot.FindTrivia(diagnostic.Location.SourceSpan.Start);
             var commentArray = new[] { singleLineComment };
 
-            var leadingTrivia = FixTriviaList(singleLineComment.Token.LeadingTrivia, commentArray);
-            var trailingTrivia = FixTriviaList(singleLineComment.Token.TrailingTrivia, commentArray);
+            var leadingTrivia = FixTriviaList(singleLineComment.Token.LeadingTrivia, commentArray, endOfLineTrivia);
+            var trailingTrivia = FixTriviaList(singleLineComment.Token.TrailingTrivia, commentArray, endOfLineTrivia);
 
             var newToken = singleLineComment.Token
                 .WithLeadingTrivia(leadingTrivia)
@@ -67,7 +70,7 @@ namespace StyleCop.Analyzers.LayoutRules
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
 
-        private static SyntaxTriviaList FixTriviaList(SyntaxTriviaList triviaList, IEnumerable<SyntaxTrivia> commentTrivias)
+        private static SyntaxTriviaList FixTriviaList(SyntaxTriviaList triviaList, IEnumerable<SyntaxTrivia> commentTrivias, SyntaxTrivia endOfLineTrivia)
         {
             foreach (var singleLineComment in commentTrivias)
             {
@@ -87,7 +90,7 @@ namespace StyleCop.Analyzers.LayoutRules
                         break;
 
                     default:
-                        triviaList = triviaList.ReplaceRange(triviaList[index], new[] { triviaList[index], SyntaxFactory.CarriageReturnLineFeed });
+                        triviaList = triviaList.ReplaceRange(triviaList[index], new[] { triviaList[index], endOfLineTrivia });
 
                         // We found the trivia so we don't have to loop any longer
                         index = -2;
@@ -97,7 +100,7 @@ namespace StyleCop.Analyzers.LayoutRules
 
                 if (index == -1)
                 {
-                    triviaList = triviaList.ReplaceRange(triviaList[0], new[] { SyntaxFactory.CarriageReturnLineFeed, triviaList[0] });
+                    triviaList = triviaList.ReplaceRange(triviaList[0], new[] { endOfLineTrivia, triviaList[0] });
                 }
             }
 
@@ -119,7 +122,9 @@ namespace StyleCop.Analyzers.LayoutRules
                     return null;
                 }
 
-                var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+                var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var sourceText = await document.GetTextAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var options = document.Project.Solution.Workspace.Options;
 
                 List<SyntaxTrivia> trivias = new List<SyntaxTrivia>();
 
@@ -135,8 +140,9 @@ namespace StyleCop.Analyzers.LayoutRules
                 foreach (var tokenWithTrivia in tokensWithTrivia)
                 {
                     var token = tokenWithTrivia.Key;
-                    var newLeadingTrivia = FixTriviaList(token.LeadingTrivia, tokenWithTrivia);
-                    var newTrailingTrivia = FixTriviaList(token.TrailingTrivia, tokenWithTrivia);
+                    var endOfLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(token, sourceText, options);
+                    var newLeadingTrivia = FixTriviaList(token.LeadingTrivia, tokenWithTrivia, endOfLineTrivia);
+                    var newTrailingTrivia = FixTriviaList(token.TrailingTrivia, tokenWithTrivia, endOfLineTrivia);
 
                     replacements.Add(token, token.WithLeadingTrivia(newLeadingTrivia).WithTrailingTrivia(newTrailingTrivia));
                 }

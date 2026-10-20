@@ -3,9 +3,11 @@
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -13,8 +15,8 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Formatting;
     using Microsoft.CodeAnalysis.Simplification;
+    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
@@ -103,12 +105,11 @@ namespace StyleCop.Analyzers.DocumentationRules
             return (declaredSymbol != null) && NamedTypeHelpers.IsImplementingAnInterfaceMember(declaredSymbol);
         }
 
-        private static Task<Document> GetConstructorOrDestructorDocumentationTransformedDocumentAsync(Document document, SyntaxNode root, BaseMethodDeclarationSyntax declaration, CancellationToken cancellationToken)
+        private static async Task<Document> GetConstructorOrDestructorDocumentationTransformedDocumentAsync(Document document, SyntaxNode root, BaseMethodDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxTriviaList leadingTrivia = declaration.GetLeadingTrivia();
             int insertionIndex = GetInsertionIndex(ref leadingTrivia);
-
-            string newLineText = document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
+            string newLineText = (await FormattingHelper.GetEndOfLineForCodeFixAsync(document, declaration.GetFirstToken(), cancellationToken).ConfigureAwait(false)).ToFullString();
 
             var documentationNodes = new List<XmlNodeSyntax>();
 
@@ -134,19 +135,14 @@ namespace StyleCop.Analyzers.DocumentationRules
                 XmlSyntaxFactory.DocumentationComment(
                     newLineText,
                     documentationNodes.ToArray());
-            var trivia = SyntaxFactory.Trivia(documentationComment);
-
-            SyntaxTriviaList newLeadingTrivia = leadingTrivia.Insert(insertionIndex, trivia);
-            SyntaxNode newElement = declaration.WithLeadingTrivia(newLeadingTrivia);
-            return Task.FromResult(document.WithSyntaxRoot(root.ReplaceNode(declaration, newElement)));
+            return await InsertDocumentationCommentAsync(document, root, declaration, leadingTrivia, insertionIndex, documentationComment, newLineText, cancellationToken).ConfigureAwait(false);
         }
 
-        private static Task<Document> GetMethodDocumentationTransformedDocumentAsync(Document document, SyntaxNode root, SemanticModel semanticModel, MethodDeclarationSyntax methodDeclaration, CancellationToken cancellationToken)
+        private static async Task<Document> GetMethodDocumentationTransformedDocumentAsync(Document document, SyntaxNode root, SemanticModel semanticModel, MethodDeclarationSyntax methodDeclaration, CancellationToken cancellationToken)
         {
             SyntaxTriviaList leadingTrivia = methodDeclaration.GetLeadingTrivia();
             int insertionIndex = GetInsertionIndex(ref leadingTrivia);
-
-            string newLineText = document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
+            string newLineText = (await FormattingHelper.GetEndOfLineForCodeFixAsync(document, methodDeclaration.GetFirstToken(), cancellationToken).ConfigureAwait(false)).ToFullString();
 
             var documentationNodes = new List<XmlNodeSyntax>();
 
@@ -196,11 +192,33 @@ namespace StyleCop.Analyzers.DocumentationRules
                 XmlSyntaxFactory.DocumentationComment(
                     newLineText,
                     documentationNodes.ToArray());
-            var trivia = SyntaxFactory.Trivia(documentationComment);
+            return await InsertDocumentationCommentAsync(document, root, methodDeclaration, leadingTrivia, insertionIndex, documentationComment, newLineText, cancellationToken).ConfigureAwait(false);
+        }
 
+        private static async Task<Document> InsertDocumentationCommentAsync(Document document, SyntaxNode root, SyntaxNode declaration, SyntaxTriviaList leadingTrivia, int insertionIndex, DocumentationCommentTriviaSyntax documentationComment, string newLineText, CancellationToken cancellationToken)
+        {
+            var trivia = SyntaxFactory.Trivia(documentationComment);
             SyntaxTriviaList newLeadingTrivia = leadingTrivia.Insert(insertionIndex, trivia);
-            SyntaxNode newElement = methodDeclaration.WithLeadingTrivia(newLeadingTrivia);
-            return Task.FromResult(document.WithSyntaxRoot(root.ReplaceNode(methodDeclaration, newElement)));
+            SyntaxNode newElement = declaration.WithLeadingTrivia(newLeadingTrivia);
+            Document updatedDocument = document.WithSyntaxRoot(root.ReplaceNode(declaration, newElement));
+            Document simplifiedDocument = await Simplifier.ReduceAsync(updatedDocument, cancellationToken: cancellationToken).ConfigureAwait(false);
+            var simplifiedRoot = await simplifiedDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            int insertionPosition = insertionIndex < leadingTrivia.Count ? leadingTrivia[insertionIndex].SpanStart : declaration.SpanStart;
+            var insertedComment = simplifiedRoot.DescendantTrivia(descendIntoTrivia: false)
+                .First(candidate => candidate.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia) && candidate.FullSpan.Start == insertionPosition);
+
+            var sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+            var sourceLine = sourceText.Lines.GetLineFromPosition(declaration.SpanStart);
+            string indentation = sourceText.ToString(TextSpan.FromBounds(sourceLine.Start, declaration.SpanStart));
+            string commentText = insertedComment.ToFullString();
+            if (commentText.EndsWith(newLineText, StringComparison.Ordinal))
+            {
+                commentText = commentText.Substring(0, commentText.Length - newLineText.Length);
+            }
+
+            commentText = indentation + commentText.Replace(newLineText, newLineText + indentation) + newLineText;
+            var simplifiedText = await simplifiedDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);
+            return simplifiedDocument.WithText(simplifiedText.WithChanges(new TextChange(insertedComment.FullSpan, commentText)));
         }
 
         private static int GetInsertionIndex(ref SyntaxTriviaList leadingTrivia)
