@@ -9,9 +9,6 @@ namespace StyleCop.Analyzers.OrderingRules
     using System.Linq;
     using Microsoft.CodeAnalysis.Text;
 
-    /// <content>
-    /// Implements a code fix for all misaligned using statements.
-    /// </content>
     internal sealed partial class UsingCodeFixProvider
     {
         /// <summary>

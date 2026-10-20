@@ -6,15 +6,11 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
-    using StyleCop.Analyzers.LayoutRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.LayoutRules.SA1502ElementMustNotBeOnASingleLine,
         StyleCop.Analyzers.LayoutRules.SA1502CodeFixProvider>;
 
-    /// <content>
-    /// Unit tests for the interfaces part of <see cref="SA1502ElementMustNotBeOnASingleLine"/>.
-    /// </content>
     public partial class SA1502UnitTests
     {
         /// <summary>

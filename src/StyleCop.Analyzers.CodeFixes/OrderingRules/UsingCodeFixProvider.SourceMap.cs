@@ -12,9 +12,6 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Lightup;
 
-    /// <content>
-    /// Implements a code fix for all misaligned using statements.
-    /// </content>
     internal sealed partial class UsingCodeFixProvider
     {
         /// <summary>

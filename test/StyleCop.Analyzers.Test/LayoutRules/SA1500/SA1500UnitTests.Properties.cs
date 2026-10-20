@@ -6,16 +6,12 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
-    using StyleCop.Analyzers.LayoutRules;
     using StyleCop.Analyzers.Lightup;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.LayoutRules.SA1500BracesForMultiLineStatementsMustNotShareLine,
         StyleCop.Analyzers.LayoutRules.SA1500CodeFixProvider>;
 
-    /// <content>
-    /// Unit tests for <see cref="SA1500BracesForMultiLineStatementsMustNotShareLine"/>.
-    /// </content>
     public partial class SA1500UnitTests
     {
         /// <summary>
