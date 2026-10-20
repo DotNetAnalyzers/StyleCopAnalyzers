@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using StyleCop.Analyzers.Lightup;
 using Xunit;
 
-public class MemberDeclarationSyntaxExtensionsTests
+public class MemberDeclarationSyntaxExtensionsUnitTests
 {
     [Theory]
     [InlineData("class C { }")]
