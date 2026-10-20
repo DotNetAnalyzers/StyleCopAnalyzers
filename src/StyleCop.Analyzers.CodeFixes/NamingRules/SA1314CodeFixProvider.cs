@@ -64,14 +64,26 @@ namespace StyleCop.Analyzers.NamingRules
 
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             var declaredSymbol = semanticModel.GetDeclaredSymbol(token.Parent, cancellationToken);
-            while (!await RenameHelper.IsValidNewMemberNameAsync(semanticModel, declaredSymbol, newName, cancellationToken).ConfigureAwait(false))
+            HashSet<string>? crefPlaceholderNames = null;
+            if (declaredSymbol is ITypeParameterSymbol typeParameter
+                && typeParameter.ContainingSymbol is INamedTypeSymbol containingType)
+            {
+                crefPlaceholderNames = await GetCrefPlaceholderNamesAsync(
+                    document.Project.Solution,
+                    containingType,
+                    typeParameter,
+                    cancellationToken).ConfigureAwait(false);
+            }
+
+            while (!await RenameHelper.IsValidNewMemberNameAsync(semanticModel, declaredSymbol, newName, cancellationToken).ConfigureAwait(false)
+                || crefPlaceholderNames?.Contains(newName) == true)
             {
                 index++;
                 newName = baseName + index;
             }
 
-            if (declaredSymbol is ITypeParameterSymbol typeParameter
-                && typeParameter.ContainingSymbol is INamedTypeSymbol containingType)
+            if (declaredSymbol is ITypeParameterSymbol typeParameter2
+                && typeParameter2.ContainingSymbol is INamedTypeSymbol containingType2)
             {
                 var declarationAnnotation = new SyntaxAnnotation();
                 var solution = await RenameTypeParameterReferencesInCrefsAsync(
@@ -79,8 +91,8 @@ namespace StyleCop.Analyzers.NamingRules
                     document.Id,
                     token,
                     declarationAnnotation,
-                    containingType,
-                    typeParameter,
+                    containingType2,
+                    typeParameter2,
                     newName,
                     cancellationToken).ConfigureAwait(false);
                 document = solution.GetDocument(document.Id);
@@ -115,6 +127,61 @@ namespace StyleCop.Analyzers.NamingRules
             }
 
             return false;
+        }
+
+        private static async Task<HashSet<string>> GetCrefPlaceholderNamesAsync(
+            Solution solution,
+            INamedTypeSymbol containingType,
+            ITypeParameterSymbol typeParameter,
+            CancellationToken cancellationToken)
+        {
+            var placeholderNames = new HashSet<string>();
+            foreach (var declarationReference in containingType.DeclaringSyntaxReferences)
+            {
+                var declaration = await declarationReference.GetSyntaxAsync(cancellationToken).ConfigureAwait(false);
+                var declarationDocument = solution.GetDocument(declaration.SyntaxTree);
+                if (declarationDocument == null || solution.GetDocument(declarationDocument.Id) == null)
+                {
+                    continue;
+                }
+
+                var semanticModel = await declarationDocument.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+                foreach (var trivia in declaration.DescendantTrivia(descendIntoTrivia: true))
+                {
+                    if (!(trivia.GetStructure() is DocumentationCommentTriviaSyntax documentationComment))
+                    {
+                        continue;
+                    }
+
+                    var documentationOwner = documentationComment.ParentTrivia.Token.Parent;
+                    if (IsShadowedTypeParameterReference(documentationOwner, declaration, typeParameter.Name))
+                    {
+                        continue;
+                    }
+
+                    foreach (var genericName in documentationComment.DescendantNodes()
+                        .OfType<CrefSyntax>()
+                        .SelectMany(cref => cref.DescendantNodes().OfType<GenericNameSyntax>()))
+                    {
+                        if (!(semanticModel.GetSymbolInfo(genericName, cancellationToken).Symbol is INamedTypeSymbol referencedType)
+                            || !Equals(referencedType.OriginalDefinition, containingType.OriginalDefinition))
+                        {
+                            continue;
+                        }
+
+                        for (var i = 0; i < genericName.TypeArgumentList.Arguments.Count; i++)
+                        {
+                            if (i != typeParameter.Ordinal
+                                && genericName.TypeArgumentList.Arguments[i] is IdentifierNameSyntax identifierName)
+                            {
+                                placeholderNames.Add(identifierName.Identifier.ValueText);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return placeholderNames;
         }
 
         private static async Task<Solution> RenameTypeParameterReferencesInCrefsAsync(
@@ -160,6 +227,7 @@ namespace StyleCop.Analyzers.NamingRules
                         if (!(identifierName.Parent is TypeArgumentListSyntax typeArgumentList)
                             || genericName == null
                             || typeArgumentList.Arguments.IndexOf(identifierName) != typeParameter.Ordinal
+                            || identifierName.Identifier.ValueText != typeParameter.Name
                             || !(semanticModel.GetSymbolInfo(genericName, cancellationToken).Symbol is INamedTypeSymbol referencedType)
                             || !Equals(referencedType.OriginalDefinition, containingType.OriginalDefinition))
                         {

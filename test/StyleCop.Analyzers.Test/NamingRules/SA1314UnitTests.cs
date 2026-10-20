@@ -582,5 +582,71 @@ public class Foo<TIDENT>
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(2966, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2966")]
+        public async Task TestTypeParameterDoesNotStartWithTAndDoesNotRenameDifferentCrefPlaceholderAsync()
+        {
+            var testCode = @"
+public class Foo<{|#0:IDENT|}>
+{
+#pragma warning disable SA1314
+    /// <summary><see cref=""Foo{TAlias}.M(TAlias)""/></summary>
+    public void M(IDENT value)
+    {
+    }
+#pragma warning restore SA1314
+}
+";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+
+            var fixedCode = @"
+public class Foo<TIDENT>
+{
+#pragma warning disable SA1314
+    /// <summary><see cref=""Foo{TAlias}.M(TAlias)""/></summary>
+    public void M(TIDENT value)
+    {
+    }
+#pragma warning restore SA1314
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2966, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2966")]
+        public async Task TestTypeParameterDoesNotStartWithTAndAvoidsCrefPlaceholderCollisionAsync()
+        {
+            var testCode = @"
+public class Foo<{|#0:IDENT|}, TSecond>
+{
+#pragma warning disable SA1314
+    /// <summary><see cref=""Foo{IDENT,TIDENT}.M(IDENT,TIDENT)""/></summary>
+    public void M(IDENT first, TSecond second)
+    {
+    }
+#pragma warning restore SA1314
+}
+";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+
+            var fixedCode = @"
+public class Foo<TIDENT1, TSecond>
+{
+#pragma warning disable SA1314
+    /// <summary><see cref=""Foo{TIDENT1,TIDENT}.M(TIDENT1,TIDENT)""/></summary>
+    public void M(TIDENT1 first, TSecond second)
+    {
+    }
+#pragma warning restore SA1314
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
