@@ -130,13 +130,10 @@ internal class SA1117CodeFixProvider : CodeFixProvider
             foreach (SyntaxToken elementToken in element.DescendantTokens())
             {
                 tokensToUpdate.Add(elementToken);
-                if (startsOnSameLine && elementToken != firstToken && originalIndentation != targetIndentation)
+                if (startsOnSameLine && originalIndentation != targetIndentation)
                 {
                     tokensToIndent.Add(elementToken);
-                    string indentationDelta = targetIndentation.StartsWith(originalIndentation, StringComparison.Ordinal)
-                        ? targetIndentation.Substring(originalIndentation.Length)
-                        : string.Empty;
-                    indentationDeltaByToken.Add(elementToken, indentationDelta);
+                    indentationDeltaByToken.Add(elementToken, originalIndentation);
                 }
             }
 
@@ -151,8 +148,13 @@ internal class SA1117CodeFixProvider : CodeFixProvider
             tokensToUpdate,
             (original, rewritten) => updatedLeadingTrivia.TryGetValue(original, out SyntaxTriviaList leadingTrivia)
                 ? rewritten.WithLeadingTrivia(leadingTrivia)
+                    .WithTrailingTrivia(tokensToIndent.Contains(original)
+                        ? ShiftTrailingTrivia(rewritten.TrailingTrivia, indentationDeltaByToken[original], targetIndentation)
+                        : rewritten.TrailingTrivia)
                 : tokensToIndent.Contains(original)
-                    ? IndentToken(rewritten, original, indentationDeltaByToken[original], sourceText, targetIndentation)
+                    ? rewritten
+                        .WithLeadingTrivia(ShiftLeadingTrivia(original, rewritten.LeadingTrivia, indentationDeltaByToken[original], targetIndentation))
+                        .WithTrailingTrivia(ShiftTrailingTrivia(rewritten.TrailingTrivia, indentationDeltaByToken[original], targetIndentation))
                     : separatorsToClear.Contains(original)
                         ? rewritten.WithTrailingTrivia(default(SyntaxTriviaList))
                         : rewritten);
@@ -193,14 +195,59 @@ internal class SA1117CodeFixProvider : CodeFixProvider
         return false;
     }
 
-    private static SyntaxToken IndentToken(SyntaxToken rewritten, SyntaxToken original, string indentationDelta, SourceText sourceText, string targetIndentation)
+    private static SyntaxTriviaList ShiftLeadingTrivia(SyntaxToken token, SyntaxTriviaList leadingTrivia, string originalIndentation, string targetIndentation)
     {
-        if (indentationDelta.Length > 0)
+        SyntaxTriviaList previousTrailingTrivia = token.GetPreviousToken(includeZeroWidth: true).TrailingTrivia;
+        bool atLineStart = previousTrailingTrivia.Count > 0 && previousTrailingTrivia[previousTrailingTrivia.Count - 1].IsKind(SyntaxKind.EndOfLineTrivia);
+        return ShiftTrivia(leadingTrivia, atLineStart, originalIndentation, targetIndentation);
+    }
+
+    private static SyntaxTriviaList ShiftTrailingTrivia(SyntaxTriviaList trailingTrivia, string originalIndentation, string targetIndentation)
+    {
+        return ShiftTrivia(trailingTrivia, atLineStart: false, originalIndentation, targetIndentation);
+    }
+
+    private static SyntaxTriviaList ShiftTrivia(SyntaxTriviaList trivia, bool atLineStart, string originalIndentation, string targetIndentation)
+    {
+        var result = new List<SyntaxTrivia>();
+        for (int i = 0; i < trivia.Count; i++)
         {
-            return rewritten.WithLeadingTrivia(IndentationHelper.IndentLeadingTrivia(original, rewritten.LeadingTrivia, indentationDelta, default(SyntaxTriviaList)));
+            SyntaxTrivia item = trivia[i];
+            if (item.IsKind(SyntaxKind.EndOfLineTrivia))
+            {
+                result.Add(item);
+                atLineStart = true;
+            }
+            else if (item.IsKind(SyntaxKind.WhitespaceTrivia))
+            {
+                bool isBlankLine = i + 1 < trivia.Count && trivia[i + 1].IsKind(SyntaxKind.EndOfLineTrivia);
+                string whitespace = item.ToString();
+                if (atLineStart && !isBlankLine && whitespace.StartsWith(originalIndentation, StringComparison.Ordinal))
+                {
+                    whitespace = targetIndentation + whitespace.Substring(originalIndentation.Length);
+                }
+
+                result.Add(SyntaxFactory.Whitespace(whitespace));
+                atLineStart = false;
+            }
+            else if (item.IsDirective)
+            {
+                result.Add(item);
+                atLineStart = true;
+            }
+            else
+            {
+                if (atLineStart)
+                {
+                    result.Add(SyntaxFactory.Whitespace(targetIndentation));
+                }
+
+                result.Add(item);
+                atLineStart = false;
+            }
         }
 
-        return rewritten.WithLeadingTrivia(ShiftLeadingTrivia(rewritten.LeadingTrivia, GetLineIndentation(sourceText, original.SpanStart), targetIndentation));
+        return SyntaxFactory.TriviaList(result);
     }
 
     private static string GetLineIndentation(SourceText sourceText, int position)

@@ -419,6 +419,47 @@ class Foo
 
         [Fact]
         [WorkItem(1504, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1504")]
+        public async Task TestCodeFixShiftsOverIndentedTrailingLambdaAsync()
+        {
+            var testCode = @"
+using System;
+class Foo
+{
+    public void Bar(int a, int b, Action action) { }
+    public void Baz()
+    {
+        Bar(1,
+                2, {|#0:() =>
+                {
+                    Console.WriteLine();
+
+                }|});
+    }
+}";
+            var fixedCode = @"
+using System;
+class Foo
+{
+    public void Bar(int a, int b, Action action) { }
+    public void Baz()
+    {
+        Bar(
+            1,
+            2,
+            () =>
+            {
+                Console.WriteLine();
+
+            });
+    }
+}";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1504, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1504")]
         public async Task TestCodeFixIsNotOfferedForOmittedArrayRankSizesAsync()
         {
             var testCode = @"
