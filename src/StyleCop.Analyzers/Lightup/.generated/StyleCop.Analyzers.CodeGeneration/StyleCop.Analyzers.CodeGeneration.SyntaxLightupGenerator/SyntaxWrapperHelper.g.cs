@@ -28,7 +28,9 @@ namespace StyleCop.Analyzers.Lightup
 
             var objectCreationExpressionSyntaxType = csharpCodeAnalysisAssembly.GetType(BaseObjectCreationExpressionSyntaxWrapper.WrappedTypeName) ?? csharpCodeAnalysisAssembly.GetType(BaseObjectCreationExpressionSyntaxWrapper.FallbackWrappedTypeName);
             builder.Add(typeof(BaseObjectCreationExpressionSyntaxWrapper), objectCreationExpressionSyntaxType);
-            builder.Add(typeof(BaseParameterSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(BaseParameterSyntaxWrapper.WrappedTypeName));
+
+            var parameterSyntaxType = csharpCodeAnalysisAssembly.GetType(BaseParameterSyntaxWrapper.WrappedTypeName) ?? csharpCodeAnalysisAssembly.GetType(BaseParameterSyntaxWrapper.FallbackWrappedTypeName);
+            builder.Add(typeof(BaseParameterSyntaxWrapper), parameterSyntaxType);
             builder.Add(typeof(BinaryPatternSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(BinaryPatternSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(CasePatternSwitchLabelSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(CasePatternSwitchLabelSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(CollectionElementSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(CollectionElementSyntaxWrapper.WrappedTypeName));

@@ -700,7 +700,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                             expression: SyntaxFactory.MemberAccessExpression(
                                 SyntaxKind.SimpleMemberAccessExpression,
                                 expression: SyntaxFactory.IdentifierName("LightupHelpers"),
-                                name: SyntaxFactory.IdentifierName("CanWrapNode")),
+                                name: SyntaxFactory.IdentifierName(nodeData.Name == "ExpressionOrPatternSyntax" ? "CanWrapExpressionOrPattern" : "CanWrapNode")),
                             argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(
                                 new[]
                                 {
@@ -953,19 +953,15 @@ namespace StyleCop.Analyzers.CodeGeneration
                     continue;
                 }
 
-                if (node.Name == nameof(BaseObjectCreationExpressionSyntax))
+                if (node.Name is nameof(BaseObjectCreationExpressionSyntax) or nameof(BaseParameterSyntax))
                 {
-                    // Prior to C# 9, ObjectCreationExpressionSyntax was the base type for all object creation
-                    // statements. If the BaseObjectCreationExpressionSyntax type isn't found at runtime, we fall back
-                    // to using this type instead.
-                    //
-                    // var objectCreationExpressionSyntaxType = csharpCodeAnalysisAssembly.GetType(BaseObjectCreationExpressionSyntaxWrapper.WrappedTypeName)
-                    //     ?? csharpCodeAnalysisAssembly.GetType(BaseObjectCreationExpressionSyntaxWrapper.FallbackWrappedTypeName);
+                    // These bases were introduced in C# 9; older hosts expose only the original concrete type.
+                    var fallbackVariableName = node.Name == nameof(BaseParameterSyntax) ? "parameterSyntaxType" : "objectCreationExpressionSyntaxType";
                     LocalDeclarationStatementSyntax localStatement =
                         SyntaxFactory.LocalDeclarationStatement(SyntaxFactory.VariableDeclaration(
                             type: SyntaxFactory.IdentifierName("var"),
                             variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(
-                                identifier: SyntaxFactory.Identifier("objectCreationExpressionSyntaxType"),
+                                identifier: SyntaxFactory.Identifier(fallbackVariableName),
                                 argumentList: null,
                                 initializer: SyntaxFactory.EqualsValueClause(
                                     SyntaxFactory.BinaryExpression(
@@ -994,7 +990,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                     // This is the first line of the statements that initialize 'builder', so start it with a blank line
                     staticCtorStatements = staticCtorStatements.Add(localStatement.WithLeadingBlankLine());
 
-                    // builder.Add(typeof(BaseObjectCreationExpressionSyntaxWrapper), objectCreationExpressionSyntaxType);
+                    // builder.Add(typeof(SyntaxWrapper), fallbackSyntaxType);
                     staticCtorStatements = staticCtorStatements.Add(SyntaxFactory.ExpressionStatement(
                         SyntaxFactory.InvocationExpression(
                             expression: SyntaxFactory.MemberAccessExpression(
@@ -1006,7 +1002,7 @@ namespace StyleCop.Analyzers.CodeGeneration
                                     new[]
                                     {
                                         SyntaxFactory.Argument(SyntaxFactory.TypeOfExpression(SyntaxFactory.IdentifierName(node.WrapperName))),
-                                        SyntaxFactory.Argument(SyntaxFactory.IdentifierName("objectCreationExpressionSyntaxType")),
+                                        SyntaxFactory.Argument(SyntaxFactory.IdentifierName(fallbackVariableName)),
                                     })))));
 
                     continue;
