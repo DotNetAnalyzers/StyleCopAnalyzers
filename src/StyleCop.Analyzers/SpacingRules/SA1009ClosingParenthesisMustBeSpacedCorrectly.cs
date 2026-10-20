@@ -19,8 +19,9 @@ namespace StyleCop.Analyzers.SpacingRules
     /// <para>A violation of this rule occurs when the closing parenthesis within a statement is not spaced
     /// correctly.</para>
     ///
-    /// <para>A closing parenthesis should never be preceded by whitespace. In most cases, a closing parenthesis should
-    /// be followed by a single space, unless the closing parenthesis comes at the end of a cast, or the closing
+    /// <para>A closing parenthesis should not be preceded by whitespace, except in a tuple expression where the open
+    /// and closing parentheses are each on their own line. In most cases, a closing parenthesis should be followed by a
+    /// single space, unless the closing parenthesis comes at the end of a cast, or the closing
     /// parenthesis is followed by certain types of operator symbols, such as positive signs, negative signs, and
     /// colons.</para>
     ///
@@ -92,7 +93,15 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
-            bool precededBySpace = token.IsFirstInLine() || token.IsPrecededByWhitespace(context.CancellationToken);
+            bool firstInLine = token.IsFirstInLine();
+            bool precededBySpace = firstInLine || token.IsPrecededByWhitespace(context.CancellationToken);
+            bool allowTupleParenthesisOnSeparateLines = false;
+            if (firstInLine && token.Parent.IsKind(SyntaxKindEx.TupleExpression))
+            {
+                SyntaxToken openParenToken = token.Parent.GetFirstToken();
+                allowTupleParenthesisOnSeparateLines = openParenToken.IsFirstInLine() && openParenToken.IsLastInLine();
+            }
+
             bool followedBySpace = token.IsFollowedByWhitespace();
             bool lastInLine = token.IsLastInLine();
             bool precedesStickyCharacter;
@@ -235,7 +244,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 }
             }
 
-            if (precededBySpace)
+            if (precededBySpace && !allowTupleParenthesisOnSeparateLines)
             {
                 // Closing parenthesis should{ not} be {preceded} by a space.
                 ImmutableDictionary<string, string> properties;

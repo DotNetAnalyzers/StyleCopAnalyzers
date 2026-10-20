@@ -16,6 +16,32 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
     public partial class SA1009CSharp9UnitTests : SA1009CSharp8UnitTests
     {
         [Fact]
+        [WorkItem(3835, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3835")]
+        public async Task TestMultilineTupleExpressionInSwitchExpressionAsync()
+        {
+            const string testCode = @"using System;
+
+public static class Example
+{
+    public static void Test(Exception exception)
+    {
+        (string detail, string title, int statusCode) = exception switch
+        {
+            InvalidOperationException =>
+            (
+                exception.Message,
+                exception.GetType().Name,
+                102
+            ),
+            _ => default,
+        };
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(3248, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3248")]
         public async Task TestRecordInheritanceAsync()
         {
