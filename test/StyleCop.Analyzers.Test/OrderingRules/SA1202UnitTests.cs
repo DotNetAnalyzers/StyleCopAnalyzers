@@ -45,6 +45,32 @@ public class Foo
         }
 
         /// <summary>
+        /// Verifies that the accessibility order can be customized without a member-kind order.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3920, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3920")]
+        public async Task TestCustomAccessibilityOrderWithoutMemberKindOrderAsync()
+        {
+            var testCode = @"
+public class Foo
+{
+    internal void InternalMethod() { }
+    protected void {|#0:ProtectedMethod|}() { }
+}";
+            var settings = @"{ ""settings"": { ""orderingRules"": { ""accessibilityOrder"": [ ""public"", ""protected"", ""protectedInternal"", ""internal"", ""privateProtected"", ""private"" ] } } }";
+            var expected = Diagnostic().WithLocation(0).WithArguments("protected", "internal");
+            var fixedCode = @"
+public class Foo
+{
+    protected void ProtectedMethod() { }
+    internal void InternalMethod() { }
+}";
+
+            await VerifyCSharpFixAsync(testCode, settings, new[] { expected }, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that members in the configured accessibility order do not produce a diagnostic.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>

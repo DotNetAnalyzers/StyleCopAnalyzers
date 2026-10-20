@@ -78,6 +78,48 @@ public partial class SA1201CSharp8UnitTests : SA1201CSharp7UnitTests
         await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
     }
 
+    [Fact]
+    public async Task TestInvalidAccessibilityOrderFromEditorConfigAsync()
+    {
+        var test = new InvalidConfigurationTest { TestCode = "public class C { }" };
+        test.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", """
+            root = true
+
+            [*]
+            stylecop.ordering.accessibilityOrder = private, privateProtected, protected, protectedInternal, internal, public, typo
+            """));
+        test.ExpectedDiagnostics.Add(new DiagnosticResult(new SA0002InvalidSettingsFile().SupportedDiagnostics[0])
+            .WithArguments("accessibilityOrder cannot contain value 'typo'."));
+        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestInvalidAccessibilityOrderInLaterFileAsync()
+    {
+        var test = new InvalidConfigurationTest();
+        test.TestState.Sources.Add(("/0/First.cs", "public class First { }"));
+        test.TestState.Sources.Add(("/0/Second.cs", "public class Second { }"));
+        test.TestState.Sources.Add(("/0/Third.cs", "public class Third { }"));
+        test.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", """
+            root = true
+
+            [First.cs]
+            stylecop.ordering.memberKindOrder = method
+            stylecop.ordering.accessibilityOrder = public, internal, protectedInternal, protected, privateProtected, private
+
+            [Second.cs]
+            stylecop.ordering.memberKindOrder = method
+            stylecop.ordering.accessibilityOrder = public, internal, protectedInternal, protected, privateProtected, private
+
+            [Third.cs]
+            stylecop.ordering.memberKindOrder = method
+            stylecop.ordering.accessibilityOrder = public, internal, protectedInternal, protected
+            """));
+        test.ExpectedDiagnostics.Add(new DiagnosticResult(new SA0002InvalidSettingsFile().SupportedDiagnostics[0])
+            .WithArguments("accessibilityOrder must contain each access level exactly once."));
+        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
     [Theory]
     [InlineData("unknown", "memberKindOrder cannot contain kind 'unknown'")]
     [InlineData("property, PROPERTY", "memberKindOrder cannot contain duplicate kind 'PROPERTY'")]

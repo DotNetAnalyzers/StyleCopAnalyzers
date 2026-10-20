@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
+    using System;
     using System.Collections.Immutable;
     using LightJson;
     using StyleCop.Analyzers.Helpers;
@@ -88,8 +89,8 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                 value => bool.TryParse(value, out var separate) ? (separate ? OptionSetting.Require : OptionSetting.Allow) : null);
 
             this.elementOrder = reader.GetEnumList<OrderingTrait>("elementOrder", "stylecop.ordering.elementOrder") ?? ImmutableArray<OrderingTrait>.Empty;
-            this.accessibilityOrder = reader.GetEnumList<AccessLevel>("accessibilityOrder", "stylecop.ordering.accessibilityOrder") is { } accessibilityOrder
-                ? ValidateAccessibilityOrder(accessibilityOrder)
+            this.accessibilityOrder = reader.GetStringList("accessibilityOrder", "stylecop.ordering.accessibilityOrder") is { } accessibilityNames
+                ? ValidateAccessibilityOrder(ParseAccessibilityOrder(accessibilityNames))
                 : DefaultAccessibilityOrder;
             if (reader.GetStringList("memberKindOrder", "stylecop.ordering.memberKindOrder", emptyValueIsEmptyList: true) is { } memberKindOrder)
             {
@@ -122,6 +123,25 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.blankLinesBetweenUsingGroups;
 
         internal MemberKindOrder? MemberKindOrder { get; }
+
+        private static ImmutableArray<AccessLevel> ParseAccessibilityOrder(ImmutableArray<string> accessibilityNames)
+        {
+            var builder = ImmutableArray.CreateBuilder<AccessLevel>(accessibilityNames.Length);
+            foreach (var accessibilityName in accessibilityNames)
+            {
+                if (accessibilityName.Length == 0
+                    || !char.IsLetter(accessibilityName[0])
+                    || !Enum.TryParse(accessibilityName, ignoreCase: true, out AccessLevel accessLevel)
+                    || !Enum.IsDefined(typeof(AccessLevel), accessLevel))
+                {
+                    throw new InvalidSettingsException($"accessibilityOrder cannot contain value '{accessibilityName}'.");
+                }
+
+                builder.Add(accessLevel);
+            }
+
+            return builder.ToImmutable();
+        }
 
         private static ImmutableArray<AccessLevel> ValidateAccessibilityOrder(ImmutableArray<AccessLevel> accessibilityOrder)
         {

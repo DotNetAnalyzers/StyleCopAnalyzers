@@ -64,7 +64,8 @@ namespace StyleCop.Analyzers.SpecialRules
                 context.GetStyleCopSettings(firstSyntaxTree, DeserializationFailureBehavior.ThrowException, context.CancellationToken);
 
                 var optionsProvider = context.Options.AnalyzerConfigOptionsProvider();
-                HashSet<string>? validatedOrders = null;
+                HashSet<string>? validatedMemberKindOrders = null;
+                HashSet<string>? validatedAccessibilityOrders = null;
                 foreach (var tree in context.Compilation.SyntaxTrees)
                 {
                     if (tree == firstSyntaxTree)
@@ -74,14 +75,23 @@ namespace StyleCop.Analyzers.SpecialRules
 
                     context.CancellationToken.ThrowIfCancellationRequested();
                     var reader = new SettingsReader(null, optionsProvider.GetOptions(tree));
+                    var shouldValidate = false;
                     if (reader.GetString("memberKindOrder", "stylecop.ordering.memberKindOrder") is { } memberKindOrder)
                     {
                         // JSON settings are shared, and kind validation is independent of other per-file options.
-                        validatedOrders ??= new HashSet<string>(StringComparer.Ordinal);
-                        if (validatedOrders.Add(memberKindOrder))
-                        {
-                            context.GetStyleCopSettings(tree, DeserializationFailureBehavior.ThrowException, context.CancellationToken);
-                        }
+                        validatedMemberKindOrders ??= new HashSet<string>(StringComparer.Ordinal);
+                        shouldValidate |= validatedMemberKindOrders.Add(memberKindOrder);
+                    }
+
+                    if (reader.GetString("accessibilityOrder", "stylecop.ordering.accessibilityOrder") is { } accessibilityOrder)
+                    {
+                        validatedAccessibilityOrders ??= new HashSet<string>(StringComparer.Ordinal);
+                        shouldValidate |= validatedAccessibilityOrders.Add(accessibilityOrder);
+                    }
+
+                    if (shouldValidate)
+                    {
+                        context.GetStyleCopSettings(tree, DeserializationFailureBehavior.ThrowException, context.CancellationToken);
                     }
                 }
             }
