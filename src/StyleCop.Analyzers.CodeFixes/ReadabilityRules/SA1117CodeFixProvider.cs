@@ -125,12 +125,11 @@ internal class SA1117CodeFixProvider : CodeFixProvider
             SyntaxToken precedingToken = i == 0 ? openDelimiter : separators[i - 1];
             SyntaxTriviaList originalLeadingTrivia = precedingToken.TrailingTrivia.AddRange(firstToken.LeadingTrivia);
             updatedLeadingTrivia.Add(firstToken, newLeadingTrivia.AddRange(RemoveInitialWhitespace(originalLeadingTrivia)));
-            bool startsOnSameLine = !ContainsEndOfLine(originalLeadingTrivia);
             string originalIndentation = GetLineIndentation(sourceText, firstToken.SpanStart);
             foreach (SyntaxToken elementToken in element.DescendantTokens())
             {
                 tokensToUpdate.Add(elementToken);
-                if (startsOnSameLine && originalIndentation != targetIndentation)
+                if (originalIndentation != targetIndentation)
                 {
                     tokensToIndent.Add(elementToken);
                     indentationDeltaByToken.Add(elementToken, originalIndentation);
@@ -295,19 +294,6 @@ internal class SA1117CodeFixProvider : CodeFixProvider
         }
 
         return SyntaxFactory.TriviaList(result);
-    }
-
-    private static bool ContainsEndOfLine(SyntaxTriviaList trivia)
-    {
-        foreach (SyntaxTrivia item in trivia)
-        {
-            if (item.IsKind(SyntaxKind.EndOfLineTrivia))
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private static bool IsListElement(SyntaxNode list, SyntaxNode node)
