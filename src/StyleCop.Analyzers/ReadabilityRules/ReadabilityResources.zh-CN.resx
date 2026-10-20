@@ -282,6 +282,9 @@
   <data name="SA1114Title" xml:space="preserve">
     <value>参数列表应紧接声明</value>
   </data>
+  <data name="SA1114CodeFix" xml:space="preserve">
+    <value>删除左分隔符后的空行</value>
+  </data>
   <data name="SA1115CodeFix" xml:space="preserve">
     <value>删除参数之间的空行</value>
   </data>
