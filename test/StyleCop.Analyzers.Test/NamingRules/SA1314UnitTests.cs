@@ -504,5 +504,83 @@ public class Outer<TIDENT>
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(2966, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2966")]
+        public async Task TestTypeParameterDoesNotStartWithTDoesNotChangeUnrelatedCrefPlaceholdersAsync()
+        {
+            var testCode = @"
+public class Foo<{|#0:IDENT|}>
+{
+#pragma warning disable SA1314
+    /// <summary><see cref=""Other{IDENT,TIDENT}.M(IDENT)""/></summary>
+    public void Bar()
+    {
+    }
+#pragma warning restore SA1314
+}
+
+public class Other<TFirst, TSecond>
+{
+    public void M(TFirst first) { }
+    public void M(TSecond second) { }
+}
+";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+
+            var fixedCode = @"
+public class Foo<TIDENT>
+{
+#pragma warning disable SA1314
+    /// <summary><see cref=""Other{IDENT,TIDENT}.M(IDENT)""/></summary>
+    public void Bar()
+    {
+    }
+#pragma warning restore SA1314
+}
+
+public class Other<TFirst, TSecond>
+{
+    public void M(TFirst first) { }
+    public void M(TSecond second) { }
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2966, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2966")]
+        public async Task TestTypeParameterDoesNotStartWithTAndMethodCrefUsesRenamerAsync()
+        {
+            var testCode = @"
+public class Foo<{|#0:IDENT|}>
+{
+#pragma warning disable SA1314
+    /// <summary><see cref=""M{T}(IDENT,T)""/></summary>
+    public void M<T>(IDENT value, T other)
+    {
+    }
+#pragma warning restore SA1314
+}
+";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
+
+            var fixedCode = @"
+public class Foo<TIDENT>
+{
+#pragma warning disable SA1314
+    /// <summary><see cref=""M{T}(TIDENT,T)""/></summary>
+    public void M<T>(TIDENT value, T other)
+    {
+    }
+#pragma warning restore SA1314
+}
+";
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

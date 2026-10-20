@@ -156,9 +156,12 @@ namespace StyleCop.Analyzers.NamingRules
                         .OfType<CrefSyntax>()
                         .SelectMany(cref => cref.DescendantNodes().OfType<IdentifierNameSyntax>()))
                     {
-                        if (!(semanticModel.GetSymbolInfo(identifierName, cancellationToken).Symbol is ITypeParameterSymbol referencedTypeParameter)
-                            || referencedTypeParameter.Name != typeParameter.Name
-                            || referencedTypeParameter.Ordinal != typeParameter.Ordinal)
+                        var genericName = identifierName.Ancestors().OfType<GenericNameSyntax>().FirstOrDefault();
+                        if (!(identifierName.Parent is TypeArgumentListSyntax typeArgumentList)
+                            || genericName == null
+                            || typeArgumentList.Arguments.IndexOf(identifierName) != typeParameter.Ordinal
+                            || !(semanticModel.GetSymbolInfo(genericName, cancellationToken).Symbol is INamedTypeSymbol referencedType)
+                            || !Equals(referencedType.OriginalDefinition, containingType.OriginalDefinition))
                         {
                             continue;
                         }
