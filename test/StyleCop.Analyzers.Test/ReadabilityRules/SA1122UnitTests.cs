@@ -49,8 +49,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestCodeFixMultipleNodesAsync(string lineEnding)
         {
             // Tests if the code fix works if the SourceSpan of the diagnostic has more then one SyntaxNode associated with it

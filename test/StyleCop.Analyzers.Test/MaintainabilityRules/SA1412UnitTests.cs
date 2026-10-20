@@ -67,8 +67,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestFileWithUtf8EncodingWithoutBOMAsync(string lineEnding)
         {
             var source = "class TypeName\n{\n}\n".ReplaceLineEndings(lineEnding);

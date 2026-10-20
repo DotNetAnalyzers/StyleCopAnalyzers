@@ -425,8 +425,7 @@ public enum OtherEnum { A }
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestTypeMemberOrderWrongOrderInterfaceAsync(string lineEnding)
         {
             string testCode = @"public interface OuterType

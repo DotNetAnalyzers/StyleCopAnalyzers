@@ -45,8 +45,7 @@ public class Foo
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestOpenSquareBracketMustNotBePrecededBySpaceAsync(string lineEnding)
         {
             string testCode = @"using System;

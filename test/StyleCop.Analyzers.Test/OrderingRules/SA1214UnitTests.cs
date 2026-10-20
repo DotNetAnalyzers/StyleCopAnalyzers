@@ -154,8 +154,7 @@ public {keyword} Foo
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestTwoFieldsInClassStaticReadonlyFieldPlacedAfterStaticNonReadonlyWithLineEndingAsync(string lineEnding)
         {
             var testCode = @"

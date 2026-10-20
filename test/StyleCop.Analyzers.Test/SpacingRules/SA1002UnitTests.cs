@@ -20,8 +20,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     public class SA1002UnitTests
     {
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestForLoopAsync(string lineEnding)
         {
             string testCode = @"

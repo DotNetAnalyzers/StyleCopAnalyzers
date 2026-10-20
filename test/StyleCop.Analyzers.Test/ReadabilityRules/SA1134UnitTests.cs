@@ -91,8 +91,7 @@ namespace TestNamespace
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task VerifyMultipleAttributesOnSameLineForTypeDeclarationsWithLineEndingsAsync(string lineEnding)
         {
             var testCode = @"using System.ComponentModel;

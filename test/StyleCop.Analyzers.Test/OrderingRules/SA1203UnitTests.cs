@@ -91,8 +91,7 @@ public class TestClass2
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestClassViolationAsync(string lineEnding)
         {
             var testCode = @"

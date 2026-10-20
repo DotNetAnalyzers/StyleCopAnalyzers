@@ -49,8 +49,7 @@ class ClassName
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestWrongCodeAsync(string lineEnding)
         {
             string testCode = @"

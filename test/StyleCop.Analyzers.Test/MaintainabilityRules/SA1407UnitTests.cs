@@ -54,8 +54,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestAdditionMultiplicationAsync(string lineEnding)
         {
             var testCode = @"public class Foo

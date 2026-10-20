@@ -17,8 +17,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     public class SA1135UnitTests
     {
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestUnqualifiedUsingsAsync(string lineEnding)
         {
             string testCode = @"

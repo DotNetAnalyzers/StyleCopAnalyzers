@@ -32,8 +32,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestPrefixUnaryOperatorAtEndOfLineAsync(string lineEnding)
         {
             string testCode = $@"namespace Namespace

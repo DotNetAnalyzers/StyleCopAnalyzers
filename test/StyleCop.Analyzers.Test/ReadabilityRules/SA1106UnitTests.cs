@@ -63,8 +63,7 @@ class TestClass
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestEmptyStatementAsBlockInDoWhileAsync(string lineEnding)
         {
             var testCode = @"
@@ -144,8 +143,7 @@ class TestClass
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestEmptyStatementAsync(string lineEnding)
         {
             var testCode = @"

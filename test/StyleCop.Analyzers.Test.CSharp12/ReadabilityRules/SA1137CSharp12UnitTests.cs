@@ -21,8 +21,7 @@ namespace StyleCop.Analyzers.Test.CSharp12.ReadabilityRules
         /// <param name="lineEnding">The line ending used in the source.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         [WorkItem(3296, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3296")]
         public async Task TestInlineCollectionExpressionClosingBracketAsync(string lineEnding)
         {
@@ -57,8 +56,7 @@ class C
         /// <param name="lineEnding">The line ending used in the source.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         [WorkItem(3296, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3296")]
         public async Task TestCollectionExpressionClosingBracketAfterLeadingCommentAsync(string lineEnding)
         {

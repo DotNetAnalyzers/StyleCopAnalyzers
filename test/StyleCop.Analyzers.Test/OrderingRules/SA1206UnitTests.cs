@@ -289,8 +289,7 @@ public class ExtendedClass : TestClass
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task VerifyKeywordReorderingInClassDeclarationWithLineEndingsAsync(string lineEnding)
         {
             var testCode = @"abstract

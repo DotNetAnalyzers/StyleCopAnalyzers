@@ -28,8 +28,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         protected abstract bool IsConfiguredAsTopLevelTypeByDefault { get; }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestTwoGenericElementsAsync(string lineEnding)
         {
             var testCode = @"%1 Foo<T1>

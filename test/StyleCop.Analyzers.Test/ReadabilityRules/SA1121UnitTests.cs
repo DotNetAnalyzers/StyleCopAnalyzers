@@ -507,8 +507,7 @@ public class Foo
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public virtual async Task TestMissleadingUsingAsync(string lineEnding)
         {
             string testSource = @"namespace Foo

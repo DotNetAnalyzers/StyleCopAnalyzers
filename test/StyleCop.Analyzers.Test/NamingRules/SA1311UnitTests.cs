@@ -15,8 +15,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     public class SA1311UnitTests
     {
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestStaticReadonlyFieldStartingWithLowerCaseAsync(string lineEnding)
         {
             var testCode = @"public class Foo
