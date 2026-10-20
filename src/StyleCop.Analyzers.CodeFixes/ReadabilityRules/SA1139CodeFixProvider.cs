@@ -64,9 +64,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static SyntaxNode GenerateReplacementNode(CastExpressionSyntax node)
         {
             var literalExpressionSyntax =
-                !(node.Expression.WalkDownParentheses() is PrefixUnaryExpressionSyntax plusMinusSyntax) ?
-                (LiteralExpressionSyntax)node.Expression.WalkDownParentheses() :
-                (LiteralExpressionSyntax)plusMinusSyntax.Operand.WalkDownParentheses();
+                !(node.Expression.WalkDownParentheses() is PrefixUnaryExpressionSyntax plusMinusSyntax)
+                    ? (LiteralExpressionSyntax)node.Expression.WalkDownParentheses()
+                    : (LiteralExpressionSyntax)plusMinusSyntax.Operand.WalkDownParentheses();
             var typeToken = node.Type.GetFirstToken();
             var replacementLiteral = literalExpressionSyntax.WithLiteralSuffix(typeToken.Kind());
 

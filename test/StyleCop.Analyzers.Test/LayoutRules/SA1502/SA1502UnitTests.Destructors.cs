@@ -12,9 +12,9 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         StyleCop.Analyzers.LayoutRules.SA1502ElementMustNotBeOnASingleLine,
         StyleCop.Analyzers.LayoutRules.SA1502CodeFixProvider>;
 
-    /// <summary>
+    /// <content>
     /// Unit tests for the destructors part of <see cref="SA1502ElementMustNotBeOnASingleLine"/>.
-    /// </summary>
+    /// </content>
     public partial class SA1502UnitTests
     {
         /// <summary>

@@ -298,10 +298,12 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         /// <param name="fieldName">The name of the field providing the default value for the type.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
+#pragma warning disable SA1121 // Use built-in type alias: Triggers on .NET 10 but the built-in alias can not be used on .NET Framework
         [InlineData("System.Threading", nameof(CancellationToken), nameof(CancellationToken.None))]
         [InlineData("System", nameof(IntPtr), nameof(IntPtr.Zero))]
         [InlineData("System", nameof(UIntPtr), nameof(UIntPtr.Zero))]
         [InlineData("System", nameof(Guid), nameof(Guid.Empty))]
+#pragma warning restore SA1121 // Use built-in type alias
         public async Task VerifySpecialTypeFixUsesSpecialSyntaxAsync(string typeNamespace, string typeName, string fieldName)
         {
             var testCode = $@"
@@ -339,10 +341,12 @@ public class TestClass
         /// <param name="fieldName">The name of the field providing the default value for the type.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
+#pragma warning disable SA1121 // Use built-in type alias: Triggers on .NET 10 but the built-in alias can not be used on .NET Framework
         [InlineData("System.Threading", nameof(CancellationToken), nameof(CancellationToken.None))]
         [InlineData("System", nameof(IntPtr), nameof(IntPtr.Zero))]
         [InlineData("System", nameof(UIntPtr), nameof(UIntPtr.Zero))]
         [InlineData("System", nameof(Guid), nameof(Guid.Empty))]
+#pragma warning restore SA1121 // Use built-in type alias
         public async Task VerifySpecialTypeTriviaPreservationAsync(string typeNamespace, string typeName, string fieldName)
         {
             var testCode = $@"
@@ -381,10 +385,12 @@ public class TestClass
         /// <param name="fieldName">The name of the field providing the default value for the type.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
+#pragma warning disable SA1121 // Use built-in type alias: Triggers on .NET 10 but the built-in alias can not be used on .NET Framework
         [InlineData("System.Threading", nameof(CancellationToken), nameof(CancellationToken.None))]
         [InlineData("System", nameof(IntPtr), nameof(IntPtr.Zero))]
         [InlineData("System", nameof(UIntPtr), nameof(UIntPtr.Zero))]
         [InlineData("System", nameof(Guid), nameof(Guid.Empty))]
+#pragma warning restore SA1121 // Use built-in type alias
         public async Task VerifyQualifiedSpecialTypeFixUsesFieldSyntaxAsync(string typeNamespace, string typeName, string fieldName)
         {
             var testCode = $@"
@@ -468,10 +474,12 @@ public class TestClass
         /// <param name="fieldName">The name of the field providing the default value for the type.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
+#pragma warning disable SA1121 // Use built-in type alias: Triggers on .NET 10 but the built-in alias can not be used on .NET Framework
         [InlineData("System.Threading", nameof(CancellationToken), nameof(CancellationToken.None))]
         [InlineData("System", nameof(IntPtr), nameof(IntPtr.Zero))]
         [InlineData("System", nameof(UIntPtr), nameof(UIntPtr.Zero))]
         [InlineData("System", nameof(Guid), nameof(Guid.Empty))]
+#pragma warning restore SA1121 // Use built-in type alias
         public async Task VerifyAliasedSpecialTypeUsesFieldSyntaxAsync(string typeNamespace, string typeName, string fieldName)
         {
             var testCode = $@"

@@ -75,10 +75,10 @@ namespace StyleCop.Analyzers.Helpers
         /// </returns>
         internal static bool IsInterpolatedUnaryExpression(this SyntaxToken token)
         {
-            SyntaxNode parentNode = (token.Parent.IsKind(SyntaxKind.UnaryMinusExpression)
-                    || token.Parent.IsKind(SyntaxKind.UnaryPlusExpression))
-                ? token.Parent.Parent
-                : token.Parent;
+            SyntaxNode parentNode =
+                (token.Parent.IsKind(SyntaxKind.UnaryMinusExpression) || token.Parent.IsKind(SyntaxKind.UnaryPlusExpression))
+                    ? token.Parent.Parent
+                    : token.Parent;
 
             if (parentNode.IsKind(SyntaxKind.Interpolation))
             {

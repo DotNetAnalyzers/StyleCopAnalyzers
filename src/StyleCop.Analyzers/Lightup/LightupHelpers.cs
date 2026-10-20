@@ -189,8 +189,8 @@ namespace StyleCop.Analyzers.Lightup
             var operationParameter = Expression.Parameter(typeof(TOperation), "operation");
             Expression instance =
                 type.GetTypeInfo().IsAssignableFrom(typeof(TOperation).GetTypeInfo())
-                ? (Expression)operationParameter
-                : Expression.Convert(operationParameter, type);
+                    ? (Expression)operationParameter
+                    : Expression.Convert(operationParameter, type);
 
             Expression<Func<TOperation, TProperty>> expression =
                 Expression.Lambda<Func<TOperation, TProperty>>(
@@ -231,8 +231,8 @@ namespace StyleCop.Analyzers.Lightup
             var nullabilityInfoVariable = Expression.Variable(nullabilityInfoType, "nullabilityInfo");
             Expression instance =
                 type.GetTypeInfo().IsAssignableFrom(typeof(TSource).GetTypeInfo())
-                ? (Expression)sourceParameter
-                : Expression.Convert(sourceParameter, type);
+                    ? (Expression)sourceParameter
+                    : Expression.Convert(sourceParameter, type);
             var constructor = typeof(NullabilityInfo).GetTypeInfo().DeclaredConstructors
                 .Single(c => c.GetParameters().Length == 2);
             var body = Expression.Block(
@@ -295,8 +295,8 @@ namespace StyleCop.Analyzers.Lightup
             var syntaxParameter = Expression.Parameter(typeof(TOperation), "syntax");
             Expression instance =
                 type.GetTypeInfo().IsAssignableFrom(typeof(TOperation).GetTypeInfo())
-                ? (Expression)syntaxParameter
-                : Expression.Convert(syntaxParameter, type);
+                    ? (Expression)syntaxParameter
+                    : Expression.Convert(syntaxParameter, type);
             Expression propertyAccess = Expression.Call(instance, property.GetMethod);
 
             var unboundCastUpMethod = typeof(ImmutableArray<IOperation>).GetTypeInfo().GetDeclaredMethod(nameof(ImmutableArray<IOperation>.CastUp));
@@ -376,8 +376,8 @@ namespace StyleCop.Analyzers.Lightup
             var syntaxParameter = Expression.Parameter(typeof(TSyntax), "syntax");
             Expression instance =
                 type.GetTypeInfo().IsAssignableFrom(typeof(TSyntax).GetTypeInfo())
-                ? (Expression)syntaxParameter
-                : Expression.Convert(syntaxParameter, type);
+                    ? (Expression)syntaxParameter
+                    : Expression.Convert(syntaxParameter, type);
 
             Expression<Func<TSyntax, TProperty>> expression =
                 Expression.Lambda<Func<TSyntax, TProperty>>(
@@ -446,12 +446,12 @@ namespace StyleCop.Analyzers.Lightup
             var argParameter = Expression.Parameter(typeof(TArg), "arg");
             Expression instance =
                 type.GetTypeInfo().IsAssignableFrom(typeof(TSyntax).GetTypeInfo())
-                ? (Expression)syntaxParameter
-                : Expression.Convert(syntaxParameter, type);
+                    ? (Expression)syntaxParameter
+                    : Expression.Convert(syntaxParameter, type);
             Expression argument =
                 argumentType.GetTypeInfo().IsAssignableFrom(typeof(TArg).GetTypeInfo())
-                ? (Expression)argParameter
-                : Expression.Convert(argParameter, argumentType);
+                    ? (Expression)argParameter
+                    : Expression.Convert(argParameter, argumentType);
 
             Expression<Func<TSyntax, TArg, TProperty>> expression =
                 Expression.Lambda<Func<TSyntax, TArg, TProperty>>(
@@ -533,16 +533,16 @@ namespace StyleCop.Analyzers.Lightup
             var arg2Parameter = Expression.Parameter(typeof(TArg2), "arg2");
             Expression instance =
                 type.GetTypeInfo().IsAssignableFrom(typeof(TSyntax).GetTypeInfo())
-                ? (Expression)syntaxParameter
-                : Expression.Convert(syntaxParameter, type);
+                    ? (Expression)syntaxParameter
+                    : Expression.Convert(syntaxParameter, type);
             Expression argument1 =
                 argumentType1.GetTypeInfo().IsAssignableFrom(typeof(TArg1).GetTypeInfo())
-                ? (Expression)arg1Parameter
-                : Expression.Convert(arg1Parameter, argumentType1);
+                    ? (Expression)arg1Parameter
+                    : Expression.Convert(arg1Parameter, argumentType1);
             Expression argument2 =
                 argumentType2.GetTypeInfo().IsAssignableFrom(typeof(TArg2).GetTypeInfo())
-                ? (Expression)arg2Parameter
-                : Expression.Convert(arg2Parameter, argumentType2);
+                    ? (Expression)arg2Parameter
+                    : Expression.Convert(arg2Parameter, argumentType2);
 
             Expression<Func<TSyntax, TArg1, TArg2, TProperty>> expression =
                 Expression.Lambda<Func<TSyntax, TArg1, TArg2, TProperty>>(
@@ -616,12 +616,12 @@ namespace StyleCop.Analyzers.Lightup
             var valueParameter = Expression.Parameter(typeof(TValue).MakeByRefType(), "value");
             Expression instance =
                 type.GetTypeInfo().IsAssignableFrom(typeof(TSyntax).GetTypeInfo())
-                ? (Expression)syntaxParameter
-                : Expression.Convert(syntaxParameter, type);
+                    ? (Expression)syntaxParameter
+                    : Expression.Convert(syntaxParameter, type);
             Expression key =
                 keyType.GetTypeInfo().IsAssignableFrom(typeof(TKey).GetTypeInfo())
-                ? (Expression)keyParameter
-                : Expression.Convert(keyParameter, keyType);
+                    ? (Expression)keyParameter
+                    : Expression.Convert(keyParameter, keyType);
 
             Expression<TryGetValueAccessor<TSyntax, TKey, TValue>> expression =
                 Expression.Lambda<TryGetValueAccessor<TSyntax, TKey, TValue>>(
@@ -705,16 +705,16 @@ namespace StyleCop.Analyzers.Lightup
             var arg2Parameter = Expression.Parameter(typeof(TArg2), "arg2");
             Expression instance =
                 type.GetTypeInfo().IsAssignableFrom(typeof(T).GetTypeInfo())
-                ? (Expression)instanceParameter
-                : Expression.Convert(instanceParameter, type);
+                    ? (Expression)instanceParameter
+                    : Expression.Convert(instanceParameter, type);
             Expression argument1 =
                 argumentType1.GetTypeInfo().IsAssignableFrom(typeof(TArg1).GetTypeInfo())
-                ? (Expression)arg1Parameter
-                : Expression.Convert(arg1Parameter, argumentType1);
+                    ? (Expression)arg1Parameter
+                    : Expression.Convert(arg1Parameter, argumentType1);
             Expression argument2 =
                 argumentType2.GetTypeInfo().IsAssignableFrom(typeof(TArg2).GetTypeInfo())
-                ? (Expression)arg2Parameter
-                : Expression.Convert(arg2Parameter, argumentType2);
+                    ? (Expression)arg2Parameter
+                    : Expression.Convert(arg2Parameter, argumentType2);
 
             Expression methodAccess = Expression.Call(instance, method, argument1, argument2);
 
@@ -776,8 +776,8 @@ namespace StyleCop.Analyzers.Lightup
             var syntaxParameter = Expression.Parameter(typeof(TSyntax), "syntax");
             Expression instance =
                 type.GetTypeInfo().IsAssignableFrom(typeof(TSyntax).GetTypeInfo())
-                ? (Expression)syntaxParameter
-                : Expression.Convert(syntaxParameter, type);
+                    ? (Expression)syntaxParameter
+                    : Expression.Convert(syntaxParameter, type);
             Expression propertyAccess = Expression.Call(instance, property.GetMethod);
 
             var unboundWrapperType = typeof(SeparatedSyntaxListWrapper<>.AutoWrapSeparatedSyntaxList<>);
@@ -842,12 +842,12 @@ namespace StyleCop.Analyzers.Lightup
             var valueParameter = Expression.Parameter(typeof(TProperty), methodInfo.GetParameters()[0].Name);
             Expression instance =
                 type.GetTypeInfo().IsAssignableFrom(typeof(TSyntax).GetTypeInfo())
-                ? (Expression)syntaxParameter
-                : Expression.Convert(syntaxParameter, type);
+                    ? (Expression)syntaxParameter
+                    : Expression.Convert(syntaxParameter, type);
             Expression value =
                 property.PropertyType.GetTypeInfo().IsAssignableFrom(typeof(TProperty).GetTypeInfo())
-                ? (Expression)valueParameter
-                : Expression.Convert(valueParameter, property.PropertyType);
+                    ? (Expression)valueParameter
+                    : Expression.Convert(valueParameter, property.PropertyType);
 
             Expression<Func<TSyntax, TProperty?, TSyntax>> expression =
                 Expression.Lambda<Func<TSyntax, TProperty?, TSyntax>>(
@@ -911,8 +911,8 @@ namespace StyleCop.Analyzers.Lightup
             var valueParameter = Expression.Parameter(typeof(SeparatedSyntaxListWrapper<TProperty>), methodInfo.GetParameters()[0].Name);
             Expression instance =
                 type.GetTypeInfo().IsAssignableFrom(typeof(TSyntax).GetTypeInfo())
-                ? (Expression)syntaxParameter
-                : Expression.Convert(syntaxParameter, type);
+                    ? (Expression)syntaxParameter
+                    : Expression.Convert(syntaxParameter, type);
 
             var underlyingListProperty = typeof(SeparatedSyntaxListWrapper<TProperty>).GetTypeInfo().GetDeclaredProperty(nameof(SeparatedSyntaxListWrapper<TProperty>.UnderlyingList));
             Expression value = Expression.Convert(

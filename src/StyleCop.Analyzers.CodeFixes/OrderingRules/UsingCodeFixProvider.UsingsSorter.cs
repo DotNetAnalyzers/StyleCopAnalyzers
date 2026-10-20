@@ -16,9 +16,9 @@ namespace StyleCop.Analyzers.OrderingRules
     using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
-    /// <summary>
+    /// <content>
     /// Implements a code fix for all misaligned using statements.
-    /// </summary>
+    /// </content>
     internal sealed partial class UsingCodeFixProvider
     {
         /// <summary>

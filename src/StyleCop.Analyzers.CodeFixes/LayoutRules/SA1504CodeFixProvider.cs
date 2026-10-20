@@ -454,10 +454,11 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static SyntaxTriviaList ReformatAccessorHeaderTrivia(SyntaxTriviaList trivia)
         {
-            return trivia.All(t => t.IsKind(SyntaxKind.WhitespaceTrivia)
+            var shouldReformat = trivia.All(t => t.IsKind(SyntaxKind.WhitespaceTrivia)
                     || t.IsKind(SyntaxKind.EndOfLineTrivia)
                     || t.IsKind(SyntaxKind.MultiLineCommentTrivia))
-                && !trivia.ContainsBlankLines(startsOnNewLine: false)
+                && !trivia.ContainsBlankLines(startsOnNewLine: false);
+            return shouldReformat
                 ? ReformatTriviaListNoLeadingSpace(trivia)
                 : trivia;
         }

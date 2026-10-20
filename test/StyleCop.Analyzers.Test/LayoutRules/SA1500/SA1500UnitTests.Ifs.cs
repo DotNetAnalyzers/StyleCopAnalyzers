@@ -12,9 +12,9 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         StyleCop.Analyzers.LayoutRules.SA1500BracesForMultiLineStatementsMustNotShareLine,
         StyleCop.Analyzers.LayoutRules.SA1500CodeFixProvider>;
 
-    /// <summary>
+    /// <content>
     /// Unit tests for <see cref="SA1500BracesForMultiLineStatementsMustNotShareLine"/>.
-    /// </summary>
+    /// </content>
     public partial class SA1500UnitTests
     {
         /// <summary>
