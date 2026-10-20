@@ -63,8 +63,8 @@ namespace StyleCop.Analyzers.Lightup
                             var instanceParameter = Expression.Parameter(fromObjectMethod.GetParameters()[0].ParameterType, "instance");
                             Expression value =
                                 fromObjectMethod.GetParameters()[0].ParameterType.GetTypeInfo().IsAssignableFrom(typeof(object).GetTypeInfo())
-                                ? (Expression)instanceParameter
-                                : Expression.Convert(instanceParameter, parameterType);
+                                    ? (Expression)instanceParameter
+                                    : Expression.Convert(instanceParameter, parameterType);
                             Expression<Func<object, object>> expression =
                                 Expression.Lambda<Func<object, object>>(
                                     Expression.Convert(Expression.Call(null, fromObjectMethod, instanceParameter), typeof(object)),
