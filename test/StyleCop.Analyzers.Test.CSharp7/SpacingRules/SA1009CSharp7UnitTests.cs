@@ -15,6 +15,119 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 
     public partial class SA1009CSharp7UnitTests : SA1009UnitTests
     {
+        [Fact]
+        [WorkItem(3835, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3835")]
+        public async Task TestMultilineTupleExpressionWithOpeningParenthesisOnOwnLineAsync()
+        {
+            const string testCode = @"using System;
+
+public class Foo
+{
+    public void TestMethod()
+    {
+        var values =
+            (
+                1,
+                2
+            );
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3835, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3835")]
+        public async Task TestMultilineTupleExpressionWithOpeningParenthesisSharingLineAsync()
+        {
+            const string testCode = @"using System;
+
+public class Foo
+{
+    public void TestMethod()
+    {
+        var values =
+            (1,
+                2
+            {|#0:)|};
+    }
+}";
+
+            DiagnosticResult expected = Diagnostic(DescriptorNotPreceded).WithLocation(0);
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3835, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3835")]
+        public async Task TestMultilineTupleExpressionFollowedByAnotherElementOnSameLineAsync()
+        {
+            const string testCode = @"using System;
+
+public class Foo
+{
+    public void TestMethod()
+    {
+        var values =
+            (
+                (
+                    1,
+                    2
+                {|#0:)|}, 3
+            );
+    }
+}";
+
+            DiagnosticResult expected = Diagnostic(DescriptorNotPreceded).WithLocation(0);
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3835, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3835")]
+        public async Task TestMultilineTupleExpressionFollowedByMemberAccessAsync()
+        {
+            const string testCode = @"using System;
+
+public class Foo
+{
+    public void TestMethod()
+    {
+        string value =
+            (
+                1,
+                2
+            {|#0:)|}.ToString();
+    }
+}";
+
+            DiagnosticResult expected = Diagnostic(DescriptorNotPreceded).WithLocation(0);
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3835, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3835")]
+        public async Task TestMultilineTupleExpressionWithOpeningParenthesisNotOnOwnLineAsync()
+        {
+            const string testCode = @"using System;
+
+public class Foo
+{
+    public void TestMethod()
+    {
+        var values = (
+            1,
+            2
+        {|#0:)|};
+    }
+}";
+
+            DiagnosticResult expected = Diagnostic(DescriptorNotPreceded).WithLocation(0);
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Verifies spacing around a <c>]</c> character in tuple types and expressions.
         /// </summary>
