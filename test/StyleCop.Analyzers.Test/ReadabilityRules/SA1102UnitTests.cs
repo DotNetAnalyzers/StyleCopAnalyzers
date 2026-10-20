@@ -16,8 +16,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     public class SA1102UnitTests
     {
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestSelectOnSeparateLineWithAdditionalEmptyLineAsync(string lineEnding)
         {
             var testCode = @"

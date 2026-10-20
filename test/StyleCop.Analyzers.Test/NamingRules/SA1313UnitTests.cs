@@ -62,8 +62,7 @@ public class TypeName
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestThatDiagnosticIsReported_SingleParameterAsync(string lineEnding)
         {
             var testCode = @"public class TypeName

@@ -49,8 +49,7 @@ namespace Bar
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestInvalidOrderedUsingDirectivesInNamespaceDeclarationAsync(string lineEnding)
         {
             var testCode = @"namespace Food

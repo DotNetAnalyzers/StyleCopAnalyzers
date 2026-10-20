@@ -53,8 +53,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestSpaceBeforeOperatorWithLineEndingsAsync(string lineEnding)
         {
             const string op = ".";

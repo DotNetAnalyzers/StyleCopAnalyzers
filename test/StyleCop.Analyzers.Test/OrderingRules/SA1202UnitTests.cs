@@ -242,8 +242,7 @@ internal {keyword} TestClass1 {{ }}
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestTypeOrderingWithLineEndingsAsync(string lineEnding)
         {
             var testCode = @"internal class TestClass1 { }

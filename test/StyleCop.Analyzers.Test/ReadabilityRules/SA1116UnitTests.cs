@@ -269,8 +269,7 @@ class ObsoleteType
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestInvalidAttributeAsync(string lineEnding)
         {
             var testCode = @"

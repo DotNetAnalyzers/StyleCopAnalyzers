@@ -21,8 +21,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     public class SA1028UnitTests
     {
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TrailingWhitespaceAfterStatementAsync(string lineEnding)
         {
             string testCode = new StringBuilder()

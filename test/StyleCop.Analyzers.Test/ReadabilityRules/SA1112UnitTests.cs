@@ -15,8 +15,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     public class SA1112UnitTests
     {
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestMethodWithNoParametersClosingParanthesisOnTheNextLineAsync(string lineEnding)
         {
             var testCode = @"

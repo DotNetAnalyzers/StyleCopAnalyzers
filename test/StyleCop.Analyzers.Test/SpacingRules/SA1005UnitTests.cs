@@ -70,8 +70,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestNoLeadingSpaceAsync(string lineEnding)
         {
             var testCode = @"public class Foo

@@ -40,8 +40,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         /// <param name="lineEnding">The line ending to use in the test code.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestCopyrightElementWithMismatchingFileAttributeAsync(string lineEnding)
         {
             var testCode = @"// {|#0:<copyright|} file=""wrongfile.cs"" company=""FooCorp"">

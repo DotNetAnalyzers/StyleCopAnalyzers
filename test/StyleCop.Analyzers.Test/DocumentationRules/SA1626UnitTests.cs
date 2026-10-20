@@ -45,8 +45,7 @@ public class TypeName
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestMethodWithOneLineThreeSlashCommentAsync(string lineEnding)
         {
             var testCode = @"public class TypeName

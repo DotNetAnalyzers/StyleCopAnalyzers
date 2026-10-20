@@ -151,8 +151,7 @@ string CarValueValue, Car, CarValue;
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestFieldStartingWithVerbatimIdentifierAsync(string lineEnding)
         {
             var testCode = @"public class Foo

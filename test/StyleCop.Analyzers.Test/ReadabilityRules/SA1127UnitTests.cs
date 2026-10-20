@@ -49,8 +49,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestViolationWithMethodDeclarationAsync(string lineEnding)
         {
             var testCode = $@"

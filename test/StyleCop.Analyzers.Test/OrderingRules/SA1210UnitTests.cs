@@ -48,8 +48,7 @@ namespace Bar
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestInvalidOrderedUsingDirectivesInCompilationUnitAsync(string lineEnding)
         {
             var testCode = @"{|#0:using System.Threading;|}

@@ -50,8 +50,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestMUnderscoreOnlyAsync(string lineEnding)
         {
             var originalCode = @"public class Foo

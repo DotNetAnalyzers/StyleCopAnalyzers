@@ -79,8 +79,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestCheckedFieldNotStartingWithAnUnderscoreWithLineEndingsAsync(string lineEnding)
         {
             var testCode = @"public class ClassName

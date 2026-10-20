@@ -44,8 +44,7 @@ class A
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestWhenUsingAliasDirectivesAreNotPlacedCorrectlyInCompilationAsync(string lineEnding)
         {
             var testCodeCompilationUnit = @"{|#0:using TasksNamespace = System.Threading.Tasks;|}

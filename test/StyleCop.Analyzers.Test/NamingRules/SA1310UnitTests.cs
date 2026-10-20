@@ -15,8 +15,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     public class SA1310UnitTests
     {
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestFieldWithUnderscoreAsync(string lineEnding)
         {
             var testCode = @"public class ClassName

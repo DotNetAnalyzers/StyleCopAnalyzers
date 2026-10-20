@@ -50,8 +50,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestTopLevelPlaceholderAsync(string lineEnding)
         {
             var testCode = @"namespace FooNamespace
@@ -97,8 +96,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestEmbeddedPlaceholderAsync(string lineEnding)
         {
             var testCode = @"namespace FooNamespace

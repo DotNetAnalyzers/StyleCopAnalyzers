@@ -220,8 +220,7 @@ public class SA1143UnitTests
     /// <param name="lineEnding">The newline convention.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
     [Theory]
-    [InlineData("\r\n")]
-    [InlineData("\n")]
+    [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
     public async Task TestExpandedFixWithCommentsAsync(string lineEnding)
     {
         var source = """

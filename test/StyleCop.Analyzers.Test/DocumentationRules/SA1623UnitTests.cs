@@ -203,8 +203,7 @@ public class TestClass
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         [WorkItem(1934, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1934")]
         public async Task SummaryInParagraphCanBeFixedAsync(string lineEnding)
         {

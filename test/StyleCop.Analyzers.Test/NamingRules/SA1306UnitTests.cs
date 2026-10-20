@@ -259,8 +259,7 @@ string bar, car, dar;
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestFieldWithCodefixRenameConflictAsync(string lineEnding)
         {
             var testCode = @"public class Foo

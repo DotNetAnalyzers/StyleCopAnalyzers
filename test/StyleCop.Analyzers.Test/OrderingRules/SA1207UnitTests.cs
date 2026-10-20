@@ -135,8 +135,7 @@ public class Foo
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestInvalidDeclarationWithLineEndingsAsync(string lineEnding)
         {
             var invalidDeclaration = @"internal

@@ -903,8 +903,7 @@ class ClassName
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestTrailingCommentAsync(string lineEnding)
         {
             string testCode = @"

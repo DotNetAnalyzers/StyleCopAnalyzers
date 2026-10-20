@@ -15,8 +15,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     public class SA1212UnitTests
     {
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestPropertyWithDocumentationAsync(string lineEnding)
         {
             var testCode = @"

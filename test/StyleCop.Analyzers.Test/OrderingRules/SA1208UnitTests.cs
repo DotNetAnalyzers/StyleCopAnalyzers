@@ -306,8 +306,7 @@ namespace Test
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestPreprocessorDirectivesAsync(string lineEnding)
         {
             var testCode = @"using System;

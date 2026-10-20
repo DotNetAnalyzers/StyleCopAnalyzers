@@ -264,8 +264,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestPrefixLocalCallsWithThisWithGenericArgumentsAsync(string lineEnding)
         {
             string testCode = @"public class Test_SA1101

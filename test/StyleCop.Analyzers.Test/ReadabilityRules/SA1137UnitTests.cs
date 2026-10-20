@@ -2103,8 +2103,7 @@ class ClassName
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestAnonymousObjectCreationExpressionAsync(string lineEnding)
         {
             string testCode = @"
@@ -2428,8 +2427,7 @@ class C
         /// <param name="lineEnding">The line ending used in the source.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         [WorkItem(3296, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3296")]
         public async Task VerifyInitializerClosingBraceAfterLeadingCommentAsync(string lineEnding)
         {

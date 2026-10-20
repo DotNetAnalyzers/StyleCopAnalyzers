@@ -169,8 +169,7 @@ class D : C
         }
 
         [Theory]
-        [InlineData("\n")]
-        [InlineData("\r\n")]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
         public async Task TestChildClassUsesBaseButNoOverrideAsync(string lineEnding)
         {
             var testCode = @"
