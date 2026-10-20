@@ -42,6 +42,31 @@ public static class Example
         }
 
         [Fact]
+        [WorkItem(3835, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3835")]
+        public async Task TestMultilineTupleExpressionInFinalSwitchArmAsync()
+        {
+            const string testCode = @"using System;
+
+public static class Example
+{
+    public static void Test(Exception exception)
+    {
+        (string detail, string title, int statusCode) value = exception switch
+        {
+            _ =>
+            (
+                exception.Message,
+                exception.GetType().Name,
+                102
+            )
+        };
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(3248, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3248")]
         public async Task TestRecordInheritanceAsync()
         {

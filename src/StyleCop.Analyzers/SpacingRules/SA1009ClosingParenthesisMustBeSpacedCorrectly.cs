@@ -103,7 +103,9 @@ namespace StyleCop.Analyzers.SpacingRules
                 allowTupleParenthesisOnSeparateLines =
                     openParenToken.IsFirstInLine()
                     && openParenToken.IsLastInLine()
-                    && (nextToken.IsKind(SyntaxKind.SemicolonToken) || nextToken.IsKind(SyntaxKind.CommaToken));
+                    && (token.IsLastInLine()
+                        || ((nextToken.IsKind(SyntaxKind.SemicolonToken) || nextToken.IsKind(SyntaxKind.CommaToken))
+                            && nextToken.IsLastInLine()));
             }
 
             bool followedBySpace = token.IsFollowedByWhitespace();
