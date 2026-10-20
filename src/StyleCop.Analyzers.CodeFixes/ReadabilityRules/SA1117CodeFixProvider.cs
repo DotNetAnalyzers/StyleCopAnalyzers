@@ -1,0 +1,324 @@
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.ReadabilityRules;
+
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Composition;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
+using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
+using StyleCop.Analyzers.Helpers;
+
+/// <summary>
+/// Implements a code fix for <see cref="SA1117ParametersMustBeOnSameLineOrSeparateLines"/>.
+/// </summary>
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1117CodeFixProvider))]
+[Shared]
+internal class SA1117CodeFixProvider : CodeFixProvider
+{
+    /// <inheritdoc/>
+    public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+        ImmutableArray.Create(SA1117ParametersMustBeOnSameLineOrSeparateLines.DiagnosticId);
+
+    /// <inheritdoc/>
+    public override FixAllProvider GetFixAllProvider()
+    {
+        return CustomFixAllProviders.BatchFixer;
+    }
+
+    /// <inheritdoc/>
+    public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+    {
+        SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+        foreach (var diagnostic in context.Diagnostics)
+        {
+            if (diagnostic.Location.SourceSpan.IsEmpty)
+            {
+                continue;
+            }
+
+            SyntaxToken diagnosticToken = root.FindToken(diagnostic.Location.SourceSpan.Start);
+            SyntaxNode? list = GetContainingList(diagnosticToken);
+            if (list == null || HasZeroWidthElement(list))
+            {
+                continue;
+            }
+
+            context.RegisterCodeFix(
+                CodeAction.Create(
+                    ReadabilityResources.SA1117CodeFix,
+                    cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
+                    nameof(SA1117CodeFixProvider)),
+                diagnostic);
+        }
+    }
+
+    private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+    {
+        SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+        SyntaxToken diagnosticToken = root.FindToken(diagnostic.Location.SourceSpan.Start);
+        SyntaxNode? list = GetContainingList(diagnosticToken);
+        if (list == null)
+        {
+            throw new InvalidOperationException("The diagnostic is not contained in a supported parameter or argument list.");
+        }
+
+        var elements = new List<SyntaxNode>(list.ChildNodes());
+        if (elements.Count < 2)
+        {
+            throw new InvalidOperationException("The diagnostic list does not contain at least two elements.");
+        }
+
+        SyntaxTree tree = root.SyntaxTree;
+        SourceText sourceText = await tree.GetTextAsync(cancellationToken).ConfigureAwait(false);
+        SyntaxToken openDelimiter = list.GetFirstToken();
+        TextLine sourceLine = sourceText.Lines.GetLineFromPosition(openDelimiter.SpanStart);
+        string lineText = sourceText.ToString(sourceLine.Span);
+        int indentationLength;
+        for (indentationLength = 0; indentationLength < lineText.Length; indentationLength++)
+        {
+            if (!char.IsWhiteSpace(lineText[indentationLength]))
+            {
+                break;
+            }
+        }
+
+        var options = document.Project.Solution.Workspace.Options;
+        SyntaxTrivia endOfLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(openDelimiter, sourceText, options);
+        var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, tree, cancellationToken);
+        string indentationStep = IndentationHelper.GenerateIndentationString(settings.Indentation, 1);
+        string targetIndentation = lineText.Substring(0, indentationLength) + indentationStep;
+        SyntaxTriviaList newLeadingTrivia = SyntaxFactory.TriviaList(
+            endOfLineTrivia,
+            SyntaxFactory.Whitespace(targetIndentation));
+
+        var separators = new List<SyntaxToken>();
+        foreach (SyntaxToken childToken in list.ChildTokens())
+        {
+            if (childToken.IsKind(SyntaxKind.CommaToken))
+            {
+                separators.Add(childToken);
+            }
+        }
+
+        if (separators.Count != elements.Count - 1)
+        {
+            throw new InvalidOperationException("The list separator count does not match its element count.");
+        }
+
+        var updatedLeadingTrivia = new Dictionary<SyntaxToken, SyntaxTriviaList>();
+        var indentationDeltaByToken = new Dictionary<SyntaxToken, string>();
+        var tokensToIndent = new HashSet<SyntaxToken>();
+        var tokensToUpdate = new List<SyntaxToken> { openDelimiter };
+        for (int i = 0; i < elements.Count; i++)
+        {
+            SyntaxNode element = elements[i];
+            SyntaxToken firstToken = element.GetFirstToken();
+            SyntaxToken precedingToken = i == 0 ? openDelimiter : separators[i - 1];
+            SyntaxTriviaList originalLeadingTrivia = precedingToken.TrailingTrivia.AddRange(firstToken.LeadingTrivia);
+            updatedLeadingTrivia.Add(firstToken, newLeadingTrivia.AddRange(RemoveInitialWhitespace(originalLeadingTrivia)));
+            string originalIndentation = GetLineIndentation(sourceText, firstToken.SpanStart);
+            foreach (SyntaxToken elementToken in element.DescendantTokens())
+            {
+                tokensToUpdate.Add(elementToken);
+                if (originalIndentation != targetIndentation)
+                {
+                    tokensToIndent.Add(elementToken);
+                    indentationDeltaByToken.Add(elementToken, originalIndentation);
+                }
+            }
+
+            if (i < separators.Count)
+            {
+                tokensToUpdate.Add(separators[i]);
+            }
+        }
+
+        var separatorsToClear = new HashSet<SyntaxToken>(separators) { openDelimiter };
+        SyntaxNode updatedRoot = root.ReplaceTokens(
+            tokensToUpdate,
+            (original, rewritten) => updatedLeadingTrivia.TryGetValue(original, out SyntaxTriviaList leadingTrivia)
+                ? rewritten.WithLeadingTrivia(leadingTrivia)
+                    .WithTrailingTrivia(tokensToIndent.Contains(original)
+                        ? ShiftTrailingTrivia(rewritten.TrailingTrivia, indentationDeltaByToken[original], targetIndentation)
+                        : rewritten.TrailingTrivia)
+                : tokensToIndent.Contains(original)
+                    ? rewritten
+                        .WithLeadingTrivia(ShiftLeadingTrivia(original, rewritten.LeadingTrivia, indentationDeltaByToken[original], targetIndentation))
+                        .WithTrailingTrivia(ShiftTrailingTrivia(rewritten.TrailingTrivia, indentationDeltaByToken[original], targetIndentation))
+                    : separatorsToClear.Contains(original)
+                        ? rewritten.WithTrailingTrivia(default(SyntaxTriviaList))
+                        : rewritten);
+        return document.WithSyntaxRoot(updatedRoot);
+    }
+
+    private static SyntaxNode? GetContainingList(SyntaxToken token)
+    {
+        SyntaxNode? current = token.Parent;
+        while (current?.Parent != null)
+        {
+            SyntaxNode parent = current.Parent;
+            if ((parent is BaseArgumentListSyntax
+                    || parent is BaseParameterListSyntax
+                    || parent is AttributeArgumentListSyntax
+                    || parent is ArrayRankSpecifierSyntax)
+                && IsListElement(parent, current))
+            {
+                return parent;
+            }
+
+            current = parent;
+        }
+
+        return null;
+    }
+
+    private static bool HasZeroWidthElement(SyntaxNode list)
+    {
+        foreach (SyntaxNode element in list.ChildNodes())
+        {
+            if (element.Span.IsEmpty)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static SyntaxTriviaList ShiftLeadingTrivia(SyntaxToken token, SyntaxTriviaList leadingTrivia, string originalIndentation, string targetIndentation)
+    {
+        SyntaxTriviaList previousTrailingTrivia = token.GetPreviousToken(includeZeroWidth: true).TrailingTrivia;
+        bool atLineStart = previousTrailingTrivia.Count > 0 && previousTrailingTrivia[previousTrailingTrivia.Count - 1].IsKind(SyntaxKind.EndOfLineTrivia);
+        return ShiftTrivia(leadingTrivia, atLineStart, originalIndentation, targetIndentation);
+    }
+
+    private static SyntaxTriviaList ShiftTrailingTrivia(SyntaxTriviaList trailingTrivia, string originalIndentation, string targetIndentation)
+    {
+        return ShiftTrivia(trailingTrivia, atLineStart: false, originalIndentation, targetIndentation);
+    }
+
+    private static SyntaxTriviaList ShiftTrivia(SyntaxTriviaList trivia, bool atLineStart, string originalIndentation, string targetIndentation)
+    {
+        var result = new List<SyntaxTrivia>();
+        for (int i = 0; i < trivia.Count; i++)
+        {
+            SyntaxTrivia item = trivia[i];
+            if (item.IsKind(SyntaxKind.EndOfLineTrivia))
+            {
+                result.Add(item);
+                atLineStart = true;
+            }
+            else if (item.IsKind(SyntaxKind.WhitespaceTrivia))
+            {
+                bool isBlankLine = i + 1 < trivia.Count && trivia[i + 1].IsKind(SyntaxKind.EndOfLineTrivia);
+                string whitespace = item.ToString();
+                if (atLineStart && !isBlankLine && whitespace.StartsWith(originalIndentation, StringComparison.Ordinal))
+                {
+                    whitespace = targetIndentation + whitespace.Substring(originalIndentation.Length);
+                }
+
+                result.Add(SyntaxFactory.Whitespace(whitespace));
+                atLineStart = false;
+            }
+            else if (item.IsDirective)
+            {
+                result.Add(item);
+                atLineStart = true;
+            }
+            else
+            {
+                if (atLineStart)
+                {
+                    result.Add(SyntaxFactory.Whitespace(targetIndentation));
+                }
+
+                result.Add(item);
+                atLineStart = false;
+            }
+        }
+
+        return SyntaxFactory.TriviaList(result);
+    }
+
+    private static string GetLineIndentation(SourceText sourceText, int position)
+    {
+        TextLine line = sourceText.Lines.GetLineFromPosition(position);
+        string lineText = sourceText.ToString(line.Span);
+        int indentationLength = 0;
+        while (indentationLength < lineText.Length && char.IsWhiteSpace(lineText[indentationLength]))
+        {
+            indentationLength++;
+        }
+
+        return lineText.Substring(0, indentationLength);
+    }
+
+    private static SyntaxTriviaList ShiftLeadingTrivia(SyntaxTriviaList leadingTrivia, string originalIndentation, string targetIndentation)
+    {
+        var result = new List<SyntaxTrivia>();
+        bool atLineStart = false;
+        for (int i = 0; i < leadingTrivia.Count; i++)
+        {
+            SyntaxTrivia trivia = leadingTrivia[i];
+            if (trivia.IsKind(SyntaxKind.EndOfLineTrivia))
+            {
+                result.Add(trivia);
+                atLineStart = true;
+            }
+            else if (trivia.IsKind(SyntaxKind.WhitespaceTrivia))
+            {
+                bool isBlankLine = i + 1 < leadingTrivia.Count && leadingTrivia[i + 1].IsKind(SyntaxKind.EndOfLineTrivia);
+                string whitespace = trivia.ToString();
+                if (atLineStart && !isBlankLine && whitespace.StartsWith(originalIndentation, StringComparison.Ordinal))
+                {
+                    whitespace = targetIndentation + whitespace.Substring(originalIndentation.Length);
+                }
+
+                result.Add(SyntaxFactory.Whitespace(whitespace));
+                atLineStart = false;
+            }
+            else
+            {
+                result.Add(trivia);
+                atLineStart = false;
+            }
+        }
+
+        return SyntaxFactory.TriviaList(result);
+    }
+
+    private static bool IsListElement(SyntaxNode list, SyntaxNode node)
+    {
+        foreach (SyntaxNode child in list.ChildNodes())
+        {
+            if (child == node)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static SyntaxTriviaList RemoveInitialWhitespace(SyntaxTriviaList trivia)
+    {
+        int firstNonWhitespace = 0;
+        while (firstNonWhitespace < trivia.Count
+            && (trivia[firstNonWhitespace].IsKind(SyntaxKind.WhitespaceTrivia)
+                || trivia[firstNonWhitespace].IsKind(SyntaxKind.EndOfLineTrivia)))
+        {
+            firstNonWhitespace++;
+        }
+
+        return trivia.RemoveRange(0, firstNonWhitespace);
+    }
+}

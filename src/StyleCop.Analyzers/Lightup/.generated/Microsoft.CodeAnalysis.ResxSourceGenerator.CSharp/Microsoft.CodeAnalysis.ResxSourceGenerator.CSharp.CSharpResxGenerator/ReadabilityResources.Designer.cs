@@ -134,6 +134,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         public static string @SA1115Title => GetResourceString("SA1115Title")!;
         /// <summary>Move first argument to next line</summary>
         public static string @SA1116CodeFix => GetResourceString("SA1116CodeFix")!;
+        /// <summary>Put each item on its own line</summary>
+        public static string @SA1117CodeFix => GetResourceString("SA1117CodeFix")!;
         /// <summary>The parameters to a C# method or indexer call or declaration span across multiple lines, but the first parameter does not start on the line after the opening bracket.</summary>
         public static string @SA1116Description => GetResourceString("SA1116Description")!;
         /// <summary>The parameters should begin on the line after the declaration, whenever the parameter span across multiple lines</summary>

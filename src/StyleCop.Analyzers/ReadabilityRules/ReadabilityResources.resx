@@ -297,6 +297,9 @@
   <data name="SA1116CodeFix" xml:space="preserve">
     <value>Move first argument to next line</value>
   </data>
+  <data name="SA1117CodeFix" xml:space="preserve">
+    <value>Put each item on its own line</value>
+  </data>
   <data name="SA1116Description" xml:space="preserve">
     <value>The parameters to a C# method or indexer call or declaration span across multiple lines, but the first parameter does not start on the line after the opening bracket.</value>
   </data>
