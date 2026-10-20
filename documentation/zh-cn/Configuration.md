@@ -447,6 +447,8 @@ stylecop.readability.allowBuiltInTypeAliases = true
 > stylecop.ordering.elementOrder = kind, accessibility, constant, static, readonly
 > ```
 
+<a id="accessibility-order"></a>
+
 ### 访问级别顺序
 
 `accessibilityOrder` 指定 SA1202 和元素排序代码修复所使用的访问级别顺序。请将六种访问级别各列出一次，从第一项（优先级最高）到最后一项。默认值保留现有顺序：
