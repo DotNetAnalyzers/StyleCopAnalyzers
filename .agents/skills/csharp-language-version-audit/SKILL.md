@@ -90,13 +90,14 @@ Checklist:
 
 ### Preview versions: the default language version
 
-While C# N is in preview, Roslyn has no `LanguageVersion.CSharpN` value, so `LightupHelpers.SupportsCSharpN`
-is `false` even in the C# N test project, and tests silently run as C# N-1. #4192 fixed this for C# 15 with the
-test-only `StyleCop.Analyzers.Test/Helpers/TestLanguageVersion.cs`: it detects the compiler by one of its
-preview syntax kinds (`SyntaxKindEx.UnionDeclaration`) and returns `LanguageVersionEx.Preview` as the default
-for both verifiers. For a new preview version, extend that helper with a feature that exists only in the new
-compiler, and confirm it works: temporarily return `null` and check that the new-feature tests fail. When the
-version ships, Roslyn adds the enum value and the detection can be removed.
+While C# N is in preview, its features may only be enabled under `LanguageVersion.Preview`, so the C# N test
+project must default to it. The test-only `StyleCop.Analyzers.Test/Helpers/TestLanguageVersion.cs` can handle this
+by returning Preview when running tests for the C# N project. This detection can for example be based on available
+language versions or syntax kinds. Remove the override once an official C# N compiler is referenced.
+
+Early preview compilers may not define `LanguageVersion.CSharpN` yet, so `LightupHelpers.SupportsCSharpN` is
+`false` even in the C# N test project. In that case detect the compiler by one of its new syntax kinds instead,
+as #4192 did for C# 15 with `SyntaxKindEx.UnionDeclaration` before Roslyn 5.11 added `CSharp15`.
 
 ## 4. Probe every rule against every feature
 
@@ -108,7 +109,7 @@ compiler errors, analyzer exceptions (AD0001), and fix results.
 dotnet build src/StyleCop.Analyzers.CodeFixes/StyleCop.Analyzers.CodeFixes.csproj -c Debug
 dotnet run --project .agents/skills/csharp-language-version-audit/scripts/probe -- --fix --lang preview snippets/
 # probe with another compiler, for example a dotnet-tools feed build:
-dotnet run --project .agents/skills/csharp-language-version-audit/scripts/probe -p:RoslynVersion=5.10.0-1.26477.9 -- snippets/
+dotnet run --project .agents/skills/csharp-language-version-audit/scripts/probe -p:RoslynVersion=5.11.0-1.26512.2 -- snippets/
 ```
 
 Keep snippet folders out of the repo (or in a scratch folder you don't commit).

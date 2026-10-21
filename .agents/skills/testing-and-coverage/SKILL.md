@@ -13,7 +13,7 @@ description: How StyleCop.Analyzers tests are organized and run, and what "adequ
 | `Test.CSharp7` / `8` / `9` | 2.8.2 / 3.6.0 / 3.8.0 | C# 7.x / 8 / 9 |
 | `Test.CSharp10` / `11` / `12` | 4.0.1 / 4.4.0 / 4.8.0 | C# 10 / 11 / 12 |
 | `Test.CSharp13` / `14` | 4.12.0 / 5.0.0 | C# 13 / 14 |
-| `Test.CSharp15` | 5.10 preview (dotnet-tools feed) | preview (`TestLanguageVersion.Default`) |
+| `Test.CSharp15` | 5.11 preview (dotnet-tools feed) | preview (`TestLanguageVersion.Default`) |
 
 Check the csproj files for current versions; this table is from Oct 2026.
 

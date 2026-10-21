@@ -24,8 +24,9 @@ namespace StyleCop.Analyzers.Test.Helpers
             {
                 if (LightupHelpers.SupportsCSharp15)
                 {
-                    // C# 15 is still in preview, so the C# 15 test project runs every test with the preview language
-                    // version. Remove this once C# 15 is the default language version of the referenced compiler.
+                    // Some C# 15 features (e.g. the safe modifier) are still gated behind the preview language version
+                    // in the referenced compiler, so the C# 15 test project runs every test with it.
+                    // Remove this once an official C# 15 compiler is referenced.
                     return LanguageVersionEx.Preview;
                 }
 
