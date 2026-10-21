@@ -41,6 +41,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
     <PackageReference Include="Nullable" PrivateAssets="all" />
+    <PackageReference Include="System.Net.Http" PrivateAssets="all" />
+    <PackageReference Include="System.Text.RegularExpressions" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

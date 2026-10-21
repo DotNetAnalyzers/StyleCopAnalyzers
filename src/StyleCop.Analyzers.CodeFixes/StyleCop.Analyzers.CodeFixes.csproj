@@ -44,6 +44,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
+    <PackageReference Include="System.Net.Http" PrivateAssets="all" />
+    <PackageReference Include="System.Text.RegularExpressions" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
