@@ -97,7 +97,7 @@ internal class SA1143ConditionalExpressionsMustBeFormattedConsistently : Diagnos
                 || !StartsLine(text, expression.QuestionToken.SpanStart)
                 || !StartsLine(text, expression.ColonToken.SpanStart)
                 || GetColumn(text, expression.QuestionToken.SpanStart, tabSize) != GetColumn(text, expression.ColonToken.SpanStart, tabSize)
-                || GetColumn(text, expression.QuestionToken.SpanStart, tabSize) <= GetIndentation(text, expression.Condition.GetLastToken().SpanStart, tabSize))
+                || GetColumn(text, expression.QuestionToken.SpanStart, tabSize) <= GetIndentation(text, expression.Condition.Span.End - 1, tabSize))
             {
                 return false;
             }
