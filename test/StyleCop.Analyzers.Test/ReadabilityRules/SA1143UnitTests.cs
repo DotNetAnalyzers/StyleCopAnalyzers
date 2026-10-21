@@ -83,6 +83,42 @@ public class SA1143UnitTests
     }
 
     /// <summary>
+    /// Verifies that multiline condition literals use their closing-line indentation.
+    /// </summary>
+    /// <param name="operatorIndentation">The indentation of the conditional operators.</param>
+    /// <param name="expectedDiagnostics">The expected number of diagnostics.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    [Theory]
+    [InlineData("            ", 0)]
+    [InlineData("        ", 1)]
+    public async Task TestMultilineConditionLiteralIndentationAsync(
+        string operatorIndentation,
+        int expectedDiagnostics)
+    {
+        var source = string.Join(
+            "\n",
+            "class C",
+            "{",
+            "    bool M(bool condition, string invocation)",
+            "    {",
+            "        return condition && invocation == @\"first",
+            "second",
+            "        third\"",
+            operatorIndentation + "? true",
+            operatorIndentation + ": false;",
+            "    }",
+            "}");
+        if (expectedDiagnostics == 0)
+        {
+            await VerifyCSharpDiagnosticAsync(source, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+        else
+        {
+            await VerifyCSharpDiagnosticAsync(source, Diagnostic().WithSpan(8, operatorIndentation.Length + 1, 8, operatorIndentation.Length + 2), CancellationToken.None).ConfigureAwait(false);
+        }
+    }
+
+    /// <summary>
     /// Verifies that conditional branches can contain multiline arithmetic expressions.
     /// </summary>
     /// <returns>A task representing the asynchronous operation.</returns>
