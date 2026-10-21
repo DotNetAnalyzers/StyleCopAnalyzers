@@ -55,7 +55,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
             // https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/configure-language-version
             // C# 13 ships with .NET 9, C# 14 with .NET 10, and C# 15 with .NET 11.
             ReferenceAssemblies defaultReferenceAssemblies;
-            if (TestLanguageVersion.SupportsCSharp15)
+            if (LightupHelpers.SupportsCSharp15)
             {
                 defaultReferenceAssemblies = new ReferenceAssemblies(
                     "net11.0",
