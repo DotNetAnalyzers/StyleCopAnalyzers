@@ -90,15 +90,14 @@ internal class SA1143ConditionalExpressionsMustBeFormattedConsistently : Diagnos
         {
             var question = expression.QuestionToken.GetLineSpan().StartLinePosition;
             var colon = expression.ColonToken.GetLineSpan().StartLinePosition;
-            if (!IsSingleLine(expression.Condition)
-                || question.Line <= expression.Condition.GetLineSpan().EndLinePosition.Line
+            if (question.Line <= expression.Condition.GetLineSpan().EndLinePosition.Line
                 || colon.Line <= expression.WhenTrue.GetLineSpan().EndLinePosition.Line
                 || expression.WhenTrue.GetLineSpan().StartLinePosition.Line != question.Line
                 || expression.WhenFalse.GetLineSpan().StartLinePosition.Line != colon.Line
                 || !StartsLine(text, expression.QuestionToken.SpanStart)
                 || !StartsLine(text, expression.ColonToken.SpanStart)
                 || GetColumn(text, expression.QuestionToken.SpanStart, tabSize) != GetColumn(text, expression.ColonToken.SpanStart, tabSize)
-                || GetColumn(text, expression.QuestionToken.SpanStart, tabSize) <= GetIndentation(text, expression.SpanStart, tabSize))
+                || GetColumn(text, expression.QuestionToken.SpanStart, tabSize) <= GetIndentation(text, expression.Condition.GetLastToken().SpanStart, tabSize))
             {
                 return false;
             }
