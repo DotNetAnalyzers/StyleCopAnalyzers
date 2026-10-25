@@ -94,7 +94,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 else
                 {
                     // Check if we need to apply a fix before the brace
-                    if (LocationHelpers.GetLineSpan(previousToken).EndLinePosition.Line == braceLine)
+                    if (!previousToken.IsKind(SyntaxKind.None) && LocationHelpers.GetLineSpan(previousToken).EndLinePosition.Line == braceLine)
                     {
                         if (!braceTokens.Contains(previousToken))
                         {

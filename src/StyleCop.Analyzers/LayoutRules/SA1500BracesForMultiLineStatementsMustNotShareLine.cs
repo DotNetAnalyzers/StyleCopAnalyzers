@@ -279,7 +279,7 @@ namespace StyleCop.Analyzers.LayoutRules
             int line = token.GetLineSpan().StartLinePosition.Line;
 
             SyntaxToken previousToken = token.GetPreviousToken(includeZeroWidth: true);
-            if (!previousToken.IsMissing)
+            if (!previousToken.IsMissing && !previousToken.IsKind(SyntaxKind.None))
             {
                 if (previousToken.GetLineSpan().EndLinePosition.Line == line)
                 {
