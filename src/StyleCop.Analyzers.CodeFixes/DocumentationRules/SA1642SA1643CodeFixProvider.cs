@@ -157,6 +157,11 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return structDeclaration.TypeParameterList;
             }
 
+            if (typeDeclaration is InterfaceDeclarationSyntax interfaceDeclaration)
+            {
+                return interfaceDeclaration.TypeParameterList;
+            }
+
             if (RecordDeclarationSyntaxWrapper.IsInstance(typeDeclaration))
             {
                 var recordDeclaration = (RecordDeclarationSyntaxWrapper)typeDeclaration;
@@ -329,7 +334,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static TypeArgumentListSyntax ParameterToArgumentListSyntax(TypeParameterListSyntax typeParameters)
         {
             var list = SyntaxFactory.SeparatedList<TypeSyntax>();
-            list = list.AddRange(typeParameters.Parameters.Select(p => SyntaxFactory.ParseName(p.ToString()).WithTriviaFrom(p)));
+            list = list.AddRange(typeParameters.Parameters.Select(p => SyntaxFactory.IdentifierName(p.Identifier.WithoutTrivia()).WithTriviaFrom(p)));
 
             for (int i = 0; i < list.SeparatorCount; i++)
             {
