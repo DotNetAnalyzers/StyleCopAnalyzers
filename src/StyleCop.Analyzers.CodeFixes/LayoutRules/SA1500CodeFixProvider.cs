@@ -188,6 +188,10 @@ namespace StyleCop.Analyzers.LayoutRules
                 token = token.GetNextToken();
                 switch (token.Kind())
                 {
+                case SyntaxKind.None:
+                    // The open brace has no matching close brace.
+                    return false;
+
                 case SyntaxKind.CloseBraceToken:
                     depth--;
                     break;
@@ -220,6 +224,7 @@ namespace StyleCop.Analyzers.LayoutRules
             // For a closing brace use the indentation of the corresponding opening brace
             if (token.IsKind(SyntaxKind.CloseBraceToken))
             {
+                var closeBraceToken = token;
                 var depth = 1;
 
                 while (depth > 0)
@@ -227,6 +232,12 @@ namespace StyleCop.Analyzers.LayoutRules
                     token = token.GetPreviousToken();
                     switch (token.Kind())
                     {
+                    case SyntaxKind.None:
+                        // The close brace has no matching open brace, so use its own indentation.
+                        token = closeBraceToken;
+                        depth = 0;
+                        break;
+
                     case SyntaxKind.CloseBraceToken:
                         depth++;
                         break;
