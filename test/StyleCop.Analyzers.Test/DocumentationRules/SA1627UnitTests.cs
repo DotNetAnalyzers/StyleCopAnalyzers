@@ -184,6 +184,24 @@ public class ClassName
         }
 
         /// <summary>
+        /// Verifies that an include documentation statement before the closing brace of an undocumented type does not
+        /// cause the analyzer to fail.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestIncludedDocumentationBeforeCloseBraceOfUndocumentedTypeAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    /// <include file='NoneFilled.xml' path='/TestClass/TestMethod/*'/>
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that member with valid elements in the included documentation does not produce diagnostics.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
