@@ -3,10 +3,15 @@
 
 namespace StyleCop.Analyzers.Test.CSharp12.OrderingRules
 {
+    using System;
+    using System.IO;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
+    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
 
     public partial class SA1200OutsideNamespaceCSharp12UnitTests
@@ -144,6 +149,142 @@ namespace TestNamespace
             };
 
             await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestAliasAnyTypeReferringToArrayAliasPreservesRankOrderAsync()
+        {
+            var testCode = @"using Row = int[];
+
+namespace TestNamespace
+{
+    {|#0:using Matrix = Row[,];|}
+
+    public class TestClass
+    {
+        public int[] M(Matrix matrix) => matrix[0, 0];
+    }
+}
+";
+            var fixedTestCode = @"using Matrix = int[,][];
+using Row = int[];
+
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public int[] M(Matrix matrix) => matrix[0, 0];
+    }
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(0),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestAliasAnyTypeReferringToNullableAliasPreservesNullabilityAsync()
+        {
+            var testCode = @"using Maybe = TestNamespace.TestStruct?;
+
+namespace TestNamespace
+{
+    {|#0:using Items = Maybe[];|}
+
+    public struct TestStruct
+    {
+    }
+
+    public class TestClass
+    {
+        public bool M(Items items) => items[0].HasValue;
+    }
+}
+";
+            var fixedTestCode = @"using Items = TestNamespace.TestStruct?[];
+using Maybe = TestNamespace.TestStruct?;
+
+namespace TestNamespace
+{
+    public struct TestStruct
+    {
+    }
+
+    public class TestClass
+    {
+        public bool M(Items items) => items[0].HasValue;
+    }
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(0),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestAliasAnyTypeWithExternAliasPreservesQualifierAsync()
+        {
+            var testCode = @"extern alias corlib;
+
+namespace TestNamespace
+{
+    {|#0:using Items = corlib::System.String[];|}
+    {|#1:using Lists = corlib::System.Collections.Generic.List<TestClass>[];|}
+
+    public class TestClass
+    {
+    }
+}
+";
+            var fixedTestCode = @"extern alias corlib;
+using Items = corlib::System.String[];
+using Lists = corlib::System.Collections.Generic.List<TestNamespace.TestClass>[];
+
+namespace TestNamespace
+{
+    public class TestClass
+    {
+    }
+}
+";
+
+            var test = new StyleCopCodeFixVerifier<SA1200UsingDirectivesMustBePlacedCorrectly, UsingCodeFixProvider>.CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedTestCode,
+                Settings = TestSettings,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(0),
+                    Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(1),
+                },
+            };
+            test.SolutionTransforms.Add((solution, projectId) =>
+            {
+                var project = solution.GetProject(projectId) ?? throw new InvalidOperationException();
+                var references = project.MetadataReferences.OfType<PortableExecutableReference>()
+                    .Where(reference => Path.GetFileName(reference.FilePath) is "System.Runtime.dll" or "System.Collections.dll")
+                    .ToList();
+
+                foreach (var reference in references)
+                {
+                    solution = solution
+                        .RemoveMetadataReference(projectId, reference)
+                        .AddMetadataReference(projectId, reference.WithAliases(new[] { "global", "corlib" }));
+                }
+
+                return solution;
+            });
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
