@@ -142,6 +142,32 @@ namespace TestNamespace
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        public async Task TestAliasReferringToNonGenericValueTupleAliasIsExpandedWhenMovedInsideNamespaceAsync()
+        {
+            var testCode = @"{|#0:using VT = System.ValueTuple;|}
+
+namespace NamespaceName
+{
+    using OtherVT = VT;
+}
+";
+
+            var fixedTestCode = @"namespace NamespaceName
+{
+    using OtherVT = System.ValueTuple;
+    using VT = System.ValueTuple;
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(0),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(1931, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1931")]
         public async Task TestInvalidExternAliasDirectivesInCompilationUnitAsync()
         {
