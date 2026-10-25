@@ -416,8 +416,12 @@ namespace StyleCop.Analyzers.DocumentationRules
         public static string @SA1654Title => GetResourceString("SA1654Title")!;
         /// <summary>Initializes static members of the</summary>
         public static string @StaticConstructorStandardTextFirstPart => GetResourceString("StaticConstructorStandardTextFirstPart")!;
+        /// <summary>Initializes static members of the</summary>
+        public static string @InterfaceStaticConstructorStandardTextFirstPart => GetResourceString("InterfaceStaticConstructorStandardTextFirstPart")!;
         /// <summary>{0}</summary>
         public static string @StaticConstructorStandardTextSecondPart => GetResourceString("StaticConstructorStandardTextSecondPart")!;
+        /// <summary>{0}</summary>
+        public static string @InterfaceStaticConstructorStandardTextSecondPart => GetResourceString("InterfaceStaticConstructorStandardTextSecondPart")!;
         /// <summary>Gets or initializes</summary>
         public static string @StartingTextGetsOrInitializes => GetResourceString("StartingTextGetsOrInitializes")!;
         /// <summary>A</summary>
@@ -430,6 +434,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         public static string @TypeTextStruct => GetResourceString("TypeTextStruct")!;
         /// <summary>union</summary>
         public static string @TypeTextUnion => GetResourceString("TypeTextUnion")!;
+        /// <summary>interface</summary>
+        public static string @TypeTextInterface => GetResourceString("TypeTextInterface")!;
         /// <summary>Gets or initializes a value indicating whether</summary>
         public static string @StartingTextGetsOrInitializesWhether => GetResourceString("StartingTextGetsOrInitializesWhether")!;
         /// <summary>Initializes</summary>

@@ -720,7 +720,14 @@
   <data name="StaticConstructorStandardTextFirstPart" xml:space="preserve">
     <value>Initializes static members of the </value>
   </data>
+  <data name="InterfaceStaticConstructorStandardTextFirstPart" xml:space="preserve">
+    <value>Initializes static members of the </value>
+    <comment>Used instead of StaticConstructorStandardTextFirstPart for static constructors of interfaces, for languages where the article before the type word differs.</comment>
+  </data>
   <data name="StaticConstructorStandardTextSecondPart" xml:space="preserve">
+    <value> {0}</value>
+  </data>
+  <data name="InterfaceStaticConstructorStandardTextSecondPart" xml:space="preserve">
     <value> {0}</value>
   </data>
   <data name="StartingTextGetsOrInitializes" xml:space="preserve">
@@ -740,6 +747,9 @@
   </data>
   <data name="TypeTextUnion" xml:space="preserve">
     <value>union</value>
+  </data>
+  <data name="TypeTextInterface" xml:space="preserve">
+    <value>interface</value>
   </data>
   <data name="StartingTextGetsOrInitializesWhether" xml:space="preserve">
     <value>Gets or initializes a value indicating whether</value>

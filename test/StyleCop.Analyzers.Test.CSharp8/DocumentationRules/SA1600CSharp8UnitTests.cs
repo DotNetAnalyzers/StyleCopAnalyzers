@@ -42,7 +42,7 @@ public interface ITest<" + variance + @"T>
 public interface ITest<" + variance + @"T>
 {
     /// <summary>
-    /// Initializes static members of the <see cref=""ITest{T}""/> class.
+    /// Initializes static members of the <see cref=""ITest{T}""/> interface.
     /// </summary>
     static ITest()
     {

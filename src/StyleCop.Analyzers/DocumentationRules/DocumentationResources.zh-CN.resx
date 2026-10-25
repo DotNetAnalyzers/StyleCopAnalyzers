@@ -661,7 +661,13 @@
   <data name="StaticConstructorStandardTextFirstPart" xml:space="preserve">
     <value>初始化 </value>
   </data>
+  <data name="InterfaceStaticConstructorStandardTextFirstPart" xml:space="preserve">
+    <value>初始化 </value>
+  </data>
   <data name="StaticConstructorStandardTextSecondPart" xml:space="preserve">
+    <value> {0}的静态成员</value>
+  </data>
+  <data name="InterfaceStaticConstructorStandardTextSecondPart" xml:space="preserve">
     <value> {0}的静态成员</value>
   </data>
   <data name="StartingTextGetsOrInitializes" xml:space="preserve">
@@ -681,6 +687,9 @@
   </data>
   <data name="TypeTextUnion" xml:space="preserve">
     <value>联合</value>
+  </data>
+  <data name="TypeTextInterface" xml:space="preserve">
+    <value>接口</value>
   </data>
   <data name="StartingTextGetsOrInitializesWhether" xml:space="preserve">
     <value>获取或初始化一个值，该值指示是否</value>

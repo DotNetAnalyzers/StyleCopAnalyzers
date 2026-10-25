@@ -162,7 +162,13 @@
   <data name="StaticConstructorStandardTextFirstPart" xml:space="preserve">
     <value>Inicializa miembros estáticos de la {0} </value>
   </data>
+  <data name="InterfaceStaticConstructorStandardTextFirstPart" xml:space="preserve">
+    <value>Inicializa miembros estáticos de la {0} </value>
+  </data>
   <data name="StaticConstructorStandardTextSecondPart" xml:space="preserve">
+    <value />
+  </data>
+  <data name="InterfaceStaticConstructorStandardTextSecondPart" xml:space="preserve">
     <value />
   </data>
   <data name="TypeTextClass" xml:space="preserve">
@@ -173,6 +179,9 @@
   </data>
   <data name="TypeTextUnion" xml:space="preserve">
     <value>union</value>
+  </data>
+  <data name="TypeTextInterface" xml:space="preserve">
+    <value>interfaz</value>
   </data>
   <data name="StartingTextGetsOrInitializes" xml:space="preserve">
     <value>Obtiene o inicializa</value>

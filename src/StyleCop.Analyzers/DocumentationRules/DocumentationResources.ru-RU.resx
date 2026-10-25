@@ -201,7 +201,13 @@
   <data name="StaticConstructorStandardTextFirstPart" xml:space="preserve">
     <value>Инициализирует статические члены {0} </value>
   </data>
+  <data name="InterfaceStaticConstructorStandardTextFirstPart" xml:space="preserve">
+    <value>Инициализирует статические члены {0} </value>
+  </data>
   <data name="StaticConstructorStandardTextSecondPart" xml:space="preserve">
+    <value />
+  </data>
+  <data name="InterfaceStaticConstructorStandardTextSecondPart" xml:space="preserve">
     <value />
   </data>
   <data name="TaskReturnElementFirstPart" xml:space="preserve">
@@ -218,6 +224,9 @@
   </data>
   <data name="TypeTextUnion" xml:space="preserve">
     <value>объединения</value>
+  </data>
+  <data name="TypeTextInterface" xml:space="preserve">
+    <value>интерфейса</value>
   </data>
   <data name="StartingTextGetsOrInitializes" xml:space="preserve">
     <value>Возвращает или инициализирует</value>

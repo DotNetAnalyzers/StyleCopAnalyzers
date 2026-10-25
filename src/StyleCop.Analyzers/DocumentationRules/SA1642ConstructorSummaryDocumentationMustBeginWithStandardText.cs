@@ -141,7 +141,36 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return nameof(DocumentationResources.TypeTextStruct);
             }
 
+            if (typeDeclaration.IsKind(SyntaxKind.InterfaceDeclaration))
+            {
+                return nameof(DocumentationResources.TypeTextInterface);
+            }
+
             return nameof(DocumentationResources.TypeTextClass);
+        }
+
+        /// <summary>
+        /// Gets the name of the resource for the first part of the standard text of a static constructor.
+        /// </summary>
+        /// <param name="typeDeclaration">The type declaration that contains the constructor.</param>
+        /// <returns>The name of the <see cref="DocumentationResources"/> string for the first part of the standard text.</returns>
+        internal static string GetStaticConstructorFirstPartResourceName(SyntaxNode typeDeclaration)
+        {
+            return typeDeclaration.IsKind(SyntaxKind.InterfaceDeclaration)
+                ? nameof(DocumentationResources.InterfaceStaticConstructorStandardTextFirstPart)
+                : nameof(DocumentationResources.StaticConstructorStandardTextFirstPart);
+        }
+
+        /// <summary>
+        /// Gets the name of the resource for the second part of the standard text of a static constructor.
+        /// </summary>
+        /// <param name="typeDeclaration">The type declaration that contains the constructor.</param>
+        /// <returns>The name of the <see cref="DocumentationResources"/> string for the second part of the standard text.</returns>
+        internal static string GetStaticConstructorSecondPartResourceName(SyntaxNode typeDeclaration)
+        {
+            return typeDeclaration.IsKind(SyntaxKind.InterfaceDeclaration)
+                ? nameof(DocumentationResources.InterfaceStaticConstructorStandardTextSecondPart)
+                : nameof(DocumentationResources.StaticConstructorStandardTextSecondPart);
         }
 
         private static void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
@@ -157,8 +186,8 @@ namespace StyleCop.Analyzers.DocumentationRules
             {
                 HandleDeclaration(
                     context,
-                    string.Format(resourceManager.GetString(nameof(DocumentationResources.StaticConstructorStandardTextFirstPart), culture), typeKindText),
-                    string.Format(resourceManager.GetString(nameof(DocumentationResources.StaticConstructorStandardTextSecondPart), culture), typeKindText),
+                    string.Format(resourceManager.GetString(GetStaticConstructorFirstPartResourceName(constructorDeclarationSyntax.Parent), culture), typeKindText),
+                    string.Format(resourceManager.GetString(GetStaticConstructorSecondPartResourceName(constructorDeclarationSyntax.Parent), culture), typeKindText),
                     Descriptor,
                     allowLangwordStandardText: true,
                     documentationCulture: culture,
