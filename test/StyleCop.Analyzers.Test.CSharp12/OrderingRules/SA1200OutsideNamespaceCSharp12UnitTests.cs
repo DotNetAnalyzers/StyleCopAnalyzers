@@ -68,7 +68,7 @@ public class G<T>
 {
 }
 ";
-            var fixedTestCode = @"using Items = global::G<global::TestNamespace.TestClass>[];
+            var fixedTestCode = @"using Items = global::G<TestNamespace.TestClass>[];
 
 namespace TestNamespace
 {
@@ -238,8 +238,13 @@ namespace TestNamespace
 {
     {|#0:using Items = corlib::System.String[];|}
     {|#1:using Lists = corlib::System.Collections.Generic.List<TestClass>[];|}
+    {|#2:using Wrappers = Wrapper<corlib::System.String>[];|}
 
     public class TestClass
+    {
+    }
+
+    public class Wrapper<T>
     {
     }
 }
@@ -247,10 +252,15 @@ namespace TestNamespace
             var fixedTestCode = @"extern alias corlib;
 using Items = corlib::System.String[];
 using Lists = corlib::System.Collections.Generic.List<TestNamespace.TestClass>[];
+using Wrappers = TestNamespace.Wrapper<corlib::System.String>[];
 
 namespace TestNamespace
 {
     public class TestClass
+    {
+    }
+
+    public class Wrapper<T>
     {
     }
 }
@@ -265,6 +275,7 @@ namespace TestNamespace
                 {
                     Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(0),
                     Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(1),
+                    Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(2),
                 },
             };
             test.SolutionTransforms.Add((solution, projectId) =>
@@ -285,6 +296,70 @@ namespace TestNamespace
             });
 
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestAliasAnyTypePreservesNullableReferenceAnnotationsAsync()
+        {
+            var testCode = @"#nullable enable
+
+namespace TestNamespace
+{
+    {|#0:using Items = TestClass?[];|}
+
+    public class TestClass
+    {
+    }
+}
+";
+            var fixedTestCode = @"using Items = TestNamespace.TestClass?[];
+
+#nullable enable
+
+namespace TestNamespace
+{
+    public class TestClass
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(0),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestAliasAnyTypePreservesCommentsAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    {|#0:using Point = (int X, /* coordinate */ TestClass Y);|}
+
+    public class TestClass
+    {
+    }
+}
+";
+            var fixedTestCode = @"using Point = (int X, /* coordinate */ TestNamespace.TestClass Y);
+
+namespace TestNamespace
+{
+    public class TestClass
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(0),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -191,6 +191,18 @@ namespace StyleCop.Analyzers.OrderingRules
                 return SyntaxFactory.List(usingList);
             }
 
+            private static bool IsExternAliasQualified(NameSyntax name)
+            {
+                NameSyntax leftmost = name;
+                while (leftmost is QualifiedNameSyntax qualifiedName)
+                {
+                    leftmost = qualifiedName.Left;
+                }
+
+                return leftmost is AliasQualifiedNameSyntax aliasQualifiedName
+                    && !aliasQualifiedName.Alias.Identifier.IsKind(SyntaxKind.GlobalKeyword);
+            }
+
             private List<UsingDirectiveSyntax> GenerateUsings(Dictionary<TreeTextSpan, List<UsingDirectiveSyntax>> usingsGroup, TreeTextSpan directiveSpan, string indentation, SyntaxTrivia endOfLine, List<SyntaxTrivia> triviaToMove, bool qualifyNames, bool isGlobal, bool expandAliases)
             {
                 List<UsingDirectiveSyntax> result = new List<UsingDirectiveSyntax>();
@@ -445,52 +457,97 @@ namespace StyleCop.Analyzers.OrderingRules
 
             private TypeSyntax QualifyTypeInAliasTarget(TypeSyntax type)
             {
-                if (!ContainsExternAliasQualifier(type))
+                // Only the names within the target are rewritten, so the structure and the trivia of the target
+                // (including nullable annotations, tuple element names, and comments) are preserved.
+                switch (type)
                 {
-                    // The type is replaced by the fully qualified display of its bound type. This expands references
-                    // to other aliases (preserving array ranks, nullability, and tuple element names), which are not
-                    // visible from the target of an alias declared in the same using block.
-                    var typeSymbol = this.semanticModel.GetSymbolInfo(type, CancellationToken.None).Symbol as ITypeSymbol
-                        ?? this.semanticModel.GetTypeInfo(type, CancellationToken.None).Type;
-                    if (typeSymbol == null || typeSymbol.TypeKind == TypeKind.Error)
+                case NameSyntax name:
+                    return this.QualifyNameInAliasTarget(name);
+
+                case ArrayTypeSyntax arrayType:
+                    TypeSyntax elementType = this.QualifyTypeInAliasTarget(arrayType.ElementType);
+                    if (elementType is ArrayTypeSyntax expandedArrayType && !(arrayType.ElementType is ArrayTypeSyntax))
                     {
-                        return type;
+                        // An alias to an array type was expanded. The ranks of the outer array come first, so
+                        // 'Row[,]' with 'Row = int[]' becomes 'int[,][]'.
+                        return arrayType
+                            .WithElementType(expandedArrayType.ElementType)
+                            .WithRankSpecifiers(arrayType.RankSpecifiers.AddRange(expandedArrayType.RankSpecifiers));
                     }
 
-                    TypeSyntax replacement = SyntaxFactory.ParseTypeName(typeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
-                    if (!type.DescendantNodesAndSelf().OfType<AliasQualifiedNameSyntax>().Any())
-                    {
-                        replacement = replacement.ReplaceNodes(
-                            replacement.DescendantNodesAndSelf().OfType<AliasQualifiedNameSyntax>(),
-                            (originalNode, rewrittenNode) => rewrittenNode.Name);
-                    }
+                    return arrayType.WithElementType(elementType);
 
-                    return replacement.WithTriviaFrom(type);
+                default:
+                    var children = type.DescendantNodes(node => node == type || !(node is TypeSyntax || node is ArrayRankSpecifierSyntax))
+                        .OfType<TypeSyntax>()
+                        .ToList();
+                    return type.ReplaceNodes(children, (originalNode, rewrittenNode) => this.QualifyTypeInAliasTarget(originalNode));
                 }
-
-                // A type referenced through an extern alias keeps its qualifier, but the types it contains (such as
-                // type arguments or array element types) are still qualified.
-                IEnumerable<TypeSyntax> children;
-                if (type is NameSyntax)
-                {
-                    children = type.DescendantNodes(node => !(node is TypeArgumentListSyntax))
-                        .OfType<TypeArgumentListSyntax>()
-                        .SelectMany(typeArgumentList => typeArgumentList.Arguments);
-                }
-                else
-                {
-                    children = type.DescendantNodes(node => node == type || !(node is TypeSyntax || node is ArrayRankSpecifierSyntax))
-                        .OfType<TypeSyntax>();
-                }
-
-                return type.ReplaceNodes(children.ToList(), (originalNode, rewrittenNode) => this.QualifyTypeInAliasTarget(originalNode));
             }
 
-            private static bool ContainsExternAliasQualifier(TypeSyntax type)
+            private TypeSyntax QualifyNameInAliasTarget(NameSyntax name)
             {
-                return type.DescendantNodesAndSelf()
-                    .OfType<AliasQualifiedNameSyntax>()
-                    .Any(name => !name.Alias.Identifier.IsKind(SyntaxKind.GlobalKeyword));
+                if (IsExternAliasQualified(name))
+                {
+                    // A name referenced through an extern alias keeps its qualifier, but its type arguments are
+                    // qualified.
+                    return (TypeSyntax)this.QualifyTypeArgumentsInAliasTarget(name);
+                }
+
+                if (name is IdentifierNameSyntax identifierName
+                    && this.semanticModel.GetAliasInfo(identifierName, CancellationToken.None) is IAliasSymbol alias
+                    && alias.Target is ITypeSymbol aliasTarget
+                    && (!(aliasTarget is INamedTypeSymbol namedTarget) || namedTarget.IsTupleType() || namedTarget.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T))
+                {
+                    // A reference to an alias of a type that is not written as a name (such as an array, nullable,
+                    // or tuple type) is replaced by the target of that alias, since other aliases of the same using
+                    // block are not visible from the target of an alias.
+                    var aliasDirective = alias.DeclaringSyntaxReferences.Select(reference => reference.GetSyntax()).OfType<UsingDirectiveSyntax>().FirstOrDefault();
+                    TypeSyntax? aliasTargetSyntax = aliasDirective?.NamespaceOrType();
+                    if (aliasTargetSyntax != null && aliasTargetSyntax.SyntaxTree == this.semanticModel.SyntaxTree)
+                    {
+                        return this.QualifyTypeInAliasTarget(aliasTargetSyntax).WithTriviaFrom(name);
+                    }
+
+                    return SyntaxFactory.ParseTypeName(aliasTarget.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)).WithTriviaFrom(name);
+                }
+
+                NameSyntax qualifiedName = this.QualifyName(name);
+                if (qualifiedName == name)
+                {
+                    return (TypeSyntax)this.QualifyTypeArgumentsInAliasTarget(name);
+                }
+
+                if (!name.DescendantNodesAndSelf(node => node is NameSyntax).OfType<AliasQualifiedNameSyntax>().Any())
+                {
+                    // QualifyName only omits 'global::' when the name has no alias qualifier at all, including in its
+                    // type arguments.
+                    qualifiedName = qualifiedName.ReplaceNodes(
+                        qualifiedName.DescendantNodesAndSelf(node => node is NameSyntax).OfType<AliasQualifiedNameSyntax>(),
+                        (originalNode, rewrittenNode) => rewrittenNode.Name);
+                }
+
+                // Type arguments are qualified separately, so that they keep their own form.
+                var originalGeneric = name.DescendantNodesAndSelf(node => node is NameSyntax).OfType<GenericNameSyntax>().LastOrDefault();
+                var qualifiedGeneric = qualifiedName.DescendantNodesAndSelf(node => node is NameSyntax).OfType<GenericNameSyntax>().LastOrDefault();
+                if (originalGeneric != null
+                    && qualifiedGeneric != null
+                    && originalGeneric.TypeArgumentList.Arguments.Count == qualifiedGeneric.TypeArgumentList.Arguments.Count)
+                {
+                    var typeArguments = (TypeArgumentListSyntax)this.QualifyTypeArgumentsInAliasTarget(originalGeneric.TypeArgumentList);
+                    qualifiedName = qualifiedName.ReplaceNode(qualifiedGeneric.TypeArgumentList, typeArguments);
+                }
+
+                return qualifiedName;
+            }
+
+            private SyntaxNode QualifyTypeArgumentsInAliasTarget(SyntaxNode node)
+            {
+                var typeArguments = node.DescendantNodesAndSelf(descendant => descendant == node || descendant is NameSyntax)
+                    .OfType<TypeArgumentListSyntax>()
+                    .SelectMany(typeArgumentList => typeArgumentList.Arguments)
+                    .ToList();
+                return node.ReplaceNodes(typeArguments, (originalNode, rewrittenNode) => this.QualifyTypeInAliasTarget(originalNode));
             }
 
             private NameSyntax QualifyName(NameSyntax originalName)
