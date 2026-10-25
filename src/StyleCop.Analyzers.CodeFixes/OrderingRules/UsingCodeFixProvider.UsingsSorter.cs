@@ -191,18 +191,6 @@ namespace StyleCop.Analyzers.OrderingRules
                 return SyntaxFactory.List(usingList);
             }
 
-            private static bool IsExternAliasQualified(NameSyntax name)
-            {
-                NameSyntax leftmost = name;
-                while (leftmost is QualifiedNameSyntax qualifiedName)
-                {
-                    leftmost = qualifiedName.Left;
-                }
-
-                return leftmost is AliasQualifiedNameSyntax aliasQualifiedName
-                    && !aliasQualifiedName.Alias.Identifier.IsKind(SyntaxKind.GlobalKeyword);
-            }
-
             private List<UsingDirectiveSyntax> GenerateUsings(Dictionary<TreeTextSpan, List<UsingDirectiveSyntax>> usingsGroup, TreeTextSpan directiveSpan, string indentation, SyntaxTrivia endOfLine, List<SyntaxTrivia> triviaToMove, bool qualifyNames, bool isGlobal, bool expandAliases)
             {
                 List<UsingDirectiveSyntax> result = new List<UsingDirectiveSyntax>();
@@ -487,7 +475,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
             private TypeSyntax QualifyNameInAliasTarget(NameSyntax name)
             {
-                if (IsExternAliasQualified(name))
+                if (this.IsExternAliasQualified(name))
                 {
                     // A name referenced through an extern alias keeps its qualifier, but its type arguments are
                     // qualified.
@@ -527,18 +515,41 @@ namespace StyleCop.Analyzers.OrderingRules
                         (originalNode, rewrittenNode) => rewrittenNode.Name);
                 }
 
-                // Type arguments are qualified separately, so that they keep their own form.
-                var originalGeneric = name.DescendantNodesAndSelf(node => node is NameSyntax).OfType<GenericNameSyntax>().LastOrDefault();
-                var qualifiedGeneric = qualifiedName.DescendantNodesAndSelf(node => node is NameSyntax).OfType<GenericNameSyntax>().LastOrDefault();
-                if (originalGeneric != null
-                    && qualifiedGeneric != null
-                    && originalGeneric.TypeArgumentList.Arguments.Count == qualifiedGeneric.TypeArgumentList.Arguments.Count)
+                // Type arguments are qualified separately, so that they keep their own form. The generic segments of
+                // the original name correspond to the trailing generic segments of the qualified name.
+                var originalGenerics = name.DescendantNodesAndSelf(node => node is NameSyntax).OfType<GenericNameSyntax>().ToList();
+                var qualifiedGenerics = qualifiedName.DescendantNodesAndSelf(node => node is NameSyntax).OfType<GenericNameSyntax>().ToList();
+                var replacements = new Dictionary<TypeArgumentListSyntax, TypeArgumentListSyntax>();
+                for (int i = 1; i <= originalGenerics.Count && i <= qualifiedGenerics.Count; i++)
                 {
-                    var typeArguments = (TypeArgumentListSyntax)this.QualifyTypeArgumentsInAliasTarget(originalGeneric.TypeArgumentList);
-                    qualifiedName = qualifiedName.ReplaceNode(qualifiedGeneric.TypeArgumentList, typeArguments);
+                    var originalGeneric = originalGenerics[originalGenerics.Count - i];
+                    var qualifiedGeneric = qualifiedGenerics[qualifiedGenerics.Count - i];
+                    if (originalGeneric.Identifier.ValueText != qualifiedGeneric.Identifier.ValueText
+                        || originalGeneric.TypeArgumentList.Arguments.Count != qualifiedGeneric.TypeArgumentList.Arguments.Count)
+                    {
+                        break;
+                    }
+
+                    replacements[qualifiedGeneric.TypeArgumentList] = (TypeArgumentListSyntax)this.QualifyTypeArgumentsInAliasTarget(originalGeneric.TypeArgumentList);
                 }
 
-                return qualifiedName;
+                return qualifiedName.ReplaceNodes(replacements.Keys, (originalNode, rewrittenNode) => replacements[originalNode]);
+            }
+
+            private bool IsExternAliasQualified(NameSyntax name)
+            {
+                NameSyntax leftmost = name;
+                while (leftmost is QualifiedNameSyntax qualifiedName)
+                {
+                    leftmost = qualifiedName.Left;
+                }
+
+                // Only an extern alias needs to be preserved; a using alias is not visible from the target of another
+                // alias in the same using block, so names qualified with one are fully qualified instead.
+                return leftmost is AliasQualifiedNameSyntax aliasQualifiedName
+                    && !aliasQualifiedName.Alias.Identifier.IsKind(SyntaxKind.GlobalKeyword)
+                    && this.semanticModel.GetAliasInfo(aliasQualifiedName.Alias, CancellationToken.None) is IAliasSymbol alias
+                    && !alias.DeclaringSyntaxReferences.Any(reference => reference.GetSyntax() is UsingDirectiveSyntax);
             }
 
             private SyntaxNode QualifyTypeArgumentsInAliasTarget(SyntaxNode node)

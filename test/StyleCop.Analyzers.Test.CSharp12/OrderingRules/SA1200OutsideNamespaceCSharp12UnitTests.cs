@@ -239,6 +239,7 @@ namespace TestNamespace
     {|#0:using Items = corlib::System.String[];|}
     {|#1:using Lists = corlib::System.Collections.Generic.List<TestClass>[];|}
     {|#2:using Wrappers = Wrapper<corlib::System.String>[];|}
+    {|#3:using Nested = Outer<corlib::System.String>.Inner<int>[];|}
 
     public class TestClass
     {
@@ -247,11 +248,19 @@ namespace TestNamespace
     public class Wrapper<T>
     {
     }
+
+    public class Outer<T>
+    {
+        public class Inner<U>
+        {
+        }
+    }
 }
 ";
             var fixedTestCode = @"extern alias corlib;
 using Items = corlib::System.String[];
 using Lists = corlib::System.Collections.Generic.List<TestNamespace.TestClass>[];
+using Nested = TestNamespace.Outer<corlib::System.String>.Inner<int>[];
 using Wrappers = TestNamespace.Wrapper<corlib::System.String>[];
 
 namespace TestNamespace
@@ -262,6 +271,13 @@ namespace TestNamespace
 
     public class Wrapper<T>
     {
+    }
+
+    public class Outer<T>
+    {
+        public class Inner<U>
+        {
+        }
     }
 }
 ";
@@ -276,6 +292,7 @@ namespace TestNamespace
                     Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(0),
                     Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(1),
                     Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(2),
+                    Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(3),
                 },
             };
             test.SolutionTransforms.Add((solution, projectId) =>
@@ -296,6 +313,38 @@ namespace TestNamespace
             });
 
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestAliasAnyTypeWithUsingAliasQualifierIsQualifiedAsync()
+        {
+            var testCode = @"using NS = TestNamespace;
+
+namespace TestNamespace
+{
+    {|#0:using Items = NS::TestClass[];|}
+
+    public class TestClass
+    {
+    }
+}
+";
+            var fixedTestCode = @"using Items = global::TestNamespace.TestClass[];
+using NS = TestNamespace;
+
+namespace TestNamespace
+{
+    public class TestClass
+    {
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(
+                testCode,
+                new[] { Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(0) },
+                fixedTestCode,
+                CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
