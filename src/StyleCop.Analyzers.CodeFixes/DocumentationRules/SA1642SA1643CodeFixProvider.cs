@@ -157,6 +157,11 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return structDeclaration.TypeParameterList;
             }
 
+            if (typeDeclaration is InterfaceDeclarationSyntax interfaceDeclaration)
+            {
+                return interfaceDeclaration.TypeParameterList;
+            }
+
             if (RecordDeclarationSyntaxWrapper.IsInstance(typeDeclaration))
             {
                 var recordDeclaration = (RecordDeclarationSyntaxWrapper)typeDeclaration;
