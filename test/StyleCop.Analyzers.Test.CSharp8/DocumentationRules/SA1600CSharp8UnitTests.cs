@@ -18,6 +18,46 @@ namespace StyleCop.Analyzers.Test.CSharp8.DocumentationRules
         // Using 'Default' here makes sure that later test projects also run these tests with their own language version, without having to override this property
         protected override LanguageVersion LanguageVersion => LanguageVersion.Default;
 
+        [Theory]
+        [InlineData("")]
+        [InlineData("out ")]
+        [InlineData("in ")]
+        public async Task TestGenericInterfaceStaticConstructorCodeFixAsync(string variance)
+        {
+            var testCode = @"/// <summary>
+/// Test interface.
+/// </summary>
+/// <typeparam name=""T"">The type.</typeparam>
+public interface ITest<" + variance + @"T>
+{
+    static {|#0:ITest|}()
+    {
+    }
+}
+";
+            var fixedCode = @"/// <summary>
+/// Test interface.
+/// </summary>
+/// <typeparam name=""T"">The type.</typeparam>
+public interface ITest<" + variance + @"T>
+{
+    /// <summary>
+    /// Initializes static members of the <see cref=""ITest{T}""/> class.
+    /// </summary>
+    static ITest()
+    {
+    }
+}
+";
+
+            await new CSharpTest(this.LanguageVersion)
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics = { Diagnostic().WithLocation(0) },
+                FixedCode = fixedCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// The editorconfig interface setting does not disable general documentation requirements.
         /// </summary>

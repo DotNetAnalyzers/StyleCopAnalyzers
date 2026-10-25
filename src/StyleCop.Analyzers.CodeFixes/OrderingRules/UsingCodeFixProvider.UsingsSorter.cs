@@ -581,7 +581,7 @@ namespace StyleCop.Analyzers.OrderingRules
                     {
                         fullName = "global::System." + symbol.Name;
                     }
-                    else if (namedTypeSymbol.IsTupleType())
+                    else if (namedTypeSymbol.IsTupleType() && namedTypeSymbol.TupleUnderlyingTypeOrSelf().Arity > 0)
                     {
                         fullName = namedTypeSymbol.TupleUnderlyingTypeOrSelf().ToFullyQualifiedValueTupleDisplayString();
                     }
@@ -830,7 +830,7 @@ namespace StyleCop.Analyzers.OrderingRules
                         {
                             fullName = "global::System." + symbol.Name;
                         }
-                        else if (namedTypeSymbol.IsTupleType())
+                        else if (namedTypeSymbol.IsTupleType() && namedTypeSymbol.TupleUnderlyingTypeOrSelf().Arity > 0)
                         {
                             fullName = namedTypeSymbol.TupleUnderlyingTypeOrSelf().ToFullyQualifiedValueTupleDisplayString();
                         }

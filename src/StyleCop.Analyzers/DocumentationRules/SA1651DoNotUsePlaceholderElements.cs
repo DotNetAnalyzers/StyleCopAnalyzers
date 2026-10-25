@@ -122,6 +122,12 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             var rawDocumentation = declaration.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
+            if (string.IsNullOrEmpty(rawDocumentation))
+            {
+                // The include element is not part of the documentation of the containing member.
+                return false;
+            }
+
             var completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
             return completeDocumentation.DescendantNodesAndSelf().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.PlaceholderTag);
         }
