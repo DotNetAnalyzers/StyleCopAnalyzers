@@ -435,17 +435,33 @@ namespace StyleCop.Analyzers.OrderingRules
                 }
 
                 // Qualify the outermost names within the target. Type arguments of a generic name are qualified along
-                // with the name that contains them.
+                // with the name that contains them. Names qualified by an extern alias are left unchanged.
                 var names = target.DescendantNodes(node => !(node is NameSyntax))
                     .OfType<NameSyntax>()
-                    .Where(name => !name.IsKind(SyntaxKind.AliasQualifiedName))
+                    .Where(name => !name.IsKind(SyntaxKind.AliasQualifiedName) || ((AliasQualifiedNameSyntax)name).Alias.Identifier.IsKind(SyntaxKind.GlobalKeyword))
                     .ToList();
                 if (names.Count == 0)
                 {
                     return usingDirective;
                 }
 
-                return usingDirective.ReplaceNodes(names, (originalNode, rewrittenNode) => this.QualifyName(originalNode));
+                // The target is parsed again so that an expanded alias produces the same tree as the equivalent source
+                // text (for example, an array of an array alias becomes a single jagged array type).
+                var rewrittenTarget = target.ReplaceNodes(names, (originalNode, rewrittenNode) => this.QualifyNameInAliasTarget(originalNode));
+                return usingDirective.ReplaceNode(target, SyntaxFactory.ParseTypeName(rewrittenTarget.ToFullString()));
+            }
+
+            private TypeSyntax QualifyNameInAliasTarget(NameSyntax originalName)
+            {
+                // A reference to an alias of a type that cannot be written as a name (such as an array, pointer, or
+                // tuple type) is expanded to the syntax of that type, preserving tuple element names.
+                if (this.semanticModel.GetAliasInfo(originalName, CancellationToken.None)?.Target is ITypeSymbol aliasTarget
+                    && (!(aliasTarget is INamedTypeSymbol namedTarget) || namedTarget.IsTupleType()))
+                {
+                    return SyntaxFactory.ParseTypeName(aliasTarget.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)).WithTriviaFrom(originalName);
+                }
+
+                return this.QualifyName(originalName);
             }
 
             private NameSyntax QualifyName(NameSyntax originalName)
