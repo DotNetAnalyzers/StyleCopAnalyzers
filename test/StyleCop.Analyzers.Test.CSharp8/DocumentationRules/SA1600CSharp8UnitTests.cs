@@ -18,14 +18,17 @@ namespace StyleCop.Analyzers.Test.CSharp8.DocumentationRules
         // Using 'Default' here makes sure that later test projects also run these tests with their own language version, without having to override this property
         protected override LanguageVersion LanguageVersion => LanguageVersion.Default;
 
-        [Fact]
-        public async Task TestGenericInterfaceStaticConstructorCodeFixAsync()
+        [Theory]
+        [InlineData("")]
+        [InlineData("out ")]
+        [InlineData("in ")]
+        public async Task TestGenericInterfaceStaticConstructorCodeFixAsync(string variance)
         {
             var testCode = @"/// <summary>
 /// Test interface.
 /// </summary>
 /// <typeparam name=""T"">The type.</typeparam>
-public interface ITest<T>
+public interface ITest<" + variance + @"T>
 {
     static {|#0:ITest|}()
     {
@@ -36,7 +39,7 @@ public interface ITest<T>
 /// Test interface.
 /// </summary>
 /// <typeparam name=""T"">The type.</typeparam>
-public interface ITest<T>
+public interface ITest<" + variance + @"T>
 {
     /// <summary>
     /// Initializes static members of the <see cref=""ITest{T}""/> class.
