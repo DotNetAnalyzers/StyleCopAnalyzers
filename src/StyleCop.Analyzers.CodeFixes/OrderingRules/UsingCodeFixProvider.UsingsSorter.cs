@@ -387,6 +387,12 @@ namespace StyleCop.Analyzers.OrderingRules
             private UsingDirectiveSyntax QualifyUsingDirective(UsingDirectiveSyntax usingDirective)
             {
                 NameSyntax originalName = usingDirective.Name;
+                if (originalName == null)
+                {
+                    // The alias target is a type that is not a name, such as a tuple, array, or pointer type.
+                    return this.QualifyAliasTarget(usingDirective);
+                }
+
                 NameSyntax rewrittenName;
                 switch (originalName.Kind())
                 {
@@ -396,62 +402,8 @@ namespace StyleCop.Analyzers.OrderingRules
                     if (originalName.Parent.IsKind(SyntaxKind.UsingDirective)
                         || originalName.Parent.IsKind(SyntaxKind.TypeArgumentList))
                     {
-                        var symbol = this.semanticModel.GetSymbolInfo(originalName, cancellationToken: CancellationToken.None).Symbol;
-                        if (symbol == null)
-                        {
-                            rewrittenName = originalName;
-                            break;
-                        }
-
-                        if (symbol is INamespaceSymbol)
-                        {
-                            // TODO: Preserve inner trivia
-                            string fullName = symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-                            NameSyntax replacement = SyntaxFactory.ParseName(fullName);
-                            if (!originalName.DescendantNodesAndSelf().OfType<AliasQualifiedNameSyntax>().Any())
-                            {
-                                replacement = replacement.ReplaceNodes(
-                                    replacement.DescendantNodesAndSelf().OfType<AliasQualifiedNameSyntax>(),
-                                    (originalNode2, rewrittenNode2) => rewrittenNode2.Name);
-                            }
-
-                            rewrittenName = replacement.WithTriviaFrom(originalName);
-                            break;
-                        }
-                        else if (symbol is INamedTypeSymbol namedTypeSymbol)
-                        {
-                            // TODO: Preserve inner trivia
-                            // TODO: simplify after qualification
-                            string fullName;
-                            if (SpecialTypeHelper.IsPredefinedType(namedTypeSymbol.OriginalDefinition.SpecialType))
-                            {
-                                fullName = "global::System." + symbol.Name;
-                            }
-                            else if (namedTypeSymbol.IsTupleType())
-                            {
-                                fullName = namedTypeSymbol.TupleUnderlyingTypeOrSelf().ToFullyQualifiedValueTupleDisplayString();
-                            }
-                            else
-                            {
-                                fullName = symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-                            }
-
-                            NameSyntax replacement = SyntaxFactory.ParseName(fullName);
-                            if (!originalName.DescendantNodesAndSelf().OfType<AliasQualifiedNameSyntax>().Any())
-                            {
-                                replacement = replacement.ReplaceNodes(
-                                    replacement.DescendantNodesAndSelf().OfType<AliasQualifiedNameSyntax>(),
-                                    (originalNode2, rewrittenNode2) => rewrittenNode2.Name);
-                            }
-
-                            rewrittenName = replacement.WithTriviaFrom(originalName);
-                            break;
-                        }
-                        else
-                        {
-                            rewrittenName = originalName;
-                            break;
-                        }
+                        rewrittenName = this.QualifyName(originalName);
+                        break;
                     }
                     else
                     {
@@ -472,6 +424,84 @@ namespace StyleCop.Analyzers.OrderingRules
                 }
 
                 return usingDirective.ReplaceNode(originalName, rewrittenName);
+            }
+
+            private UsingDirectiveSyntax QualifyAliasTarget(UsingDirectiveSyntax usingDirective)
+            {
+                TypeSyntax? target = usingDirective.NamespaceOrType();
+                if (target == null)
+                {
+                    return usingDirective;
+                }
+
+                // Qualify the outermost names within the target. Type arguments of a generic name are qualified along
+                // with the name that contains them.
+                var names = target.DescendantNodes(node => !(node is NameSyntax))
+                    .OfType<NameSyntax>()
+                    .Where(name => !name.IsKind(SyntaxKind.AliasQualifiedName))
+                    .ToList();
+                if (names.Count == 0)
+                {
+                    return usingDirective;
+                }
+
+                return usingDirective.ReplaceNodes(names, (originalNode, rewrittenNode) => this.QualifyName(originalNode));
+            }
+
+            private NameSyntax QualifyName(NameSyntax originalName)
+            {
+                var symbol = this.semanticModel.GetSymbolInfo(originalName, cancellationToken: CancellationToken.None).Symbol;
+                if (symbol == null)
+                {
+                    return originalName;
+                }
+
+                if (symbol is INamespaceSymbol)
+                {
+                    // TODO: Preserve inner trivia
+                    string fullName = symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+                    NameSyntax replacement = SyntaxFactory.ParseName(fullName);
+                    if (!originalName.DescendantNodesAndSelf().OfType<AliasQualifiedNameSyntax>().Any())
+                    {
+                        replacement = replacement.ReplaceNodes(
+                            replacement.DescendantNodesAndSelf().OfType<AliasQualifiedNameSyntax>(),
+                            (originalNode2, rewrittenNode2) => rewrittenNode2.Name);
+                    }
+
+                    return replacement.WithTriviaFrom(originalName);
+                }
+                else if (symbol is INamedTypeSymbol namedTypeSymbol)
+                {
+                    // TODO: Preserve inner trivia
+                    // TODO: simplify after qualification
+                    string fullName;
+                    if (SpecialTypeHelper.IsPredefinedType(namedTypeSymbol.OriginalDefinition.SpecialType))
+                    {
+                        fullName = "global::System." + symbol.Name;
+                    }
+                    else if (namedTypeSymbol.IsTupleType())
+                    {
+                        fullName = namedTypeSymbol.TupleUnderlyingTypeOrSelf().ToFullyQualifiedValueTupleDisplayString();
+                    }
+                    else
+                    {
+                        fullName = symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+                    }
+
+                    NameSyntax replacement = SyntaxFactory.ParseName(fullName);
+                    if (!originalName.DescendantNodesAndSelf().OfType<AliasQualifiedNameSyntax>().Any())
+                    {
+                        replacement = replacement.ReplaceNodes(
+                            replacement.DescendantNodesAndSelf().OfType<AliasQualifiedNameSyntax>(),
+                            (originalNode2, rewrittenNode2) => rewrittenNode2.Name);
+                    }
+
+                    return replacement.WithTriviaFrom(originalName);
+                }
+                else
+                {
+                    return originalName;
+                }
             }
 
             private UsingDirectiveSyntax ExpandAliasReferences(UsingDirectiveSyntax usingDirective)
