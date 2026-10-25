@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.LayoutRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.LayoutRules;
     using StyleCop.Analyzers.Test.Helpers;
@@ -15,6 +16,51 @@ namespace StyleCop.Analyzers.Test.CSharp9.LayoutRules
 
     public partial class SA1500CSharp9UnitTests : SA1500CSharp8UnitTests
     {
+        [Fact]
+        public async Task TestTopLevelBlockAtStartOfFileAsync()
+        {
+            var testCode = @"{
+    System.Console.WriteLine();
+}
+";
+
+            await new CSharpTest
+            {
+                TestState =
+                {
+                    OutputKind = OutputKind.ConsoleApplication,
+                    Sources = { testCode },
+                },
+                FixedCode = testCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestTopLevelBlockAtStartOfFileSharingLineAsync()
+        {
+            var testCode = @"[|{|] System.Console.WriteLine();
+}
+";
+            var fixedCode = @"{
+    System.Console.WriteLine();
+}
+";
+
+            await new CSharpTest
+            {
+                TestState =
+                {
+                    OutputKind = OutputKind.ConsoleApplication,
+                    Sources = { testCode },
+                },
+                FixedState =
+                {
+                    OutputKind = OutputKind.ConsoleApplication,
+                    Sources = { fixedCode },
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Theory]
         [MemberData(nameof(CommonMemberData.RecordTypeDeclarationKeywords), MemberType = typeof(CommonMemberData))]
         [WorkItem(3272, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3272")]
