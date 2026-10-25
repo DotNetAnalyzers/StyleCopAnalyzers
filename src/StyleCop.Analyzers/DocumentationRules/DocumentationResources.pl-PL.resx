@@ -162,6 +162,9 @@
   <data name="StaticConstructorStandardTextFirstPart" xml:space="preserve">
     <value>Inicjalizuje statyczne składowe {0} </value>
   </data>
+  <data name="InterfaceStaticConstructorStandardTextFirstPart" xml:space="preserve">
+    <value>Inicjalizuje statyczne składowe {0} </value>
+  </data>
   <data name="StaticConstructorStandardTextSecondPart" xml:space="preserve">
     <value />
   </data>

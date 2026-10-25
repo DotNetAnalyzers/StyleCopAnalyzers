@@ -162,6 +162,9 @@
   <data name="StaticConstructorStandardTextFirstPart" xml:space="preserve">
     <value>Initialises static members of the </value>
   </data>
+  <data name="InterfaceStaticConstructorStandardTextFirstPart" xml:space="preserve">
+    <value>Initialises static members of the </value>
+  </data>
   <data name="StaticConstructorStandardTextSecondPart" xml:space="preserve">
     <value> {0}.</value>
   </data>

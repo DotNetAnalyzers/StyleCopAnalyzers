@@ -99,7 +99,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 if (methodDeclaration.Modifiers.Any(SyntaxKind.StaticKeyword))
                 {
                     return ImmutableArray.Create(
-                        string.Format(resourceManager.GetString(nameof(DocumentationResources.StaticConstructorStandardTextFirstPart), culture), typeKindText),
+                        string.Format(resourceManager.GetString(SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.GetStaticConstructorFirstPartResourceName(typeDeclaration), culture), typeKindText),
                         string.Format(resourceManager.GetString(nameof(DocumentationResources.StaticConstructorStandardTextSecondPart), culture), typeKindText));
                 }
                 else

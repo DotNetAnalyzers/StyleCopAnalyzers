@@ -720,6 +720,10 @@
   <data name="StaticConstructorStandardTextFirstPart" xml:space="preserve">
     <value>Initializes static members of the </value>
   </data>
+  <data name="InterfaceStaticConstructorStandardTextFirstPart" xml:space="preserve">
+    <value>Initializes static members of the </value>
+    <comment>Used instead of StaticConstructorStandardTextFirstPart for static constructors of interfaces, for languages where the article before the type word differs.</comment>
+  </data>
   <data name="StaticConstructorStandardTextSecondPart" xml:space="preserve">
     <value> {0}</value>
   </data>

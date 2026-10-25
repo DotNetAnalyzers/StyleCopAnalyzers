@@ -416,6 +416,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         public static string @SA1654Title => GetResourceString("SA1654Title")!;
         /// <summary>Initializes static members of the</summary>
         public static string @StaticConstructorStandardTextFirstPart => GetResourceString("StaticConstructorStandardTextFirstPart")!;
+        /// <summary>Initializes static members of the</summary>
+        public static string @InterfaceStaticConstructorStandardTextFirstPart => GetResourceString("InterfaceStaticConstructorStandardTextFirstPart")!;
         /// <summary>{0}</summary>
         public static string @StaticConstructorStandardTextSecondPart => GetResourceString("StaticConstructorStandardTextSecondPart")!;
         /// <summary>Gets or initializes</summary>

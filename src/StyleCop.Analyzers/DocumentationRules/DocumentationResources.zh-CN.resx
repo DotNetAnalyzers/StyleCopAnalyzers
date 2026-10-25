@@ -661,6 +661,9 @@
   <data name="StaticConstructorStandardTextFirstPart" xml:space="preserve">
     <value>初始化 </value>
   </data>
+  <data name="InterfaceStaticConstructorStandardTextFirstPart" xml:space="preserve">
+    <value>初始化 </value>
+  </data>
   <data name="StaticConstructorStandardTextSecondPart" xml:space="preserve">
     <value> {0}的静态成员</value>
   </data>
