@@ -371,5 +371,35 @@ public class TestClass
                 CompilerDiagnostics = CompilerDiagnostics.None,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that the code fix completes when an accessor's open brace has no matching close brace.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestCodeFixWithUnmatchedAccessorOpenBraceAsync()
+        {
+            var testCode = @"class Foo
+{
+    public int Bar
+    {
+        get [|{|] return 0;
+";
+            var fixedCode = @"class Foo
+{
+    public int Bar
+    {
+        get
+        {
+            return 0;
+";
+
+            await new CSharpTest(LanguageVersion.CSharp7_3.OrLaterDefault())
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                CompilerDiagnostics = CompilerDiagnostics.None,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
