@@ -27,7 +27,7 @@
          includes the fix. Move to a stable release on nuget.org once one with the fix ships. -->
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" VersionOverride="5.11.0-1.26512.2" />
     <!-- Required by the Workspaces preview above to avoid NU1605. Remove together with that preview. -->
-    <PackageReference Update="Microsoft.CodeAnalysis.Analyzers" VersionOverride="5.11.0-1.26521.10" />
+    <PackageReference Update="Microsoft.CodeAnalysis.Analyzers" VersionOverride="5.11.0-1.26525.1" />
     <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
   </ItemGroup>
 
