@@ -727,6 +727,9 @@
   <data name="StaticConstructorStandardTextSecondPart" xml:space="preserve">
     <value> {0}</value>
   </data>
+  <data name="InterfaceStaticConstructorStandardTextSecondPart" xml:space="preserve">
+    <value> {0}</value>
+  </data>
   <data name="StartingTextGetsOrInitializes" xml:space="preserve">
     <value>Gets or initializes</value>
   </data>

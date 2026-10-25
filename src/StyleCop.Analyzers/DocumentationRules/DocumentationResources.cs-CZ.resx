@@ -180,6 +180,9 @@
   <data name="StaticConstructorStandardTextSecondPart" xml:space="preserve">
     <value/>
   </data>
+  <data name="InterfaceStaticConstructorStandardTextSecondPart" xml:space="preserve">
+    <value/>
+  </data>
   <data name="TypeTextClass" xml:space="preserve">
     <value>třídy</value>
   </data>

@@ -420,6 +420,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         public static string @InterfaceStaticConstructorStandardTextFirstPart => GetResourceString("InterfaceStaticConstructorStandardTextFirstPart")!;
         /// <summary>{0}</summary>
         public static string @StaticConstructorStandardTextSecondPart => GetResourceString("StaticConstructorStandardTextSecondPart")!;
+        /// <summary>{0}</summary>
+        public static string @InterfaceStaticConstructorStandardTextSecondPart => GetResourceString("InterfaceStaticConstructorStandardTextSecondPart")!;
         /// <summary>Gets or initializes</summary>
         public static string @StartingTextGetsOrInitializes => GetResourceString("StartingTextGetsOrInitializes")!;
         /// <summary>A</summary>

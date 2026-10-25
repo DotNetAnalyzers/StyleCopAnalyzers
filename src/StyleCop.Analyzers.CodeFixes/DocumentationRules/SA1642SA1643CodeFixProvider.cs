@@ -100,7 +100,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 {
                     return ImmutableArray.Create(
                         string.Format(resourceManager.GetString(SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.GetStaticConstructorFirstPartResourceName(typeDeclaration), culture), typeKindText),
-                        string.Format(resourceManager.GetString(nameof(DocumentationResources.StaticConstructorStandardTextSecondPart), culture), typeKindText));
+                        string.Format(resourceManager.GetString(SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.GetStaticConstructorSecondPartResourceName(typeDeclaration), culture), typeKindText));
                 }
                 else
                 {

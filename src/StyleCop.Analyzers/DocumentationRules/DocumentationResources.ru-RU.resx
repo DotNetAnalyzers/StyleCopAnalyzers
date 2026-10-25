@@ -207,6 +207,9 @@
   <data name="StaticConstructorStandardTextSecondPart" xml:space="preserve">
     <value />
   </data>
+  <data name="InterfaceStaticConstructorStandardTextSecondPart" xml:space="preserve">
+    <value />
+  </data>
   <data name="TaskReturnElementFirstPart" xml:space="preserve">
     <value>Объект </value>
   </data>

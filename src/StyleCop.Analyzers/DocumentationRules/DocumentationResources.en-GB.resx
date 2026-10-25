@@ -168,6 +168,9 @@
   <data name="StaticConstructorStandardTextSecondPart" xml:space="preserve">
     <value> {0}.</value>
   </data>
+  <data name="InterfaceStaticConstructorStandardTextSecondPart" xml:space="preserve">
+    <value> {0}.</value>
+  </data>
   <data name="TypeTextClass" xml:space="preserve">
     <value>class</value>
   </data>

@@ -667,6 +667,9 @@
   <data name="StaticConstructorStandardTextSecondPart" xml:space="preserve">
     <value> {0}的静态成员</value>
   </data>
+  <data name="InterfaceStaticConstructorStandardTextSecondPart" xml:space="preserve">
+    <value> {0}的静态成员</value>
+  </data>
   <data name="StartingTextGetsOrInitializes" xml:space="preserve">
     <value>获取或初始化</value>
   </data>
