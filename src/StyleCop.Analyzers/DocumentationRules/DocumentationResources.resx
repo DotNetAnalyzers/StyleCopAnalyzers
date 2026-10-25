@@ -741,6 +741,9 @@
   <data name="TypeTextUnion" xml:space="preserve">
     <value>union</value>
   </data>
+  <data name="TypeTextInterface" xml:space="preserve">
+    <value>interface</value>
+  </data>
   <data name="StartingTextGetsOrInitializesWhether" xml:space="preserve">
     <value>Gets or initializes a value indicating whether</value>
   </data>

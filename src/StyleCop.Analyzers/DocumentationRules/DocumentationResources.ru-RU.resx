@@ -219,6 +219,9 @@
   <data name="TypeTextUnion" xml:space="preserve">
     <value>объединения</value>
   </data>
+  <data name="TypeTextInterface" xml:space="preserve">
+    <value>интерфейса</value>
+  </data>
   <data name="StartingTextGetsOrInitializes" xml:space="preserve">
     <value>Возвращает или инициализирует</value>
   </data>

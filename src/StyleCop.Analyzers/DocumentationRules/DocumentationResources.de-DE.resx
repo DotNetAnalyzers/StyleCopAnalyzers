@@ -174,6 +174,9 @@
   <data name="TypeTextUnion" xml:space="preserve">
     <value>Union</value>
   </data>
+  <data name="TypeTextInterface" xml:space="preserve">
+    <value>Schnittstelle</value>
+  </data>
   <data name="StartingTextGetsOrInitializes" xml:space="preserve">
     <value>Holt oder initialisiert</value>
   </data>

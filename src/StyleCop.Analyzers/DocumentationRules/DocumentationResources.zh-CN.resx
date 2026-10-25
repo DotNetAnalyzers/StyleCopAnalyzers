@@ -682,6 +682,9 @@
   <data name="TypeTextUnion" xml:space="preserve">
     <value>联合</value>
   </data>
+  <data name="TypeTextInterface" xml:space="preserve">
+    <value>接口</value>
+  </data>
   <data name="StartingTextGetsOrInitializesWhether" xml:space="preserve">
     <value>获取或初始化一个值，该值指示是否</value>
   </data>

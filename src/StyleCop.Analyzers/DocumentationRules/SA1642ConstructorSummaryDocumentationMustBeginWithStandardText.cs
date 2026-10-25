@@ -141,6 +141,11 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return nameof(DocumentationResources.TypeTextStruct);
             }
 
+            if (typeDeclaration.IsKind(SyntaxKind.InterfaceDeclaration))
+            {
+                return nameof(DocumentationResources.TypeTextInterface);
+            }
+
             return nameof(DocumentationResources.TypeTextClass);
         }
 
