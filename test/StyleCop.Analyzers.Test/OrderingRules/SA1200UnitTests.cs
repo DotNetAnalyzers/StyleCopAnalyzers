@@ -205,6 +205,32 @@ namespace TestNamespace
         }
 
         [Fact]
+        public async Task TestCodeFixWithNonGenericValueTupleAliasWithoutNamespaceAsync()
+        {
+            var testCode = @"{|#0:using VT = System.ValueTuple;|}
+{|#1:using System;|}
+";
+            var fixedCode = @"{|#0:using System;|}
+{|#1:using VT = System.ValueTuple;|}
+";
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(0),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(1),
+            };
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                NumberOfFixAllIterations = 2,
+            };
+            test.ExpectedDiagnostics.AddRange(expected);
+            test.FixedState.ExpectedDiagnostics.AddRange(expected);
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(1931, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1931")]
         public async Task TestExternAliasWithDuplicateNamespaceAliasIsDiagnosedAsync()
         {
