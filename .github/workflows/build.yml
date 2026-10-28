@@ -58,7 +58,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v7
       with:
-        node-version: '24'
+        node-version: '26'
 
     - name: Download rule status report
       uses: actions/download-artifact@v8
@@ -111,7 +111,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v7
       with:
-        node-version: '24'
+        node-version: '26'
     - name: Test status page
       run: node --test build/status-page.test.cjs
 
