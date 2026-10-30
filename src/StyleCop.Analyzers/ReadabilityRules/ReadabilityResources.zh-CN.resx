@@ -579,6 +579,9 @@
   <data name="SA1143CodeFixChain" xml:space="preserve">
     <value>将连续的条件表达式放在单独的行中并对齐</value>
   </data>
+  <data name="SA1143CodeFixAlignBranchDelimiters" xml:space="preserve">
+    <value>对齐多行条件分支中的结束括号</value>
+  </data>
   <data name="SA1143Description" xml:space="preserve">
     <value>条件表达式应位于同一行，或使用以“?”和“:”开头的缩进行，或对连续条件使用对齐的行。</value>
   </data>

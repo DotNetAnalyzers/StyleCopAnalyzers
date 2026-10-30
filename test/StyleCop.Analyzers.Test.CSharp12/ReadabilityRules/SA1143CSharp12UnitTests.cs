@@ -263,4 +263,47 @@ public partial class SA1143CSharp12UnitTests : SA1143CSharp11UnitTests
         test.ExpectedDiagnostics.AddRange(new[] { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1) });
         await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
     }
+
+    /// <summary>
+    /// Verifies alignment when a collection element shares the conditional expression's span.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    [Fact]
+    public async Task TestDelimiterAlignmentInCollectionElementAsync()
+    {
+        const string source = """
+            class C
+            {
+                int[][] M(bool condition) =>
+                    [
+                        condition
+                            {|#0:?|} [
+                                1,
+                            ]
+                            : [],
+                    ];
+            }
+            """;
+        const string fixedSource = """
+            class C
+            {
+                int[][] M(bool condition) =>
+                    [
+                        condition
+                            ? [
+                                1,
+                              ]
+                            : [],
+                    ];
+            }
+            """;
+        var test = new CSharpTest
+        {
+            TestCode = source,
+            FixedCode = fixedSource,
+            CodeActionEquivalenceKey = "AlignBranchDelimiters",
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
+        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
 }

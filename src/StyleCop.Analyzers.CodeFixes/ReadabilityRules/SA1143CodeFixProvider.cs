@@ -100,19 +100,11 @@ internal class SA1143CodeFixProvider : CodeFixProvider
         }
 
         var changes = new List<TextChange>();
-        var current = expression;
-        while (true)
+        foreach (var conditional in expression.DescendantNodesAndSelf(descendIntoChildren: node => !(node is InterpolatedStringExpressionSyntax)).OfType<ConditionalExpressionSyntax>())
         {
             cancellationToken.ThrowIfCancellationRequested();
-            AddDelimiterAlignmentChanges(current.WhenTrue, current.QuestionToken, text, settings, changes);
-            if (current.WhenFalse is ConditionalExpressionSyntax next)
-            {
-                current = next;
-                continue;
-            }
-
-            AddDelimiterAlignmentChanges(current.WhenFalse, current.ColonToken, text, settings, changes);
-            break;
+            AddDelimiterAlignmentChanges(conditional.WhenTrue, conditional.QuestionToken, text, settings, changes);
+            AddDelimiterAlignmentChanges(conditional.WhenFalse, conditional.ColonToken, text, settings, changes);
         }
 
         if (changes.Count == 0)
@@ -123,7 +115,7 @@ internal class SA1143CodeFixProvider : CodeFixProvider
         var alignedText = text.WithChanges(changes.OrderBy(change => change.Span.Start));
         var alignedRoot = expression.SyntaxTree.WithChangedText(alignedText).GetRoot(cancellationToken);
         var alignedSpan = new TextSpan(expression.SpanStart, expression.Span.Length + alignedText.Length - text.Length);
-        var alignedExpression = (ConditionalExpressionSyntax)alignedRoot.FindNode(alignedSpan);
+        var alignedExpression = (ConditionalExpressionSyntax)alignedRoot.FindNode(alignedSpan, getInnermostNodeForTie: true);
 
         // Nested diagnostics share this action, so the complete replacement must satisfy the rule.
         foreach (var conditional in alignedExpression.DescendantNodesAndSelf().OfType<ConditionalExpressionSyntax>())
@@ -147,7 +139,7 @@ internal class SA1143CodeFixProvider : CodeFixProvider
     private static void AddDelimiterAlignmentChanges(ExpressionSyntax branch, SyntaxToken operatorToken, SourceText text, IndentationSettings settings, List<TextChange> changes)
     {
         var operatorColumn = SA1143ConditionalExpressionsMustBeFormattedConsistently.GetColumn(text, operatorToken.SpanStart, settings.TabSize);
-        foreach (var node in branch.DescendantNodesAndSelf(descendIntoChildren: node => !(node is InterpolatedStringExpressionSyntax)))
+        foreach (var node in branch.DescendantNodesAndSelf(descendIntoChildren: node => !(node is InterpolatedStringExpressionSyntax) && !(node is ConditionalExpressionSyntax)))
         {
             SyntaxToken open;
             SyntaxToken close;

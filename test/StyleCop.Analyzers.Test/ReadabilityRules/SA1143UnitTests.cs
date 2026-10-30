@@ -832,4 +832,106 @@ public class SA1143UnitTests
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
         await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
     }
+
+    /// <summary>
+    /// Verifies alignment when an unnamed invocation argument shares the conditional's span.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    [Fact]
+    public async Task TestDelimiterAlignmentInInvocationArgumentAsync()
+    {
+        const string source = """
+            class C
+            {
+                void M(bool condition)
+                {
+                    M(condition
+                        {|#0:?|} (
+                            true
+                        )
+                        : false);
+                }
+            }
+            """;
+        const string fixedSource = """
+            class C
+            {
+                void M(bool condition)
+                {
+                    M(condition
+                        ? (
+                            true
+                          )
+                        : false);
+                }
+            }
+            """;
+        var test = new CSharpTest
+        {
+            TestCode = source,
+            FixedCode = fixedSource,
+            CodeActionEquivalenceKey = "AlignBranchDelimiters",
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
+        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Verifies that nested true branches and parenthesized false branches use their own operators.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    [Fact]
+    public async Task TestNestedConditionalBranchDelimiterAlignmentAsync()
+    {
+        const string source = """
+            class C
+            {
+                int[] M(bool condition)
+                {
+                    return condition
+                        ? condition
+                            {|#1:?|} new[]
+                            {
+                                1,
+                          }
+                            : null
+                        : (condition
+                            {|#2:?|} null
+                            : new[]
+                            {
+                                2,
+                          });
+                }
+            }
+            """;
+        const string fixedSource = """
+            class C
+            {
+                int[] M(bool condition)
+                {
+                    return condition
+                        ? condition
+                            ? new[]
+                            {
+                                1,
+                            }
+                            : null
+                        : (condition
+                            ? null
+                            : new[]
+                            {
+                                2,
+                            });
+                }
+            }
+            """;
+        var test = new CSharpTest
+        {
+            TestCode = source,
+            FixedCode = fixedSource,
+            CodeActionEquivalenceKey = "AlignBranchDelimiters",
+        };
+        test.ExpectedDiagnostics.AddRange(new[] { Diagnostic().WithLocation(1), Diagnostic().WithLocation(2) });
+        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
 }
