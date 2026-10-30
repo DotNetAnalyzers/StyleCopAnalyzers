@@ -73,4 +73,56 @@ public partial class SA1143CSharp7UnitTests : SA1143UnitTests
             """;
         await VerifyCSharpDiagnosticAsync(source, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
     }
+
+    /// <summary>
+    /// Verifies that tuple delimiters are aligned without collapsing tuple elements.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    [Fact]
+    [WorkItem(4390, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4390")]
+    public async Task TestTupleBranchDelimiterAlignmentAsync()
+    {
+        const string source = """
+            class C
+            {
+                (int, int) M(bool condition)
+                {
+                    return condition
+                        {|#0:?|} (
+                            1, // first
+                            2
+                        )
+                        : (
+                            3,
+                            4
+                        );
+                }
+            }
+            """;
+        const string fixedSource = """
+            class C
+            {
+                (int, int) M(bool condition)
+                {
+                    return condition
+                        ? (
+                            1, // first
+                            2
+                          )
+                        : (
+                            3,
+                            4
+                          );
+                }
+            }
+            """;
+        var test = new CSharpTest
+        {
+            TestCode = source,
+            FixedCode = fixedSource,
+            CodeActionEquivalenceKey = "AlignBranchDelimiters",
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
+        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
 }

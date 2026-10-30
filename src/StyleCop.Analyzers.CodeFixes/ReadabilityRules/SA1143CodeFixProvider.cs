@@ -16,6 +16,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using StyleCop.Analyzers.Helpers;
+using StyleCop.Analyzers.Lightup;
 using StyleCop.Analyzers.Settings.ObjectModel;
 
 /// <summary>
@@ -47,31 +48,162 @@ internal class SA1143CodeFixProvider : CodeFixProvider
         {
             // Nested diagnostics must produce the same edit so Fix All cannot re-expand an inner branch.
             var expression = root.FindToken(diagnostic.Location.SourceSpan.Start).Parent?.AncestorsAndSelf().OfType<ConditionalExpressionSyntax>().LastOrDefault();
-            if (expression == null || !CanFormat(expression, text))
+            if (expression == null)
             {
                 continue;
             }
 
-            context.RegisterCodeFix(
-                CodeAction.Create(
-                    ReadabilityResources.SA1143CodeFixSingleLine,
-                    cancellationToken => FormatAsync(context.Document, expression, Layout.SingleLine, cancellationToken),
-                    nameof(Layout.SingleLine)),
-                diagnostic);
-            context.RegisterCodeFix(
-                CodeAction.Create(
-                    ReadabilityResources.SA1143CodeFixMultiLine,
-                    cancellationToken => FormatAsync(context.Document, expression, Layout.Expanded, cancellationToken),
-                    nameof(Layout.Expanded)),
-                diagnostic);
-            if (expression.WhenFalse is ConditionalExpressionSyntax)
+            if (CanFormat(expression, text))
             {
                 context.RegisterCodeFix(
                     CodeAction.Create(
-                        ReadabilityResources.SA1143CodeFixChain,
-                        cancellationToken => FormatAsync(context.Document, expression, Layout.Chain, cancellationToken),
-                        nameof(Layout.Chain)),
+                        ReadabilityResources.SA1143CodeFixSingleLine,
+                        cancellationToken => FormatAsync(context.Document, expression, Layout.SingleLine, cancellationToken),
+                        nameof(Layout.SingleLine)),
                     diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        ReadabilityResources.SA1143CodeFixMultiLine,
+                        cancellationToken => FormatAsync(context.Document, expression, Layout.Expanded, cancellationToken),
+                        nameof(Layout.Expanded)),
+                    diagnostic);
+                if (expression.WhenFalse is ConditionalExpressionSyntax)
+                {
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            ReadabilityResources.SA1143CodeFixChain,
+                            cancellationToken => FormatAsync(context.Document, expression, Layout.Chain, cancellationToken),
+                            nameof(Layout.Chain)),
+                        diagnostic);
+                }
+            }
+
+            var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(context.Document.Project.AnalyzerOptions, expression.SyntaxTree, context.CancellationToken);
+            var alignedText = GetAlignedBranchText(expression, text, settings.Indentation, context.CancellationToken);
+            if (alignedText != null)
+            {
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        ReadabilityResources.SA1143CodeFixAlignBranchDelimiters,
+                        cancellationToken => Task.FromResult(context.Document.WithText(alignedText)),
+                        "AlignBranchDelimiters"),
+                    diagnostic);
+            }
+        }
+    }
+
+    private static SourceText? GetAlignedBranchText(ConditionalExpressionSyntax expression, SourceText text, IndentationSettings settings, CancellationToken cancellationToken)
+    {
+        if (expression.ContainsDiagnostics || expression.ContainsDirectives)
+        {
+            return null;
+        }
+
+        var changes = new List<TextChange>();
+        var current = expression;
+        while (true)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            AddDelimiterAlignmentChanges(current.WhenTrue, current.QuestionToken, text, settings, changes);
+            if (current.WhenFalse is ConditionalExpressionSyntax next)
+            {
+                current = next;
+                continue;
+            }
+
+            AddDelimiterAlignmentChanges(current.WhenFalse, current.ColonToken, text, settings, changes);
+            break;
+        }
+
+        if (changes.Count == 0)
+        {
+            return null;
+        }
+
+        var alignedText = text.WithChanges(changes.OrderBy(change => change.Span.Start));
+        var alignedRoot = expression.SyntaxTree.WithChangedText(alignedText).GetRoot(cancellationToken);
+        var alignedSpan = new TextSpan(expression.SpanStart, expression.Span.Length + alignedText.Length - text.Length);
+        var alignedExpression = (ConditionalExpressionSyntax)alignedRoot.FindNode(alignedSpan);
+
+        // Nested diagnostics share this action, so the complete replacement must satisfy the rule.
+        foreach (var conditional in alignedExpression.DescendantNodesAndSelf().OfType<ConditionalExpressionSyntax>())
+        {
+            if (conditional.Parent is ConditionalExpressionSyntax parent && parent.WhenFalse == conditional)
+            {
+                continue;
+            }
+
+            var span = conditional.GetLineSpan();
+            if (span.StartLinePosition.Line != span.EndLinePosition.Line
+                && !SA1143ConditionalExpressionsMustBeFormattedConsistently.IsMultilineLayoutValid(conditional, alignedText, settings.TabSize))
+            {
+                return null;
+            }
+        }
+
+        return alignedText;
+    }
+
+    private static void AddDelimiterAlignmentChanges(ExpressionSyntax branch, SyntaxToken operatorToken, SourceText text, IndentationSettings settings, List<TextChange> changes)
+    {
+        var operatorColumn = SA1143ConditionalExpressionsMustBeFormattedConsistently.GetColumn(text, operatorToken.SpanStart, settings.TabSize);
+        foreach (var node in branch.DescendantNodesAndSelf(descendIntoChildren: node => !(node is InterpolatedStringExpressionSyntax)))
+        {
+            SyntaxToken open;
+            SyntaxToken close;
+            switch (node)
+            {
+            case InitializerExpressionSyntax initializer:
+                open = initializer.OpenBraceToken;
+                close = initializer.CloseBraceToken;
+                break;
+
+            case ParenthesizedExpressionSyntax parenthesized:
+                open = parenthesized.OpenParenToken;
+                close = parenthesized.CloseParenToken;
+                break;
+
+            default:
+                if (CollectionExpressionSyntaxWrapper.IsInstance(node))
+                {
+                    var collection = (CollectionExpressionSyntaxWrapper)node;
+                    open = collection.OpenBracketToken;
+                    close = collection.CloseBracketToken;
+                }
+                else if (TupleExpressionSyntaxWrapper.IsInstance(node))
+                {
+                    var tuple = (TupleExpressionSyntaxWrapper)node;
+                    open = tuple.OpenParenToken;
+                    close = tuple.CloseParenToken;
+                }
+                else
+                {
+                    continue;
+                }
+
+                break;
+            }
+
+            var line = text.Lines.GetLineFromPosition(close.SpanStart);
+            if (line.LineNumber == text.Lines.GetLineFromPosition(open.SpanStart).LineNumber
+                || !close.IsFirstInLine(allowNonWhitespaceTrivia: false)
+                || close.GetPreviousToken().Span.End > line.Start)
+            {
+                continue;
+            }
+
+            var indentationSpan = TextSpan.FromBounds(line.Start, close.SpanStart);
+            var indentation = text.ToString(indentationSpan);
+            var column = SA1143ConditionalExpressionsMustBeFormattedConsistently.GetColumn(text, close.SpanStart, settings.TabSize);
+            if (column > operatorColumn || (column == operatorColumn && close.IsKind(SyntaxKind.CloseBraceToken)))
+            {
+                continue;
+            }
+
+            var alignment = GenerateAlignment(SA1143ConditionalExpressionsMustBeFormattedConsistently.GetColumn(text, open.SpanStart, settings.TabSize), settings);
+            if (alignment != indentation)
+            {
+                changes.Add(new TextChange(indentationSpan, alignment));
             }
         }
     }

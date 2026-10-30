@@ -579,6 +579,9 @@
   <data name="SA1143CodeFixChain" xml:space="preserve">
     <value>Align chained conditional expressions on separate lines</value>
   </data>
+  <data name="SA1143CodeFixAlignBranchDelimiters" xml:space="preserve">
+    <value>Align closing delimiters in multiline conditional branches</value>
+  </data>
   <data name="SA1143Description" xml:space="preserve">
     <value>A conditional expression should occupy one line, use indented lines beginning with '?' and ':', or use aligned lines for chained conditions.</value>
   </data>
