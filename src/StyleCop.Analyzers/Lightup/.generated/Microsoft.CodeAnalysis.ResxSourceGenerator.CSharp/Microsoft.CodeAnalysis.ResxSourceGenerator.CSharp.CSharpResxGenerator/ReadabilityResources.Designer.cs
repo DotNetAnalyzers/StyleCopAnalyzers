@@ -322,6 +322,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         public static string @SA1143CodeFixMultiLine => GetResourceString("SA1143CodeFixMultiLine")!;
         /// <summary>Align chained conditional expressions on separate lines</summary>
         public static string @SA1143CodeFixChain => GetResourceString("SA1143CodeFixChain")!;
+        /// <summary>Align closing delimiters in multiline conditional branches</summary>
+        public static string @SA1143CodeFixAlignBranchDelimiters => GetResourceString("SA1143CodeFixAlignBranchDelimiters")!;
         /// <summary>A conditional expression should occupy one line, use indented lines beginning with '?' and ':', or use aligned lines for chained conditions.</summary>
         public static string @SA1143Description => GetResourceString("SA1143Description")!;
         /// <summary>Conditional expressions must be formatted consistently</summary>

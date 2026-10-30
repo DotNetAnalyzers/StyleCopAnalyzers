@@ -62,6 +62,11 @@ internal class SA1143ConditionalExpressionsMustBeFormattedConsistently : Diagnos
         return column;
     }
 
+    internal static bool IsMultilineLayoutValid(ConditionalExpressionSyntax expression, SourceText text, int tabSize)
+    {
+        return IsExpanded(expression, text, tabSize) || IsChain(expression, text, tabSize);
+    }
+
     private static void HandleConditional(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
     {
         var expression = (ConditionalExpressionSyntax)context.Node;
@@ -77,8 +82,7 @@ internal class SA1143ConditionalExpressionsMustBeFormattedConsistently : Diagnos
         }
 
         var text = context.Node.SyntaxTree.GetText(context.CancellationToken);
-        if (!IsExpanded(expression, text, settings.Indentation.TabSize)
-            && !IsChain(expression, text, settings.Indentation.TabSize))
+        if (!IsMultilineLayoutValid(expression, text, settings.Indentation.TabSize))
         {
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, expression.QuestionToken.GetLocation()));
         }

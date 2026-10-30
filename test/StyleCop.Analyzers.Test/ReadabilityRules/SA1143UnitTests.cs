@@ -559,4 +559,379 @@ public class SA1143UnitTests
         test.ExpectedDiagnostics.AddRange(new[] { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1) });
         await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
     }
+
+    /// <summary>
+    /// Verifies that aligning an initializer preserves comments, blank lines, and multiline literals.
+    /// </summary>
+    /// <param name="lineEnding">The newline convention.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    [Theory]
+    [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
+    [WorkItem(4390, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4390")]
+    public async Task TestArrayInitializerDelimiterAlignmentAsync(string lineEnding)
+    {
+        var source = """
+            class C
+            {
+                string[] M(bool condition)
+                {
+                    return condition // condition
+                        {|#0:?|} new[]
+                        {
+                            // Keep these delimiters: ] ) }
+                            @"first
+            second",
+                            $@"third
+            {1}",
+
+                            /* keep
+                               this too */
+                            "last",
+                    } // closing brace
+                        : null;
+                }
+            }
+            """.ReplaceLineEndings(lineEnding);
+        var fixedSource = """
+            class C
+            {
+                string[] M(bool condition)
+                {
+                    return condition // condition
+                        ? new[]
+                        {
+                            // Keep these delimiters: ] ) }
+                            @"first
+            second",
+                            $@"third
+            {1}",
+
+                            /* keep
+                               this too */
+                            "last",
+                        } // closing brace
+                        : null;
+                }
+            }
+            """.ReplaceLineEndings(lineEnding);
+        var test = new CSharpTest
+        {
+            TestCode = source,
+            FixedCode = fixedSource,
+            CodeActionEquivalenceKey = "AlignBranchDelimiters",
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
+        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Verifies that object and collection initializer delimiters can be aligned in both branches.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    [Fact]
+    public async Task TestObjectAndCollectionInitializerDelimiterAlignmentAsync()
+    {
+        const string source = """
+            using System.Collections.Generic;
+            class C
+            {
+                public List<int> Values { get; set; }
+
+                C M(bool condition)
+                {
+                    return condition
+                        {|#0:?|} new C
+                        {
+                            Values = new List<int>
+                            {
+                                1,
+                    },
+                    }
+                        : new C
+                        {
+                            Values = null,
+                    };
+                }
+            }
+            """;
+        const string fixedSource = """
+            using System.Collections.Generic;
+            class C
+            {
+                public List<int> Values { get; set; }
+
+                C M(bool condition)
+                {
+                    return condition
+                        ? new C
+                        {
+                            Values = new List<int>
+                            {
+                                1,
+                            },
+                        }
+                        : new C
+                        {
+                            Values = null,
+                        };
+                }
+            }
+            """;
+        var test = new CSharpTest
+        {
+            TestCode = source,
+            FixedCode = fixedSource,
+            CodeActionEquivalenceKey = "AlignBranchDelimiters",
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
+        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Verifies that parentheses are aligned without changing the arithmetic inside them.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    [Fact]
+    public async Task TestParenthesizedBranchDelimiterAlignmentAsync()
+    {
+        const string source = """
+            class C
+            {
+                int M(bool condition)
+                {
+                    return condition
+                        {|#0:?|} (
+                            1 +
+                                2
+                        )
+                        : 3;
+                }
+            }
+            """;
+        const string fixedSource = """
+            class C
+            {
+                int M(bool condition)
+                {
+                    return condition
+                        ? (
+                            1 +
+                                2
+                          )
+                        : 3;
+                }
+            }
+            """;
+        var test = new CSharpTest
+        {
+            TestCode = source,
+            FixedCode = fixedSource,
+            CodeActionEquivalenceKey = "AlignBranchDelimiters",
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
+        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Verifies alignment throughout a false-branch chain and Fix All across independent expressions.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    [Fact]
+    public async Task TestBranchDelimiterAlignmentFixAllAsync()
+    {
+        const string source = """
+            class C
+            {
+                int[] M(bool condition)
+                {
+                    var first = condition
+                        {|#0:?|} new[]
+                        {
+                            1,
+                    }
+                        : null;
+                    return condition
+                        {|#1:?|} first
+                        : condition
+                            ? new[]
+                            {
+                                2,
+                        }
+                            : new[]
+                            {
+                                3,
+                        };
+                }
+            }
+            """;
+        const string fixedSource = """
+            class C
+            {
+                int[] M(bool condition)
+                {
+                    var first = condition
+                        ? new[]
+                        {
+                            1,
+                        }
+                        : null;
+                    return condition
+                        ? first
+                        : condition
+                            ? new[]
+                            {
+                                2,
+                            }
+                            : new[]
+                            {
+                                3,
+                            };
+                }
+            }
+            """;
+        var test = new CSharpTest
+        {
+            TestCode = source,
+            FixedCode = fixedSource,
+            CodeActionEquivalenceKey = "AlignBranchDelimiters",
+        };
+        test.ExpectedDiagnostics.AddRange(new[] { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1) });
+        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Verifies that alignment is not offered when it cannot resolve the violation.
+    /// </summary>
+    /// <param name="expression">The expression whose layout cannot be safely corrected by alignment.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    [Theory]
+    [InlineData("condition {|#0:?|} new[]\n            {\n                1,\n        } : null")]
+    [InlineData("condition\n            {|#0:?|} new[]\n            {\n            1,\n        }\n            : null")]
+    [InlineData("condition\n            {|#0:?|} new[]\n            {\n            1 }\n            : null")]
+    [InlineData("condition\n            {|#0:?|} new[]\n            {\n                1,\n        /* keep */ }\n            : null")]
+    [InlineData("condition {|#0:?|} new[]\n            {\n                1,\n            } : null")]
+    [InlineData("condition\n            {|#0:?|} new[]\n            {\n#if true\n                1,\n#endif\n        }\n            : null")]
+    [InlineData("condition\n            {|#0:?|} new[]\n        {\n                1,\n        }\n            : null")]
+    public async Task TestInapplicableBranchDelimiterAlignmentAsync(string expression)
+    {
+        var source = $$"""
+            class C
+            {
+                object M(bool condition)
+                {
+                    return {{expression}};
+                }
+            }
+            """;
+        var test = new CSharpTest
+        {
+            TestCode = source,
+            FixedCode = source,
+            CodeActionEquivalenceKey = "AlignBranchDelimiters",
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
+        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Verifies alignment when an unnamed invocation argument shares the conditional's span.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    [Fact]
+    public async Task TestDelimiterAlignmentInInvocationArgumentAsync()
+    {
+        const string source = """
+            class C
+            {
+                void M(bool condition)
+                {
+                    M(condition
+                        {|#0:?|} (
+                            true
+                        )
+                        : false);
+                }
+            }
+            """;
+        const string fixedSource = """
+            class C
+            {
+                void M(bool condition)
+                {
+                    M(condition
+                        ? (
+                            true
+                          )
+                        : false);
+                }
+            }
+            """;
+        var test = new CSharpTest
+        {
+            TestCode = source,
+            FixedCode = fixedSource,
+            CodeActionEquivalenceKey = "AlignBranchDelimiters",
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
+        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Verifies that nested true branches and parenthesized false branches use their own operators.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    [Fact]
+    public async Task TestNestedConditionalBranchDelimiterAlignmentAsync()
+    {
+        const string source = """
+            class C
+            {
+                int[] M(bool condition)
+                {
+                    return condition
+                        ? condition
+                            {|#1:?|} new[]
+                            {
+                                1,
+                          }
+                            : null
+                        : (condition
+                            {|#2:?|} null
+                            : new[]
+                            {
+                                2,
+                          });
+                }
+            }
+            """;
+        const string fixedSource = """
+            class C
+            {
+                int[] M(bool condition)
+                {
+                    return condition
+                        ? condition
+                            ? new[]
+                            {
+                                1,
+                            }
+                            : null
+                        : (condition
+                            ? null
+                            : new[]
+                            {
+                                2,
+                            });
+                }
+            }
+            """;
+        var test = new CSharpTest
+        {
+            TestCode = source,
+            FixedCode = fixedSource,
+            CodeActionEquivalenceKey = "AlignBranchDelimiters",
+        };
+        test.ExpectedDiagnostics.AddRange(new[] { Diagnostic().WithLocation(1), Diagnostic().WithLocation(2) });
+        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
 }
