@@ -20,13 +20,27 @@ namespace StyleCop.Analyzers.Test.Settings
     {
         private const string TestProjectName = "TestProject";
 
-        private static readonly ImmutableArray<AccessLevel> DefaultAccessibilityOrder = ImmutableArray.Create(
+        private static readonly string[] DefaultExcludeFromPunctuationCheck = ["seealso"];
+        private static readonly TopLevelType[] DefaultTopLevelTypes = [TopLevelType.Class];
+
+        private static readonly ImmutableArray<AccessLevel> DefaultAccessibilityOrder =
+        [
             AccessLevel.Public,
             AccessLevel.Internal,
             AccessLevel.ProtectedInternal,
             AccessLevel.Protected,
             AccessLevel.PrivateProtected,
-            AccessLevel.Private);
+            AccessLevel.Private,
+        ];
+
+        private static readonly OrderingTrait[] DefaultElementOrder =
+        [
+            OrderingTrait.Kind,
+            OrderingTrait.Accessibility,
+            OrderingTrait.Constant,
+            OrderingTrait.Static,
+            OrderingTrait.Readonly,
+        ];
 
         /// <summary>
         /// Verifies that proper defaults are returned when there are no additional files.
@@ -36,18 +50,36 @@ namespace StyleCop.Analyzers.Test.Settings
         {
             var styleCopSettings = SettingsHelper.GetStyleCopSettingsInTests(default(SyntaxTreeAnalysisContext), CancellationToken.None);
 
+            Assert.NotNull(styleCopSettings.DocumentationRules);
             Assert.Equal("PlaceholderCompany", styleCopSettings.DocumentationRules.CompanyName);
+            Assert.Equal(string.Empty, styleCopSettings.DocumentationRules.HeaderDecoration);
+            Assert.Empty(styleCopSettings.DocumentationRules.Variables);
+            Assert.True(styleCopSettings.DocumentationRules.XmlHeader);
+            Assert.True(styleCopSettings.DocumentationRules.DocumentExposedElements);
+            Assert.True(styleCopSettings.DocumentationRules.DocumentInternalElements);
+            Assert.False(styleCopSettings.DocumentationRules.DocumentPrivateElements);
+            Assert.Equal(InterfaceDocumentationMode.All, styleCopSettings.DocumentationRules.DocumentInterfaces);
+            Assert.False(styleCopSettings.DocumentationRules.DocumentPrivateFields);
+            Assert.Equal(FileNamingConvention.StyleCop, styleCopSettings.DocumentationRules.FileNamingConvention);
             Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
             Assert.Equal("en-US", styleCopSettings.DocumentationRules.DocumentationCulture);
             Assert.Same(CultureInfo.InvariantCulture, styleCopSettings.DocumentationRules.DocumentationCultureInfo);
+            Assert.Equal(DefaultExcludeFromPunctuationCheck, styleCopSettings.DocumentationRules.ExcludeFromPunctuationCheck);
+
+            Assert.NotNull(styleCopSettings.NamingRules);
             Assert.True(styleCopSettings.NamingRules.AllowCommonHungarianPrefixes);
             Assert.Empty(styleCopSettings.NamingRules.AllowedHungarianPrefixes);
             Assert.Empty(styleCopSettings.NamingRules.AllowedNamespaceComponents);
+            Assert.False(styleCopSettings.NamingRules.IncludeInferredTupleElementNames);
+            Assert.Equal(TupleElementNameCase.PascalCase, styleCopSettings.NamingRules.TupleElementNameCasing);
 
             Assert.NotNull(styleCopSettings.OrderingRules);
+            Assert.Equal(DefaultElementOrder, styleCopSettings.OrderingRules.ElementOrder);
             Assert.Equal(DefaultAccessibilityOrder, styleCopSettings.OrderingRules.AccessibilityOrder);
+            Assert.True(styleCopSettings.OrderingRules.SystemUsingDirectivesFirst);
             Assert.Equal(UsingDirectivesPlacement.InsideNamespace, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
             Assert.Equal(OptionSetting.Allow, styleCopSettings.OrderingRules.BlankLinesBetweenUsingGroups);
+            Assert.Null(styleCopSettings.OrderingRules.MemberKindOrder);
 
             Assert.NotNull(styleCopSettings.LayoutRules);
             Assert.Equal(OptionSetting.Allow, styleCopSettings.LayoutRules.NewlineAtEndOfFile);
@@ -56,8 +88,17 @@ namespace StyleCop.Analyzers.Test.Settings
             Assert.Equal(BracelessIfStatements.Off, styleCopSettings.LayoutRules.AllowBracelessIfStatements);
 
             Assert.NotNull(styleCopSettings.SpacingRules);
+
             Assert.NotNull(styleCopSettings.ReadabilityRules);
+            Assert.False(styleCopSettings.ReadabilityRules.AllowBuiltInTypeAliases);
+
             Assert.NotNull(styleCopSettings.MaintainabilityRules);
+            Assert.Equal(DefaultTopLevelTypes, styleCopSettings.MaintainabilityRules.TopLevelTypes);
+
+            Assert.NotNull(styleCopSettings.Indentation);
+            Assert.Equal(4, styleCopSettings.Indentation.IndentationSize);
+            Assert.Equal(4, styleCopSettings.Indentation.TabSize);
+            Assert.False(styleCopSettings.Indentation.UseTabs);
         }
 
         [Fact]
