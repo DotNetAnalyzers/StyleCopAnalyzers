@@ -14,6 +14,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
 using StyleCop.Analyzers.Helpers;
 
 /// <summary>
@@ -55,12 +56,6 @@ internal class SA1653CodeFixProvider : CodeFixProvider
                 continue;
             }
 
-            List<SummaryInfo> summaries = await GetSummaryInfoAsync(symbol, declaration, context.CancellationToken).ConfigureAwait(false);
-            if (summaries.Any(summary => summary.IsGenerated && !summary.IsSelectedDeclaration))
-            {
-                continue;
-            }
-
             context.RegisterCodeFix(
                 CodeAction.Create(
                     DocumentationResources.SA1653CodeFix,
@@ -84,16 +79,21 @@ internal class SA1653CodeFixProvider : CodeFixProvider
             throw new System.InvalidOperationException("The partial declaration does not have a declared type symbol.");
         }
 
-        List<SummaryInfo> summaries = await GetSummaryInfoAsync(symbol, selectedDeclaration, cancellationToken).ConfigureAwait(false);
+        List<SummaryInfo> summaries = await GetSummaryInfoAsync(document.Project.AnalyzerOptions, symbol, selectedDeclaration, cancellationToken).ConfigureAwait(false);
         return await ApplySummaryChangesAsync(document.Project.Solution, summaries, cancellationToken).ConfigureAwait(false);
     }
 
-    private static async Task<List<SummaryInfo>> GetSummaryInfoAsync(INamedTypeSymbol symbol, TypeDeclarationSyntax selectedDeclaration, CancellationToken cancellationToken)
+    private static async Task<List<SummaryInfo>> GetSummaryInfoAsync(AnalyzerOptions options, INamedTypeSymbol symbol, TypeDeclarationSyntax selectedDeclaration, CancellationToken cancellationToken)
     {
         var declarations = new List<SummaryCandidate>();
         foreach (SyntaxReference reference in symbol.DeclaringSyntaxReferences)
         {
             if (await reference.GetSyntaxAsync(cancellationToken).ConfigureAwait(false) is not TypeDeclarationSyntax declaration)
+            {
+                continue;
+            }
+
+            if (declaration.SyntaxTree.IsGeneratedDocument(options, cancellationToken))
             {
                 continue;
             }
@@ -110,10 +110,9 @@ internal class SA1653CodeFixProvider : CodeFixProvider
                 continue;
             }
 
-            bool isGenerated = await IsGeneratedCodeAsync(declaration, cancellationToken).ConfigureAwait(false);
             foreach (XmlNodeSyntax summary in declarationSummaries)
             {
-                declarations.Add(new SummaryCandidate(declaration, summary, isGenerated));
+                declarations.Add(new SummaryCandidate(declaration, summary));
             }
         }
 
@@ -127,7 +126,6 @@ internal class SA1653CodeFixProvider : CodeFixProvider
                 summary.Summary,
                 GetSummaryText(summary.Summary),
                 summary.Declaration.SyntaxTree == selectedDeclaration.SyntaxTree && summary.Declaration.Span == selectedDeclaration.Span,
-                summary.IsGenerated,
                 counts))
             .ToList();
     }
@@ -135,7 +133,7 @@ internal class SA1653CodeFixProvider : CodeFixProvider
     private static async Task<Solution> ApplySummaryChangesAsync(Solution solution, List<SummaryInfo> summaries, CancellationToken cancellationToken)
     {
         foreach (IGrouping<SyntaxTree, SummaryInfo> treeSummaries in summaries
-            .Where(summary => !summary.IsSelectedDeclaration && !summary.IsGenerated)
+            .Where(summary => !summary.IsSelectedDeclaration)
             .GroupBy(summary => summary.Declaration.SyntaxTree))
         {
             Document? targetDocument = solution.GetDocument(treeSummaries.Key);
@@ -151,26 +149,17 @@ internal class SA1653CodeFixProvider : CodeFixProvider
 
             SyntaxNode updatedRoot = targetRoot.ReplaceNodes(
                 summariesByDeclaration.Keys,
-                (original, rewritten) => RewriteDeclaration((TypeDeclarationSyntax)original, summariesByDeclaration[original]));
+                (original, rewritten) =>
+                {
+                    // Compute documentation edits against the original node (summary node identities are stable
+                    // there), then apply the resulting leading trivia to rewritten so nested replacements survive.
+                    TypeDeclarationSyntax updatedOriginal = RewriteDeclaration((TypeDeclarationSyntax)original, summariesByDeclaration[original]);
+                    return rewritten.WithLeadingTrivia(updatedOriginal.GetLeadingTrivia());
+                });
             solution = solution.WithDocumentSyntaxRoot(targetDocument.Id, updatedRoot);
         }
 
         return solution;
-    }
-
-    private static async Task<bool> IsGeneratedCodeAsync(TypeDeclarationSyntax declaration, CancellationToken cancellationToken)
-    {
-        string filePath = declaration.SyntaxTree.FilePath;
-        if (filePath.EndsWith(".g.cs", System.StringComparison.OrdinalIgnoreCase)
-            || filePath.EndsWith(".generated.cs", System.StringComparison.OrdinalIgnoreCase)
-            || filePath.EndsWith(".designer.cs", System.StringComparison.OrdinalIgnoreCase))
-        {
-            return true;
-        }
-
-        SyntaxNode root = await declaration.SyntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
-        return root.GetLeadingTrivia().Any(trivia =>
-            trivia.ToString().IndexOf("<auto-generated", System.StringComparison.OrdinalIgnoreCase) >= 0);
     }
 
     private static string GetSummaryText(XmlNodeSyntax summary)
@@ -239,18 +228,15 @@ internal class SA1653CodeFixProvider : CodeFixProvider
 
     private sealed class SummaryCandidate
     {
-        public SummaryCandidate(TypeDeclarationSyntax declaration, XmlNodeSyntax summary, bool isGenerated)
+        public SummaryCandidate(TypeDeclarationSyntax declaration, XmlNodeSyntax summary)
         {
             this.Declaration = declaration;
             this.Summary = summary;
-            this.IsGenerated = isGenerated;
         }
 
         public TypeDeclarationSyntax Declaration { get; }
 
         public XmlNodeSyntax Summary { get; }
-
-        public bool IsGenerated { get; }
     }
 
     private sealed class SummaryInfo
@@ -260,14 +246,12 @@ internal class SA1653CodeFixProvider : CodeFixProvider
             XmlNodeSyntax node,
             string text,
             bool isSelectedDeclaration,
-            bool isGenerated,
             Dictionary<string, int> counts)
         {
             this.Declaration = declaration;
             this.Node = node;
             this.Text = text;
             this.IsSelectedDeclaration = isSelectedDeclaration;
-            this.IsGenerated = isGenerated;
             this.Counts = counts;
         }
 
@@ -278,8 +262,6 @@ internal class SA1653CodeFixProvider : CodeFixProvider
         public string Text { get; }
 
         public bool IsSelectedDeclaration { get; }
-
-        public bool IsGenerated { get; }
 
         public Dictionary<string, int> Counts { get; }
     }
@@ -333,11 +315,13 @@ internal class SA1653CodeFixProvider : CodeFixProvider
             var summaries = new List<SummaryInfo>();
             foreach (KeyValuePair<INamedTypeSymbol, TypeDeclarationSyntax> selected in selectedDeclarations)
             {
-                List<SummaryInfo> selectedSummaries = await GetSummaryInfoAsync(selected.Key, selected.Value, cancellationToken).ConfigureAwait(false);
-                if (!selectedSummaries.Any(summary => summary.IsGenerated && !summary.IsSelectedDeclaration))
+                Document? document = fixAllContext.Solution.GetDocument(selected.Value.SyntaxTree);
+                if (document == null)
                 {
-                    summaries.AddRange(selectedSummaries);
+                    continue;
                 }
+
+                summaries.AddRange(await GetSummaryInfoAsync(document.Project.AnalyzerOptions, selected.Key, selected.Value, cancellationToken).ConfigureAwait(false));
             }
 
             return await ApplySummaryChangesAsync(fixAllContext.Solution, summaries, cancellationToken).ConfigureAwait(false);
