@@ -16,6 +16,87 @@ using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
 public partial class SA1500CSharp12UnitTests : SA1500CSharp11UnitTests
 {
     /// <summary>
+    /// Verifies that unindented nested closing brackets move, but single-line collections remain intact.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    [Fact]
+    public async Task TestNestedCollectionClosingBracketIndentationAsync()
+    {
+        var testCode = """
+            class C
+            {
+                int[][] multiline = {|#0:[|}[
+                        1,
+            ],
+                ];
+
+                int[][] singleLine = {|#1:[|}[1, 2],
+                ];
+            }
+            """;
+
+        var fixedCode = """
+            class C
+            {
+                int[][] multiline = [
+                    [
+                        1,
+                    ],
+                ];
+
+                int[][] singleLine = [
+                    [1, 2],
+                ];
+            }
+            """;
+
+        await VerifyCSharpFixAsync(
+            testCode,
+            new[] { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1) },
+            fixedCode,
+            CancellationToken.None).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Verifies that moving a nested opening bracket also aligns its otherwise valid closing bracket.
+    /// </summary>
+    /// <param name="lineEnding">The line ending used in the source.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    [Theory]
+    [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
+    public async Task TestNestedCollectionWithoutInnerDiagnosticAsync(string lineEnding)
+    {
+        var testCode = """
+            class C
+            {
+                int[][] values = {|#0:[|}[
+                        1, // Preserve the element comment.
+                /* Preserve the closing comment. */
+                ],
+                ];
+            }
+            """;
+
+        var fixedCode = """
+            class C
+            {
+                int[][] values = [
+                    [
+                        1, // Preserve the element comment.
+                /* Preserve the closing comment. */
+                    ],
+                ];
+            }
+            """;
+
+        await VerifyCSharpFixAsync(
+            testCode.ReplaceLineEndings(lineEnding),
+            Diagnostic().WithLocation(0),
+            fixedCode.ReplaceLineEndings(lineEnding),
+            CancellationToken.None).ConfigureAwait(false);
+    }
+
+    /// <summary>
     /// Verifies that a multiline collection's final element cannot share its closing bracket's line.
     /// </summary>
     /// <param name="comma">The optional trailing comma.</param>

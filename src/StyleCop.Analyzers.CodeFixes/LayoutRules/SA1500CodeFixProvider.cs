@@ -151,6 +151,31 @@ namespace StyleCop.Analyzers.LayoutRules
                             }
 
                             AddReplacement(tokenReplacements, nextToken, nextToken.WithLeadingTrivia(IndentationHelper.GenerateWhitespaceTrivia(settings.Indentation, newIndentationSteps)));
+
+                            if (nextToken.IsKind(SyntaxKind.OpenBracketToken)
+                                && nextToken.Parent.IsKind(SyntaxKindEx.CollectionExpression))
+                            {
+                                var closeBracket = ((CollectionExpressionSyntaxWrapper)nextToken.Parent).CloseBracketToken;
+                                if (!closeBracket.IsMissing
+                                    && closeBracket.GetLine() != nextTokenLine
+                                    && closeBracket.IsFirstInLine(allowNonWhitespaceTrivia: false)
+                                    && !braceTokens.Contains(closeBracket))
+                                {
+                                    // Moving a nested opening bracket must not leave its matching bracket behind.
+                                    var leadingTrivia = closeBracket.LeadingTrivia;
+                                    var indentation = IndentationHelper.GenerateWhitespaceTrivia(settings.Indentation, newIndentationSteps);
+                                    if (leadingTrivia.LastOrDefault().IsKind(SyntaxKind.WhitespaceTrivia))
+                                    {
+                                        leadingTrivia = leadingTrivia.Replace(leadingTrivia.Last(), indentation);
+                                    }
+                                    else
+                                    {
+                                        leadingTrivia = leadingTrivia.Add(indentation);
+                                    }
+
+                                    AddReplacement(tokenReplacements, closeBracket, closeBracket.WithLeadingTrivia(leadingTrivia));
+                                }
+                            }
                         }
 
                         braceReplacementToken = braceReplacementToken.WithTrailingTrivia(newTrailingTrivia);
