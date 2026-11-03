@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-namespace StyleCop.Analyzers.Test.CSharp8.Helpers;
+namespace StyleCop.Analyzers.Test.CSharp9.Helpers;
 
 using System.Collections.Immutable;
 using System.Threading;
@@ -16,7 +16,7 @@ using Xunit;
 /// Verifies <see cref="SyntaxTreeHelpers.IsGeneratedDocument"/> honors <c>generated_code</c> analyzer-config
 /// overrides ahead of filename heuristics.
 /// </summary>
-public class SyntaxTreeHelpersGeneratedCodeCSharp8UnitTests
+public class SyntaxTreeHelpersGeneratedCodeCSharp9UnitTests
 {
     [Fact]
     public void GeneratedCodeFalseOverridesGeneratedFileName()
@@ -82,6 +82,9 @@ public class SyntaxTreeHelpersGeneratedCodeCSharp8UnitTests
         {
             this.analyzerConfigSet = analyzerConfigSet;
         }
+
+        public override AnalyzerConfigOptions GlobalOptions
+            => new TestAnalyzerConfigOptions(this.analyzerConfigSet.GlobalConfigOptions);
 
         public override AnalyzerConfigOptions GetOptions(SyntaxTree tree)
             => new TestAnalyzerConfigOptions(this.analyzerConfigSet.GetOptionsForSourcePath(tree.FilePath));
