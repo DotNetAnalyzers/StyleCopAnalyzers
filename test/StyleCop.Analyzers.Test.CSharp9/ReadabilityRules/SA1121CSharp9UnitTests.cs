@@ -15,6 +15,47 @@ namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
 
     public partial class SA1121CSharp9UnitTests : SA1121CSharp8UnitTests
     {
+        /// <summary>
+        /// Verifies that fixing other built-in types does not change native-sized integers in C# 9.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestFixAllPreservesNativeSizedIntegersInCSharp9Async()
+        {
+            var testCode = @"
+using System;
+using System.Runtime.CompilerServices;
+
+class TestClass
+{
+    private static [|String|] Format => ""{3}{0}.{1}{2} (target address: 0x{4:X"" + (IntPtr.Size * 2) + ""})"";
+
+    private static unsafe IntPtr GetAddress(object value) => new IntPtr(Unsafe.AsPointer(ref value));
+
+    private static unsafe UIntPtr GetUnsignedAddress(object value) => new UIntPtr(Unsafe.AsPointer(ref value));
+}";
+
+            var fixedCode = @"
+using System;
+using System.Runtime.CompilerServices;
+
+class TestClass
+{
+    private static string Format => ""{3}{0}.{1}{2} (target address: 0x{4:X"" + (IntPtr.Size * 2) + ""})"";
+
+    private static unsafe IntPtr GetAddress(object value) => new IntPtr(Unsafe.AsPointer(ref value));
+
+    private static unsafe UIntPtr GetUnsignedAddress(object value) => new UIntPtr(Unsafe.AsPointer(ref value));
+}";
+
+            await new CSharpTest(LanguageVersionEx.CSharp9)
+            {
+                ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
+                TestCode = testCode,
+                FixedCode = fixedCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         [WorkItem(3969, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3969")]
         public async Task TestNativeSizedIntegersDoNotReportAsync()

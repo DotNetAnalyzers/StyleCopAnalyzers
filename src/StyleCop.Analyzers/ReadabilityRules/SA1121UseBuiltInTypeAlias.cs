@@ -231,7 +231,15 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 case nameof(UInt16):
                 case nameof(UInt32):
                 case nameof(UInt64):
+                    break;
+
                 case nameof(IntPtr) or nameof(UIntPtr) when this.supportsNativeSizedIntegers:
+                    // Unlike predefined type keywords, nint and nuint are not recognized in cref attributes.
+                    if (identifierNameSyntax.FirstAncestorOrSelf<CrefSyntax>() != null)
+                    {
+                        return;
+                    }
+
                     break;
 
                 default:
