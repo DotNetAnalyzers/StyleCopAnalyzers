@@ -79,6 +79,7 @@ namespace StyleCop.Analyzers.LayoutRules
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> AnonymousObjectCreationExpressionAction = HandleAnonymousObjectCreationExpression;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> SwitchExpressionAction = HandleSwitchExpression;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> PropertyPatternClauseAction = HandlePropertyPatternClause;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CollectionExpressionAction = HandleCollectionExpression;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -102,6 +103,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 context.RegisterSyntaxNodeAction(AnonymousObjectCreationExpressionAction, SyntaxKind.AnonymousObjectCreationExpression);
                 context.RegisterSyntaxNodeAction(SwitchExpressionAction, SyntaxKindEx.SwitchExpression);
                 context.RegisterSyntaxNodeAction(PropertyPatternClauseAction, SyntaxKindEx.PropertyPatternClause);
+                context.RegisterSyntaxNodeAction(CollectionExpressionAction, SyntaxKindEx.CollectionExpression);
             });
         }
 
@@ -157,6 +159,29 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             var syntax = (PropertyPatternClauseSyntaxWrapper)context.Node;
             CheckBraces(context, settings, syntax.OpenBraceToken, syntax.CloseBraceToken);
+        }
+
+        private static void HandleCollectionExpression(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        {
+            var syntax = (CollectionExpressionSyntaxWrapper)context.Node;
+            var openBracket = syntax.OpenBracketToken;
+            var closeBracket = syntax.CloseBracketToken;
+            if (openBracket.IsMissing || closeBracket.IsMissing || openBracket.GetLine() == closeBracket.GetLine())
+            {
+                return;
+            }
+
+            var nextToken = openBracket.GetNextToken(includeZeroWidth: true);
+            if (!nextToken.IsMissing && nextToken.GetLine() == openBracket.GetLine())
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, openBracket.GetLocation()));
+            }
+
+            var previousToken = closeBracket.GetPreviousToken(includeZeroWidth: true);
+            if (!previousToken.IsMissing && previousToken.GetEndLine() == closeBracket.GetLine())
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, closeBracket.GetLocation()));
+            }
         }
 
         private static void CheckBraces(SyntaxNodeAnalysisContext context, StyleCopSettings settings, SyntaxToken openBraceToken, SyntaxToken closeBraceToken)
