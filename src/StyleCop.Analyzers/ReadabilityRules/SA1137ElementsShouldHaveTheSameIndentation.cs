@@ -11,6 +11,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
 
@@ -267,7 +268,34 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var collectionExpression = (CollectionExpressionSyntaxWrapper)context.Node;
 
-            CheckBraces(context, collectionExpression.OpenBracketToken, collectionExpression.CloseBracketToken);
+            var openBracket = collectionExpression.OpenBracketToken;
+            var closeBracket = collectionExpression.CloseBracketToken;
+            if (openBracket.IsFirstInLine())
+            {
+                CheckBraces(context, openBracket, closeBracket);
+            }
+            else if (!openBracket.IsMissing && !closeBracket.IsMissing
+                && openBracket.GetLine() != closeBracket.GetLine()
+                && closeBracket.IsFirstInLine(allowNonWhitespaceTrivia: false))
+            {
+                // An inline opening bracket uses its line's indentation, not its column, as the closing anchor.
+                var text = context.Node.SyntaxTree.GetText(context.CancellationToken);
+                var lineStart = text.Lines.GetLineFromPosition(openBracket.SpanStart).Start;
+                var indentationEnd = lineStart;
+                while (indentationEnd < openBracket.SpanStart && SyntaxFacts.IsWhitespace(text[indentationEnd]))
+                {
+                    indentationEnd++;
+                }
+
+                var expectedIndentation = text.ToString(TextSpan.FromBounds(lineStart, indentationEnd));
+                var indentationTrivia = closeBracket.LeadingTrivia.LastOrDefault();
+                var indentation = indentationTrivia.IsKind(SyntaxKind.WhitespaceTrivia) ? indentationTrivia.ToString() : string.Empty;
+                if (!string.Equals(expectedIndentation, indentation, StringComparison.Ordinal))
+                {
+                    ReportDiagnostic(context, closeBracket, indentationTrivia, indentation, expectedIndentation);
+                }
+            }
+
             CheckElements(context, collectionExpression.Elements);
         }
 
