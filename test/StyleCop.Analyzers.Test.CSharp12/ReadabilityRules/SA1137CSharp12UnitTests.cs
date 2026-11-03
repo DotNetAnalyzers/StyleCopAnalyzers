@@ -16,6 +16,152 @@ namespace StyleCop.Analyzers.Test.CSharp12.ReadabilityRules
     public partial class SA1137CSharp12UnitTests : SA1137CSharp11UnitTests
     {
         /// <summary>
+        /// Verifies that a closing bracket aligns with the line containing an inline opening bracket.
+        /// </summary>
+        /// <param name="lineEnding">The line ending used in the source.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Theory]
+        [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
+        public async Task TestInlineOpeningBracketIndentationAsync(string lineEnding)
+        {
+            var testCode = """
+                class C
+                {
+                    object[] M(string text, int maxCount)
+                    {
+                        object[] parameters = [
+                            new { Value = $"\"{text}\"" }, // Keep this comment.
+                            new { Value = maxCount },
+                {|#0:            |}];
+                        return parameters;
+                    }
+                }
+                """;
+
+            var fixedCode = """
+                class C
+                {
+                    object[] M(string text, int maxCount)
+                    {
+                        object[] parameters = [
+                            new { Value = $"\"{text}\"" }, // Keep this comment.
+                            new { Value = maxCount },
+                        ];
+                        return parameters;
+                    }
+                }
+                """;
+
+            await VerifyCSharpFixAsync(
+                testCode.ReplaceLineEndings(lineEnding),
+                Diagnostic().WithLocation(0),
+                fixedCode.ReplaceLineEndings(lineEnding),
+                CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies bracket alignment even when the first element shares the opening bracket's line.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Fact]
+        public async Task TestOpeningBracketSharingFirstElementLineAsync()
+        {
+            var testCode = """
+                class C
+                {
+                    object[][] values =
+                    [
+                        [new { Value = "path" },
+                            new { Value = 1 },
+                            new { Value = 2 },
+                {|#0:    |}],
+                    ];
+                }
+                """;
+
+            var fixedCode = """
+                class C
+                {
+                    object[][] values =
+                    [
+                        [new { Value = "path" },
+                            new { Value = 1 },
+                            new { Value = 2 },
+                        ],
+                    ];
+                }
+                """;
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies inline bracket alignment with tabs, comments, and unindented closing brackets.
+        /// </summary>
+        /// <param name="indentation">The indentation of the opening bracket's line.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData("    ")]
+        [InlineData("\t")]
+        public async Task TestInlineOpeningBracketWithUnindentedClosingBracketAsync(string indentation)
+        {
+            var testCode = $$"""
+                class C
+                {
+                {{indentation}}int[] M(int[] other) => /* Collection. */ [
+                        .. other, // Keep this comment.
+                {|#0:]|};
+                }
+                """;
+
+            var fixedCode = $$"""
+                class C
+                {
+                {{indentation}}int[] M(int[] other) => /* Collection. */ [
+                        .. other, // Keep this comment.
+                {{indentation}}];
+                }
+                """;
+
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that aligned inline-opening collections and single-line collections remain valid.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Fact]
+        public async Task TestInlineOpeningBracketValidIndentationAsync()
+        {
+            var testCode = """
+                class C
+                {
+                    int[] M(int[] other)
+                    {
+                        return [
+                            .. other,
+                            1,
+                        ];
+                    }
+
+                    int[] empty = [
+                    ];
+
+                    int[] single = [1, 2];
+                }
+
+                class Unindented
+                {
+                int[] M() => [
+                    1,
+                ];
+                }
+                """;
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that inline closing brackets use the same fix as inline closing braces.
         /// </summary>
         /// <param name="lineEnding">The line ending used in the source.</param>

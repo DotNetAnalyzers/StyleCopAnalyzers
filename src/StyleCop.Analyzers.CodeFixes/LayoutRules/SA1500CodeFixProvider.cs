@@ -93,8 +93,9 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
                 else
                 {
-                    // Check if we need to apply a fix before the brace
-                    if (!previousToken.IsKind(SyntaxKind.None) && LocationHelpers.GetLineSpan(previousToken).EndLinePosition.Line == braceLine)
+                    // Opening collection brackets may follow code, unless the preceding token is itself being moved.
+                    if ((!braceToken.IsKind(SyntaxKind.OpenBracketToken) || braceTokens.Contains(previousToken))
+                        && !previousToken.IsKind(SyntaxKind.None) && LocationHelpers.GetLineSpan(previousToken).EndLinePosition.Line == braceLine)
                     {
                         if (!braceTokens.Contains(previousToken))
                         {
@@ -112,6 +113,7 @@ namespace StyleCop.Analyzers.LayoutRules
 
                     // Check if we need to apply a fix after the brace. No fix is needed when:
                     // - The closing brace belongs to a switch expression and the next token is not another brace being fixed
+                    // - The closing bracket belongs to a collection expression and the next token is not being fixed
                     // - The closing brace is followed by a semi-colon or closing paren
                     // - The closing brace is the last token in the file
                     // - The closing brace is followed by the while expression of a do/while loop and the
@@ -122,6 +124,7 @@ namespace StyleCop.Analyzers.LayoutRules
                     var allowDoWhileOnClosingBrace = settings.LayoutRules.AllowDoWhileOnClosingBrace && nextToken.IsKind(SyntaxKind.WhileKeyword) && (braceToken.Parent?.IsKind(SyntaxKind.Block) ?? false) && (braceToken.Parent!.Parent?.IsKind(SyntaxKind.DoStatement) ?? false);
 
                     if ((nextTokenLine == braceLine) &&
+                        (!braceToken.IsKind(SyntaxKind.CloseBracketToken) || braceTokens.Contains(nextToken)) &&
                         (!braceToken.IsKind(SyntaxKind.CloseBraceToken)
                             || ((!braceToken.Parent.IsKind(SyntaxKindEx.SwitchExpression) || braceTokens.Contains(nextToken))
                                 && !IsValidFollowingToken(nextToken))) &&
@@ -137,7 +140,7 @@ namespace StyleCop.Analyzers.LayoutRules
                         if (!braceTokens.Contains(nextToken))
                         {
                             int newIndentationSteps = indentationSteps;
-                            if (braceToken.IsKind(SyntaxKind.OpenBraceToken))
+                            if (braceToken.IsKind(SyntaxKind.OpenBraceToken) || braceToken.IsKind(SyntaxKind.OpenBracketToken))
                             {
                                 newIndentationSteps++;
                             }
@@ -148,6 +151,31 @@ namespace StyleCop.Analyzers.LayoutRules
                             }
 
                             AddReplacement(tokenReplacements, nextToken, nextToken.WithLeadingTrivia(IndentationHelper.GenerateWhitespaceTrivia(settings.Indentation, newIndentationSteps)));
+
+                            if (nextToken.IsKind(SyntaxKind.OpenBracketToken)
+                                && nextToken.Parent.IsKind(SyntaxKindEx.CollectionExpression))
+                            {
+                                var closeBracket = ((CollectionExpressionSyntaxWrapper)nextToken.Parent).CloseBracketToken;
+                                if (!closeBracket.IsMissing
+                                    && closeBracket.GetLine() != nextTokenLine
+                                    && closeBracket.IsFirstInLine(allowNonWhitespaceTrivia: false)
+                                    && !braceTokens.Contains(closeBracket))
+                                {
+                                    // Moving a nested opening bracket must not leave its matching bracket behind.
+                                    var leadingTrivia = closeBracket.LeadingTrivia;
+                                    var indentation = IndentationHelper.GenerateWhitespaceTrivia(settings.Indentation, newIndentationSteps);
+                                    if (leadingTrivia.LastOrDefault().IsKind(SyntaxKind.WhitespaceTrivia))
+                                    {
+                                        leadingTrivia = leadingTrivia.Replace(leadingTrivia.Last(), indentation);
+                                    }
+                                    else
+                                    {
+                                        leadingTrivia = leadingTrivia.Add(indentation);
+                                    }
+
+                                    AddReplacement(tokenReplacements, closeBracket, closeBracket.WithLeadingTrivia(leadingTrivia));
+                                }
+                            }
                         }
 
                         braceReplacementToken = braceReplacementToken.WithTrailingTrivia(newTrailingTrivia);
@@ -221,6 +249,22 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static int DetermineIndentationSteps(IndentationSettings indentationSettings, SyntaxToken token)
         {
+            if (token.IsKind(SyntaxKind.CloseBracketToken) && token.Parent.IsKind(SyntaxKindEx.CollectionExpression))
+            {
+                token = ((CollectionExpressionSyntaxWrapper)token.Parent).OpenBracketToken;
+            }
+
+            if (token.IsKind(SyntaxKind.OpenBracketToken) && token.Parent.IsKind(SyntaxKindEx.CollectionExpression))
+            {
+                var previousToken = token.GetPreviousToken();
+                if (previousToken.IsKind(SyntaxKind.OpenBracketToken)
+                    && previousToken.Parent.IsKind(SyntaxKindEx.CollectionExpression)
+                    && previousToken.GetLine() == token.GetLine())
+                {
+                    return DetermineIndentationSteps(indentationSettings, previousToken) + 1;
+                }
+            }
+
             // For a closing brace use the indentation of the corresponding opening brace
             if (token.IsKind(SyntaxKind.CloseBraceToken))
             {
