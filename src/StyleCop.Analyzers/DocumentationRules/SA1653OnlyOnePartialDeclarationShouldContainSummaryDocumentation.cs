@@ -57,6 +57,11 @@ internal class SA1653OnlyOnePartialDeclarationShouldContainSummaryDocumentation 
                 continue;
             }
 
+            if (declaration.SyntaxTree.IsGeneratedDocument(context.CancellationToken))
+            {
+                continue;
+            }
+
             var documentation = declaration.GetDocumentationCommentTriviaSyntax();
             if (documentation == null || documentation.Content.GetFirstXmlElement(XmlCommentHelper.SummaryXmlTag) == null)
             {
