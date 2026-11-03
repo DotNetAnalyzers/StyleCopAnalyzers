@@ -38,11 +38,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
         }
 
         /// <inheritdoc/>
-        public override Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (IsUnsupportedUsingAliasTarget(context.Document, diagnostic))
+                if (IsUnsupportedUsingAliasTarget(context.Document, diagnostic)
+                    || await IsUnsupportedLinkedNativeSizedIntegerAsync(context.Document, diagnostic, context.CancellationToken).ConfigureAwait(false))
                 {
                     continue;
                 }
@@ -54,8 +55,35 @@ namespace StyleCop.Analyzers.ReadabilityRules
                         nameof(SA1121CodeFixProvider)),
                     diagnostic);
             }
+        }
 
-            return SpecializedTasks.CompletedTask;
+        private static async Task<bool> IsUnsupportedLinkedNativeSizedIntegerAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        {
+            var linkedDocumentIds = document.GetLinkedDocumentIds();
+            if (linkedDocumentIds.IsEmpty || diagnostic.Location.SourceTree == null)
+            {
+                return false;
+            }
+
+            var root = await diagnostic.Location.SourceTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
+            var node = root.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
+            if (node.GetLastToken().ValueText is not ("IntPtr" or "UIntPtr"))
+            {
+                return false;
+            }
+
+            // A fix edits shared source, so every target must support the replacement.
+            foreach (var linkedDocumentId in linkedDocumentIds)
+            {
+                var linkedProject = document.Project.Solution.GetDocument(linkedDocumentId)!.Project;
+                var compilation = await linkedProject.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
+                if (compilation == null || !compilation.SupportsNativeSizedIntegers())
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static bool IsUnsupportedUsingAliasTarget(Document document, Diagnostic diagnostic)
@@ -154,7 +182,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 List<SyntaxNode> nodesToReplace = new List<SyntaxNode>(diagnostics.Length);
                 foreach (var diagnostic in diagnostics)
                 {
-                    if (IsUnsupportedUsingAliasTarget(document, diagnostic))
+                    if (IsUnsupportedUsingAliasTarget(document, diagnostic)
+                        || await IsUnsupportedLinkedNativeSizedIntegerAsync(document, diagnostic, fixAllContext.CancellationToken).ConfigureAwait(false))
                     {
                         continue;
                     }
