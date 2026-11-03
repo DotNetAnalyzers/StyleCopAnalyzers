@@ -57,7 +57,7 @@ internal class SA1653OnlyOnePartialDeclarationShouldContainSummaryDocumentation 
                 continue;
             }
 
-            if (declaration.SyntaxTree.IsGeneratedDocument(context.CancellationToken))
+            if (declaration.SyntaxTree.IsGeneratedDocument(context.Options, context.CancellationToken))
             {
                 continue;
             }

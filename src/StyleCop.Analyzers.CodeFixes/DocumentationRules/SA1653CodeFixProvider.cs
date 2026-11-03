@@ -14,6 +14,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
 using StyleCop.Analyzers.Helpers;
 
 /// <summary>
@@ -78,11 +79,11 @@ internal class SA1653CodeFixProvider : CodeFixProvider
             throw new System.InvalidOperationException("The partial declaration does not have a declared type symbol.");
         }
 
-        List<SummaryInfo> summaries = await GetSummaryInfoAsync(symbol, selectedDeclaration, cancellationToken).ConfigureAwait(false);
+        List<SummaryInfo> summaries = await GetSummaryInfoAsync(document.Project.AnalyzerOptions, symbol, selectedDeclaration, cancellationToken).ConfigureAwait(false);
         return await ApplySummaryChangesAsync(document.Project.Solution, summaries, cancellationToken).ConfigureAwait(false);
     }
 
-    private static async Task<List<SummaryInfo>> GetSummaryInfoAsync(INamedTypeSymbol symbol, TypeDeclarationSyntax selectedDeclaration, CancellationToken cancellationToken)
+    private static async Task<List<SummaryInfo>> GetSummaryInfoAsync(AnalyzerOptions options, INamedTypeSymbol symbol, TypeDeclarationSyntax selectedDeclaration, CancellationToken cancellationToken)
     {
         var declarations = new List<SummaryCandidate>();
         foreach (SyntaxReference reference in symbol.DeclaringSyntaxReferences)
@@ -92,7 +93,7 @@ internal class SA1653CodeFixProvider : CodeFixProvider
                 continue;
             }
 
-            if (declaration.SyntaxTree.IsGeneratedDocument(cancellationToken))
+            if (declaration.SyntaxTree.IsGeneratedDocument(options, cancellationToken))
             {
                 continue;
             }
@@ -148,7 +149,13 @@ internal class SA1653CodeFixProvider : CodeFixProvider
 
             SyntaxNode updatedRoot = targetRoot.ReplaceNodes(
                 summariesByDeclaration.Keys,
-                (original, rewritten) => RewriteDeclaration((TypeDeclarationSyntax)original, summariesByDeclaration[original]));
+                (original, rewritten) =>
+                {
+                    // Compute documentation edits against the original node (summary node identities are stable
+                    // there), then apply the resulting leading trivia to rewritten so nested replacements survive.
+                    TypeDeclarationSyntax updatedOriginal = RewriteDeclaration((TypeDeclarationSyntax)original, summariesByDeclaration[original]);
+                    return rewritten.WithLeadingTrivia(updatedOriginal.GetLeadingTrivia());
+                });
             solution = solution.WithDocumentSyntaxRoot(targetDocument.Id, updatedRoot);
         }
 
@@ -308,7 +315,13 @@ internal class SA1653CodeFixProvider : CodeFixProvider
             var summaries = new List<SummaryInfo>();
             foreach (KeyValuePair<INamedTypeSymbol, TypeDeclarationSyntax> selected in selectedDeclarations)
             {
-                summaries.AddRange(await GetSummaryInfoAsync(selected.Key, selected.Value, cancellationToken).ConfigureAwait(false));
+                Document? document = fixAllContext.Solution.GetDocument(selected.Value.SyntaxTree);
+                if (document == null)
+                {
+                    continue;
+                }
+
+                summaries.AddRange(await GetSummaryInfoAsync(document.Project.AnalyzerOptions, selected.Key, selected.Value, cancellationToken).ConfigureAwait(false));
             }
 
             return await ApplySummaryChangesAsync(fixAllContext.Solution, summaries, cancellationToken).ConfigureAwait(false);
