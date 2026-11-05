@@ -1006,5 +1006,59 @@ public class TestClass
 
             await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestNamespaceWithMissingNameAsync()
+        {
+            var testCode = @"
+namespace
+{
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                DiagnosticResult.CompilerError("CS1001").WithSpan(2, 10, 2, 10),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestClassWithMissingNameAsync()
+        {
+            var testCode = @"
+public class
+{
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                DiagnosticResult.CompilerError("CS1001").WithSpan(2, 13, 2, 13),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestEventFieldWithMissingNameAsync()
+        {
+            var testCode = @"
+using System;
+
+public class TestClass
+{
+    public event EventHandler Handler, ;
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                DiagnosticResult.CompilerError("CS1001").WithSpan(6, 40, 6, 41),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

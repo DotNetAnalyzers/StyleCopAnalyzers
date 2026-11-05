@@ -260,5 +260,40 @@ public class Foo
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestEventWithMissingAccessorListAsync()
+        {
+            var testCode = @"
+using System;
+
+public interface ITest
+{
+    event EventHandler TestEvent;
+}
+
+public class TestClass : ITest
+{
+    event EventHandler ITest.TestEvent;
+}
+";
+
+            var expected = this.GetExpectedResultTestEventWithMissingAccessorList();
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestEventWithMissingAccessorList()
+        {
+            return new[]
+            {
+                DiagnosticResult.CompilerError("CS0535").WithSpan(9, 26, 9, 31).WithArguments("TestClass", "ITest.TestEvent"),
+                DiagnosticResult.CompilerError("CS0071").WithSpan(11, 29, 11, 30),
+                DiagnosticResult.CompilerError("CS0065").WithSpan(11, 30, 11, 30).WithArguments("TestClass."),
+                DiagnosticResult.CompilerError("CS0539").WithSpan(11, 30, 11, 30).WithArguments("TestClass."),
+                DiagnosticResult.CompilerError("CS1519").WithSpan(11, 39, 11, 40).WithArguments(";"),
+                DiagnosticResult.CompilerError("CS1519").WithSpan(11, 39, 11, 40).WithArguments(";"),
+            };
+        }
     }
 }

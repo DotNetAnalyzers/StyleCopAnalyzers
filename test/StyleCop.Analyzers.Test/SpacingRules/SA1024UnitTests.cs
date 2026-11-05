@@ -330,5 +330,61 @@ public class Foo<T>:object where T:IFormattable
 
             await VerifyCSharpFixAsync(testCode, expected, ExpectedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestConditionalExpressionWithMissingColonAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var value = true ? 1 ;
+    }
+}
+";
+
+            var expected = this.GetExpectedResultTestConditionalExpressionWithMissingColon();
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestCaseLabelWithMissingColonAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod(int value)
+    {
+        switch (value)
+        {
+        case 1 break;
+        }
+    }
+}
+";
+
+            var expected = this.GetExpectedResultTestCaseLabelWithMissingColon();
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestConditionalExpressionWithMissingColon()
+        {
+            return new[]
+            {
+                DiagnosticResult.CompilerError("CS1003").WithSpan(6, 30, 6, 31).WithArguments(":", ";"),
+                DiagnosticResult.CompilerError("CS1525").WithSpan(6, 30, 6, 31).WithArguments(";"),
+            };
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestCaseLabelWithMissingColon()
+        {
+            return new[]
+            {
+                DiagnosticResult.CompilerError("CS1003").WithSpan(8, 16, 8, 21).WithArguments(":", "break"),
+            };
+        }
     }
 }

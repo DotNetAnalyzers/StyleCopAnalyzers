@@ -368,6 +368,36 @@ public class ClassName
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestPropertyWithMissingNameAsync()
+        {
+            var testCode = @"
+/// <summary>Summary.</summary>
+public interface ITest
+{
+    /// <summary>Summary.</summary>
+    /// <value>Value.</value>
+    int TestProperty { get; }
+}
+
+/// <summary>Summary.</summary>
+public class TestClass : ITest
+{
+    /// <summary>Summary.</summary>
+    int ITest. { get { return 0; } }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                DiagnosticResult.CompilerError("CS0535").WithSpan(11, 26, 11, 31).WithArguments("TestClass", "ITest.TestProperty"),
+                DiagnosticResult.CompilerError("CS0539").WithSpan(14, 16, 14, 16).WithArguments("TestClass."),
+                DiagnosticResult.CompilerError("CS1001").WithSpan(14, 16, 14, 17),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
             => VerifyCSharpFixAsync(source, expected, fixedSource: null, cancellationToken);
 

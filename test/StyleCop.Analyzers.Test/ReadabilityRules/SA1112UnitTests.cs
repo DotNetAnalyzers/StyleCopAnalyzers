@@ -344,5 +344,92 @@ public class TestClass
             test.RemainingDiagnostics.AddRange(expected);
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestObjectCreationWithMissingCloseParenthesisAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var value = new TestClass(;
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                DiagnosticResult.CompilerError("CS1026").WithSpan(6, 35, 6, 36),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestInvocationWithMissingCloseParenthesisAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        TestMethod(;
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                DiagnosticResult.CompilerError("CS1026").WithSpan(6, 20, 6, 21),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMethodWithMissingCloseParenthesisAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod(
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                DiagnosticResult.CompilerError("CS1026").WithSpan(4, 28, 4, 28),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMethodWithMissingParameterListAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod<T>;
+}
+";
+
+            var expected = this.GetExpectedResultTestMethodWithMissingParameterList();
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestMethodWithMissingParameterList()
+        {
+            return new[]
+            {
+                DiagnosticResult.CompilerError("CS0501").WithSpan(4, 17, 4, 27).WithArguments("TestClass.TestMethod<T>()"),
+                DiagnosticResult.CompilerError("CS1003").WithSpan(4, 30, 4, 31).WithArguments("(", ";"),
+                DiagnosticResult.CompilerError("CS1026").WithSpan(4, 30, 4, 31),
+            };
+        }
     }
 }

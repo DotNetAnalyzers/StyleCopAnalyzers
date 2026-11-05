@@ -1335,6 +1335,29 @@ public class TypeName
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestMissingChildStatementAsync()
+        {
+            await new CSharpTest
+            {
+                TestCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        if (true)
+    }
+}
+",
+                ExpectedDiagnostics =
+                {
+                    DiagnosticResult.CompilerError("CS1002").WithSpan(6, 18, 6, 18),
+                    DiagnosticResult.CompilerError("CS1525").WithSpan(6, 18, 6, 18).WithArguments("}"),
+                },
+                DisabledDiagnostics = { SA1503BracesMustNotBeOmitted.DiagnosticId },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
         private string GenerateTestStatement(string statementText)
         {
             var testCodeFormat = @"using System.Diagnostics;

@@ -1013,5 +1013,326 @@ public class TestClass
                 NumberOfFixAllIterations = 1,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestConversionOperatorWithMissingTypeAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public static implicit operator (TestClass value)
+    {
+        return 0;
+    }
+}
+";
+
+            var expected = this.GetExpectedResultTestConversionOperatorWithMissingType();
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestConversionOperatorWithMissingParameterListAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public static implicit operator TestClass;
+}
+";
+
+            var expected = this.GetExpectedResultTestConversionOperatorWithMissingParameterList();
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestOperatorWithMissingOperatorTokenAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public static TestClass operator (TestClass value)
+    {
+        return value;
+    }
+}
+";
+
+            var expected = this.GetExpectedResultTestOperatorWithMissingOperatorToken();
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestOperatorWithMissingParameterListAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public static TestClass operator +;
+}
+";
+
+            var expected = this.GetExpectedResultTestOperatorWithMissingParameterList();
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestDelegateWithMissingNameAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public delegate void (int value);
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                DiagnosticResult.CompilerError("CS1001").WithSpan(4, 26, 4, 27),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestDelegateWithMissingParameterListAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public delegate void TestDelegate;
+}
+";
+
+            var expected = this.GetExpectedResultTestDelegateWithMissingParameterList();
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestIndexerWithMissingParameterListAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public int this;
+}
+";
+
+            var expected = this.GetExpectedResultTestIndexerWithMissingParameterList();
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestIndexerWithMissingOpenBracketAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public int this int value] { get { return value; } }
+}
+";
+
+            var expected = this.GetExpectedResultTestIndexerWithMissingOpenBracket();
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMethodWithMissingNameAsync()
+        {
+            var testCode = @"
+public interface ITest
+{
+    void TestMethod();
+}
+
+public class TestClass : ITest
+{
+    void ITest.()
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                DiagnosticResult.CompilerError("CS0535").WithSpan(7, 26, 7, 31).WithArguments("TestClass", "ITest.TestMethod()"),
+                DiagnosticResult.CompilerError("CS0539").WithSpan(9, 16, 9, 16).WithArguments("TestClass.()"),
+                DiagnosticResult.CompilerError("CS1001").WithSpan(9, 16, 9, 17),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMethodWithMissingParameterListAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod<T>;
+}
+";
+
+            var expected = this.GetExpectedResultTestMethodWithMissingParameterList();
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestObjectCreationWithMissingTypeAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var value = new;
+    }
+}
+";
+
+            var expected = this.GetExpectedResultTestObjectCreationWithMissingType();
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestInvocationWithMissingNameAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        this.();
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                DiagnosticResult.CompilerError("CS1001").WithSpan(6, 14, 6, 15),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestAttributeWithMissingNameAsync()
+        {
+            var testCode = @"
+[System.()]
+public class TestClass
+{
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                DiagnosticResult.CompilerError("CS1001").WithSpan(2, 9, 2, 10),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestConversionOperatorWithMissingType()
+        {
+            return new[]
+            {
+                DiagnosticResult.CompilerError("CS1031").WithSpan(4, 37, 4, 38),
+            };
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestConversionOperatorWithMissingParameterList()
+        {
+            return new[]
+            {
+                DiagnosticResult.CompilerError("CS0501").WithSpan(4, 37, 4, 46).WithArguments("TestClass.implicit operator TestClass()"),
+                DiagnosticResult.CompilerError("CS1019").WithSpan(4, 46, 4, 46),
+                DiagnosticResult.CompilerError("CS1001").WithSpan(4, 46, 4, 47),
+                DiagnosticResult.CompilerError("CS1003").WithSpan(4, 46, 4, 47).WithArguments("(", ";"),
+                DiagnosticResult.CompilerError("CS1002").WithSpan(4, 47, 4, 47),
+                DiagnosticResult.CompilerError("CS1026").WithSpan(4, 47, 4, 47),
+            };
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestOperatorWithMissingOperatorToken()
+        {
+            return new[]
+            {
+                DiagnosticResult.CompilerError("CS1019").WithSpan(4, 38, 4, 39),
+                DiagnosticResult.CompilerError("CS1003").WithSpan(4, 39, 4, 48).WithArguments("(", string.Empty),
+            };
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestOperatorWithMissingParameterList()
+        {
+            return new[]
+            {
+                DiagnosticResult.CompilerError("CS0501").WithSpan(4, 38, 4, 39).WithArguments("TestClass.operator +()"),
+                DiagnosticResult.CompilerError("CS1534").WithSpan(4, 38, 4, 39).WithArguments("+"),
+                DiagnosticResult.CompilerError("CS1001").WithSpan(4, 39, 4, 40),
+                DiagnosticResult.CompilerError("CS1003").WithSpan(4, 39, 4, 40).WithArguments("(", ";"),
+                DiagnosticResult.CompilerError("CS1002").WithSpan(4, 40, 4, 40),
+                DiagnosticResult.CompilerError("CS1026").WithSpan(4, 40, 4, 40),
+            };
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestDelegateWithMissingParameterList()
+        {
+            return new[]
+            {
+                DiagnosticResult.CompilerError("CS1003").WithSpan(4, 38, 4, 39).WithArguments("(", ";"),
+                DiagnosticResult.CompilerError("CS1026").WithSpan(4, 38, 4, 39),
+            };
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestIndexerWithMissingParameterList()
+        {
+            return new[]
+            {
+                DiagnosticResult.CompilerError("CS0548").WithSpan(4, 16, 4, 20).WithArguments("TestClass.this"),
+                DiagnosticResult.CompilerError("CS1001").WithSpan(4, 20, 4, 21),
+                DiagnosticResult.CompilerError("CS1003").WithSpan(4, 20, 4, 21).WithArguments("[", ";"),
+                DiagnosticResult.CompilerError("CS1003").WithSpan(4, 21, 4, 21).WithArguments("]", "}"),
+                DiagnosticResult.CompilerError("CS1514").WithSpan(4, 21, 4, 21),
+                DiagnosticResult.CompilerError("CS1551").WithSpan(5, 1, 5, 1),
+                DiagnosticResult.CompilerError("CS1513").WithSpan(5, 2, 5, 2),
+            };
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestIndexerWithMissingOpenBracket()
+        {
+            return new[]
+            {
+                DiagnosticResult.CompilerError("CS1003").WithSpan(4, 21, 4, 24).WithArguments("[", "int"),
+            };
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestMethodWithMissingParameterList()
+        {
+            return new[]
+            {
+                DiagnosticResult.CompilerError("CS0501").WithSpan(4, 17, 4, 27).WithArguments("TestClass.TestMethod<T>()"),
+                DiagnosticResult.CompilerError("CS1003").WithSpan(4, 30, 4, 31).WithArguments("(", ";"),
+                DiagnosticResult.CompilerError("CS1026").WithSpan(4, 30, 4, 31),
+            };
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestObjectCreationWithMissingType()
+        {
+            return new[]
+            {
+                DiagnosticResult.CompilerError("CS1031").WithSpan(6, 24, 6, 25),
+                DiagnosticResult.CompilerError("CS1526").WithSpan(6, 24, 6, 25),
+            };
+        }
     }
 }

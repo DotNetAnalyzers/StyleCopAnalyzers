@@ -313,5 +313,22 @@ namespace System
             DiagnosticResult expected = Diagnostic().WithLocation(4, 22);
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestInterfaceWithMissingNameAsync()
+        {
+            var testCode = @"
+public interface
+{
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                DiagnosticResult.CompilerError("CS1001").WithSpan(2, 17, 2, 17),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

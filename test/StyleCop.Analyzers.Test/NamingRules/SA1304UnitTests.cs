@@ -285,6 +285,24 @@ namespace StyleCop.Analyzers.Test.NamingRules
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestFieldWithMissingNameAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    protected readonly string Bar, ;
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                DiagnosticResult.CompilerError("CS1001").WithSpan(4, 36, 4, 37),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         internal class CombinedCSharpTest : CSharpTest
         {
             public CombinedCSharpTest(LanguageVersion? languageVersion = null)

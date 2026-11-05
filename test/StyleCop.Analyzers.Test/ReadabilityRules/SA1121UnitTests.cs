@@ -679,5 +679,26 @@ namespace System
             DiagnosticResult expected = Diagnostic().WithLocation(8, 34);
             await VerifyCSharpFixAsync(string.Format(testCode, fullName), expected, string.Format(testCode, predefined), CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestMissingIdentifierNameAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        int value = ;
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                DiagnosticResult.CompilerError("CS1525").WithSpan(6, 21, 6, 22).WithArguments(";"),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

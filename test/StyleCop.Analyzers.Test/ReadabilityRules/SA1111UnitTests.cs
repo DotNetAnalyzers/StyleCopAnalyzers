@@ -1586,5 +1586,77 @@ public class TestClass
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestIndexerWithMissingParameterListAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public int this;
+}
+";
+
+            var expected = this.GetExpectedResultTestIndexerWithMissingParameterList();
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestInvocationWithMissingCloseParenthesisAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod(int value)
+    {
+        TestMethod(1;
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                DiagnosticResult.CompilerError("CS1026").WithSpan(6, 21, 6, 22),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestInvocationWithMissingLastArgumentAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod(int first, int second)
+    {
+        TestMethod(1,
+            );
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                DiagnosticResult.CompilerError("CS1525").WithSpan(6, 22, 6, 22).WithArguments(")"),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestIndexerWithMissingParameterList()
+        {
+            return new[]
+            {
+                DiagnosticResult.CompilerError("CS0548").WithSpan(4, 16, 4, 20).WithArguments("TestClass.this"),
+                DiagnosticResult.CompilerError("CS1001").WithSpan(4, 20, 4, 21),
+                DiagnosticResult.CompilerError("CS1003").WithSpan(4, 20, 4, 21).WithArguments("[", ";"),
+                DiagnosticResult.CompilerError("CS1003").WithSpan(4, 21, 4, 21).WithArguments("]", "}"),
+                DiagnosticResult.CompilerError("CS1514").WithSpan(4, 21, 4, 21),
+                DiagnosticResult.CompilerError("CS1551").WithSpan(5, 1, 5, 1),
+                DiagnosticResult.CompilerError("CS1513").WithSpan(5, 2, 5, 2),
+            };
+        }
     }
 }

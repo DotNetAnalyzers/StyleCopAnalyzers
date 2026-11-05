@@ -288,6 +288,110 @@ public partial class ClassName
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestPartialClassWithMissingNameAsync()
+        {
+            var testCode = @"
+/// <remarks>Remarks.</remarks>
+public partial class
+{
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                DiagnosticResult.CompilerError("CS1001").WithSpan(3, 21, 3, 21),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMethodWithMissingNameAsync()
+        {
+            var testCode = @"
+/// <summary>Summary.</summary>
+public interface ITest
+{
+    /// <summary>Summary.</summary>
+    void TestMethod();
+}
+
+/// <summary>Summary.</summary>
+public partial class TestClass : ITest
+{
+    /// <remarks>Remarks.</remarks>
+    void ITest.()
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                DiagnosticResult.CompilerError("CS0535").WithSpan(10, 34, 10, 39).WithArguments("TestClass", "ITest.TestMethod()"),
+                DiagnosticResult.CompilerError("CS0539").WithSpan(13, 16, 13, 16).WithArguments("TestClass.()"),
+                DiagnosticResult.CompilerError("CS1001").WithSpan(13, 16, 13, 17),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPropertyWithMissingNameAsync()
+        {
+            var testCode = @"
+/// <summary>Summary.</summary>
+public interface ITest
+{
+    /// <summary>Summary.</summary>
+    int TestProperty { get; }
+}
+
+/// <summary>Summary.</summary>
+public partial class TestClass : ITest
+{
+    /// <remarks>Remarks.</remarks>
+    int ITest. { get { return 0; } }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                DiagnosticResult.CompilerError("CS0535").WithSpan(10, 34, 10, 39).WithArguments("TestClass", "ITest.TestProperty"),
+                DiagnosticResult.CompilerError("CS0539").WithSpan(13, 16, 13, 16).WithArguments("TestClass."),
+                DiagnosticResult.CompilerError("CS1001").WithSpan(13, 16, 13, 17),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestEventWithMissingNameAsync()
+        {
+            var testCode = @"
+using System;
+
+/// <summary>Summary.</summary>
+public partial class TestClass
+{
+    /// <remarks>Remarks.</remarks>
+    public event EventHandler
+    {
+        add { }
+        remove { }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                DiagnosticResult.CompilerError("CS1001").WithSpan(8, 30, 8, 30),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
             => VerifyCSharpDiagnosticAsync(source, TestSettings, new[] { expected }, cancellationToken);
 
