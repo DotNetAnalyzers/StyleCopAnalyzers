@@ -20,13 +20,27 @@ namespace StyleCop.Analyzers.Test.Settings
     {
         private const string TestProjectName = "TestProject";
 
-        private static readonly ImmutableArray<AccessLevel> DefaultAccessibilityOrder = ImmutableArray.Create(
+        private static readonly string[] DefaultExcludeFromPunctuationCheck = ["seealso"];
+        private static readonly TopLevelType[] DefaultTopLevelTypes = [TopLevelType.Class];
+
+        private static readonly ImmutableArray<AccessLevel> DefaultAccessibilityOrder =
+        [
             AccessLevel.Public,
             AccessLevel.Internal,
             AccessLevel.ProtectedInternal,
             AccessLevel.Protected,
             AccessLevel.PrivateProtected,
-            AccessLevel.Private);
+            AccessLevel.Private,
+        ];
+
+        private static readonly OrderingTrait[] DefaultElementOrder =
+        [
+            OrderingTrait.Kind,
+            OrderingTrait.Accessibility,
+            OrderingTrait.Constant,
+            OrderingTrait.Static,
+            OrderingTrait.Readonly,
+        ];
 
         /// <summary>
         /// Verifies that proper defaults are returned when there are no additional files.
@@ -36,28 +50,41 @@ namespace StyleCop.Analyzers.Test.Settings
         {
             var styleCopSettings = SettingsHelper.GetStyleCopSettingsInTests(default(SyntaxTreeAnalysisContext), CancellationToken.None);
 
-            Assert.Equal("PlaceholderCompany", styleCopSettings.DocumentationRules.CompanyName);
-            Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
-            Assert.Equal("en-US", styleCopSettings.DocumentationRules.DocumentationCulture);
-            Assert.Same(CultureInfo.InvariantCulture, styleCopSettings.DocumentationRules.DocumentationCultureInfo);
-            Assert.True(styleCopSettings.NamingRules.AllowCommonHungarianPrefixes);
-            Assert.Empty(styleCopSettings.NamingRules.AllowedHungarianPrefixes);
-            Assert.Empty(styleCopSettings.NamingRules.AllowedNamespaceComponents);
+            AssertDefaultSettings(styleCopSettings);
+        }
 
-            Assert.NotNull(styleCopSettings.OrderingRules);
-            Assert.Equal(DefaultAccessibilityOrder, styleCopSettings.OrderingRules.AccessibilityOrder);
-            Assert.Equal(UsingDirectivesPlacement.InsideNamespace, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
-            Assert.Equal(OptionSetting.Allow, styleCopSettings.OrderingRules.BlankLinesBetweenUsingGroups);
+        /// <summary>
+        /// Verifies that proper defaults are returned when the project has no settings file. Unlike
+        /// <see cref="VerifySettingsDefaults"/>, this reads every section through the constructors that take a
+        /// settings reader.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifySettingsDefaultsWithoutSettingsFileAsync()
+        {
+            var context = await CreateAnalysisContextAsync(stylecopJSON: null).ConfigureAwait(false);
 
-            Assert.NotNull(styleCopSettings.LayoutRules);
-            Assert.Equal(OptionSetting.Allow, styleCopSettings.LayoutRules.NewlineAtEndOfFile);
-            Assert.True(styleCopSettings.LayoutRules.AllowConsecutiveUsings);
-            Assert.False(styleCopSettings.LayoutRules.AllowDoWhileOnClosingBrace);
-            Assert.Equal(BracelessIfStatements.Off, styleCopSettings.LayoutRules.AllowBracelessIfStatements);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
 
-            Assert.NotNull(styleCopSettings.SpacingRules);
-            Assert.NotNull(styleCopSettings.ReadabilityRules);
-            Assert.NotNull(styleCopSettings.MaintainabilityRules);
+            AssertDefaultSettings(styleCopSettings);
+        }
+
+        /// <summary>
+        /// Verifies that proper defaults are returned when the settings file does not set any values.
+        /// </summary>
+        /// <param name="stylecopJSON">The content of the settings file.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("{ }")]
+        [InlineData(@"{ ""settings"": { } }")]
+        [InlineData(@"{ ""settings"": { ""indentation"": { }, ""spacingRules"": { }, ""readabilityRules"": { }, ""orderingRules"": { }, ""namingRules"": { }, ""maintainabilityRules"": { }, ""layoutRules"": { }, ""documentationRules"": { } } }")]
+        public async Task VerifySettingsDefaultsWithoutValuesAsync(string stylecopJSON)
+        {
+            var context = await CreateAnalysisContextAsync(stylecopJSON).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+
+            AssertDefaultSettings(styleCopSettings);
         }
 
         [Fact]
@@ -449,8 +476,7 @@ namespace StyleCop.Analyzers.Test.Settings
             var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
 
             // The result is the same as the default settings.
-            Assert.Equal("PlaceholderCompany", styleCopSettings.DocumentationRules.CompanyName);
-            Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
+            AssertDefaultSettings(styleCopSettings);
         }
 
         [Fact]
@@ -462,11 +488,63 @@ namespace StyleCop.Analyzers.Test.Settings
             var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
 
             // The result is the same as the default settings.
-            Assert.Equal("PlaceholderCompany", styleCopSettings.DocumentationRules.CompanyName);
-            Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
+            AssertDefaultSettings(styleCopSettings);
         }
 
-        private static async Task<SyntaxTreeAnalysisContext> CreateAnalysisContextAsync(string stylecopJSON, string settingsFileName = SettingsHelper.SettingsFileName)
+        private static void AssertDefaultSettings(StyleCopSettings styleCopSettings)
+        {
+            Assert.NotNull(styleCopSettings.DocumentationRules);
+            Assert.Equal("PlaceholderCompany", styleCopSettings.DocumentationRules.CompanyName);
+            Assert.Equal(string.Empty, styleCopSettings.DocumentationRules.HeaderDecoration);
+            Assert.Empty(styleCopSettings.DocumentationRules.Variables);
+            Assert.True(styleCopSettings.DocumentationRules.XmlHeader);
+            Assert.True(styleCopSettings.DocumentationRules.DocumentExposedElements);
+            Assert.True(styleCopSettings.DocumentationRules.DocumentInternalElements);
+            Assert.False(styleCopSettings.DocumentationRules.DocumentPrivateElements);
+            Assert.Equal(InterfaceDocumentationMode.All, styleCopSettings.DocumentationRules.DocumentInterfaces);
+            Assert.False(styleCopSettings.DocumentationRules.DocumentPrivateFields);
+            Assert.Equal(FileNamingConvention.StyleCop, styleCopSettings.DocumentationRules.FileNamingConvention);
+            Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
+            Assert.Equal("en-US", styleCopSettings.DocumentationRules.DocumentationCulture);
+            Assert.Same(CultureInfo.InvariantCulture, styleCopSettings.DocumentationRules.DocumentationCultureInfo);
+            Assert.Equal(DefaultExcludeFromPunctuationCheck, styleCopSettings.DocumentationRules.ExcludeFromPunctuationCheck);
+
+            Assert.NotNull(styleCopSettings.NamingRules);
+            Assert.True(styleCopSettings.NamingRules.AllowCommonHungarianPrefixes);
+            Assert.Empty(styleCopSettings.NamingRules.AllowedHungarianPrefixes);
+            Assert.Empty(styleCopSettings.NamingRules.AllowedNamespaceComponents);
+            Assert.False(styleCopSettings.NamingRules.IncludeInferredTupleElementNames);
+            Assert.Equal(TupleElementNameCase.PascalCase, styleCopSettings.NamingRules.TupleElementNameCasing);
+
+            Assert.NotNull(styleCopSettings.OrderingRules);
+            Assert.Equal(DefaultElementOrder, styleCopSettings.OrderingRules.ElementOrder);
+            Assert.Equal(DefaultAccessibilityOrder, styleCopSettings.OrderingRules.AccessibilityOrder);
+            Assert.True(styleCopSettings.OrderingRules.SystemUsingDirectivesFirst);
+            Assert.Equal(UsingDirectivesPlacement.InsideNamespace, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
+            Assert.Equal(OptionSetting.Allow, styleCopSettings.OrderingRules.BlankLinesBetweenUsingGroups);
+            Assert.Null(styleCopSettings.OrderingRules.MemberKindOrder);
+
+            Assert.NotNull(styleCopSettings.LayoutRules);
+            Assert.Equal(OptionSetting.Allow, styleCopSettings.LayoutRules.NewlineAtEndOfFile);
+            Assert.True(styleCopSettings.LayoutRules.AllowConsecutiveUsings);
+            Assert.False(styleCopSettings.LayoutRules.AllowDoWhileOnClosingBrace);
+            Assert.Equal(BracelessIfStatements.Off, styleCopSettings.LayoutRules.AllowBracelessIfStatements);
+
+            Assert.NotNull(styleCopSettings.SpacingRules);
+
+            Assert.NotNull(styleCopSettings.ReadabilityRules);
+            Assert.False(styleCopSettings.ReadabilityRules.AllowBuiltInTypeAliases);
+
+            Assert.NotNull(styleCopSettings.MaintainabilityRules);
+            Assert.Equal(DefaultTopLevelTypes, styleCopSettings.MaintainabilityRules.TopLevelTypes);
+
+            Assert.NotNull(styleCopSettings.Indentation);
+            Assert.Equal(4, styleCopSettings.Indentation.IndentationSize);
+            Assert.Equal(4, styleCopSettings.Indentation.TabSize);
+            Assert.False(styleCopSettings.Indentation.UseTabs);
+        }
+
+        private static async Task<SyntaxTreeAnalysisContext> CreateAnalysisContextAsync(string? stylecopJSON, string settingsFileName = SettingsHelper.SettingsFileName)
         {
             var projectId = ProjectId.CreateNewId();
             var documentId = DocumentId.CreateNewId(projectId);
@@ -479,8 +557,9 @@ namespace StyleCop.Analyzers.Test.Settings
             var document = solution.GetDocument(documentId);
             var syntaxTree = await document.GetSyntaxTreeAsync().ConfigureAwait(false);
 
-            var stylecopJSONFile = new AdditionalTextHelper(settingsFileName, stylecopJSON);
-            var additionalFiles = ImmutableArray.Create<AdditionalText>(stylecopJSONFile);
+            var additionalFiles = stylecopJSON is null
+                ? ImmutableArray<AdditionalText>.Empty
+                : ImmutableArray.Create<AdditionalText>(new AdditionalTextHelper(settingsFileName, stylecopJSON));
             var analyzerOptions = new AnalyzerOptions(additionalFiles);
 
             return new SyntaxTreeAnalysisContext(syntaxTree, analyzerOptions, reportDiagnostic: _ => { }, isSupportedDiagnostic: _ => true, CancellationToken.None);
