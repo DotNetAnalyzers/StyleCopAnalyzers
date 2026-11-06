@@ -848,4 +848,27 @@ public class Foo
         DiagnosticResult expected = Diagnostic().WithLocation(0);
         await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
     }
+
+    [Fact]
+    public async Task TestExpressionBodiedAccessorWithMissingSemicolonAsync()
+    {
+        var testCode = @"
+public class Foo
+{
+    private int value;
+
+    public int Value
+    {
+        get => this.value
+        set => this.value = value;
+    }
+}";
+
+        DiagnosticResult[] expected =
+        {
+            DiagnosticResult.CompilerError("CS1002").WithSpan(8, 26, 8, 26),
+        };
+
+        await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+    }
 }

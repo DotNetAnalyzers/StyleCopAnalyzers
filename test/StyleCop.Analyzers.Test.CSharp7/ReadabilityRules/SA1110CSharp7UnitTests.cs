@@ -64,6 +64,56 @@ class Foo
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestLocalFunctionWithMissingNameAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Method()
+    {
+        void <T>(T value)
+        {
+        }
+    }
+}";
+
+            DiagnosticResult[] expected =
+            {
+                DiagnosticResult.CompilerError("CS1001").WithSpan(6, 14, 6, 15),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestLocalFunctionWithMissingParameterListAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Method()
+    {
+        void Bar<T>
+        {
+        }
+    }
+}";
+
+            var expected = this.GetExpectedResultTestLocalFunctionWithMissingParameterList();
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestLocalFunctionWithMissingParameterList()
+        {
+            return new[]
+            {
+                DiagnosticResult.CompilerError("CS1003").WithSpan(6, 20, 6, 20).WithArguments("(", "{"),
+                DiagnosticResult.CompilerError("CS1026").WithSpan(6, 20, 6, 20),
+            };
+        }
+
         protected override DiagnosticResult[] GetExpectedResultTestConversionOperatorWithMissingType()
         {
             return new[]

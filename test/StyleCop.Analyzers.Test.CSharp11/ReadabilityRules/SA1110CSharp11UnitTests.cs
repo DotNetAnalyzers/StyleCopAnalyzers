@@ -30,6 +30,15 @@ namespace StyleCop.Analyzers.Test.CSharp11.ReadabilityRules
             };
         }
 
+        protected override DiagnosticResult[] GetExpectedResultTestLocalFunctionWithMissingParameterList()
+        {
+            return new[]
+            {
+                DiagnosticResult.CompilerError("CS1003").WithSpan(6, 20, 6, 20).WithArguments("("),
+                DiagnosticResult.CompilerError("CS1026").WithSpan(6, 20, 6, 20),
+            };
+        }
+
         protected override DiagnosticResult[] GetExpectedResultTestOperatorWithMissingOperatorToken()
         {
             return new[]
