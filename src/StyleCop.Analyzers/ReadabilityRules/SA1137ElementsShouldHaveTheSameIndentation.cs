@@ -288,9 +288,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
 
                 var expectedIndentation = text.ToString(TextSpan.FromBounds(lineStart, indentationEnd));
+                var openBracketColumn = openBracket.SpanStart - lineStart;
                 var indentationTrivia = closeBracket.LeadingTrivia.LastOrDefault();
                 var indentation = indentationTrivia.IsKind(SyntaxKind.WhitespaceTrivia) ? indentationTrivia.ToString() : string.Empty;
-                if (!string.Equals(expectedIndentation, indentation, StringComparison.Ordinal))
+                if (!string.Equals(expectedIndentation, indentation, StringComparison.Ordinal)
+                    && indentation.Length != openBracketColumn)
                 {
                     ReportDiagnostic(context, closeBracket, indentationTrivia, indentation, expectedIndentation);
                 }

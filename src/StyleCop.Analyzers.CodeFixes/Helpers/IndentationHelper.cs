@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Helpers
     using System.Collections.Generic;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers.ObjectPools;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
@@ -86,6 +87,19 @@ namespace StyleCop.Analyzers.Helpers
             }
 
             return result;
+        }
+
+        public static string GenerateIndentationStringForColumn(SourceText text, int position)
+        {
+            var lineStart = text.Lines.GetLineFromPosition(position).Start;
+            var indentationEnd = lineStart;
+            while (indentationEnd < position && SyntaxFacts.IsWhitespace(text[indentationEnd]))
+            {
+                indentationEnd++;
+            }
+
+            var leadingIndentation = text.ToString(TextSpan.FromBounds(lineStart, indentationEnd));
+            return leadingIndentation + new string(' ', position - indentationEnd);
         }
 
         /// <summary>

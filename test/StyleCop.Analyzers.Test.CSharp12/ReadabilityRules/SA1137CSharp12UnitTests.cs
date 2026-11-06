@@ -162,6 +162,55 @@ namespace StyleCop.Analyzers.Test.CSharp12.ReadabilityRules
         }
 
         /// <summary>
+        /// Verifies that a closing bracket aligned with an inline opening bracket is accepted.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Fact]
+        [WorkItem(4399, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4399")]
+        public async Task TestInlineOpeningBracketAlignedClosingBracketIsAcceptedAsync()
+        {
+            var testCode = @"class C
+{
+    string[] something = [
+                            ""some"", ""text"", ""here"",
+                         ];
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix can align a closing bracket with an inline opening bracket.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Fact]
+        [WorkItem(4399, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4399")]
+        public async Task TestAlignClosingBracketWithOpeningBracketCodeFixAsync()
+        {
+            var testCode = @"class C
+{
+    string[] something = [
+        ""some"", ""text"", ""here"",
+{|#0:     |}];
+}";
+            var fixedCode = @"class C
+{
+    string[] something = [
+        ""some"", ""text"", ""here"",
+                         ];
+}";
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                CodeActionEquivalenceKey = "AlignClosingBracketWithOpeningBracket",
+            };
+            test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that inline closing brackets use the same fix as inline closing braces.
         /// </summary>
         /// <param name="lineEnding">The line ending used in the source.</param>

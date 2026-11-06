@@ -16,6 +16,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         internal static string? GetResourceString(string resourceKey, string? defaultValue = null) =>  ResourceManager.GetString(resourceKey, Culture) ?? defaultValue;
         /// <summary>Fix indentation</summary>
         public static string @IndentationCodeFix => GetResourceString("IndentationCodeFix")!;
+        /// <summary>Align closing bracket with opening bracket</summary>
+        public static string @AlignClosingBracketWithOpeningBracketCodeFix => GetResourceString("AlignClosingBracketWithOpeningBracketCodeFix")!;
         /// <summary>Remove region</summary>
         public static string @RemoveRegionCodeFix => GetResourceString("RemoveRegionCodeFix")!;
         /// <summary>Replace 'base.' with 'this.'</summary>
