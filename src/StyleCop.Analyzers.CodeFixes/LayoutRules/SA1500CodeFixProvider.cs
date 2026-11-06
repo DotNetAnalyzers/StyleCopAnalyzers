@@ -18,6 +18,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
+    using StyleCop.Analyzers.ReadabilityRules;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -38,22 +39,34 @@ namespace StyleCop.Analyzers.LayoutRules
         }
 
         /// <inheritdoc/>
-        public override Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             foreach (Diagnostic diagnostic in context.Diagnostics)
             {
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         LayoutResources.SA1500CodeFix,
-                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, false, cancellationToken),
                         nameof(SA1500CodeFixProvider)),
                     diagnostic);
-            }
 
-            return SpecializedTasks.CompletedTask;
+                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
+                if (token.IsKind(SyntaxKind.CloseBracketToken)
+                    && token.Parent.IsKind(SyntaxKindEx.CollectionExpression)
+                    && !((CollectionExpressionSyntaxWrapper)token.Parent).OpenBracketToken.IsFirstInLine())
+                {
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            ReadabilityResources.AlignClosingBracketWithOpeningBracketCodeFix,
+                            cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, true, cancellationToken),
+                            "AlignClosingBracketWithOpeningBracket"),
+                        diagnostic);
+                }
+            }
         }
 
-        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, bool alignWithOpeningBracket, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
@@ -61,13 +74,13 @@ namespace StyleCop.Analyzers.LayoutRules
 
             var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
             var braceToken = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-            var tokenReplacements = GenerateBraceFixes(settings, ImmutableArray.Create(braceToken), sourceText, options);
+            var tokenReplacements = GenerateBraceFixes(settings, ImmutableArray.Create(braceToken), sourceText, options, alignWithOpeningBracket);
 
             var newSyntaxRoot = syntaxRoot.ReplaceTokens(tokenReplacements.Keys, (originalToken, rewrittenToken) => tokenReplacements[originalToken]);
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
 
-        private static Dictionary<SyntaxToken, SyntaxToken> GenerateBraceFixes(StyleCopSettings settings, ImmutableArray<SyntaxToken> braceTokens, SourceText sourceText, OptionSet options)
+        private static Dictionary<SyntaxToken, SyntaxToken> GenerateBraceFixes(StyleCopSettings settings, ImmutableArray<SyntaxToken> braceTokens, SourceText sourceText, OptionSet options, bool alignWithOpeningBracket = false)
         {
             var tokenReplacements = new Dictionary<SyntaxToken, SyntaxToken>();
 
@@ -76,6 +89,12 @@ namespace StyleCop.Analyzers.LayoutRules
                 var endOfLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(braceToken, sourceText, options);
                 var braceLine = LocationHelpers.GetLineSpan(braceToken).StartLinePosition.Line;
                 var braceReplacementToken = braceToken;
+                if (alignWithOpeningBracket
+                    && braceToken.IsKind(SyntaxKind.CloseBracketToken)
+                    && tokenReplacements.TryGetValue(braceToken, out var previousBraceReplacement))
+                {
+                    braceReplacementToken = previousBraceReplacement;
+                }
 
                 var indentationSteps = DetermineIndentationSteps(settings.Indentation, braceToken);
 
@@ -108,7 +127,31 @@ namespace StyleCop.Analyzers.LayoutRules
                             AddReplacement(tokenReplacements, previousToken, previousToken.WithTrailingTrivia(previousTokenNewTrailingTrivia));
                         }
 
-                        braceReplacementToken = braceReplacementToken.WithLeadingTrivia(IndentationHelper.GenerateWhitespaceTrivia(settings.Indentation, indentationSteps));
+                        SyntaxTrivia indentation;
+                        if (alignWithOpeningBracket
+                            && braceToken.IsKind(SyntaxKind.CloseBracketToken)
+                            && braceToken.Parent.IsKind(SyntaxKindEx.CollectionExpression))
+                        {
+                            var openBracket = ((CollectionExpressionSyntaxWrapper)braceToken.Parent).OpenBracketToken;
+                            int openBracketColumn;
+                            if (tokenReplacements.TryGetValue(openBracket, out var replacementOpenBracket)
+                                && !string.Equals(replacementOpenBracket.LeadingTrivia.ToFullString(), openBracket.LeadingTrivia.ToFullString(), StringComparison.Ordinal))
+                            {
+                                openBracketColumn = IndentationHelper.GetColumn(replacementOpenBracket.LeadingTrivia.LastOrDefault().ToString(), settings.Indentation.TabSize);
+                            }
+                            else
+                            {
+                                openBracketColumn = SA1143ConditionalExpressionsMustBeFormattedConsistently.GetColumn(sourceText, openBracket.SpanStart, settings.Indentation.TabSize);
+                            }
+
+                            indentation = SyntaxFactory.Whitespace(IndentationHelper.GenerateIndentationStringForColumn(openBracketColumn, settings.Indentation));
+                        }
+                        else
+                        {
+                            indentation = IndentationHelper.GenerateWhitespaceTrivia(settings.Indentation, indentationSteps);
+                        }
+
+                        braceReplacementToken = braceReplacementToken.WithLeadingTrivia(indentation);
                     }
 
                     // Check if we need to apply a fix after the brace. No fix is needed when:
@@ -353,7 +396,8 @@ namespace StyleCop.Analyzers.LayoutRules
 
                 var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, fixAllContext.CancellationToken);
 
-                var tokenReplacements = GenerateBraceFixes(settings, tokens, sourceText, document.Project.Solution.Workspace.Options);
+                bool alignWithOpeningBracket = fixAllContext.CodeActionEquivalenceKey == "AlignClosingBracketWithOpeningBracket";
+                var tokenReplacements = GenerateBraceFixes(settings, tokens, sourceText, document.Project.Solution.Workspace.Options, alignWithOpeningBracket);
 
                 return syntaxRoot.ReplaceTokens(tokenReplacements.Keys, (originalToken, rewrittenToken) => tokenReplacements[originalToken]);
             }

@@ -120,6 +120,9 @@
   <data name="IndentationCodeFix" xml:space="preserve">
     <value>修正缩进</value>
   </data>
+  <data name="AlignClosingBracketWithOpeningBracketCodeFix" xml:space="preserve">
+    <value>将右方括号与左方括号对齐</value>
+  </data>
   <data name="RemoveRegionCodeFix" xml:space="preserve">
     <value>删除区域</value>
   </data>

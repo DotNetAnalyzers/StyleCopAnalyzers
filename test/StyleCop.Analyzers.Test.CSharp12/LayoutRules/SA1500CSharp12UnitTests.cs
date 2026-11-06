@@ -3,9 +3,19 @@
 
 namespace StyleCop.Analyzers.Test.CSharp12.LayoutRules;
 
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
+using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Testing;
+using Microsoft.CodeAnalysis.Text;
+using StyleCop.Analyzers.LayoutRules;
 using StyleCop.Analyzers.Test.CSharp11.LayoutRules;
 using StyleCop.Analyzers.Test.Helpers;
 using Xunit;
@@ -134,6 +144,117 @@ public partial class SA1500CSharp12UnitTests : SA1500CSharp11UnitTests
             """;
 
         await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Verifies that an alternate code fix can align a separated closing bracket with an inline opening bracket.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    [Fact]
+    [WorkItem(4399, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4399")]
+    public async Task TestAlignCollectionExpressionClosingBracketAsync()
+    {
+        var testCode = @"class C
+{
+    string[] something = [
+        ""some"", ""text"", ""here""{|#0:]|};
+}";
+        var fixedCode = @"class C
+{
+    string[] something = [
+        ""some"", ""text"", ""here""
+                         ];
+}";
+        var test = new CSharpTest
+        {
+            TestCode = testCode,
+            FixedCode = fixedCode,
+            CodeActionEquivalenceKey = "AlignClosingBracketWithOpeningBracket",
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
+
+        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Verifies that the alternate code fix uses tabs when aligning a closing bracket with an inline opening bracket.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    [Fact]
+    public async Task TestAlignCollectionExpressionClosingBracketWithTabsAsync()
+    {
+        const string testCode = "class C\n{\n\tstring[] something = [\n\t\t\"some\", \"text\", \"here\"{|#0:]|};\n}";
+        const string fixedCode = "class C\n{\n\tstring[] something = [\n\t\t\"some\", \"text\", \"here\"\n\t\t\t\t\t\t ];\n}";
+        var test = new CSharpTest
+        {
+            TestCode = testCode,
+            FixedCode = fixedCode,
+            CodeActionEquivalenceKey = "AlignClosingBracketWithOpeningBracket",
+            UseTabs = true,
+            TabSize = 4,
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
+
+        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Verifies that Fix All aligns nested collection-expression closing brackets with moved opening brackets.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    [Fact]
+    public async Task TestAlignNestedCollectionExpressionClosingBracketsFixAllAsync()
+    {
+        const string source = "class C\n{\n    int[][] values = [[\n        1, 2]];\n}";
+        const string fixedSource = "class C\n{\n    int[][] values = [\n        [\n        1, 2\n        ]\n                     ];\n}";
+        using var workspace = new AdhocWorkspace();
+        var projectId = ProjectId.CreateNewId();
+        var documentId = DocumentId.CreateNewId(projectId);
+        var projectInfo = ProjectInfo.Create(
+            projectId,
+            VersionStamp.Create(),
+            "TestProject",
+            "TestProject",
+            LanguageNames.CSharp,
+            parseOptions: CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.CSharp12));
+        var solution = workspace.CurrentSolution
+            .AddProject(projectInfo)
+            .AddDocument(documentId, "Test.cs", SourceText.From(source));
+        var document = solution.GetDocument(documentId);
+        Assert.NotNull(document);
+        var syntaxTree = await document.GetSyntaxTreeAsync(CancellationToken.None).ConfigureAwait(false);
+        Assert.NotNull(syntaxTree);
+        var diagnosticDescriptor = new DiagnosticDescriptor(
+            SA1500BracesForMultiLineStatementsMustNotShareLine.DiagnosticId,
+            "Title",
+            "Message",
+            "Category",
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+        var openBracketPosition = source.IndexOf("[[", StringComparison.Ordinal);
+        var closingBracketsPosition = source.IndexOf("]]", StringComparison.Ordinal);
+        var diagnostics = ImmutableArray.Create(
+            Microsoft.CodeAnalysis.Diagnostic.Create(diagnosticDescriptor, Location.Create(syntaxTree, new TextSpan(openBracketPosition, 1))),
+            Microsoft.CodeAnalysis.Diagnostic.Create(diagnosticDescriptor, Location.Create(syntaxTree, new TextSpan(closingBracketsPosition, 1))),
+            Microsoft.CodeAnalysis.Diagnostic.Create(diagnosticDescriptor, Location.Create(syntaxTree, new TextSpan(closingBracketsPosition + 1, 1))));
+        var codeFixProvider = new SA1500CodeFixProvider();
+        var fixAllContext = new FixAllContext(
+            document,
+            codeFixProvider,
+            FixAllScope.Document,
+            "AlignClosingBracketWithOpeningBracket",
+            codeFixProvider.FixableDiagnosticIds,
+            new TestDiagnosticProvider(documentId, diagnostics),
+            CancellationToken.None);
+
+        var fixAllAction = await codeFixProvider.GetFixAllProvider().GetFixAsync(fixAllContext).ConfigureAwait(false);
+        Assert.NotNull(fixAllAction);
+        var operations = await fixAllAction.GetOperationsAsync(CancellationToken.None).ConfigureAwait(false);
+        var changedSolution = Assert.Single(operations.OfType<ApplyChangesOperation>()).ChangedSolution;
+        var changedDocument = changedSolution.GetDocument(documentId);
+        Assert.NotNull(changedDocument);
+
+        Assert.Equal(fixedSource, (await changedDocument.GetTextAsync(CancellationToken.None).ConfigureAwait(false)).ToString());
     }
 
     /// <summary>
@@ -292,5 +413,32 @@ public partial class SA1500CSharp12UnitTests : SA1500CSharp11UnitTests
             new[] { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1), Diagnostic().WithLocation(2), Diagnostic().WithLocation(3) },
             fixedCode,
             CancellationToken.None).ConfigureAwait(false);
+    }
+
+    private sealed class TestDiagnosticProvider : FixAllContext.DiagnosticProvider
+    {
+        private readonly DocumentId documentId;
+        private readonly ImmutableArray<Diagnostic> diagnostics;
+
+        public TestDiagnosticProvider(DocumentId documentId, ImmutableArray<Diagnostic> diagnostics)
+        {
+            this.documentId = documentId;
+            this.diagnostics = diagnostics;
+        }
+
+        public override Task<IEnumerable<Diagnostic>> GetDocumentDiagnosticsAsync(Document document, CancellationToken cancellationToken)
+        {
+            return Task.FromResult<IEnumerable<Diagnostic>>(document.Id == this.documentId ? this.diagnostics : ImmutableArray<Diagnostic>.Empty);
+        }
+
+        public override Task<IEnumerable<Diagnostic>> GetProjectDiagnosticsAsync(Project project, CancellationToken cancellationToken)
+        {
+            return Task.FromResult<IEnumerable<Diagnostic>>(ImmutableArray<Diagnostic>.Empty);
+        }
+
+        public override Task<IEnumerable<Diagnostic>> GetAllDiagnosticsAsync(Project project, CancellationToken cancellationToken)
+        {
+            return Task.FromResult<IEnumerable<Diagnostic>>(this.diagnostics);
+        }
     }
 }

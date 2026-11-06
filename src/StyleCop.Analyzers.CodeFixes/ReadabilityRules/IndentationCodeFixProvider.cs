@@ -16,6 +16,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.Options;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(IndentationCodeFixProvider))]
@@ -31,29 +32,41 @@ namespace StyleCop.Analyzers.ReadabilityRules
             FixAll.Instance;
 
         /// <inheritdoc/>
-        public override Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         ReadabilityResources.IndentationCodeFix,
-                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, false, cancellationToken),
                         nameof(IndentationCodeFixProvider)),
                     diagnostic);
-            }
 
-            return SpecializedTasks.CompletedTask;
+                var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
+                if (token.IsKind(SyntaxKind.CloseBracketToken)
+                    && token.Parent.IsKind(SyntaxKindEx.CollectionExpression)
+                    && !((CollectionExpressionSyntaxWrapper)token.Parent).OpenBracketToken.IsFirstInLine())
+                {
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            ReadabilityResources.AlignClosingBracketWithOpeningBracketCodeFix,
+                            cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, true, cancellationToken),
+                            "AlignClosingBracketWithOpeningBracket"),
+                        diagnostic);
+                }
+            }
         }
 
-        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, bool alignWithOpeningBracket, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
             var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
             var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
 
             TextChange textChange;
-            if (!TryGetTextChange(diagnostic, syntaxRoot, text, document.Project.Solution.Workspace.Options, settings.Indentation, out textChange))
+            if (!TryGetTextChange(diagnostic, syntaxRoot, text, document.Project.Solution.Workspace.Options, settings.Indentation, alignWithOpeningBracket, out textChange))
             {
                 return document;
             }
@@ -61,10 +74,19 @@ namespace StyleCop.Analyzers.ReadabilityRules
             return document.WithText(text.WithChanges(textChange));
         }
 
-        private static bool TryGetTextChange(Diagnostic diagnostic, SyntaxNode syntaxRoot, SourceText text, OptionSet options, IndentationSettings indentationSettings, out TextChange textChange)
+        private static bool TryGetTextChange(Diagnostic diagnostic, SyntaxNode syntaxRoot, SourceText text, OptionSet options, IndentationSettings indentationSettings, bool alignWithOpeningBracket, out TextChange textChange)
         {
             string replacement;
-            if (!diagnostic.Properties.TryGetValue(SA1137ElementsShouldHaveTheSameIndentation.ExpectedIndentationKey, out replacement))
+            var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
+            if (alignWithOpeningBracket
+                && token.IsKind(SyntaxKind.CloseBracketToken)
+                && token.Parent.IsKind(SyntaxKindEx.CollectionExpression))
+            {
+                var openBracket = ((CollectionExpressionSyntaxWrapper)token.Parent).OpenBracketToken;
+                replacement = IndentationHelper.GenerateIndentationStringForColumn(text, openBracket.SpanStart, indentationSettings);
+            }
+            else if (alignWithOpeningBracket
+                || !diagnostic.Properties.TryGetValue(SA1137ElementsShouldHaveTheSameIndentation.ExpectedIndentationKey, out replacement))
             {
                 textChange = default;
                 return false;
@@ -83,7 +105,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 originalSpan = trivia.Span;
             }
 
-            var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
             if (token.IsKind(SyntaxKind.CloseBraceToken)
                 && token.Parent is InitializerExpressionSyntax initializer
                 && initializer.IsKind(SyntaxKind.ArrayInitializerExpression)
@@ -170,7 +191,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     // Some compilers report the same diagnostic twice for positional records and in files with
                     // top-level statements (https://github.com/dotnet/roslyn/issues/53136 and
                     // https://github.com/dotnet/roslyn/issues/58561), and overlapping text changes are not allowed.
-                    if (TryGetTextChange(diagnostic, syntaxRoot, text, document.Project.Solution.Workspace.Options, settings.Indentation, out var textChange) && !changes.Contains(textChange))
+                    bool alignWithOpeningBracket = fixAllContext.CodeActionEquivalenceKey == "AlignClosingBracketWithOpeningBracket";
+                    if (TryGetTextChange(diagnostic, syntaxRoot, text, document.Project.Solution.Workspace.Options, settings.Indentation, alignWithOpeningBracket, out var textChange) && !changes.Contains(textChange))
                     {
                         if (!changes.Exists(change => change.Span.Contains(textChange.Span)))
                         {

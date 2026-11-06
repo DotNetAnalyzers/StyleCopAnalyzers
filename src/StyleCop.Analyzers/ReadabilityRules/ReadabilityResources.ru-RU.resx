@@ -120,6 +120,9 @@
   <data name="IndentationCodeFix" xml:space="preserve">
     <value>Исправить отступы</value>
   </data>
+  <data name="AlignClosingBracketWithOpeningBracketCodeFix" xml:space="preserve">
+    <value>Выровнять закрывающую квадратную скобку по открывающей</value>
+  </data>
   <data name="RemoveRegionCodeFix" xml:space="preserve">
     <value>Удалить регион</value>
   </data>

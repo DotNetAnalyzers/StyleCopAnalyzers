@@ -6,7 +6,9 @@ namespace StyleCop.Analyzers.Helpers
     using System.Collections.Generic;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers.ObjectPools;
+    using StyleCop.Analyzers.ReadabilityRules;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -86,6 +88,35 @@ namespace StyleCop.Analyzers.Helpers
             }
 
             return result;
+        }
+
+        public static string GenerateIndentationStringForColumn(SourceText text, int position, IndentationSettings indentationSettings)
+        {
+            var column = SA1143ConditionalExpressionsMustBeFormattedConsistently.GetColumn(text, position, indentationSettings.TabSize);
+            return GenerateIndentationStringForColumn(column, indentationSettings);
+        }
+
+        public static string GenerateIndentationStringForColumn(int column, IndentationSettings indentationSettings)
+        {
+            if (indentationSettings.UseTabs && indentationSettings.TabSize > 0)
+            {
+                var tabCount = column / indentationSettings.TabSize;
+                var spaceCount = column % indentationSettings.TabSize;
+                return new string('\t', tabCount) + new string(' ', spaceCount);
+            }
+
+            return new string(' ', column);
+        }
+
+        public static int GetColumn(string indentation, int tabSize)
+        {
+            var column = 0;
+            foreach (var character in indentation)
+            {
+                column += character == '\t' && tabSize > 0 ? tabSize - (column % tabSize) : 1;
+            }
+
+            return column;
         }
 
         /// <summary>
