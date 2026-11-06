@@ -469,5 +469,27 @@ class TestClass
 
             await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestCollectionExpressionWithMissingCloseBracketAsync()
+        {
+            string testCode = @"
+class TestClass
+{
+    void TestMethod()
+    {
+        int[] a = [1,
+            2;
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                DiagnosticResult.CompilerError("CS1003").WithSpan(7, 14, 7, 15).WithArguments("]"),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

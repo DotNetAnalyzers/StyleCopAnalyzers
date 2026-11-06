@@ -415,6 +415,76 @@ public partial class SA1500CSharp12UnitTests : SA1500CSharp11UnitTests
             CancellationToken.None).ConfigureAwait(false);
     }
 
+    [Fact]
+    public async Task TestCollectionExpressionWithMissingCloseBracketAsync()
+    {
+        var testCode = """
+            class C
+            {
+                void M()
+                {
+                    int[] values = [
+                        1,
+                        2;
+                }
+            }
+            """;
+
+        DiagnosticResult[] expected =
+        {
+            DiagnosticResult.CompilerError("CS1003").WithSpan(7, 14, 7, 15).WithArguments("]"),
+        };
+
+        await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestCollectionExpressionWithMissingFirstElementAsync()
+    {
+        var testCode = """
+            class C
+            {
+                void M()
+                {
+                    int[] values = [ ,
+                        2,
+                    ];
+                }
+            }
+            """;
+
+        DiagnosticResult[] expected =
+        {
+            DiagnosticResult.CompilerError("CS1525").WithSpan(5, 26, 5, 27).WithArguments(","),
+        };
+
+        await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestCollectionExpressionWithMissingLastOperandAsync()
+    {
+        var testCode = """
+            class C
+            {
+                void M()
+                {
+                    int[] values = [
+                        1,
+                        2 +
+                    ];
+                }
+            }
+            """;
+
+        DiagnosticResult[] expected =
+        {
+            DiagnosticResult.CompilerError("CS1525").WithSpan(7, 16, 7, 16).WithArguments("]"),
+        };
+
+        await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+    }
+
     private sealed class TestDiagnosticProvider : FixAllContext.DiagnosticProvider
     {
         private readonly DocumentId documentId;
