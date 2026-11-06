@@ -180,6 +180,43 @@ namespace StyleCop.Analyzers.Test.CSharp12.ReadabilityRules
         }
 
         /// <summary>
+        /// Verifies that collection-expression bracket alignment uses visual columns when tabs are enabled.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Fact]
+        public async Task TestInlineOpeningBracketAlignedClosingBracketWithTabsIsAcceptedAsync()
+        {
+            const string testCode = "class C\n{\n\tstring[] something = [\n\t\t\"some\", \"text\", \"here\",\n\t\t\t\t\t\t ];\n}";
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                UseTabs = true,
+                TabSize = 4,
+            };
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that collection-expression brackets at different visual columns are still diagnosed with tabs.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Fact]
+        public async Task TestInlineOpeningBracketMisalignedClosingBracketWithTabsIsDiagnosedAsync()
+        {
+            const string testCode = "class C\n{\n\tstring[] something = [\n\t\t\"some\", \"text\", \"here\",\n{|#0:\t\t\t\t\t|}];\n}";
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                UseTabs = true,
+                TabSize = 4,
+            };
+            test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that the code fix can align a closing bracket with an inline opening bracket.
         /// </summary>
         /// <returns>A task representing the asynchronous operation.</returns>
@@ -204,6 +241,28 @@ namespace StyleCop.Analyzers.Test.CSharp12.ReadabilityRules
                 TestCode = testCode,
                 FixedCode = fixedCode,
                 CodeActionEquivalenceKey = "AlignClosingBracketWithOpeningBracket",
+            };
+            test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
+
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the alternate code fix uses tabs when aligning a closing bracket with an inline opening bracket.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Fact]
+        public async Task TestAlignClosingBracketWithOpeningBracketCodeFixWithTabsAsync()
+        {
+            const string testCode = "class C\n{\n\tstring[] something = [\n\t\t\"some\", \"text\", \"here\",\n{|#0:\t\t|}];\n}";
+            const string fixedCode = "class C\n{\n\tstring[] something = [\n\t\t\"some\", \"text\", \"here\",\n\t\t\t\t\t\t ];\n}";
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                CodeActionEquivalenceKey = "AlignClosingBracketWithOpeningBracket",
+                UseTabs = true,
+                TabSize = 4,
             };
             test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
 

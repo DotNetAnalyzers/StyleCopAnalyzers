@@ -14,6 +14,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SA1137ElementsShouldHaveTheSameIndentation : DiagnosticAnalyzer
@@ -47,10 +48,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly Action<SyntaxNodeAnalysisContext> BlockAction = HandleBlock;
         private static readonly Action<SyntaxNodeAnalysisContext> SwitchStatementAction = HandleSwitchStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> InitializerExpressionAction = HandleInitializerExpression;
-        private static readonly Action<SyntaxNodeAnalysisContext> CollectionExpressionAction = HandleCollectionExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CollectionExpressionAction = HandleCollectionExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> AnonymousObjectCreationExpressionAction = HandleAnonymousObjectCreationExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> TupleTypeAction = HandleTupleType;
         private static readonly Action<SyntaxNodeAnalysisContext> TupleExpressionAction = HandleTupleExpression;
+        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = RegisterCollectionExpressionAction;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -61,6 +63,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
+            context.RegisterCompilationStartAction(CompilationStartAction);
 
             context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
             context.RegisterSyntaxNodeAction(BaseNamespaceDeclarationAction, SyntaxKinds.BaseNamespaceDeclaration);
@@ -78,7 +81,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(BlockAction, SyntaxKind.Block);
             context.RegisterSyntaxNodeAction(SwitchStatementAction, SyntaxKind.SwitchStatement);
             context.RegisterSyntaxNodeAction(InitializerExpressionAction, SyntaxKinds.InitializerExpression);
-            context.RegisterSyntaxNodeAction(CollectionExpressionAction, SyntaxKindEx.CollectionExpression);
             context.RegisterSyntaxNodeAction(AnonymousObjectCreationExpressionAction, SyntaxKind.AnonymousObjectCreationExpression);
             context.RegisterSyntaxNodeAction(TupleTypeAction, SyntaxKindEx.TupleType);
             context.RegisterSyntaxNodeAction(TupleExpressionAction, SyntaxKindEx.TupleExpression);
@@ -264,7 +266,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
             CheckElements(context, initializerExpression.Expressions);
         }
 
-        private static void HandleCollectionExpression(SyntaxNodeAnalysisContext context)
+        private static void RegisterCollectionExpressionAction(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(CollectionExpressionAction, SyntaxKindEx.CollectionExpression);
+        }
+
+        private static void HandleCollectionExpression(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             var collectionExpression = (CollectionExpressionSyntaxWrapper)context.Node;
 
@@ -288,11 +295,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
 
                 var expectedIndentation = text.ToString(TextSpan.FromBounds(lineStart, indentationEnd));
-                var openBracketColumn = openBracket.SpanStart - lineStart;
+                var openBracketColumn = SA1143ConditionalExpressionsMustBeFormattedConsistently.GetColumn(text, openBracket.SpanStart, settings.Indentation.TabSize);
+                var closeBracketColumn = SA1143ConditionalExpressionsMustBeFormattedConsistently.GetColumn(text, closeBracket.SpanStart, settings.Indentation.TabSize);
                 var indentationTrivia = closeBracket.LeadingTrivia.LastOrDefault();
                 var indentation = indentationTrivia.IsKind(SyntaxKind.WhitespaceTrivia) ? indentationTrivia.ToString() : string.Empty;
                 if (!string.Equals(expectedIndentation, indentation, StringComparison.Ordinal)
-                    && indentation.Length != openBracketColumn)
+                    && closeBracketColumn != openBracketColumn)
                 {
                     ReportDiagnostic(context, closeBracket, indentationTrivia, indentation, expectedIndentation);
                 }

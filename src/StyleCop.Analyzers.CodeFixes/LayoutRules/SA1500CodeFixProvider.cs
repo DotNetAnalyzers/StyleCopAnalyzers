@@ -89,6 +89,12 @@ namespace StyleCop.Analyzers.LayoutRules
                 var endOfLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(braceToken, sourceText, options);
                 var braceLine = LocationHelpers.GetLineSpan(braceToken).StartLinePosition.Line;
                 var braceReplacementToken = braceToken;
+                if (alignWithOpeningBracket
+                    && braceToken.IsKind(SyntaxKind.CloseBracketToken)
+                    && tokenReplacements.TryGetValue(braceToken, out var previousBraceReplacement))
+                {
+                    braceReplacementToken = previousBraceReplacement;
+                }
 
                 var indentationSteps = DetermineIndentationSteps(settings.Indentation, braceToken);
 
@@ -127,7 +133,18 @@ namespace StyleCop.Analyzers.LayoutRules
                             && braceToken.Parent.IsKind(SyntaxKindEx.CollectionExpression))
                         {
                             var openBracket = ((CollectionExpressionSyntaxWrapper)braceToken.Parent).OpenBracketToken;
-                            indentation = SyntaxFactory.Whitespace(IndentationHelper.GenerateIndentationStringForColumn(sourceText, openBracket.SpanStart));
+                            int openBracketColumn;
+                            if (tokenReplacements.TryGetValue(openBracket, out var replacementOpenBracket)
+                                && !string.Equals(replacementOpenBracket.LeadingTrivia.ToFullString(), openBracket.LeadingTrivia.ToFullString(), StringComparison.Ordinal))
+                            {
+                                openBracketColumn = IndentationHelper.GetColumn(replacementOpenBracket.LeadingTrivia.LastOrDefault().ToString(), settings.Indentation.TabSize);
+                            }
+                            else
+                            {
+                                openBracketColumn = SA1143ConditionalExpressionsMustBeFormattedConsistently.GetColumn(sourceText, openBracket.SpanStart, settings.Indentation.TabSize);
+                            }
+
+                            indentation = SyntaxFactory.Whitespace(IndentationHelper.GenerateIndentationStringForColumn(openBracketColumn, settings.Indentation));
                         }
                         else
                         {

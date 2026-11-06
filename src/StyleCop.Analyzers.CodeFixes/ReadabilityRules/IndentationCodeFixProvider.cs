@@ -83,7 +83,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 && token.Parent.IsKind(SyntaxKindEx.CollectionExpression))
             {
                 var openBracket = ((CollectionExpressionSyntaxWrapper)token.Parent).OpenBracketToken;
-                replacement = IndentationHelper.GenerateIndentationStringForColumn(text, openBracket.SpanStart);
+                replacement = IndentationHelper.GenerateIndentationStringForColumn(text, openBracket.SpanStart, indentationSettings);
             }
             else if (alignWithOpeningBracket
                 || !diagnostic.Properties.TryGetValue(SA1137ElementsShouldHaveTheSameIndentation.ExpectedIndentationKey, out replacement))
