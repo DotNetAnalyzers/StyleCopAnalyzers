@@ -859,16 +859,11 @@ public class Foo
 
     public int Value
     {
-        get => this.value
+        get => this.value{|CS1002:|}
         set => this.value = value;
     }
 }";
 
-        DiagnosticResult[] expected =
-        {
-            DiagnosticResult.CompilerError("CS1002").WithSpan(8, 26, 8, 26),
-        };
-
-        await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
     }
 }

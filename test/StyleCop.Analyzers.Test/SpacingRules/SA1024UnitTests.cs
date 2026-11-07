@@ -339,14 +339,12 @@ public class TestClass
 {
     public void TestMethod()
     {
-        var value = true ? 1 ;
+        var value = true ? 1 {|CS1003:{|CS1525:;|}|}
     }
 }
 ";
 
-            var expected = this.GetExpectedResultTestConditionalExpressionWithMissingColon();
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -359,32 +357,13 @@ public class TestClass
     {
         switch (value)
         {
-        case 1 break;
+        case 1 {|CS1003:break|};
         }
     }
 }
 ";
 
-            var expected = this.GetExpectedResultTestCaseLabelWithMissingColon();
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected virtual DiagnosticResult[] GetExpectedResultTestConditionalExpressionWithMissingColon()
-        {
-            return new[]
-            {
-                DiagnosticResult.CompilerError("CS1003").WithSpan(6, 30, 6, 31).WithArguments(":", ";"),
-                DiagnosticResult.CompilerError("CS1525").WithSpan(6, 30, 6, 31).WithArguments(";"),
-            };
-        }
-
-        protected virtual DiagnosticResult[] GetExpectedResultTestCaseLabelWithMissingColon()
-        {
-            return new[]
-            {
-                DiagnosticResult.CompilerError("CS1003").WithSpan(8, 16, 8, 21).WithArguments(":", "break"),
-            };
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

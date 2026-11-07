@@ -76,7 +76,7 @@ using System;
 public partial class TestClass
 {
     /// <remarks>No summary.</remarks>
-    public partial event EventHandler {|#0:TestEvent|}, ;
+    public partial event EventHandler [|TestEvent|], {|CS9275:|}{|CS1001:;|}
 }
 
 /// <content>
@@ -95,14 +95,7 @@ public partial class TestClass
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                Diagnostic().WithLocation(0),
-                DiagnosticResult.CompilerError("CS9275").WithSpan(10, 50, 10, 50).WithArguments("TestClass."),
-                DiagnosticResult.CompilerError("CS1001").WithSpan(10, 50, 10, 51),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -1011,34 +1011,24 @@ public class TestClass
         public async Task TestNamespaceWithMissingNameAsync()
         {
             var testCode = @"
-namespace
+namespace{|CS1001:|}
 {
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS1001").WithSpan(2, 10, 2, 10),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestClassWithMissingNameAsync()
         {
             var testCode = @"
-public class
+public class{|CS1001:|}
 {
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS1001").WithSpan(2, 13, 2, 13),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -1049,16 +1039,11 @@ using System;
 
 public class TestClass
 {
-    public event EventHandler Handler, ;
+    public event EventHandler Handler, {|CS1001:;|}
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS1001").WithSpan(6, 40, 6, 41),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

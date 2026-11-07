@@ -353,17 +353,12 @@ public class TestClass
 {
     public void TestMethod()
     {
-        var value = new TestClass(;
+        var value = new TestClass({|CS1026:;|}
     }
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS1026").WithSpan(6, 35, 6, 36),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -374,17 +369,12 @@ public class TestClass
 {
     public void TestMethod()
     {
-        TestMethod(;
+        TestMethod({|CS1026:;|}
     }
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS1026").WithSpan(6, 20, 6, 21),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -393,18 +383,13 @@ public class TestClass
             var testCode = @"
 public class TestClass
 {
-    public void TestMethod(
+    public void TestMethod({|CS1026:|}
     {
     }
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS1026").WithSpan(4, 28, 4, 28),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -413,23 +398,11 @@ public class TestClass
             var testCode = @"
 public class TestClass
 {
-    public void TestMethod<T>;
+    public void {|CS0501:TestMethod|}<T>{|CS1003:{|CS1026:;|}|}
 }
 ";
 
-            var expected = this.GetExpectedResultTestMethodWithMissingParameterList();
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected virtual DiagnosticResult[] GetExpectedResultTestMethodWithMissingParameterList()
-        {
-            return new[]
-            {
-                DiagnosticResult.CompilerError("CS0501").WithSpan(4, 17, 4, 27).WithArguments("TestClass.TestMethod<T>()"),
-                DiagnosticResult.CompilerError("CS1003").WithSpan(4, 30, 4, 31).WithArguments("(", ";"),
-                DiagnosticResult.CompilerError("CS1026").WithSpan(4, 30, 4, 31),
-            };
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

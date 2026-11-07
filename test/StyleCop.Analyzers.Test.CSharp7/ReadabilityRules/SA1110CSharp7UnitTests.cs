@@ -72,18 +72,13 @@ class Foo
 {
     public void Method()
     {
-        void <T>(T value)
+        void {|CS1001:<|}T>(T value)
         {
         }
     }
 }";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS1001").WithSpan(6, 14, 6, 15),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -94,24 +89,13 @@ class Foo
 {
     public void Method()
     {
-        void Bar<T>
+        void Bar<T>{|CS1003:|}{|CS1026:|}
         {
         }
     }
 }";
 
-            var expected = this.GetExpectedResultTestLocalFunctionWithMissingParameterList();
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected virtual DiagnosticResult[] GetExpectedResultTestLocalFunctionWithMissingParameterList()
-        {
-            return new[]
-            {
-                DiagnosticResult.CompilerError("CS1003").WithSpan(6, 20, 6, 20).WithArguments("(", "{"),
-                DiagnosticResult.CompilerError("CS1026").WithSpan(6, 20, 6, 20),
-            };
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override DiagnosticResult[] GetExpectedResultTestConversionOperatorWithMissingType()

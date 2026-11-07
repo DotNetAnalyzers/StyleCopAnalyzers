@@ -685,17 +685,12 @@ public class Foo<TIDENT1, TSecond>
         public async Task TestTypeParameterWithMissingNameAsync()
         {
             var testCode = @"
-public class TestClass<>
+public class TestClass<{|CS1001:>|}
 {
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS1001").WithSpan(2, 24, 2, 25),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

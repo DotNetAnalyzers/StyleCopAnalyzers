@@ -688,17 +688,12 @@ public class TestClass
 {
     public void TestMethod()
     {
-        int value = ;
+        int value = {|CS1525:;|}
     }
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS1525").WithSpan(6, 21, 6, 22).WithArguments(";"),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

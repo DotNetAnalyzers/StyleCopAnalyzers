@@ -547,17 +547,12 @@ internal class OuterTypeName
         public async Task TestClassWithMissingNameAsync()
         {
             var testCode = @"
-class
+class{|CS1001:|}
 {
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS1001").WithSpan(2, 6, 2, 6),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         private async Task TestTypeDeclarationImplAsync(string keyword, bool warning = true)

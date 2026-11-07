@@ -1610,17 +1610,12 @@ public class TestClass
 {
     public void TestMethod(int value)
     {
-        TestMethod(1;
+        TestMethod(1{|CS1026:;|}
     }
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS1026").WithSpan(6, 21, 6, 22),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -1631,18 +1626,13 @@ public class TestClass
 {
     public void TestMethod(int first, int second)
     {
-        TestMethod(1,
+        TestMethod(1,{|CS1525:|}
             );
     }
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS1525").WithSpan(6, 22, 6, 22).WithArguments(")"),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected virtual DiagnosticResult[] GetExpectedResultTestIndexerWithMissingParameterList()

@@ -425,23 +425,16 @@ public interface ITest
 }
 
 /// <summary>Summary.</summary>
-public class TestClass : ITest
+public class TestClass : {|CS0535:ITest|}
 {
     /// <summary>Summary.</summary>
-    void ITest.(int value)
+    void ITest.{|CS0539:|}{|CS1001:(|}int value)
     {
     }
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS0535").WithSpan(11, 26, 11, 31).WithArguments("TestClass", "ITest.TestMethod(int)"),
-                DiagnosticResult.CompilerError("CS0539").WithSpan(14, 16, 14, 16).WithArguments("TestClass.(int)"),
-                DiagnosticResult.CompilerError("CS1001").WithSpan(14, 16, 14, 17),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -452,16 +445,14 @@ public class TestClass : ITest
 public class TestClass
 {
     /// <summary>Summary.</summary>
-    public static TestClass operator (TestClass value)
+    public static TestClass operator {|CS1019:(|}{|CS1003:TestClass|} value)
     {
         return value;
     }
 }
 ";
 
-            var expected = this.GetExpectedResultTestOperatorWithMissingOperatorToken();
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
@@ -549,15 +540,6 @@ public class TestClass
 
             test.ExpectedDiagnostics.AddRange(expected);
             return test.RunAsync(cancellationToken);
-        }
-
-        protected virtual DiagnosticResult[] GetExpectedResultTestOperatorWithMissingOperatorToken()
-        {
-            return new[]
-            {
-                DiagnosticResult.CompilerError("CS1019").WithSpan(6, 38, 6, 39),
-                DiagnosticResult.CompilerError("CS1003").WithSpan(6, 39, 6, 48).WithArguments("(", string.Empty),
-            };
         }
     }
 }

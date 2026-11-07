@@ -175,16 +175,11 @@ namespace StyleCop.Analyzers.Test.NamingRules
             var testCode = @"
 public class TestClass
 {
-    private static string _bar, ;
+    private static string _bar, {|CS1001:;|}
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS1001").WithSpan(4, 33, 4, 34),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

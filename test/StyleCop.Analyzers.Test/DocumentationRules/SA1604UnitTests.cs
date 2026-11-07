@@ -898,17 +898,12 @@ class Class1
         {
             var testCode = @"
 /// <remarks>Remarks.</remarks>
-public class
+public class{|CS1001:|}
 {
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS1001").WithSpan(3, 13, 3, 13),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -919,16 +914,11 @@ public class
 public class TestClass
 {
     /// <remarks>Remarks.</remarks>
-    public delegate void ();
+    public delegate void {|CS1001:(|});
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS1001").WithSpan(6, 26, 6, 27),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -943,23 +933,16 @@ public interface ITest
 }
 
 /// <summary>Summary.</summary>
-public class TestClass : ITest
+public class TestClass : {|CS0535:ITest|}
 {
     /// <remarks>Remarks.</remarks>
-    void ITest.()
+    void ITest.{|CS0539:|}{|CS1001:(|})
     {
     }
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS0535").WithSpan(10, 26, 10, 31).WithArguments("TestClass", "ITest.TestMethod()"),
-                DiagnosticResult.CompilerError("CS0539").WithSpan(13, 16, 13, 16).WithArguments("TestClass.()"),
-                DiagnosticResult.CompilerError("CS1001").WithSpan(13, 16, 13, 17),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -993,21 +976,14 @@ public interface ITest
 }
 
 /// <summary>Summary.</summary>
-public class TestClass : ITest
+public class TestClass : {|CS0535:ITest|}
 {
     /// <remarks>Remarks.</remarks>
-    int ITest. { get { return 0; } }
+    int ITest. {|CS0539:|}{|CS1001:{|} get { return 0; } }
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS0535").WithSpan(10, 26, 10, 31).WithArguments("TestClass", "ITest.TestProperty"),
-                DiagnosticResult.CompilerError("CS0539").WithSpan(13, 16, 13, 16).WithArguments("TestClass."),
-                DiagnosticResult.CompilerError("CS1001").WithSpan(13, 16, 13, 17),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -1018,17 +994,11 @@ public class TestClass : ITest
 public class TestClass
 {
     /// <remarks>Remarks.</remarks>
-    public int field, ;
+    public int [|field|], {|CS1001:;|}
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                Diagnostic().WithSpan(6, 16, 6, 21),
-                DiagnosticResult.CompilerError("CS1001").WithSpan(6, 23, 6, 24),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -1041,7 +1011,7 @@ using System;
 public class TestClass
 {
     /// <remarks>Remarks.</remarks>
-    public event EventHandler
+    public event EventHandler{|CS1001:|}
     {
         add { }
         remove { }
@@ -1049,12 +1019,7 @@ public class TestClass
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS1001").WithSpan(8, 30, 8, 30),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected virtual DiagnosticResult[] GetExpectedResultTestDestructorWithMissingName()

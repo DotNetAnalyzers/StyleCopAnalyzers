@@ -1345,15 +1345,10 @@ public class TestClass
 {
     public void TestMethod()
     {
-        if (true)
+        if (true){|CS1002:|}{|CS1525:|}
     }
 }
 ",
-                ExpectedDiagnostics =
-                {
-                    DiagnosticResult.CompilerError("CS1002").WithSpan(6, 18, 6, 18),
-                    DiagnosticResult.CompilerError("CS1525").WithSpan(6, 18, 6, 18).WithArguments("}"),
-                },
                 DisabledDiagnostics = { SA1503BracesMustNotBeOmitted.DiagnosticId },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }

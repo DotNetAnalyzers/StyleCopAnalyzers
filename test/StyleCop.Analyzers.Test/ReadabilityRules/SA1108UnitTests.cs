@@ -429,18 +429,12 @@ public class TestClass
 {
     public void TestMethod(int value)
     {
-        switch (value) // comment
+        switch (value){|CS1514:|} // comment
     }
-}
+}{|CS1513:|}
 ";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS1514").WithSpan(6, 23, 6, 23),
-                DiagnosticResult.CompilerError("CS1513").WithSpan(8, 2, 8, 2),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

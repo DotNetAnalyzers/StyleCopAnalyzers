@@ -1187,14 +1187,12 @@ public class TestClass
     public void TestMethod()
     {
         var value = new int[1
-            , 2;
+            , 2{|CS0443:|}{|CS1003:{|CS1003:;|}|}
     }
 }
 ";
 
-            var expected = this.GetExpectedResultTestArrayCreationWithMissingCloseBracket();
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -1211,15 +1209,13 @@ public class BaseClass
 public class TestClass : BaseClass
 {
     public TestClass()
-        : base
+        : {|CS7036:base|}{|CS1003:|}{|CS1026:|}
     {
     }
 }
 ";
 
-            var expected = this.GetExpectedResultTestConstructorInitializerWithMissingArgumentList();
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -1228,42 +1224,11 @@ public class TestClass : BaseClass
             var testCode = @"
 public class TestClass
 {
-    public delegate void TestDelegate;
+    public delegate void TestDelegate{|CS1003:{|CS1026:;|}|}
 }
 ";
 
-            var expected = this.GetExpectedResultTestDelegateWithMissingParameterList();
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected virtual DiagnosticResult[] GetExpectedResultTestArrayCreationWithMissingCloseBracket()
-        {
-            return new[]
-            {
-                DiagnosticResult.CompilerError("CS0443").WithSpan(7, 16, 7, 16),
-                DiagnosticResult.CompilerError("CS1003").WithSpan(7, 16, 7, 17).WithArguments(",", ";"),
-                DiagnosticResult.CompilerError("CS1003").WithSpan(7, 16, 7, 17).WithArguments("]", ";"),
-            };
-        }
-
-        protected virtual DiagnosticResult[] GetExpectedResultTestConstructorInitializerWithMissingArgumentList()
-        {
-            return new[]
-            {
-                DiagnosticResult.CompilerError("CS7036").WithSpan(12, 11, 12, 15).WithArguments("first", "BaseClass.BaseClass(int, int)"),
-                DiagnosticResult.CompilerError("CS1003").WithSpan(12, 15, 12, 15).WithArguments("(", "{"),
-                DiagnosticResult.CompilerError("CS1026").WithSpan(12, 15, 12, 15),
-            };
-        }
-
-        protected virtual DiagnosticResult[] GetExpectedResultTestDelegateWithMissingParameterList()
-        {
-            return new[]
-            {
-                DiagnosticResult.CompilerError("CS1003").WithSpan(4, 38, 4, 39).WithArguments("(", ";"),
-                DiagnosticResult.CompilerError("CS1026").WithSpan(4, 38, 4, 39),
-            };
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

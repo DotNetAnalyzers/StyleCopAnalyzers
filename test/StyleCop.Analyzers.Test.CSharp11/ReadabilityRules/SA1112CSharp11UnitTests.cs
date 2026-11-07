@@ -18,15 +18,5 @@ namespace StyleCop.Analyzers.Test.CSharp11.ReadabilityRules
                 Diagnostic().WithLocation(0),
             };
         }
-
-        protected override DiagnosticResult[] GetExpectedResultTestMethodWithMissingParameterList()
-        {
-            return new[]
-            {
-                DiagnosticResult.CompilerError("CS0501").WithSpan(4, 17, 4, 27).WithArguments("TestClass.TestMethod<T>()"),
-                DiagnosticResult.CompilerError("CS1003").WithSpan(4, 30, 4, 31).WithArguments("("),
-                DiagnosticResult.CompilerError("CS1026").WithSpan(4, 30, 4, 31),
-            };
-        }
     }
 }

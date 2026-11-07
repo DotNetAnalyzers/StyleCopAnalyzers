@@ -479,17 +479,12 @@ class TestClass
     void TestMethod()
     {
         int[] a = [1,
-            2;
+            2{|CS1003:;|}
     }
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS1003").WithSpan(7, 14, 7, 15).WithArguments("]"),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

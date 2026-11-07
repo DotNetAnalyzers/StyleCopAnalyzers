@@ -127,16 +127,11 @@ class Test
 {
     void M()
     {
-        Test value = new(;
+        Test value = new({|CS1026:;|}
     }
 }";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS1026").WithSpan(6, 26, 6, 27),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -147,16 +142,11 @@ record Foo()
 {
 }
 
-record Bar() : Foo(
+record Bar() : Foo({|CS1026:|}
 {
 }";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS1026").WithSpan(6, 20, 6, 20),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected virtual DiagnosticResult[] GetExpectedResultTestPrimaryConstructorWithNoParametersClosingParenthesisOnTheNextLine()

@@ -295,16 +295,11 @@ string bar, car, dar;
             var testCode = @"
 public class TestClass
 {
-    private string bar, ;
+    private string bar, {|CS1001:;|}
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS1001").WithSpan(4, 25, 4, 26),
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

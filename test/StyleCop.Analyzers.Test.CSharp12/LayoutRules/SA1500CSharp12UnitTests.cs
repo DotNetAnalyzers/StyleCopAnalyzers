@@ -425,17 +425,12 @@ public partial class SA1500CSharp12UnitTests : SA1500CSharp11UnitTests
                 {
                     int[] values = [
                         1,
-                        2;
+                        2{|CS1003:;|}
                 }
             }
             """;
 
-        DiagnosticResult[] expected =
-        {
-            DiagnosticResult.CompilerError("CS1003").WithSpan(7, 14, 7, 15).WithArguments("]"),
-        };
-
-        await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
     }
 
     [Fact]
@@ -446,19 +441,14 @@ public partial class SA1500CSharp12UnitTests : SA1500CSharp11UnitTests
             {
                 void M()
                 {
-                    int[] values = [ ,
+                    int[] values = [ {|CS1525:,|}
                         2,
                     ];
                 }
             }
             """;
 
-        DiagnosticResult[] expected =
-        {
-            DiagnosticResult.CompilerError("CS1525").WithSpan(5, 26, 5, 27).WithArguments(","),
-        };
-
-        await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
     }
 
     [Fact]
@@ -471,18 +461,13 @@ public partial class SA1500CSharp12UnitTests : SA1500CSharp11UnitTests
                 {
                     int[] values = [
                         1,
-                        2 +
+                        2 +{|CS1525:|}
                     ];
                 }
             }
             """;
 
-        DiagnosticResult[] expected =
-        {
-            DiagnosticResult.CompilerError("CS1525").WithSpan(7, 16, 7, 16).WithArguments("]"),
-        };
-
-        await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
     }
 
     private sealed class TestDiagnosticProvider : FixAllContext.DiagnosticProvider
