@@ -102,14 +102,14 @@ class Foo
         {
             return new[]
             {
-                DiagnosticResult.CompilerError("CS0501").WithSpan(4, 37, 4, 54).WithArguments("TestClass.implicit operator (TestClass value, ?)()"),
-                DiagnosticResult.CompilerError("CS8124").WithSpan(4, 53, 4, 54),
-                DiagnosticResult.CompilerError("CS1001").WithSpan(4, 54, 4, 54),
-                DiagnosticResult.CompilerError("CS1003").WithSpan(4, 54, 4, 54).WithArguments("(", "{"),
-                DiagnosticResult.CompilerError("CS1019").WithSpan(5, 1, 7, 1),
-                DiagnosticResult.CompilerError("CS1002").WithSpan(6, 18, 6, 18),
-                DiagnosticResult.CompilerError("CS1026").WithSpan(6, 18, 6, 18),
-                DiagnosticResult.CompilerError("CS1022").WithSpan(8, 1, 8, 2),
+                DiagnosticResult.CompilerError("CS0501").WithSpan(5, 9, 5, 26).WithArguments("TestClass.implicit operator (TestClass value, ?)()"),
+                DiagnosticResult.CompilerError("CS8124").WithSpan(5, 25, 5, 26),
+                DiagnosticResult.CompilerError("CS1001").WithSpan(5, 26, 5, 26),
+                DiagnosticResult.CompilerError("CS1003").WithSpan(5, 26, 5, 26).WithArguments("(", "{"),
+                DiagnosticResult.CompilerError("CS1019").WithSpan(6, 1, 8, 1),
+                DiagnosticResult.CompilerError("CS1002").WithSpan(7, 18, 7, 18),
+                DiagnosticResult.CompilerError("CS1026").WithSpan(7, 18, 7, 18),
+                DiagnosticResult.CompilerError("CS1022").WithSpan(9, 1, 9, 2),
             };
         }
 

@@ -302,7 +302,7 @@ public partial class{|CS1001:|}
         }
 
         [Fact]
-        public async Task TestMethodWithMissingNameAsync()
+        public async Task TestPartialMethodWithMissingNameAsync()
         {
             var testCode = @"
 /// <summary>Summary.</summary>
@@ -316,52 +316,7 @@ public interface ITest
 public partial class TestClass : {|CS0535:ITest|}
 {
     /// <remarks>Remarks.</remarks>
-    void ITest.{|CS0539:|}{|CS1001:(|})
-    {
-    }
-}
-";
-
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestPropertyWithMissingNameAsync()
-        {
-            var testCode = @"
-/// <summary>Summary.</summary>
-public interface ITest
-{
-    /// <summary>Summary.</summary>
-    int TestProperty { get; }
-}
-
-/// <summary>Summary.</summary>
-public partial class TestClass : {|CS0535:ITest|}
-{
-    /// <remarks>Remarks.</remarks>
-    int ITest. {|CS0539:|}{|CS1001:{|} get { return 0; } }
-}
-";
-
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestEventWithMissingNameAsync()
-        {
-            var testCode = @"
-using System;
-
-/// <summary>Summary.</summary>
-public partial class TestClass
-{
-    /// <remarks>Remarks.</remarks>
-    public event EventHandler{|CS1001:|}
-    {
-        add { }
-        remove { }
-    }
+    partial void ITest.{|CS0539:|}{|CS0754:|}{|CS1001:(|});
 }
 ";
 

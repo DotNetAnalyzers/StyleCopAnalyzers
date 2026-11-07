@@ -1020,7 +1020,8 @@ public class TestClass
             var testCode = @"
 public class TestClass
 {
-    public static implicit operator (TestClass value)
+    public static implicit operator
+        (TestClass value)
     {
         return 0;
     }
@@ -1084,7 +1085,8 @@ public class TestClass
             var testCode = @"
 public class TestClass
 {
-    public delegate void {|CS1001:(|}int value);
+    public delegate void{|CS1001:|}
+        (int value);
 }
 ";
 
@@ -1097,7 +1099,8 @@ public class TestClass
             var testCode = @"
 public class TestClass
 {
-    public delegate void TestDelegate{|CS1003:{|CS1026:;|}|}
+    public delegate void TestDelegate{|CS1003:|}{|CS1026:|}
+        ;
 }
 ";
 
@@ -1125,7 +1128,8 @@ public class TestClass
             var testCode = @"
 public class TestClass
 {
-    public int this {|CS1003:int|} value] { get { return value; } }
+    public int this{|CS1003:|}
+        int value] { get { return value; } }
 }
 ";
 
@@ -1143,7 +1147,8 @@ public interface ITest
 
 public class TestClass : {|CS0535:ITest|}
 {
-    void ITest.{|CS0539:|}{|CS1001:(|})
+    void ITest.{|CS1001:|}
+{|CS0539:|}        ()
     {
     }
 }
@@ -1191,7 +1196,8 @@ public class TestClass
 {
     public void TestMethod()
     {
-        this.{|CS1001:(|});
+        this.{|CS1001:|}
+            ();
     }
 }
 ";
@@ -1203,7 +1209,8 @@ public class TestClass
         public async Task TestAttributeWithMissingNameAsync()
         {
             var testCode = @"
-[System.{|CS1001:(|})]
+[System.{|CS1001:|}
+    ()]
 public class TestClass
 {
 }
@@ -1216,7 +1223,7 @@ public class TestClass
         {
             return new[]
             {
-                DiagnosticResult.CompilerError("CS1031").WithSpan(4, 37, 4, 38),
+                DiagnosticResult.CompilerError("CS1031").WithSpan(4, 36, 4, 36),
             };
         }
 

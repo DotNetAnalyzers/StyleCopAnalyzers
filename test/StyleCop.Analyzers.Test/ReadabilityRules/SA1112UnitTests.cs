@@ -353,7 +353,8 @@ public class TestClass
 {
     public void TestMethod()
     {
-        var value = new TestClass({|CS1026:;|}
+        var value = new TestClass({|CS1026:|}
+            ;
     }
 }
 ";
@@ -369,7 +370,8 @@ public class TestClass
 {
     public void TestMethod()
     {
-        TestMethod({|CS1026:;|}
+        TestMethod({|CS1026:|}
+            ;
     }
 }
 ";

@@ -12,7 +12,7 @@ public partial class SA1110CSharp10UnitTests : SA1110CSharp9UnitTests
     {
         return new[]
         {
-            DiagnosticResult.CompilerError("CS1001").WithSpan(4, 37, 4, 38),
+            DiagnosticResult.CompilerError("CS1001").WithSpan(4, 36, 4, 36),
         };
     }
 

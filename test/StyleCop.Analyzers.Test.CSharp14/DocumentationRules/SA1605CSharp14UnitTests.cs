@@ -97,5 +97,22 @@ public partial class TestClass
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestPartialEventWithMissingNameAsync()
+        {
+            var testCode = @"
+using System;
+
+/// <summary>Summary.</summary>
+public partial class TestClass
+{
+    /// <remarks>Remarks.</remarks>
+    public partial event EventHandler {|CS9276:|}{|CS1001:{|} add { } remove { } }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

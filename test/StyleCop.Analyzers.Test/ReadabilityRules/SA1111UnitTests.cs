@@ -1610,7 +1610,8 @@ public class TestClass
 {
     public void TestMethod(int value)
     {
-        TestMethod(1{|CS1026:;|}
+        TestMethod(1{|CS1026:|}
+            ;
     }
 }
 ";
