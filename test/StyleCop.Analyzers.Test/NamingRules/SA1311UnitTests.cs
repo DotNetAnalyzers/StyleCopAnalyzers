@@ -191,5 +191,18 @@ namespace StyleCop.Analyzers.Test.NamingRules
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestFieldWithMissingNameAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public static readonly string Bar, {|CS1001:;|}
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

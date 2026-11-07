@@ -412,6 +412,49 @@ public class ClassName
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestMethodWithMissingNameAsync()
+        {
+            var testCode = @"
+/// <summary>Summary.</summary>
+public interface ITest
+{
+    /// <summary>Summary.</summary>
+    /// <param name=""value"">Value.</param>
+    void TestMethod(int value);
+}
+
+/// <summary>Summary.</summary>
+public class TestClass : {|CS0535:ITest|}
+{
+    /// <summary>Summary.</summary>
+    void ITest.{|CS0539:|}{|CS1001:(|}int value)
+    {
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestOperatorWithMissingOperatorTokenAsync()
+        {
+            var testCode = @"
+/// <summary>Summary.</summary>
+public class TestClass
+{
+    /// <summary>Summary.</summary>
+    public static TestClass operator {|CS1019:(|}{|CS1003:TestClass|} value)
+    {
+        return value;
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
             string contentWithoutElementDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>

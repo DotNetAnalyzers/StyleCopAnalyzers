@@ -344,5 +344,67 @@ public class TestClass
             test.RemainingDiagnostics.AddRange(expected);
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestObjectCreationWithMissingCloseParenthesisAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var value = new TestClass({|CS1026:|}
+            ;
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestInvocationWithMissingCloseParenthesisAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        TestMethod({|CS1026:|}
+            ;
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMethodWithMissingCloseParenthesisAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod({|CS1026:|}
+    {
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMethodWithMissingParameterListAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void {|CS0501:TestMethod|}<T>{|CS1003:{|CS1026:;|}|}
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

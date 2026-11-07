@@ -1586,5 +1586,68 @@ public class TestClass
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestIndexerWithMissingParameterListAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public int this;
+}
+";
+
+            var expected = this.GetExpectedResultTestIndexerWithMissingParameterList();
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestInvocationWithMissingCloseParenthesisAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod(int value)
+    {
+        TestMethod(1{|CS1026:|}
+            ;
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestInvocationWithMissingLastArgumentAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod(int first, int second)
+    {
+        TestMethod(1,{|CS1525:|}
+            );
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestIndexerWithMissingParameterList()
+        {
+            return new[]
+            {
+                DiagnosticResult.CompilerError("CS0548").WithSpan(4, 16, 4, 20).WithArguments("TestClass.this"),
+                DiagnosticResult.CompilerError("CS1001").WithSpan(4, 20, 4, 21),
+                DiagnosticResult.CompilerError("CS1003").WithSpan(4, 20, 4, 21).WithArguments("[", ";"),
+                DiagnosticResult.CompilerError("CS1003").WithSpan(4, 21, 4, 21).WithArguments("]", "}"),
+                DiagnosticResult.CompilerError("CS1514").WithSpan(4, 21, 4, 21),
+                DiagnosticResult.CompilerError("CS1551").WithSpan(5, 1, 5, 1),
+                DiagnosticResult.CompilerError("CS1513").WithSpan(5, 2, 5, 2),
+            };
+        }
     }
 }

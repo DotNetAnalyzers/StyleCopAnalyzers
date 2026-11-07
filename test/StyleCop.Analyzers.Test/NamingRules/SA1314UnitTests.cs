@@ -680,5 +680,17 @@ public class Foo<TIDENT1, TSecond>
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestTypeParameterWithMissingNameAsync()
+        {
+            var testCode = @"
+public class TestClass<{|CS1001:>|}
+{
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

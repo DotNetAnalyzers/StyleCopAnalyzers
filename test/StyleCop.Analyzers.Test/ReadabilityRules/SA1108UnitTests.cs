@@ -420,5 +420,21 @@ namespace Foo
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestSwitchStatementWithMissingOpenBraceAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod(int value)
+    {
+        switch (value){|CS1514:|} // comment
+    }
+}{|CS1513:|}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

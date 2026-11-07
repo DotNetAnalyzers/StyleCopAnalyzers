@@ -368,6 +368,29 @@ public class ClassName
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestPropertyWithMissingNameAsync()
+        {
+            var testCode = @"
+/// <summary>Summary.</summary>
+public interface ITest
+{
+    /// <summary>Summary.</summary>
+    /// <value>Value.</value>
+    int TestProperty { get; }
+}
+
+/// <summary>Summary.</summary>
+public class TestClass : {|CS0535:ITest|}
+{
+    /// <summary>Summary.</summary>
+    int ITest. {|CS0539:|}{|CS1001:{|} get { return 0; } }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
             => VerifyCSharpFixAsync(source, expected, fixedSource: null, cancellationToken);
 

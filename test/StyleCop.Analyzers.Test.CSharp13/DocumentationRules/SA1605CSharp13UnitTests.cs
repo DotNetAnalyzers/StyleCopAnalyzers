@@ -805,6 +805,28 @@ public partial class ClassName
             await VerifyCSharpDiagnosticWithIncludeAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, "ImplementingIndexerAccessorExpressionBodyWithoutSummary.xml", xmlContent, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestPartialPropertyWithMissingNameAsync()
+        {
+            var testCode = @"
+/// <summary>Summary.</summary>
+public interface ITest
+{
+    /// <summary>Summary.</summary>
+    int TestProperty { get; }
+}
+
+/// <summary>Summary.</summary>
+public partial class TestClass : {|CS0535:ITest|}
+{
+    /// <remarks>Remarks.</remarks>
+    partial int ITest. {|CS0539:|}{|CS0754:|}{|CS9248:|}{|CS1001:{|} get; }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         private static Task VerifyCSharpDiagnosticWithIncludeAsync(string source, DiagnosticResult[] expected, string xmlFileName, string xmlContent, CancellationToken cancellationToken)
         {
             var test = new StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1605PartialElementDocumentationMustHaveSummary>.CSharpTest

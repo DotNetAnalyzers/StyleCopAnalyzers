@@ -63,5 +63,56 @@ public partial class TestClass
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestPartialEventFieldWithMissingNameAsync()
+        {
+            var testCode = @"
+using System;
+
+/// <summary>
+/// A class.
+/// </summary>
+public partial class TestClass
+{
+    /// <remarks>No summary.</remarks>
+    public partial event EventHandler [|TestEvent|], {|CS9275:|}{|CS1001:;|}
+}
+
+/// <content>
+/// More.
+/// </content>
+public partial class TestClass
+{
+    /// <content>
+    /// The implementation.
+    /// </content>
+    public partial event EventHandler TestEvent
+    {
+        add { }
+        remove { }
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPartialEventWithMissingNameAsync()
+        {
+            var testCode = @"
+using System;
+
+/// <summary>Summary.</summary>
+public partial class TestClass
+{
+    /// <remarks>Remarks.</remarks>
+    public partial event EventHandler {|CS9276:|}{|CS1001:{|} add { } remove { } }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

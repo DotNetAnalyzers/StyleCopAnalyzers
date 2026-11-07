@@ -1040,5 +1040,14 @@ public sealed class UsedImplicitlyAttribute : Attribute
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestAttributeListAtStartOfFileAsync()
+        {
+            var testCode = @"[assembly: System.CLSCompliant(true)]
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

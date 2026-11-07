@@ -116,5 +116,19 @@ class Foo
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        protected override DiagnosticResult[] GetExpectedResultTestIndexerWithMissingParameterList()
+        {
+            return new[]
+            {
+                DiagnosticResult.CompilerError("CS1551"),
+                DiagnosticResult.CompilerError("CS0548").WithSpan(4, 16, 4, 20).WithArguments("TestClass.this"),
+                DiagnosticResult.CompilerError("CS1001").WithSpan(4, 20, 4, 21),
+                DiagnosticResult.CompilerError("CS1003").WithSpan(4, 20, 4, 21).WithArguments("[", ";"),
+                DiagnosticResult.CompilerError("CS1003").WithSpan(4, 21, 4, 21).WithArguments("]", "}"),
+                DiagnosticResult.CompilerError("CS1514").WithSpan(4, 21, 4, 21),
+                DiagnosticResult.CompilerError("CS1513").WithSpan(5, 2, 5, 2),
+            };
+        }
     }
 }
