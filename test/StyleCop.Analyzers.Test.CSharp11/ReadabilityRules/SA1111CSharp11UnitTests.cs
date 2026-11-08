@@ -18,19 +18,5 @@ namespace StyleCop.Analyzers.Test.CSharp11.ReadabilityRules
                 Diagnostic().WithLocation(0),
             };
         }
-
-        protected override DiagnosticResult[] GetExpectedResultTestIndexerWithMissingParameterList()
-        {
-            return new[]
-            {
-                DiagnosticResult.CompilerError("CS1551"),
-                DiagnosticResult.CompilerError("CS0548").WithSpan(4, 16, 4, 20).WithArguments("TestClass.this"),
-                DiagnosticResult.CompilerError("CS1003").WithSpan(4, 20, 4, 21).WithArguments("["),
-                DiagnosticResult.CompilerError("CS1003").WithSpan(4, 20, 4, 21).WithArguments("]"),
-                DiagnosticResult.CompilerError("CS1014").WithSpan(4, 20, 4, 21),
-                DiagnosticResult.CompilerError("CS1514").WithSpan(4, 20, 4, 21),
-                DiagnosticResult.CompilerError("CS1513").WithSpan(5, 2, 5, 2),
-            };
-        }
     }
 }

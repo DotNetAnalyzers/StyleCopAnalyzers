@@ -28,25 +28,24 @@ namespace StyleCop.Analyzers.Test.Verifiers
             => VerifyCSharpDiagnosticAsync(source, new[] { expected }, cancellationToken);
 
         internal static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
-        {
-            var test = new CSharpTest
-            {
-                TestCode = source,
-            };
+            => VerifyCSharpDiagnosticAsync(languageVersion: null, source, settings: null, expected, ignoreCompilerDiagnostics: false, cancellationToken);
 
-            test.ExpectedDiagnostics.AddRange(expected);
-            return test.RunAsync(cancellationToken);
-        }
+        internal static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, bool ignoreCompilerDiagnostics, CancellationToken cancellationToken)
+            => VerifyCSharpDiagnosticAsync(languageVersion: null, source, settings: null, expected, ignoreCompilerDiagnostics, cancellationToken);
 
         internal static Task VerifyCSharpDiagnosticAsync(LanguageVersion? languageVersion, string source, DiagnosticResult expected, CancellationToken cancellationToken)
             => VerifyCSharpDiagnosticAsync(languageVersion, source, settings: null, new[] { expected }, cancellationToken);
 
         internal static Task VerifyCSharpDiagnosticAsync(LanguageVersion? languageVersion, string source, string? settings, DiagnosticResult[] expected, CancellationToken cancellationToken)
+            => VerifyCSharpDiagnosticAsync(languageVersion, source, settings, expected, ignoreCompilerDiagnostics: false, cancellationToken);
+
+        private static Task VerifyCSharpDiagnosticAsync(LanguageVersion? languageVersion, string source, string? settings, DiagnosticResult[] expected, bool ignoreCompilerDiagnostics, CancellationToken cancellationToken)
         {
             var test = new CSharpTest(languageVersion)
             {
                 TestCode = source,
                 Settings = settings,
+                IgnoreCompilerDiagnostics = ignoreCompilerDiagnostics,
             };
 
             test.ExpectedDiagnostics.AddRange(expected);

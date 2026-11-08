@@ -1593,13 +1593,14 @@ public class TestClass
             var testCode = @"
 public class TestClass
 {
-    public int this;
-}
+    public int {|CS0548:this|}{|CS1001:{|CS1003:;|}|}{|CS1003:|}{|CS1514:|}
+{|CS1551:|}}{|CS1513:|}
 ";
 
-            var expected = this.GetExpectedResultTestIndexerWithMissingParameterList();
+            // The compiler errors differ between compiler versions, so they are only verified in this project.
+            var ignoreCompilerDiagnostics = this.IsInheritedTest();
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, ignoreCompilerDiagnostics, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -1634,20 +1635,6 @@ public class TestClass
 ";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected virtual DiagnosticResult[] GetExpectedResultTestIndexerWithMissingParameterList()
-        {
-            return new[]
-            {
-                DiagnosticResult.CompilerError("CS0548").WithSpan(4, 16, 4, 20).WithArguments("TestClass.this"),
-                DiagnosticResult.CompilerError("CS1001").WithSpan(4, 20, 4, 21),
-                DiagnosticResult.CompilerError("CS1003").WithSpan(4, 20, 4, 21).WithArguments("[", ";"),
-                DiagnosticResult.CompilerError("CS1003").WithSpan(4, 21, 4, 21).WithArguments("]", "}"),
-                DiagnosticResult.CompilerError("CS1514").WithSpan(4, 21, 4, 21),
-                DiagnosticResult.CompilerError("CS1551").WithSpan(5, 1, 5, 1),
-                DiagnosticResult.CompilerError("CS1513").WithSpan(5, 2, 5, 2),
-            };
         }
     }
 }

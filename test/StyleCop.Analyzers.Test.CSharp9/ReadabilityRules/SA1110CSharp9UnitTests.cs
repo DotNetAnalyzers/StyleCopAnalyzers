@@ -226,13 +226,5 @@ public class TestClass
                 Diagnostic().WithLocation(0),
             };
         }
-
-        protected override DiagnosticResult[] GetExpectedResultTestObjectCreationWithMissingType()
-        {
-            return new[]
-            {
-                DiagnosticResult.CompilerError("CS1526").WithSpan(6, 24, 6, 25),
-            };
-        }
     }
 }

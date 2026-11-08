@@ -953,15 +953,16 @@ public class TestClass : {|CS0535:ITest|}
 public class TestClass
 {
     /// <remarks>Remarks.</remarks>
-    ~()
+    ~{|CS0574:{|CS1001:(|}|})
     {
     }
 }
 ";
 
-            var expected = this.GetExpectedResultTestDestructorWithMissingName();
+            // The compiler errors differ between compiler versions, so they are only verified in this project.
+            var ignoreCompilerDiagnostics = this.IsInheritedTest();
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, ignoreCompilerDiagnostics, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -1022,19 +1023,13 @@ public class TestClass
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected virtual DiagnosticResult[] GetExpectedResultTestDestructorWithMissingName()
-        {
-            return new[]
-            {
-                DiagnosticResult.CompilerError("CS0574").WithSpan(6, 6, 6, 7),
-                DiagnosticResult.CompilerError("CS1001").WithSpan(6, 6, 6, 7),
-            };
-        }
-
         private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
             => VerifyCSharpDiagnosticAsync(source, new[] { expected }, cancellationToken);
 
         private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+            => VerifyCSharpDiagnosticAsync(source, expected, ignoreCompilerDiagnostics: false, cancellationToken);
+
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, bool ignoreCompilerDiagnostics, CancellationToken cancellationToken)
         {
             string contentWithSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <Class1>
@@ -1068,6 +1063,7 @@ public class TestClass
             var test = new StyleCopDiagnosticVerifier<SA1604ElementDocumentationMustHaveSummary>.CSharpTest
             {
                 TestCode = source,
+                IgnoreCompilerDiagnostics = ignoreCompilerDiagnostics,
                 XmlReferences =
                 {
                     { "ClassWithSummary.xml", contentWithSummary },
