@@ -1,17 +1,18 @@
 {
   "$schema": "https://raw.githubusercontent.com/dotnet/Nerdbank.GitVersioning/main/src/NerdBank.GitVersioning/version.schema.json",
-  "version": "1.3-beta",
+  "version": "1.3",
   "assemblyVersion": {
     "precision": "revision"
   },
-  "nugetPackageVersion": {
-    "semVer": 2
+  "nuGetPackageVersion": {
+    "semVer": 2.0
   },
   "publicReleaseRefSpec": [
     "^refs/heads/master$",
     "^refs/heads/v\\d+\\.\\d+$"
   ],
   "release": {
-    "tagName": "{version}"
+    "tagName": "{version}",
+    "firstUnstableTag": "beta"
   }
 }
