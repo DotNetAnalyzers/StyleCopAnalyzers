@@ -469,5 +469,22 @@ class TestClass
 
             await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestCollectionExpressionWithMissingCloseBracketAsync()
+        {
+            string testCode = @"
+class TestClass
+{
+    void TestMethod()
+    {
+        int[] a = [1,
+            2{|CS1003:;|}
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

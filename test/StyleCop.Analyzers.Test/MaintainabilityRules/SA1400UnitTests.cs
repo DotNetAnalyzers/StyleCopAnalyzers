@@ -543,6 +543,18 @@ internal class OuterTypeName
             await this.TestNestedDeclarationWithDirectivesAsync("private", "OuterTypeName", "static OuterTypeName(", " ) { }", warning: false).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestClassWithMissingNameAsync()
+        {
+            var testCode = @"
+class{|CS1001:|}
+{
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         private async Task TestTypeDeclarationImplAsync(string keyword, bool warning = true)
         {
             await this.TestDeclarationAsync("internal", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning).ConfigureAwait(false);

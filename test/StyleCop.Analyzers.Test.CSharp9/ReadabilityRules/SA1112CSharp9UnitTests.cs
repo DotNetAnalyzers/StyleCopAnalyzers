@@ -119,6 +119,36 @@ public class TestClass
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestTargetTypedNewWithMissingClosingParenthesisAsync()
+        {
+            var testCode = @"
+class Test
+{
+    void M()
+    {
+        Test value = new({|CS1026:;|}
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPrimaryConstructorBaseListWithMissingClosingParenthesisAsync()
+        {
+            var testCode = @"
+record Foo()
+{
+}
+
+record Bar() : Foo({|CS1026:|}
+{
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected virtual DiagnosticResult[] GetExpectedResultTestPrimaryConstructorWithNoParametersClosingParenthesisOnTheNextLine()
         {
             return new[]

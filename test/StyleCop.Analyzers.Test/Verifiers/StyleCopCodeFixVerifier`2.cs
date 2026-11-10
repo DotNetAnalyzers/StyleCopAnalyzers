@@ -43,6 +43,9 @@ namespace StyleCop.Analyzers.Test.Verifiers
         internal static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
             => StyleCopDiagnosticVerifier<TAnalyzer>.VerifyCSharpDiagnosticAsync(source, expected, cancellationToken);
 
+        internal static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, bool ignoreCompilerDiagnostics, CancellationToken cancellationToken)
+            => StyleCopDiagnosticVerifier<TAnalyzer>.VerifyCSharpDiagnosticAsync(source, expected, ignoreCompilerDiagnostics, cancellationToken);
+
         internal static Task VerifyCSharpDiagnosticAsync(LanguageVersion? languageVersion, string source, DiagnosticResult expected, CancellationToken cancellationToken)
             => StyleCopDiagnosticVerifier<TAnalyzer>.VerifyCSharpDiagnosticAsync(languageVersion, source, expected, cancellationToken);
 
@@ -317,7 +320,38 @@ namespace StyleCop.Analyzers.Test.Verifiers
             /// </value>
             public List<string> ExplicitlyEnabledDiagnostics { get; } = new List<string>();
 
+            /// <summary>
+            /// Gets or sets a value indicating whether compiler diagnostics are ignored.
+            /// </summary>
+            /// <remarks>
+            /// <para>When <see langword="true"/>, markup for compiler diagnostics, such as <c>{|CS1001:|}</c>, is removed
+            /// from the sources and compiler diagnostics are ignored. Tests with invalid code set it to
+            /// <c>this.IsInheritedTest()</c> (see <see cref="TestClassExtensions.IsInheritedTest"/>), so the compiler
+            /// diagnostics are verified in the test project that declares the test, and not again with every later
+            /// compiler.</para>
+            /// </remarks>
+            /// <value>
+            /// <see langword="true"/> to ignore compiler diagnostics; otherwise, <see langword="false"/> (the default).
+            /// </value>
+            public bool IgnoreCompilerDiagnostics { get; set; }
+
             private LanguageVersion? LanguageVersion { get; }
+
+            protected override Task RunImplAsync(CancellationToken cancellationToken)
+            {
+                if (this.IgnoreCompilerDiagnostics)
+                {
+                    // CompilerDiagnostics.None only filters the actual compiler diagnostics. Compiler diagnostics in
+                    // markup would still be expected, so the markup is removed here, before the base implementation
+                    // turns the markup into expected diagnostics.
+                    this.CompilerDiagnostics = CompilerDiagnostics.None;
+                    RemoveCompilerDiagnosticMarkup(this.TestState.Sources);
+                    RemoveCompilerDiagnosticMarkup(this.FixedState.Sources);
+                    RemoveCompilerDiagnosticMarkup(this.BatchFixedState.Sources);
+                }
+
+                return base.RunImplAsync(cancellationToken);
+            }
 
             protected override CompilationOptions CreateCompilationOptions()
             {
@@ -341,6 +375,15 @@ namespace StyleCop.Analyzers.Test.Verifiers
                 }
 
                 return parseOptions;
+            }
+
+            private static void RemoveCompilerDiagnosticMarkup(SourceFileList sources)
+            {
+                for (int i = 0; i < sources.Count; i++)
+                {
+                    var (filename, content) = sources[i];
+                    sources[i] = (filename, SourceText.From(CompilerDiagnosticMarkup.Remove(content.ToString()), content.Encoding, content.ChecksumAlgorithm));
+                }
             }
 
             private void UpdateGlobalAnalyzerConfig()

@@ -2492,5 +2492,23 @@ public class TestClass2
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestMissingArgumentAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod(int first, int second)
+    {
+        TestMethod(
+            1,{|CS1525:|}
+            );
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

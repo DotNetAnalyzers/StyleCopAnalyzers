@@ -1335,6 +1335,24 @@ public class TypeName
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestMissingChildStatementAsync()
+        {
+            await new CSharpTest
+            {
+                TestCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        if (true){|CS1002:|}{|CS1525:|}
+    }
+}
+",
+                DisabledDiagnostics = { SA1503BracesMustNotBeOmitted.DiagnosticId },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
         private string GenerateTestStatement(string statementText)
         {
             var testCodeFormat = @"using System.Diagnostics;

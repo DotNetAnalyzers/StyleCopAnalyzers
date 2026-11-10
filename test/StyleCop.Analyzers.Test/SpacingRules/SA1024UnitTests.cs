@@ -330,5 +330,40 @@ public class Foo<T>:object where T:IFormattable
 
             await VerifyCSharpFixAsync(testCode, expected, ExpectedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestConditionalExpressionWithMissingColonAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var value = true ? 1 {|CS1003:{|CS1525:;|}|}
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestCaseLabelWithMissingColonAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod(int value)
+    {
+        switch (value)
+        {
+        case 1 {|CS1003:break|};
+        }
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

@@ -63,5 +63,39 @@ class Foo
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestLocalFunctionWithMissingNameAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Method()
+    {
+        void {|CS1001:<|}T>(T value)
+        {
+        }
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestLocalFunctionWithMissingParameterListAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Method()
+    {
+        void Bar<T>{|CS1003:|}{|CS1026:|}
+        {
+        }
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

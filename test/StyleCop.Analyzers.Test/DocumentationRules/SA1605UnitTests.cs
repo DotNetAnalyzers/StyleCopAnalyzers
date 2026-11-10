@@ -288,6 +288,41 @@ public partial class ClassName
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestPartialClassWithMissingNameAsync()
+        {
+            var testCode = @"
+/// <remarks>Remarks.</remarks>
+public partial class{|CS1001:|}
+{
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPartialMethodWithMissingNameAsync()
+        {
+            var testCode = @"
+/// <summary>Summary.</summary>
+public interface ITest
+{
+    /// <summary>Summary.</summary>
+    void TestMethod();
+}
+
+/// <summary>Summary.</summary>
+public partial class TestClass : {|CS0535:ITest|}
+{
+    /// <remarks>Remarks.</remarks>
+    partial void ITest.{|CS0539:|}{|CS0754:|}{|CS1001:(|});
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
             => VerifyCSharpDiagnosticAsync(source, TestSettings, new[] { expected }, cancellationToken);
 

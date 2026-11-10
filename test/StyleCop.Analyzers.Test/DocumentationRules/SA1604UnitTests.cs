@@ -893,10 +893,143 @@ class Class1
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestClassWithMissingNameAsync()
+        {
+            var testCode = @"
+/// <remarks>Remarks.</remarks>
+public class{|CS1001:|}
+{
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestDelegateWithMissingNameAsync()
+        {
+            var testCode = @"
+/// <summary>Summary.</summary>
+public class TestClass
+{
+    /// <remarks>Remarks.</remarks>
+    public delegate void {|CS1001:(|});
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMethodWithMissingNameAsync()
+        {
+            var testCode = @"
+/// <summary>Summary.</summary>
+public interface ITest
+{
+    /// <summary>Summary.</summary>
+    void TestMethod();
+}
+
+/// <summary>Summary.</summary>
+public class TestClass : {|CS0535:ITest|}
+{
+    /// <remarks>Remarks.</remarks>
+    void ITest.{|CS0539:|}{|CS1001:(|})
+    {
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestDestructorWithMissingNameAsync()
+        {
+            var testCode = @"
+/// <summary>Summary.</summary>
+public class TestClass
+{
+    /// <remarks>Remarks.</remarks>
+    ~{|CS0574:{|CS1001:(|}|})
+    {
+    }
+}
+";
+
+            // The compiler errors differ between compiler versions, so they are only verified in this project.
+            var ignoreCompilerDiagnostics = this.IsInheritedTest();
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, ignoreCompilerDiagnostics, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPropertyWithMissingNameAsync()
+        {
+            var testCode = @"
+/// <summary>Summary.</summary>
+public interface ITest
+{
+    /// <summary>Summary.</summary>
+    int TestProperty { get; }
+}
+
+/// <summary>Summary.</summary>
+public class TestClass : {|CS0535:ITest|}
+{
+    /// <remarks>Remarks.</remarks>
+    int ITest. {|CS0539:|}{|CS1001:{|} get { return 0; } }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestFieldWithMissingNameAsync()
+        {
+            var testCode = @"
+/// <summary>Summary.</summary>
+public class TestClass
+{
+    /// <remarks>Remarks.</remarks>
+    public int [|field|], {|CS1001:;|}
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestEventWithMissingNameAsync()
+        {
+            var testCode = @"
+using System;
+
+/// <summary>Summary.</summary>
+public class TestClass
+{
+    /// <remarks>Remarks.</remarks>
+    public event EventHandler{|CS1001:|}
+    {
+        add { }
+        remove { }
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
             => VerifyCSharpDiagnosticAsync(source, new[] { expected }, cancellationToken);
 
         private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+            => VerifyCSharpDiagnosticAsync(source, expected, ignoreCompilerDiagnostics: false, cancellationToken);
+
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, bool ignoreCompilerDiagnostics, CancellationToken cancellationToken)
         {
             string contentWithSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <Class1>
@@ -930,6 +1063,7 @@ class Class1
             var test = new StyleCopDiagnosticVerifier<SA1604ElementDocumentationMustHaveSummary>.CSharpTest
             {
                 TestCode = source,
+                IgnoreCompilerDiagnostics = ignoreCompilerDiagnostics,
                 XmlReferences =
                 {
                     { "ClassWithSummary.xml", contentWithSummary },

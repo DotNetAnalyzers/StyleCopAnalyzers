@@ -260,5 +260,28 @@ public class Foo
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestEventWithMissingAccessorListAsync()
+        {
+            var testCode = @"
+using System;
+
+public interface ITest
+{
+    event EventHandler TestEvent;
+}
+
+public class TestClass : {|CS0535:ITest|}
+{
+    event EventHandler ITest{|CS0071:.|}{|CS0065:|}{|CS0539:|}TestEvent{|CS1519:{|CS1519:;|}|}
+}
+";
+
+            // The compiler errors differ between compiler versions, so they are only verified in this project.
+            var ignoreCompilerDiagnostics = this.IsInheritedTest();
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, ignoreCompilerDiagnostics, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

@@ -412,6 +412,63 @@ class ClassName
             Assert.StartsWith($"Context: Diagnostics of test state{Environment.NewLine}Expected 1 additional locations but got 0 for Diagnostic", ex.Message);
         }
 
+        [Fact]
+        public async Task TestCompilerDiagnosticsVerifiedAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    int {|CS1001:field|};
+}
+";
+
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+                async () =>
+                {
+                    await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, ignoreCompilerDiagnostics: false, CancellationToken.None).ConfigureAwait(false);
+                }).ConfigureAwait(false);
+            Assert.StartsWith($"Context: Diagnostics of test state{Environment.NewLine}Mismatch between number of diagnostics returned, expected \"1\" actual \"0\"", ex.Message);
+        }
+
+        [Fact]
+        public async Task TestCompilerDiagnosticsNotVerifiedAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    int {|CS1001:field|};
+    int PropertyName
+    {
+        get{return this.field[|;|]}
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, ignoreCompilerDiagnostics: true, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestAnalyzerDiagnosticsVerifiedWithoutCompilerDiagnosticsAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    int {|CS1001:field|};
+    int PropertyName
+    {
+        get{return this.field;}
+    }
+}
+";
+
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+                async () =>
+                {
+                    await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, ignoreCompilerDiagnostics: true, CancellationToken.None).ConfigureAwait(false);
+                }).ConfigureAwait(false);
+            Assert.StartsWith($"Context: Diagnostics of test state{Environment.NewLine}Mismatch between number of diagnostics returned, expected \"0\" actual \"1\"", ex.Message);
+        }
+
         private class ErrorThrowingAnalyzer : SA1002SemicolonsMustBeSpacedCorrectly
         {
             private static readonly Action<SyntaxNodeAnalysisContext> BlockAction = HandleBlock;

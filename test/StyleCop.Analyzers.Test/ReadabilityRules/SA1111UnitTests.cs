@@ -1586,5 +1586,55 @@ public class TestClass
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestIndexerWithMissingParameterListAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public int {|CS0548:this|}{|CS1001:{|CS1003:;|}|}{|CS1003:|}{|CS1514:|}
+{|CS1551:|}}{|CS1513:|}
+";
+
+            // The compiler errors differ between compiler versions, so they are only verified in this project.
+            var ignoreCompilerDiagnostics = this.IsInheritedTest();
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, ignoreCompilerDiagnostics, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestInvocationWithMissingCloseParenthesisAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod(int value)
+    {
+        TestMethod(1{|CS1026:|}
+            ;
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestInvocationWithMissingLastArgumentAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod(int first, int second)
+    {
+        TestMethod(1,{|CS1525:|}
+            );
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

@@ -1177,5 +1177,58 @@ class ClassName
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestArrayCreationWithMissingCloseBracketAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var value = new int[1
+            , 2{|CS0443:|}{|CS1003:{|CS1003:;|}|}
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestConstructorInitializerWithMissingArgumentListAsync()
+        {
+            var testCode = @"
+public class BaseClass
+{
+    public BaseClass(int first, int second)
+    {
+    }
+}
+
+public class TestClass : BaseClass
+{
+    public TestClass()
+        : {|CS7036:base|}{|CS1003:|}{|CS1026:|}
+    {
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestDelegateWithMissingParameterListAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public delegate void TestDelegate{|CS1003:{|CS1026:;|}|}
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

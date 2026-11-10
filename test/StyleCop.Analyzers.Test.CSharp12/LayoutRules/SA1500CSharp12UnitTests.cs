@@ -415,6 +415,61 @@ public partial class SA1500CSharp12UnitTests : SA1500CSharp11UnitTests
             CancellationToken.None).ConfigureAwait(false);
     }
 
+    [Fact]
+    public async Task TestCollectionExpressionWithMissingCloseBracketAsync()
+    {
+        var testCode = """
+            class C
+            {
+                void M()
+                {
+                    int[] values = [
+                        1,
+                        2{|CS1003:;|}
+                }
+            }
+            """;
+
+        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestCollectionExpressionWithMissingFirstElementAsync()
+    {
+        var testCode = """
+            class C
+            {
+                void M()
+                {
+                    int[] values = [ {|CS1525:,|}
+                        2,
+                    ];
+                }
+            }
+            """;
+
+        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestCollectionExpressionWithMissingLastOperandAsync()
+    {
+        var testCode = """
+            class C
+            {
+                void M()
+                {
+                    int[] values = [
+                        1,
+                        2 +{|CS1525:|}
+                    ];
+                }
+            }
+            """;
+
+        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+    }
+
     private sealed class TestDiagnosticProvider : FixAllContext.DiagnosticProvider
     {
         private readonly DocumentId documentId;

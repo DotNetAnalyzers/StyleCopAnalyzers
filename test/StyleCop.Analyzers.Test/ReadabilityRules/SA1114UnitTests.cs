@@ -1477,5 +1477,42 @@ public class TestClass
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestConstructorInitializerWithMissingArgumentListAsync()
+        {
+            var testCode = @"
+public class BaseClass
+{
+    public BaseClass(int value)
+    {
+    }
+}
+
+public class TestClass : BaseClass
+{
+    public TestClass()
+        : {|CS7036:base|}{|CS1003:|}{|CS1026:|}
+    {
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestIndexerWithMissingOpenBracketAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public int this{|CS1003:|}
+        int value] { get { return value; } }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
