@@ -341,7 +341,7 @@ internal interface IName
         var testCode = @"
 internal class TypeName
 {
-    {|#0:public|} TypeName()
+    {|#0:public|} TypeName(int value)
     {
     }
 
@@ -359,7 +359,7 @@ internal class TypeName
         var fixedCode = @"
 internal class TypeName
 {
-    internal TypeName()
+    internal TypeName(int value)
     {
     }
 
@@ -549,6 +549,436 @@ internal class TypeName : IName
 ";
 
         await VerifyAsync(testCode, fixedCode, Diagnostic().WithLocation(0)).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestParameterlessConstructorIsNotReportedAsync()
+    {
+        var testCode = @"
+internal class TypeName
+{
+    public TypeName()
+    {
+    }
+}
+
+internal class Consumer
+{
+    internal void Use<T>()
+        where T : new()
+    {
+        new T();
+    }
+
+    internal void Call()
+    {
+        this.Use<TypeName>();
+    }
+}
+";
+
+        await VerifyAsync(testCode, testCode).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestEnumerationPatternMembersAreNotReportedAsync()
+    {
+        var testCode = @"
+internal class Collection
+{
+    public Enumerator GetEnumerator()
+    {
+        return new Enumerator();
+    }
+
+    {|#0:public|} void Unused()
+    {
+    }
+}
+
+internal struct Enumerator
+{
+    public int Current
+    {
+        get { return 0; }
+    }
+
+    public bool MoveNext()
+    {
+        return false;
+    }
+}
+
+internal class Consumer
+{
+    internal void M(Collection values)
+    {
+        foreach (var value in values)
+        {
+        }
+    }
+}
+";
+        var fixedCode = @"
+internal class Collection
+{
+    public Enumerator GetEnumerator()
+    {
+        return new Enumerator();
+    }
+
+    internal void Unused()
+    {
+    }
+}
+
+internal struct Enumerator
+{
+    public int Current
+    {
+        get { return 0; }
+    }
+
+    public bool MoveNext()
+    {
+        return false;
+    }
+}
+
+internal class Consumer
+{
+    internal void M(Collection values)
+    {
+        foreach (var value in values)
+        {
+        }
+    }
+}
+";
+
+        await VerifyAsync(testCode, fixedCode, Diagnostic().WithLocation(0)).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestEnumerationPatternNamesThatAreNotThePatternAreReportedAndFixedAsync()
+    {
+        var testCode = @"
+internal class TypeName
+{
+    {|#0:public|} int GetEnumerator()
+    {
+        return 0;
+    }
+
+    {|#1:public|} void MoveNext()
+    {
+    }
+
+    {|#2:public|} int Current { get; }
+}
+";
+        var fixedCode = @"
+internal class TypeName
+{
+    internal int GetEnumerator()
+    {
+        return 0;
+    }
+
+    internal void MoveNext()
+    {
+    }
+
+    internal int Current { get; }
+}
+";
+
+        await VerifyAsync(testCode, fixedCode, Diagnostic().WithLocation(0), Diagnostic().WithLocation(1), Diagnostic().WithLocation(2)).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestAttributeFieldAndSettablePropertyAreNotReportedAsync()
+    {
+        var testCode = @"
+internal class AAttribute : System.Attribute
+{
+    public int Value;
+
+    public int Property { get; set; }
+
+    {|#0:public|} int ReadOnly { get; }
+}
+
+[A(Value = 1, Property = 2)]
+internal class Consumer
+{
+}
+";
+        var fixedCode = @"
+internal class AAttribute : System.Attribute
+{
+    public int Value;
+
+    public int Property { get; set; }
+
+    internal int ReadOnly { get; }
+}
+
+[A(Value = 1, Property = 2)]
+internal class Consumer
+{
+}
+";
+
+        await VerifyAsync(testCode, fixedCode, Diagnostic().WithLocation(0)).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestInheritedInterfaceImplementationIsNotReportedAsync()
+    {
+        var testCode = @"
+internal interface IName
+{
+    void MethodName();
+}
+
+internal class BaseName
+{
+    public void MethodName()
+    {
+    }
+
+    {|#0:public|} void OtherMethod()
+    {
+    }
+}
+
+internal class DerivedName : BaseName, IName
+{
+}
+";
+        var fixedCode = @"
+internal interface IName
+{
+    void MethodName();
+}
+
+internal class BaseName
+{
+    public void MethodName()
+    {
+    }
+
+    internal void OtherMethod()
+    {
+    }
+}
+
+internal class DerivedName : BaseName, IName
+{
+}
+";
+
+        await VerifyAsync(testCode, fixedCode, Diagnostic().WithLocation(0)).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestInternalAccessorModifierIsRemovedAsync()
+    {
+        var testCode = @"
+internal class TypeName
+{
+    {|#0:public|} int PropertyName { get; internal set; }
+
+    {|#1:public|} int this[int index]
+    {
+        get { return 0; }
+        internal set { }
+    }
+}
+";
+        var fixedCode = @"
+internal class TypeName
+{
+    internal int PropertyName { get; set; }
+
+    internal int this[int index]
+    {
+        get { return 0; }
+        set { }
+    }
+}
+";
+
+        await VerifyAsync(testCode, fixedCode, Diagnostic().WithLocation(0), Diagnostic().WithLocation(1)).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestPrivateAccessorModifierIsPreservedAsync()
+    {
+        var testCode = @"
+internal class TypeName
+{
+    {|#0:public|} int PropertyName { get; private set; }
+
+    {|#1:public|} int this[int index]
+    {
+        get { return 0; }
+        private set { }
+    }
+}
+";
+        var fixedCode = @"
+internal class TypeName
+{
+    internal int PropertyName { get; private set; }
+
+    internal int this[int index]
+    {
+        get { return 0; }
+        private set { }
+    }
+}
+";
+
+        await VerifyAsync(testCode, fixedCode, Diagnostic().WithLocation(0), Diagnostic().WithLocation(1)).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestProtectedAccessorPreventsCodeFixAsync()
+    {
+        var testCode = @"
+internal class TypeName
+{
+    {|#0:public|} int PropertyName { get; protected set; }
+
+    {|#1:public|} int OtherProperty { get; protected internal set; }
+
+    {|#2:public|} int this[int index]
+    {
+        get { return 0; }
+        protected set { }
+    }
+}
+";
+
+        await VerifyNoFixAsync(testCode, Diagnostic().WithLocation(0), Diagnostic().WithLocation(1), Diagnostic().WithLocation(2)).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestVirtualMethodAndOverrideAreUpdatedTogetherAsync()
+    {
+        var testCode = @"
+internal class BaseName
+{
+    {|#0:public|} virtual void MethodName()
+    {
+    }
+}
+
+internal class DerivedName : BaseName
+{
+    public override void MethodName()
+    {
+    }
+}
+";
+        var fixedCode = @"
+internal class BaseName
+{
+    internal virtual void MethodName()
+    {
+    }
+}
+
+internal class DerivedName : BaseName
+{
+    internal override void MethodName()
+    {
+    }
+}
+";
+
+        await VerifyAsync(testCode, fixedCode, Diagnostic().WithLocation(0)).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestAbstractMethodAndOverrideAreUpdatedTogetherAsync()
+    {
+        var testCode = @"
+internal abstract class BaseName
+{
+    {|#0:public|} abstract void MethodName();
+}
+
+internal class DerivedName : BaseName
+{
+    public override void MethodName()
+    {
+    }
+}
+";
+        var fixedCode = @"
+internal abstract class BaseName
+{
+    internal abstract void MethodName();
+}
+
+internal class DerivedName : BaseName
+{
+    internal override void MethodName()
+    {
+    }
+}
+";
+
+        await VerifyAsync(testCode, fixedCode, Diagnostic().WithLocation(0)).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestOverrideInGeneratedCodePreventsCodeFixAsync()
+    {
+        var testCode = @"
+internal class BaseName
+{
+    {|#0:public|} virtual void MethodName()
+    {
+    }
+}
+";
+        var generatedCode = @"
+// <auto-generated/>
+internal class DerivedName : BaseName
+{
+    public override void MethodName()
+    {
+    }
+}
+";
+
+        var test = new CSharpTest();
+        test.TestState.Sources.Add(("BaseName.cs", testCode));
+        test.TestState.Sources.Add(("DerivedName.generated.cs", generatedCode));
+        test.FixedState.Sources.Add(("BaseName.cs", testCode));
+        test.FixedState.Sources.Add(("DerivedName.generated.cs", generatedCode));
+        test.ExplicitlyEnabledDiagnostics.Add(DiagnosticId);
+        var expected = Diagnostic().WithLocation(0);
+        test.ExpectedDiagnostics.Add(expected);
+        test.RemainingDiagnostics.Add(expected);
+        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
+    private static Task VerifyNoFixAsync(string testCode, params DiagnosticResult[] expected)
+    {
+        var test = new CSharpTest
+        {
+            TestCode = testCode,
+            FixedCode = testCode,
+        };
+        test.ExplicitlyEnabledDiagnostics.Add(DiagnosticId);
+        test.ExpectedDiagnostics.AddRange(expected);
+        test.RemainingDiagnostics.AddRange(expected);
+        return test.RunAsync(CancellationToken.None);
     }
 
     private static Task VerifyAsync(string testCode, string fixedCode, params DiagnosticResult[] expected)

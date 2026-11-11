@@ -55,6 +55,45 @@ public static class Extensions
         await VerifyAsync(testCode, testCode, expectDiagnostic: false).ConfigureAwait(false);
     }
 
+    [Fact]
+    public async Task TestPartialEventPartsInOneFileAreUpdatedTogetherAsync()
+    {
+        var testCode = @"
+internal partial class TypeName
+{
+    {|#0:public|} partial event System.EventHandler EventName;
+
+    {|#1:public|} partial event System.EventHandler EventName
+    {
+        add { }
+        remove { }
+    }
+}
+";
+        var fixedCode = @"
+internal partial class TypeName
+{
+    internal partial event System.EventHandler EventName;
+
+    internal partial event System.EventHandler EventName
+    {
+        add { }
+        remove { }
+    }
+}
+";
+
+        var test = new CSharpTest
+        {
+            TestCode = testCode,
+            FixedCode = fixedCode,
+        };
+        test.ExplicitlyEnabledDiagnostics.Add(SA1415DoNotUsePublicOnMembersOfInternalTypes.DiagnosticId);
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(1));
+        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
     private static Task VerifyAsync(string testCode, string fixedCode, bool expectDiagnostic)
     {
         var test = new CSharpTest
