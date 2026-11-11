@@ -59,7 +59,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
             {
                 defaultReferenceAssemblies = new ReferenceAssemblies(
                     "net11.0",
-                    new PackageIdentity("Microsoft.NETCore.App.Ref", "11.0.0-rc.1.26425.128"),
+                    new PackageIdentity("Microsoft.NETCore.App.Ref", "11.0.0"),
                     Path.Combine("ref", "net11.0"));
             }
             else if (LightupHelpers.SupportsCSharp14)
