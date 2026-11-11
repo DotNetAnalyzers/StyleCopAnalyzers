@@ -5,6 +5,11 @@ Microsoft.CodeAnalysis 1.2.1 and reach newer compiler APIs through light-up. Tes
 Roslyn 1.3.2 (C# 6) up to the newest one, in `StyleCop.Analyzers.Test` and `StyleCop.Analyzers.Test.CSharp7`
 through `StyleCop.Analyzers.Test.CSharp15`. Each test project inherits all the tests of the previous one.
 
+Language-version test classes (for example `SA1234CSharp13UnitTests`) are emitted automatically by
+`tools/StyleCop.Analyzers.PrivateAnalyzers/DerivedTestGenerator.cs` when they are absent. Only declare one
+when it contains tests; never check in an empty wrapper class. See
+[csharp-language-version-audit](.agents/skills/csharp-language-version-audit/SKILL.md).
+
 Procedures live in [Agent Skills](https://agentskills.io) under [`.agents/skills`](.agents/skills). Read the
 matching skill before you start:
 
