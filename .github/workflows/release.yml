@@ -172,7 +172,7 @@ jobs:
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
       with:
-        dotnet-version: 10.0.x
+        dotnet-version: 11.0.x
 
     # Request the key right before pushing: it is valid for one hour.
     - name: NuGet login (OIDC to short-lived API key)
