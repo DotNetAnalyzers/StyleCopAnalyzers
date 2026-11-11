@@ -159,6 +159,18 @@
   <data name="SA1412Title" xml:space="preserve">
     <value>使用带字节顺序标记的 UTF-8 保存文件</value>
   </data>
+  <data name="SA1415CodeFix" xml:space="preserve">
+    <value>将可访问性更改为 internal</value>
+  </data>
+  <data name="SA1415Description" xml:space="preserve">
+    <value>实际可访问性为内部或私有的类型的公共成员不属于公共 API，应声明为 internal。</value>
+  </data>
+  <data name="SA1415MessageFormat" xml:space="preserve">
+    <value>内部或私有类型的成员不应声明为 public</value>
+  </data>
+  <data name="SA1415Title" xml:space="preserve">
+    <value>不要在内部类型的成员上使用 public</value>
+  </data>
   <data name="SX1412CodeFix" xml:space="preserve">
     <value>将文件编码更改为不带字节顺序标记的 UTF-8</value>
   </data>

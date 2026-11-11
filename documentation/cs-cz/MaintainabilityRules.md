@@ -25,3 +25,4 @@ Identifikátor | Název | Popis
 [SA1412](SA1412.md) | StoreFilesAsUtf8 | Kódování souboru není UTF-8 s bajtovým pořadím (BOM).
 [SA1413](SA1413.md) | UseTrailingCommasInMultiLineInitializers | Víceřádkový inicializátor, enum, výraz `switch` nebo vzor vlastnosti by měl používat čárku na posledním prvku.
 [SA1414](SA1414.md) | TupleTypesInSignaturesShouldHaveElementNames | Typy tuple v signaturách členů by měly mít explicitně pojmenované prvky tuple.
+[SA1415](SA1415.md) | DoNotUsePublicOnMembersOfInternalTypes | Člen typu, který je efektivně interní nebo privátní, je deklarován jako public. Toto pravidlo je ve výchozím nastavení zakázáno.

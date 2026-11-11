@@ -12,6 +12,7 @@ SA1315 | StyleCop.CSharp.NamingRules | Warning | SA1315ParametersShouldMatchInhe
 SA1316 | StyleCop.CSharp.NamingRules | Warning | SA1316TupleElementNamesShouldUseCorrectCasing, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1316.html)
 SA1317 | StyleCop.CSharp.NamingRules | Warning | SA1317IdentifierShouldBeNamedOnlyWithLatinLetters, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1317.html)
 SA1414 | StyleCop.CSharp.ReadabilityRules | Warning | SA1414TupleTypesInSignaturesShouldHaveElementNames, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1414.html)
+SA1415 | StyleCop.CSharp.MaintainabilityRules | Warning | SA1415DoNotUsePublicOnMembersOfInternalTypes, [Documentation](../../documentation/SA1415.md)
 SX1412 | StyleCop.CSharp.MaintainabilityRules | Warning | SX1412StoreFilesAsUtf8WithoutByteOrderMark, [Documentation](../../documentation/SX1412.md)
 SA1518 | StyleCop.CSharp.LayoutRules | Warning | SA1518UseLineEndingsCorrectlyAtEndOfFile, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1518.html)
 SA1653 | StyleCop.CSharp.DocumentationRules | Warning | SA1653OnlyOnePartialDeclarationShouldContainSummaryDocumentation, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1653.html)
