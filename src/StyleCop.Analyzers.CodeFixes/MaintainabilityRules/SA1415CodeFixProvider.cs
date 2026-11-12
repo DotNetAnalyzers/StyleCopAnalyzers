@@ -83,13 +83,13 @@ internal sealed class SA1415CodeFixProvider : CodeFixProvider
 
         var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
         var symbols = GetDeclaredSymbols(semanticModel, member, cancellationToken);
-        var targets = await TryCollectTargetsAsync(solution, member, symbols, cancellationToken).ConfigureAwait(false);
-        if (targets is null)
+        var plan = await TryCollectTargetsAsync(solution, member, symbols, cancellationToken).ConfigureAwait(false);
+        if (plan is null)
         {
             return solution;
         }
 
-        return await RewriteTargetsAsync(solution, targets, cancellationToken).ConfigureAwait(false);
+        return await RewriteTargetsAsync(solution, plan, cancellationToken).ConfigureAwait(false);
     }
 
     private static async Task<bool> CanOfferFixAsync(
@@ -98,11 +98,11 @@ internal sealed class SA1415CodeFixProvider : CodeFixProvider
         IReadOnlyList<ISymbol> symbols,
         CancellationToken cancellationToken)
     {
-        var targets = await TryCollectTargetsAsync(solution, member, symbols, cancellationToken).ConfigureAwait(false);
-        return targets is not null;
+        var plan = await TryCollectTargetsAsync(solution, member, symbols, cancellationToken).ConfigureAwait(false);
+        return plan is not null;
     }
 
-    private static async Task<List<MemberDeclarationSyntax>?> TryCollectTargetsAsync(
+    private static async Task<FixPlan?> TryCollectTargetsAsync(
         Solution solution,
         MemberDeclarationSyntax member,
         IReadOnlyList<ISymbol> symbols,
@@ -124,7 +124,9 @@ internal sealed class SA1415CodeFixProvider : CodeFixProvider
                 return null;
             }
 
-            return targets.Count > 0 ? targets : null;
+            return targets.Count > 0
+                ? await TryCreatePlanAsync(solution, targets, new SA1415DoNotUsePublicOnMembersOfInternalTypes.RequirementContext(), cancellationToken).ConfigureAwait(false)
+                : null;
         }
 
         while (pending.Count > 0)
@@ -183,7 +185,92 @@ internal sealed class SA1415CodeFixProvider : CodeFixProvider
             }
         }
 
-        return targets.Count > 0 ? targets : null;
+        return targets.Count > 0
+            ? await TryCreatePlanAsync(solution, targets, new SA1415DoNotUsePublicOnMembersOfInternalTypes.RequirementContext(), cancellationToken).ConfigureAwait(false)
+            : null;
+    }
+
+    private static async Task<FixPlan?> TryCreatePlanAsync(
+        Solution solution,
+        List<MemberDeclarationSyntax> targets,
+        SA1415DoNotUsePublicOnMembersOfInternalTypes.RequirementContext requirements,
+        CancellationToken cancellationToken)
+    {
+        var plan = new FixPlan();
+        foreach (var declaration in targets)
+        {
+            var symbols = await GetDeclarationSymbolsAsync(solution, declaration, cancellationToken).ConfigureAwait(false);
+            var keep = new List<string>();
+            var change = 0;
+            if (symbols.Count == 0)
+            {
+                plan.Declarations.Add(declaration);
+                continue;
+            }
+
+            foreach (var symbol in symbols)
+            {
+                var compilation = await GetCompilationAsync(solution, symbol, cancellationToken).ConfigureAwait(false);
+                if (compilation is not null
+                    && requirements.MustRemainPublic(compilation, symbol, cancellationToken))
+                {
+                    keep.Add(symbol.Name);
+                }
+                else
+                {
+                    change++;
+                }
+            }
+
+            if (change == 0)
+            {
+                continue;
+            }
+
+            if (keep.Count > 0 && !CanSplitField(declaration))
+            {
+                return null;
+            }
+
+            plan.Declarations.Add(declaration);
+            if (keep.Count > 0)
+            {
+                plan.KeepPublic.Add(declaration, keep);
+            }
+        }
+
+        return plan.Declarations.Count > 0 ? plan : null;
+    }
+
+    private static async Task<List<ISymbol>> GetDeclarationSymbolsAsync(
+        Solution solution,
+        MemberDeclarationSyntax declaration,
+        CancellationToken cancellationToken)
+    {
+        var document = solution.GetDocument(declaration.SyntaxTree);
+        if (document is null)
+        {
+            return new List<ISymbol>();
+        }
+
+        var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+        return GetDeclaredSymbols(semanticModel, declaration, cancellationToken);
+    }
+
+    private static async Task<Compilation?> GetCompilationAsync(Solution solution, ISymbol symbol, CancellationToken cancellationToken)
+    {
+        foreach (var reference in symbol.DeclaringSyntaxReferences)
+        {
+            var document = solution.GetDocument(reference.SyntaxTree);
+            if (document is null)
+            {
+                continue;
+            }
+
+            return await document.Project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        return null;
     }
 
     private static bool IsSeedSymbol(IReadOnlyList<ISymbol> symbols, ISymbol symbol)
@@ -584,11 +671,11 @@ internal sealed class SA1415CodeFixProvider : CodeFixProvider
 
     private static async Task<Solution> RewriteTargetsAsync(
         Solution solution,
-        List<MemberDeclarationSyntax> targets,
+        FixPlan plan,
         CancellationToken cancellationToken)
     {
         var byTree = new Dictionary<SyntaxTree, List<MemberDeclarationSyntax>>();
-        foreach (var target in targets)
+        foreach (var target in plan.Declarations)
         {
             if (!byTree.TryGetValue(target.SyntaxTree, out var list))
             {
@@ -614,7 +701,16 @@ internal sealed class SA1415CodeFixProvider : CodeFixProvider
                 return solution;
             }
 
-            var newRoot = targetRoot.ReplaceNodes(pair.Value, (original, rewritten) => RewriteMember(rewritten));
+            var keepPublic = new Dictionary<MemberDeclarationSyntax, List<string>>();
+            foreach (var declaration in pair.Value)
+            {
+                if (plan.KeepPublic.TryGetValue(declaration, out var names))
+                {
+                    keepPublic.Add(declaration, names);
+                }
+            }
+
+            var newRoot = new DeclarationRewriter(new HashSet<MemberDeclarationSyntax>(pair.Value), keepPublic).Visit(targetRoot);
             updated = targetDocument.WithSyntaxRoot(newRoot).Project.Solution;
         }
 
@@ -913,6 +1009,116 @@ internal sealed class SA1415CodeFixProvider : CodeFixProvider
         }
     }
 
+    private static bool CanSplitField(MemberDeclarationSyntax declaration)
+    {
+        return declaration is BaseFieldDeclarationSyntax field
+            && field.Parent is TypeDeclarationSyntax type
+            && CanReplaceMembers(type);
+    }
+
+    private static bool CanReplaceMembers(TypeDeclarationSyntax type)
+    {
+        return type is ClassDeclarationSyntax or StructDeclarationSyntax or InterfaceDeclarationSyntax
+            || RecordDeclarationSyntaxWrapper.IsInstance(type)
+            || ExtensionBlockDeclarationSyntaxWrapper.IsInstance(type)
+            || UnionDeclarationSyntaxWrapper.IsInstance(type);
+    }
+
+    private static TypeDeclarationSyntax ReplaceMembers(TypeDeclarationSyntax type, SyntaxList<MemberDeclarationSyntax> members)
+    {
+        return type switch
+        {
+            ClassDeclarationSyntax classDeclaration => classDeclaration.WithMembers(members),
+            StructDeclarationSyntax structDeclaration => structDeclaration.WithMembers(members),
+            InterfaceDeclarationSyntax interfaceDeclaration => interfaceDeclaration.WithMembers(members),
+            _ when RecordDeclarationSyntaxWrapper.IsInstance(type) => ((RecordDeclarationSyntaxWrapper)type).WithMembers(members).SyntaxNode!,
+            _ when ExtensionBlockDeclarationSyntaxWrapper.IsInstance(type) => ((ExtensionBlockDeclarationSyntaxWrapper)type).WithMembers(members).SyntaxNode!,
+            _ when UnionDeclarationSyntaxWrapper.IsInstance(type) => ((UnionDeclarationSyntaxWrapper)type).WithMembers(members).SyntaxNode!,
+            _ => type,
+        };
+    }
+
+    private static List<MemberDeclarationSyntax> SplitField(BaseFieldDeclarationSyntax field, List<string> keepNames)
+    {
+        var keep = new HashSet<string>(keepNames);
+        var changeVariables = new List<VariableDeclaratorSyntax>();
+        var keepVariables = new List<VariableDeclaratorSyntax>();
+        var firstIsKept = false;
+        var sawVariable = false;
+        foreach (var variable in field.Declaration.Variables)
+        {
+            if (!sawVariable)
+            {
+                firstIsKept = keep.Contains(variable.Identifier.ValueText);
+                sawVariable = true;
+            }
+
+            if (keep.Contains(variable.Identifier.ValueText))
+            {
+                keepVariables.Add(variable.WithoutTrivia());
+            }
+            else
+            {
+                changeVariables.Add(variable.WithoutTrivia());
+            }
+        }
+
+        if (changeVariables.Count == 0 || keepVariables.Count == 0)
+        {
+            return new List<MemberDeclarationSyntax> { RewriteMember(field) };
+        }
+
+        var changed = RewriteMember(WithVariables(field, changeVariables));
+        var kept = WithVariables(field, keepVariables);
+        var first = firstIsKept ? kept : changed;
+        var second = firstIsKept ? changed : kept;
+        var leading = field.GetLeadingTrivia();
+        var trailing = field.GetTrailingTrivia();
+        first = first.WithLeadingTrivia(leading).WithTrailingTrivia(EndOfLine(field));
+        second = second.WithLeadingTrivia(Indentation(leading)).WithTrailingTrivia(trailing);
+        return new List<MemberDeclarationSyntax> { first, second };
+    }
+
+    private static BaseFieldDeclarationSyntax WithVariables(BaseFieldDeclarationSyntax field, List<VariableDeclaratorSyntax> variables)
+    {
+        var separators = new List<SyntaxToken>();
+        for (var i = 1; i < variables.Count; i++)
+        {
+            separators.Add(SyntaxFactory.Token(SyntaxKind.CommaToken).WithTrailingTrivia(SyntaxFactory.Space));
+        }
+
+        var separated = SyntaxFactory.SeparatedList(variables, separators);
+        var declaration = field.Declaration.WithVariables(separated);
+        return field switch
+        {
+            EventFieldDeclarationSyntax eventField => eventField.WithDeclaration(declaration),
+            FieldDeclarationSyntax variableField => variableField.WithDeclaration(declaration),
+            _ => field,
+        };
+    }
+
+    private static SyntaxTriviaList Indentation(SyntaxTriviaList leading)
+    {
+        var text = leading.ToFullString();
+        var index = text.LastIndexOf('\n');
+        var indent = index < 0 ? text : text.Substring(index + 1);
+        if (indent.EndsWith("\r", StringComparison.Ordinal))
+        {
+            indent = indent.Substring(0, indent.Length - 1);
+        }
+
+        return indent.Length == 0
+            ? SyntaxFactory.TriviaList()
+            : SyntaxFactory.TriviaList(SyntaxFactory.Whitespace(indent));
+    }
+
+    private static SyntaxTriviaList EndOfLine(SyntaxNode node)
+    {
+        var text = node.SyntaxTree.GetText().ToString();
+        var eol = text.IndexOf("\r\n", StringComparison.Ordinal) >= 0 ? "\r\n" : "\n";
+        return SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine(eol));
+    }
+
     private readonly struct NodeKey : IEquatable<NodeKey>
     {
         private readonly SyntaxTree tree;
@@ -945,6 +1151,75 @@ internal sealed class SA1415CodeFixProvider : CodeFixProvider
                 hash = (hash * 397) ^ this.length;
                 return hash;
             }
+        }
+    }
+
+    private sealed class FixPlan
+    {
+        public List<MemberDeclarationSyntax> Declarations { get; } = new();
+
+        public Dictionary<MemberDeclarationSyntax, List<string>> KeepPublic { get; } = new();
+    }
+
+    private sealed class DeclarationRewriter : CSharpSyntaxRewriter
+    {
+        private readonly HashSet<MemberDeclarationSyntax> rewrites;
+        private readonly Dictionary<MemberDeclarationSyntax, List<string>> keepPublic;
+
+        public DeclarationRewriter(HashSet<MemberDeclarationSyntax> rewrites, Dictionary<MemberDeclarationSyntax, List<string>> keepPublic)
+        {
+            this.rewrites = rewrites;
+            this.keepPublic = keepPublic;
+        }
+
+        public override SyntaxNode Visit(SyntaxNode node)
+        {
+            if (node is TypeDeclarationSyntax type && this.Touches(type))
+            {
+                return this.RewriteType(type);
+            }
+
+            return base.Visit(node)!;
+        }
+
+        private bool Touches(TypeDeclarationSyntax type)
+        {
+            foreach (var member in type.Members)
+            {
+                if (this.rewrites.Contains(member))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private TypeDeclarationSyntax RewriteType(TypeDeclarationSyntax type)
+        {
+            var members = new List<MemberDeclarationSyntax>(type.Members.Count);
+            foreach (var member in type.Members)
+            {
+                if (!this.rewrites.Contains(member))
+                {
+                    members.Add((MemberDeclarationSyntax)this.Visit(member)!);
+                    continue;
+                }
+
+                if (this.keepPublic.TryGetValue(member, out var keep) && member is BaseFieldDeclarationSyntax field)
+                {
+                    foreach (var part in SplitField(field, keep))
+                    {
+                        members.Add((MemberDeclarationSyntax)this.Visit(part)!);
+                    }
+                }
+                else
+                {
+                    members.Add((MemberDeclarationSyntax)this.Visit(RewriteMember(member))!);
+                }
+            }
+
+            return ReplaceMembers(type, SyntaxFactory.List(members));
         }
     }
 }

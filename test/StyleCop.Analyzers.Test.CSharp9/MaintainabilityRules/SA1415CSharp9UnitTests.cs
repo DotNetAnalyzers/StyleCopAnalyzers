@@ -231,6 +231,99 @@ internal sealed record TypeName
     }
 
     [Fact]
+    public async Task TestExtensionGetEnumeratorDiscoversDerivedEnumeratorAsync()
+    {
+        var testCode = @"
+internal class Collection
+{
+}
+
+internal static class CollectionExtensions
+{
+    public static Enumerator GetEnumerator(this Collection collection)
+    {
+        return new Enumerator();
+    }
+}
+
+internal class BaseEnumerator
+{
+    public bool MoveNext()
+    {
+        return false;
+    }
+
+    {|#0:public|} void Unused()
+    {
+    }
+}
+
+internal class Enumerator : BaseEnumerator
+{
+    public int Current
+    {
+        get { return 0; }
+    }
+}
+
+internal class Consumer
+{
+    internal void M(Collection values)
+    {
+        foreach (var value in values)
+        {
+        }
+    }
+}
+";
+        var fixedCode = @"
+internal class Collection
+{
+}
+
+internal static class CollectionExtensions
+{
+    public static Enumerator GetEnumerator(this Collection collection)
+    {
+        return new Enumerator();
+    }
+}
+
+internal class BaseEnumerator
+{
+    public bool MoveNext()
+    {
+        return false;
+    }
+
+    internal void Unused()
+    {
+    }
+}
+
+internal class Enumerator : BaseEnumerator
+{
+    public int Current
+    {
+        get { return 0; }
+    }
+}
+
+internal class Consumer
+{
+    internal void M(Collection values)
+    {
+        foreach (var value in values)
+        {
+        }
+    }
+}
+";
+
+        await VerifyFixAsync(testCode, fixedCode, Diagnostic().WithLocation(0)).ConfigureAwait(false);
+    }
+
+    [Fact]
     public async Task TestAttributeInitPropertyIsNotReportedAsync()
     {
         var testCode = @"

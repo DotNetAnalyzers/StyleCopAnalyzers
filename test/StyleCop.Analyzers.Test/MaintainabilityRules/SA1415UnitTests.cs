@@ -1317,6 +1317,200 @@ internal class OuterName
         await VerifyAsync(testCode, fixedCode, Diagnostic().WithLocation(0)).ConfigureAwait(false);
     }
 
+    [Fact]
+    public async Task TestSharedOverrideKeepsInterfaceEventPublicAsync()
+    {
+        var testCode = @"
+internal interface IName
+{
+    event System.Action EventC;
+}
+
+internal class BaseName : IName
+{
+    {|#0:public|} virtual event System.Action EventB;
+
+    public virtual event System.Action EventC;
+}
+
+internal class DerivedName : BaseName
+{
+    public override event System.Action EventB, EventC;
+}
+";
+        var fixedCode = @"
+internal interface IName
+{
+    event System.Action EventC;
+}
+
+internal class BaseName : IName
+{
+    internal virtual event System.Action EventB;
+
+    public virtual event System.Action EventC;
+}
+
+internal class DerivedName : BaseName
+{
+    internal override event System.Action EventB;
+    public override event System.Action EventC;
+}
+";
+
+        await VerifyAsync(testCode, fixedCode, Diagnostic().WithLocation(0)).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestGetEnumeratorReturningConstrainedTypeParameterIsNotReportedAsync()
+    {
+        var testCode = @"
+internal class Collection<T>
+    where T : System.Collections.Generic.IEnumerator<int>
+{
+    public T GetEnumerator()
+    {
+        return default(T);
+    }
+
+    {|#0:public|} void Unused()
+    {
+    }
+}
+
+internal class Consumer
+{
+    internal void M(Collection<System.Collections.Generic.IEnumerator<int>> values)
+    {
+        foreach (var value in values)
+        {
+        }
+    }
+}
+";
+        var fixedCode = @"
+internal class Collection<T>
+    where T : System.Collections.Generic.IEnumerator<int>
+{
+    public T GetEnumerator()
+    {
+        return default(T);
+    }
+
+    internal void Unused()
+    {
+    }
+}
+
+internal class Consumer
+{
+    internal void M(Collection<System.Collections.Generic.IEnumerator<int>> values)
+    {
+        foreach (var value in values)
+        {
+        }
+    }
+}
+";
+
+        await VerifyAsync(testCode, fixedCode, Diagnostic().WithLocation(0)).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestOverriddenMoveNextInDerivedEnumeratorIsNotReportedAsync()
+    {
+        var testCode = @"
+internal class BaseEnumerator
+{
+    public virtual bool MoveNext()
+    {
+        return false;
+    }
+
+    {|#0:public|} void Unused()
+    {
+    }
+}
+
+internal class Enumerator : BaseEnumerator
+{
+    public int Current
+    {
+        get { return 0; }
+    }
+
+    public override bool MoveNext()
+    {
+        return false;
+    }
+}
+
+internal class Collection
+{
+    public Enumerator GetEnumerator()
+    {
+        return new Enumerator();
+    }
+}
+
+internal class Consumer
+{
+    internal void M(Collection values)
+    {
+        foreach (var value in values)
+        {
+        }
+    }
+}
+";
+        var fixedCode = @"
+internal class BaseEnumerator
+{
+    public virtual bool MoveNext()
+    {
+        return false;
+    }
+
+    internal void Unused()
+    {
+    }
+}
+
+internal class Enumerator : BaseEnumerator
+{
+    public int Current
+    {
+        get { return 0; }
+    }
+
+    public override bool MoveNext()
+    {
+        return false;
+    }
+}
+
+internal class Collection
+{
+    public Enumerator GetEnumerator()
+    {
+        return new Enumerator();
+    }
+}
+
+internal class Consumer
+{
+    internal void M(Collection values)
+    {
+        foreach (var value in values)
+        {
+        }
+    }
+}
+";
+
+        await VerifyAsync(testCode, fixedCode, Diagnostic().WithLocation(0)).ConfigureAwait(false);
+    }
+
     private static Task VerifyNoFixAsync(string testCode, params DiagnosticResult[] expected)
     {
         var test = new CSharpTest

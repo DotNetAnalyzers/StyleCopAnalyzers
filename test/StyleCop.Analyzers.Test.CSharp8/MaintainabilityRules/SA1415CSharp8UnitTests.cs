@@ -164,6 +164,143 @@ internal class Consumer
         await VerifyFixAsync(testCode, fixedCode, Diagnostic().WithLocation(0)).ConfigureAwait(false);
     }
 
+    [Fact]
+    public async Task TestAsyncEnumerationWithExtensionAwaiterIsNotReportedAsync()
+    {
+        var testCode = @"
+internal class Collection
+{
+    public Enumerator GetAsyncEnumerator()
+    {
+        return new Enumerator();
+    }
+
+    {|#0:public|} void Unused()
+    {
+    }
+}
+
+internal struct Enumerator
+{
+    public int Current
+    {
+        get { return 0; }
+    }
+
+    public BoolTask MoveNextAsync()
+    {
+        return new BoolTask();
+    }
+}
+
+internal struct BoolTask
+{
+}
+
+internal static class BoolTaskExtensions
+{
+    internal static BoolAwaiter GetAwaiter(this BoolTask task)
+    {
+        return new BoolAwaiter();
+    }
+}
+
+internal struct BoolAwaiter : System.Runtime.CompilerServices.INotifyCompletion
+{
+    internal bool IsCompleted
+    {
+        get { return true; }
+    }
+
+    internal bool GetResult()
+    {
+        return false;
+    }
+
+    public void OnCompleted(System.Action continuation)
+    {
+    }
+}
+
+internal class Consumer
+{
+    internal async System.Threading.Tasks.Task M(Collection values)
+    {
+        await foreach (var value in values)
+        {
+        }
+    }
+}
+";
+        var fixedCode = @"
+internal class Collection
+{
+    public Enumerator GetAsyncEnumerator()
+    {
+        return new Enumerator();
+    }
+
+    internal void Unused()
+    {
+    }
+}
+
+internal struct Enumerator
+{
+    public int Current
+    {
+        get { return 0; }
+    }
+
+    public BoolTask MoveNextAsync()
+    {
+        return new BoolTask();
+    }
+}
+
+internal struct BoolTask
+{
+}
+
+internal static class BoolTaskExtensions
+{
+    internal static BoolAwaiter GetAwaiter(this BoolTask task)
+    {
+        return new BoolAwaiter();
+    }
+}
+
+internal struct BoolAwaiter : System.Runtime.CompilerServices.INotifyCompletion
+{
+    internal bool IsCompleted
+    {
+        get { return true; }
+    }
+
+    internal bool GetResult()
+    {
+        return false;
+    }
+
+    public void OnCompleted(System.Action continuation)
+    {
+    }
+}
+
+internal class Consumer
+{
+    internal async System.Threading.Tasks.Task M(Collection values)
+    {
+        await foreach (var value in values)
+        {
+        }
+    }
+}
+";
+
+        await VerifyFixAsync(testCode, fixedCode, Diagnostic().WithLocation(0)).ConfigureAwait(false);
+    }
+
     private static Task VerifyFixAsync(string testCode, string fixedCode, params DiagnosticResult[] expected)
     {
         var test = new CSharpTest
