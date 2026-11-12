@@ -163,6 +163,51 @@ internal record TypeName
     }
 
     [Fact]
+    public async Task TestPartialMethodInterfaceImplementationIsNotReportedAsync()
+    {
+        var testCode = @"
+internal interface IName
+{
+    void MethodName();
+}
+
+internal partial class TypeName : IName
+{
+    public partial void MethodName();
+
+    public partial void MethodName()
+    {
+    }
+
+    {|#0:public|} void Unused()
+    {
+    }
+}
+";
+        var fixedCode = @"
+internal interface IName
+{
+    void MethodName();
+}
+
+internal partial class TypeName : IName
+{
+    public partial void MethodName();
+
+    public partial void MethodName()
+    {
+    }
+
+    internal void Unused()
+    {
+    }
+}
+";
+
+        await VerifyFixAsync(testCode, fixedCode, Diagnostic().WithLocation(0)).ConfigureAwait(false);
+    }
+
+    [Fact]
     public async Task TestSealedRecordCopyConstructorIsReportedAndFixedAsync()
     {
         var testCode = @"

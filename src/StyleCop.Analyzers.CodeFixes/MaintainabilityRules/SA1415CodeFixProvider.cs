@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -50,8 +51,8 @@ internal sealed class SA1415CodeFixProvider : CodeFixProvider
                 continue;
             }
 
-            var symbol = GetDeclaredSymbol(semanticModel, member, context.CancellationToken);
-            if (!await CanOfferFixAsync(context.Document.Project.Solution, member, symbol, context.CancellationToken).ConfigureAwait(false))
+            var symbols = GetDeclaredSymbols(semanticModel, member, context.CancellationToken);
+            if (!await CanOfferFixAsync(context.Document.Project.Solution, member, symbols, context.CancellationToken).ConfigureAwait(false))
             {
                 continue;
             }
@@ -81,8 +82,8 @@ internal sealed class SA1415CodeFixProvider : CodeFixProvider
         }
 
         var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-        var symbol = GetDeclaredSymbol(semanticModel, member, cancellationToken);
-        var targets = await TryCollectTargetsAsync(solution, member, symbol, cancellationToken).ConfigureAwait(false);
+        var symbols = GetDeclaredSymbols(semanticModel, member, cancellationToken);
+        var targets = await TryCollectTargetsAsync(solution, member, symbols, cancellationToken).ConfigureAwait(false);
         if (targets is null)
         {
             return solution;
@@ -94,35 +95,109 @@ internal sealed class SA1415CodeFixProvider : CodeFixProvider
     private static async Task<bool> CanOfferFixAsync(
         Solution solution,
         MemberDeclarationSyntax member,
-        ISymbol? symbol,
+        IReadOnlyList<ISymbol> symbols,
         CancellationToken cancellationToken)
     {
-        var targets = await TryCollectTargetsAsync(solution, member, symbol, cancellationToken).ConfigureAwait(false);
+        var targets = await TryCollectTargetsAsync(solution, member, symbols, cancellationToken).ConfigureAwait(false);
         return targets is not null;
     }
 
     private static async Task<List<MemberDeclarationSyntax>?> TryCollectTargetsAsync(
         Solution solution,
         MemberDeclarationSyntax member,
-        ISymbol? symbol,
+        IReadOnlyList<ISymbol> symbols,
         CancellationToken cancellationToken)
     {
         var targets = new List<MemberDeclarationSyntax>();
-        var seen = new HashSet<NodeKey>();
-        if (!TryAddDeclarations(solution, member, symbol, targets, seen, cancellationToken))
+        var seenNodes = new HashSet<NodeKey>();
+        var seenSymbols = new HashSet<ISymbol>();
+        var pending = new Queue<ISymbol>();
+        foreach (var symbol in symbols)
         {
-            return null;
+            pending.Enqueue(symbol);
         }
 
-        if (symbol is not null && IsOverridable(symbol))
+        if (pending.Count == 0)
         {
-            if (!await TryAddOverridesAsync(solution, symbol, targets, seen, cancellationToken).ConfigureAwait(false))
+            if (!TryAddDeclarations(solution, member, symbol: null, targets, seenNodes, cancellationToken))
             {
                 return null;
+            }
+
+            return targets.Count > 0 ? targets : null;
+        }
+
+        while (pending.Count > 0)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var symbol = pending.Dequeue();
+            if (!seenSymbols.Add(NormalizePartial(symbol)))
+            {
+                continue;
+            }
+
+            var declarations = new List<MemberDeclarationSyntax>();
+            var fallback = IsSeedSymbol(symbols, symbol) ? member : null;
+            if (!TryGetDeclarations(solution, fallback, symbol, declarations, cancellationToken))
+            {
+                return null;
+            }
+
+            foreach (var declaration in declarations)
+            {
+                if (!AccessorChangeIsSafe(declaration))
+                {
+                    return null;
+                }
+
+                AddTarget(targets, seenNodes, declaration);
+                if (!await TryEnqueueDeclaredSymbolsAsync(solution, declaration, pending, cancellationToken).ConfigureAwait(false))
+                {
+                    return null;
+                }
+            }
+
+            if (IsOverridable(symbol))
+            {
+                if (!await TryEnqueueOverridesAsync(solution, symbol, pending, cancellationToken).ConfigureAwait(false))
+                {
+                    return null;
+                }
+            }
+
+            var overridden = GetOverridden(symbol);
+            if (overridden is not null)
+            {
+                var source = await ResolveSourceSymbolAsync(solution, overridden, cancellationToken).ConfigureAwait(false);
+                if (source is null)
+                {
+                    if (symbol.IsOverride)
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    pending.Enqueue(source);
+                }
             }
         }
 
         return targets.Count > 0 ? targets : null;
+    }
+
+    private static bool IsSeedSymbol(IReadOnlyList<ISymbol> symbols, ISymbol symbol)
+    {
+        var normalized = NormalizePartial(symbol);
+        foreach (var candidate in symbols)
+        {
+            if (candidate.Equals(symbol) || NormalizePartial(candidate).Equals(normalized))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static bool TryAddDeclarations(
@@ -208,7 +283,7 @@ internal sealed class SA1415CodeFixProvider : CodeFixProvider
             declarations.Add(fallback);
         }
 
-        if (sawPartial && UniqueDeclarationCount(declarations) < 2)
+        if (sawPartial && RequiresPartialPair(symbol) && UniqueDeclarationCount(declarations) < 2)
         {
             return false;
         }
@@ -216,11 +291,50 @@ internal sealed class SA1415CodeFixProvider : CodeFixProvider
         return true;
     }
 
-    private static async Task<bool> TryAddOverridesAsync(
+    private static bool RequiresPartialPair(ISymbol? symbol)
+    {
+        return symbol is IMethodSymbol or IPropertySymbol or IEventSymbol;
+    }
+
+    private static async Task<bool> TryEnqueueDeclaredSymbolsAsync(
+        Solution solution,
+        MemberDeclarationSyntax declaration,
+        Queue<ISymbol> pending,
+        CancellationToken cancellationToken)
+    {
+        if (declaration is not BaseFieldDeclarationSyntax field || field.Declaration.Variables.Count < 2)
+        {
+            return true;
+        }
+
+        var document = solution.GetDocument(declaration.SyntaxTree);
+        if (document is null)
+        {
+            return false;
+        }
+
+        var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+        if (semanticModel is null)
+        {
+            return false;
+        }
+
+        foreach (var variable in field.Declaration.Variables)
+        {
+            var symbol = semanticModel.GetDeclaredSymbol(variable, cancellationToken);
+            if (symbol is not null)
+            {
+                pending.Enqueue(symbol);
+            }
+        }
+
+        return true;
+    }
+
+    private static async Task<bool> TryEnqueueOverridesAsync(
         Solution solution,
         ISymbol symbol,
-        List<MemberDeclarationSyntax> targets,
-        HashSet<NodeKey> seen,
+        Queue<ISymbol> pending,
         CancellationToken cancellationToken)
     {
         var containingType = symbol.ContainingType;
@@ -253,14 +367,101 @@ internal sealed class SA1415CodeFixProvider : CodeFixProvider
             CollectOverrides(compilation.Assembly.GlobalNamespace, containingType, symbol, overrides, cancellationToken);
             foreach (var overrideSymbol in overrides)
             {
-                if (!TryAddDeclarations(solution, fallback: null, overrideSymbol, targets, seen, cancellationToken))
-                {
-                    return false;
-                }
+                pending.Enqueue(overrideSymbol);
             }
         }
 
         return true;
+    }
+
+    private static async Task<ISymbol?> ResolveSourceSymbolAsync(Solution solution, ISymbol symbol, CancellationToken cancellationToken)
+    {
+        if (symbol.DeclaringSyntaxReferences.Length > 0)
+        {
+            return symbol;
+        }
+
+        var metadataName = MetadataName(symbol.ContainingType);
+        if (metadataName is null)
+        {
+            return null;
+        }
+
+        foreach (var project in solution.Projects)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (!project.SupportsCompilation)
+            {
+                continue;
+            }
+
+            var compilation = await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
+            if (compilation is null)
+            {
+                return null;
+            }
+
+            var type = compilation.GetTypeByMetadataName(metadataName);
+            if (type is null)
+            {
+                continue;
+            }
+
+            foreach (var member in type.GetMembers(symbol.Name))
+            {
+                if (member.Kind == symbol.Kind && member.DeclaringSyntaxReferences.Length > 0)
+                {
+                    return member;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private static string? MetadataName(INamedTypeSymbol? type)
+    {
+        if (type is null)
+        {
+            return null;
+        }
+
+        var builder = new StringBuilder();
+        AppendNamespace(builder, type.ContainingNamespace);
+        if (builder.Length > 0)
+        {
+            builder.Append('.');
+        }
+
+        AppendContainingTypes(builder, type);
+        return builder.ToString();
+    }
+
+    private static void AppendNamespace(StringBuilder builder, INamespaceSymbol? namespaceSymbol)
+    {
+        if (namespaceSymbol is null || namespaceSymbol.IsGlobalNamespace)
+        {
+            return;
+        }
+
+        AppendNamespace(builder, namespaceSymbol.ContainingNamespace);
+        if (builder.Length > 0)
+        {
+            builder.Append('.');
+        }
+
+        builder.Append(namespaceSymbol.Name);
+    }
+
+    private static void AppendContainingTypes(StringBuilder builder, INamedTypeSymbol type)
+    {
+        if (type.ContainingType is not null)
+        {
+            AppendContainingTypes(builder, type.ContainingType);
+            builder.Append('+');
+        }
+
+        builder.Append(type.MetadataName);
     }
 
     private static bool CompilationMayContainOverrides(Compilation compilation, IAssemblySymbol assembly)
@@ -544,22 +745,54 @@ internal sealed class SA1415CodeFixProvider : CodeFixProvider
         return true;
     }
 
-    private static ISymbol? GetDeclaredSymbol(SemanticModel? semanticModel, MemberDeclarationSyntax member, CancellationToken cancellationToken)
+    private static List<ISymbol> GetDeclaredSymbols(SemanticModel? semanticModel, MemberDeclarationSyntax member, CancellationToken cancellationToken)
     {
+        var symbols = new List<ISymbol>();
         if (semanticModel is null)
         {
-            return null;
+            return symbols;
         }
 
-        var symbol = semanticModel.GetDeclaredSymbol(member, cancellationToken);
-        if (symbol is null
-            && member is BaseFieldDeclarationSyntax field
-            && field.Declaration.Variables.Count > 0)
+        if (member is BaseFieldDeclarationSyntax field)
         {
-            symbol = semanticModel.GetDeclaredSymbol(field.Declaration.Variables[0], cancellationToken);
+            foreach (var variable in field.Declaration.Variables)
+            {
+                var variableSymbol = semanticModel.GetDeclaredSymbol(variable, cancellationToken);
+                if (variableSymbol is not null)
+                {
+                    symbols.Add(variableSymbol);
+                }
+            }
         }
 
-        return symbol;
+        if (symbols.Count == 0)
+        {
+            var symbol = semanticModel.GetDeclaredSymbol(member, cancellationToken);
+            if (symbol is not null)
+            {
+                symbols.Add(symbol);
+            }
+        }
+
+        return symbols;
+    }
+
+    private static ISymbol NormalizePartial(ISymbol symbol)
+    {
+        switch (symbol)
+        {
+        case IMethodSymbol method when method.PartialDefinitionPart is not null:
+            return method.PartialDefinitionPart;
+
+        case IPropertySymbol property when property.PartialDefinitionPart() is IPropertySymbol definition:
+            return definition;
+
+        case IEventSymbol ev when ev.PartialDefinitionPart() is IEventSymbol definition:
+            return definition;
+
+        default:
+            return symbol;
+        }
     }
 
     private static void AddOtherPartial(ISymbol symbol, List<ISymbol> symbols)

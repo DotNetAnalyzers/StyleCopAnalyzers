@@ -133,6 +133,12 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
                 return true;
             }
 
+            if (semanticModel.GetDeclaredSymbol(constructor, cancellationToken) is IMethodSymbol constructorSymbol
+                && DerivesFromAttribute(constructorSymbol.ContainingType))
+            {
+                return true;
+            }
+
             return IsNonSealedRecordCopyConstructor(constructor, semanticModel, cancellationToken);
 
         case EventFieldDeclarationSyntax eventField:
@@ -140,7 +146,7 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
             {
                 var eventSymbol = semanticModel.GetDeclaredSymbol(variable, cancellationToken);
                 if (IsInterfaceImplementationOrOverride(eventSymbol)
-                    || (eventSymbol is not null && lookup.RequiresPublic(eventSymbol, cancellationToken)))
+                    || (eventSymbol is not null && lookup.RequiresPublic(DefinitionPart(eventSymbol), cancellationToken)))
                 {
                     return true;
                 }
@@ -157,7 +163,7 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
             foreach (var variable in field.Declaration.Variables)
             {
                 var fieldSymbol = semanticModel.GetDeclaredSymbol(variable, cancellationToken);
-                if (fieldSymbol is not null && IsEnumerationPatternMember(fieldSymbol))
+                if (fieldSymbol is not null && IsEnumerationPatternMember(fieldSymbol, lookup, cancellationToken))
                 {
                     return true;
                 }
@@ -181,7 +187,7 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
                 return true;
             }
 
-            if (IsEnumerationPatternMember(symbol)
+            if (IsEnumerationPatternMember(symbol, lookup, cancellationToken)
                 || IsInterfaceImplementationOrOverride(symbol))
             {
                 return true;
@@ -189,7 +195,7 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
 
             if (symbol is IMethodSymbol or IPropertySymbol or IEventSymbol)
             {
-                return lookup.RequiresPublic(symbol, cancellationToken);
+                return lookup.RequiresPublic(DefinitionPart(symbol), cancellationToken);
             }
 
             return false;
@@ -295,7 +301,7 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
             && type.ContainingNamespace.ContainingNamespace?.IsGlobalNamespace == true;
     }
 
-    private static bool IsEnumerationPatternMember(ISymbol symbol)
+    private static bool IsEnumerationPatternMember(ISymbol symbol, InheritedImplementationLookup lookup, CancellationToken cancellationToken)
     {
         if (symbol.IsStatic || symbol.DeclaredAccessibility != Accessibility.Public)
         {
@@ -310,64 +316,86 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
 
         switch (symbol)
         {
-        case IMethodSymbol { Name: "GetEnumerator", TypeParameters.IsEmpty: true, IsExtensionMethod: false } method
-            when method.Parameters.IsEmpty:
-            return IsEnumeratorType(method.ReturnType);
+        case IMethodSymbol method when IsInstanceGetEnumerator(method, asyncPattern: false):
+            return IsEnumeratorType(method.ReturnType, asyncPattern: false);
 
-        case IMethodSymbol { Name: "MoveNext", TypeParameters.IsEmpty: true } method
-            when method.Parameters.IsEmpty && method.ReturnType.SpecialType == SpecialType.System_Boolean:
-            return HasPublicInstanceCurrent(containingType);
+        case IMethodSymbol method when IsInstanceGetEnumerator(method, asyncPattern: true):
+            return IsEnumeratorType(method.ReturnType, asyncPattern: true);
+
+        case IMethodSymbol method when IsMoveNext(method, asyncPattern: false):
+            return FindCurrent(containingType) is not null || lookup.IsBoundPatternMember(symbol, cancellationToken);
+
+        case IMethodSymbol method when IsMoveNext(method, asyncPattern: true):
+            return FindCurrent(containingType) is not null || lookup.IsBoundPatternMember(symbol, cancellationToken);
 
         case IPropertySymbol { Name: "Current", IsIndexer: false }:
         case IFieldSymbol { Name: "Current" }:
-            return HasPublicInstanceMoveNext(containingType);
+            return FindMoveNext(containingType, asyncPattern: false) is not null
+                || FindMoveNext(containingType, asyncPattern: true) is not null
+                || lookup.IsBoundPatternMember(symbol, cancellationToken);
 
         default:
             return false;
         }
     }
 
-    private static bool IsEnumeratorType(ITypeSymbol? type)
+    private static bool IsInstanceGetEnumerator(IMethodSymbol method, bool asyncPattern)
     {
-        return type is INamedTypeSymbol namedType
-            && HasPublicInstanceMoveNext(namedType)
-            && HasPublicInstanceCurrent(namedType);
+        if (method.IsStatic || method.IsExtensionMethod || !method.TypeParameters.IsEmpty)
+        {
+            return false;
+        }
+
+        if (asyncPattern)
+        {
+            return method.Name == "GetAsyncEnumerator" && ParametersAreOptional(method);
+        }
+
+        return method.Name == "GetEnumerator" && method.Parameters.IsEmpty;
     }
 
-    private static bool HasPublicInstanceMoveNext(INamedTypeSymbol type)
+    private static bool IsMoveNext(IMethodSymbol method, bool asyncPattern)
     {
-        var seen = new HashSet<INamedTypeSymbol>();
-        for (var current = type; current is not null && current.SpecialType != SpecialType.System_Object; current = current.BaseType)
+        if (method.IsStatic
+            || method.DeclaredAccessibility != Accessibility.Public
+            || !method.TypeParameters.IsEmpty
+            || !method.Parameters.IsEmpty)
         {
-            if (!seen.Add(current))
+            return false;
+        }
+
+        if (asyncPattern)
+        {
+            return method.Name == "MoveNextAsync" && IsAwaitableBool(method.ReturnType);
+        }
+
+        return method.Name == "MoveNext" && method.ReturnType.SpecialType == SpecialType.System_Boolean;
+    }
+
+    private static bool ParametersAreOptional(IMethodSymbol method)
+    {
+        foreach (var parameter in method.Parameters)
+        {
+            if (!parameter.IsOptional)
             {
                 return false;
-            }
-
-            foreach (var member in current.GetMembers("MoveNext"))
-            {
-                if (member is IMethodSymbol { IsStatic: false, DeclaredAccessibility: Accessibility.Public, TypeParameters.IsEmpty: true } method
-                    && method.Parameters.IsEmpty
-                    && method.ReturnType.SpecialType == SpecialType.System_Boolean)
-                {
-                    return true;
-                }
             }
         }
 
-        return false;
+        return true;
     }
 
-    private static bool HasPublicInstanceCurrent(INamedTypeSymbol type)
+    private static bool IsEnumeratorType(ITypeSymbol? type, bool asyncPattern)
     {
-        var seen = new HashSet<INamedTypeSymbol>();
-        for (var current = type; current is not null && current.SpecialType != SpecialType.System_Object; current = current.BaseType)
-        {
-            if (!seen.Add(current))
-            {
-                return false;
-            }
+        return type is INamedTypeSymbol namedType
+            && FindCurrent(namedType) is not null
+            && FindMoveNext(namedType, asyncPattern) is not null;
+    }
 
+    private static ISymbol? FindCurrent(INamedTypeSymbol type)
+    {
+        return FindPatternMember(type, current =>
+        {
             foreach (var member in current.GetMembers("Current"))
             {
                 if (member.IsStatic || member.DeclaredAccessibility != Accessibility.Public)
@@ -377,12 +405,148 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
 
                 if (member is IPropertySymbol { IsIndexer: false } or IFieldSymbol)
                 {
-                    return true;
+                    return member;
                 }
+            }
+
+            return null;
+        });
+    }
+
+    private static ISymbol? FindMoveNext(INamedTypeSymbol type, bool asyncPattern)
+    {
+        var name = asyncPattern ? "MoveNextAsync" : "MoveNext";
+        return FindPatternMember(type, current =>
+        {
+            foreach (var member in current.GetMembers(name))
+            {
+                if (member is IMethodSymbol method && IsMoveNext(method, asyncPattern))
+                {
+                    return method;
+                }
+            }
+
+            return null;
+        });
+    }
+
+    private static ISymbol? FindPatternMember(INamedTypeSymbol type, Func<INamedTypeSymbol, ISymbol?> match)
+    {
+        var seen = new HashSet<INamedTypeSymbol>();
+        for (var current = type; current is not null && current.SpecialType != SpecialType.System_Object; current = current.BaseType)
+        {
+            if (!seen.Add(current))
+            {
+                break;
+            }
+
+            var found = match(current);
+            if (found is not null)
+            {
+                return found;
+            }
+        }
+
+        foreach (var iface in type.AllInterfaces)
+        {
+            if (!seen.Add(iface))
+            {
+                continue;
+            }
+
+            var found = match(iface);
+            if (found is not null)
+            {
+                return found;
+            }
+        }
+
+        return null;
+    }
+
+    private static bool IsAwaitableBool(ITypeSymbol? type)
+    {
+        if (type is not INamedTypeSymbol namedType)
+        {
+            return false;
+        }
+
+        IMethodSymbol? getAwaiter = null;
+        var seen = new HashSet<INamedTypeSymbol>();
+        for (var current = namedType; current is not null && current.SpecialType != SpecialType.System_Object; current = current.BaseType)
+        {
+            if (!seen.Add(current))
+            {
+                break;
+            }
+
+            foreach (var member in current.GetMembers("GetAwaiter"))
+            {
+                if (member is IMethodSymbol { IsStatic: false, TypeParameters.IsEmpty: true } method && method.Parameters.IsEmpty)
+                {
+                    getAwaiter = method;
+                    break;
+                }
+            }
+
+            if (getAwaiter is not null)
+            {
+                break;
+            }
+        }
+
+        if (getAwaiter?.ReturnType is not INamedTypeSymbol awaiterType)
+        {
+            return false;
+        }
+
+        var hasResult = false;
+        var hasCompleted = false;
+        for (var current = awaiterType; current is not null && current.SpecialType != SpecialType.System_Object; current = current.BaseType)
+        {
+            foreach (var member in current.GetMembers("GetResult"))
+            {
+                if (member is IMethodSymbol { IsStatic: false, Parameters.IsEmpty: true } method
+                    && method.ReturnType.SpecialType == SpecialType.System_Boolean)
+                {
+                    hasResult = true;
+                }
+            }
+
+            foreach (var member in current.GetMembers("IsCompleted"))
+            {
+                if (member is IPropertySymbol { IsStatic: false, IsIndexer: false } property
+                    && property.Type.SpecialType == SpecialType.System_Boolean)
+                {
+                    hasCompleted = true;
+                }
+            }
+
+            if (hasResult && hasCompleted)
+            {
+                return true;
             }
         }
 
         return false;
+    }
+
+    private static ISymbol DefinitionPart(ISymbol symbol)
+    {
+        switch (symbol)
+        {
+        case IMethodSymbol method when method.PartialDefinitionPart is not null:
+            return method.PartialDefinitionPart;
+
+        case IPropertySymbol property when property.PartialDefinitionPart() is IPropertySymbol definition:
+            return definition;
+
+        case IEventSymbol ev when ev.PartialDefinitionPart() is IEventSymbol definition:
+            return definition;
+
+        default:
+            return symbol;
+        }
     }
 
     private static bool IsInterfaceImplementationOrOverride(ISymbol? symbol)
@@ -392,12 +556,14 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
             return symbol?.IsOverride == true;
         }
 
-        if (HasExplicitInterfaceImplementations(symbol))
+        var definition = DefinitionPart(symbol);
+        if (HasExplicitInterfaceImplementations(symbol)
+            || (!definition.Equals(symbol) && HasExplicitInterfaceImplementations(definition)))
         {
             return true;
         }
 
-        var containingType = symbol.ContainingType;
+        var containingType = definition.ContainingType;
         if (containingType is null || containingType.AllInterfaces.IsDefaultOrEmpty)
         {
             return false;
@@ -405,10 +571,10 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
 
         foreach (var iface in containingType.AllInterfaces)
         {
-            foreach (var member in iface.GetMembers(symbol.Name))
+            foreach (var member in iface.GetMembers(definition.Name))
             {
                 var implementation = containingType.FindImplementationForInterfaceMember(member);
-                if (implementation is not null && implementation.Equals(symbol))
+                if (implementation is not null && DefinitionPart(implementation).Equals(definition))
                 {
                     return true;
                 }
@@ -439,7 +605,9 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
         private readonly Compilation compilation;
         private readonly object gate = new();
         private readonly Dictionary<ISymbol, bool> results = new();
+        private readonly Dictionary<ISymbol, bool> patternResults = new();
         private Dictionary<INamedTypeSymbol, List<INamedTypeSymbol>>? implementersByBase;
+        private HashSet<ISymbol>? boundPatternMembers;
 
         public InheritedImplementationLookup(Compilation compilation)
         {
@@ -461,6 +629,27 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
             lock (this.gate)
             {
                 this.results[symbol] = required;
+            }
+
+            return required;
+        }
+
+        public bool IsBoundPatternMember(ISymbol symbol, CancellationToken cancellationToken)
+        {
+            var key = DefinitionPart(symbol).OriginalDefinition;
+            lock (this.gate)
+            {
+                if (this.patternResults.TryGetValue(key, out var cached))
+                {
+                    return cached;
+                }
+            }
+
+            var required = this.GetBoundPatternMembers(cancellationToken).Contains(key);
+
+            lock (this.gate)
+            {
+                this.patternResults[key] = required;
             }
 
             return required;
@@ -501,7 +690,7 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
 
         private static bool ChainContains(ISymbol implementation, ISymbol symbol)
         {
-            var target = symbol.OriginalDefinition;
+            var target = DefinitionPart(symbol).OriginalDefinition;
             var seen = new HashSet<ISymbol>();
             for (var current = implementation; current is not null; current = GetOverridden(current))
             {
@@ -510,7 +699,8 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
                     return false;
                 }
 
-                if (current.Equals(symbol) || current.OriginalDefinition.Equals(target))
+                var currentDefinition = DefinitionPart(current);
+                if (currentDefinition.Equals(DefinitionPart(symbol)) || currentDefinition.OriginalDefinition.Equals(target))
                 {
                     return true;
                 }
@@ -528,6 +718,59 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
                 IEventSymbol ev => ev.OverriddenEvent,
                 _ => null,
             };
+        }
+
+        private static void CollectPatternType(INamedTypeSymbol type, HashSet<ISymbol> members, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            CollectPatternMethods(type, "GetEnumerator", asyncPattern: false, members);
+            CollectPatternMethods(type, "GetAsyncEnumerator", asyncPattern: true, members);
+
+            foreach (var nested in type.GetTypeMembers())
+            {
+                CollectPatternType(nested, members, cancellationToken);
+            }
+        }
+
+        private static void CollectPatternMethods(INamedTypeSymbol type, string name, bool asyncPattern, HashSet<ISymbol> members)
+        {
+            foreach (var member in type.GetMembers(name))
+            {
+                if (member is not IMethodSymbol method || !IsPatternDiscoveryMethod(method, asyncPattern))
+                {
+                    continue;
+                }
+
+                if (method.ReturnType is not INamedTypeSymbol returnType)
+                {
+                    continue;
+                }
+
+                var current = FindCurrent(returnType);
+                var moveNext = FindMoveNext(returnType, asyncPattern);
+                if (current is null || moveNext is null)
+                {
+                    continue;
+                }
+
+                members.Add(DefinitionPart(current).OriginalDefinition);
+                members.Add(DefinitionPart(moveNext).OriginalDefinition);
+            }
+        }
+
+        private static bool IsPatternDiscoveryMethod(IMethodSymbol method, bool asyncPattern)
+        {
+            if (!method.TypeParameters.IsEmpty || (method.IsStatic && !method.IsExtensionMethod))
+            {
+                return false;
+            }
+
+            if (asyncPattern)
+            {
+                return method.Name == "GetAsyncEnumerator" && ParametersAreOptional(method);
+            }
+
+            return method.Name == "GetEnumerator" && method.Parameters.IsEmpty;
         }
 
         private bool Compute(ISymbol symbol, CancellationToken cancellationToken)
@@ -581,6 +824,45 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
                 }
 
                 return this.implementersByBase;
+            }
+        }
+
+        private HashSet<ISymbol> GetBoundPatternMembers(CancellationToken cancellationToken)
+        {
+            var existing = this.boundPatternMembers;
+            if (existing is not null)
+            {
+                return existing;
+            }
+
+            lock (this.gate)
+            {
+                if (this.boundPatternMembers is null)
+                {
+                    var members = new HashSet<ISymbol>();
+                    this.CollectPatternMembers(this.compilation.Assembly.GlobalNamespace, members, cancellationToken);
+                    this.boundPatternMembers = members;
+                }
+
+                return this.boundPatternMembers;
+            }
+        }
+
+        private void CollectPatternMembers(INamespaceSymbol namespaceSymbol, HashSet<ISymbol> members, CancellationToken cancellationToken)
+        {
+            foreach (var member in namespaceSymbol.GetMembers())
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                switch (member)
+                {
+                case INamespaceSymbol child:
+                    this.CollectPatternMembers(child, members, cancellationToken);
+                    break;
+
+                case INamedTypeSymbol type:
+                    CollectPatternType(type, members, cancellationToken);
+                    break;
+                }
             }
         }
 
