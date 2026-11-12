@@ -25,3 +25,4 @@ dotnet_analyzer_diagnostic.category-StyleCop.CSharp.MaintainabilityRules.severit
 [SA1412](SA1412.md) | StoreFilesAsUtf8 | 文件编码不是带字节顺序标记的 UTF-8。
 [SA1413](SA1413.md) | UseTrailingCommasInMultiLineInitializers | 多行初始值设定项、枚举、switch 表达式或属性模式的最后一项应使用逗号。
 [SA1414](SA1414.md) | TupleTypesInSignaturesShouldHaveElementNames | 成员声明中出现的元组类型应显式指定元组元素名称。
+[SA1415](SA1415.md) | DoNotUsePublicOnMembersOfInternalTypes | 实际可访问性为内部或私有的类型的成员被声明为 public。此规则默认禁用。

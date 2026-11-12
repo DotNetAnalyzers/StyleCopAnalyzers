@@ -285,6 +285,18 @@
   <data name="SA1414Title" xml:space="preserve">
     <value>Tuple types in signatures should have element names</value>
   </data>
+  <data name="SA1415CodeFix" xml:space="preserve">
+    <value>Change accessibility to internal</value>
+  </data>
+  <data name="SA1415Description" xml:space="preserve">
+    <value>A public member of an effectively internal or private type is not part of the public API and should be declared internal.</value>
+  </data>
+  <data name="SA1415MessageFormat" xml:space="preserve">
+    <value>Members of internal or private types should not be declared public</value>
+  </data>
+  <data name="SA1415Title" xml:space="preserve">
+    <value>Do not use public on members of internal types</value>
+  </data>
   <data name="SX1412CodeFix" xml:space="preserve">
     <value>Change encoding to UTF-8 without byte order mark</value>
   </data>

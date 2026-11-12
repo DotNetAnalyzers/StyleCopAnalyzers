@@ -25,3 +25,4 @@ dotnet_analyzer_diagnostic.category-StyleCop.CSharp.MaintainabilityRules.severit
 [SA1412](SA1412.md) | StoreFilesAsUtf8 | Файл сохранён не в кодировке UTF-8 с маркером порядка байтов.
 [SA1413](SA1413.md) | UseTrailingCommasInMultiLineInitializers | В многострочном инициализаторе, перечислении, выражении switch или образце свойств после последнего элемента должна стоять запятая.
 [SA1414](SA1414.md) | TupleTypesInSignaturesShouldHaveElementNames | Типы-кортежи в объявлениях членов должны иметь явно именованные элементы.
+[SA1415](SA1415.md) | DoNotUsePublicOnMembersOfInternalTypes | Член типа, который фактически является внутренним или закрытым, объявлен как public. Это правило по умолчанию отключено.

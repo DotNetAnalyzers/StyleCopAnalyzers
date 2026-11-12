@@ -151,6 +151,18 @@
   <data name="SA1412Title" xml:space="preserve">
     <value>Сохраняйте файлы в кодировке UTF-8 с меткой порядка байтов</value>
   </data>
+  <data name="SA1415CodeFix" xml:space="preserve">
+    <value>Изменить доступность на internal</value>
+  </data>
+  <data name="SA1415Description" xml:space="preserve">
+    <value>Открытый член фактически внутреннего или закрытого типа не входит в общедоступный API и должен быть объявлен как internal.</value>
+  </data>
+  <data name="SA1415MessageFormat" xml:space="preserve">
+    <value>Члены внутренних или закрытых типов не должны объявляться как public</value>
+  </data>
+  <data name="SA1415Title" xml:space="preserve">
+    <value>Не объявляйте члены внутренних типов как public</value>
+  </data>
   <data name="SX1412CodeFix" xml:space="preserve">
     <value>Сохранить файл в кодировке UTF-8 без метки порядка байтов</value>
   </data>

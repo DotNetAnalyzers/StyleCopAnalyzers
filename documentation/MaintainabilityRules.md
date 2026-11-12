@@ -26,3 +26,4 @@ Identifier | Name | Description
 [SA1412](SA1412.md) | StoreFilesAsUtf8 | The encoding of the file is not UTF-8 with byte order mark. 
 [SA1413](SA1413.md) | UseTrailingCommasInMultiLineInitializers | A multi-line initializer, enum, switch expression or property pattern should use a comma on the last item. 
 [SA1414](SA1414.md) | TupleTypesInSignaturesShouldHaveElementNames | Tuple types appearing in member declarations should have explicitly named tuple elements.
+[SA1415](SA1415.md) | DoNotUsePublicOnMembersOfInternalTypes | A member of an effectively internal or private type is declared public. This rule is disabled by default.

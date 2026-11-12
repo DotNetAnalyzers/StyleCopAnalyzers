@@ -126,6 +126,14 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         public static string @SA1414MessageFormat => GetResourceString("SA1414MessageFormat")!;
         /// <summary>Tuple types in signatures should have element names</summary>
         public static string @SA1414Title => GetResourceString("SA1414Title")!;
+        /// <summary>Change accessibility to internal</summary>
+        public static string @SA1415CodeFix => GetResourceString("SA1415CodeFix")!;
+        /// <summary>A public member of an effectively internal or private type is not part of the public API and should be declared internal.</summary>
+        public static string @SA1415Description => GetResourceString("SA1415Description")!;
+        /// <summary>Members of internal or private types should not be declared public</summary>
+        public static string @SA1415MessageFormat => GetResourceString("SA1415MessageFormat")!;
+        /// <summary>Do not use public on members of internal types</summary>
+        public static string @SA1415Title => GetResourceString("SA1415Title")!;
         /// <summary>Change encoding to UTF-8 without byte order mark</summary>
         public static string @SX1412CodeFix => GetResourceString("SX1412CodeFix")!;
         /// <summary>Source files should be saved using UTF-8 encoding without a byte order mark.</summary>
