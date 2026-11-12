@@ -346,7 +346,7 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
 
     private static bool IsGetEnumeratorPatternMethod(IMethodSymbol method, bool asyncPattern)
     {
-        if (!method.TypeParameters.IsEmpty || (method.IsStatic && !method.IsExtensionMethod))
+        if ((method.IsStatic && !method.IsExtensionMethod) || !TypeParametersAreReceiverInferable(method))
         {
             return false;
         }
@@ -397,6 +397,70 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
         }
 
         return original.Parameters[0].Type;
+    }
+
+    private static bool TypeParametersAreReceiverInferable(IMethodSymbol method)
+    {
+        if (method.TypeParameters.IsEmpty)
+        {
+            return true;
+        }
+
+        // foreach infers extension type arguments from the receiver. A parameter that does not
+        // appear there cannot be inferred, so the method is not part of the pattern.
+        var receiver = ExtensionReceiverType(method);
+        if (receiver is null)
+        {
+            return false;
+        }
+
+        var found = new List<ITypeParameterSymbol>();
+        CollectTypeParameters(receiver, found);
+        foreach (var parameter in method.TypeParameters)
+        {
+            var matches = false;
+            foreach (var candidate in found)
+            {
+                if (candidate.Equals(parameter))
+                {
+                    matches = true;
+                    break;
+                }
+            }
+
+            if (!matches)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static void CollectTypeParameters(ITypeSymbol type, List<ITypeParameterSymbol> found)
+    {
+        switch (type)
+        {
+        case ITypeParameterSymbol parameter:
+            found.Add(parameter);
+            break;
+
+        case IArrayTypeSymbol array:
+            CollectTypeParameters(array.ElementType, found);
+            break;
+
+        case IPointerTypeSymbol pointer:
+            CollectTypeParameters(pointer.PointedAtType, found);
+            break;
+
+        case INamedTypeSymbol named:
+            foreach (var argument in named.TypeArguments)
+            {
+                CollectTypeParameters(argument, found);
+            }
+
+            break;
+        }
     }
 
     private static bool NonReceiverParametersAreEmpty(IMethodSymbol method)
@@ -648,7 +712,7 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
     private static bool SymbolMustRemainPublic(InheritedImplementationLookup lookup, ISymbol symbol, CancellationToken cancellationToken)
     {
         var root = RootSymbol(DefinitionPart(symbol));
-        if (ImplementsInterface(root))
+        if (TypeIsExternallyVisible(root.ContainingType) || ImplementsInterface(root))
         {
             return true;
         }
@@ -663,6 +727,22 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
         }
 
         return IsRequiredConstructor(root) || IsRequiredAttributeMember(root);
+    }
+
+    private static bool TypeIsExternallyVisible(INamedTypeSymbol? type)
+    {
+        return type is not null && !IsEffectivelyNotExternallyVisible(EffectiveTypeAccessibility(type));
+    }
+
+    private static Accessibility EffectiveTypeAccessibility(INamedTypeSymbol type)
+    {
+        var accessibility = type.DeclaredAccessibility;
+        if (accessibility <= Accessibility.Private || type.ContainingType is null)
+        {
+            return accessibility;
+        }
+
+        return AccessLevelHelper.CombineEffectiveAccessibility(accessibility, EffectiveTypeAccessibility(type.ContainingType));
     }
 
     private static ISymbol RootSymbol(ISymbol symbol)
@@ -952,12 +1032,9 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
 
         private static bool IsPatternDiscoveryMethod(IMethodSymbol method, bool asyncPattern)
         {
-            if (method.DeclaredAccessibility != Accessibility.Public || !method.TypeParameters.IsEmpty)
-            {
-                return false;
-            }
-
-            if (method.IsStatic && !method.IsExtensionMethod)
+            if (method.DeclaredAccessibility != Accessibility.Public
+                || (method.IsStatic && !method.IsExtensionMethod)
+                || !TypeParametersAreReceiverInferable(method))
             {
                 return false;
             }

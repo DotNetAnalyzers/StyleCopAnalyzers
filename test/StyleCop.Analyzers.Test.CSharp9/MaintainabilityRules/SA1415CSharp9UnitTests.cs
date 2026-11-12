@@ -324,6 +324,176 @@ internal class Consumer
     }
 
     [Fact]
+    public async Task TestGenericExtensionGetEnumeratorInferredFromReceiverIsNotReportedAsync()
+    {
+        var testCode = @"
+internal class Collection<T>
+{
+}
+
+internal class PlainCollection
+{
+    {|#0:public|} void Unused()
+    {
+    }
+}
+
+internal static class CollectionExtensions
+{
+    public static System.Collections.Generic.IEnumerator<T> GetEnumerator<T>(this Collection<T> value)
+    {
+        return null;
+    }
+
+    {|#1:public|} static System.Collections.Generic.IEnumerator<U> GetEnumerator<T, U>(this Collection<T> value)
+    {
+        return null;
+    }
+}
+
+internal class Consumer
+{
+    internal void M(Collection<int> values)
+    {
+        foreach (var value in values)
+        {
+        }
+    }
+}
+";
+        var fixedCode = @"
+internal class Collection<T>
+{
+}
+
+internal class PlainCollection
+{
+    internal void Unused()
+    {
+    }
+}
+
+internal static class CollectionExtensions
+{
+    public static System.Collections.Generic.IEnumerator<T> GetEnumerator<T>(this Collection<T> value)
+    {
+        return null;
+    }
+
+    internal static System.Collections.Generic.IEnumerator<U> GetEnumerator<T, U>(this Collection<T> value)
+    {
+        return null;
+    }
+}
+
+internal class Consumer
+{
+    internal void M(Collection<int> values)
+    {
+        foreach (var value in values)
+        {
+        }
+    }
+}
+";
+
+        await VerifyFixAsync(testCode, fixedCode, Diagnostic().WithLocation(0), Diagnostic().WithLocation(1)).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestGenericExtensionGetEnumeratorDiscoversDerivedEnumeratorAsync()
+    {
+        var testCode = @"
+internal class Collection<T>
+{
+}
+
+internal static class CollectionExtensions
+{
+    public static Enumerator<T> GetEnumerator<T>(this Collection<T> value)
+    {
+        return new Enumerator<T>();
+    }
+}
+
+internal class BaseEnumerator<T>
+{
+    public bool MoveNext()
+    {
+        return false;
+    }
+
+    {|#0:public|} void Unused()
+    {
+    }
+}
+
+internal class Enumerator<T> : BaseEnumerator<T>
+{
+    public T Current
+    {
+        get { return default(T); }
+    }
+}
+
+internal class Consumer
+{
+    internal void M(Collection<int> values)
+    {
+        foreach (var value in values)
+        {
+        }
+    }
+}
+";
+        var fixedCode = @"
+internal class Collection<T>
+{
+}
+
+internal static class CollectionExtensions
+{
+    public static Enumerator<T> GetEnumerator<T>(this Collection<T> value)
+    {
+        return new Enumerator<T>();
+    }
+}
+
+internal class BaseEnumerator<T>
+{
+    public bool MoveNext()
+    {
+        return false;
+    }
+
+    internal void Unused()
+    {
+    }
+}
+
+internal class Enumerator<T> : BaseEnumerator<T>
+{
+    public T Current
+    {
+        get { return default(T); }
+    }
+}
+
+internal class Consumer
+{
+    internal void M(Collection<int> values)
+    {
+        foreach (var value in values)
+        {
+        }
+    }
+}
+";
+
+        await VerifyFixAsync(testCode, fixedCode, Diagnostic().WithLocation(0)).ConfigureAwait(false);
+    }
+
+    [Fact]
     public async Task TestAttributeInitPropertyIsNotReportedAsync()
     {
         var testCode = @"

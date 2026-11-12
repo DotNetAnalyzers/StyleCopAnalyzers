@@ -227,7 +227,7 @@ internal sealed class SA1415CodeFixProvider : CodeFixProvider
                 continue;
             }
 
-            if (keep.Count > 0 && !CanSplitField(declaration))
+            if (keep.Count > 0 && (declaration is not BaseFieldDeclarationSyntax field || !CanSplitField(declaration) || FieldSplitHasDirective(field)))
             {
                 return null;
             }
@@ -1038,55 +1038,161 @@ internal sealed class SA1415CodeFixProvider : CodeFixProvider
         };
     }
 
+    private static bool FieldSplitHasDirective(BaseFieldDeclarationSyntax field)
+    {
+        if (TriviaHasDirective(field.SemicolonToken.LeadingTrivia) || TriviaHasDirective(field.SemicolonToken.TrailingTrivia))
+        {
+            return true;
+        }
+
+        var variables = field.Declaration.Variables;
+        foreach (var variable in variables)
+        {
+            foreach (var trivia in variable.DescendantTrivia(descendIntoTrivia: true))
+            {
+                if (trivia.IsDirective)
+                {
+                    return true;
+                }
+            }
+        }
+
+        for (var i = 0; i < variables.SeparatorCount; i++)
+        {
+            var separator = variables.GetSeparator(i);
+            if (TriviaHasDirective(separator.LeadingTrivia) || TriviaHasDirective(separator.TrailingTrivia))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool TriviaHasDirective(SyntaxTriviaList trivia)
+    {
+        foreach (var trivium in trivia)
+        {
+            if (trivium.IsDirective)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private static List<MemberDeclarationSyntax> SplitField(BaseFieldDeclarationSyntax field, List<string> keepNames)
     {
         var keep = new HashSet<string>(keepNames);
-        var changeVariables = new List<VariableDeclaratorSyntax>();
-        var keepVariables = new List<VariableDeclaratorSyntax>();
-        var firstIsKept = false;
-        var sawVariable = false;
-        foreach (var variable in field.Declaration.Variables)
+        var groups = new List<FieldGroup>();
+        var variables = field.Declaration.Variables;
+        for (var i = 0; i < variables.Count; i++)
         {
-            if (!sawVariable)
+            var kept = keep.Contains(variables[i].Identifier.ValueText);
+            if (groups.Count == 0 || groups[groups.Count - 1].Keep != kept)
             {
-                firstIsKept = keep.Contains(variable.Identifier.ValueText);
-                sawVariable = true;
+                if (groups.Count > 0)
+                {
+                    AttachBoundaryTrivia(groups[groups.Count - 1], variables.GetSeparator(i - 1));
+                }
+
+                groups.Add(new FieldGroup(kept));
             }
 
-            if (keep.Contains(variable.Identifier.ValueText))
+            var group = groups[groups.Count - 1];
+            if (group.Variables.Count > 0)
             {
-                keepVariables.Add(variable.WithoutTrivia());
+                group.Separators.Add(variables.GetSeparator(i - 1));
             }
-            else
-            {
-                changeVariables.Add(variable.WithoutTrivia());
-            }
+
+            group.Variables.Add(variables[i]);
         }
 
-        if (changeVariables.Count == 0 || keepVariables.Count == 0)
+        if (groups.Count <= 1)
         {
-            return new List<MemberDeclarationSyntax> { RewriteMember(field) };
+            var only = groups.Count == 1 && groups[0].Keep ? field : (BaseFieldDeclarationSyntax)RewriteMember(field);
+            return new List<MemberDeclarationSyntax> { only };
         }
 
-        var changed = RewriteMember(WithVariables(field, changeVariables));
-        var kept = WithVariables(field, keepVariables);
-        var first = firstIsKept ? kept : changed;
-        var second = firstIsKept ? changed : kept;
         var leading = field.GetLeadingTrivia();
         var trailing = field.GetTrailingTrivia();
-        first = first.WithLeadingTrivia(leading).WithTrailingTrivia(EndOfLine(field));
-        second = second.WithLeadingTrivia(Indentation(leading)).WithTrailingTrivia(trailing);
-        return new List<MemberDeclarationSyntax> { first, second };
-    }
-
-    private static BaseFieldDeclarationSyntax WithVariables(BaseFieldDeclarationSyntax field, List<VariableDeclaratorSyntax> variables)
-    {
-        var separators = new List<SyntaxToken>();
-        for (var i = 1; i < variables.Count; i++)
+        var parts = new List<MemberDeclarationSyntax>(groups.Count);
+        for (var i = 0; i < groups.Count; i++)
         {
-            separators.Add(SyntaxFactory.Token(SyntaxKind.CommaToken).WithTrailingTrivia(SyntaxFactory.Space));
+            var part = WithVariables(field, groups[i].Variables, groups[i].Separators);
+            if (!groups[i].Keep)
+            {
+                part = (BaseFieldDeclarationSyntax)RewriteMember(part);
+            }
+
+            part = i == 0
+                ? part.WithLeadingTrivia(leading)
+                : part.WithLeadingTrivia(Indentation(leading));
+            part = i == groups.Count - 1
+                ? part.WithTrailingTrivia(trailing)
+                : WithoutSemicolonLeadingTrivia(part).WithTrailingTrivia(EndOfLine(field));
+            parts.Add(part);
         }
 
+        return parts;
+    }
+
+    private static void AttachBoundaryTrivia(FieldGroup group, SyntaxToken separator)
+    {
+        var extra = NonWhitespaceTrivia(separator);
+        if (extra.Count == 0 || group.Variables.Count == 0)
+        {
+            return;
+        }
+
+        var index = group.Variables.Count - 1;
+        var variable = group.Variables[index];
+        group.Variables[index] = variable.WithTrailingTrivia(variable.GetTrailingTrivia().AddRange(extra));
+    }
+
+    private static SyntaxTriviaList NonWhitespaceTrivia(SyntaxToken token)
+    {
+        var trivia = new List<SyntaxTrivia>();
+        AddNonWhitespace(token.LeadingTrivia, trivia);
+        AddNonWhitespace(token.TrailingTrivia, trivia);
+        return SyntaxFactory.TriviaList(trivia);
+    }
+
+    private static void AddNonWhitespace(SyntaxTriviaList source, List<SyntaxTrivia> trivia)
+    {
+        foreach (var trivium in source)
+        {
+            if (trivium.IsKind(SyntaxKind.WhitespaceTrivia) || trivium.IsKind(SyntaxKind.EndOfLineTrivia))
+            {
+                continue;
+            }
+
+            trivia.Add(trivium);
+        }
+    }
+
+    private static BaseFieldDeclarationSyntax WithoutSemicolonLeadingTrivia(BaseFieldDeclarationSyntax field)
+    {
+        if (field.SemicolonToken.LeadingTrivia.Count == 0)
+        {
+            return field;
+        }
+
+        var semicolon = field.SemicolonToken.WithLeadingTrivia(SyntaxFactory.TriviaList());
+        return field switch
+        {
+            EventFieldDeclarationSyntax eventField => eventField.WithSemicolonToken(semicolon),
+            FieldDeclarationSyntax variableField => variableField.WithSemicolonToken(semicolon),
+            _ => field,
+        };
+    }
+
+    private static BaseFieldDeclarationSyntax WithVariables(
+        BaseFieldDeclarationSyntax field,
+        List<VariableDeclaratorSyntax> variables,
+        List<SyntaxToken> separators)
+    {
         var separated = SyntaxFactory.SeparatedList(variables, separators);
         var declaration = field.Declaration.WithVariables(separated);
         return field switch
@@ -1152,6 +1258,20 @@ internal sealed class SA1415CodeFixProvider : CodeFixProvider
                 return hash;
             }
         }
+    }
+
+    private sealed class FieldGroup
+    {
+        public FieldGroup(bool keep)
+        {
+            this.Keep = keep;
+        }
+
+        public bool Keep { get; }
+
+        public List<VariableDeclaratorSyntax> Variables { get; } = new();
+
+        public List<SyntaxToken> Separators { get; } = new();
     }
 
     private sealed class FixPlan

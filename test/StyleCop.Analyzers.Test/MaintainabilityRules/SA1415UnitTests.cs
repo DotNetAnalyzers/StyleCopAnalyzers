@@ -1511,6 +1511,176 @@ internal class Consumer
         await VerifyAsync(testCode, fixedCode, Diagnostic().WithLocation(0)).ConfigureAwait(false);
     }
 
+    [Fact]
+    public async Task TestSharedOverrideKeepsPublicBaseEventPublicAsync()
+    {
+        var testCode = @"
+public class ParentName
+{
+    public virtual event System.Action EventC;
+}
+
+internal class BaseName : ParentName
+{
+    {|#0:public|} virtual event System.Action EventB;
+}
+
+internal class DerivedName : BaseName
+{
+    public override event System.Action EventB, EventC;
+}
+";
+        var fixedCode = @"
+public class ParentName
+{
+    public virtual event System.Action EventC;
+}
+
+internal class BaseName : ParentName
+{
+    internal virtual event System.Action EventB;
+}
+
+internal class DerivedName : BaseName
+{
+    internal override event System.Action EventB;
+    public override event System.Action EventC;
+}
+";
+
+        await VerifyAsync(testCode, fixedCode, Diagnostic().WithLocation(0)).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestSplitOverridePreservesInitializerOrderAsync()
+    {
+        var testCode = @"
+internal interface IName
+{
+    event System.Action Keep;
+}
+
+internal class BaseName : IName
+{
+    {|#0:public|} virtual event System.Action A, C;
+
+    public virtual event System.Action Keep;
+}
+
+internal class DerivedName : BaseName
+{
+    public override event System.Action A = Init(""A""), Keep = Init(""Keep""), C = Init(""C"");
+
+    private static System.Action Init(string name)
+    {
+        System.Console.Write(name);
+        return null;
+    }
+}
+";
+        var fixedCode = @"
+internal interface IName
+{
+    event System.Action Keep;
+}
+
+internal class BaseName : IName
+{
+    internal virtual event System.Action A, C;
+
+    public virtual event System.Action Keep;
+}
+
+internal class DerivedName : BaseName
+{
+    internal override event System.Action A = Init(""A"");
+    public override event System.Action Keep = Init(""Keep"");
+    internal override event System.Action C = Init(""C"");
+
+    private static System.Action Init(string name)
+    {
+        System.Console.Write(name);
+        return null;
+    }
+}
+";
+
+        await VerifyAsync(testCode, fixedCode, Diagnostic().WithLocation(0)).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestSplitOverridePreservesDeclaratorCommentAsync()
+    {
+        var testCode = @"
+internal interface IName
+{
+    event System.Action EventC;
+}
+
+internal class BaseName : IName
+{
+    {|#0:public|} virtual event System.Action EventB;
+
+    public virtual event System.Action EventC;
+}
+
+internal class DerivedName : BaseName
+{
+    public override event System.Action EventB /* explanation */, EventC;
+}
+";
+        var fixedCode = @"
+internal interface IName
+{
+    event System.Action EventC;
+}
+
+internal class BaseName : IName
+{
+    internal virtual event System.Action EventB;
+
+    public virtual event System.Action EventC;
+}
+
+internal class DerivedName : BaseName
+{
+    internal override event System.Action EventB /* explanation */;
+    public override event System.Action EventC;
+}
+";
+
+        await VerifyAsync(testCode, fixedCode, Diagnostic().WithLocation(0)).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestSplitOverrideWithDirectiveIsNotFixedAsync()
+    {
+        var testCode = @"
+internal interface IName
+{
+    event System.Action EventC;
+}
+
+internal class BaseName : IName
+{
+    {|#0:public|} virtual event System.Action EventB;
+
+    public virtual event System.Action EventC;
+}
+
+internal class DerivedName : BaseName
+{
+    public override event System.Action EventB,
+#region keep
+        EventC
+#endregion
+        ;
+}
+";
+
+        await VerifyNoFixAsync(testCode, Diagnostic().WithLocation(0)).ConfigureAwait(false);
+    }
+
     private static Task VerifyNoFixAsync(string testCode, params DiagnosticResult[] expected)
     {
         var test = new CSharpTest
