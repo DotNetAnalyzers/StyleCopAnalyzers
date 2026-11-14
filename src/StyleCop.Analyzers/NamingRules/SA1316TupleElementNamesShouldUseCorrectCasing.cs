@@ -81,7 +81,8 @@ namespace StyleCop.Analyzers.NamingRules
             }
 
             bool includeInferredNames = settings.NamingRules.IncludeInferredTupleElementNames
-                && context.SupportsInferredTupleElementNames();
+                && context.SupportsInferredTupleElementNames()
+                && !IsDeconstructionTarget(context.Node);
 
             var tupleExpression = (TupleExpressionSyntaxWrapper)context.Node;
             foreach (var argument in tupleExpression.Arguments)
@@ -101,6 +102,23 @@ namespace StyleCop.Analyzers.NamingRules
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Determines whether a tuple expression is the target of a deconstruction assignment, either directly or
+        /// nested in another tuple expression, such as <c>(a, b)</c> in <c>((a, b), c) = value</c>.
+        /// </summary>
+        private static bool IsDeconstructionTarget(SyntaxNode tupleExpression)
+        {
+            var node = tupleExpression;
+            while (node.Parent is ArgumentSyntax argument && argument.Parent.IsKind(SyntaxKindEx.TupleExpression))
+            {
+                node = argument.Parent;
+            }
+
+            return node.Parent is AssignmentExpressionSyntax assignment
+                && assignment.IsKind(SyntaxKind.SimpleAssignmentExpression)
+                && assignment.Left == node;
         }
 
         private static void CheckTupleElement(SyntaxNodeAnalysisContext context, StyleCopSettings settings, TupleElementSyntaxWrapper tupleElement)
