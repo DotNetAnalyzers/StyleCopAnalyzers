@@ -30,5 +30,37 @@ namespace StyleCop.Analyzers.Test.CSharp10.NamingRules
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that deconstruction into a mix of new and existing variables does not produce diagnostics,
+        /// regardless of settings.
+        /// </summary>
+        /// <param name="settings">The test settings to use.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData(DefaultTestSettings)]
+        [InlineData(CamelCaseTestSettings)]
+        [InlineData(PascalCaseTestSettings)]
+        [InlineData(CamelCaseInferredTestSettings)]
+        [InlineData(PascalCaseInferredTestSettings)]
+        [InlineData(CamelCaseExplicitOnlyTestSettings)]
+        [InlineData(PascalCaseExplicitOnlyTestSettings)]
+        [WorkItem(4418, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4418")]
+        public async Task TestTupleDeconstructionIntoMixedTargetsAsync(string settings)
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        string Value, other;
+        (var name, Value) = (""a"", ""b"");
+        ((var first, Value), other) = ((""a"", ""b""), ""c"");
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
