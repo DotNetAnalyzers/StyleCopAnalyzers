@@ -95,6 +95,9 @@ project must default to it. The test-only `StyleCop.Analyzers.Test/Helpers/TestL
 by returning Preview when running tests for the C# N project. This detection can for example be based on available
 language versions or syntax kinds. Remove the override once an official C# N compiler is referenced.
 
+Features that are still in preview in the official compiler need `LanguageVersionEx.Preview` passed explicitly
+to the tests that use them, as `SA1206CSharp15UnitTests.TestSafeModifierAsync` does.
+
 Early preview compilers may not define `LanguageVersion.CSharpN` yet, so `LightupHelpers.SupportsCSharpN` is
 `false` even in the C# N test project. In that case detect the compiler by one of its new syntax kinds instead,
 as #4192 did for C# 15 with `SyntaxKindEx.UnionDeclaration` before Roslyn 5.11 added `CSharp15`.
@@ -183,7 +186,8 @@ union two or three times, so diagnostics were duplicated in the IDE and the test
    5.10 preview, and a newer SDK can still have the bug).
 4. **Use that build only in the test project that needs it**, with a csproj comment naming the Roslyn issue and
    "move to <version> on nuget.org once it ships". Fix any NU1605 downgrade with a matching
-   `PackageReference Update` in the same project.
+   `PackageReference Update` in the same project. Remove both once the stable release is out (the C# 15 project
+   used a 5.11 preview until Roslyn 5.12.0 shipped).
 5. **Write exactly-once tests** (a single expected diagnostic per location, which the verifier enforces), and
    check them against the buggy compiler: they must fail there with the duplicate counts (17 of the #4191 tests
    did). That proves the tests would catch a regression.
