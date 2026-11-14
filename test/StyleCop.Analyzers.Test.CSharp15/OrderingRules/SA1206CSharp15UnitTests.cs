@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.CSharp15.OrderingRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Test.CSharp14.OrderingRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -89,7 +90,8 @@ partial class Outer
         /// <summary>
         /// Verifies that the C# 15 <c>safe</c> modifier, used on <see langword="extern"/> members and on fields of
         /// explicit layout types, is ordered like the other non-access modifiers, after the access modifier and
-        /// <see langword="static"/>.
+        /// <see langword="static"/>. The <c>safe</c> modifier is part of the updated memory safety rules, which still
+        /// require the preview language version.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -162,7 +164,7 @@ public struct Layout
                 Diagnostic().WithLocation(2).WithArguments("public", "safe"),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(LanguageVersionEx.Preview, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>

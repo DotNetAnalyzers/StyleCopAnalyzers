@@ -118,7 +118,7 @@ on master").
 - Roslyn 4.0 (C# 10/11 projects): some diagnostics on positional records and record structs are reported twice
   (dotnet/roslyn#53136); tests use non-positional records or `virtual` expectations overridden in later projects.
 - Roslyn 5.x: syntax node actions don't run on the defining part of a partial constructor.
-- Roslyn 5.9: nodes inside a union are visited up to three times (fixed in 5.10; the C# 15 test project uses a
-  5.11 preview build).
+- Roslyn 5.9: nodes inside a union are visited up to three times (fixed in 5.10; the C# 15 test project uses
+  5.12.0).
 - A `$$"""` raw string can't be written inside test markup, because `$$` is the markup caret marker; use
   `MarkupMode.None` or build the string differently.

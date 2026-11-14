@@ -96,7 +96,7 @@ public union U<T>(int, T) : System.IDisposable where T : class
 
         private static TypeDeclarationSyntax ParseUnionDeclaration(string source)
         {
-            var syntaxTree = SyntaxFactory.ParseSyntaxTree(source, new CSharpParseOptions(LanguageVersion.Preview));
+            var syntaxTree = SyntaxFactory.ParseSyntaxTree(source, new CSharpParseOptions(LanguageVersion.CSharp15));
             Assert.Empty(syntaxTree.GetDiagnostics());
 
             var syntaxNode = syntaxTree.GetRoot().DescendantNodes().OfType<TypeDeclarationSyntax>().Single();

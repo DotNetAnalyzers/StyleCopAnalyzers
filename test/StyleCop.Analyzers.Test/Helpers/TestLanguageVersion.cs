@@ -13,25 +13,13 @@ namespace StyleCop.Analyzers.Test.Helpers
         /// compiler's default language version.
         /// </summary>
         /// <value>
-        /// <see cref="LanguageVersionEx.Preview"/> for the C# 15 test project; otherwise, <see langword="null"/>.
+        /// Currently always <see langword="null"/>.
         /// </value>
         /// <remarks>
-        /// <para>If needed, this property can be temporarily updated to default to a preview version.</para>
+        /// <para>If needed, this property can be temporarily updated to default to a preview version, for example
+        /// <see cref="LanguageVersionEx.Preview"/> when <see cref="LightupHelpers"/> reports support for a language
+        /// version that the referenced compiler still treats as preview.</para>
         /// </remarks>
-        public static LanguageVersion? Default
-        {
-            get
-            {
-                if (LightupHelpers.SupportsCSharp15)
-                {
-                    // Some C# 15 features (e.g. the safe modifier) are still gated behind the preview language version
-                    // in the referenced compiler, so the C# 15 test project runs every test with it.
-                    // Remove this once an official C# 15 compiler is referenced.
-                    return LanguageVersionEx.Preview;
-                }
-
-                return null;
-            }
-        }
+        public static LanguageVersion? Default => null;
     }
 }
