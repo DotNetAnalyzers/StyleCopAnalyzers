@@ -111,8 +111,9 @@ compiler errors, analyzer exceptions (AD0001), and fix results.
 ```bash
 dotnet build src/StyleCop.Analyzers.CodeFixes/StyleCop.Analyzers.CodeFixes.csproj -c Debug
 dotnet run --project .agents/skills/csharp-language-version-audit/scripts/probe -- --fix --lang preview snippets/
-# probe with another compiler, for example a dotnet-tools feed build:
-dotnet run --project .agents/skills/csharp-language-version-audit/scripts/probe -p:RoslynVersion=5.11.0-1.26512.2 -- snippets/
+# The default compiler is SharedRoslynVersion (currently 5.12.0). Override it to probe another compiler,
+# including a dotnet-tools feed build:
+dotnet run --project .agents/skills/csharp-language-version-audit/scripts/probe -p:RoslynVersion=5.12.0 -- snippets/
 ```
 
 Keep snippet folders out of the repo (or in a scratch folder you don't commit).

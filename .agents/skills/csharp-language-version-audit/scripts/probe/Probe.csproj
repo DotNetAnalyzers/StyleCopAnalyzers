@@ -15,8 +15,8 @@
     <RepoRoot>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)', '..', '..', '..', '..', '..'))</RepoRoot>
     <ProbeConfiguration Condition="'$(ProbeConfiguration)' == ''">Debug</ProbeConfiguration>
     <ProbeBin Condition="'$(ProbeBin)' == ''">$(RepoRoot)src/StyleCop.Analyzers.CodeFixes/bin/$(ProbeConfiguration)/netstandard1.1</ProbeBin>
-    <!-- RS1035: banned analyzer APIs (this is a console app, not an analyzer). RSEXPERIMENTAL006: preview syntax APIs. -->
-    <NoWarn>$(NoWarn);RS1035;CS8019;RSEXPERIMENTAL006</NoWarn>
+    <!-- RS1035: banned analyzer APIs (this is a console app, not an analyzer). -->
+    <NoWarn>$(NoWarn);RS1035;CS8019</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
