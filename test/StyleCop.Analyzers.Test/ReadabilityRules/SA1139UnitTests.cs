@@ -162,7 +162,7 @@ class ClassName
         [InlineData("1d", "double")]
         [InlineData("1M", "decimal")]
         [InlineData("1m", "decimal")]
-        public async Task TestDoNotRaportDiagnositcOnRedundantCastAsync(string literal, string type)
+        public async Task TestDoNotReportDiagnosticOnRedundantCastAsync(string literal, string type)
         {
             var testCode = $@"
 class ClassName
@@ -248,7 +248,7 @@ class ClassName
         [InlineData("(int)1000000000000000000L")]
         [InlineData("(int)0xFFFFFFFFFFFFFFFFL")]
         [InlineData("(uint)0xFFFFFFFFFFFFFFFFL")]
-        public async Task TestCastsInUncheckedEnviromentShouldPreserveValueAsync(string castExpression)
+        public async Task TestCastsInUncheckedEnvironmentShouldPreserveValueAsync(string castExpression)
         {
             var testCode = $@"
 class ClassName

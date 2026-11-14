@@ -95,7 +95,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEventWithBlockStartkOnSameLineAsync()
+        public async Task TestEventWithBlockStartOnSameLineAsync()
         {
             var testCode = @"using System;
 

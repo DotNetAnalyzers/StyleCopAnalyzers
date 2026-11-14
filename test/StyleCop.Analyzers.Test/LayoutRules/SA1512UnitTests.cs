@@ -257,7 +257,7 @@ namespace Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestCommentFollowedBySingleLineDocumenationCommentAsync()
+        public async Task TestCommentFollowedBySingleLineDocumentationCommentAsync()
         {
             var testCode = @"// some comment
                 

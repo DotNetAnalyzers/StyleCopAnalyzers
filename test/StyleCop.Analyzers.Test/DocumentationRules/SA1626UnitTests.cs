@@ -115,7 +115,7 @@ public class TypeName
         }
 
         [Fact]
-        public async Task TestMethodWithSingeLineDocumentationAsync()
+        public async Task TestMethodWithSingleLineDocumentationAsync()
         {
             var testCode = @"public class TypeName
 {

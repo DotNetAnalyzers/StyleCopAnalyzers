@@ -617,7 +617,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestConstructorallParametersListOnNextLineAsOpeningParenthesisAsync()
+        public async Task TestConstructorCallParametersListOnNextLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 public class Foo
@@ -980,7 +980,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestAtributeParametersListOnSameLineAsOpeningParenthesisAsync()
+        public async Task TestAttributeParametersListOnSameLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 using System.Diagnostics;
@@ -1046,7 +1046,7 @@ Conditional(""DEBUG""),Conditional(""DEBUG2"")]
         }
 
         [Fact]
-        public async Task TestAtributesListParametersListOnSameLineAsOpeningParenthesisAsync()
+        public async Task TestAttributesListParametersListOnSameLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 using System.Diagnostics;

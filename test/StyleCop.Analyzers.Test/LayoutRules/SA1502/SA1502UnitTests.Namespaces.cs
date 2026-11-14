@@ -72,7 +72,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestNamespaceWithBlockStartkOnSameLineAsync()
+        public async Task TestNamespaceWithBlockStartOnSameLineAsync()
         {
             var testCode = @"namespace Foo {
     using System;

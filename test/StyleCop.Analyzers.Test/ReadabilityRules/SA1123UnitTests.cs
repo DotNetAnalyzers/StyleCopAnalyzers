@@ -47,7 +47,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         }
 
         [Fact]
-        public async Task TestRegionPartialyInMethodAsync()
+        public async Task TestRegionPartiallyInMethodAsync()
         {
             var testCode = @"public class Foo
 {
@@ -63,7 +63,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         }
 
         [Fact]
-        public async Task TestRegionPartialyInMethod2Async()
+        public async Task TestRegionPartiallyInMethod2Async()
         {
             var testCode = @"public class Foo
 {
@@ -78,7 +78,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         }
 
         [Fact]
-        public async Task TestRegionPartialyMultipleMethodsAsync()
+        public async Task TestRegionPartiallyMultipleMethodsAsync()
         {
             var testCode = @"public class Foo
 {

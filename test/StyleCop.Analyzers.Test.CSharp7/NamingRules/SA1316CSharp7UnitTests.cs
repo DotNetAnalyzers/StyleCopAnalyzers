@@ -401,7 +401,7 @@ public class TestClass
 
         [Fact]
         [WorkItem(3031, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3031")]
-        public async Task TestTupleDesconstructionCamelCaseAsync()
+        public async Task TestTupleDeconstructionCamelCaseAsync()
         {
             var testCode = @"
 public class TypeName
@@ -418,7 +418,7 @@ public class TypeName
 
         [Fact]
         [WorkItem(3031, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3031")]
-        public async Task TestTupleDesconstructionPascalCaseAsync()
+        public async Task TestTupleDeconstructionPascalCaseAsync()
         {
             var testCode = @"
 public class TypeName
@@ -435,7 +435,7 @@ public class TypeName
 
         [Fact]
         [WorkItem(3031, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3031")]
-        public async Task TestTupleDesconstructionPascalCaseListAsync()
+        public async Task TestTupleDeconstructionPascalCaseListAsync()
         {
             var testCode = @"
 using System.Collections.Generic;
@@ -455,7 +455,7 @@ public class TypeName
 
         [Fact]
         [WorkItem(3139, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3139")]
-        public async Task TestTupleDesconstructionDiscardAsync()
+        public async Task TestTupleDeconstructionDiscardAsync()
         {
             var testCode = @"
 public class TypeName

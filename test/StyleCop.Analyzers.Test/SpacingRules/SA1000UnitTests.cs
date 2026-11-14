@@ -681,7 +681,7 @@ default :
         }
 
         [Fact]
-        public async Task TestNewConstructorContraintStatement_TypeAsync()
+        public async Task TestNewConstructorConstraintStatement_TypeAsync()
         {
             string statementWithSpace = @"public class Foo<T> where T : new ()
 {
@@ -699,7 +699,7 @@ default :
         }
 
         [Fact]
-        public async Task TestNewConstructorContraintStatement_TypeWithMultipleConstraintsAsync()
+        public async Task TestNewConstructorConstraintStatement_TypeWithMultipleConstraintsAsync()
         {
             string statementWithSpace = @"public class Foo<T> where T : IDisposable, new ()
 {
@@ -717,7 +717,7 @@ default :
         }
 
         [Fact]
-        public async Task TestNewConstructorContraintStatement_TypeWithClassConstraintsAsync()
+        public async Task TestNewConstructorConstraintStatement_TypeWithClassConstraintsAsync()
         {
             string statementWithSpace = @"public class Foo<T> where T : class, new ()
 {
@@ -735,7 +735,7 @@ default :
         }
 
         [Fact]
-        public async Task TestNewConstructorContraintStatement_MethodAsync()
+        public async Task TestNewConstructorConstraintStatement_MethodAsync()
         {
             string statementWithSpace = @"public void Foo<T>() where T : new ()
 {
@@ -753,7 +753,7 @@ default :
         }
 
         [Fact]
-        public async Task TestNewConstructorContraintStatement_MethodWithMultipleConstraintsAsync()
+        public async Task TestNewConstructorConstraintStatement_MethodWithMultipleConstraintsAsync()
         {
             string statementWithSpace = @"public void Foo<T>() where T : IDisposable, new ()
 {
@@ -771,7 +771,7 @@ default :
         }
 
         [Fact]
-        public async Task TestNewConstructorContraintStatement_MethodWithClassConstraintsAsync()
+        public async Task TestNewConstructorConstraintStatement_MethodWithClassConstraintsAsync()
         {
             string statementWithSpace = @"public void Foo<T>() where T : class, new ()
 {

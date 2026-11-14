@@ -77,7 +77,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestIndexerWithBlockStartkOnSameLineAsync()
+        public async Task TestIndexerWithBlockStartOnSameLineAsync()
         {
             var testCode = @"public class Foo 
 {
