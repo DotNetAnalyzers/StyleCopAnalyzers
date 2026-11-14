@@ -508,7 +508,7 @@ public class Foo
 
         [Theory]
         [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
-        public virtual async Task TestMissleadingUsingAsync(string lineEnding)
+        public virtual async Task TestMisleadingUsingAsync(string lineEnding)
         {
             string testSource = @"namespace Foo
 {
@@ -562,7 +562,7 @@ public class TestClass
         }
 
         [Fact]
-        public virtual async Task TestMissleadingUsingAllowAliasesAsync()
+        public virtual async Task TestMisleadingUsingAllowAliasesAsync()
         {
             string testSource = @"namespace Foo
 {

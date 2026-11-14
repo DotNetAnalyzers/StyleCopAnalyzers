@@ -16,7 +16,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     {
         [Theory]
         [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
-        public async Task TestMethodDeclarationWithOneParameterClosingParanthesisOnTheNextLineAsTheLastParameterAsync(string lineEnding)
+        public async Task TestMethodDeclarationWithOneParameterClosingParenthesisOnTheNextLineAsTheLastParameterAsync(string lineEnding)
         {
             var testCode = @"
 class Foo
@@ -42,7 +42,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestMethodDeclarationWithThreeParameterClosingParanthesisOnTheNextLineAsTheLastParameterAsync()
+        public async Task TestMethodDeclarationWithThreeParameterClosingParenthesisOnTheNextLineAsTheLastParameterAsync()
         {
             var testCode = @"
 class Foo
@@ -72,7 +72,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestMethodDeclarationWithNoParameterClosingParanthesisOnTheNextLineAsTheLastParameterAsync()
+        public async Task TestMethodDeclarationWithNoParameterClosingParenthesisOnTheNextLineAsTheLastParameterAsync()
         {
             var testCode = @"
 class Foo
@@ -88,7 +88,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestMethodDeclarationWithOneParameterClosingParanthesisOnTheSameLineAsTheLastParameterAsync()
+        public async Task TestMethodDeclarationWithOneParameterClosingParenthesisOnTheSameLineAsTheLastParameterAsync()
         {
             var testCode = @"
 class Foo
@@ -103,7 +103,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestConstructorDeclarationWithOneParameterClosingParanthesisOnTheNextLineAsTheLastParameterAsync()
+        public async Task TestConstructorDeclarationWithOneParameterClosingParenthesisOnTheNextLineAsTheLastParameterAsync()
         {
             var testCode = @"
 class Foo
@@ -129,7 +129,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestConstructorDeclarationWithThreeParameterClosingParanthesisOnTheNextLineAsTheLastParameterAsync()
+        public async Task TestConstructorDeclarationWithThreeParameterClosingParenthesisOnTheNextLineAsTheLastParameterAsync()
         {
             var testCode = @"
 class Foo
@@ -159,7 +159,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestConstructorDeclarationWithNoParameterClosingParanthesisOnTheNextLineAsTheLastParameterAsync()
+        public async Task TestConstructorDeclarationWithNoParameterClosingParenthesisOnTheNextLineAsTheLastParameterAsync()
         {
             var testCode = @"
 class Foo
@@ -175,7 +175,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestConstructorDeclarationWithOneParameterClosingParanthesisOnTheSameLineAsTheLastParameterAsync()
+        public async Task TestConstructorDeclarationWithOneParameterClosingParenthesisOnTheSameLineAsTheLastParameterAsync()
         {
             var testCode = @"
 class Foo
@@ -190,7 +190,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestMethodCallWithOneParameterClosingParanthesisOnTheNextLineAsTheLastParameterAsync()
+        public async Task TestMethodCallWithOneParameterClosingParenthesisOnTheNextLineAsTheLastParameterAsync()
         {
             var testCode = @"
 class Foo
@@ -226,7 +226,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestMethodCallWithOneParameterThatSpansTwoLinesClosingParanthesisOnTheSameLineAsTheLastParameterAsync()
+        public async Task TestMethodCallWithOneParameterThatSpansTwoLinesClosingParenthesisOnTheSameLineAsTheLastParameterAsync()
         {
             var testCode = @"
 class Foo
@@ -247,7 +247,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestMethodCallWithTwoParametersClosingParanthesisOnTheNextLineAsTheLastParameterAsync()
+        public async Task TestMethodCallWithTwoParametersClosingParenthesisOnTheNextLineAsTheLastParameterAsync()
         {
             var testCode = @"
 class Foo
@@ -285,7 +285,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestMethodCallWithTwoParametersClosingParanthesisOnTheSameLineAsTheLastParameterAsync()
+        public async Task TestMethodCallWithTwoParametersClosingParenthesisOnTheSameLineAsTheLastParameterAsync()
         {
             var testCode = @"
 class Foo
@@ -306,7 +306,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestMethodCallWithNoParametersClosingParanthesisOnTheNextLineAsTheLastParameterAsync()
+        public async Task TestMethodCallWithNoParametersClosingParenthesisOnTheNextLineAsTheLastParameterAsync()
         {
             var testCode = @"
 class Foo
@@ -327,7 +327,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestConstructorCallWithOneParameterClosingParanthesisOnTheNextLineAsTheLastParameterAsync()
+        public async Task TestConstructorCallWithOneParameterClosingParenthesisOnTheNextLineAsTheLastParameterAsync()
         {
             var testCode = @"
 class Foo
@@ -362,7 +362,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestConstructorCallWithTwoParametersClosingParanthesisOnTheNextLineAsTheLastParameterAsync()
+        public async Task TestConstructorCallWithTwoParametersClosingParenthesisOnTheNextLineAsTheLastParameterAsync()
         {
             var testCode = @"
 class Foo
@@ -400,7 +400,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestConstructorCallWithTwoParametersClosingParanthesisOnTheSameLineAsTheLastParameterAsync()
+        public async Task TestConstructorCallWithTwoParametersClosingParenthesisOnTheSameLineAsTheLastParameterAsync()
         {
             var testCode = @"
 class Foo
@@ -421,7 +421,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestConstructorCallWithNoParametersClosingParanthesisOnTheNextLineAsTheLastParameterAsync()
+        public async Task TestConstructorCallWithNoParametersClosingParenthesisOnTheNextLineAsTheLastParameterAsync()
         {
             var testCode = @"
 class Foo
@@ -442,7 +442,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestIndexerDeclarationWithOneParameterClosingParanthesisOnTheNextLineAsTheLastParameterAsync()
+        public async Task TestIndexerDeclarationWithOneParameterClosingParenthesisOnTheNextLineAsTheLastParameterAsync()
         {
             var testCode = @"
 class Foo
@@ -474,7 +474,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestIndexerDeclarationWithThreeParameterClosingParanthesisOnTheNextLineAsTheLastParameterAsync()
+        public async Task TestIndexerDeclarationWithThreeParameterClosingParenthesisOnTheNextLineAsTheLastParameterAsync()
         {
             var testCode = @"
 class Foo
@@ -510,7 +510,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestIndexerDeclarationWithOneParameterClosingParanthesisOnTheSameLineAsTheLastParameterAsync()
+        public async Task TestIndexerDeclarationWithOneParameterClosingParenthesisOnTheSameLineAsTheLastParameterAsync()
         {
             var testCode = @"
 class Foo
@@ -716,7 +716,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestIndexerCallOfMethodReturOneParameterClosingBracketOnTheNextLineAsTheLastParameterAsync()
+        public async Task TestIndexerCallOfMethodReturnOneParameterClosingBracketOnTheNextLineAsTheLastParameterAsync()
         {
             var testCode = @"
 class Foo
@@ -750,7 +750,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestIndexerCallOfObjectsPropertyReturOneParameterClosingBracketOnTheNextLineAsTheLastParameterAsync()
+        public async Task TestIndexerCallOfObjectsPropertyReturnOneParameterClosingBracketOnTheNextLineAsTheLastParameterAsync()
         {
             var testCode = @"
 class Bar
@@ -1499,7 +1499,7 @@ public class TestClass
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task VerifyUnaryOperatorDeclarationWithClosingParanthesisOnNextLineAsync()
+        public async Task VerifyUnaryOperatorDeclarationWithClosingParenthesisOnNextLineAsync()
         {
             var testCode = @"
 public class TestClass
@@ -1530,7 +1530,7 @@ public class TestClass
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task VerifyBinaryOperatorDeclarationWithClosingParanthesisOnNextLineAsync()
+        public async Task VerifyBinaryOperatorDeclarationWithClosingParenthesisOnNextLineAsync()
         {
             var testCode = @"
 public class TestClass
@@ -1561,7 +1561,7 @@ public class TestClass
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task VerifyConversionOperatorDeclarationWithClosingParanthesisOnNextLineAsync()
+        public async Task VerifyConversionOperatorDeclarationWithClosingParenthesisOnNextLineAsync()
         {
             var testCode = @"
 public class TestClass

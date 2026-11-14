@@ -16,7 +16,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
     public partial class SA1116CSharp9UnitTests : SA1116CSharp8UnitTests
     {
         [Fact]
-        public async Task TestTargetTypedNewExpressionnAsync()
+        public async Task TestTargetTypedNewExpressionAsync()
         {
             var testCode = @"
 class Foo

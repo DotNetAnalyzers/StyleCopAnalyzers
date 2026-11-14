@@ -491,7 +491,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestIndexerCalOpeningBracketInTheNextLineAsync()
+        public async Task TestIndexerCallOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -811,7 +811,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestArrayOfArraysCreationOpneningBracketOnTheSameLineAsTypeNameAsync()
+        public async Task TestArrayOfArraysCreationOpeningBracketOnTheSameLineAsTypeNameAsync()
         {
             var testCode = @"
 public class Foo

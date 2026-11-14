@@ -313,7 +313,7 @@ class ClassName
 
         [Fact]
         [WorkItem(2564, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2564")]
-        public async Task TestArrayElementPointerDeferenceAsync()
+        public async Task TestArrayElementPointerDereferenceAsync()
         {
             var testCode = @"public class TestClass
 {

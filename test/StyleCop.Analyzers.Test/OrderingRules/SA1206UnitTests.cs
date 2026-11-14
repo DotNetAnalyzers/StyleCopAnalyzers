@@ -148,7 +148,7 @@ public class ExtendedTestClass : TestClass
         }
 
         [Fact]
-        public async Task TestHidedNestedDelegateDeclarationAsync()
+        public async Task TestHiddenNestedDelegateDeclarationAsync()
         {
             var testCode = @"public class TestClass
 {

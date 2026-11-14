@@ -799,7 +799,7 @@ namespace TestNamespace
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestDocumenationPrecededByCommentNotReportedAsync()
+        public async Task TestDocumentationPrecededByCommentNotReportedAsync()
         {
             var testCode = @"namespace TestNamespace
 {
@@ -846,7 +846,7 @@ namespace TestNamespace
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestDocumenationPrecededByCommentNotReportedForLooseCommentAsync()
+        public async Task TestDocumentationPrecededByCommentNotReportedForLooseCommentAsync()
         {
             var testCode = @"namespace TestNamespace
 {

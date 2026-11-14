@@ -38,7 +38,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         }
 
         [Fact]
-        public async Task TestRegionPartialyInMethodAsync()
+        public async Task TestRegionPartiallyInMethodAsync()
         {
             var testCode = @"public class Foo
 {
@@ -57,7 +57,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
         [Theory]
         [MemberData(nameof(CommonData.EndOfLineSequences), MemberType = typeof(CommonData))]
-        public async Task TestRegionPartialyInMethod2Async(string lineEnding)
+        public async Task TestRegionPartiallyInMethod2Async(string lineEnding)
         {
             var testCode = @"public class Foo
 {
@@ -83,7 +83,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         }
 
         [Fact]
-        public async Task TestRegionPartialyMultipleMethodsAsync()
+        public async Task TestRegionPartiallyMultipleMethodsAsync()
         {
             var testCode = @"public class Foo
 {

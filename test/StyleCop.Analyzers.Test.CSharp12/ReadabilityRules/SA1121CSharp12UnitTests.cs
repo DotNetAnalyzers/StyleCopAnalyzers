@@ -297,7 +297,7 @@ public class TestClass
         //// xUnit reads the InlineData attributes from the base method as well, so they must not be repeated here.
 #pragma warning disable xUnit1003 // Theory methods must have test data
         [Theory]
-        public override async Task TestMissleadingUsingAsync(string lineEnding)
+        public override async Task TestMisleadingUsingAsync(string lineEnding)
 #pragma warning restore xUnit1003 // Theory methods must have test data
         {
             string oldSource = @"namespace Foo
@@ -361,7 +361,7 @@ public class TestClass
 
         /// <inheritdoc/>
         [Fact]
-        public override async Task TestMissleadingUsingAllowAliasesAsync()
+        public override async Task TestMisleadingUsingAllowAliasesAsync()
         {
             string oldSource = @"namespace Foo
 {

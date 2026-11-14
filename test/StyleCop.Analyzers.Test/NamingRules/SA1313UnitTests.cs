@@ -380,7 +380,7 @@ public class Test : Testbase
 
         [Fact]
         [WorkItem(1442, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1442")]
-        public async Task TestSimpleLambaExpressionAsync()
+        public async Task TestSimpleLambdaExpressionAsync()
         {
             var testCode = @"public class TypeName
 {

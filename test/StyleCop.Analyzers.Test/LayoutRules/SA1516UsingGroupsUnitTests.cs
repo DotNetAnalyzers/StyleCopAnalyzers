@@ -160,7 +160,7 @@ namespace TestNamespace
         [Theory]
         [InlineData(null)]
         [InlineData("Test")]
-        public async Task TestOmitWithSeparingCommentsAsync(string? namespaceName)
+        public async Task TestOmitWithSeparatingCommentsAsync(string? namespaceName)
         {
             var testCode = @"
 using System;

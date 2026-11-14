@@ -1010,7 +1010,7 @@ class ClassName : System.Collections.Generic.List<int>
         }
 
         [Fact]
-        public async Task TestIndexerWithInvokationAsync()
+        public async Task TestIndexerWithInvocationAsync()
         {
             var testCode = @"
 class ClassName : System.Collections.Generic.List<System.Func<int>>

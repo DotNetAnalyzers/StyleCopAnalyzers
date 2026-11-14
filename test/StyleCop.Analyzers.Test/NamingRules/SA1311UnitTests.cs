@@ -54,7 +54,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [Fact]
-        public async Task TestStaticReadonlyFieldStartingWithLoweCaseFieldIsJustOneLetterAsync()
+        public async Task TestStaticReadonlyFieldStartingWithLowerCaseFieldIsJustOneLetterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -111,7 +111,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [Fact]
-        public async Task TestReadonlyFieldStartingWithLoweCaseAsync()
+        public async Task TestReadonlyFieldStartingWithLowerCaseAsync()
         {
             var testCode = @"public class Foo
 {
@@ -122,7 +122,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [Fact]
-        public async Task TestStaticFieldStartingWithLoweCaseAsync()
+        public async Task TestStaticFieldStartingWithLowerCaseAsync()
         {
             var testCode = @"public class Foo
 {

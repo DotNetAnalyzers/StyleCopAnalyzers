@@ -226,7 +226,7 @@ class ClassName
         [InlineData("(uint)0xFFFF_FFFF_FFFF_FFFFL")]
         [InlineData("(int)0b11111111_11111111_11111111_11111111_11111111_11111111_11111111_11111111L")]
         [InlineData("(uint)0b11111111_11111111_11111111_11111111_11111111_11111111_11111111_11111111L")]
-        public async Task TestCastsWithSeparatorsInUncheckedEnviromentShouldPreserveValueAsync(string castExpression)
+        public async Task TestCastsWithSeparatorsInUncheckedEnvironmentShouldPreserveValueAsync(string castExpression)
         {
             var testCode = $@"
 class ClassName

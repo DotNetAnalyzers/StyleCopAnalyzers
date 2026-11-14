@@ -200,7 +200,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestMutlipleWhitespaceInMethodBodyAsync()
+        public async Task TestMultipleWhitespaceInMethodBodyAsync()
         {
             var testCode = @"namespace TestNamespace
 {
@@ -246,7 +246,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestMutlipleWhitespaceInPropertyAsync()
+        public async Task TestMultipleWhitespaceInPropertyAsync()
         {
             var testCode = @"namespace TestNamespace
 {
@@ -289,7 +289,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestMutlipleWhitespaceInForLoopAsync()
+        public async Task TestMultipleWhitespaceInForLoopAsync()
         {
             var testCode = @"namespace TestNamespace
 {

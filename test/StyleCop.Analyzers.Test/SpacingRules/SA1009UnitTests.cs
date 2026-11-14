@@ -184,7 +184,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestConstructorInheritenceWithSpaceAfterClosingParenthesisAsync()
+        public async Task TestConstructorInheritanceWithSpaceAfterClosingParenthesisAsync()
         {
             const string testCode = @"using System;
 
@@ -199,7 +199,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestConstructorInheritenceWithNoSpaceAfterClosingParenthesisAsync()
+        public async Task TestConstructorInheritanceWithNoSpaceAfterClosingParenthesisAsync()
         {
             const string testCode = @"using System;
 
@@ -255,7 +255,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestSpaceBeforeParenthisInIncrementingForLoopAsync()
+        public async Task TestSpaceBeforeParenthesisInIncrementingForLoopAsync()
         {
             var invalidStatement = @"for (int i = 0; i < 10; i++ )
             {
@@ -270,7 +270,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestSpaceBeforeParenthisInDecrementingForLoopAsync()
+        public async Task TestSpaceBeforeParenthesisInDecrementingForLoopAsync()
         {
             var invalidStatement = @"for (int i = 0; i < 10; i-- )
             {
