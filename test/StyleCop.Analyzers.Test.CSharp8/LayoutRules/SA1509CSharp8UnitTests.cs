@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp8.LayoutRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp7.LayoutRules;
@@ -58,7 +57,7 @@ public class Wrapper
 ";
 
             var expected = Diagnostic().WithLocation(0);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -102,7 +101,7 @@ public class Wrapper
 ";
 
             var expected = Diagnostic().WithLocation(0);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

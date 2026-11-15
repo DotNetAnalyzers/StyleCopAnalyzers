@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.Helpers;
@@ -31,7 +30,7 @@ public class TestClass
 {
 }
 ";
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -87,7 +86,7 @@ namespace TestNamespace
                 Diagnostic().WithLocation(1),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         [Theory]
@@ -138,7 +137,7 @@ namespace TestNamespace
                 Diagnostic().WithLocation(1),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -180,7 +179,7 @@ public class TopLevelTest2
                 Diagnostic().WithLocation(1),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -234,7 +233,7 @@ namespace TestNamespace
                 Diagnostic().WithLocation(1),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -270,7 +269,7 @@ using System.Runtime.InteropServices;
                 Diagnostic().WithLocation(7, 31),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -304,7 +303,7 @@ namespace TestNamespace
                 Diagnostic().WithLocation(4, 31),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -339,7 +338,7 @@ public class TestClass
                 Diagnostic().WithLocation(3, 93),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -380,7 +379,7 @@ namespace TestNamespace
                 Diagnostic().WithLocation(8, 50),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -462,7 +461,7 @@ namespace TestNamespace
                 Diagnostic().WithLocation(23, 54),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -524,7 +523,7 @@ namespace TestNamespace
                 Diagnostic().WithLocation(14, 9),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -551,7 +550,7 @@ namespace TestNamespace
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -581,7 +580,7 @@ namespace TestNamespace
                 DiagnosticResult.CompilerError("CS1022").WithLocation(8, 1),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, testCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -652,7 +651,7 @@ public sealed class UsedImplicitlyAttribute : Attribute
                 Diagnostic().WithLocation(1),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -707,7 +706,7 @@ public sealed class UsedImplicitlyAttribute : Attribute
                 Diagnostic().WithLocation(0),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -775,7 +774,7 @@ public sealed class SecondAttribute : Attribute
                 Diagnostic().WithLocation(0),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -838,7 +837,7 @@ public sealed class UsedImplicitlyAttribute : Attribute
                 Diagnostic().WithLocation(0),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -889,7 +888,7 @@ public sealed class UsedImplicitlyAttribute : Attribute
                 Diagnostic().WithLocation(0),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -946,7 +945,7 @@ public sealed class UsedImplicitlyAttribute : Attribute
                 Diagnostic().WithLocation(0),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1038,7 +1037,7 @@ public sealed class UsedImplicitlyAttribute : Attribute
                 Diagnostic().WithLocation(1),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -1047,7 +1046,7 @@ public sealed class UsedImplicitlyAttribute : Attribute
             var testCode = @"[assembly: System.CLSCompliant(true)]
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
     }
 }

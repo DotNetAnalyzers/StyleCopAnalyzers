@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
@@ -114,7 +113,7 @@ public class TestClass
 ";
 
             DiagnosticResult expected = Diagnostic().WithArguments(" not", "preceded").WithLocation(0);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -309,7 +308,7 @@ class ClassName
 ";
 
             DiagnosticResult expected = DiagnosticResult.CompilerError("CS1003").WithMessage("Syntax error, ',' expected").WithLocation(6, 25);
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -335,7 +334,7 @@ class ClassName
 ";
 
             DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "followed").WithLocation(6, 24);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Theory]
@@ -383,7 +382,7 @@ public class TestClass
                 Diagnostic().WithArguments(string.Empty, "followed").WithLocation(1),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -404,7 +403,7 @@ partial struct Money : IFormattable
 
             var expected = DiagnosticResult.EmptyDiagnosticResults;
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -426,7 +425,7 @@ partial struct Money : IFormattable
 
             var expected = DiagnosticResult.EmptyDiagnosticResults;
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -448,7 +447,7 @@ partial struct Money : IFormattable
 
             var expected = DiagnosticResult.EmptyDiagnosticResults;
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -469,7 +468,7 @@ partial struct Money : IFormattable
 
             var expected = DiagnosticResult.EmptyDiagnosticResults;
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -501,7 +500,7 @@ partial struct Money : IFormattable,
                 Diagnostic().WithLocation(0).WithArguments(" not", "preceded"),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         private Task TestCommaInStatementOrDeclAsync(string originalStatement, DiagnosticResult expected, string fixedStatement)
@@ -535,7 +534,7 @@ partial struct Money : IFormattable,
             };
 
             test.ExpectedDiagnostics.AddRange(expected);
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
     }
 }

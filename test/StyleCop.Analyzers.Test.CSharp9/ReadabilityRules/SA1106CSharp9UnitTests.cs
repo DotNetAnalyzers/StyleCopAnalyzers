@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.ReadabilityRules;
@@ -24,7 +23,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestCode = testCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -90,7 +89,7 @@ public static class ExtensionEnumerableExtensions
 }
 ";
 
-            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode).ConfigureAwait(false);
         }
     }
 }

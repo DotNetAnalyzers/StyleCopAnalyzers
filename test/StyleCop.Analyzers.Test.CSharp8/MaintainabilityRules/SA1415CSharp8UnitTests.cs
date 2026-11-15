@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp8.MaintainabilityRules;
 
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using StyleCop.Analyzers.MaintainabilityRules;
@@ -32,7 +31,7 @@ internal interface IName
             FixedCode = testCode,
         };
         test.ExplicitlyEnabledDiagnostics.Add(SA1415DoNotUsePublicOnMembersOfInternalTypes.DiagnosticId);
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -310,6 +309,6 @@ internal class Consumer
         };
         test.ExplicitlyEnabledDiagnostics.Add(SA1415DoNotUsePublicOnMembersOfInternalTypes.DiagnosticId);
         test.ExpectedDiagnostics.AddRange(expected);
-        return test.RunAsync(CancellationToken.None);
+        return test.RunAsync();
     }
 }

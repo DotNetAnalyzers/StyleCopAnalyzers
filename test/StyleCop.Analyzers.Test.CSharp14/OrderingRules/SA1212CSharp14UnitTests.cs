@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp14.OrderingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.Test.CSharp13.OrderingRules;
     using Xunit;
@@ -63,7 +62,7 @@ public static class TestClass
     }
 }";
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

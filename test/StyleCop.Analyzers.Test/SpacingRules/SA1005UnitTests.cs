@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
@@ -37,7 +36,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -61,7 +60,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 Diagnostic().WithLocation(5, 5),
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -93,7 +92,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             var expected = Diagnostic().WithLocation(3, 5);
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -122,7 +121,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 ";
 
             var expected = Diagnostic().WithLocation(3, 5);
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -144,7 +143,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -161,7 +160,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -177,7 +176,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -193,7 +192,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -219,7 +218,7 @@ public class SomeClass
 {directive}
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -237,7 +236,7 @@ public class SomeClass
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -253,7 +252,7 @@ public class SomeClass
         }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -272,7 +271,7 @@ public class SomeClass
         }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -300,7 +299,7 @@ public class SomeClass
 ";
 
             var expected = Diagnostic().WithLocation(3, 9);
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -320,7 +319,7 @@ public class SomeClass
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -337,7 +336,7 @@ public class Bar
 {
 }
 ";
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
 
             // Verify that this works if the project was configured to treat documentation comments as regular comments
             await new CSharpTest
@@ -347,7 +346,7 @@ public class Bar
                     DocumentationMode = DocumentationMode.None,
                     Sources = { testCode },
                 },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
     }
 }

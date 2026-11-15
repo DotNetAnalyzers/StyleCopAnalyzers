@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp12.SpacingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp11.SpacingRules;
@@ -35,7 +34,7 @@ unsafe class TestClass
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -63,7 +62,7 @@ unsafe class TestClass
 ";
 
             var expected = Diagnostic(DescriptorNotFollowed).WithLocation(0);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

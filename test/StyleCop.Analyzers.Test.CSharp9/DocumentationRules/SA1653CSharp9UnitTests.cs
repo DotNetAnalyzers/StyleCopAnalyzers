@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.DocumentationRules;
 
-using System.Threading;
 using System.Threading.Tasks;
 using StyleCop.Analyzers.Test.CSharp8.DocumentationRules;
 using Xunit;
@@ -25,7 +24,6 @@ public partial record {|#1:TestType|};";
             {
                 Diagnostic().WithLocation(0).WithArguments("TestType"),
                 Diagnostic().WithLocation(1).WithArguments("TestType"),
-            },
-            CancellationToken.None).ConfigureAwait(false);
+            }).ConfigureAwait(false);
     }
 }

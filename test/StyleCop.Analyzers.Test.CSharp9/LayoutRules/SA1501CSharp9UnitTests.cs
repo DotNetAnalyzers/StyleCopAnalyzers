@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.Test.CSharp9.LayoutRules
 {
     using System;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -42,7 +41,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.LayoutRules
             });
 
             test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -76,7 +75,7 @@ class TestClass
 }
 ";
 
-            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -142,7 +141,7 @@ public static class ExtensionEnumerableExtensions
 }
 ";
 
-            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode).ConfigureAwait(false);
         }
     }
 }

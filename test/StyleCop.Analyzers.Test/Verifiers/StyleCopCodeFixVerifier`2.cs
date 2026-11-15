@@ -23,6 +23,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
     using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.Test.Helpers;
+    using Xunit;
 
     internal static class StyleCopCodeFixVerifier<TAnalyzer, TCodeFix>
         where TAnalyzer : DiagnosticAnalyzer, new()
@@ -37,31 +38,31 @@ namespace StyleCop.Analyzers.Test.Verifiers
         internal static DiagnosticResult Diagnostic(DiagnosticDescriptor descriptor)
             => new DiagnosticResult(descriptor);
 
-        internal static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
-            => StyleCopDiagnosticVerifier<TAnalyzer>.VerifyCSharpDiagnosticAsync(source, expected, cancellationToken);
+        internal static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected)
+            => StyleCopDiagnosticVerifier<TAnalyzer>.VerifyCSharpDiagnosticAsync(source, expected);
 
-        internal static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
-            => StyleCopDiagnosticVerifier<TAnalyzer>.VerifyCSharpDiagnosticAsync(source, expected, cancellationToken);
+        internal static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected)
+            => StyleCopDiagnosticVerifier<TAnalyzer>.VerifyCSharpDiagnosticAsync(source, expected);
 
-        internal static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, bool ignoreCompilerDiagnostics, CancellationToken cancellationToken)
-            => StyleCopDiagnosticVerifier<TAnalyzer>.VerifyCSharpDiagnosticAsync(source, expected, ignoreCompilerDiagnostics, cancellationToken);
+        internal static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, bool ignoreCompilerDiagnostics)
+            => StyleCopDiagnosticVerifier<TAnalyzer>.VerifyCSharpDiagnosticAsync(source, expected, ignoreCompilerDiagnostics);
 
-        internal static Task VerifyCSharpDiagnosticAsync(LanguageVersion? languageVersion, string source, DiagnosticResult expected, CancellationToken cancellationToken)
-            => StyleCopDiagnosticVerifier<TAnalyzer>.VerifyCSharpDiagnosticAsync(languageVersion, source, expected, cancellationToken);
+        internal static Task VerifyCSharpDiagnosticAsync(LanguageVersion? languageVersion, string source, DiagnosticResult expected)
+            => StyleCopDiagnosticVerifier<TAnalyzer>.VerifyCSharpDiagnosticAsync(languageVersion, source, expected);
 
-        internal static Task VerifyCSharpDiagnosticAsync(LanguageVersion? languageVersion, string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
-            => StyleCopDiagnosticVerifier<TAnalyzer>.VerifyCSharpDiagnosticAsync(languageVersion, source, settings: null, expected, cancellationToken);
+        internal static Task VerifyCSharpDiagnosticAsync(LanguageVersion? languageVersion, string source, DiagnosticResult[] expected)
+            => StyleCopDiagnosticVerifier<TAnalyzer>.VerifyCSharpDiagnosticAsync(languageVersion, source, settings: null, expected);
 
-        internal static Task VerifyCSharpDiagnosticAsync(string source, string? settings, DiagnosticResult[] expected, CancellationToken cancellationToken)
-            => StyleCopDiagnosticVerifier<TAnalyzer>.VerifyCSharpDiagnosticAsync(languageVersion: null, source, settings, expected, cancellationToken);
+        internal static Task VerifyCSharpDiagnosticAsync(string source, string? settings, DiagnosticResult[] expected)
+            => StyleCopDiagnosticVerifier<TAnalyzer>.VerifyCSharpDiagnosticAsync(languageVersion: null, source, settings, expected);
 
-        internal static Task VerifyCSharpDiagnosticAsync(LanguageVersion? languageVersion, string source, string? settings, DiagnosticResult[] expected, CancellationToken cancellationToken)
-            => StyleCopDiagnosticVerifier<TAnalyzer>.VerifyCSharpDiagnosticAsync(languageVersion, source, settings, expected, cancellationToken);
+        internal static Task VerifyCSharpDiagnosticAsync(LanguageVersion? languageVersion, string source, string? settings, DiagnosticResult[] expected)
+            => StyleCopDiagnosticVerifier<TAnalyzer>.VerifyCSharpDiagnosticAsync(languageVersion, source, settings, expected);
 
-        internal static Task VerifyCSharpFixAsync(string source, DiagnosticResult expected, string? fixedSource, CancellationToken cancellationToken)
-            => VerifyCSharpFixAsync(source, new[] { expected }, fixedSource, cancellationToken);
+        internal static Task VerifyCSharpFixAsync(string source, DiagnosticResult expected, string? fixedSource)
+            => VerifyCSharpFixAsync(source, new[] { expected }, fixedSource);
 
-        internal static Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string? fixedSource, CancellationToken cancellationToken)
+        internal static Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string? fixedSource)
         {
             var test = new CSharpTest
             {
@@ -74,19 +75,19 @@ namespace StyleCop.Analyzers.Test.Verifiers
             }
 
             test.ExpectedDiagnostics.AddRange(expected);
-            return test.RunAsync(cancellationToken);
+            return test.RunAsync();
         }
 
-        internal static Task VerifyCSharpFixAsync(LanguageVersion? languageVersion, string source, DiagnosticResult expected, string? fixedSource, CancellationToken cancellationToken)
-            => VerifyCSharpFixAsync(languageVersion, source, settings: null, new[] { expected }, fixedSource, cancellationToken);
+        internal static Task VerifyCSharpFixAsync(LanguageVersion? languageVersion, string source, DiagnosticResult expected, string? fixedSource)
+            => VerifyCSharpFixAsync(languageVersion, source, settings: null, new[] { expected }, fixedSource);
 
-        internal static Task VerifyCSharpFixAsync(LanguageVersion? languageVersion, string source, DiagnosticResult[] expected, string? fixedSource, CancellationToken cancellationToken)
-            => VerifyCSharpFixAsync(languageVersion, source, settings: null, expected, fixedSource, cancellationToken);
+        internal static Task VerifyCSharpFixAsync(LanguageVersion? languageVersion, string source, DiagnosticResult[] expected, string? fixedSource)
+            => VerifyCSharpFixAsync(languageVersion, source, settings: null, expected, fixedSource);
 
-        internal static Task VerifyCSharpFixAsync(string source, string? settings, DiagnosticResult[] expected, string? fixedSource, CancellationToken cancellationToken)
-            => VerifyCSharpFixAsync(languageVersion: null, source, settings, expected, fixedSource, cancellationToken);
+        internal static Task VerifyCSharpFixAsync(string source, string? settings, DiagnosticResult[] expected, string? fixedSource)
+            => VerifyCSharpFixAsync(languageVersion: null, source, settings, expected, fixedSource);
 
-        internal static Task VerifyCSharpFixAsync(LanguageVersion? languageVersion, string source, string? settings, DiagnosticResult[] expected, string? fixedSource, CancellationToken cancellationToken)
+        internal static Task VerifyCSharpFixAsync(LanguageVersion? languageVersion, string source, string? settings, DiagnosticResult[] expected, string? fixedSource)
         {
             var test = new CSharpTest(languageVersion)
             {
@@ -100,7 +101,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
             }
 
             test.ExpectedDiagnostics.AddRange(expected);
-            return test.RunAsync(cancellationToken);
+            return test.RunAsync();
         }
 
         internal class CSharpTest : CSharpCodeFixTest<TAnalyzer, TCodeFix, DefaultVerifier>
@@ -336,6 +337,13 @@ namespace StyleCop.Analyzers.Test.Verifiers
             public bool IgnoreCompilerDiagnostics { get; set; }
 
             private LanguageVersion? LanguageVersion { get; }
+
+            /// <summary>
+            /// Runs the test using the cancellation token of the current xUnit test.
+            /// </summary>
+            /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+            public Task RunAsync()
+                => this.RunAsync(TestContext.Current.CancellationToken);
 
             protected override Task RunImplAsync(CancellationToken cancellationToken)
             {

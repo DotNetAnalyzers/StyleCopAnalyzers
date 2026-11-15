@@ -5,7 +5,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Testing;
@@ -45,7 +44,7 @@ public class Foo
 }";
 
             DiagnosticResult expected = this.Diagnostic().WithLocation(6, 9);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -77,7 +76,7 @@ public class Foo
                 this.Diagnostic().WithLocation(17, 13),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, includeSystemDll: false, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, includeSystemDll: false).ConfigureAwait(false);
         }
     }
 }

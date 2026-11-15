@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp13.ReadabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp12.ReadabilityRules;
@@ -30,7 +29,7 @@ class Foo<T>
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -56,7 +55,7 @@ class Foo<T>
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
     }
 }

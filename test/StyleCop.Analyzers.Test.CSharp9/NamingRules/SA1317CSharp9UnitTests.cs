@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.NamingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.NamingRules;
@@ -18,7 +17,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.NamingRules
         {
             var testCode = @"public record RecordName {}";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -34,7 +33,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.NamingRules
                     Diagnostic().WithArguments("RеcоrdNаmе", 9).WithLocation(1, 15),
                 };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
     }
 }

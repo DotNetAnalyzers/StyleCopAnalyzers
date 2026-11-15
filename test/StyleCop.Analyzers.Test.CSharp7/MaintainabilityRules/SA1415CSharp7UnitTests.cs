@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules;
 
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp;
 using StyleCop.Analyzers.MaintainabilityRules;
@@ -87,6 +86,6 @@ public class Outer
             test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
         }
 
-        return test.RunAsync(CancellationToken.None);
+        return test.RunAsync();
     }
 }

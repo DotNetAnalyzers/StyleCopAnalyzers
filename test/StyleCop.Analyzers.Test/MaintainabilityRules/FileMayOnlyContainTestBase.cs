@@ -5,7 +5,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -32,7 +31,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             testCode = testCode.Replace("%1", this.Keyword);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -63,14 +62,14 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             if (this.SupportsCodeFix)
             {
-                await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode).ConfigureAwait(false);
             }
             else
             {
-                await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), expected, CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), expected).ConfigureAwait(false);
                 foreach (var (_, code) in fixedCode)
                 {
-                    await this.VerifyCSharpDiagnosticAsync(code, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                    await this.VerifyCSharpDiagnosticAsync(code, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
                 }
             }
         }
@@ -114,14 +113,14 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             if (this.SupportsCodeFix)
             {
-                await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode).ConfigureAwait(false);
             }
             else
             {
-                await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), expected, CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), expected).ConfigureAwait(false);
                 foreach (var (_, code) in fixedCode)
                 {
-                    await this.VerifyCSharpDiagnosticAsync(code, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                    await this.VerifyCSharpDiagnosticAsync(code, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
                 }
             }
         }
@@ -158,14 +157,14 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             if (this.SupportsCodeFix)
             {
-                await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode).ConfigureAwait(false);
             }
             else
             {
-                await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), expected, CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), expected).ConfigureAwait(false);
                 foreach (var (_, code) in fixedCode)
                 {
-                    await this.VerifyCSharpDiagnosticAsync(code, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                    await this.VerifyCSharpDiagnosticAsync(code, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
                 }
             }
         }
@@ -198,15 +197,15 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             if (this.SupportsCodeFix)
             {
-                await this.VerifyCSharpFixAsync(testCode.Replace("%1", this.Keyword), this.GetSettings(), expected, fixedCode.Select(c => (c.Item1, c.Item2.Replace("%1", this.Keyword))).ToArray(), CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpFixAsync(testCode.Replace("%1", this.Keyword), this.GetSettings(), expected, fixedCode.Select(c => (c.Item1, c.Item2.Replace("%1", this.Keyword))).ToArray()).ConfigureAwait(false);
             }
             else
             {
-                await this.VerifyCSharpDiagnosticAsync(testCode.Replace("%1", this.Keyword), this.GetSettings(), expected, CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpDiagnosticAsync(testCode.Replace("%1", this.Keyword), this.GetSettings(), expected).ConfigureAwait(false);
 
                 foreach (var (_, code) in fixedCode)
                 {
-                    await this.VerifyCSharpDiagnosticAsync(code.Replace("%1", this.Keyword), this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                    await this.VerifyCSharpDiagnosticAsync(code.Replace("%1", this.Keyword), this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
                 }
             }
         }
@@ -243,14 +242,14 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             if (this.SupportsCodeFix)
             {
-                await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode).ConfigureAwait(false);
             }
             else
             {
-                await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), expected, CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), expected).ConfigureAwait(false);
                 foreach (var (_, code) in fixedCode)
                 {
-                    await this.VerifyCSharpDiagnosticAsync(code, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                    await this.VerifyCSharpDiagnosticAsync(code, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
                 }
             }
         }
@@ -292,14 +291,14 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             if (this.SupportsCodeFix)
             {
-                await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode).ConfigureAwait(false);
             }
             else
             {
-                await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), expected, CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), expected).ConfigureAwait(false);
                 foreach (var (_, code) in fixedCode)
                 {
-                    await this.VerifyCSharpDiagnosticAsync(code, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                    await this.VerifyCSharpDiagnosticAsync(code, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
                 }
             }
         }
@@ -307,10 +306,10 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         protected DiagnosticResult Diagnostic()
             => new DiagnosticResult(this.Analyzer.SupportedDiagnostics.Single());
 
-        protected Task VerifyCSharpDiagnosticAsync(string source, string? testSettings, DiagnosticResult expected, CancellationToken cancellationToken)
-            => this.VerifyCSharpDiagnosticAsync(source, testSettings, new[] { expected }, cancellationToken);
+        protected Task VerifyCSharpDiagnosticAsync(string source, string? testSettings, DiagnosticResult expected)
+            => this.VerifyCSharpDiagnosticAsync(source, testSettings, new[] { expected });
 
-        protected Task VerifyCSharpDiagnosticAsync(string source, string? testSettings, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        protected Task VerifyCSharpDiagnosticAsync(string source, string? testSettings, DiagnosticResult[] expected)
         {
             var test = new CSharpTest(this)
             {
@@ -319,13 +318,13 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             };
 
             test.ExpectedDiagnostics.AddRange(expected);
-            return test.RunAsync(cancellationToken);
+            return test.RunAsync();
         }
 
-        protected Task VerifyCSharpFixAsync(string source, string? testSettings, DiagnosticResult expected, (string fileName, string content)[] fixedSources, CancellationToken cancellationToken)
-            => this.VerifyCSharpFixAsync(source, testSettings, new[] { expected }, fixedSources, cancellationToken);
+        protected Task VerifyCSharpFixAsync(string source, string? testSettings, DiagnosticResult expected, (string fileName, string content)[] fixedSources)
+            => this.VerifyCSharpFixAsync(source, testSettings, new[] { expected }, fixedSources);
 
-        protected Task VerifyCSharpFixAsync(string source, string? testSettings, DiagnosticResult[] expected, (string fileName, string content)[] fixedSources, CancellationToken cancellationToken)
+        protected Task VerifyCSharpFixAsync(string source, string? testSettings, DiagnosticResult[] expected, (string fileName, string content)[] fixedSources)
         {
             var test = new CSharpTest(this)
             {
@@ -339,7 +338,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             }
 
             test.ExpectedDiagnostics.AddRange(expected);
-            return test.RunAsync(cancellationToken);
+            return test.RunAsync();
         }
 
         protected virtual string? GetSettings() => null;

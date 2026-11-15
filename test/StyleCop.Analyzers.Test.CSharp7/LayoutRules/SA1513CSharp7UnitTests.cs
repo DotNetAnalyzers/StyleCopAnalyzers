@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
@@ -54,7 +53,7 @@ public class Foo
 }
 ";
 
-            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, testCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -141,7 +140,7 @@ public class Foo
                 Diagnostic().WithLocation(27, 10),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -170,7 +169,7 @@ public class Foo
 }
 ";
 
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3.OrLaterDefault(), testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3.OrLaterDefault(), testCode, DiagnosticResult.EmptyDiagnosticResults, testCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -199,7 +198,7 @@ public class Foo
 }
 ";
 
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3.OrLaterDefault(), testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3.OrLaterDefault(), testCode, DiagnosticResult.EmptyDiagnosticResults, testCode).ConfigureAwait(false);
         }
     }
 }

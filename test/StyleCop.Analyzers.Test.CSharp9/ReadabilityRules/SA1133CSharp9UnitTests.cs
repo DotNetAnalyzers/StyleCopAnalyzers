@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.Test.CSharp8.ReadabilityRules;
     using Xunit;
@@ -66,7 +65,7 @@ class Attr2Attribute : Attribute
 }
 ";
 
-            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode).ConfigureAwait(false);
         }
     }
 }

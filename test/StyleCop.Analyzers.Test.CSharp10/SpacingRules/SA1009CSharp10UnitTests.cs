@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp10.SpacingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp9.SpacingRules;
@@ -47,7 +46,7 @@ class TestClass
                 {
                     Diagnostic(DescriptorFollowed).WithLocation(0),
                 },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -72,7 +71,7 @@ class TestClass
     }
 }";
 
-            await VerifyCSharpFixAsync(testCode, Diagnostic(DescriptorNotPreceded).WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic(DescriptorNotPreceded).WithLocation(0), fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -94,7 +93,7 @@ class TestClass
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -123,7 +122,7 @@ class TestClass
 }";
 
             var expected = Diagnostic(DescriptorFollowed).WithLocation(0);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -161,7 +160,7 @@ public record struct MyQuery3(int X) : IQuery;
                 Diagnostic(DescriptorNotPreceded).WithLocation(1),
                 Diagnostic(DescriptorFollowed).WithLocation(2),
             };
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

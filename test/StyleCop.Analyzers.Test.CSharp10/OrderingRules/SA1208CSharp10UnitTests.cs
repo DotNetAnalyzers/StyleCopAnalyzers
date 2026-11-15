@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp9.OrderingRules;
@@ -60,7 +59,7 @@ class A
                     Diagnostic().WithLocation(1).WithArguments("System.IO", "Xyz"),
                     Diagnostic().WithLocation(2).WithArguments("System.Threading.Tasks", "Xyz"),
                 },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -105,7 +104,7 @@ class A
                     Diagnostic().WithLocation(1).WithArguments("System.IO", "Xyz"),
                     Diagnostic().WithLocation(2).WithArguments("System.Threading.Tasks", "Xyz"),
                 },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -127,7 +126,7 @@ class TestClass
 {
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -171,7 +170,7 @@ using OtherNamespace;
                     Diagnostic().WithLocation(2).WithArguments("System.IO", "OtherNamespace"),
                     Diagnostic().WithLocation(3).WithArguments("System", "OtherNamespace"),
                 },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
     }
 }

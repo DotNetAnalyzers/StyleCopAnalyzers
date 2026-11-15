@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.DocumentationRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
@@ -28,7 +27,7 @@ public {keyword} TestRecord<T>
 ";
 
             var expected = Diagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(0);
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Theory]
@@ -41,7 +40,7 @@ public {keyword} TestRecord<T>
 public {typeKeyword} TestType<T>(T X);";
 
             var expected = this.GetExpectedResultTestGenericTypeWithPrimaryConstructorTypeParameterWithoutText();
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         protected virtual DiagnosticResult[] GetExpectedResultTestGenericTypeWithPrimaryConstructorTypeParameterWithoutText()

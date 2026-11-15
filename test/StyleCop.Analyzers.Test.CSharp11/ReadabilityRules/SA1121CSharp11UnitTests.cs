@@ -5,7 +5,6 @@ namespace StyleCop.Analyzers.Test.CSharp11.ReadabilityRules
 {
     using System.IO;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
@@ -119,7 +118,7 @@ class TestClass
                         },
                     },
                 },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -175,7 +174,7 @@ class TestClass
                         },
                     },
                 },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -243,7 +242,7 @@ class TestClass
                         },
                     },
                 },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -295,7 +294,7 @@ class TestClass
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -339,7 +338,7 @@ class TestClass
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net70,
                 TestCode = testCode,
                 FixedCode = fixedCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -378,7 +377,7 @@ class TestClass
                 ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net472.Default,
                 TestCode = testCode,
                 FixedCode = fixedCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -419,7 +418,7 @@ class TestClass
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60,
                 TestCode = testCode,
                 FixedCode = fixedCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -459,7 +458,7 @@ class TestClass
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         // NOTE: This tests a fix for a c# 10 feature, but the Roslyn API used to solve it wasn't available in the version
@@ -480,7 +479,7 @@ class TestClass
             await new CSharpTest()
             {
                 TestSources = { source1, source2 },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -496,7 +495,7 @@ class TestClass
             await new CSharpTest()
             {
                 TestSources = { source },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -525,7 +524,7 @@ class TestClass
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -545,7 +544,7 @@ class TestClass
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net60,
                 TestCode = testCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -584,7 +583,7 @@ class TestClass
 }
 ";
 
-            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -617,7 +616,7 @@ class TestClass
 }
 ";
 
-            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode).ConfigureAwait(false);
         }
     }
 }

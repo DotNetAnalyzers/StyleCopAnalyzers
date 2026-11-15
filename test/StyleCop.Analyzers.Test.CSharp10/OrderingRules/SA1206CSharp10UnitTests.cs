@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp9.OrderingRules;
@@ -32,7 +31,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
 }}
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -57,7 +56,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
 ";
 
             var expected = Diagnostic().WithLocation(0).WithArguments("public", "sealed");
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

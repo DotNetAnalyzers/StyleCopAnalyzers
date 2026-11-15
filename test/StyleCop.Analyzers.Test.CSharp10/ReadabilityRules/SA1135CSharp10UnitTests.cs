@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp10.ReadabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp9.ReadabilityRules;
@@ -36,7 +35,7 @@ using static corlib::System.Math;
             {
                 ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net472.Default,
                 TestCode = testCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -49,7 +48,7 @@ namespace TestNamespace
     using KeyValue = System.Collections.Generic.KeyValuePair<string, object?>;
 }
 ";
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
             await new CSharpTest
             {
                 TestState =
@@ -74,7 +73,7 @@ using A.B.C;
 ",
                     },
                 },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
     }
 }

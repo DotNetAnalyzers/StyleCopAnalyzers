@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.DocumentationRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.DocumentationRules;
@@ -24,7 +23,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.DocumentationRules
 public {typeKeyword} TestType(int X);";
 
             var expected = this.GetExpectedResultTestPrimaryConstructorParameterWithoutText();
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         protected virtual DiagnosticResult[] GetExpectedResultTestPrimaryConstructorParameterWithoutText()

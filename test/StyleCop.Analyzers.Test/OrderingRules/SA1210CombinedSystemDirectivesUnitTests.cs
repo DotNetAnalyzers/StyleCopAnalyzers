@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
@@ -45,7 +44,7 @@ namespace Bar
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(namespaceDeclaration, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(namespaceDeclaration, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Theory]
@@ -87,7 +86,7 @@ namespace Bar
                 Diagnostic().WithLocation(2),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -123,7 +122,7 @@ namespace Food
                 Diagnostic().WithLocation(3, 1),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -163,7 +162,7 @@ namespace Food
                 Diagnostic().WithLocation(5, 1),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -177,7 +176,7 @@ namespace Food
     using static System.Math;
 }";
 
-            await VerifyCSharpDiagnosticAsync(namespaceDeclaration, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(namespaceDeclaration, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -216,13 +215,13 @@ using Microsoft.CodeAnalysis;
                 Diagnostic().WithLocation(7, 1),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
-        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
-            => VerifyCSharpFixAsync(source, expected, fixedSource: null, cancellationToken);
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected)
+            => VerifyCSharpFixAsync(source, expected, fixedSource: null);
 
-        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string? fixedSource, CancellationToken cancellationToken)
+        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string? fixedSource)
         {
             var test = new StyleCopCodeFixVerifier<SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace, UsingCodeFixProvider>.CSharpTest
             {
@@ -236,7 +235,7 @@ using Microsoft.CodeAnalysis;
             }
 
             test.ExpectedDiagnostics.AddRange(expected);
-            return test.RunAsync(cancellationToken);
+            return test.RunAsync();
         }
     }
 }

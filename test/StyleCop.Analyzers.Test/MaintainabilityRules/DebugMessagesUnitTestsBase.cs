@@ -7,7 +7,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using System.Diagnostics;
     using System.Linq;
     using System.Text;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -204,7 +203,7 @@ public class Foo
     }}
 }}";
 
-            await this.VerifyCSharpDiagnosticAsync(this.BuildTestCode(testCode), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(this.BuildTestCode(testCode), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -232,7 +231,7 @@ class Debug
 }}
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(this.BuildTestCode(testCode), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(this.BuildTestCode(testCode), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -247,7 +246,7 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -277,19 +276,19 @@ public class Foo
                 this.Diagnostic().WithLocation(12, 9),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(this.BuildTestCode(testCode), expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(this.BuildTestCode(testCode), expected).ConfigureAwait(false);
         }
 
         protected DiagnosticResult Diagnostic()
             => new DiagnosticResult(this.Analyzer.SupportedDiagnostics.Single());
 
-        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
-            => this.VerifyCSharpDiagnosticAsync(source, new[] { expected }, includeSystemDll: true, cancellationToken);
+        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected)
+            => this.VerifyCSharpDiagnosticAsync(source, new[] { expected }, includeSystemDll: true);
 
-        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
-            => this.VerifyCSharpDiagnosticAsync(source, expected, includeSystemDll: true, cancellationToken);
+        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected)
+            => this.VerifyCSharpDiagnosticAsync(source, expected, includeSystemDll: true);
 
-        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, bool includeSystemDll, CancellationToken cancellationToken)
+        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, bool includeSystemDll)
         {
             var test = new CSharpTest(this)
             {
@@ -306,7 +305,7 @@ public class Foo
             }
 
             test.ExpectedDiagnostics.AddRange(expected);
-            return test.RunAsync(cancellationToken);
+            return test.RunAsync();
         }
 
         protected virtual string BuildTestCode(string format)
@@ -333,7 +332,7 @@ public class Foo
     }}}}
 }}}}";
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected).ConfigureAwait(false);
         }
 
         private async Task TestConstantMessage_Local_PassExecuterAsync(string argument, params DiagnosticResult[] expected)
@@ -348,7 +347,7 @@ public class Foo
     }}}}
 }}}}";
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected).ConfigureAwait(false);
         }
 
         private async Task TestConstantMessage_Inline_PassExecuterAsync(string argument, params DiagnosticResult[] expected)
@@ -362,7 +361,7 @@ public class Foo
     }}}}
 }}}}";
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected).ConfigureAwait(false);
         }
 
         private async Task TestConstantMessage_Field_FailAsync(string argument)
@@ -378,7 +377,7 @@ public class Foo
 }}}}";
 
             DiagnosticResult expected = this.Diagnostic().WithLocation(7, 9);
-            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected).ConfigureAwait(false);
         }
 
         private async Task TestConstantMessage_Local_FailAsync(string argument)
@@ -394,7 +393,7 @@ public class Foo
 }}}}";
 
             DiagnosticResult expected = this.Diagnostic().WithLocation(7, 9);
-            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected).ConfigureAwait(false);
         }
 
         private async Task TestConstantMessage_Inline_FailAsync(string argument)
@@ -409,7 +408,7 @@ public class Foo
 }}}}";
 
             DiagnosticResult expected = this.Diagnostic().WithLocation(6, 9);
-            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected).ConfigureAwait(false);
         }
 
         private class CSharpTest : StyleCopDiagnosticVerifier<EmptyDiagnosticAnalyzer>.CSharpTest

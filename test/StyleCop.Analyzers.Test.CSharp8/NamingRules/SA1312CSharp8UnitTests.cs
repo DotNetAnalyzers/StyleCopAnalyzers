@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp8.NamingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp7.NamingRules;
@@ -44,7 +43,7 @@ public class TypeName
                 Diagnostic().WithArguments("__").WithLocation(1),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, testCode).ConfigureAwait(false);
         }
     }
 }

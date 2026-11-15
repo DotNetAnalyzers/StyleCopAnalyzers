@@ -111,9 +111,9 @@ namespace StyleCop.Analyzers.Test.HelperTests
         public async Task VerifyGetIndentationStepsAsync(string indentationString, int expectedIndentationSteps, int indentationSize, int tabSize)
         {
             var testSource = $"{indentationString}public class TestClass {{}}";
-            var document = await CreateTestDocumentAsync(testSource, indentationSize, false, tabSize, CancellationToken.None).ConfigureAwait(false);
-            var syntaxRoot = await document.GetSyntaxRootAsync(CancellationToken.None).ConfigureAwait(false);
-            StyleCopSettings settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, CancellationToken.None);
+            var document = await CreateTestDocumentAsync(testSource, indentationSize, false, tabSize, TestContext.Current.CancellationToken).ConfigureAwait(false);
+            var syntaxRoot = await document.GetSyntaxRootAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
+            StyleCopSettings settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, TestContext.Current.CancellationToken);
 
             var firstToken = syntaxRoot.GetFirstToken();
 
@@ -129,9 +129,9 @@ namespace StyleCop.Analyzers.Test.HelperTests
         public async Task VerifyGetIndentationStepsForTokenNotAtStartOfLineAsync()
         {
             var testSource = "    public class TestClass {}";
-            var document = await CreateTestDocumentAsync(testSource, cancellationToken: CancellationToken.None).ConfigureAwait(false);
-            var syntaxRoot = await document.GetSyntaxRootAsync(CancellationToken.None).ConfigureAwait(false);
-            StyleCopSettings settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, CancellationToken.None);
+            var document = await CreateTestDocumentAsync(testSource, cancellationToken: TestContext.Current.CancellationToken).ConfigureAwait(false);
+            var syntaxRoot = await document.GetSyntaxRootAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
+            StyleCopSettings settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, TestContext.Current.CancellationToken);
 
             var secondToken = syntaxRoot.GetFirstToken().GetNextToken();
 

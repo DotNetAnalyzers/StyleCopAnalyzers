@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
@@ -60,7 +59,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
                 Diagnostic().WithLocation(12, 17),
             };
 
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3.OrLaterDefault(), testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3.OrLaterDefault(), testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -107,7 +106,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
                 Diagnostic().WithLocation(12, 17),
             };
 
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3.OrLaterDefault(), testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3.OrLaterDefault(), testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

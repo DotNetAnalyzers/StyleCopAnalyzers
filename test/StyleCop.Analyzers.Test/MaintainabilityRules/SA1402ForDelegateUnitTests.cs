@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     using System;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Settings.ObjectModel;
@@ -20,7 +19,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         {
             var testCode = @"public delegate void Foo();";
 
-            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -39,7 +38,7 @@ public delegate void Bar();
             };
 
             DiagnosticResult expected = Diagnostic().WithLocation(2, 22);
-            await VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode).ConfigureAwait(false);
         }
 
         [Theory]
@@ -67,7 +66,7 @@ public delegate void Bar<T1, T2, T3>(T1 x, T2 y, T3 z);
             };
 
             DiagnosticResult expected = Diagnostic().WithLocation(2, 22);
-            await VerifyCSharpFixAsync(testCode, this.GetSettings((FileNamingConvention)namingConvention), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, this.GetSettings((FileNamingConvention)namingConvention), expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -79,7 +78,7 @@ public delegate void Bar<T1, T2, T3>(T1 x, T2 y, T3 z);
 public delegate void Bar();
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -91,7 +90,7 @@ public delegate void Bar();
 public delegate void Bar();
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -118,7 +117,7 @@ public delegate void FooBar();
                 Diagnostic().WithLocation(3, 22),
             };
 
-            await VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -137,7 +136,7 @@ public delegate void Test0();
             };
 
             DiagnosticResult expected = Diagnostic().WithLocation(1, 22);
-            await VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

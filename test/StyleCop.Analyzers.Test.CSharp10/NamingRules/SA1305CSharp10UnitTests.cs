@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp10.NamingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp9.NamingRules;
@@ -30,7 +29,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.NamingRules
                 Diagnostic().WithLocation(0).WithArguments("variable", "iCount"),
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
     }
 }

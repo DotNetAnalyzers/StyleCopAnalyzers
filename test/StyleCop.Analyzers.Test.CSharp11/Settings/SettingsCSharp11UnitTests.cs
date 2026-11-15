@@ -5,7 +5,6 @@ namespace StyleCop.Analyzers.Test.CSharp11.Settings
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -29,7 +28,7 @@ stylecop.documentation.copyrightText = Licensed under {licenseName}.
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             Assert.Single(styleCopSettings.DocumentationRules.Variables);
             Assert.Equal("MIT", styleCopSettings.DocumentationRules.Variables["licensename"]);
@@ -45,12 +44,12 @@ stylecop.documentation.copyrightText = Licensed under {licenseName}.
 stylecop.documentation.companyName = TestCompany
 stylecop.documentation.variables.licenseName = MIT
 ";
-            var syntaxTree = CSharpSyntaxTree.ParseText(string.Empty, path: "/0/Test0.cs");
+            var syntaxTree = CSharpSyntaxTree.ParseText(string.Empty, path: "/0/Test0.cs", cancellationToken: TestContext.Current.CancellationToken);
             var analyzerConfigSet = AnalyzerConfigSet.Create(new[] { AnalyzerConfig.Parse(SourceText.From(settings), "/.editorconfig") });
             var analyzerOptions = new AnalyzerOptions(ImmutableArray<AdditionalText>.Empty, new NoKeysAnalyzerConfigOptionsProvider(analyzerConfigSet));
-            var context = new SyntaxTreeAnalysisContext(syntaxTree, analyzerOptions, reportDiagnostic: _ => { }, isSupportedDiagnostic: _ => true, CancellationToken.None);
+            var context = new SyntaxTreeAnalysisContext(syntaxTree, analyzerOptions, reportDiagnostic: _ => { }, isSupportedDiagnostic: _ => true, TestContext.Current.CancellationToken);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
             Assert.Empty(styleCopSettings.DocumentationRules.Variables);

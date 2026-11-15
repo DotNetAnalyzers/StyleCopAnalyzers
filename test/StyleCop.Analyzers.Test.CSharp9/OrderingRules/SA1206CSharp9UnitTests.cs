@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.OrderingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.OrderingRules;
@@ -59,7 +58,7 @@ public class DerivedClass : BaseClass
 }
 ";
 
-            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode).ConfigureAwait(false);
         }
 
         [Theory]
@@ -77,7 +76,7 @@ public class DerivedClass : BaseClass
 ";
 
             var expected = Diagnostic().WithLocation(0).WithArguments("public", "unsafe");
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Theory]
@@ -90,7 +89,7 @@ public class DerivedClass : BaseClass
             var fixedCode = $@"public sealed {typeKeyword} TestType(int X);";
 
             var expected = this.GetExpectedResultTestModifierOrderInTypeWithPrimaryConstructor();
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         protected virtual DiagnosticResult[] GetExpectedResultTestModifierOrderInTypeWithPrimaryConstructor()

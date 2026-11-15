@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.Test.MaintainabilityRules;
 
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
@@ -27,7 +26,7 @@ public class SX1412UnitTests
         };
 
         test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -41,7 +40,7 @@ public class SX1412UnitTests
         };
 
         test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -56,7 +55,7 @@ public class SX1412UnitTests
         };
 
         test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -71,7 +70,7 @@ public class SX1412UnitTests
         };
 
         test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -86,7 +85,7 @@ public class SX1412UnitTests
         };
 
         test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -116,6 +115,6 @@ public class SX1412UnitTests
         };
 
         test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 }

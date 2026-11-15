@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp10.ReadabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.Test.CSharp9.ReadabilityRules;
     using StyleCop.Analyzers.Test.Helpers;
@@ -162,7 +161,7 @@ using System;
 class MyAttribute : Attribute {{ }}
 ",
                 },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
     }
 }

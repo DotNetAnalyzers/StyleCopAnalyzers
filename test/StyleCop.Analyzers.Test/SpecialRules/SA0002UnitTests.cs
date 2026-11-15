@@ -29,7 +29,7 @@ namespace NamespaceName { }
         [Fact]
         public async Task TestMissingSettingsAsync()
         {
-            await VerifyCSharpDiagnosticAsync(TestCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(TestCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Theory]
@@ -43,7 +43,7 @@ namespace NamespaceName { }
                 TestCode = TestCode,
                 Settings = $$"""{ "settings": { "orderingRules": { "memberKindOrder": {{value}} } } }""",
                 ExpectedDiagnostics = { Diagnostic().WithArguments(error) },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -54,7 +54,7 @@ namespace NamespaceName { }
                 TestCode = TestCode,
                 Settings = """{ "settings": { "orderingRules": { "accessibilityOrder": ["internal, private", "public", "protectedInternal", "protected", "privateProtected", "private"] } } }""",
                 ExpectedDiagnostics = { Diagnostic().WithArguments("accessibilityOrder cannot contain value 'internal, private'.") },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -78,7 +78,7 @@ namespace NamespaceName { }
                         },
                     },
                 },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -88,7 +88,7 @@ namespace NamespaceName { }
             {
                 TestCode = TestCode,
                 Settings = SettingsFileCodeFixProvider.DefaultSettingsFileContent,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -115,7 +115,7 @@ namespace NamespaceName { }
                 TestCode = TestCode,
                 ExpectedDiagnostics = { expected },
                 Settings = settings,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -139,7 +139,7 @@ namespace NamespaceName { }
                 TestCode = TestCode,
                 ExpectedDiagnostics = { expected },
                 Settings = settings,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -163,7 +163,7 @@ namespace NamespaceName { }
                 TestCode = TestCode,
                 ExpectedDiagnostics = { expected },
                 Settings = settings,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -187,7 +187,7 @@ namespace NamespaceName { }
                 TestCode = TestCode,
                 ExpectedDiagnostics = { expected },
                 Settings = settings,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -211,7 +211,7 @@ namespace NamespaceName { }
                 TestCode = TestCode,
                 ExpectedDiagnostics = { expected },
                 Settings = settings,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -235,7 +235,7 @@ namespace NamespaceName { }
                 TestCode = TestCode,
                 ExpectedDiagnostics = { expected },
                 Settings = settings,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -259,7 +259,7 @@ namespace NamespaceName { }
                 TestCode = TestCode,
                 ExpectedDiagnostics = { expected },
                 Settings = settings,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -283,7 +283,7 @@ namespace NamespaceName { }
                 TestCode = TestCode,
                 ExpectedDiagnostics = { expected },
                 Settings = settings,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -307,7 +307,7 @@ namespace NamespaceName { }
                 TestCode = TestCode,
                 ExpectedDiagnostics = { expected },
                 Settings = settings,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -329,7 +329,7 @@ namespace NamespaceName { }
                 TestCode = TestCode,
                 ExpectedDiagnostics = { expected },
                 Settings = settings,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -354,7 +354,7 @@ namespace NamespaceName { }
                 TestCode = TestCode,
                 ExpectedDiagnostics = { expected },
                 Settings = settings,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -372,7 +372,7 @@ namespace NamespaceName { }
                 TestCode = TestCode,
                 ExpectedDiagnostics = { expected },
                 Settings = settings,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -387,7 +387,7 @@ namespace NamespaceName { }
                     (solution, projectId) =>
                     {
 #pragma warning disable VSTHRD002 // async approach not available in this context.
-                        var compilation = solution.GetProject(projectId).GetCompilationAsync(CancellationToken.None).GetAwaiter().GetResult();
+                        var compilation = solution.GetProject(projectId).GetCompilationAsync(TestContext.Current.CancellationToken).GetAwaiter().GetResult();
 #pragma warning restore VSTHRD002 // async approach not available in this context.
 
                         var analysisContext = new AnalysisContextMissingOptions();
@@ -397,14 +397,14 @@ namespace NamespaceName { }
 
                         var additionalFiles = ImmutableArray.Create<AdditionalText>(new InvalidAdditionalText());
                         Assert.Null(additionalFiles[0].Path);
-                        Assert.Null(additionalFiles[0].GetText(CancellationToken.None));
-                        var context = new CompilationAnalysisContext(compilation, options: new AnalyzerOptions(additionalFiles), reportDiagnostic: null, isSupportedDiagnostic: null, cancellationToken: CancellationToken.None);
+                        Assert.Null(additionalFiles[0].GetText(TestContext.Current.CancellationToken));
+                        var context = new CompilationAnalysisContext(compilation, options: new AnalyzerOptions(additionalFiles), reportDiagnostic: null, isSupportedDiagnostic: null, cancellationToken: TestContext.Current.CancellationToken);
                         Assert.Throws<ArgumentNullException>(() => analysisContext.CompilationAction(context));
 
                         return solution;
                     },
                 },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         private class InvalidAdditionalText : AdditionalText

@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
@@ -57,7 +56,7 @@ struct TestStruct
 }}
 ";
             DiagnosticResult expected = Diagnostic().WithLocation(8, 18);
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_1.OrLaterDefault(), testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_1.OrLaterDefault(), testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

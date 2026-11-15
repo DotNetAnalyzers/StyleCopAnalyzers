@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
 {
     using System.Collections.Generic;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Lightup;
@@ -62,7 +61,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -81,7 +80,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -109,7 +108,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 40),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Theory]
@@ -125,7 +124,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
     }}
 }}";
 
-            await VerifyCSharpDiagnosticAsync(LanguageVersionEx.CSharp7_2.OrLaterDefault(), testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(LanguageVersionEx.CSharp7_2.OrLaterDefault(), testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
     }
 }

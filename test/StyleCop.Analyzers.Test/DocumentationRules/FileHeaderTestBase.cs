@@ -5,7 +5,6 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
@@ -43,7 +42,7 @@ namespace Bar
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -63,7 +62,7 @@ namespace Bar
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -85,7 +84,7 @@ namespace Bar
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         protected static DiagnosticResult Diagnostic(DiagnosticDescriptor descriptor)
@@ -100,19 +99,19 @@ namespace Bar
         protected virtual IEnumerable<string> GetExplicitlyEnabledDiagnostics()
             => Enumerable.Empty<string>();
 
-        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
-            => this.VerifyCSharpFixAsync(source, new[] { expected }, fixedSource: null, cancellationToken);
+        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected)
+            => this.VerifyCSharpFixAsync(source, new[] { expected }, fixedSource: null);
 
-        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
-            => this.VerifyCSharpFixAsync(source, expected, fixedSource: null, cancellationToken);
+        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected)
+            => this.VerifyCSharpFixAsync(source, expected, fixedSource: null);
 
-        protected Task VerifyCSharpFixAsync(string source, DiagnosticResult expected, string? fixedSource, CancellationToken cancellationToken)
-            => this.VerifyCSharpFixAsync(source, new[] { expected }, fixedSource, cancellationToken);
+        protected Task VerifyCSharpFixAsync(string source, DiagnosticResult expected, string? fixedSource)
+            => this.VerifyCSharpFixAsync(source, new[] { expected }, fixedSource);
 
-        protected Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string? fixedSource, CancellationToken cancellationToken)
-            => this.VerifyCSharpFixAsync(source, expected, fixedSource, DiagnosticResult.EmptyDiagnosticResults, cancellationToken);
+        protected Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string? fixedSource)
+            => this.VerifyCSharpFixAsync(source, expected, fixedSource, DiagnosticResult.EmptyDiagnosticResults);
 
-        protected Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string? fixedSource, DiagnosticResult[] remainingDiagnostics, CancellationToken cancellationToken)
+        protected Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string? fixedSource, DiagnosticResult[] remainingDiagnostics)
         {
             var test = new StyleCopCodeFixVerifier<FileHeaderAnalyzers, FileHeaderCodeFixProvider>.CSharpTest
             {
@@ -130,7 +129,7 @@ namespace Bar
             test.RemainingDiagnostics.AddRange(remainingDiagnostics);
             test.DisabledDiagnostics.AddRange(this.GetDisabledDiagnostics());
             test.ExplicitlyEnabledDiagnostics.AddRange(this.GetExplicitlyEnabledDiagnostics());
-            return test.RunAsync(cancellationToken);
+            return test.RunAsync();
         }
     }
 }

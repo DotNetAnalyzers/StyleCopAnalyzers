@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.Test.LayoutRules
 {
     using System.Text;
-    using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.LayoutRules;
     using StyleCop.Analyzers.Settings.ObjectModel;
@@ -43,7 +42,7 @@ using Factory = System.Activator;
             {
                 TestCode = testCode,
                 Settings = GetSettings(blankLinesBetweenUsingGroups: OptionSetting.Allow),
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         //// TODO: Add namespace checks to the remaining code using WrapWithNamespace
@@ -98,7 +97,7 @@ namespace TestNamespace
                 },
                 FixedCode = fixedTestCode,
                 Settings = GetSettings(systemUsingDirectivesFirst: true, blankLinesBetweenUsingGroups: OptionSetting.Omit),
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -149,7 +148,7 @@ namespace TestNamespace
                 },
                 FixedCode = fixedTestCode,
                 Settings = GetSettings(systemUsingDirectivesFirst: false, blankLinesBetweenUsingGroups: OptionSetting.Omit),
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -182,7 +181,7 @@ namespace TestNamespace
             {
                 TestCode = testCode,
                 Settings = GetSettings(systemUsingDirectivesFirst: true, blankLinesBetweenUsingGroups: OptionSetting.Omit),
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -235,7 +234,7 @@ namespace TestNamespace
                 },
                 FixedCode = fixedTestCode,
                 Settings = GetSettings(systemUsingDirectivesFirst: true, blankLinesBetweenUsingGroups: OptionSetting.Require),
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -286,7 +285,7 @@ namespace TestNamespace
                 },
                 FixedCode = fixedTestCode,
                 Settings = GetSettings(systemUsingDirectivesFirst: false, blankLinesBetweenUsingGroups: OptionSetting.Require),
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         private static string GetSettings(bool systemUsingDirectivesFirst = true, OptionSetting blankLinesBetweenUsingGroups = OptionSetting.Allow)

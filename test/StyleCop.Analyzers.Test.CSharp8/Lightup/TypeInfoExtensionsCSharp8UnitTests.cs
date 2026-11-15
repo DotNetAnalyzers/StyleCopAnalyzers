@@ -21,7 +21,8 @@ public partial class TypeInfoExtensionsCSharp8UnitTests : TypeInfoExtensionsCSha
     {
         var syntaxTree = CSharpSyntaxTree.ParseText(
             "#nullable enable\nclass C { void M() { object? value = null; value.ToString(); } }",
-            new CSharpParseOptions(LanguageVersion.CSharp8));
+            new CSharpParseOptions(LanguageVersion.CSharp8),
+            cancellationToken: TestContext.Current.CancellationToken);
         var compilation = CSharpCompilation.Create(
             "Test",
             new[] { syntaxTree },
@@ -29,9 +30,9 @@ public partial class TypeInfoExtensionsCSharp8UnitTests : TypeInfoExtensionsCSha
             new CSharpCompilationOptions(
                 OutputKind.DynamicallyLinkedLibrary,
                 nullableContextOptions: NullableContextOptions.Enable));
-        var expression = syntaxTree.GetRoot().DescendantNodes().OfType<IdentifierNameSyntax>()
+        var expression = syntaxTree.GetRoot(TestContext.Current.CancellationToken).DescendantNodes().OfType<IdentifierNameSyntax>()
             .Single(node => node.Identifier.ValueText == "value");
-        var typeInfo = compilation.GetSemanticModel(syntaxTree).GetTypeInfo(expression);
+        var typeInfo = compilation.GetSemanticModel(syntaxTree).GetTypeInfo(expression, TestContext.Current.CancellationToken);
 
         Assert.Equal(NullableAnnotation.Annotated, typeInfo.Nullability().Annotation);
         Assert.Equal(NullableFlowState.MaybeNull, typeInfo.Nullability().FlowState);
@@ -57,7 +58,8 @@ public partial class TypeInfoExtensionsCSharp8UnitTests : TypeInfoExtensionsCSha
     {
         var syntaxTree = CSharpSyntaxTree.ParseText(
             "#nullable enable\nclass B { } class C { void M() { C value = new C(); M(value); } void M(B? value) { } public static implicit operator B?(C value) => null; }",
-            new CSharpParseOptions(LanguageVersion.CSharp8));
+            new CSharpParseOptions(LanguageVersion.CSharp8),
+            cancellationToken: TestContext.Current.CancellationToken);
         var compilation = CSharpCompilation.Create(
             "Test",
             new[] { syntaxTree },
@@ -65,9 +67,9 @@ public partial class TypeInfoExtensionsCSharp8UnitTests : TypeInfoExtensionsCSha
             new CSharpCompilationOptions(
                 OutputKind.DynamicallyLinkedLibrary,
                 nullableContextOptions: NullableContextOptions.Enable));
-        var expression = syntaxTree.GetRoot().DescendantNodes().OfType<IdentifierNameSyntax>()
+        var expression = syntaxTree.GetRoot(TestContext.Current.CancellationToken).DescendantNodes().OfType<IdentifierNameSyntax>()
             .Single(node => node.Identifier.ValueText == "value" && node.Parent is ArgumentSyntax);
-        var typeInfo = compilation.GetSemanticModel(syntaxTree).GetTypeInfo(expression);
+        var typeInfo = compilation.GetSemanticModel(syntaxTree).GetTypeInfo(expression, TestContext.Current.CancellationToken);
 
         Assert.Equal(NullableAnnotation.NotAnnotated, typeInfo.Nullability().Annotation);
         Assert.Equal(NullableFlowState.NotNull, typeInfo.Nullability().FlowState);

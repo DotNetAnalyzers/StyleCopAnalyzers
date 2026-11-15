@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp7.SpacingRules;
@@ -52,7 +51,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
                 Diagnostic().WithArguments(" not", "preceded").WithLocation(9, 40),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

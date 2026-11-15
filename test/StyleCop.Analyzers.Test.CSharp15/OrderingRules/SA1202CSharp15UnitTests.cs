@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp15.OrderingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.Test.CSharp14.OrderingRules;
     using Xunit;
@@ -50,7 +49,7 @@ namespace TestNamespace
 
             var expected = Diagnostic().WithLocation(0).WithArguments("public", "internal");
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -81,7 +80,7 @@ public class OuterClass
 
             var expected = Diagnostic().WithLocation(0).WithArguments("public", "private");
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -121,7 +120,7 @@ public union Pet(int, string)
 
             var expected = Diagnostic().WithLocation(0).WithArguments("public", "private");
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

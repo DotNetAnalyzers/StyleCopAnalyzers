@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
@@ -79,7 +78,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 Diagnostic(SA110xQueryClauses.SA1105Descriptor).WithLocation(0),
             };
 
-            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -141,7 +140,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 Diagnostic(SA110xQueryClauses.SA1105Descriptor).WithLocation(15, 51),
             };
 
-            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -215,7 +214,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 Diagnostic(SA110xQueryClauses.SA1105Descriptor).WithLocation(14, 24),
             };
 
-            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -277,7 +276,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 Diagnostic(SA110xQueryClauses.SA1105Descriptor).WithLocation(15, 62),
             };
 
-            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

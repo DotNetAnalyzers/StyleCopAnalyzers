@@ -40,10 +40,11 @@ namespace StyleCop.Analyzers.Test.CSharp14.Lightup
         {
             var syntaxTree = SyntaxFactory.ParseSyntaxTree(
                 "static class E\r\n{\r\n    extension<T>(T value) where T : class\r\n    {\r\n        public int M() => 0;\r\n        public int P => 0;\r\n    }\r\n}\r\n",
-                new CSharpParseOptions(LanguageVersion.Preview));
-            Assert.Empty(syntaxTree.GetDiagnostics());
+                new CSharpParseOptions(LanguageVersion.Preview),
+                cancellationToken: TestContext.Current.CancellationToken);
+            Assert.Empty(syntaxTree.GetDiagnostics(TestContext.Current.CancellationToken));
 
-            var syntaxNode = syntaxTree.GetRoot().DescendantNodes().OfType<ExtensionBlockDeclarationSyntax>().Single();
+            var syntaxNode = syntaxTree.GetRoot(TestContext.Current.CancellationToken).DescendantNodes().OfType<ExtensionBlockDeclarationSyntax>().Single();
             Assert.True(syntaxNode.IsKind(SyntaxKindEx.ExtensionBlockDeclaration));
             Assert.True(ExtensionBlockDeclarationSyntaxWrapper.IsInstance(syntaxNode));
 

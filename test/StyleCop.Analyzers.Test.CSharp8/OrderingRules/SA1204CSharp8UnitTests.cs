@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp8.OrderingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp7.OrderingRules;
@@ -42,7 +41,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.OrderingRules
 }
 ";
 
-            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode).ConfigureAwait(false);
         }
     }
 }

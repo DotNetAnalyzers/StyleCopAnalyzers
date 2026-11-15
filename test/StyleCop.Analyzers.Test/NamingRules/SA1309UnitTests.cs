@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.NamingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Lightup;
@@ -31,7 +30,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     public string bar = ""baz"";
 }".ReplaceLineEndings(lineEnding);
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -42,7 +41,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     public string bar = ""baz"";
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -96,7 +95,7 @@ public class PdbWriter
     }
 }";
 
-            await VerifyCSharpFixAsync(testCode, Diagnostic().WithArguments("_documentIndex").WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithArguments("_documentIndex").WithLocation(0), fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -142,7 +141,7 @@ public partial class PdbWriter<T>
             test.FixedState.Sources.Add(fixedReferences);
             test.ExpectedDiagnostics.Add(Diagnostic().WithArguments("_documentIndex").WithLocation(0));
 
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -168,7 +167,7 @@ public partial class PdbWriter<T>
     }
 }";
 
-            await VerifyCSharpFixAsync(testCode, Diagnostic().WithArguments("_value").WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithArguments("_value").WithLocation(0), fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -200,7 +199,7 @@ public class Derived : Base<int>
     }
 }";
 
-            await VerifyCSharpFixAsync(testCode, Diagnostic().WithArguments("_value").WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithArguments("_value").WithLocation(0), fixedCode).ConfigureAwait(false);
         }
 
         [Theory]
@@ -231,7 +230,7 @@ public class Derived : Base<int>
     }
 }";
 
-            await VerifyCSharpFixAsync(testCode, Diagnostic().WithArguments("_value").WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithArguments("_value").WithLocation(0), fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -242,7 +241,7 @@ public class Derived : Base<int>
     internal string _bar = ""baz"";
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -260,7 +259,7 @@ public class Derived : Base<int>
     internal string bar = ""baz"";
 }";
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -274,7 +273,7 @@ public class Derived : Base<int>
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -289,7 +288,7 @@ public class Derived : Base<int>
 
             // no changes will be made
             var fixedCode = testCode;
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -313,7 +312,7 @@ public class Derived : Base<int>
     public string bar = ""baz"";
 }";
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         // This a regression test for issue #2360.
@@ -329,7 +328,7 @@ public class Derived : Base<int>
 
             // no changes will be made
             var fixedCode = testCode;
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -346,7 +345,7 @@ public class Derived : Base<int>
 }";
 
             DiagnosticResult expected = Diagnostic().WithArguments("_int").WithLocation(3, 20);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -380,7 +379,7 @@ public class Derived : Base<int>
             DiagnosticResult expected = Diagnostic().WithArguments("_testEvent").WithLocation(0);
 
             // The stripped name collides with the event, so the code fix must not be offered.
-            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, testCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -393,7 +392,7 @@ public class TestClass
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
     }
 }

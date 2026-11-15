@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.DocumentationRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.DocumentationRules;
@@ -33,7 +32,7 @@ public partial class TestClass
 
             var expected = Diagnostic().WithLocation(0).WithArguments("T");
 
-            await VerifyCSharpDiagnosticAsync(testCode, new[] { expected }, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, new[] { expected }).ConfigureAwait(false);
         }
 
         [Theory]
@@ -45,7 +44,7 @@ public partial class TestClass
 public {typeKeyword} TestType<{{|#0:T|}}>(T X);";
 
             var expected = this.GetExpectedResultTestGenericTypeWithPrimaryConstructorWithoutTypeParameterDocumentation();
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         protected virtual DiagnosticResult[] GetExpectedResultTestGenericTypeWithPrimaryConstructorWithoutTypeParameterDocumentation()

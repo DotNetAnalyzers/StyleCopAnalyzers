@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
@@ -50,7 +49,7 @@ namespace TestNamespace
             {
             };
 
-            await this.VerifyCSharpFixAsync(testCode, expected, fixedCode, fixedExpected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, expected, fixedCode, fixedExpected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -93,7 +92,7 @@ namespace TestNamespace
             {
             };
 
-            await this.VerifyCSharpFixAsync(testCode, expected, fixedCode, fixedExpected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, expected, fixedCode, fixedExpected).ConfigureAwait(false);
         }
     }
 }

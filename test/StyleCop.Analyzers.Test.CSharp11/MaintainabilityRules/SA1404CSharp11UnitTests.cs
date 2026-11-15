@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp11.MaintainabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.MaintainabilityRules;
     using StyleCop.Analyzers.Test.CSharp10.MaintainabilityRules;
@@ -54,7 +53,7 @@ public class Foo
                 },
                 NumberOfIncrementalIterations = 2,
                 NumberOfFixAllIterations = 2,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
     }
 }

@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp9.OrderingRules;
@@ -43,7 +42,7 @@ class A
 }
 ";
 
-            await VerifyCSharpFixAsync(testCodeNamespace, DiagnosticResult.EmptyDiagnosticResults, fixedTestCodeNamespace, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCodeNamespace, DiagnosticResult.EmptyDiagnosticResults, fixedTestCodeNamespace).ConfigureAwait(false);
         }
 
         [Fact]
@@ -84,7 +83,7 @@ class A
                 {
                     Diagnostic().WithLocation(0),
                 },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -106,7 +105,7 @@ class TestClass
 {
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -144,7 +143,7 @@ using AliasLocal = System.Text.StringBuilder;
                     Diagnostic().WithLocation(0),
                     Diagnostic().WithLocation(1),
                 },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
     }
 }

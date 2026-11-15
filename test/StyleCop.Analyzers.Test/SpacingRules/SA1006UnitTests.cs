@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
@@ -51,7 +50,7 @@ class ClassName
                 Diagnostic().WithArguments("endregion").WithLocation(8, 8),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -101,7 +100,7 @@ more invalid text
                 Diagnostic().WithArguments("endif").WithLocation(14, 5),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -114,7 +113,7 @@ class ClassName
 # ";
 
             DiagnosticResult expected = DiagnosticResult.CompilerError("CS1024").WithMessage("Preprocessor directive expected").WithLocation(5, 1);
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
     }
 }

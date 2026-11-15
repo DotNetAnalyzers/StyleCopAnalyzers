@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp15.NamingRules;
 
-using System.Threading;
 using System.Threading.Tasks;
 using StyleCop.Analyzers.Test.CSharp14.NamingRules;
 using Xunit;
@@ -17,7 +16,6 @@ public partial class SA1317CSharp15UnitTests : SA1317CSharp14UnitTests
     {
         await VerifyCSharpDiagnosticAsync(
             @"public union {|#0:а|}(int, string);",
-            Diagnostic().WithLocation(0).WithArguments("а", 0),
-            CancellationToken.None).ConfigureAwait(false);
+            Diagnostic().WithLocation(0).WithArguments("а", 0)).ConfigureAwait(false);
     }
 }

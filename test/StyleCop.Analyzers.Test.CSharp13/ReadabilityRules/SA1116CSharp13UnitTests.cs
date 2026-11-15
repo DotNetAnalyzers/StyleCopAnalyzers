@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp13.ReadabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp12.ReadabilityRules;
@@ -37,7 +36,7 @@ class Foo
         params ReadOnlySpan<int> s) { }
 }";
 
-            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -71,7 +70,7 @@ class Foo
                 FixedCode = fixedCode,
                 ReferenceAssemblies = ReferenceAssemblies.NetFramework.Net472.Default,
                 CompilerDiagnostics = CompilerDiagnostics.None,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         protected override DiagnosticResult[] GetExpectedResultTestPrimaryConstructorBaseListSplitArgumentsNotStartingOnNextLine()

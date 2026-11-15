@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -79,17 +78,17 @@ End Class
         solution = workspace.CurrentSolution;
 
         var document = solution.GetDocument(csharpDocumentId);
-        var compilation = await document.Project.GetCompilationAsync(CancellationToken.None).ConfigureAwait(false);
-        Assert.Empty(compilation.GetDiagnostics().Where(diagnostic => diagnostic.Severity == DiagnosticSeverity.Error));
-        var visualBasicCompilation = await solution.GetProject(visualBasicProject.Id).GetCompilationAsync(CancellationToken.None).ConfigureAwait(false);
-        Assert.Empty(visualBasicCompilation.GetDiagnostics().Where(diagnostic => diagnostic.Severity == DiagnosticSeverity.Error));
+        var compilation = await document.Project.GetCompilationAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
+        Assert.Empty(compilation.GetDiagnostics(TestContext.Current.CancellationToken).Where(diagnostic => diagnostic.Severity == DiagnosticSeverity.Error));
+        var visualBasicCompilation = await solution.GetProject(visualBasicProject.Id).GetCompilationAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
+        Assert.Empty(visualBasicCompilation.GetDiagnostics(TestContext.Current.CancellationToken).Where(diagnostic => diagnostic.Severity == DiagnosticSeverity.Error));
 
         var analyzer = new SA1316TupleElementNamesShouldUseCorrectCasing();
-        var diagnostics = await compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(analyzer)).GetAnalyzerDiagnosticsAsync(CancellationToken.None).ConfigureAwait(false);
+        var diagnostics = await compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(analyzer), cancellationToken: TestContext.Current.CancellationToken).GetAnalyzerDiagnosticsAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
         var diagnostic = Assert.Single(diagnostics);
 
         var actions = new List<CodeAction>();
-        var context = new CodeFixContext(document, diagnostic, (action, _) => actions.Add(action), CancellationToken.None);
+        var context = new CodeFixContext(document, diagnostic, (action, _) => actions.Add(action), TestContext.Current.CancellationToken);
         await new SA1316CodeFixProvider().RegisterCodeFixesAsync(context).ConfigureAwait(false);
         Assert.Empty(actions);
     }
@@ -106,7 +105,7 @@ End Class
         {
             var projectId = ProjectId.CreateNewId();
             var state = new Microsoft.CodeAnalysis.Testing.Model.EvaluatedProjectState(this.TestState, this.ReferenceAssemblies);
-            var solution = await this.CreateSolutionAsync(projectId, state, CancellationToken.None).ConfigureAwait(false);
+            var solution = await this.CreateSolutionAsync(projectId, state, TestContext.Current.CancellationToken).ConfigureAwait(false);
             return solution.GetProject(projectId).MetadataReferences.ToList();
         }
     }

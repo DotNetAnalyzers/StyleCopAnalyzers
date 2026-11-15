@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp12.ReadabilityRules;
 
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using StyleCop.Analyzers.Test.CSharp11.ReadabilityRules;
@@ -60,7 +59,7 @@ public partial class SA1143CSharp12UnitTests : SA1143CSharp11UnitTests
             TestState = { OutputKind = OutputKind.ConsoleApplication },
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     /// <summary>
@@ -127,7 +126,7 @@ public partial class SA1143CSharp12UnitTests : SA1143CSharp11UnitTests
             CodeActionEquivalenceKey = "AlignBranchDelimiters",
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     /// <summary>
@@ -156,7 +155,7 @@ public partial class SA1143CSharp12UnitTests : SA1143CSharp11UnitTests
             IndentationSize = 2,
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     /// <summary>
@@ -200,7 +199,7 @@ public partial class SA1143CSharp12UnitTests : SA1143CSharp11UnitTests
             CodeActionEquivalenceKey = equivalenceKey,
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     /// <summary>
@@ -230,7 +229,7 @@ public partial class SA1143CSharp12UnitTests : SA1143CSharp11UnitTests
             CodeActionEquivalenceKey = "AlignBranchDelimiters",
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     /// <summary>
@@ -261,7 +260,7 @@ public partial class SA1143CSharp12UnitTests : SA1143CSharp11UnitTests
             CodeActionEquivalenceKey = "AlignBranchDelimiters",
         };
         test.ExpectedDiagnostics.AddRange(new[] { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1) });
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     /// <summary>
@@ -304,6 +303,6 @@ public partial class SA1143CSharp12UnitTests : SA1143CSharp11UnitTests
             CodeActionEquivalenceKey = "AlignBranchDelimiters",
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 }

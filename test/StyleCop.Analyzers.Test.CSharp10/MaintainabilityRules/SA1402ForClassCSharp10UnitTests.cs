@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp10.MaintainabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.Test.CSharp9.MaintainabilityRules;
     using Xunit;
@@ -36,8 +35,7 @@ public class TestClass2 {{ }}
                 {
                     ("/0/Test0.cs", fixedCode1),
                     ("TestClass2.cs", fixedCode2),
-                },
-                CancellationToken.None).ConfigureAwait(false);
+                }).ConfigureAwait(false);
         }
     }
 }

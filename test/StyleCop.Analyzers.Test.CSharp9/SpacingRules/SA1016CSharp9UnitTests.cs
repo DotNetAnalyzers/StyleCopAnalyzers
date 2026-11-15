@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.SpacingRules;
@@ -78,7 +77,7 @@ class MyAttributeAttribute : Attribute
                 Diagnostic().WithLocation(1),
                 Diagnostic().WithLocation(2),
             };
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp10.LayoutRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp9.LayoutRules;
@@ -23,7 +22,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.LayoutRules
 }
 #line (10,1)-(10,1) ""Remapped.cs""";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
     }
 }

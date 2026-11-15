@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.ReadabilityRules;
@@ -40,7 +39,7 @@ class Foo
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestCode = testCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -72,7 +71,7 @@ class Foo
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestCode = testCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -104,7 +103,7 @@ class Foo
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestCode = testCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -132,7 +131,7 @@ class TestClass
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
     }
 }

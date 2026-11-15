@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules;
 
-using System.Threading;
 using System.Threading.Tasks;
 using StyleCop.Analyzers.Test.CSharp7.SpacingRules;
 using Xunit;
@@ -50,6 +49,6 @@ public partial class SA1017CSharp8UnitTests : SA1017CSharp7UnitTests
 
             """;
 
-        await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0).WithMessage("Closing attribute brackets should be followed by a space"), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0).WithMessage("Closing attribute brackets should be followed by a space"), fixedCode).ConfigureAwait(false);
     }
 }

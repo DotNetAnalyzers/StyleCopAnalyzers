@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
@@ -145,7 +144,7 @@ namespace TestNamespace
                 Diagnostic().WithArguments("return", string.Empty, "followed").WithLocation(11, 43),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -190,7 +189,7 @@ namespace TestNamespace
                 Diagnostic().WithArguments("new", string.Empty, "followed").WithLocation(8, 21),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -235,7 +234,7 @@ namespace TestNamespace
                 Diagnostic().WithArguments("foreach", string.Empty, "followed").WithLocation(8, 13),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -270,7 +269,7 @@ namespace TestNamespace
     }}
 }}";
 
-            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp7_1.OrLaterDefault(), testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp7_1.OrLaterDefault(), testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
     }
 }

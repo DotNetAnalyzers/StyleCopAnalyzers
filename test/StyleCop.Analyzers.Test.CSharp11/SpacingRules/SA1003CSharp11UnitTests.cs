@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp11.SpacingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.Test.CSharp10.SpacingRules;
     using Xunit;
@@ -50,7 +49,7 @@ namespace TestNamespace
                     Diagnostic(DescriptorPrecededByWhitespace).WithLocation(0).WithArguments(">>>="),
                     Diagnostic(DescriptorFollowedByWhitespace).WithLocation(0).WithArguments(">>>="),
             };
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -88,7 +87,7 @@ namespace TestNamespace
                     Diagnostic(DescriptorPrecededByWhitespace).WithLocation(0).WithArguments(">>>"),
                     Diagnostic(DescriptorFollowedByWhitespace).WithLocation(0).WithArguments(">>>"),
             };
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

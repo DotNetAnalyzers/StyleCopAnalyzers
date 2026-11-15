@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.NamingRules;
@@ -37,7 +36,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
 }";
 
             DiagnosticResult expected = Diagnostic().WithArguments("localFunction").WithLocation(0);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -68,7 +67,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
 }";
 
             DiagnosticResult expected = Diagnostic().WithArguments("localFunction").WithLocation(0);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

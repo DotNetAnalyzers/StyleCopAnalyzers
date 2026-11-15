@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Lightup;
@@ -53,7 +52,7 @@ class TestClass
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestCode = testCode,
                 FixedCode = fixedCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -70,7 +69,7 @@ class TestClass
     System.UIntPtr field2;
 }";
 
-            await VerifyCSharpDiagnosticAsync(LanguageVersionEx.CSharp9, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(LanguageVersionEx.CSharp9, testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -84,7 +83,7 @@ class TestClass
     nuint field2;
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -115,7 +114,7 @@ public class TestClass
                 Diagnostic().WithLocation(3),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

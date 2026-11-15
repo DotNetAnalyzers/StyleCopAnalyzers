@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
@@ -32,7 +31,7 @@ namespace TestNamespace;
                 Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(1),
             };
 
-            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -53,7 +52,7 @@ namespace TestNamespace;
                 Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(0),
             };
 
-            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode).ConfigureAwait(false);
         }
 
         [Theory]
@@ -65,7 +64,7 @@ namespace TestNamespace;
         {
             var testCode = $@"{leadingTrivia}global using System;";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -86,7 +85,7 @@ namespace TestNamespace
 {
 }";
 
-            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -109,7 +108,7 @@ namespace TestNamespace
 {
 }";
 
-            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

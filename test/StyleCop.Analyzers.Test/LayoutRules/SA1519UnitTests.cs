@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.Test.LayoutRules
 {
     using System.Collections.Generic;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using Xunit;
@@ -53,7 +52,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         [MemberData(nameof(TestStatements))]
         public async Task TestSingleLineStatementWithoutBracesAsync(string statementText)
         {
-            await VerifyCSharpDiagnosticAsync(this.GenerateSingleLineTestStatement(statementText), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.GenerateSingleLineTestStatement(statementText), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -67,7 +66,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         public async Task TestMultiLineStatementWithoutBracesAsync(string statementText)
         {
             var expected = Diagnostic().WithLocation(7, 13);
-            await VerifyCSharpDiagnosticAsync(this.GenerateMultiLineTestStatement(statementText), expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.GenerateMultiLineTestStatement(statementText), expected).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -89,7 +88,7 @@ public class Foo
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -126,7 +125,7 @@ public class Foo
 }";
 
             var expected = Diagnostic().WithLocation(7, 13);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -148,7 +147,7 @@ public class Foo
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -200,7 +199,7 @@ public class Foo
   }
 }
 ",
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -250,7 +249,7 @@ public class Foo
                 },
                 FixedCode = fixedCode,
                 Settings = AllowConsecutiveUsingsDisabledSettings,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -286,7 +285,7 @@ public class Foo
     }
 }";
 
-            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(6, 9), fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(6, 9), fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -334,7 +333,7 @@ third"";
                 ExpectedDiagnostics = { Diagnostic().WithLocation(7, 9) },
                 FixedCode = fixedCode,
                 Settings = AllowConsecutiveUsingsDisabledSettings,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -355,7 +354,7 @@ third"";
                 FixedCode = fixedCode,
                 Settings = AllowConsecutiveUsingsDisabledSettings,
                 UseTabs = true,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -368,7 +367,7 @@ third"";
         [MemberData(nameof(TestStatements))]
         public async Task TestStatementWithBracesAsync(string statementText)
         {
-            await VerifyCSharpDiagnosticAsync(this.GenerateFixedTestStatement(statementText), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.GenerateFixedTestStatement(statementText), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -391,7 +390,7 @@ public class Foo
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -422,7 +421,7 @@ public class Foo
                 Diagnostic().WithLocation(10, 13),
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -448,7 +447,7 @@ public class Foo
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -479,7 +478,7 @@ public class Foo
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -499,7 +498,7 @@ public class Foo
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -525,7 +524,7 @@ public class Foo
                 Diagnostic().WithLocation(6, 33),
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -540,7 +539,7 @@ public class Foo
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -568,7 +567,7 @@ public class Foo
 }";
 
             var expected = Diagnostic().WithLocation(6, 13);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -585,7 +584,7 @@ public class Foo
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -603,7 +602,7 @@ public class Foo
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -617,7 +616,7 @@ public class Foo
         public async Task TestCodeFixForStatementAsync(string statementText)
         {
             var expected = Diagnostic().WithLocation(7, 13);
-            await VerifyCSharpFixAsync(this.GenerateMultiLineTestStatement(statementText), expected, this.GenerateFixedTestStatement(statementText), CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(this.GenerateMultiLineTestStatement(statementText), expected, this.GenerateFixedTestStatement(statementText)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -660,7 +659,7 @@ public class Foo
 }";
 
             var expected = Diagnostic().WithLocation(7, 13);
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -703,7 +702,7 @@ public class Foo
 }";
 
             var expected = Diagnostic().WithLocation(9, 13);
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -746,7 +745,7 @@ public class Foo
 }";
 
             var expected = Diagnostic().WithLocation(11, 13);
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -789,7 +788,7 @@ public class Foo
                 },
                 FixedCode = fixedTestCode,
                 IndentationSize = 1,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -833,7 +832,7 @@ public class Foo
             };
 
             test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -874,7 +873,7 @@ public class Foo
                 Diagnostic().WithLocation(6, 21),
                 Diagnostic().WithLocation(6, 33),
             };
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -899,7 +898,7 @@ public class Foo
 }";
 
             var expected = Diagnostic().WithLocation(8, 13);
-            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, testCode).ConfigureAwait(false);
         }
 
         private string GenerateSingleLineTestStatement(string statementText)

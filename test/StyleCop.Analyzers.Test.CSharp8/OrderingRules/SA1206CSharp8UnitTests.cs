@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp8.OrderingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp7.OrderingRules;
@@ -39,7 +38,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.OrderingRules
 
             var expected = Diagnostic().WithArguments("static", "async").WithLocation(0);
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -67,7 +66,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.OrderingRules
 
             var expected = Diagnostic().WithArguments("static", "unsafe").WithLocation(0);
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -91,7 +90,7 @@ public struct S
 }";
 
             var expected = Diagnostic().WithLocation(0).WithArguments("public", "readonly");
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -111,7 +110,7 @@ public struct S
 }";
 
             var expected = Diagnostic().WithLocation(0).WithArguments("internal", "readonly");
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -131,7 +130,7 @@ public struct S
 }";
 
             var expected = Diagnostic().WithLocation(0).WithArguments("public", "override");
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -164,7 +163,7 @@ public struct S
                 },
             };
 
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
     }
 }

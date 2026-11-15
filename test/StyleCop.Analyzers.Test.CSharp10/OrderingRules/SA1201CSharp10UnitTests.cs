@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp9.OrderingRules;
@@ -32,7 +31,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
                     }
                     """,
             };
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         [Theory]
@@ -62,7 +61,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
                     """,
             };
             test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithArguments(displayName, "a method"));
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -77,7 +76,7 @@ public struct FooStruct { }
 public class FooClass { }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -98,7 +97,7 @@ public struct {|#1:FooStruct|} { }
                 Diagnostic().WithLocation(1).WithArguments("A struct", "a class"),
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -112,8 +111,8 @@ public record struct FooStruct { }
 public class FooClass { }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await VerifyCSharpDiagnosticAsync("namespace OuterNamespace { " + testCode + " }", DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync("namespace OuterNamespace { " + testCode + " }", DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -134,8 +133,8 @@ public record struct {|#1:FooStruct|} { }
                 Diagnostic().WithLocation(1).WithArguments("A record struct", "a class"),
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await VerifyCSharpDiagnosticAsync("namespace OuterNamespace { " + testCode + " }", expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync("namespace OuterNamespace { " + testCode + " }", expected).ConfigureAwait(false);
         }
     }
 }

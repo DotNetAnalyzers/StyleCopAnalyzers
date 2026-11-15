@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp11.MaintainabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp10.MaintainabilityRules;
@@ -26,7 +25,7 @@ public class TestClass1 { }
 file enum TestEnum { }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
     }
 }

@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp8.DocumentationRules;
 
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Testing;
@@ -48,7 +47,7 @@ public interface ITest
 }
 ";
 
-        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -92,7 +91,7 @@ public interface ITest<T>
 }
 ";
 
-        await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -158,13 +157,13 @@ public {typeKeyword} TestType
         {
             TestCode = validCode,
             Settings = FrenchSettings,
-        }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }.RunAsync().ConfigureAwait(false);
 
         await new StyleCopCodeFixVerifier<SA1642ConstructorSummaryDocumentationMustBeginWithStandardText, SA1642SA1643CodeFixProvider>.CSharpTest(LanguageVersion.CSharp8)
         {
             TestCode = invalidCode,
             FixedCode = fixedCode,
             Settings = FrenchSettings,
-        }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }.RunAsync().ConfigureAwait(false);
     }
 }

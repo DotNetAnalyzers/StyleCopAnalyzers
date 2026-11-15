@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Xunit;
 
@@ -51,7 +50,7 @@ public class Bar
             };
 
             var expected = this.Diagnostic().WithLocation(0);
-            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -94,7 +93,7 @@ public class Bar
             };
 
             var expected = this.Diagnostic().WithLocation(0);
-            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -134,7 +133,7 @@ public class TestClass
             };
 
             var expected = this.Diagnostic().WithLocation(0);
-            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -179,7 +178,7 @@ public class TestClass
             };
 
             var expected = this.Diagnostic().WithLocation(0);
-            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -226,7 +225,7 @@ public class TestClass
             };
 
             var expected = this.Diagnostic().WithLocation(0);
-            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -269,7 +268,7 @@ public class TestClass
             };
 
             var expected = this.Diagnostic().WithLocation(0);
-            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -318,7 +317,7 @@ public class TestClass
             };
 
             var expected = this.Diagnostic().WithLocation(0);
-            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -367,7 +366,7 @@ public class TestClass
             };
 
             var expected = this.Diagnostic().WithLocation(0);
-            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -416,7 +415,7 @@ public class TestClass
             };
 
             var expected = this.Diagnostic().WithLocation(0);
-            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -468,7 +467,7 @@ public class TestClass
             };
 
             var expected = this.Diagnostic().WithLocation(0);
-            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -510,7 +509,7 @@ public class TestClass
             };
 
             var expected = this.Diagnostic().WithLocation(0);
-            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -564,7 +563,7 @@ public class TestClass
             };
 
             var expected = this.Diagnostic().WithLocation(0);
-            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -611,7 +610,7 @@ namespace TestNamespace
             };
 
             var expected = this.Diagnostic().WithLocation(0);
-            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -657,7 +656,7 @@ namespace TestNamespace
             };
 
             var expected = this.Diagnostic().WithLocation(0);
-            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -708,7 +707,7 @@ namespace TestNamespace
             };
 
             var expected = this.Diagnostic().WithLocation(0);
-            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

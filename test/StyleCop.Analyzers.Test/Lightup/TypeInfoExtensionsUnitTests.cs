@@ -15,13 +15,13 @@ public partial class TypeInfoExtensionsUnitTests
     [Fact]
     public void NullabilityPropertiesDefaultWhenNullableContextIsDisabled()
     {
-        var syntaxTree = CSharpSyntaxTree.ParseText("class C { object M(object value) => value; }");
+        var syntaxTree = CSharpSyntaxTree.ParseText("class C { object M(object value) => value; }", cancellationToken: TestContext.Current.CancellationToken);
         var compilation = CSharpCompilation.Create(
             "Test",
             new[] { syntaxTree },
             new[] { MetadataReference.CreateFromFile(typeof(object).Assembly.Location) });
-        var expression = syntaxTree.GetRoot().DescendantNodes().OfType<IdentifierNameSyntax>().Single();
-        var typeInfo = compilation.GetSemanticModel(syntaxTree).GetTypeInfo(expression);
+        var expression = syntaxTree.GetRoot(TestContext.Current.CancellationToken).DescendantNodes().OfType<IdentifierNameSyntax>().Single();
+        var typeInfo = compilation.GetSemanticModel(syntaxTree).GetTypeInfo(expression, TestContext.Current.CancellationToken);
 
         Assert.Equal(NullableAnnotation.None, typeInfo.Nullability().Annotation);
         Assert.Equal(NullableFlowState.None, typeInfo.Nullability().FlowState);

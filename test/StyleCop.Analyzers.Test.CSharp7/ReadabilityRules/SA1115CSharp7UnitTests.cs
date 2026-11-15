@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.ReadabilityRules;
@@ -47,7 +46,7 @@ int k)
             DiagnosticResult expected1 = Diagnostic().WithLocation(8, 1);
             DiagnosticResult expected2 = Diagnostic().WithLocation(10, 1);
 
-            await VerifyCSharpFixAsync(testCode, new[] { expected1, expected2 }, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, new[] { expected1, expected2 }, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -65,7 +64,7 @@ string s)
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -82,7 +81,7 @@ class Foo
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
     }
 }

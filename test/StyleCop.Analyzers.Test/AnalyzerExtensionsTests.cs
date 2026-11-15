@@ -6,7 +6,6 @@ namespace StyleCop.Analyzers.Test
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -37,7 +36,7 @@ class TypeName
             await new CSharpTest(this)
             {
                 TestCode = testCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
 
             Assert.True(this.invokedBlockCallback);
             Assert.True(this.invokedMethodDeclarationCallback);

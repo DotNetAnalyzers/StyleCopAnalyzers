@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp10.DocumentationRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Test.CSharp9.DocumentationRules;
@@ -27,7 +26,7 @@ public class TestClass
 #line default";
 
             var expected = Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -42,7 +41,7 @@ public class TestClass
 #line default";
 
             var expected = Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
     }
 }

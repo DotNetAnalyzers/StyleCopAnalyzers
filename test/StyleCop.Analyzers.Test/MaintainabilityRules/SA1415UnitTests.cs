@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules;
 
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using StyleCop.Analyzers.MaintainabilityRules;
@@ -40,7 +39,7 @@ internal class TypeName
             TestCode = testCode,
         };
         test.DisabledDiagnostics.Add(DiagnosticId);
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -965,7 +964,7 @@ internal class DerivedName : BaseName
         var expected = Diagnostic().WithLocation(0);
         test.ExpectedDiagnostics.Add(expected);
         test.RemainingDiagnostics.Add(expected);
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -1691,7 +1690,7 @@ internal class DerivedName : BaseName
         test.ExplicitlyEnabledDiagnostics.Add(DiagnosticId);
         test.ExpectedDiagnostics.AddRange(expected);
         test.RemainingDiagnostics.AddRange(expected);
-        return test.RunAsync(CancellationToken.None);
+        return test.RunAsync();
     }
 
     private static Task VerifyAsync(string testCode, string fixedCode, params DiagnosticResult[] expected)
@@ -1703,6 +1702,6 @@ internal class DerivedName : BaseName
         };
         test.ExplicitlyEnabledDiagnostics.Add(DiagnosticId);
         test.ExpectedDiagnostics.AddRange(expected);
-        return test.RunAsync(CancellationToken.None);
+        return test.RunAsync();
     }
 }

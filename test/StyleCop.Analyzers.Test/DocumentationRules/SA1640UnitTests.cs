@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Test.Helpers;
@@ -41,7 +40,7 @@ namespace Bar
 ".ReplaceLineEndings(lineEnding);
 
             var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1640Descriptor).WithLocation(0);
-            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -69,7 +68,7 @@ namespace Bar
 ";
 
             var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1640Descriptor).WithLocation(1, 4);
-            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -97,7 +96,7 @@ namespace Bar
 ";
 
             var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1640Descriptor).WithLocation(1, 4);
-            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode).ConfigureAwait(false);
         }
     }
 }

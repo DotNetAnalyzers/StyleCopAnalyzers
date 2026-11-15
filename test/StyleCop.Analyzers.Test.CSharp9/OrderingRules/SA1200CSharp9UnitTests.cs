@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.Test.CSharp9.OrderingRules
 {
     using System;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
@@ -78,7 +77,7 @@ return 0;
                     Sources = { testCode },
                     AdditionalFiles = { ("stylecop.json", file) },
                 },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Theory]
@@ -94,7 +93,7 @@ public {keyword} TestRecord
 }}
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
     }
 }

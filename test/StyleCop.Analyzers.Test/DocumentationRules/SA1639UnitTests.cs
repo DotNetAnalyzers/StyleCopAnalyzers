@@ -5,7 +5,6 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.DocumentationRules;
     using Xunit;
@@ -32,7 +31,7 @@ namespace Bar
 ";
 
             var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1639Descriptor).WithLocation(1, 1);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -53,7 +52,7 @@ namespace Bar
 ";
 
             var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1639Descriptor).WithLocation(4, 4);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -74,7 +73,7 @@ namespace Bar
 ";
 
             var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1639Descriptor).WithLocation(4, 4);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic).ConfigureAwait(false);
         }
 
         /// <summary>

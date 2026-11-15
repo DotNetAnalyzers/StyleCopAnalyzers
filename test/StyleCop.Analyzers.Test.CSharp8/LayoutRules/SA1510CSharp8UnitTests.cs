@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp8.LayoutRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.Test.CSharp7.LayoutRules;
     using Xunit;
@@ -52,7 +51,7 @@ public class TestClass
 ";
 
             var expected = Diagnostic().WithLocation(0).WithArguments("catch");
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

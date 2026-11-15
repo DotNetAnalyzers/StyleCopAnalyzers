@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.DocumentationRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.DocumentationRules;
@@ -23,7 +22,7 @@ public {keyword} TestRecord
 }}
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, Diagnostic().WithLocation(0), CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, Diagnostic().WithLocation(0)).ConfigureAwait(false);
         }
 
         [Fact]
@@ -42,7 +41,7 @@ public record DerivedRecord : BaseRecord
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Theory]
@@ -54,7 +53,7 @@ public record DerivedRecord : BaseRecord
 public {typeKeyword} TestType(int X);";
 
             var expected = this.GetExpectedResultTestTypeWithPrimaryConstructorWithInvalidInheritDoc();
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         protected virtual DiagnosticResult[] GetExpectedResultTestTypeWithPrimaryConstructorWithInvalidInheritDoc()

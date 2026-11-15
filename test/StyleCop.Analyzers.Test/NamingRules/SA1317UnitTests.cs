@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.Test.NamingRules
 {
     using System.Globalization;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
@@ -60,7 +59,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
         [InlineData(@"using System.Linq; class C { object M() => from x in new int[0] select x into {|#0:а|} select а; }", "а")]
         public async Task TestAdditionalDeclarationsAsync(string testCode, string name)
         {
-            await VerifyCSharpDiagnosticAsync(testCode, Diagnostic().WithLocation(0).WithArguments(name, 0), CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, Diagnostic().WithLocation(0).WithArguments(name, 0)).ConfigureAwait(false);
         }
 
         [Theory]
@@ -74,7 +73,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
 class NonLatinа {}")]
         public async Task TestAllowedIdentifierCharactersAsync(string testCode)
         {
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -82,7 +81,7 @@ class NonLatinа {}")]
         {
             var testCode = @"public class ClassName {}";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -98,7 +97,7 @@ class NonLatinа {}")]
                     Diagnostic().WithArguments("СlаssNаmе", 8).WithLocation(1, 14),
                 };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -109,7 +108,7 @@ class NonLatinа {}")]
     public void MethodName() {}
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -128,7 +127,7 @@ class NonLatinа {}")]
                     Diagnostic().WithArguments("MеthоdNаmе", 9).WithLocation(3, 17),
                 };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -139,7 +138,7 @@ class NonLatinа {}")]
     public ClassName() {}
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -162,7 +161,7 @@ class NonLatinа {}")]
                     Diagnostic().WithArguments("СlаssNаmе", 8).WithLocation(3, 12),
                 };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -173,7 +172,7 @@ class NonLatinа {}")]
     ~ClassName() {}
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -196,7 +195,7 @@ class NonLatinа {}")]
                     Diagnostic().WithArguments("СlаssNаmе", 8).WithLocation(3, 6),
                 };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -204,7 +203,7 @@ class NonLatinа {}")]
         {
             var testCode = @"enum EnumName {}";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -219,7 +218,7 @@ class NonLatinа {}")]
                     Diagnostic().WithArguments("ЕnumNаmе", 7).WithLocation(1, 6),
                 };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -230,7 +229,7 @@ class NonLatinа {}")]
     EnumValueName
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -250,7 +249,7 @@ class NonLatinа {}")]
                     Diagnostic().WithArguments("ЕnumVаluеNаmе", 12).WithLocation(3, 5),
                 };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -258,7 +257,7 @@ class NonLatinа {}")]
         {
             var testCode = @"public struct StructName {}";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -273,7 +272,7 @@ class NonLatinа {}")]
                     Diagnostic().WithArguments("StruсtNаmе", 9).WithLocation(1, 15),
                 };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -281,7 +280,7 @@ class NonLatinа {}")]
         {
             var testCode = @"interface InterfaceName {}";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -299,7 +298,7 @@ class NonLatinа {}")]
                     Diagnostic().WithArguments("IntеrfасеNаmе", 12).WithLocation(1, 11),
                 };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -310,7 +309,7 @@ class NonLatinа {}")]
     public int PropertyName { get; set; }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -332,7 +331,7 @@ class NonLatinа {}")]
                     Diagnostic().WithArguments("РrореrtуNаmе", 11).WithLocation(3, 16),
                 };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -343,7 +342,7 @@ class NonLatinа {}")]
     public int FirstFieldName, SecondFieldName;
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -367,7 +366,7 @@ class NonLatinа {}")]
                     Diagnostic().WithArguments("SесоndFiеldNаmе", 14).WithLocation(3, 32),
                 };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -379,7 +378,7 @@ class NonLatinа {}")]
     public event DelegateName EventName;
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -399,7 +398,7 @@ class NonLatinа {}")]
                     Diagnostic().WithArguments("ЕvеntNаmе", 8).WithLocation(4, 31),
                 };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -410,7 +409,7 @@ class NonLatinа {}")]
     public delegate void DelegateName();
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -431,7 +430,7 @@ class NonLatinа {}")]
                     Diagnostic().WithArguments("DеlеgаtеNаmе", 11).WithLocation(3, 26),
                 };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -447,7 +446,7 @@ class NonLatinа {}")]
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -482,7 +481,7 @@ class NonLatinа {}")]
                     Diagnostic().WithArguments("vаriаblеNаmе3", 11).WithLocation(7, 18),
                 };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -496,7 +495,7 @@ class NonLatinа {}")]
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -518,7 +517,7 @@ class NonLatinа {}")]
                     Diagnostic().WithArguments("соnstNаmе1", 8).WithLocation(5, 19),
                   };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -529,7 +528,7 @@ class NonLatinа {}")]
     public void MethodName(int parameterName) {}
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -551,7 +550,7 @@ class NonLatinа {}")]
                     Diagnostic().WithArguments("раrаmеtеrNаmе", 12).WithLocation(3, 32),
                   };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
     }
 }

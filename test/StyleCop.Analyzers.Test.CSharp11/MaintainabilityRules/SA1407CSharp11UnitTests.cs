@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp11.MaintainabilityRules;
 
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using StyleCop.Analyzers.Test.CSharp10.MaintainabilityRules;
@@ -35,7 +34,7 @@ public partial class SA1407CSharp11UnitTests : SA1407CSharp10UnitTests
     }
 }";
 
-        await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
     }
 
     [Fact]
@@ -51,6 +50,6 @@ public partial class SA1407CSharp11UnitTests : SA1407CSharp10UnitTests
     }
 }";
 
-        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
     }
 }

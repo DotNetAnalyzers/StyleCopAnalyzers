@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp13.OrderingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.Test.CSharp12.OrderingRules;
     using Xunit;
@@ -35,7 +34,7 @@ public partial class TypeName
 
             var expected = Diagnostic().WithLocation(0).WithArguments("A field", "a property");
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -57,7 +56,7 @@ public ref struct TestRefStruct : IInterface
 
             var expected = Diagnostic().WithLocation(0).WithArguments("A field", "a method");
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
     }
 }

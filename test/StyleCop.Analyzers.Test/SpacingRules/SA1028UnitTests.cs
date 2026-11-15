@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Text;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
@@ -51,7 +50,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 Diagnostic().WithLocation(5, 36),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -74,7 +73,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 Diagnostic().WithLocation(1, 16),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -93,7 +92,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 Diagnostic().WithLocation(1, 12),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -121,7 +120,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 Diagnostic().WithLocation(4, 3),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -148,7 +147,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 Diagnostic().WithLocation(3, 15),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -177,7 +176,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 Diagnostic().WithLocation(5, 3),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -202,7 +201,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             DiagnosticResult expected = Diagnostic().WithLocation(3, 2);
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -220,7 +219,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 .Append(" }")
                 .ToString();
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -266,7 +265,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 Diagnostic().WithLocation(10, 11),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -279,7 +278,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 .ToString();
 
             // Note: we verify that no diagnostics are produced inside non-compiled blocks
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -291,7 +290,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 .AppendLine("}")
                 .ToString();
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -311,7 +310,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             DiagnosticResult expected = Diagnostic().WithLocation(2, 10);
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -347,7 +346,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 Diagnostic().WithLocation(4, 14),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

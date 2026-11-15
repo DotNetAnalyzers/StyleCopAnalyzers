@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp7.NamingRules;
 
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using StyleCop.Analyzers.Test.NamingRules;
@@ -20,12 +19,12 @@ public partial class SA1317CSharp7UnitTests : SA1317UnitTests
     [InlineData(@"class C { (int {|#0:а|}, int b) M() => (1, 2); }")]
     public async Task TestCSharp7DeclarationFormsAsync(string testCode)
     {
-        await VerifyCSharpDiagnosticAsync(testCode, Diagnostic().WithLocation(0).WithArguments("а", 0), CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(testCode, Diagnostic().WithLocation(0).WithArguments("а", 0)).ConfigureAwait(false);
     }
 
     [Fact]
     public async Task TestUnnamedTupleElementsAsync()
     {
-        await VerifyCSharpDiagnosticAsync(@"class C { (int, int) M() => (1, 2); }", DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(@"class C { (int, int) M() => (1, 2); }", DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
     }
 }

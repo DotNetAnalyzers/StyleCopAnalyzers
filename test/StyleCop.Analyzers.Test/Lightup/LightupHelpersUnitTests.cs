@@ -27,14 +27,14 @@ namespace StyleCop.Analyzers.Test.Lightup
                 Assert.False(options.TryGetValue("missing", out var value));
                 Assert.Null(value);
                 Assert.Empty(provider.GlobalOptions.GetKeys());
-                Assert.Empty(provider.GetOptions(SyntaxFactory.ParseSyntaxTree(string.Empty)).GetKeys());
+                Assert.Empty(provider.GetOptions(SyntaxFactory.ParseSyntaxTree(string.Empty, cancellationToken: TestContext.Current.CancellationToken)).GetKeys());
                 Assert.Throws<ArgumentNullException>(() => provider.GetOptions((SyntaxTree)null!));
             }
             else
             {
                 Assert.Throws<NullReferenceException>(() => options.TryGetValue("missing", out _));
                 Assert.Throws<NullReferenceException>(() => provider.GlobalOptions);
-                Assert.Throws<NullReferenceException>(() => provider.GetOptions(SyntaxFactory.ParseSyntaxTree(string.Empty)));
+                Assert.Throws<NullReferenceException>(() => provider.GetOptions(SyntaxFactory.ParseSyntaxTree(string.Empty, cancellationToken: TestContext.Current.CancellationToken)));
             }
         }
 

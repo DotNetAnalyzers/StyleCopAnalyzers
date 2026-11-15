@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp7.SpacingRules;
@@ -65,7 +64,7 @@ namespace TestNamespace
                     Diagnostic(DescriptorNotPrecededByWhitespace).WithLocation(1).WithArguments("(int)"),
                 },
                 FixedCode = fixedCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -103,7 +102,7 @@ namespace TestNamespace
                     Diagnostic(DescriptorPrecededByWhitespace).WithLocation(0).WithArguments("??="),
                     Diagnostic(DescriptorFollowedByWhitespace).WithLocation(0).WithArguments("??="),
             };
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -152,7 +151,7 @@ namespace TestNamespace
                 Diagnostic(DescriptorFollowedByWhitespace).WithLocation(1).WithArguments("=>"),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -200,7 +199,7 @@ namespace TestNamespace
                 Diagnostic(DescriptorPrecededByWhitespace).WithLocation(0).WithArguments("=>"),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -238,7 +237,7 @@ namespace TestNamespace
                     Diagnostic(DescriptorNotPrecededByWhitespace).WithLocation(0).WithArguments("!"),
                     Diagnostic(DescriptorNotFollowedByWhitespace).WithLocation(0).WithArguments("!"),
             };
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -268,7 +267,7 @@ namespace TestNamespace
             {
                 ReferenceAssemblies = ReferenceAssemblies.NetCore.NetCoreApp31,
                 TestCode = testCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -327,7 +326,7 @@ namespace TestNamespace
                 Diagnostic(DescriptorNotFollowedByWhitespace).WithLocation(5).WithArguments(".."),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -361,7 +360,7 @@ namespace TestNamespace
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -387,7 +386,7 @@ namespace TestNamespace
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -419,7 +418,7 @@ namespace TestNamespace
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -463,8 +462,7 @@ namespace TestNamespace
 
             await VerifyCSharpDiagnosticAsync(
                 testCode,
-                Diagnostic(DescriptorFollowedByWhitespace).WithLocation(1).WithArguments("!"),
-                CancellationToken.None).ConfigureAwait(false);
+                Diagnostic(DescriptorFollowedByWhitespace).WithLocation(1).WithArguments("!")).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -493,7 +491,7 @@ namespace TestNamespace
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
     }
 }

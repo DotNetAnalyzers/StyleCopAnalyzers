@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp15.DocumentationRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp14.DocumentationRules;
@@ -47,7 +46,7 @@ public class Outer
                 TestCode = testCode,
                 ExpectedDiagnostics = { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1) },
                 DisabledDiagnostics = { "CS1591" },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -71,7 +70,7 @@ public partial union Pet
             {
                 TestCode = testCode,
                 DisabledDiagnostics = { "CS1591" },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -119,7 +118,7 @@ public union Pet(int, string)
                     Diagnostic().WithLocation(4),
                 },
                 DisabledDiagnostics = { "CS1591" },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         protected override DiagnosticResult[] GetExpectedResultTestRegressionMethodGlobalNamespace(string code)

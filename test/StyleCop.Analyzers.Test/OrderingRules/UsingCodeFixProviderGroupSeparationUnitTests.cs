@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
@@ -86,7 +85,7 @@ namespace Foo
                 Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(8, 1),
                 StyleCopDiagnosticVerifier<SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives>.Diagnostic().WithLocation(8, 1).WithArguments("System.Collections", "System.Math"),
             };
-            await this.VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -150,10 +149,10 @@ namespace Foo
                 Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(10, 5),
                 StyleCopDiagnosticVerifier<SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives>.Diagnostic().WithLocation(10, 5).WithArguments("System.Collections", "System.Math"),
             };
-            await this.VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
-        protected Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
+        protected Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource)
         {
             var systemUsingDirectivesFirst = this.SystemUsingDirectivesFirst ?? true;
 
@@ -177,7 +176,7 @@ namespace Foo
             };
 
             test.ExpectedDiagnostics.AddRange(expected);
-            return test.RunAsync(cancellationToken);
+            return test.RunAsync();
         }
     }
 }

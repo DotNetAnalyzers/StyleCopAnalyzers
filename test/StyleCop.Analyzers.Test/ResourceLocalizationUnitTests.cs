@@ -50,12 +50,12 @@ namespace StyleCop.Analyzers.Test
         {
             var compilation = CSharpCompilation.Create(
                 "Test",
-                new[] { CSharpSyntaxTree.ParseText($"class C {{ void M({parameters}) {{ int i = 0; {expression}; }} }}") },
+                new[] { CSharpSyntaxTree.ParseText($"class C {{ void M({parameters}) {{ int i = 0; {expression}; }} }}", cancellationToken: TestContext.Current.CancellationToken) },
                 new[] { MetadataReference.CreateFromFile(typeof(object).Assembly.Location) });
             var analyzers = ImmutableArray.Create<DiagnosticAnalyzer>(
                 new SA1001CommasMustBeSpacedCorrectly(),
                 new SA1020IncrementDecrementSymbolsMustBeSpacedCorrectly());
-            var diagnostics = await compilation.WithAnalyzers(analyzers).GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
+            var diagnostics = await compilation.WithAnalyzers(analyzers, cancellationToken: TestContext.Current.CancellationToken).GetAnalyzerDiagnosticsAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
             var comma = Assert.Single(diagnostics, diagnostic => diagnostic.Id == "SA1001");
             var symbol = Assert.Single(diagnostics, diagnostic => diagnostic.Id == "SA1020");
             Assert.Equal(englishComma, comma.GetMessage(CultureInfo.GetCultureInfo("en-US")));

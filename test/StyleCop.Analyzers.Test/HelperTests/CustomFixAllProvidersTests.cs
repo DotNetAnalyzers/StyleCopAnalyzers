@@ -55,8 +55,8 @@ public class CustomFixAllProvidersTests
         var descriptor = Assert.Single(new SA1018NullableTypeSymbolsMustNotBePrecededBySpace().SupportedDiagnostics);
         foreach (var id in new[] { firstId, secondId, thirdId })
         {
-            var tree = await solution.GetDocument(id).GetSyntaxTreeAsync().ConfigureAwait(false);
-            var text = (await tree.GetTextAsync().ConfigureAwait(false)).ToString();
+            var tree = await solution.GetDocument(id).GetSyntaxTreeAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
+            var text = (await tree.GetTextAsync(TestContext.Current.CancellationToken).ConfigureAwait(false)).ToString();
             diagnostics.Add(
                 id,
                 ImmutableArray.Create(
@@ -72,19 +72,19 @@ public class CustomFixAllProvidersTests
             nameof(SA1018CodeFixProvider),
             fixer.FixableDiagnosticIds,
             new DiagnosticProvider(diagnostics),
-            CancellationToken.None);
+            TestContext.Current.CancellationToken);
         var action = await fixer.GetFixAllProvider().GetFixAsync(context).ConfigureAwait(false);
         Assert.NotNull(action);
-        var operations = await action.GetOperationsAsync(CancellationToken.None).ConfigureAwait(false);
+        var operations = await action.GetOperationsAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
         var changedSolution = Assert.Single(operations.OfType<ApplyChangesOperation>()).ChangedSolution;
 
-        Assert.Equal(fixedSource, (await changedSolution.GetDocument(firstId).GetTextAsync().ConfigureAwait(false)).ToString());
+        Assert.Equal(fixedSource, (await changedSolution.GetDocument(firstId).GetTextAsync(TestContext.Current.CancellationToken).ConfigureAwait(false)).ToString());
         Assert.Equal(
             (scope == FixAllScope.Document ? source : fixedSource).Replace("class C", "class D"),
-            (await changedSolution.GetDocument(secondId).GetTextAsync().ConfigureAwait(false)).ToString());
+            (await changedSolution.GetDocument(secondId).GetTextAsync(TestContext.Current.CancellationToken).ConfigureAwait(false)).ToString());
         Assert.Equal(
             scope == FixAllScope.Solution ? fixedSource : source,
-            (await changedSolution.GetDocument(thirdId).GetTextAsync().ConfigureAwait(false)).ToString());
+            (await changedSolution.GetDocument(thirdId).GetTextAsync(TestContext.Current.CancellationToken).ConfigureAwait(false)).ToString());
     }
 
     private sealed class DiagnosticProvider : FixAllContext.DiagnosticProvider

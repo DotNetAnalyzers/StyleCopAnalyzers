@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using StyleCop.Analyzers.DocumentationRules;
@@ -83,7 +82,7 @@ public class ChildClass : ParentClass
             };
 
             test.DisabledDiagnostics.Add(compilerWarning ? SA1600.Id : CS1591.Id);
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         [Theory]
@@ -148,7 +147,7 @@ public class ChildClass : IParent
             };
 
             test.DisabledDiagnostics.Add(compilerWarning ? SA1600.Id : CS1591.Id);
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         [Theory]
@@ -186,7 +185,7 @@ public class ChildClass : ParentClass
                 FixedCode = testCode,
                 NumberOfIncrementalIterations = 1,
                 NumberOfFixAllIterations = 1,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Theory]
@@ -224,7 +223,7 @@ public class ChildClass : ParentClass
                 FixedCode = testCode,
                 NumberOfIncrementalIterations = 1,
                 NumberOfFixAllIterations = 1,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
     }
 }

@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp7.DocumentationRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Test.DocumentationRules;
@@ -73,7 +72,7 @@ public class TestClass
 ";
 
             var expected = Diagnostic(PropertySummaryDocumentationAnalyzer.SA1624Descriptor).WithLocation(9, 7 + accessibility.Length + type.Length).WithArguments(expectedArgument1, expectedArgument2);
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

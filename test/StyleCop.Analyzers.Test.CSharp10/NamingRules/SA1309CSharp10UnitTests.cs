@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp10.NamingRules;
 
-using System.Threading;
 using System.Threading.Tasks;
 using StyleCop.Analyzers.Test.CSharp9.NamingRules;
 using Xunit;
@@ -38,6 +37,6 @@ public partial class SA1309CSharp10UnitTests : SA1309CSharp9UnitTests
     }
 }";
 
-        await VerifyCSharpFixAsync(testCode, Diagnostic().WithArguments("_value").WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpFixAsync(testCode, Diagnostic().WithArguments("_value").WithLocation(0), fixedCode).ConfigureAwait(false);
     }
 }

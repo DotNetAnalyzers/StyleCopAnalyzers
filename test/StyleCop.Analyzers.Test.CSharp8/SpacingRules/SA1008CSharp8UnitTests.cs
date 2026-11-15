@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp7.SpacingRules;
@@ -73,7 +72,7 @@ namespace TestNamespace
                     Diagnostic(DescriptorNotPreceded).WithLocation(1),
                 },
                 FixedCode = fixedCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -107,8 +106,7 @@ class C
             await VerifyCSharpFixAsync(
                 testCode,
                 expectedResults,
-                fixedCode,
-                CancellationToken.None).ConfigureAwait(false);
+                fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -144,8 +142,7 @@ class C
             await VerifyCSharpFixAsync(
                 testCode,
                 expectedResults,
-                fixedCode,
-                CancellationToken.None).ConfigureAwait(false);
+                fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -189,8 +186,7 @@ internal class TestClass
             await VerifyCSharpFixAsync(
                 testCode,
                 expectedResults,
-                fixedCode,
-                CancellationToken.None).ConfigureAwait(false);
+                fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -232,8 +228,7 @@ namespace TestNamespace
             await VerifyCSharpFixAsync(
                 testCode,
                 expectedResults,
-                fixedCode,
-                CancellationToken.None).ConfigureAwait(false);
+                fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -280,8 +275,7 @@ namespace TestNamespace
             await VerifyCSharpFixAsync(
                 testCode,
                 Diagnostic(DescriptorNotFollowed).WithLocation(0),
-                fixedCode,
-                CancellationToken.None).ConfigureAwait(false);
+                fixedCode).ConfigureAwait(false);
         }
     }
 }

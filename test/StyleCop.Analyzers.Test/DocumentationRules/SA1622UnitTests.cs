@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Collections.Generic;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
@@ -54,7 +53,7 @@ public class ClassName
 {
     public ##
 }";
-            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Theory]
@@ -63,7 +62,7 @@ public class ClassName
         {
             var testCode = @"
 public ##";
-            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -74,7 +73,7 @@ public ##";
 /// Foo
 /// </summary>
 public class Foo { }";
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Theory]
@@ -94,7 +93,7 @@ public class ClassName
     /// <typeparam name=""Tb"">Param 2</param>
     public ##
 }";
-            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Theory]
@@ -108,7 +107,7 @@ public class ClassName
 /// <typeparam name=""Ta"">Param 1</param>
 /// <typeparam name=""Tb"">Param 2</param>
 public ##";
-            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Theory]
@@ -137,7 +136,7 @@ $$
                 Diagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(11, 8),
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected).ConfigureAwait(false);
         }
 
         [Theory]
@@ -160,7 +159,7 @@ public $$";
                 Diagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(6, 4),
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected).ConfigureAwait(false);
         }
 
         [Theory]
@@ -191,7 +190,7 @@ $$
                 Diagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(11, 8),
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected).ConfigureAwait(false);
         }
 
         [Theory]
@@ -215,7 +214,7 @@ public $$";
                 Diagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(6, 4),
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -232,7 +231,7 @@ public $$";
 public ##
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", typeText), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", typeText), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -254,7 +253,7 @@ public ##
                 Diagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(2, 5),
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", typeText), expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", typeText), expected).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -275,7 +274,7 @@ public class TestClass
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", memberText), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", memberText), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -302,15 +301,15 @@ public class TestClass
                 Diagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(5, 9),
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", memberText), expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", memberText), expected).ConfigureAwait(false);
         }
 
-        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected)
         {
             var test = CreateTest(expected);
             test.TestCode = source;
 
-            return test.RunAsync(cancellationToken);
+            return test.RunAsync();
         }
 
         private static StyleCopDiagnosticVerifier<GenericTypeParameterDocumentationAnalyzer>.CSharpTest CreateTest(DiagnosticResult[] expected)

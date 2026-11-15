@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp10.DocumentationRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp9.DocumentationRules;
@@ -44,7 +43,7 @@ public delegate void IgnoredDelegate();
 ";
 
             var expectedDiagnostic = Diagnostic().WithLocation(0);
-            await VerifyCSharpFixAsync("TestType2.cs", testCode, StyleCopTopLevelTypesSettings, expectedDiagnostic, "TestType.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync("TestType2.cs", testCode, StyleCopTopLevelTypesSettings, expectedDiagnostic, "TestType.cs", fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -71,7 +70,7 @@ public delegate void IgnoredDelegate();
             var testCode = @"public interface FirstType { }
 " + recordDeclaration;
 
-            await VerifyCSharpDiagnosticAsync("SecondType.cs", testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync("SecondType.cs", testCode, settings, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -85,7 +84,7 @@ public class {|#0:NotMatching|}
 #line default";
 
             var expectedDiagnostic = Diagnostic().WithLocation(0);
-            await VerifyCSharpDiagnosticAsync("ActualFile.cs", testCode, testSettings: null, new[] { expectedDiagnostic }, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync("ActualFile.cs", testCode, testSettings: null, new[] { expectedDiagnostic }).ConfigureAwait(false);
         }
     }
 }

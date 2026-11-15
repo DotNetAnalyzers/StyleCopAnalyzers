@@ -48,7 +48,7 @@ namespace StyleCop.Analyzers.Test.Settings
         [Fact]
         public void VerifySettingsDefaults()
         {
-            var styleCopSettings = SettingsHelper.GetStyleCopSettingsInTests(default(SyntaxTreeAnalysisContext), CancellationToken.None);
+            var styleCopSettings = SettingsHelper.GetStyleCopSettingsInTests(default(SyntaxTreeAnalysisContext), TestContext.Current.CancellationToken);
 
             AssertDefaultSettings(styleCopSettings);
         }
@@ -64,7 +64,7 @@ namespace StyleCop.Analyzers.Test.Settings
         {
             var context = await CreateAnalysisContextAsync(stylecopJSON: null).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             AssertDefaultSettings(styleCopSettings);
         }
@@ -82,7 +82,7 @@ namespace StyleCop.Analyzers.Test.Settings
         {
             var context = await CreateAnalysisContextAsync(stylecopJSON).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             AssertDefaultSettings(styleCopSettings);
         }
@@ -93,7 +93,7 @@ namespace StyleCop.Analyzers.Test.Settings
             var settings = @"{ ""settings"": { ""orderingRules"": { ""accessibilityOrder"": [ ""public"" ] } } }";
             var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
 
-            var accessibilityOrder = context.GetStyleCopSettingsInTests(CancellationToken.None).OrderingRules.AccessibilityOrder;
+            var accessibilityOrder = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken).OrderingRules.AccessibilityOrder;
 
             Assert.Equal(DefaultAccessibilityOrder, accessibilityOrder);
         }
@@ -113,7 +113,7 @@ namespace StyleCop.Analyzers.Test.Settings
                 { "settings": { "layoutRules": { "allowBracelessIfStatements": "{{option}}" } } }
                 """;
             var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
-            var actual = context.GetStyleCopSettingsInTests(CancellationToken.None).LayoutRules.AllowBracelessIfStatements;
+            var actual = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken).LayoutRules.AllowBracelessIfStatements;
 
             Assert.Equal(option, actual.ToString(), ignoreCase: true);
         }
@@ -133,7 +133,7 @@ namespace StyleCop.Analyzers.Test.Settings
 ";
             var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             Assert.Equal("en-US", styleCopSettings.DocumentationRules.DocumentationCulture);
             Assert.Same(CultureInfo.InvariantCulture, styleCopSettings.DocumentationRules.DocumentationCultureInfo);
@@ -184,7 +184,7 @@ namespace StyleCop.Analyzers.Test.Settings
 ";
             var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
             Assert.Equal("Custom copyright text.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
@@ -226,7 +226,7 @@ namespace StyleCop.Analyzers.Test.Settings
 ";
             var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentExposedElements);
             Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentInternalElements);
@@ -258,7 +258,7 @@ namespace StyleCop.Analyzers.Test.Settings
 ";
             var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             var expected = value switch
             {
@@ -294,7 +294,7 @@ namespace StyleCop.Analyzers.Test.Settings
 ";
             var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             Assert.Single(styleCopSettings.DocumentationRules.Variables);
             Assert.Equal("value", styleCopSettings.DocumentationRules.Variables["var"]);
@@ -322,7 +322,7 @@ namespace StyleCop.Analyzers.Test.Settings
 ";
             var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             Assert.Equal(companyName, styleCopSettings.DocumentationRules.CompanyName);
             Assert.Equal($"Copyright (c) {companyName}. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
@@ -342,7 +342,7 @@ namespace StyleCop.Analyzers.Test.Settings
 ";
             var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             Assert.Equal("[CircularReference]", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
         }
@@ -361,7 +361,7 @@ namespace StyleCop.Analyzers.Test.Settings
 ";
             var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             Assert.Equal("[InvalidReference]", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
         }
@@ -385,7 +385,7 @@ namespace StyleCop.Analyzers.Test.Settings
 ";
             var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
             Assert.Equal("Copyright (c) TestCompany. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
@@ -412,7 +412,7 @@ namespace StyleCop.Analyzers.Test.Settings
 ";
             var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
             Assert.Equal("Copyright (c) TestCompany. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
@@ -439,7 +439,7 @@ namespace StyleCop.Analyzers.Test.Settings
 ";
             var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
             Assert.Equal("Copyright (c) TestCompany. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
@@ -462,7 +462,7 @@ namespace StyleCop.Analyzers.Test.Settings
 ";
             var context = await CreateAnalysisContextAsync(settings, ".stylecop.json").ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
         }
@@ -473,7 +473,7 @@ namespace StyleCop.Analyzers.Test.Settings
             var settings = @"This is not a JSON file.";
             var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             // The result is the same as the default settings.
             AssertDefaultSettings(styleCopSettings);
@@ -485,7 +485,7 @@ namespace StyleCop.Analyzers.Test.Settings
             var settings = string.Empty;
             var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             // The result is the same as the default settings.
             AssertDefaultSettings(styleCopSettings);
@@ -562,7 +562,7 @@ namespace StyleCop.Analyzers.Test.Settings
                 : ImmutableArray.Create<AdditionalText>(new AdditionalTextHelper(settingsFileName, stylecopJSON));
             var analyzerOptions = new AnalyzerOptions(additionalFiles);
 
-            return new SyntaxTreeAnalysisContext(syntaxTree, analyzerOptions, reportDiagnostic: _ => { }, isSupportedDiagnostic: _ => true, CancellationToken.None);
+            return new SyntaxTreeAnalysisContext(syntaxTree, analyzerOptions, reportDiagnostic: _ => { }, isSupportedDiagnostic: _ => true, TestContext.Current.CancellationToken);
         }
 
         private class AdditionalTextHelper : AdditionalText

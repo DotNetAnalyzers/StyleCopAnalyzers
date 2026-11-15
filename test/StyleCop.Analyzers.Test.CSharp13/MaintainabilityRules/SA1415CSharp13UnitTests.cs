@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp13.MaintainabilityRules;
 
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using StyleCop.Analyzers.MaintainabilityRules;
@@ -90,7 +89,7 @@ internal partial class TypeName
         test.ExplicitlyEnabledDiagnostics.Add(SA1415DoNotUsePublicOnMembersOfInternalTypes.DiagnosticId);
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(1));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -123,7 +122,7 @@ internal partial class TypeName
         var expected = Diagnostic().WithLocation(0);
         test.ExpectedDiagnostics.Add(expected);
         test.RemainingDiagnostics.Add(expected);
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -166,6 +165,6 @@ internal partial class TypeName
         };
         test.ExplicitlyEnabledDiagnostics.Add(SA1415DoNotUsePublicOnMembersOfInternalTypes.DiagnosticId);
         test.ExpectedDiagnostics.AddRange(expected);
-        return test.RunAsync(CancellationToken.None);
+        return test.RunAsync();
     }
 }

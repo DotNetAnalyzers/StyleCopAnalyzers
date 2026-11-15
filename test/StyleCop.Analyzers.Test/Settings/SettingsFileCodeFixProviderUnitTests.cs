@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.Settings
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
@@ -45,7 +44,7 @@ namespace NamespaceName
             };
 
             test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -69,7 +68,7 @@ namespace NamespaceName
             };
 
             test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -89,7 +88,7 @@ namespace NamespaceName
             };
 
             test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -109,7 +108,7 @@ namespace NamespaceName
             };
 
             test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
     }
 }

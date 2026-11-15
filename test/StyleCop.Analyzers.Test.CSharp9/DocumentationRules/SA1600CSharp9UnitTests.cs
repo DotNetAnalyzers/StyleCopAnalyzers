@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.DocumentationRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
@@ -42,7 +41,7 @@ public partial class TestClass
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -79,7 +78,7 @@ public partial class TestClass
 }}
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Theory]
@@ -95,11 +94,11 @@ public partial class TestClass
                 var test = new CSharpTest { TestCode = testCode, FixedCode = testCode, DisabledDiagnostics = { "CS1591" } };
                 test.ExpectedDiagnostics.AddRange(expected);
                 test.ExpectedDiagnostics.AddRange(this.GetExpectedRecordParameterDiagnostics(1));
-                await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+                await test.RunAsync().ConfigureAwait(false);
                 return;
             }
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -130,7 +129,7 @@ public record MyRecord(int {{|#0:Parameter|}});";
                 test.ExpectedDiagnostics.AddRange(this.GetExpectedRecordParameterDiagnostics(0));
             }
 
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -152,7 +151,7 @@ public record MyRecord(int {{|#0:Parameter|}});";
             var test = new CSharpTest { TestCode = testCode, DisabledDiagnostics = { "CS1591" } };
             test.ExpectedDiagnostics.AddRange(this.GetExpectedRecordParameterDiagnostics(0));
             test.ExpectedDiagnostics.AddRange(this.GetExpectedRecordParameterDiagnostics(1));
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -182,7 +181,7 @@ public record MyRecord(int {|#0:Parameter|});",
                 test.ExpectedDiagnostics.AddRange(this.GetExpectedRecordParameterDiagnostics(0));
             }
 
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -203,7 +202,7 @@ public record MyRecord(int First, int Second, int {|#0:Missing|});",
                 XmlReferences = { { "Record.xml", "<doc><param name='Second'>Second.</param></doc>" } },
             };
             test.ExpectedDiagnostics.AddRange(this.GetExpectedRecordParameterDiagnostics(0));
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -239,7 +238,7 @@ public record MyRecord(int First, int Second, int {|#0:Missing|});",
                 test.ExpectedDiagnostics.AddRange(this.GetExpectedRecordParameterDiagnostics(0));
             }
 
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -258,7 +257,7 @@ public partial record MyRecord(int {|#0:Parameter|});
 public partial record MyRecord;",
             };
             test.ExpectedDiagnostics.AddRange(this.GetExpectedRecordParameterDiagnostics(0));
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -274,7 +273,7 @@ public partial record MyRecord;",
         {
             var testCode = $@"/// <summary>Record.</summary>
 public record MyRecord{parameterList};";
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -291,7 +290,7 @@ public record MyRecord{parameterList};";
                 TestCode = "public record MyRecord(int Parameter);",
                 TestState = { DocumentationMode = DocumentationMode.None },
             };
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         protected virtual DiagnosticResult[] GetExpectedRecordParameterDiagnostics(int location)

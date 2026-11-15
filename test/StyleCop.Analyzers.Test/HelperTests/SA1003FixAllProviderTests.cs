@@ -67,19 +67,19 @@ public class SA1003FixAllProviderTests
             nameof(SA1003CodeFixProvider),
             fixer.FixableDiagnosticIds,
             new DiagnosticProvider(diagnostics),
-            CancellationToken.None);
+            TestContext.Current.CancellationToken);
         var action = await fixer.GetFixAllProvider().GetFixAsync(context).ConfigureAwait(false);
         Assert.NotNull(action);
-        var operations = await action.GetOperationsAsync(CancellationToken.None).ConfigureAwait(false);
+        var operations = await action.GetOperationsAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
         var changedSolution = Assert.Single(operations.OfType<ApplyChangesOperation>()).ChangedSolution;
 
-        Assert.Equal(fixedFirstSource, (await changedSolution.GetDocument(firstId).GetTextAsync().ConfigureAwait(false)).ToString());
+        Assert.Equal(fixedFirstSource, (await changedSolution.GetDocument(firstId).GetTextAsync(TestContext.Current.CancellationToken).ConfigureAwait(false)).ToString());
         Assert.Equal(
             scope == FixAllScope.Document ? secondSource : fixedSecondSource,
-            (await changedSolution.GetDocument(secondId).GetTextAsync().ConfigureAwait(false)).ToString());
+            (await changedSolution.GetDocument(secondId).GetTextAsync(TestContext.Current.CancellationToken).ConfigureAwait(false)).ToString());
         Assert.Equal(
             scope == FixAllScope.Solution ? fixedThirdSource : thirdSource,
-            (await changedSolution.GetDocument(thirdId).GetTextAsync().ConfigureAwait(false)).ToString());
+            (await changedSolution.GetDocument(thirdId).GetTextAsync(TestContext.Current.CancellationToken).ConfigureAwait(false)).ToString());
     }
 
     private static async Task<ImmutableArray<Diagnostic>> CreateDiagnosticsAsync(Document document)

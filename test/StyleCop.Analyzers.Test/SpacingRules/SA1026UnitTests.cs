@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
@@ -29,7 +28,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Theory]
@@ -47,7 +46,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             const string expectedCode = "public class Foo { public Foo() { var ints = new[] { 1, 2, 3 }; } }";
             DiagnosticResult expected = Diagnostic().WithArguments("new").WithLocation(1, 46);
 
-            await VerifyCSharpFixAsync(testCode, expected, expectedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, expectedCode).ConfigureAwait(false);
         }
 
         [Theory]
@@ -72,7 +71,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             DiagnosticResult expected = Diagnostic().WithArguments("new").WithLocation(5, 20);
 
-            await VerifyCSharpFixAsync(testCode.ReplaceLineEndings(lineEnding), expected, expectedCode.ReplaceLineEndings(lineEnding), CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode.ReplaceLineEndings(lineEnding), expected, expectedCode.ReplaceLineEndings(lineEnding)).ConfigureAwait(false);
         }
     }
 }

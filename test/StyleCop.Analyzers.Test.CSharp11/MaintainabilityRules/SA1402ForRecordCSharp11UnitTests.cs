@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp11.MaintainabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp10.MaintainabilityRules;
@@ -26,7 +25,7 @@ public record TestRecord1 { }
 file record TestRecord2 { }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
     }
 }

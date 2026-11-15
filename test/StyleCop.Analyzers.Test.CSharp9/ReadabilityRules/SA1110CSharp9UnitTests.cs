@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.ReadabilityRules;
@@ -32,7 +31,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
 }}";
 
             var expected = this.GetExpectedResultTestPrimaryConstructor();
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Theory]
@@ -53,7 +52,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
 }}";
 
             var expected = this.GetExpectedResultTestPrimaryConstructor();
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Theory]
@@ -70,7 +69,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
 {{
 }}";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Theory]
@@ -99,7 +98,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
 }}";
 
             var expected = this.GetExpectedResultTestPrimaryConstructorBaseList();
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Theory]
@@ -127,7 +126,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules
 }}";
 
             var expected = this.GetExpectedResultTestPrimaryConstructorBaseList();
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -169,7 +168,7 @@ class Test
 }";
 
             var expected = Diagnostic().WithLocation(0);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -204,7 +203,7 @@ public class TestClass
 }
 ";
 
-            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode).ConfigureAwait(false);
         }
 
         protected virtual DiagnosticResult[] GetExpectedResultTestPrimaryConstructor()

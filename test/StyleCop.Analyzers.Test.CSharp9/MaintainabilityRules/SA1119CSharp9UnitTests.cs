@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.MaintainabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.MaintainabilityRules;
@@ -36,7 +35,7 @@ record Foo(int Value)
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestCode = testCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -79,7 +78,7 @@ record Foo(int Value)
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(2),
                 },
                 FixedCode = fixedCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -121,7 +120,7 @@ record Foo(int Value)
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(2),
                 },
                 FixedCode = fixedCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Theory]
@@ -148,7 +147,7 @@ record Foo(int Value)
             {
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
                 TestCode = testCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -181,7 +180,7 @@ record Foo(int Value)
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(2),
                 },
                 FixedCode = fixedCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -222,7 +221,7 @@ class C
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(2),
                 },
                 FixedCode = fixedCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -244,7 +243,7 @@ class C
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
     }
 }

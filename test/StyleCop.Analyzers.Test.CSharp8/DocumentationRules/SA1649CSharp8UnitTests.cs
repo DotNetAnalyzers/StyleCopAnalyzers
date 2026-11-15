@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp8.DocumentationRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp7.DocumentationRules;
@@ -45,7 +44,7 @@ namespace TestNamespace
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(fileName: "TestType.cs", testCode, testSettings: null, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(fileName: "TestType.cs", testCode, testSettings: null, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -110,7 +109,7 @@ namespace TestNamespace
 ";
 
             var expectedDiagnostic = Diagnostic().WithLocation(0);
-            await VerifyCSharpFixAsync(oldFileName: "WrongFileName.cs", testCode, StyleCopSettings, expectedDiagnostic, newFileName: "TestType.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(oldFileName: "WrongFileName.cs", testCode, StyleCopSettings, expectedDiagnostic, newFileName: "TestType.cs", fixedCode).ConfigureAwait(false);
         }
     }
 }

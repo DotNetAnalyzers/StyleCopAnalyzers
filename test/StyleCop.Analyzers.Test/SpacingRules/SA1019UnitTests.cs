@@ -6,7 +6,6 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
@@ -49,7 +48,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             DiagnosticResult expected = Diagnostic(DescriptorNotPreceded).WithLocation(16, 27).WithArguments(op[0]);
 
-            await VerifyCSharpFixAsync(template, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(template, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Theory]
@@ -62,7 +61,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             DiagnosticResult expected = Diagnostic(DescriptorNotPreceded).WithLocation(16, 27).WithArguments(op[0]);
 
-            await VerifyCSharpFixAsync(template, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(template, expected, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -78,7 +77,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             string fixedCode = this.GetTemplate($"{op}");
 
             DiagnosticResult expected = Diagnostic(DescriptorNotFollowed).WithLocation(16, 25 + op.Length).WithArguments(op.Last());
-            await VerifyCSharpFixAsync(template, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(template, expected, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -91,7 +90,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         public async Task TestOperatorAtEndOfLineDoesNotReportAsync(string op)
         {
             string template = this.GetTemplate($"{op}{Environment.NewLine}");
-            await VerifyCSharpDiagnosticAsync(template, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(template, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -104,7 +103,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         public async Task TestOperatorAtStartOfLineDoesNotReportAsync(string op)
         {
             string template = this.GetTemplate($"{Environment.NewLine}{op}");
-            await VerifyCSharpDiagnosticAsync(template, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(template, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -117,7 +116,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         public async Task TestBlockCommentsEitherSideOfOperatorDoesNotReportAsync(string op)
         {
             string template = this.GetTemplate($"/**/{op}/**/");
-            await VerifyCSharpDiagnosticAsync(template, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(template, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -130,7 +129,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         public async Task TestCommentOnLinePrecedingOperatorDoesNotReportAsync(string op)
         {
             string template = this.GetTemplate($"// This is a comment{Environment.NewLine}{op}");
-            await VerifyCSharpDiagnosticAsync(template, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(template, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -143,7 +142,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         public async Task TestCommentOnLineFollowingOperatorDoesNotReportAsync(string op)
         {
             string template = this.GetTemplate($"{op}{Environment.NewLine}// This is a comment{Environment.NewLine}");
-            await VerifyCSharpDiagnosticAsync(template, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(template, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -157,7 +156,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         {
             string template = this.GetTemplate($"{op} // This is a comment{Environment.NewLine}");
             DiagnosticResult expected = Diagnostic(DescriptorNotFollowed).WithLocation(16, 25 + op.Length).WithArguments(".");
-            await VerifyCSharpDiagnosticAsync(template, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(template, expected).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -170,7 +169,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         public async Task TestCommentOnSameLineImmediatelyAfterOperatorDoesNotReportsAsync(string op)
         {
             string template = this.GetTemplate($"{op}// This is a comment{Environment.NewLine}");
-            await VerifyCSharpDiagnosticAsync(template, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(template, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -192,7 +191,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(template, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(template, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -298,7 +297,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 Diagnostic(DescriptorNotFollowed).WithLocation(30, 12).WithArguments("->"),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>

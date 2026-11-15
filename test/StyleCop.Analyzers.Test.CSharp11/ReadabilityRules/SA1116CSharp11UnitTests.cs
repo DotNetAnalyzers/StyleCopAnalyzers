@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp11.ReadabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp10.ReadabilityRules;
@@ -45,7 +44,7 @@ class Foo
 }";
 
             DiagnosticResult expected = Diagnostic().WithLocation(0);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -81,7 +80,7 @@ class Foo
 }";
 
             DiagnosticResult expected = Diagnostic().WithLocation(0);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         protected override DiagnosticResult[] GetExpectedResultTestPrimaryConstructorSplitParametersNotStartingOnNextLine()

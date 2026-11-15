@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp12.ReadabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp11.ReadabilityRules;
@@ -46,7 +45,7 @@ namespace StyleCop.Analyzers.Test.CSharp12.ReadabilityRules
 }}
 ";
 
-            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode).ConfigureAwait(false);
         }
     }
 }

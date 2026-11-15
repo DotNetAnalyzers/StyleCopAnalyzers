@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using global::LightJson;
     using global::LightJson.Serialization;
@@ -23,10 +22,10 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         protected static DiagnosticResult Diagnostic()
             => StyleCopDiagnosticVerifier<SA1402FileMayOnlyContainASingleType>.Diagnostic();
 
-        protected static Task VerifyCSharpDiagnosticAsync(string source, string? testSettings, DiagnosticResult expected, CancellationToken cancellationToken)
-            => VerifyCSharpDiagnosticAsync(source, testSettings, new[] { expected }, cancellationToken);
+        protected static Task VerifyCSharpDiagnosticAsync(string source, string? testSettings, DiagnosticResult expected)
+            => VerifyCSharpDiagnosticAsync(source, testSettings, new[] { expected });
 
-        protected static Task VerifyCSharpDiagnosticAsync(string source, string? testSettings, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        protected static Task VerifyCSharpDiagnosticAsync(string source, string? testSettings, DiagnosticResult[] expected)
         {
             var test = new StyleCopCodeFixVerifier<SA1402FileMayOnlyContainASingleType, SA1402CodeFixProvider>.CSharpTest
             {
@@ -35,13 +34,13 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             };
 
             test.ExpectedDiagnostics.AddRange(expected);
-            return test.RunAsync(cancellationToken);
+            return test.RunAsync();
         }
 
-        protected static Task VerifyCSharpFixAsync(string source, string? testSettings, DiagnosticResult expected, (string fileName, string content)[] fixedSources, CancellationToken cancellationToken)
-            => VerifyCSharpFixAsync(source, testSettings, new[] { expected }, fixedSources, cancellationToken);
+        protected static Task VerifyCSharpFixAsync(string source, string? testSettings, DiagnosticResult expected, (string fileName, string content)[] fixedSources)
+            => VerifyCSharpFixAsync(source, testSettings, new[] { expected }, fixedSources);
 
-        protected static Task VerifyCSharpFixAsync(string source, string? testSettings, DiagnosticResult[] expected, (string fileName, string content)[] fixedSources, CancellationToken cancellationToken)
+        protected static Task VerifyCSharpFixAsync(string source, string? testSettings, DiagnosticResult[] expected, (string fileName, string content)[] fixedSources)
         {
             var test = new StyleCopCodeFixVerifier<SA1402FileMayOnlyContainASingleType, SA1402CodeFixProvider>.CSharpTest
             {
@@ -55,7 +54,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             }
 
             test.ExpectedDiagnostics.AddRange(expected);
-            return test.RunAsync(cancellationToken);
+            return test.RunAsync();
         }
 
         private protected virtual string? GetSettings(FileNamingConvention namingConvention = FileNamingConvention.StyleCop)

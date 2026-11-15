@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp15.DocumentationRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.Test.CSharp14.DocumentationRules;
     using Xunit;
@@ -37,7 +36,7 @@ public union Shape(int, string) : System.IDisposable
 
             var expected = Diagnostic().WithLocation(0);
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
     }
 }

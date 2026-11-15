@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.Helpers;
@@ -34,7 +33,7 @@ public class Foo
     #endregion
 }";
 
-            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), testCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), testCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -56,7 +55,7 @@ public class Foo
                 + (conditionalReadonlyField ? "#endif\r\n" : string.Empty)
                 + "}\r\n";
 
-            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), testCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), testCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -125,7 +124,7 @@ public class TestClass2
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Theory]
@@ -150,7 +149,7 @@ public {keyword} Foo
     private static readonly int j = 0;
     private static int i = 0;
 }}";
-            await VerifyCSharpFixAsync(testCode, expected, fixTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixTestCode).ConfigureAwait(false);
         }
 
         [Theory]
@@ -175,7 +174,7 @@ public class Foo
     private static readonly int j = 0;
     private static int i = 0;
 }".ReplaceLineEndings(lineEnding);
-            await VerifyCSharpFixAsync(testCode, expected, fixTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -188,7 +187,7 @@ public class Foo
     private static readonly int j = 0;
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -210,7 +209,7 @@ public class Foo
 {
     private static readonly int j = 0;
     private static int i = 0;}";
-            await VerifyCSharpFixAsync(testCode, expected, fixTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixTestCode).ConfigureAwait(false);
         }
 
         [Theory]
@@ -232,7 +231,7 @@ public {keyword} Foo
 
             var expected = Diagnostic().WithLocation(0);
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -256,7 +255,7 @@ public struct Foo
     private static readonly int j = 0;
     private static int i = 0;
 }";
-            await VerifyCSharpFixAsync(testCode, expected, fixTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -316,7 +315,7 @@ public class Foo
     public static readonly int j = 0;
 }";
 
-            await VerifyCSharpFixAsync(testCode, expected, fixTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -344,7 +343,7 @@ public class Foo
     public static readonly int j = 0;
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -357,7 +356,7 @@ public class Foo
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
     }
 }
