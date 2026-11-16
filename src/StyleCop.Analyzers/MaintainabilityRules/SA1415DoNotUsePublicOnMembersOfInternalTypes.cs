@@ -1090,6 +1090,73 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
             return method.Name == "GetEnumerator" && NonReceiverParametersAreEmpty(method);
         }
 
+        private static void CollectExtensionAwaiters(INamespaceSymbol namespaceSymbol, List<ISymbol> receivers, CancellationToken cancellationToken)
+        {
+            foreach (var member in namespaceSymbol.GetMembers())
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                switch (member)
+                {
+                case INamespaceSymbol child:
+                    CollectExtensionAwaiters(child, receivers, cancellationToken);
+                    break;
+
+                case INamedTypeSymbol type:
+                    CollectExtensionAwaiterType(type, receivers, cancellationToken);
+                    break;
+                }
+            }
+        }
+
+        private static void CollectExtensionAwaiterType(INamedTypeSymbol type, List<ISymbol> receivers, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            foreach (var member in type.GetMembers("GetAwaiter"))
+            {
+                if (member is not IMethodSymbol method
+                    || !method.IsExtensionMethod
+                    || !method.TypeParameters.IsEmpty
+                    || !NonReceiverParametersAreEmpty(method))
+                {
+                    continue;
+                }
+
+                var receiverType = ExtensionReceiverType(method);
+                if (receiverType is null || method.ReturnType is not INamedTypeSymbol awaiterType || !IsAwaiterBool(awaiterType))
+                {
+                    continue;
+                }
+
+                receivers.Add(receiverType);
+            }
+
+            foreach (var nested in type.GetTypeMembers())
+            {
+                CollectExtensionAwaiterType(nested, receivers, cancellationToken);
+            }
+        }
+
+        private static void CollectImplementers(
+            INamespaceSymbol namespaceSymbol,
+            Dictionary<INamedTypeSymbol, List<INamedTypeSymbol>> map,
+            CancellationToken cancellationToken)
+        {
+            foreach (var member in namespaceSymbol.GetMembers())
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                switch (member)
+                {
+                case INamespaceSymbol child:
+                    CollectImplementers(child, map, cancellationToken);
+                    break;
+
+                case INamedTypeSymbol type:
+                    CollectType(type, map, cancellationToken);
+                    break;
+                }
+            }
+        }
+
         private void CollectPatternType(INamedTypeSymbol type, HashSet<ISymbol> members, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -1189,7 +1256,7 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
                 if (this.implementersByBase is null)
                 {
                     var map = new Dictionary<INamedTypeSymbol, List<INamedTypeSymbol>>();
-                    this.CollectImplementers(this.compilation.Assembly.GlobalNamespace, map, cancellationToken);
+                    CollectImplementers(this.compilation.Assembly.GlobalNamespace, map, cancellationToken);
                     this.implementersByBase = map;
                 }
 
@@ -1231,57 +1298,11 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
                 if (this.extensionAwaitableReceivers is null)
                 {
                     var receivers = new List<ISymbol>();
-                    this.CollectExtensionAwaiters(this.compilation.Assembly.GlobalNamespace, receivers, cancellationToken);
+                    CollectExtensionAwaiters(this.compilation.Assembly.GlobalNamespace, receivers, cancellationToken);
                     this.extensionAwaitableReceivers = receivers;
                 }
 
                 return this.extensionAwaitableReceivers;
-            }
-        }
-
-        private void CollectExtensionAwaiters(INamespaceSymbol namespaceSymbol, List<ISymbol> receivers, CancellationToken cancellationToken)
-        {
-            foreach (var member in namespaceSymbol.GetMembers())
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                switch (member)
-                {
-                case INamespaceSymbol child:
-                    this.CollectExtensionAwaiters(child, receivers, cancellationToken);
-                    break;
-
-                case INamedTypeSymbol type:
-                    this.CollectExtensionAwaiterType(type, receivers, cancellationToken);
-                    break;
-                }
-            }
-        }
-
-        private void CollectExtensionAwaiterType(INamedTypeSymbol type, List<ISymbol> receivers, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            foreach (var member in type.GetMembers("GetAwaiter"))
-            {
-                if (member is not IMethodSymbol method
-                    || !method.IsExtensionMethod
-                    || !method.TypeParameters.IsEmpty
-                    || !NonReceiverParametersAreEmpty(method))
-                {
-                    continue;
-                }
-
-                var receiverType = ExtensionReceiverType(method);
-                if (receiverType is null || method.ReturnType is not INamedTypeSymbol awaiterType || !IsAwaiterBool(awaiterType))
-                {
-                    continue;
-                }
-
-                receivers.Add(receiverType);
-            }
-
-            foreach (var nested in type.GetTypeMembers())
-            {
-                this.CollectExtensionAwaiterType(nested, receivers, cancellationToken);
             }
         }
 
@@ -1298,27 +1319,6 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
 
                 case INamedTypeSymbol type:
                     this.CollectPatternType(type, members, cancellationToken);
-                    break;
-                }
-            }
-        }
-
-        private void CollectImplementers(
-            INamespaceSymbol namespaceSymbol,
-            Dictionary<INamedTypeSymbol, List<INamedTypeSymbol>> map,
-            CancellationToken cancellationToken)
-        {
-            foreach (var member in namespaceSymbol.GetMembers())
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                switch (member)
-                {
-                case INamespaceSymbol child:
-                    this.CollectImplementers(child, map, cancellationToken);
-                    break;
-
-                case INamedTypeSymbol type:
-                    CollectType(type, map, cancellationToken);
                     break;
                 }
             }

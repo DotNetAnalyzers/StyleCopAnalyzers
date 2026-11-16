@@ -217,7 +217,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             case GenericNameSyntax genericName:
                 builder.Append(genericName.Identifier.Text);
-                builder.Append("<");
+                builder.Append('<');
 
                 var typeArgumentList = genericName.TypeArgumentList;
                 for (int i = 0; i < typeArgumentList.Arguments.Count; i++)
@@ -230,12 +230,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     AppendCanonicalString(builder, typeArgumentList.Arguments[i], semanticModel, cancellationToken);
                 }
 
-                builder.Append(">");
+                builder.Append('>');
                 return true;
 
             case QualifiedNameSyntax qualifiedName:
                 AppendCanonicalString(builder, qualifiedName.Left, semanticModel, cancellationToken);
-                builder.Append(".");
+                builder.Append('.');
                 AppendCanonicalString(builder, qualifiedName.Right, semanticModel, cancellationToken);
                 return true;
 
@@ -247,16 +247,16 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 AppendCanonicalString(builder, arrayType.ElementType, semanticModel, cancellationToken);
                 foreach (var rankSpecifier in arrayType.RankSpecifiers)
                 {
-                    builder.Append("[");
+                    builder.Append('[');
                     builder.Append(',', rankSpecifier.Rank - 1);
-                    builder.Append("]");
+                    builder.Append(']');
                 }
 
                 return true;
 
             case NullableTypeSyntax nullableType:
                 AppendCanonicalString(builder, nullableType.ElementType, semanticModel, cancellationToken);
-                builder.Append("?");
+                builder.Append('?');
                 return true;
 
             case OmittedTypeArgumentSyntax _:
@@ -267,7 +267,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 {
                     var tupleType = (TupleTypeSyntaxWrapper)type;
 
-                    builder.Append("(");
+                    builder.Append('(');
 
                     var elements = tupleType.Elements;
                     for (int i = 0; i < elements.Count; i++)
@@ -280,11 +280,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
                         AppendCanonicalString(builder, elements[i].Type, semanticModel, cancellationToken);
                         if (!elements[i].Identifier.IsKind(SyntaxKind.None))
                         {
-                            builder.Append(" ").Append(elements[i].Identifier.Text);
+                            builder.Append(' ').Append(elements[i].Identifier.Text);
                         }
                     }
 
-                    builder.Append(")");
+                    builder.Append(')');
                     return true;
                 }
                 else

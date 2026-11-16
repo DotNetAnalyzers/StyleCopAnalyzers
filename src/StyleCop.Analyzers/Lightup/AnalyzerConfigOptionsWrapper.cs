@@ -10,24 +10,15 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly struct AnalyzerConfigOptionsWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptions";
-        private static readonly Type? WrappedType;
+        private static readonly Type? WrappedType = WrapperHelper.GetWrappedType(typeof(AnalyzerConfigOptionsWrapper));
 
-        private static readonly Func<StringComparer?> KeyComparerAccessor;
-        private static readonly TryGetValueAccessor<object, string, string> TryGetValueAccessor;
+        private static readonly Func<StringComparer?> KeyComparerAccessor = LightupHelpers.CreateStaticPropertyAccessor<StringComparer?>(WrappedType, nameof(KeyComparer));
+        private static readonly TryGetValueAccessor<object, string, string> TryGetValueAccessor = LightupHelpers.CreateTryGetValueAccessor<object, string, string>(WrappedType, typeof(string), nameof(TryGetValue));
 
-        private static readonly string[] EmptyKeys = new string[0];
-        private static readonly Func<object, IEnumerable<string>?> KeysAccessor;
+        private static readonly string[] EmptyKeys = [];
+        private static readonly Func<object, IEnumerable<string>?> KeysAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<object, IEnumerable<string>?>(WrappedType, "Keys");
 
         private readonly object? node;
-
-        static AnalyzerConfigOptionsWrapper()
-        {
-            WrappedType = WrapperHelper.GetWrappedType(typeof(AnalyzerConfigOptionsWrapper));
-
-            KeysAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<object, IEnumerable<string>?>(WrappedType, "Keys");
-            KeyComparerAccessor = LightupHelpers.CreateStaticPropertyAccessor<StringComparer?>(WrappedType, nameof(KeyComparer));
-            TryGetValueAccessor = LightupHelpers.CreateTryGetValueAccessor<object, string, string>(WrappedType, typeof(string), nameof(TryGetValue));
-        }
 
         private AnalyzerConfigOptionsWrapper(object node)
         {

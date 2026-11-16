@@ -15,12 +15,12 @@ namespace StyleCop.Analyzers.Helpers
     /// </summary>
     internal static class SymbolNameHelpers
     {
-        private const string GenericTypeParametersOpen = "<";
-        private const string GenericTypeParametersClose = ">";
+        private const char GenericTypeParametersOpen = '<';
+        private const char GenericTypeParametersClose = '>';
         private const string GenericSeparator = ", ";
 
-        private const string TupleTypeOpen = "(";
-        private const string TupleTypeClose = ")";
+        private const char TupleTypeOpen = '(';
+        private const char TupleTypeClose = ')';
         private const string TupleElementSeparator = ", ";
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace StyleCop.Analyzers.Helpers
                     builder.Append(tupleElements[i].Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
                 }
 
-                builder.Append(">");
+                builder.Append('>');
 
                 return ObjectPools.StringBuilderPool.ReturnAndFree(builder);
             }
@@ -80,9 +80,9 @@ namespace StyleCop.Analyzers.Helpers
                 var arraySymbol = (IArrayTypeSymbol)symbol;
                 AppendQualifiedSymbolName(builder, arraySymbol.ElementType, GetElementSyntax(type));
                 builder
-                    .Append("[")
+                    .Append('[')
                     .Append(',', arraySymbol.Rank - 1)
-                    .Append("]");
+                    .Append(']');
 
                 AppendNullableSuffixIfNeeded(builder, type);
                 return true;
@@ -119,7 +119,7 @@ namespace StyleCop.Analyzers.Helpers
                 {
                     // This handles the case '(int, int)?' but not 'System.Nullable<(int, int)>'
                     AppendQualifiedSymbolName(builder, namedTypeSymbol.TypeArguments[0], GetElementSyntax(type));
-                    builder.Append("?");
+                    builder.Append('?');
                     return true;
                 }
                 else
@@ -142,7 +142,7 @@ namespace StyleCop.Analyzers.Helpers
         {
             if (AppendQualifiedSymbolName(builder, namedTypeSymbol.ContainingSymbol, (type as QualifiedNameSyntax)?.Left))
             {
-                builder.Append(".");
+                builder.Append('.');
             }
 
             builder.Append(namedTypeSymbol.Name);
@@ -198,7 +198,7 @@ namespace StyleCop.Analyzers.Helpers
                     AppendQualifiedSymbolName(builder, field.Type, fieldType.Type);
                     if (!Equals(field, field.CorrespondingTupleField()))
                     {
-                        builder.Append(" ").Append(field.Name);
+                        builder.Append(' ').Append(field.Name);
                     }
                 }
 
@@ -233,7 +233,7 @@ namespace StyleCop.Analyzers.Helpers
         {
             if (type?.IsKind(SyntaxKind.NullableType) == true)
             {
-                builder.Append("?");
+                builder.Append('?');
             }
         }
     }

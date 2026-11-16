@@ -159,6 +159,64 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
         }
 
+        private static string ExpandDocumentation(Compilation compilation, DocumentationCommentTriviaSyntax documentCommentTrivia, XmlNodeSyntax includeTag)
+        {
+            var sb = new StringBuilder();
+
+            sb.Append("<member>\n");
+
+            foreach (XmlNodeSyntax xmlNode in documentCommentTrivia.Content)
+            {
+                if (xmlNode == includeTag)
+                {
+                    ExpandIncludeTag(compilation, sb, xmlNode);
+                }
+                else
+                {
+                    sb.Append(xmlNode.ToString()).Append('\n');
+                }
+            }
+
+            sb.Append("</member>\n");
+
+            return sb.ToString();
+        }
+
+        private static void ExpandIncludeTag(Compilation compilation, StringBuilder sb, XmlNodeSyntax xmlNode)
+        {
+            try
+            {
+                var includeElement = XElement.Parse(xmlNode.ToString(), LoadOptions.None);
+
+                var fileAttribute = includeElement.Attribute(XName.Get(XmlCommentHelper.FileAttributeName));
+                var pathAttribute = includeElement.Attribute(XName.Get(XmlCommentHelper.PathAttributeName));
+
+                if ((fileAttribute != null) && (pathAttribute != null))
+                {
+                    var resolver = compilation.Options.XmlReferenceResolver;
+                    if (resolver != null)
+                    {
+                        string resolvedFilePath = resolver.ResolveReference(fileAttribute.Value, null);
+
+                        using (var xmlStream = resolver.OpenRead(resolvedFilePath))
+                        {
+                            var document = XDocument.Load(xmlStream);
+                            var expandedInclude = document.XPathSelectElements(pathAttribute.Value);
+
+                            foreach (var x in expandedInclude!)
+                            {
+                                sb.Append(x.ToString()).Append('\n');
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // if the include tag is invalid, ignore it.
+            }
+        }
+
         private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             // We handle TypeDeclarationSyntax instead of BaseTypeDeclarationSyntax because enums are not allowed to be
@@ -343,7 +401,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                         // TODO: Investigate this further. Possibly add a test with an actual partial implemented method.
                         // Workaround: Roslyn does not support expanding include directives for partial method definitions.
                         //             (see src/Compilers/CSharp/Portable/Compiler/DocumentationCommentCompiler.cs#L315)
-                        rawDocumentation = this.ExpandDocumentation(context.Compilation, documentation, relevantXmlElement);
+                        rawDocumentation = ExpandDocumentation(context.Compilation, documentation, relevantXmlElement);
                     }
                     else
                     {
@@ -361,64 +419,6 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             this.HandleXmlElement(context, needsComment, relevantXmlElement, completeDocumentation, locations);
-        }
-
-        private string ExpandDocumentation(Compilation compilation, DocumentationCommentTriviaSyntax documentCommentTrivia, XmlNodeSyntax includeTag)
-        {
-            var sb = new StringBuilder();
-
-            sb.Append("<member>\n");
-
-            foreach (XmlNodeSyntax xmlNode in documentCommentTrivia.Content)
-            {
-                if (xmlNode == includeTag)
-                {
-                    this.ExpandIncludeTag(compilation, sb, xmlNode);
-                }
-                else
-                {
-                    sb.Append(xmlNode.ToString()).Append('\n');
-                }
-            }
-
-            sb.Append("</member>\n");
-
-            return sb.ToString();
-        }
-
-        private void ExpandIncludeTag(Compilation compilation, StringBuilder sb, XmlNodeSyntax xmlNode)
-        {
-            try
-            {
-                var includeElement = XElement.Parse(xmlNode.ToString(), LoadOptions.None);
-
-                var fileAttribute = includeElement.Attribute(XName.Get(XmlCommentHelper.FileAttributeName));
-                var pathAttribute = includeElement.Attribute(XName.Get(XmlCommentHelper.PathAttributeName));
-
-                if ((fileAttribute != null) && (pathAttribute != null))
-                {
-                    var resolver = compilation.Options.XmlReferenceResolver;
-                    if (resolver != null)
-                    {
-                        string resolvedFilePath = resolver.ResolveReference(fileAttribute.Value, null);
-
-                        using (var xmlStream = resolver.OpenRead(resolvedFilePath))
-                        {
-                            var document = XDocument.Load(xmlStream);
-                            var expandedInclude = document.XPathSelectElements(pathAttribute.Value);
-
-                            foreach (var x in expandedInclude!)
-                            {
-                                sb.Append(x.ToString()).Append('\n');
-                            }
-                        }
-                    }
-                }
-            }
-            catch
-            {
-                // if the include tag is invalid, ignore it.
-            }
         }
     }
 }

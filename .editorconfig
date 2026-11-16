@@ -14,6 +14,9 @@ insert_final_newline = true
 indent_style = space
 indent_size = 4
 
+# Do not generate these code quality warnings as they decrease readability
+dotnet_code_quality.CA1826.exclude_ordefault_methods = true
+
 # Sort using and Import directives with System.* appearing first
 dotnet_sort_system_directives_first = true
 dotnet_separate_import_directive_groups = false

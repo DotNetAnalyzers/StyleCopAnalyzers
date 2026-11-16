@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Helpers
     /// </summary>
     internal static class NameSyntaxHelpers
     {
-        private const string DotChar = ".";
+        private const char DotChar = '.';
 
         /// <summary>
         /// Gets the name contained in the <see cref="NameSyntax"/>, including the alias prefix (if any).
