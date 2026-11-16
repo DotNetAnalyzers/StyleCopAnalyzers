@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.Test.NamingRules;
 
     using System.Collections.Generic;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -59,8 +58,7 @@ public class DerivedType : BaseType
             await VerifyCSharpFixAsync(
                 testCode,
                 expected,
-                fixedCode,
-                CancellationToken.None).ConfigureAwait(false);
+                fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -94,8 +92,7 @@ public class TypeName : IType
             await VerifyCSharpFixAsync(
                 testCode,
                 Diagnostic().WithArguments("actualName", "inheritedName").WithLocation(0),
-                fixedCode,
-                CancellationToken.None).ConfigureAwait(false);
+                fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -129,8 +126,7 @@ public class TypeName : IType
             await VerifyCSharpFixAsync(
                 testCode,
                 Diagnostic().WithArguments("actualName", "inheritedName").WithLocation(0),
-                fixedCode,
-                CancellationToken.None).ConfigureAwait(false);
+                fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -178,8 +174,7 @@ public class TypeName : IType
             await VerifyCSharpFixAsync(
                 testCode,
                 Diagnostic().WithArguments("actualName", "inheritedName").WithLocation(0),
-                fixedCode,
-                CancellationToken.None).ConfigureAwait(false);
+                fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -225,8 +220,7 @@ public class TypeName : IType
             await VerifyCSharpFixAsync(
                 testCode,
                 Diagnostic().WithArguments("actualName", "inheritedName").WithLocation(0),
-                fixedCode,
-                CancellationToken.None).ConfigureAwait(false);
+                fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -253,8 +247,7 @@ public class TypeName : IType
             await VerifyCSharpFixAsync(
                 testCode,
                 Diagnostic().WithArguments("actualName", "inheritedName").WithLocation(0),
-                testCode,
-                CancellationToken.None).ConfigureAwait(false);
+                testCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -297,7 +290,7 @@ public class TypeName : IFirst, ISecond, IThird
                 CodeActionIndex = codeActionIndex,
             };
             test.ExpectedDiagnostics.Add(Diagnostic().WithArguments("actualName", "firstName, secondName").WithMessage("Parameter 'actualName' should match an inherited parameter name: firstName, secondName").WithLocation(0));
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -338,7 +331,7 @@ public class TypeName : BaseType, IType
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -384,8 +377,7 @@ public class DerivedType : IntermediateType
             await VerifyCSharpFixAsync(
                 testCode,
                 Diagnostic().WithArguments("actualName", "inheritedName").WithLocation(0),
-                fixedCode,
-                CancellationToken.None).ConfigureAwait(false);
+                fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -412,7 +404,7 @@ public class TypeName : IDerived, ISecond
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -456,8 +448,7 @@ public class DerivedType : BaseType, IType
             await VerifyCSharpFixAsync(
                 testCode,
                 Diagnostic().WithArguments("actualName", "baseName").WithLocation(0),
-                fixedCode,
-                CancellationToken.None).ConfigureAwait(false);
+                fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -497,7 +488,7 @@ public class TypeName : IOther, IDerived
                     .WithSpan(12, 21, 12, 31),
             });
 
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         internal class CombinedCSharpTest : StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<

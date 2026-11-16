@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp11.MaintainabilityRules;
 
-using System.Threading;
 using System.Threading.Tasks;
 using StyleCop.Analyzers.MaintainabilityRules;
 using StyleCop.Analyzers.Test.CSharp10.MaintainabilityRules;
@@ -50,6 +49,6 @@ file class TypeName
             test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
         }
 
-        return test.RunAsync(CancellationToken.None);
+        return test.RunAsync();
     }
 }

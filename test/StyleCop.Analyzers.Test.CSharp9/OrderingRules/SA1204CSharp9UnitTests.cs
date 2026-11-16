@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.OrderingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.OrderingRules;
@@ -35,7 +34,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.OrderingRules
 }}";
 
             var expected = this.GetExpectedResultTestMemberOrderInTypeWithPrimaryConstructor();
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         protected virtual DiagnosticResult[] GetExpectedResultTestMemberOrderInTypeWithPrimaryConstructor()

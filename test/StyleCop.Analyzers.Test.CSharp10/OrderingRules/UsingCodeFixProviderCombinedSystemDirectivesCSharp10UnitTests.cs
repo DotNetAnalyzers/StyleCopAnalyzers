@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp10.OrderingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
@@ -27,7 +26,7 @@ class TestClass
 {
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -63,7 +62,7 @@ class TestClass
                 StyleCopDiagnosticVerifier<SA1217UsingStaticDirectivesMustBeOrderedAlphabetically>.Diagnostic().WithLocation(1).WithArguments("System.Math", "System.Array"),
                 StyleCopDiagnosticVerifier<SA1211UsingAliasDirectivesMustBeOrderedAlphabeticallyByAliasName>.Diagnostic().WithLocation(2).WithArguments("AliasA", "AliasB"),
             };
-            await this.VerifyCSharpFixAsync(testCode, expected, fixedCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, expected, fixedCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
     }
 }

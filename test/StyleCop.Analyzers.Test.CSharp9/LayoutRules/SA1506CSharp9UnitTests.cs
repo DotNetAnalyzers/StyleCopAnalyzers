@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.LayoutRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.LayoutRules;
@@ -36,7 +35,7 @@ public {keyword} TestRecord
 }}
 ";
 
-            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(4, 1), fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(4, 1), fixedCode).ConfigureAwait(false);
         }
     }
 }

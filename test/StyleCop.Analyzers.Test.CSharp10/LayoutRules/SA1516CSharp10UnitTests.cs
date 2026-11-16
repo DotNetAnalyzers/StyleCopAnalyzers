@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp10.LayoutRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -237,7 +236,7 @@ public enum Foobar
                 FixedCode = fixedCode,
             };
 
-            return test.RunAsync(CancellationToken.None);
+            return test.RunAsync();
         }
     }
 }

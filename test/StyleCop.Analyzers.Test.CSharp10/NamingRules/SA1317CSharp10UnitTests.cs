@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp10.NamingRules;
 
-using System.Threading;
 using System.Threading.Tasks;
 using StyleCop.Analyzers.Test.CSharp9.NamingRules;
 using Xunit;
@@ -17,6 +16,6 @@ public partial class SA1317CSharp10UnitTests : SA1317CSharp9UnitTests
     [InlineData(@"record struct {|#0:а|} {}")]
     public async Task TestCSharp10DeclarationFormsAsync(string testCode)
     {
-        await VerifyCSharpDiagnosticAsync(testCode, Diagnostic().WithLocation(0).WithArguments("а", 0), CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(testCode, Diagnostic().WithLocation(0).WithArguments("а", 0)).ConfigureAwait(false);
     }
 }

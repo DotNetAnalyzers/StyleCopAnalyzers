@@ -5,7 +5,6 @@ namespace StyleCop.Analyzers.Test.CSharp8.Lightup;
 
 using System.Collections.Immutable;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -153,7 +152,7 @@ public partial class NullableLightupCSharp8UnitTests
     private static async Task<CSharpCompilation> CreateCompilationAsync(string statement)
     {
         var references = await ReferenceAssemblies.Net.Net100
-            .ResolveAsync(LanguageNames.CSharp, CancellationToken.None).ConfigureAwait(false);
+            .ResolveAsync(LanguageNames.CSharp, TestContext.Current.CancellationToken).ConfigureAwait(false);
         references = references.AddRange(new[]
         {
             MetadataReference.CreateFromFile(typeof(SyntaxNode).Assembly.Location),

@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp14.ReadabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Lightup;
@@ -34,7 +33,7 @@ public static class MyExtensions
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -56,7 +55,7 @@ public static class TestClass
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -78,7 +77,7 @@ public static class TestClass
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -119,7 +118,7 @@ public static class TestExtensions
 }
 ";
 
-            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -137,7 +136,7 @@ public class TestClass
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -189,7 +188,7 @@ internal class TestClass
             test.ExpectedDiagnostics.Add(DiagnosticResult.CompilerWarning("CS9258").WithLocation(2));
             test.FixedState.ExpectedDiagnostics.Add(DiagnosticResult.CompilerWarning("CS9258").WithLocation(1));
             test.FixedState.ExpectedDiagnostics.Add(DiagnosticResult.CompilerWarning("CS9258").WithLocation(2));
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -233,7 +232,7 @@ internal class TestClass
 
             test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
             test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(1));
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -277,7 +276,7 @@ internal class TestClass
 
             test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
             test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(1));
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
     }
 }

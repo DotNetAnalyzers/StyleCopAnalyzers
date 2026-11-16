@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp12.ReadabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp11.ReadabilityRules;
@@ -55,8 +54,7 @@ namespace StyleCop.Analyzers.Test.CSharp12.ReadabilityRules
             await VerifyCSharpFixAsync(
                 testCode.ReplaceLineEndings(lineEnding),
                 Diagnostic().WithLocation(0),
-                fixedCode.ReplaceLineEndings(lineEnding),
-                CancellationToken.None).ConfigureAwait(false);
+                fixedCode.ReplaceLineEndings(lineEnding)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -92,7 +90,7 @@ namespace StyleCop.Analyzers.Test.CSharp12.ReadabilityRules
                 }
                 """;
 
-            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -123,7 +121,7 @@ namespace StyleCop.Analyzers.Test.CSharp12.ReadabilityRules
                 }
                 """;
 
-            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -158,7 +156,7 @@ namespace StyleCop.Analyzers.Test.CSharp12.ReadabilityRules
                 }
                 """;
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -176,7 +174,7 @@ namespace StyleCop.Analyzers.Test.CSharp12.ReadabilityRules
                          ];
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -194,7 +192,7 @@ namespace StyleCop.Analyzers.Test.CSharp12.ReadabilityRules
                 TabSize = 4,
             };
 
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -213,7 +211,7 @@ namespace StyleCop.Analyzers.Test.CSharp12.ReadabilityRules
             };
             test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
 
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -244,7 +242,7 @@ namespace StyleCop.Analyzers.Test.CSharp12.ReadabilityRules
             };
             test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
 
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -266,7 +264,7 @@ namespace StyleCop.Analyzers.Test.CSharp12.ReadabilityRules
             };
             test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
 
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -300,8 +298,7 @@ class C
             await VerifyCSharpFixAsync(
                 testCode.ReplaceLineEndings(lineEnding),
                 Diagnostic().WithLocation(0),
-                fixedCode.ReplaceLineEndings(lineEnding),
-                CancellationToken.None).ConfigureAwait(false);
+                fixedCode.ReplaceLineEndings(lineEnding)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -337,8 +334,7 @@ class C
             await VerifyCSharpFixAsync(
                 testCode.ReplaceLineEndings(lineEnding),
                 DiagnosticResult.EmptyDiagnosticResults,
-                fixedCode.ReplaceLineEndings(lineEnding),
-                CancellationToken.None).ConfigureAwait(false);
+                fixedCode.ReplaceLineEndings(lineEnding)).ConfigureAwait(false);
         }
 
         [Fact]
@@ -352,7 +348,7 @@ class TestClass
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -383,7 +379,7 @@ class TestClass
 }
 ";
 
-            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -412,7 +408,7 @@ class TestClass
 }
 ";
 
-            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -467,7 +463,7 @@ class TestClass
 }
 ";
 
-            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -484,7 +480,7 @@ class TestClass
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
     }
 }

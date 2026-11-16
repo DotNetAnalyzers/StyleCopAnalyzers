@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp12.DocumentationRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp11.DocumentationRules;
@@ -31,7 +30,7 @@ public {keyword} C(int {{|#0:param1|}}, string {{|#1:param2|}}) {{ }}";
                 Diagnostic().WithLocation(1).WithArguments("param2"),
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expectedResults).ConfigureAwait(false);
         }
 
         [Theory]
@@ -46,7 +45,7 @@ public {keyword} C(int {{|#0:param1|}}, string {{|#1:param2|}}) {{ }}";
 /// <param name=""param1"">Parameter one.</param>
 public {keyword} C(int param1, string {{|#0:param2|}}) {{ }}";
 
-            await VerifyCSharpDiagnosticAsync(testCode, new[] { Diagnostic().WithLocation(0).WithArguments("param2") }, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, new[] { Diagnostic().WithLocation(0).WithArguments("param2") }).ConfigureAwait(false);
         }
 
         [Theory]
@@ -62,7 +61,7 @@ public {keyword} C(int param1, string {{|#0:param2|}}) {{ }}";
 /// <param name=""param2"">Parameter two.</param>
 public {keyword} C(int param1, string param2) {{ }}";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Theory]
@@ -81,7 +80,7 @@ public {keyword} C(int {{|#0:param1|}}, string {{|#1:param2|}}, bool {{|#2:param
                 Diagnostic().WithLocation(2).WithArguments("param3"),
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expectedResults).ConfigureAwait(false);
         }
 
         [Theory]
@@ -93,7 +92,7 @@ public {keyword} C(int {{|#0:param1|}}, string {{|#1:param2|}}, bool {{|#2:param
 /// <include file='WithPartialClassDocumentation.xml' path='/TestType/*' />
 public {keyword} C(int {{|#0:param1|}}, string param2, bool param3) {{ }}";
 
-            await VerifyCSharpDiagnosticAsync(testCode, new[] { Diagnostic().WithLocation(0).WithArguments("param1") }, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, new[] { Diagnostic().WithLocation(0).WithArguments("param1") }).ConfigureAwait(false);
         }
 
         [Theory]
@@ -105,7 +104,7 @@ public {keyword} C(int {{|#0:param1|}}, string param2, bool param3) {{ }}";
 /// <include file='WithClassDocumentation.xml' path='/TestType/*' />
 public {keyword} C(int param1, string param2, bool param3) {{ }}";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
     }
 }

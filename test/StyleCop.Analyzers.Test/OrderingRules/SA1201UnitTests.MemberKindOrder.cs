@@ -5,7 +5,6 @@ namespace StyleCop.Analyzers.Test.OrderingRules;
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -55,7 +54,7 @@ public partial class SA1201UnitTests
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithLocation(1).WithMessage(
             "Members of kind 'field' have no configured order, but must not appear between declarations of kind 'property', which has a configured order"));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -84,7 +83,7 @@ public partial class SA1201UnitTests
                 """,
         };
         test.ExpectedDiagnostics.Add(new DiagnosticResult(new SA1204StaticElementsMustAppearBeforeInstanceElements().SupportedDiagnostics[0]).WithLocation(0));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -113,7 +112,7 @@ public partial class SA1201UnitTests
                 """,
         };
         test.ExpectedDiagnostics.Add(new DiagnosticResult(new SA1214ReadonlyElementsMustAppearBeforeNonReadonlyElements().SupportedDiagnostics[0]).WithLocation(0));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Theory]
@@ -134,7 +133,7 @@ public partial class SA1201UnitTests
                     private readonly int Readonly;
                 }
                 """,
-        }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -158,7 +157,7 @@ public partial class SA1201UnitTests
                     public readonly int Readonly;
                 }
                 """,
-        }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -177,7 +176,7 @@ public partial class SA1201UnitTests
                     public int Mutable;
                 }
                 """,
-        }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -194,7 +193,7 @@ public partial class SA1201UnitTests
                     public readonly int Readonly;
                 }
                 """,
-        }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }.RunAsync().ConfigureAwait(false);
     }
 
     [Theory]
@@ -213,7 +212,7 @@ public partial class SA1201UnitTests
                     public readonly int Readonly;
                 }
                 """,
-        }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -235,7 +234,7 @@ public partial class SA1201UnitTests
 
             // The incomplete declaration deliberately models code being typed.
             CompilerDiagnostics = CompilerDiagnostics.None,
-        }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -269,7 +268,7 @@ public partial class SA1201UnitTests
                 """,
         };
         test.ExpectedDiagnostics.Add(new DiagnosticResult(new SA1204StaticElementsMustAppearBeforeInstanceElements().SupportedDiagnostics[0]).WithLocation(0));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -304,7 +303,7 @@ public partial class SA1201UnitTests
                 """,
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithArguments("A property", "a constructor"));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Theory]
@@ -327,7 +326,7 @@ public partial class SA1201UnitTests
                 """,
         };
 
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -343,7 +342,7 @@ public partial class SA1201UnitTests
                     int P { get; }
                 }
                 """,
-        }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -371,7 +370,7 @@ public partial class SA1201UnitTests
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithLocation(1).WithMessage(
             "Members of kind 'property' have no configured order, but must not appear between declarations of kind 'event', which has a configured order"));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -394,7 +393,7 @@ public partial class SA1201UnitTests
                     public class Last { }
                 }
                 """,
-        }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -424,7 +423,7 @@ public partial class SA1201UnitTests
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithLocation(1).WithMessage(
             "Members of kind 'destructor' have no configured order, but must not appear between declarations of kind 'property', which has a configured order"));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -453,7 +452,7 @@ public partial class SA1201UnitTests
                 """,
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithArguments("A field", "a property"));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -491,7 +490,7 @@ public partial class SA1201UnitTests
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithArguments("A property", "a method"));
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(1).WithArguments("A property", "a method"));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -523,7 +522,7 @@ public partial class SA1201UnitTests
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithLocation(1).WithMessage(
             "Members of kind 'delegate' have no configured order, but must not appear between declarations of kind 'property', which has a configured order"));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -558,7 +557,7 @@ public partial class SA1201UnitTests
             "Members of kind 'delegate' have no configured order, but must not appear between declarations of kind 'property', which has a configured order"));
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(2).WithLocation(3).WithMessage(
             "Members of kind 'method' have no configured order, but must not appear between declarations of kind 'property', which has a configured order"));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -582,7 +581,7 @@ public partial class SA1201UnitTests
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithLocation(1).WithMessage(
             "Members of kind 'method' have no configured order, but must not appear between declarations of kind 'property', which has a configured order"));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -602,7 +601,7 @@ public partial class SA1201UnitTests
             FixedCode = code,
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithArguments("A property", "a field"));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -624,7 +623,7 @@ public partial class SA1201UnitTests
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithLocation(1).WithMessage(
             "Members of kind 'field' have no configured order, but must not appear between declarations of kind 'property', which has a configured order"));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Theory]
@@ -646,7 +645,7 @@ public partial class SA1201UnitTests
             FixedCode = code,
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithArguments("A property", precedingKind));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -666,7 +665,7 @@ public partial class SA1201UnitTests
             FixedCode = code,
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithArguments("A property", "a field"));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Theory]
@@ -696,7 +695,7 @@ public partial class SA1201UnitTests
                 """,
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithArguments("A property", "a field"));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -726,7 +725,7 @@ public partial class SA1201UnitTests
         };
         test.ExpectedDiagnostics.Add(new DiagnosticResult(new SA1202ElementsMustBeOrderedByAccess().SupportedDiagnostics[0])
             .WithLocation(0).WithArguments("public", "private"));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -755,7 +754,7 @@ public partial class SA1201UnitTests
                 """,
         };
         test.ExpectedDiagnostics.Add(new DiagnosticResult(new SA1204StaticElementsMustAppearBeforeInstanceElements().SupportedDiagnostics[0]).WithLocation(0));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -784,7 +783,7 @@ public partial class SA1201UnitTests
                 """,
         };
         test.ExpectedDiagnostics.Add(new DiagnosticResult(new SA1214ReadonlyElementsMustAppearBeforeNonReadonlyElements().SupportedDiagnostics[0]).WithLocation(0));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -813,7 +812,7 @@ public partial class SA1201UnitTests
                 """,
         };
         test.ExpectedDiagnostics.Add(new DiagnosticResult(new SA1203ConstantsMustAppearBeforeFields().SupportedDiagnostics[0]).WithLocation(0));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -848,7 +847,7 @@ public partial class SA1201UnitTests
         };
         test.ExpectedDiagnostics.Add(new DiagnosticResult(new SA1202ElementsMustBeOrderedByAccess().SupportedDiagnostics[0])
             .WithLocation(0).WithArguments("public", "private"));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -871,7 +870,7 @@ public partial class SA1201UnitTests
                     ~C() { }
                 }
                 """,
-        }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -892,7 +891,7 @@ public partial class SA1201UnitTests
 
             // The incomplete declarations deliberately model code being typed in the editor.
             CompilerDiagnostics = CompilerDiagnostics.None,
-        }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -910,7 +909,7 @@ public partial class SA1201UnitTests
                 public struct S { }
                 public class C { }
                 """,
-        }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }.RunAsync().ConfigureAwait(false);
     }
 
     [Theory]
@@ -931,7 +930,7 @@ public partial class SA1201UnitTests
                     public int F;
                 }
                 """,
-        }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }.RunAsync().ConfigureAwait(false);
     }
 
     [Theory]

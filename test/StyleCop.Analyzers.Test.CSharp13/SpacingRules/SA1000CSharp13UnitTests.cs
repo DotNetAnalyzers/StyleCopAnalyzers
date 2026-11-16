@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp13.SpacingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp12.SpacingRules;
@@ -37,7 +36,7 @@ class Foo<T>
                 FixedCode = fixedCode,
             };
             test.ExpectedDiagnostics.Add(expected);
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -66,7 +65,7 @@ class Foo<T>
                 CompilerDiagnostics = CompilerDiagnostics.None,
             };
             test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithArguments("ref", string.Empty));
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
     }
 }

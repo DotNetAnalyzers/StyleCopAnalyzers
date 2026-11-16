@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp11.NamingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.Test.CSharp10.NamingRules;
     using Xunit;
@@ -29,7 +28,7 @@ public class TestClass
 
             var expected = Diagnostic().WithArguments("variable", "baR").WithLocation(0);
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
     }
 }

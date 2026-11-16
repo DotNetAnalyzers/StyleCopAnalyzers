@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
@@ -40,7 +39,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
 }
 ";
 
-            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, testCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -86,7 +85,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
 ";
 
             var expectedDiagnostic = Diagnostic().WithLocation(10, 13);
-            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -128,7 +127,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
 ";
 
             var expectedDiagnostic = Diagnostic().WithLocation(8, 13);
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3.OrLaterDefault(), testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3.OrLaterDefault(), testCode, expectedDiagnostic, fixedTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -170,7 +169,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
 ";
 
             var expectedDiagnostic = Diagnostic().WithLocation(8, 13);
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3.OrLaterDefault(), testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3.OrLaterDefault(), testCode, expectedDiagnostic, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

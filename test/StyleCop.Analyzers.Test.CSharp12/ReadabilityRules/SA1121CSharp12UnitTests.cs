@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp12.ReadabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
@@ -47,7 +46,7 @@ public class TestClass
 }}
 ";
 
-            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -72,7 +71,7 @@ public class TestClass
 }
 ";
 
-            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -104,7 +103,7 @@ namespace TestNamespace
 }
 ";
 
-            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -136,7 +135,7 @@ public class TestClass
                 Diagnostic().WithLocation(2),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -154,7 +153,7 @@ public class TestClass
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, AllowBuiltInTypeAliasesSettingsJson, new[] { Diagnostic().WithLocation(0) }, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, AllowBuiltInTypeAliasesSettingsJson, new[] { Diagnostic().WithLocation(0) }).ConfigureAwait(false);
         }
 
         [Fact]
@@ -180,7 +179,7 @@ public class TestClass
                 Diagnostic().WithLocation(3),
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, AllowBuiltInTypeAliasesSettingsJson, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, AllowBuiltInTypeAliasesSettingsJson, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -197,7 +196,7 @@ public class TestClass
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -218,7 +217,7 @@ public class TestClass
                 TestCode = testCode,
                 ExpectedDiagnostics = { Diagnostic().WithLocation(0) },
                 FixedCode = testCode,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -248,7 +247,7 @@ public class TestClass
                 CompilerDiagnostics = CompilerDiagnostics.None,
             };
 
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -288,7 +287,7 @@ public class TestClass
 
             test.ExpectedDiagnostics.AddRange(expectedDiagnostics);
             test.RemainingDiagnostics.Add(Diagnostic().WithLocation(2));
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         // C# 12 allows the target of a using alias directive to be replaced with a built-in type keyword.
@@ -325,7 +324,7 @@ public class TestClass
                 TestCode = oldSource,
                 ExpectedDiagnostics = { Diagnostic().WithLocation(0) },
                 FixedCode = newSource,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -356,7 +355,7 @@ public class TestClass
                 TestCode = oldSource,
                 ExpectedDiagnostics = { Diagnostic().WithLocation(0) },
                 FixedCode = newSource,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -388,7 +387,7 @@ public class TestClass
                 ExpectedDiagnostics = { Diagnostic().WithLocation(0) },
                 FixedCode = newSource,
                 Settings = AllowBuiltInTypeAliasesSettingsJson,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -409,7 +408,7 @@ public class TestClass
             {
                 TestCode = testSource,
                 Settings = AllowBuiltInTypeAliasesSettingsJson,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -438,7 +437,7 @@ MyInt value = 3;
                 TestCode = oldSource,
                 ExpectedDiagnostics = { Diagnostic().WithLocation(0) },
                 FixedCode = newSource,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -467,7 +466,7 @@ class TestClass
             {
                 TestSources = { oldSource1, oldSource2 },
                 FixedSources = { newSource1, newSource2 },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -490,7 +489,7 @@ class TestClass
             {
                 TestSources = { source },
                 FixedSources = { newSource },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
     }
 }

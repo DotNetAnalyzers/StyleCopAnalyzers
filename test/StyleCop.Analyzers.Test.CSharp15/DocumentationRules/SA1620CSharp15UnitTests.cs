@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp15.DocumentationRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Test.CSharp14.DocumentationRules;
@@ -33,7 +32,7 @@ public union Result<T>(T, string);
 
             var expected = Diagnostic(GenericTypeParameterDocumentationAnalyzer.SA1620MissingTypeParameterDescriptor).WithLocation(0).WithArguments("U");
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
     }
 }

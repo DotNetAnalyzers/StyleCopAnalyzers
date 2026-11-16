@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules;
 
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using StyleCop.Analyzers.Test.ReadabilityRules;
@@ -50,7 +49,7 @@ public partial class SA1143CSharp7UnitTests : SA1143UnitTests
             CodeActionEquivalenceKey = "Expanded",
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     /// <summary>
@@ -71,7 +70,7 @@ public partial class SA1143CSharp7UnitTests : SA1143UnitTests
                             : false;
             }
             """;
-        await VerifyCSharpDiagnosticAsync(source, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(source, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -123,6 +122,6 @@ public partial class SA1143CSharp7UnitTests : SA1143UnitTests
             CodeActionEquivalenceKey = "AlignBranchDelimiters",
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 }

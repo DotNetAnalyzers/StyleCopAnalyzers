@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -33,7 +32,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 }";
 
             DiagnosticResult expected = this.Diagnostic().WithLocation(3, 15);
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), expected).ConfigureAwait(false);
         }
     }
 }

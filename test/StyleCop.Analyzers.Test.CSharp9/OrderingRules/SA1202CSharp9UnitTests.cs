@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.OrderingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.OrderingRules;
@@ -37,7 +36,7 @@ public partial class TestClass
 
             var expected = Diagnostic().WithLocation(0).WithArguments("public", "private");
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -62,7 +61,7 @@ public partial class TestClass
 
             var expected = Diagnostic().WithLocation(0).WithArguments("public", "private");
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Theory]
@@ -85,7 +84,7 @@ public partial class TestClass
 }}";
 
             var expected = this.GetExpectedResultTestMemberOrderInTypeWithPrimaryConstructor();
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         protected virtual DiagnosticResult[] GetExpectedResultTestMemberOrderInTypeWithPrimaryConstructor()

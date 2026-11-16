@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules;
 
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -41,8 +40,7 @@ public partial class TestType { }";
                 Diagnostic().WithLocation(4, 22).WithArguments("TestType"),
                 Diagnostic().WithLocation(6, 22).WithArguments("TestType"),
             },
-            fixedSource,
-            CancellationToken.None).ConfigureAwait(false);
+            fixedSource).ConfigureAwait(false);
     }
 
     [Fact]
@@ -81,7 +79,7 @@ public partial class TestType { }"),
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation("Chosen.cs", 2, 22).WithArguments("TestType"));
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation("Chosen.cs", 4, 22).WithArguments("TestType"));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -105,8 +103,7 @@ public partial class TestType { }";
                 Diagnostic().WithLocation(2, 22).WithArguments("TestType"),
                 Diagnostic().WithLocation(4, 22).WithArguments("TestType"),
             },
-            fixedSource,
-            CancellationToken.None).ConfigureAwait(false);
+            fixedSource).ConfigureAwait(false);
     }
 
     [Fact]
@@ -144,7 +141,7 @@ public partial class TestType { }"),
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation("User.cs", 2, 22).WithArguments("TestType"));
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation("User.cs", 4, 22).WithArguments("TestType"));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     /// <summary>
@@ -171,7 +168,7 @@ public abstract partial class {|#1:BasePostRequestProcessor|}<TPaymentRequest> {
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithArguments("BasePostRequestProcessor"));
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(1).WithArguments("BasePostRequestProcessor"));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Theory]
@@ -196,7 +193,7 @@ public partial {keyword} {{|#2:TestType|}} {{ }}";
             Diagnostic().WithLocation(1).WithArguments("TestType"),
             Diagnostic().WithLocation(2).WithArguments("TestType"),
         };
-        await VerifyCSharpDiagnosticAsync(source, expected, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(source, expected).ConfigureAwait(false);
     }
 
     [Theory]
@@ -212,7 +209,7 @@ public partial class TestType {{ }}
 {documentation}
 public partial class TestType {{ }}";
 
-        await VerifyCSharpDiagnosticAsync(source, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(source, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
     }
 
     [Fact]
@@ -233,7 +230,7 @@ public class TestType { }
 /// <summary>Generic.</summary>
 public partial class TestType<T> { }";
 
-        await VerifyCSharpDiagnosticAsync(source, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(source, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
     }
 
     [Fact]
@@ -253,8 +250,7 @@ public partial class TestType<T> { }";
             {
                 Diagnostic().WithLocation(0).WithArguments("TestType"),
                 Diagnostic().WithLocation(1).WithArguments("TestType"),
-            },
-            CancellationToken.None).ConfigureAwait(false);
+            }).ConfigureAwait(false);
     }
 
     [Fact]
@@ -265,7 +261,7 @@ public partial class TestType<T> { }";
 public partial class TestType { }
 public partial class TestType { }";
 
-        await VerifyCSharpDiagnosticAsync(source, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(source, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
     }
 
     [Fact]
@@ -276,7 +272,7 @@ public partial class TestType { }
 /// <content>Second.</content>
 public partial class TestType { }";
 
-        await VerifyCSharpDiagnosticAsync(source, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(source, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
     }
 
     [Fact]
@@ -293,7 +289,7 @@ public partial class TestType { }",
                 { "Documentation.xml", "<doc><summary>Included summary.</summary></doc>" },
             },
         };
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -304,7 +300,7 @@ public partial class TestType { }",
 public partial class TestType { }
 public partial class TestType { }";
 
-        await VerifyCSharpDiagnosticAsync(source, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(source, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
     }
 
     [Fact]
@@ -319,7 +315,7 @@ public partial class TestType { }",
         };
         test.SolutionTransforms.Add((solution, projectId) =>
             solution.WithProjectParseOptions(projectId, ((CSharpParseOptions)solution.GetProject(projectId).ParseOptions).WithDocumentationMode(DocumentationMode.None)));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     /// <summary>
@@ -352,7 +348,7 @@ public partial class TestType { }"),
                 },
             },
         };
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     /// <summary>
@@ -380,7 +376,7 @@ public partial class TestType { }"),
                 },
             },
         };
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -402,7 +398,7 @@ public partial class {|#1:TestType|} { }"),
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithArguments("TestType"));
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(1).WithArguments("TestType"));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -426,7 +422,7 @@ public partial class TestType { }"),
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithArguments("TestType"));
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(1).WithArguments("TestType"));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -467,7 +463,6 @@ public partial class Outer
                 Diagnostic().WithLocation(8, 22).WithArguments("Outer"),
                 Diagnostic().WithLocation(11, 26).WithArguments("Nested"),
             },
-            fixedSource,
-            CancellationToken.None).ConfigureAwait(false);
+            fixedSource).ConfigureAwait(false);
     }
 }

@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.Test.CSharp8.OrderingRules;
 
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
@@ -52,7 +51,7 @@ public partial class SA1201CSharp8UnitTests : SA1201CSharp7UnitTests
             stylecop.ordering.memberKindOrder = {kinds}
             """));
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithArguments("A method", "a property"));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -75,7 +74,7 @@ public partial class SA1201CSharp8UnitTests : SA1201CSharp7UnitTests
             [*]
             stylecop.ordering.memberKindOrder =
             """));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -90,7 +89,7 @@ public partial class SA1201CSharp8UnitTests : SA1201CSharp7UnitTests
             """));
         test.ExpectedDiagnostics.Add(new DiagnosticResult(new SA0002InvalidSettingsFile().SupportedDiagnostics[0])
             .WithArguments("accessibilityOrder cannot contain value 'typo'."));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -117,7 +116,7 @@ public partial class SA1201CSharp8UnitTests : SA1201CSharp7UnitTests
             """));
         test.ExpectedDiagnostics.Add(new DiagnosticResult(new SA0002InvalidSettingsFile().SupportedDiagnostics[0])
             .WithArguments("accessibilityOrder must contain each access level exactly once."));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Theory]
@@ -133,7 +132,7 @@ public partial class SA1201CSharp8UnitTests : SA1201CSharp7UnitTests
             stylecop.ordering.memberKindOrder = {value}
             """));
         test.ExpectedDiagnostics.Add(new DiagnosticResult(new SA0002InvalidSettingsFile().SupportedDiagnostics[0]).WithArguments(error));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Theory]
@@ -152,7 +151,7 @@ public partial class SA1201CSharp8UnitTests : SA1201CSharp7UnitTests
             """));
         test.ExpectedDiagnostics.Add(new DiagnosticResult(new SA0002InvalidSettingsFile().SupportedDiagnostics[0])
             .WithArguments(error));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     [Theory]
@@ -178,7 +177,7 @@ public partial class SA1201CSharp8UnitTests : SA1201CSharp7UnitTests
             [Third.cs]
             stylecop.ordering.memberKindOrder = {value}
             """));
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     private sealed class InvalidConfigurationTest : CSharpTest

@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp10.ReadabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.Test.CSharp9.ReadabilityRules;
     using Xunit;
@@ -78,7 +77,7 @@ public class BAttribute : Attribute
                 Diagnostic().WithLocation(2),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

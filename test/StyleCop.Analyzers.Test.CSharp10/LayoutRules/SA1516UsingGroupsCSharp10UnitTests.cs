@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp10.LayoutRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
@@ -49,7 +48,7 @@ Console.WriteLine();
                 Settings = GetBlankLinesBetweenUsingGroupsSettings(OptionSetting.Require),
             };
             test.TestState.ExpectedDiagnostics.AddRange(this.GetExpectedResultTestBlankLineRequiredBetweenGlobalAndLocalUsingGroups());
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         protected virtual DiagnosticResult[] GetExpectedResultTestBlankLineRequiredBetweenGlobalAndLocalUsingGroups()

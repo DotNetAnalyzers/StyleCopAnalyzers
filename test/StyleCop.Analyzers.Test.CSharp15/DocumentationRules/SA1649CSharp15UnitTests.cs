@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp15.DocumentationRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp14.DocumentationRules;
@@ -35,7 +34,7 @@ namespace StyleCop.Analyzers.Test.CSharp15.DocumentationRules
 public union SecondType(int, string);
 ";
 
-            await VerifyCSharpDiagnosticAsync("SecondType.cs", testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync("SecondType.cs", testCode, settings, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -53,7 +52,7 @@ public union SecondType(int, string);
             };
 
             test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -67,7 +66,7 @@ public union SecondType(int, string);
                 TestSources = { ("TestUnion.cs", testCode) },
             };
 
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
     }
 }

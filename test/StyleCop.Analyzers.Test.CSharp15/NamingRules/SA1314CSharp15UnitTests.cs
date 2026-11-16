@@ -6,7 +6,6 @@ namespace StyleCop.Analyzers.Test.CSharp15.NamingRules
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -31,7 +30,7 @@ namespace StyleCop.Analyzers.Test.CSharp15.NamingRules
             };
             test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
 
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
 #pragma warning disable RS1041, RS1042 // This test generator must be compiled with the test assembly.

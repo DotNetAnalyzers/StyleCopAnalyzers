@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.ReadabilityRules;
 
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using StyleCop.Analyzers.Test.CSharp8.ReadabilityRules;
@@ -57,6 +56,6 @@ public partial class SA1143CSharp9UnitTests : SA1143CSharp8UnitTests
             }
             """;
 
-        await VerifyCSharpDiagnosticAsync(source, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(source, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
     }
 }

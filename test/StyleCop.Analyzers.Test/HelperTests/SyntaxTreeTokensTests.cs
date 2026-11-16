@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.Test.HelperTests
 {
     using System.Linq;
-    using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using StyleCop.Analyzers.Helpers;
@@ -43,21 +42,21 @@ public class Foo
         [Fact]
         public void TestTokensMatchDescendantTokens()
         {
-            var root = CSharpSyntaxTree.ParseText(TestCode).GetRoot();
+            var root = CSharpSyntaxTree.ParseText(TestCode, cancellationToken: TestContext.Current.CancellationToken).GetRoot(TestContext.Current.CancellationToken);
             var tokens = new SyntaxTreeTokens(root.SyntaxTree);
 
-            Assert.Equal(root.DescendantTokens(), tokens.GetTokens(CancellationToken.None));
+            Assert.Equal(root.DescendantTokens(), tokens.GetTokens(TestContext.Current.CancellationToken));
         }
 
         [Fact]
         public void TestTokensIncludingStructuredTriviaMatchDescendantTokens()
         {
-            var root = CSharpSyntaxTree.ParseText(TestCode).GetRoot();
+            var root = CSharpSyntaxTree.ParseText(TestCode, cancellationToken: TestContext.Current.CancellationToken).GetRoot(TestContext.Current.CancellationToken);
             var tokens = new SyntaxTreeTokens(root.SyntaxTree);
             var expected = root.DescendantTokens(descendIntoTrivia: true).ToArray();
 
             Assert.Contains(expected, token => token.Parent.IsPartOfStructuredTrivia());
-            Assert.Equal(expected, tokens.GetTokensIncludingStructuredTrivia(CancellationToken.None));
+            Assert.Equal(expected, tokens.GetTokensIncludingStructuredTrivia(TestContext.Current.CancellationToken));
         }
     }
 }

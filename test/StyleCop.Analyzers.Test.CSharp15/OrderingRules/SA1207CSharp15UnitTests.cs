@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp15.OrderingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.Test.CSharp14.OrderingRules;
     using Xunit;
@@ -38,7 +37,7 @@ public class Outer
 
             var expected = Diagnostic().WithLocation(0).WithArguments("protected", "internal");
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

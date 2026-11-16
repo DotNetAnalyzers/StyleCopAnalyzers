@@ -38,10 +38,11 @@ namespace StyleCop.Analyzers.Test.CSharp10.Lightup
         {
             var syntaxTree = SyntaxFactory.ParseSyntaxTree(
                 "extern alias A;\r\nnamespace N.M;\r\nusing System;\r\nclass C { }\r\nclass D { }\r\n",
-                new CSharpParseOptions(LanguageVersion.CSharp10));
-            Assert.Empty(syntaxTree.GetDiagnostics());
+                new CSharpParseOptions(LanguageVersion.CSharp10),
+                cancellationToken: TestContext.Current.CancellationToken);
+            Assert.Empty(syntaxTree.GetDiagnostics(TestContext.Current.CancellationToken));
 
-            var syntaxNode = syntaxTree.GetRoot().DescendantNodes().OfType<FileScopedNamespaceDeclarationSyntax>().Single();
+            var syntaxNode = syntaxTree.GetRoot(TestContext.Current.CancellationToken).DescendantNodes().OfType<FileScopedNamespaceDeclarationSyntax>().Single();
             Assert.True(FileScopedNamespaceDeclarationSyntaxWrapper.IsInstance(syntaxNode));
 
             var wrapper = (FileScopedNamespaceDeclarationSyntaxWrapper)syntaxNode;

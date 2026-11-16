@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.NamingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.NamingRules;
@@ -37,7 +36,7 @@ public record R(int A)
 }
 ";
 
-            await VerifyCSharpFixAsync(testCode, this.GetExpectedResultTestPositionalRecord1(), fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, this.GetExpectedResultTestPositionalRecord1(), fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -63,7 +62,7 @@ public record R(int A)
 }
 ";
 
-            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode).ConfigureAwait(false);
         }
 
         protected virtual DiagnosticResult[] GetExpectedResultTestPositionalRecord1()

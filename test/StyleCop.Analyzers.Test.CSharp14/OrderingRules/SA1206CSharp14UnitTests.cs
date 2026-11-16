@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp14.OrderingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp13.OrderingRules;
@@ -39,7 +38,7 @@ public static class TestClass
 ";
 
             var expected = Diagnostic().WithLocation(0).WithArguments("public", "static");
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -87,7 +86,7 @@ public class Derived : Base
 
             var expected = Diagnostic().WithLocation(0).WithArguments("public", "override");
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

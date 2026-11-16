@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp15.SpacingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp14.SpacingRules;
@@ -51,7 +50,7 @@ public union Pet(int, string)
                 Diagnostic(DescriptorFollowedByWhitespace).WithLocation(0).WithArguments("+"),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp10.ReadabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.Test.CSharp9.ReadabilityRules;
     using Xunit;
@@ -36,8 +35,7 @@ class TestClass
                     Diagnostic().WithLocation(1),
                     Diagnostic().WithLocation(2),
                     Diagnostic().WithLocation(3),
-                },
-                CancellationToken.None).ConfigureAwait(false);
+                }).ConfigureAwait(false);
         }
     }
 }

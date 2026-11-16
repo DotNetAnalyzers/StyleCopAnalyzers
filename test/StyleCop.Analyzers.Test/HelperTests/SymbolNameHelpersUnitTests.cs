@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.Test.HelperTests
 {
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -110,7 +109,7 @@ namespace StyleCop.Analyzers.Test.HelperTests
             var projectId = ProjectId.CreateNewId();
 
             var references = await GenericAnalyzerTest.ReferenceAssemblies
-                .ResolveAsync(LanguageNames.CSharp, CancellationToken.None).ConfigureAwait(false);
+                .ResolveAsync(LanguageNames.CSharp, TestContext.Current.CancellationToken).ConfigureAwait(false);
 
             var solution = workspace.CurrentSolution
                 .AddProject(projectId, TestProjectName, TestProjectName, LanguageNames.CSharp)

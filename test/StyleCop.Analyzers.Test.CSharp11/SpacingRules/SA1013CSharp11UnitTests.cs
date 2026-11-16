@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp11.SpacingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp10.SpacingRules;
@@ -38,7 +37,7 @@ class C
 
             var expected = Diagnostic().WithLocation(0).WithArguments(" not", "preceded");
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -72,7 +71,7 @@ class C
                 TestState = { MarkupHandling = MarkupMode.None },
                 FixedState = { MarkupHandling = MarkupMode.None },
                 ExpectedDiagnostics = { Diagnostic().WithLocation(4, 35).WithArguments(" not", "preceded") },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -92,7 +91,7 @@ class C
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
     }
 }

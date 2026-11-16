@@ -6,7 +6,6 @@ namespace StyleCop.Analyzers.Test
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -39,7 +38,7 @@ namespace StyleCop.Analyzers.Test
             await new CSharpTest(analyzerType)
             {
                 TestCode = string.Empty,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
         }
 
         [Theory]

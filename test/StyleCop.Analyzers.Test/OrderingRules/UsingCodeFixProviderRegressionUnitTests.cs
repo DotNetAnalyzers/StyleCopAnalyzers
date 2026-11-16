@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
@@ -82,7 +81,7 @@ namespace Microsoft.VisualStudio.Shell
 ";
 
             var expected = StyleCopDiagnosticVerifier<SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace>.Diagnostic().WithLocation(6, 1);
-            await this.VerifyCSharpFixAsync(testCode, new[] { expected }, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, new[] { expected }, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -115,10 +114,10 @@ namespace MyNamespace
 ";
 
             var expected = StyleCopDiagnosticVerifier<SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace>.Diagnostic().WithLocation(2, 1);
-            await this.VerifyCSharpFixAsync(testCode, new[] { expected }, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, new[] { expected }, fixedTestCode).ConfigureAwait(false);
         }
 
-        protected Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
+        protected Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource)
         {
             var testSettings = @"
 {
@@ -154,7 +153,7 @@ namespace MyNamespace
                 test.DisabledDiagnostics.Add(SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId);
             }
 
-            return test.RunAsync(cancellationToken);
+            return test.RunAsync();
         }
     }
 }

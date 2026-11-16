@@ -5,7 +5,6 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -62,7 +61,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             DiagnosticResult expected = this.Diagnostic().WithArguments(" not", "followed").WithLocation(0);
 
-            await this.VerifyCSharpFixAsync(testCode, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, expected, fixedTest).ConfigureAwait(false);
         }
 
         [Fact]
@@ -96,12 +95,12 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 ";
 
             string test = string.Format(testFormat, this.Sign + "3");
-            await this.VerifyCSharpDiagnosticAsync(test, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(test, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
 
             test = string.Format(testFormat, this.Sign + " 3");
             DiagnosticResult expected = this.Diagnostic().WithArguments(" not", "followed").WithLocation(8, 17);
 
-            await this.VerifyCSharpFixAsync(test, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, expected, fixedTest).ConfigureAwait(false);
         }
 
         [Fact]
@@ -135,12 +134,12 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 ";
 
             string test = string.Format(testFormat, this.Sign + "3");
-            await this.VerifyCSharpDiagnosticAsync(test, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(test, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
 
             test = string.Format(testFormat, this.Sign + " 3");
             DiagnosticResult expected = this.Diagnostic().WithArguments(" not", "followed").WithLocation(8, 1);
 
-            await this.VerifyCSharpFixAsync(test, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, expected, fixedTest).ConfigureAwait(false);
         }
 
         [Fact]
@@ -172,7 +171,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 ";
 
             string test = string.Format(testFormat, " " + this.Sign + "3");
-            await this.VerifyCSharpDiagnosticAsync(test, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(test, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
 
             test = string.Format(testFormat, this.Sign + "3");
             DiagnosticResult[] expected =
@@ -180,7 +179,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                     this.Diagnostic().WithArguments(string.Empty, "preceded").WithLocation(7, 20),
                 };
 
-            await this.VerifyCSharpFixAsync(test, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, expected, fixedTest).ConfigureAwait(false);
 
             test = string.Format(testFormat, " " + this.Sign + " 3");
             expected =
@@ -189,7 +188,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                     this.Diagnostic().WithArguments(" not", "followed").WithLocation(7, 21),
                 };
 
-            await this.VerifyCSharpFixAsync(test, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, expected, fixedTest).ConfigureAwait(false);
 
             test = string.Format(testFormat, this.Sign + " 3");
             expected =
@@ -199,7 +198,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                     this.Diagnostic().WithArguments(" not", "followed").WithLocation(7, 20),
                 };
 
-            await this.VerifyCSharpFixAsync(test, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, expected, fixedTest).ConfigureAwait(false);
         }
 
         [Fact]
@@ -231,12 +230,12 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 ";
 
             string test = string.Format(testFormat, this.Sign + "3");
-            await this.VerifyCSharpDiagnosticAsync(test, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(test, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
 
             test = string.Format(testFormat, this.Sign + " 3");
             DiagnosticResult expected = this.Diagnostic().WithArguments(" not", "followed").WithLocation(7, 25);
 
-            await this.VerifyCSharpFixAsync(test, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, expected, fixedTest).ConfigureAwait(false);
         }
 
         [Fact]
@@ -268,14 +267,14 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 ";
 
             string test = string.Format(testFormat, this.Sign + "3");
-            await this.VerifyCSharpDiagnosticAsync(test, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(test, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
 
             test = string.Format(testFormat, " " + this.Sign + "3");
             DiagnosticResult[] expected =
                 {
                     this.Diagnostic().WithArguments(" not", "preceded").WithLocation(7, 27),
                 };
-            await this.VerifyCSharpFixAsync(test, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, expected, fixedTest).ConfigureAwait(false);
 
             test = string.Format(testFormat, this.Sign + " 3");
             expected =
@@ -283,7 +282,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 {
                     this.Diagnostic().WithArguments(" not", "followed").WithLocation(7, 26),
                 };
-            await this.VerifyCSharpFixAsync(test, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, expected, fixedTest).ConfigureAwait(false);
 
             test = string.Format(testFormat, " " + this.Sign + " 3");
             expected =
@@ -292,7 +291,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                     this.Diagnostic().WithArguments(" not", "preceded").WithLocation(7, 27),
                     this.Diagnostic().WithArguments(" not", "followed").WithLocation(7, 27),
                 };
-            await this.VerifyCSharpFixAsync(test, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, expected, fixedTest).ConfigureAwait(false);
         }
 
         [Fact]
@@ -331,7 +330,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 this.Diagnostic().WithArguments(" not", "preceded").WithLocation(1),
             };
 
-            await this.VerifyCSharpFixAsync(test, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, expected, fixedTest).ConfigureAwait(false);
         }
 
         [Fact]
@@ -363,14 +362,14 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 ";
 
             string test = string.Format(testFormat, this.Sign + "3");
-            await this.VerifyCSharpDiagnosticAsync(test, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(test, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
 
             test = string.Format(testFormat, " " + this.Sign + "3");
             DiagnosticResult[] expected =
                 {
                     this.Diagnostic().WithArguments(" not", "preceded").WithLocation(7, 23),
                 };
-            await this.VerifyCSharpFixAsync(test, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, expected, fixedTest).ConfigureAwait(false);
 
             test = string.Format(testFormat, this.Sign + " 3");
             expected =
@@ -378,7 +377,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 {
                     this.Diagnostic().WithArguments(" not", "followed").WithLocation(7, 22),
                 };
-            await this.VerifyCSharpFixAsync(test, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, expected, fixedTest).ConfigureAwait(false);
 
             test = string.Format(testFormat, " " + this.Sign + " 3");
             expected =
@@ -387,7 +386,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                     this.Diagnostic().WithArguments(" not", "preceded").WithLocation(7, 23),
                     this.Diagnostic().WithArguments(" not", "followed").WithLocation(7, 23),
                 };
-            await this.VerifyCSharpFixAsync(test, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, expected, fixedTest).ConfigureAwait(false);
         }
 
         [Fact]
@@ -419,14 +418,14 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 ";
 
             string test = string.Format(testFormat, this.Sign + "0");
-            await this.VerifyCSharpDiagnosticAsync(test, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(test, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
 
             test = string.Format(testFormat, " " + this.Sign + "0");
             DiagnosticResult[] expected =
                 {
                     this.Diagnostic().WithArguments(" not", "preceded").WithLocation(7, 32),
                 };
-            await this.VerifyCSharpFixAsync(test, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, expected, fixedTest).ConfigureAwait(false);
 
             test = string.Format(testFormat, this.Sign + " 0");
             expected =
@@ -434,7 +433,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 {
                     this.Diagnostic().WithArguments(" not", "followed").WithLocation(7, 31),
                 };
-            await this.VerifyCSharpFixAsync(test, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, expected, fixedTest).ConfigureAwait(false);
 
             test = string.Format(testFormat, " " + this.Sign + " 0");
             expected =
@@ -443,7 +442,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                     this.Diagnostic().WithArguments(" not", "preceded").WithLocation(7, 32),
                     this.Diagnostic().WithArguments(" not", "followed").WithLocation(7, 32),
                 };
-            await this.VerifyCSharpFixAsync(test, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, expected, fixedTest).ConfigureAwait(false);
         }
 
         [Theory]
@@ -464,7 +463,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 }}
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(test, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(test, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -497,7 +496,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 ";
 
             string test = string.Format(testFormat, this.Sign + "3");
-            await this.VerifyCSharpDiagnosticAsync(test, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(test, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
 
             test = string.Format(testFormat, this.Sign + " 3");
             DiagnosticResult[] expected =
@@ -505,7 +504,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 this.Diagnostic().WithArguments(" not", "followed").WithLocation(7, 31),
             };
 
-            await this.VerifyCSharpFixAsync(test, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, expected, fixedTest).ConfigureAwait(false);
         }
 
         [Fact]
@@ -538,7 +537,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 ";
 
             string test = string.Format(testFormat, " " + this.Sign + "3");
-            await this.VerifyCSharpDiagnosticAsync(test, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(test, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
 
             test = string.Format(testFormat, " " + this.Sign + " 3");
             DiagnosticResult[] expected =
@@ -546,7 +545,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 this.Diagnostic().WithArguments(" not", "followed").WithLocation(7, 32),
             };
 
-            await this.VerifyCSharpFixAsync(test, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, expected, fixedTest).ConfigureAwait(false);
         }
 
         [Fact]
@@ -579,14 +578,14 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 ";
 
             string test = string.Format(testFormat, this.Sign + "0");
-            await this.VerifyCSharpDiagnosticAsync(test, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(test, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
 
             test = string.Format(testFormat, " " + this.Sign + "0");
             DiagnosticResult[] expected =
                 {
                     this.Diagnostic().WithArguments(" not", "preceded").WithLocation(7, 28),
                 };
-            await this.VerifyCSharpFixAsync(test, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, expected, fixedTest).ConfigureAwait(false);
 
             test = string.Format(testFormat, this.Sign + " 0");
             expected =
@@ -594,7 +593,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 {
                     this.Diagnostic().WithArguments(" not", "followed").WithLocation(7, 27),
                 };
-            await this.VerifyCSharpFixAsync(test, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, expected, fixedTest).ConfigureAwait(false);
 
             test = string.Format(testFormat, " " + this.Sign + " 0");
             expected =
@@ -603,13 +602,13 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                     this.Diagnostic().WithArguments(" not", "preceded").WithLocation(7, 28),
                     this.Diagnostic().WithArguments(" not", "followed").WithLocation(7, 28),
                 };
-            await this.VerifyCSharpFixAsync(test, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, expected, fixedTest).ConfigureAwait(false);
         }
 
         private DiagnosticResult Diagnostic()
             => new DiagnosticResult(this.Analyzer.SupportedDiagnostics.Single());
 
-        private Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        private Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected)
         {
             var test = new CSharpTest(this)
             {
@@ -617,13 +616,13 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             };
 
             test.ExpectedDiagnostics.AddRange(expected);
-            return test.RunAsync(cancellationToken);
+            return test.RunAsync();
         }
 
-        private Task VerifyCSharpFixAsync(string source, DiagnosticResult expected, string fixedSource, CancellationToken cancellationToken)
-            => this.VerifyCSharpFixAsync(source, new[] { expected }, fixedSource, cancellationToken);
+        private Task VerifyCSharpFixAsync(string source, DiagnosticResult expected, string fixedSource)
+            => this.VerifyCSharpFixAsync(source, new[] { expected }, fixedSource);
 
-        private Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
+        private Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource)
         {
             var test = new CSharpTest(this)
             {
@@ -632,7 +631,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             };
 
             test.ExpectedDiagnostics.AddRange(expected);
-            return test.RunAsync(cancellationToken);
+            return test.RunAsync();
         }
 
         private class CSharpTest : StyleCopCodeFixVerifier<EmptyDiagnosticAnalyzer, EmptyCodeFixProvider>.CSharpTest

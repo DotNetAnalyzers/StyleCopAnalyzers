@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp12.SpacingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp11.SpacingRules;
@@ -27,7 +26,7 @@ using TestAlias ={|#0:(|}string X, bool Y);";
 using TestAlias = (string X, bool Y);";
 
             var expected = Diagnostic(DescriptorPreceded).WithLocation(0);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -69,8 +68,7 @@ namespace TestNamespace
             await VerifyCSharpFixAsync(
                 testCode,
                 expectedResults,
-                fixedCode,
-                CancellationToken.None).ConfigureAwait(false);
+                fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -91,7 +89,7 @@ class TestClass
 }
 ";
 
-            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -113,7 +111,7 @@ class TestClass
 ";
 
             var expected = Diagnostic(DescriptorPreceded).WithLocation(0);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -137,7 +135,7 @@ class TestClass
 ";
 
             var expected = Diagnostic(DescriptorPreceded).WithLocation(0);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -153,7 +151,7 @@ class TestClass
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
     }
 }

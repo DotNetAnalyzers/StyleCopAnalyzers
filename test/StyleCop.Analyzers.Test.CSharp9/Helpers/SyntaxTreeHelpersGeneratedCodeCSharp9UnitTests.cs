@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.Test.CSharp9.Helpers;
 
 using System.Collections.Immutable;
-using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -23,7 +22,8 @@ public class SyntaxTreeHelpersGeneratedCodeCSharp9UnitTests
     {
         SyntaxTree tree = CSharpSyntaxTree.ParseText(
             "class C { }",
-            path: "/0/TestType.g.cs");
+            path: "/0/TestType.g.cs",
+            cancellationToken: TestContext.Current.CancellationToken);
         AnalyzerOptions options = CreateOptions("""
             root = true
 
@@ -31,7 +31,7 @@ public class SyntaxTreeHelpersGeneratedCodeCSharp9UnitTests
             generated_code = false
             """);
 
-        Assert.False(tree.IsGeneratedDocument(options, CancellationToken.None));
+        Assert.False(tree.IsGeneratedDocument(options, TestContext.Current.CancellationToken));
     }
 
     [Fact]
@@ -39,7 +39,8 @@ public class SyntaxTreeHelpersGeneratedCodeCSharp9UnitTests
     {
         SyntaxTree tree = CSharpSyntaxTree.ParseText(
             "class C { }",
-            path: "/0/Other.cs");
+            path: "/0/Other.cs",
+            cancellationToken: TestContext.Current.CancellationToken);
         AnalyzerOptions options = CreateOptions("""
             root = true
 
@@ -47,7 +48,7 @@ public class SyntaxTreeHelpersGeneratedCodeCSharp9UnitTests
             generated_code = true
             """);
 
-        Assert.True(tree.IsGeneratedDocument(options, CancellationToken.None));
+        Assert.True(tree.IsGeneratedDocument(options, TestContext.Current.CancellationToken));
     }
 
     private static AnalyzerOptions CreateOptions(string editorConfig)

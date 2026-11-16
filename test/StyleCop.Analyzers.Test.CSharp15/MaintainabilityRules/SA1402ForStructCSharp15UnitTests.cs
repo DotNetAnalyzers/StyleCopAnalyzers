@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp15.MaintainabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp14.MaintainabilityRules;
@@ -37,7 +36,7 @@ public union {|#0:Bar|}(int, string);";
 
             var settings = SA1402SettingsConfiguration.ConfigureAsTopLevelType.GetSettings("struct");
             var expected = this.Diagnostic().WithLocation(0);
-            await this.VerifyCSharpFixAsync(testCode, settings, expected, fixedSources, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, settings, expected, fixedSources).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -54,7 +53,7 @@ public union {|#0:Bar|}(int, string);";
 public union Bar(int, string);";
 
             var settings = SA1402SettingsConfiguration.ConfigureAsNonTopLevelType.GetSettings("struct");
-            await this.VerifyCSharpDiagnosticAsync(testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, settings, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -87,7 +86,7 @@ public union Baz(int, string);
 
             var settings = SA1402SettingsConfiguration.ConfigureAsNonTopLevelType.GetSettings("struct");
             var expected = this.Diagnostic().WithLocation(0);
-            await this.VerifyCSharpFixAsync(testCode, settings, expected, fixedSources, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, settings, expected, fixedSources).ConfigureAwait(false);
         }
     }
 }

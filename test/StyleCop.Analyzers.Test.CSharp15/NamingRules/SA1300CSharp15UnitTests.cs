@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp15.NamingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp14.NamingRules;
@@ -58,7 +57,7 @@ public class Outer
                 Diagnostic().WithArguments("nestedPet").WithLocation(2),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

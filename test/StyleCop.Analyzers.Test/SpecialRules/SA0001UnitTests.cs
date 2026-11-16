@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.SpecialRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
@@ -33,7 +32,7 @@ namespace StyleCop.Analyzers.Test.SpecialRules
                     DocumentationMode = documentationMode,
                     Sources = { testCode },
                 },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Theory]
@@ -56,7 +55,7 @@ namespace StyleCop.Analyzers.Test.SpecialRules
                     Sources = { testCode },
                     ExpectedDiagnostics = { expected },
                 },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
     }
 }

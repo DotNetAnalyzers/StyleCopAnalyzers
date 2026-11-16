@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.Test.SpacingRules;
     using Xunit;
@@ -103,7 +102,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
                     Diagnostic().WithLocation(13, 1),
                     Diagnostic().WithLocation(19, 1),
                 },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
     }
 }

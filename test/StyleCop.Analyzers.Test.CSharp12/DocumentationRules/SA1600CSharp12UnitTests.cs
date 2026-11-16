@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp12.DocumentationRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp11.DocumentationRules;
@@ -32,7 +31,7 @@ public {keyword} MyType(int parameter)
     /// <summary>Value.</summary>
     public int Value => parameter;
 }}";
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
     }
 }

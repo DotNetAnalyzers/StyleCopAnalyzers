@@ -40,8 +40,8 @@ namespace StyleCop.Analyzers.Test.HelperTests
 /// Text
 /// </summary>
 struct MyStruct { }";
-            var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
-            var root = syntaxTree.GetRoot();
+            var syntaxTree = CSharpSyntaxTree.ParseText(testCode, cancellationToken: TestContext.Current.CancellationToken);
+            var root = syntaxTree.GetRoot(TestContext.Current.CancellationToken);
 
             Assert.True(root.DescendantTokens().Single(i => i.IsKind(SyntaxKind.StructKeyword)).IsFirstInLine());
         }
@@ -56,8 +56,8 @@ struct MyStruct { }";
 struct /**
 Foo
 **/ MyStruct { }";
-            var syntaxTree = CSharpSyntaxTree.ParseText(testCode);
-            var root = syntaxTree.GetRoot();
+            var syntaxTree = CSharpSyntaxTree.ParseText(testCode, cancellationToken: TestContext.Current.CancellationToken);
+            var root = syntaxTree.GetRoot(TestContext.Current.CancellationToken);
 
             Assert.True(root.DescendantTokens().Single(i => i.IsKind(SyntaxKind.StructKeyword)).IsLastInLine());
         }

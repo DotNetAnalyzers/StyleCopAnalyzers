@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.MaintainabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.MaintainabilityRules;
@@ -25,7 +24,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.MaintainabilityRules
             var fixedCode = $@"internal {typeKeyword} TestType(int X);";
 
             var expected = this.GetExpectedResultTestTypeWithPrimaryConstructorWithoutAccessModifier();
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         protected virtual DiagnosticResult[] GetExpectedResultTestTypeWithPrimaryConstructorWithoutAccessModifier()

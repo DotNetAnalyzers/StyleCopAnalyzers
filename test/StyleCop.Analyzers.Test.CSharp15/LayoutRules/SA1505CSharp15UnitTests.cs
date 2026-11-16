@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp15.LayoutRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.Test.CSharp14.LayoutRules;
     using Xunit;
@@ -39,7 +38,7 @@ public union Pet(int, string)
 
             var expected = Diagnostic().WithLocation(0);
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

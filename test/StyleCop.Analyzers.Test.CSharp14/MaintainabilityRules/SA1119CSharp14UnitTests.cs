@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp14.MaintainabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp13.MaintainabilityRules;
@@ -60,7 +59,7 @@ public class TestClass
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(1),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

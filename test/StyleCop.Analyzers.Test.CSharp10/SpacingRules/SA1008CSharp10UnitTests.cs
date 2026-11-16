@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp10.SpacingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp9.SpacingRules;
@@ -72,7 +71,7 @@ class OtherAttribute : Attribute
                     Diagnostic(DescriptorPreceded).WithLocation(0),
                     Diagnostic(DescriptorPreceded).WithLocation(1),
                 },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -107,7 +106,7 @@ class TestClass
                 {
                     Diagnostic(DescriptorPreceded).WithLocation(0),
                 },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -132,7 +131,7 @@ class TestClass
     }
 }";
 
-            await VerifyCSharpFixAsync(testCode, Diagnostic(DescriptorNotFollowed).WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic(DescriptorNotFollowed).WithLocation(0), fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -154,7 +153,7 @@ class TestClass
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -198,7 +197,7 @@ class TestClass
                 Diagnostic(DescriptorPreceded).WithLocation(0),
                 Diagnostic(DescriptorPreceded).WithLocation(1),
             };
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -222,7 +221,7 @@ public record struct Bar(int X);
                 Diagnostic(DescriptorNotPreceded).WithLocation(0),
                 Diagnostic(DescriptorNotFollowed).WithLocation(1),
             };
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

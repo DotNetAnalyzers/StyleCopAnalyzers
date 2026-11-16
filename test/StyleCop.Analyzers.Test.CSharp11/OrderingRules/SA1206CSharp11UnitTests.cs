@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp11.OrderingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp10.OrderingRules;
@@ -22,7 +21,7 @@ namespace StyleCop.Analyzers.Test.CSharp11.OrderingRules
             var fixedTestCode = $"file static unsafe class TestClass {{}}";
 
             var expected = Diagnostic().WithLocation(0).WithArguments("file", "unsafe");
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -49,7 +48,7 @@ internal struct SomeStruct
                 Diagnostic().WithLocation(1).WithArguments("public", "required"),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         protected override DiagnosticResult[] GetExpectedResultTestModifierOrderInTypeWithPrimaryConstructor()

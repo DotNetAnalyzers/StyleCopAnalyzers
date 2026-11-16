@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp15.OrderingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp14.OrderingRules;
@@ -38,7 +37,7 @@ namespace StyleCop.Analyzers.Test.CSharp15.OrderingRules
                     """,
             };
             test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithArguments("A union", "a method"));
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -67,7 +66,7 @@ namespace TestNamespace
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -103,7 +102,7 @@ namespace TestNamespace
 
             var expected = Diagnostic().WithLocation(0).WithArguments("A union", "a class");
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -155,7 +154,7 @@ public class OuterClass
                 Diagnostic().WithLocation(1).WithArguments("A union", "a class"),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -191,7 +190,7 @@ public union Pet(int, string)
 
             var expected = Diagnostic().WithLocation(0).WithArguments("A property", "a method");
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

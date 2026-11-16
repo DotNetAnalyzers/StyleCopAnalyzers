@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.LayoutRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
@@ -46,7 +45,7 @@ return 0;
             };
             var expectedDiagnostics = this.GetExpectedResultTestUsingAndGlobalStatementSpacingInTopLevelProgram();
             test.TestState.ExpectedDiagnostics.AddRange(expectedDiagnostics);
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -69,7 +68,7 @@ return i;
                     OutputKind = OutputKind.ConsoleApplication,
                     Sources = { testCode },
                 },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -100,7 +99,7 @@ record A();
             };
             var expectedDiagnostics = this.GetExpectedResultTestGlobalStatementAndRecordSpacingInTopLevelProgram();
             test.TestState.ExpectedDiagnostics.AddRange(expectedDiagnostics);
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         [Fact]
@@ -147,7 +146,7 @@ public class Foo
                 TestCode = testCode,
                 FixedCode = fixedCode,
                 ReferenceAssemblies = ReferenceAssemblies.Net.Net50,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -185,7 +184,7 @@ class C
             };
 
             test.TestState.ExpectedDiagnostics.AddRange(this.GetExpectedResultTopLevelStatementsFollowedByType());
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
 
         [Theory]
@@ -208,7 +207,7 @@ class C
 }}
 ";
 
-            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode).ConfigureAwait(false);
         }
 
         protected virtual DiagnosticResult[] GetExpectedResultTestUsingAndGlobalStatementSpacingInTopLevelProgram()

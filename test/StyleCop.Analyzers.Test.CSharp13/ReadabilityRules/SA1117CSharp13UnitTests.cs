@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp13.ReadabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp12.ReadabilityRules;
@@ -26,7 +25,7 @@ class Foo
         [|params ReadOnlySpan<int> s|]) { }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         protected override DiagnosticResult[] GetExpectedResultTestInvalidPrimaryConstructorBaseList()

@@ -63,8 +63,7 @@ public partial class SA1500CSharp12UnitTests : SA1500CSharp11UnitTests
         await VerifyCSharpFixAsync(
             testCode,
             new[] { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1) },
-            fixedCode,
-            CancellationToken.None).ConfigureAwait(false);
+            fixedCode).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -102,8 +101,7 @@ public partial class SA1500CSharp12UnitTests : SA1500CSharp11UnitTests
         await VerifyCSharpFixAsync(
             testCode.ReplaceLineEndings(lineEnding),
             Diagnostic().WithLocation(0),
-            fixedCode.ReplaceLineEndings(lineEnding),
-            CancellationToken.None).ConfigureAwait(false);
+            fixedCode.ReplaceLineEndings(lineEnding)).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -143,7 +141,7 @@ public partial class SA1500CSharp12UnitTests : SA1500CSharp11UnitTests
             }
             """;
 
-        await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -173,7 +171,7 @@ public partial class SA1500CSharp12UnitTests : SA1500CSharp11UnitTests
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
 
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     /// <summary>
@@ -195,7 +193,7 @@ public partial class SA1500CSharp12UnitTests : SA1500CSharp11UnitTests
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
 
-        await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        await test.RunAsync().ConfigureAwait(false);
     }
 
     /// <summary>
@@ -222,7 +220,7 @@ public partial class SA1500CSharp12UnitTests : SA1500CSharp11UnitTests
             .AddDocument(documentId, "Test.cs", SourceText.From(source));
         var document = solution.GetDocument(documentId);
         Assert.NotNull(document);
-        var syntaxTree = await document.GetSyntaxTreeAsync(CancellationToken.None).ConfigureAwait(false);
+        var syntaxTree = await document.GetSyntaxTreeAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
         Assert.NotNull(syntaxTree);
         var diagnosticDescriptor = new DiagnosticDescriptor(
             SA1500BracesForMultiLineStatementsMustNotShareLine.DiagnosticId,
@@ -245,16 +243,16 @@ public partial class SA1500CSharp12UnitTests : SA1500CSharp11UnitTests
             "AlignClosingBracketWithOpeningBracket",
             codeFixProvider.FixableDiagnosticIds,
             new TestDiagnosticProvider(documentId, diagnostics),
-            CancellationToken.None);
+            TestContext.Current.CancellationToken);
 
         var fixAllAction = await codeFixProvider.GetFixAllProvider().GetFixAsync(fixAllContext).ConfigureAwait(false);
         Assert.NotNull(fixAllAction);
-        var operations = await fixAllAction.GetOperationsAsync(CancellationToken.None).ConfigureAwait(false);
+        var operations = await fixAllAction.GetOperationsAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
         var changedSolution = Assert.Single(operations.OfType<ApplyChangesOperation>()).ChangedSolution;
         var changedDocument = changedSolution.GetDocument(documentId);
         Assert.NotNull(changedDocument);
 
-        Assert.Equal(fixedSource, (await changedDocument.GetTextAsync(CancellationToken.None).ConfigureAwait(false)).ToString());
+        Assert.Equal(fixedSource, (await changedDocument.GetTextAsync(TestContext.Current.CancellationToken).ConfigureAwait(false)).ToString());
     }
 
     /// <summary>
@@ -291,7 +289,7 @@ public partial class SA1500CSharp12UnitTests : SA1500CSharp11UnitTests
             }
             """;
 
-        await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(0), fixedCode).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -331,8 +329,7 @@ public partial class SA1500CSharp12UnitTests : SA1500CSharp11UnitTests
         await VerifyCSharpFixAsync(
             testCode.ReplaceLineEndings(lineEnding),
             Diagnostic().WithLocation(0),
-            fixedCode.ReplaceLineEndings(lineEnding),
-            CancellationToken.None).ConfigureAwait(false);
+            fixedCode.ReplaceLineEndings(lineEnding)).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -378,7 +375,7 @@ public partial class SA1500CSharp12UnitTests : SA1500CSharp11UnitTests
             }
             """;
 
-        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -411,8 +408,7 @@ public partial class SA1500CSharp12UnitTests : SA1500CSharp11UnitTests
         await VerifyCSharpFixAsync(
             testCode,
             new[] { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1), Diagnostic().WithLocation(2), Diagnostic().WithLocation(3) },
-            fixedCode,
-            CancellationToken.None).ConfigureAwait(false);
+            fixedCode).ConfigureAwait(false);
     }
 
     [Fact]
@@ -430,7 +426,7 @@ public partial class SA1500CSharp12UnitTests : SA1500CSharp11UnitTests
             }
             """;
 
-        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
     }
 
     [Fact]
@@ -448,7 +444,7 @@ public partial class SA1500CSharp12UnitTests : SA1500CSharp11UnitTests
             }
             """;
 
-        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
     }
 
     [Fact]
@@ -467,7 +463,7 @@ public partial class SA1500CSharp12UnitTests : SA1500CSharp11UnitTests
             }
             """;
 
-        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
     }
 
     private sealed class TestDiagnosticProvider : FixAllContext.DiagnosticProvider

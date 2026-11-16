@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp10.MaintainabilityRules;
 
-using System.Threading;
 using System.Threading.Tasks;
 using StyleCop.Analyzers.MaintainabilityRules;
 using StyleCop.Analyzers.Test.CSharp9.MaintainabilityRules;
@@ -94,6 +93,6 @@ internal record struct TypeName
             test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
         }
 
-        return test.RunAsync(CancellationToken.None);
+        return test.RunAsync();
     }
 }

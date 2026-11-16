@@ -39,12 +39,12 @@ namespace StyleCop.Analyzers.Test.CSharp8.Settings
                 stylecop.layout.allowBracelessIfStatements = {option}
                 """;
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(editorConfig).ConfigureAwait(false);
-            var actual = context.GetStyleCopSettingsInTests(CancellationToken.None).LayoutRules.AllowBracelessIfStatements;
+            var actual = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken).LayoutRules.AllowBracelessIfStatements;
             Assert.Equal(option, actual.ToString(), ignoreCase: true);
 
             var json = """{ "settings": { "layoutRules": { "allowBracelessIfStatements": "off" } } }""";
             context = await this.CreateAnalysisContextFromEditorConfigAsync(editorConfig, json).ConfigureAwait(false);
-            Assert.Equal(BracelessIfStatements.Off, context.GetStyleCopSettingsInTests(CancellationToken.None).LayoutRules.AllowBracelessIfStatements);
+            Assert.Equal(BracelessIfStatements.Off, context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken).LayoutRules.AllowBracelessIfStatements);
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.Settings
                 stylecop.layout.allowBracelessIfStatements = {option}
                 """;
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(editorConfig).ConfigureAwait(false);
-            Assert.Equal(BracelessIfStatements.Off, context.GetStyleCopSettingsInTests(CancellationToken.None).LayoutRules.AllowBracelessIfStatements);
+            Assert.Equal(BracelessIfStatements.Off, context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken).LayoutRules.AllowBracelessIfStatements);
         }
 
         [Fact]
@@ -112,7 +112,7 @@ stylecop.unrecognizedValue = 3
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
             Assert.Equal("Custom copyright text.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
@@ -139,7 +139,7 @@ stylecop.ordering.accessibilityOrder = public, protected, protectedInternal, int
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             Assert.Equal(new[] { AccessLevel.Public, AccessLevel.Protected, AccessLevel.ProtectedInternal, AccessLevel.Internal, AccessLevel.PrivateProtected, AccessLevel.Private }, styleCopSettings.OrderingRules.AccessibilityOrder);
         }
@@ -159,7 +159,7 @@ insert_final_newline = true
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             Assert.Equal(new[] { OrderingTrait.Kind, OrderingTrait.Constant, OrderingTrait.Accessibility }, styleCopSettings.OrderingRules.ElementOrder);
             Assert.Equal(UsingDirectivesPlacement.Preserve, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
@@ -180,7 +180,7 @@ stylecop.layout.newlineAtEndOfFile = unset
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             Assert.Equal(UsingDirectivesPlacement.InsideNamespace, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
             Assert.Equal(OptionSetting.Allow, styleCopSettings.OrderingRules.BlankLinesBetweenUsingGroups);
@@ -201,7 +201,7 @@ file_header_template = From generic key
             var stylecopJson = @"{ ""settings"": { ""documentationRules"": { ""companyName"": ""JsonCompany"" } } }";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(editorConfig, stylecopJson).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             Assert.Equal("JsonCompany", styleCopSettings.DocumentationRules.CompanyName);
             Assert.False(styleCopSettings.LayoutRules.AllowConsecutiveUsings);
@@ -222,7 +222,7 @@ stylecop.layout.newlineAtEndOfFile = allow, require
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             Assert.True(styleCopSettings.Indentation.UseTabs);
             Assert.Equal(TupleElementNameCase.CamelCase, styleCopSettings.NamingRules.TupleElementNameCasing);
@@ -242,7 +242,7 @@ stylecop.documentation.headerDecoration = -----
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             Assert.Equal("Contoso", styleCopSettings.DocumentationRules.CompanyName);
         }
@@ -257,7 +257,7 @@ file_header_template = Line 1\nLine 2.
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             Assert.Equal("Line 1\nLine 2.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
         }
@@ -272,7 +272,7 @@ stylecop.documentation.copyrightText = Line 1\nLine 2.
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             Assert.Equal("Line 1\nLine 2.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
         }
@@ -293,7 +293,7 @@ stylecop.documentation.documentPrivateFields = {valueText}
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentExposedElements);
             Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentInternalElements);
@@ -314,7 +314,7 @@ stylecop.documentation.companyName = {companyName}
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             Assert.Equal(companyName, styleCopSettings.DocumentationRules.CompanyName);
             Assert.Equal($"Copyright (c) {companyName}. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
@@ -330,7 +330,7 @@ file_header_template = {copyrightText}
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             Assert.Equal("[CircularReference]", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
         }
@@ -345,7 +345,7 @@ file_header_template = {variable}
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             Assert.Equal("[InvalidReference]", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
         }
@@ -368,7 +368,7 @@ csharp_using_directive_placement = {placement}
 ";
             var context = await this.CreateAnalysisContextFromEditorConfigAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettingsInTests(CancellationToken.None);
+            var styleCopSettings = context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken);
 
             Assert.NotNull(styleCopSettings.OrderingRules);
             Assert.Equal(expected, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
@@ -391,7 +391,7 @@ csharp_using_directive_placement = {placement}
 
             var document = solution.GetDocument(documentId);
             Assert.NotNull(document);
-            var syntaxTree = await document.GetSyntaxTreeAsync(CancellationToken.None).ConfigureAwait(false);
+            var syntaxTree = await document.GetSyntaxTreeAsync(TestContext.Current.CancellationToken).ConfigureAwait(false);
             Assert.NotNull(syntaxTree);
 
             var analyzerConfigSet = AnalyzerConfigSet.Create(new[] { AnalyzerConfig.Parse(SourceText.From(editorConfig), "/.editorconfig") });
@@ -401,7 +401,7 @@ csharp_using_directive_placement = {placement}
             var optionsProvider = this.CreateAnalyzerConfigOptionsProvider(analyzerConfigSet);
             var analyzerOptions = new AnalyzerOptions(additionalFiles, optionsProvider);
 
-            return new SyntaxTreeAnalysisContext(syntaxTree, analyzerOptions, reportDiagnostic: _ => { }, isSupportedDiagnostic: _ => true, CancellationToken.None);
+            return new SyntaxTreeAnalysisContext(syntaxTree, analyzerOptions, reportDiagnostic: _ => { }, isSupportedDiagnostic: _ => true, TestContext.Current.CancellationToken);
         }
 
         protected class TestAnalyzerConfigOptions : AnalyzerConfigOptions

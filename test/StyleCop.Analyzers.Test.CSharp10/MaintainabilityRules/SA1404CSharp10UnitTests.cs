@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp10.MaintainabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.MaintainabilityRules;
@@ -29,7 +28,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.MaintainabilityRules
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -60,7 +59,7 @@ namespace StyleCop.Analyzers.Test.CSharp10.MaintainabilityRules
                 RemainingDiagnostics = { Diagnostic().WithLocation(0) },
                 NumberOfIncrementalIterations = 2,
                 NumberOfFixAllIterations = 2,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            }.RunAsync().ConfigureAwait(false);
         }
     }
 }

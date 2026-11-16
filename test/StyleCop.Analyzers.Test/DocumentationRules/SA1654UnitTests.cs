@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules;
 
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
@@ -32,7 +31,7 @@ public class DisposalScope<T>
 {
 }";
 
-        await VerifyCSharpFixAsync(source, Diagnostic().WithLocation(0), fixedSource, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpFixAsync(source, Diagnostic().WithLocation(0), fixedSource).ConfigureAwait(false);
     }
 
     [Fact]
@@ -45,7 +44,7 @@ public class GenericClass<T>
 {
 }";
 
-        await VerifyCSharpDiagnosticAsync(source, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(source, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
     }
 
     [Fact]
@@ -58,7 +57,7 @@ public class GenericClass<T>
 {
 }";
 
-        await VerifyCSharpDiagnosticAsync(source, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(source, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
     }
 
     [Fact]
@@ -77,7 +76,7 @@ public class GenericClass<T>
 {
 }";
 
-        await VerifyCSharpFixAsync(source, Diagnostic().WithLocation(0), fixedSource, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpFixAsync(source, Diagnostic().WithLocation(0), fixedSource).ConfigureAwait(false);
     }
 
     [Fact]
@@ -92,7 +91,7 @@ public class C
     public static bool operator >(C left, C right) => false;
 }";
 
-        await VerifyCSharpDiagnosticAsync(source, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(source, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
     }
 
     [Fact]
@@ -137,6 +136,6 @@ public class GenericClass<T>
                 Diagnostic().WithLocation(5),
             };
 
-        await VerifyCSharpFixAsync(source, expected, fixedSource, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpFixAsync(source, expected, fixedSource).ConfigureAwait(false);
     }
 }

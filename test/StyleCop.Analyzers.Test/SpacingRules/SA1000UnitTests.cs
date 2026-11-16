@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
@@ -899,7 +898,7 @@ class ClassName
 ";
 
             var expected = DiagnosticResult.CompilerError("CS0742").WithMessage("A query body must end with a select clause or a group clause").WithLocation(6, 42);
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Theory]
@@ -930,7 +929,7 @@ class ClassName
 ".ReplaceLineEndings(lineEnding);
 
             var expected = Diagnostic().WithArguments("if", string.Empty, "followed").WithLocation(6, 9);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         protected Task TestKeywordStatementAsync(string statement, DiagnosticResult expected, string fixedStatement, string returnType = "void", bool asyncMethod = false, LanguageVersion? languageVersion = default)
@@ -964,7 +963,7 @@ namespace Namespace
             string testCode = string.Format(testCodeFormat, asyncModifier, statement, unsafeModifier, awaitMethod, returnType);
             string fixedTest = string.Format(testCodeFormat, asyncModifier, fixedStatement, unsafeModifier, awaitMethod, returnType);
 
-            await VerifyCSharpFixAsync(languageVersion, testCode, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(languageVersion, testCode, expected, fixedTest).ConfigureAwait(false);
         }
 
         private Task TestKeywordDeclarationAsync(string statement, DiagnosticResult expected, string fixedStatement)
@@ -997,7 +996,7 @@ namespace Namespace
             };
 
             test.ExpectedDiagnostics.AddRange(expected);
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync().ConfigureAwait(false);
         }
     }
 }

@@ -32,10 +32,11 @@ namespace StyleCop.Analyzers.Test.CSharp8.Lightup
         {
             var syntaxTree = SyntaxFactory.ParseSyntaxTree(
                 "#nullable enable\r\nclass C { }\r\n",
-                new CSharpParseOptions(LanguageVersion.CSharp8));
-            Assert.Empty(syntaxTree.GetDiagnostics());
+                new CSharpParseOptions(LanguageVersion.CSharp8),
+                cancellationToken: TestContext.Current.CancellationToken);
+            Assert.Empty(syntaxTree.GetDiagnostics(TestContext.Current.CancellationToken));
 
-            var syntaxNode = syntaxTree.GetRoot().DescendantNodes(descendIntoTrivia: true).OfType<NullableDirectiveTriviaSyntax>().Single();
+            var syntaxNode = syntaxTree.GetRoot(TestContext.Current.CancellationToken).DescendantNodes(descendIntoTrivia: true).OfType<NullableDirectiveTriviaSyntax>().Single();
             Assert.True(NullableDirectiveTriviaSyntaxWrapper.IsInstance(syntaxNode));
 
             var wrapper = (NullableDirectiveTriviaSyntaxWrapper)syntaxNode;

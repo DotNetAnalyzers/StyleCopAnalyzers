@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.Test.ReadabilityRules;
     using Xunit;
@@ -35,7 +34,7 @@ class Foo
     }}
 }}";
             var expected = Diagnostic().WithLocation(6, 33);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -65,7 +64,7 @@ class Foo
     }
 }";
             var expected = Diagnostic().WithLocation(8, 20);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -95,7 +94,7 @@ class Foo
     }}
 }}";
             var expected = Diagnostic().WithLocation(7, 33);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -120,7 +119,7 @@ class Foo
     }}
 }}";
             var expected = Diagnostic().WithLocation(6, 35);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -149,7 +148,7 @@ class Foo
             var expected = Diagnostic().WithLocation(6, 42);
             var expected2 = Diagnostic().WithLocation(6, 59);
             var expected3 = Diagnostic().WithLocation(6, 76);
-            await VerifyCSharpFixAsync(testCode, new[] { expected, expected2, expected3 }, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, new[] { expected, expected2, expected3 }, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -181,7 +180,7 @@ class Foo
     }}
 }}";
             var expected = Diagnostic().WithLocation(7, 37);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

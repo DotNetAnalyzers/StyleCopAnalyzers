@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp15.ReadabilityRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.Test.CSharp14.ReadabilityRules;
     using Xunit;
@@ -34,7 +33,7 @@ int, string);
 
             var expected = Diagnostic().WithLocation(0);
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

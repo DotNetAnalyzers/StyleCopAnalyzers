@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp15.OrderingRules
 {
-    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Lightup;
@@ -84,7 +83,7 @@ partial class Outer
                 Diagnostic().WithLocation(1).WithArguments("private", "closed"),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -164,7 +163,7 @@ public struct Layout
                 Diagnostic().WithLocation(2).WithArguments("public", "safe"),
             };
 
-            await VerifyCSharpFixAsync(LanguageVersionEx.Preview, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(LanguageVersionEx.Preview, testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -211,7 +210,7 @@ public class Outer
                 Diagnostic().WithLocation(2).WithArguments("internal", "partial"),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

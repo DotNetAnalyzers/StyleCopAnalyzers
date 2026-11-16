@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.CSharp8.ReadabilityRules;
 
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using StyleCop.Analyzers.Test.CSharp7.ReadabilityRules;
@@ -48,7 +47,7 @@ public partial class SA1118CSharp8UnitTests : SA1118CSharp7UnitTests
             }
             """;
 
-        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -74,7 +73,7 @@ public partial class SA1118CSharp8UnitTests : SA1118CSharp7UnitTests
             }
             """;
 
-        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -104,7 +103,7 @@ public partial class SA1118CSharp8UnitTests : SA1118CSharp7UnitTests
             }
             """;
 
-        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -130,7 +129,7 @@ public partial class SA1118CSharp8UnitTests : SA1118CSharp7UnitTests
             }
             """;
 
-        await VerifyCSharpDiagnosticAsync(testCode, Diagnostic().WithLocation(0), CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(testCode, Diagnostic().WithLocation(0)).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -159,7 +158,7 @@ public partial class SA1118CSharp8UnitTests : SA1118CSharp7UnitTests
             }
             """;
 
-        await VerifyCSharpDiagnosticAsync(testCode, Diagnostic().WithLocation(0), CancellationToken.None).ConfigureAwait(false);
+        await VerifyCSharpDiagnosticAsync(testCode, Diagnostic().WithLocation(0)).ConfigureAwait(false);
     }
 
     /// <summary>
