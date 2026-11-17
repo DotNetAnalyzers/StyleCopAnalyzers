@@ -98,7 +98,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             }
         }
 
-        private static IEnumerable<MemberDeclarationSyntax> GetTopLevelTypeDeclarations(SyntaxNode root, StyleCopSettings settings)
+        private static List<MemberDeclarationSyntax> GetTopLevelTypeDeclarations(SyntaxNode root, StyleCopSettings settings)
         {
             var allTypeDeclarations = root.DescendantNodes(descendIntoChildren: node => ContainsTopLevelTypeDeclarations(node)).OfType<MemberDeclarationSyntax>().ToList();
             var relevantTypeDeclarations = allTypeDeclarations.Where(x => IsRelevantType(x, settings)).ToList();

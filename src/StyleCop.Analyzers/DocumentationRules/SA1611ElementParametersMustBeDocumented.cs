@@ -126,7 +126,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             ReportMissingParameters(context, parameterList, xmlParameterNames);
         }
 
-        private static IEnumerable<ParameterSyntax>? GetParameters(SyntaxNode node)
+        private static SeparatedSyntaxList<ParameterSyntax>? GetParameters(SyntaxNode node)
         {
             return (node as BaseMethodDeclarationSyntax)?.ParameterList?.Parameters
                 ?? (node as IndexerDeclarationSyntax)?.ParameterList?.Parameters

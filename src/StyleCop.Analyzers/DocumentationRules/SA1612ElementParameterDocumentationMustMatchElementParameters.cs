@@ -198,7 +198,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
         }
 
-        private static IEnumerable<ParameterSyntax>? GetParameters(SyntaxNode node)
+        private static SeparatedSyntaxList<ParameterSyntax>? GetParameters(SyntaxNode node)
         {
             return (node as BaseMethodDeclarationSyntax)?.ParameterList?.Parameters
                 ?? (node as IndexerDeclarationSyntax)?.ParameterList?.Parameters
