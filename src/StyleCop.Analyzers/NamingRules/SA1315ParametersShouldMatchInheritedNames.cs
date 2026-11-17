@@ -131,6 +131,14 @@ namespace StyleCop.Analyzers.NamingRules;
                         break;
                     }
 
+                    // The name 'obj' and parameters typed as a generic type parameter may deviate.
+                    // OriginalDefinition is needed because the inherited method may be a constructed member.
+                    if (inheritedName == "obj"
+                        || inheritedMethod.OriginalDefinition.Parameters[parameterIndex].Type.TypeKind == TypeKind.TypeParameter)
+                    {
+                        continue;
+                    }
+
                     if (!inheritedNames.Contains(inheritedName))
                     {
                         inheritedNames.Add(inheritedName);

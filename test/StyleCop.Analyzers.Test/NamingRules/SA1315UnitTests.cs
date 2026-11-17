@@ -335,6 +335,77 @@ public class TypeName : BaseType, IType
         }
 
         [Fact]
+        public async Task TestNoDiagnosticForObjNameOrGenericTypeParameterAsync()
+        {
+            var testCode = @"public interface IFoo<T>
+{
+    void Hi(object obj);
+    bool Equal(T other);
+    void Method<U>(U item);
+    void Other(int number);
+}
+
+public class Foo : IFoo<string>
+{
+    public void Hi(object friend) { }
+
+    public bool Equal(string otherString) => true;
+
+    public void Method<U>(U renamed) { }
+
+    public void Other(int {|#0:renamed|}) { }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, Diagnostic().WithArguments("renamed", "number").WithLocation(0)).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestExemptNamesDoNotHideNonExemptNamesFromOtherInterfacesAsync()
+        {
+            var testCode = @"public interface IObj
+{
+    void ObjMethod(object obj);
+}
+
+public interface IObjNamed
+{
+    void ObjMethod(object value);
+}
+
+public interface IGeneric<T>
+{
+    void GenericMethod(T item);
+}
+
+public interface IGenericNamed
+{
+    void GenericMethod(string name);
+}
+
+public class Foo : IObj, IObjNamed, IGeneric<string>, IGenericNamed
+{
+    public void ObjMethod(object {|#0:other|}) { }
+
+    public void GenericMethod(string {|#1:other|}) { }
+}
+
+public class Bar : IObj, IObjNamed, IGeneric<string>, IGenericNamed
+{
+    public void ObjMethod(object value) { }
+
+    public void GenericMethod(string name) { }
+}";
+
+            await VerifyCSharpDiagnosticAsync(
+                testCode,
+                new[]
+                {
+                    Diagnostic().WithArguments("other", "value").WithLocation(0),
+                    Diagnostic().WithArguments("other", "name").WithLocation(1),
+                }).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(1949, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1949")]
         public async Task TestOverrideUsesBaseMethodFromIntermediateTypeAsync()
         {
