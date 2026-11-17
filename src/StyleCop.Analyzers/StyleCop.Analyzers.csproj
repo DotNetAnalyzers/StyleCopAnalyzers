@@ -38,7 +38,7 @@
     <CompilerGeneratedFilesOutputPath>$(MSBuildProjectDirectory)\Lightup\.generated</CompilerGeneratedFilesOutputPath>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
-    <AnalysisLevel>latest-minimum</AnalysisLevel>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
   </PropertyGroup>
 
   <ItemGroup>
@@ -57,11 +57,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference
-      Include="..\..\tools\StyleCop.Analyzers.CodeGeneration\StyleCop.Analyzers.CodeGeneration.csproj"
-      SetTargetFramework="TargetFramework=netstandard2.0"
-      OutputItemType="Analyzer"
-      ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\..\tools\StyleCop.Analyzers.CodeGeneration\StyleCop.Analyzers.CodeGeneration.csproj" SetTargetFramework="TargetFramework=netstandard2.0" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
 </Project>

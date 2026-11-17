@@ -297,7 +297,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
 
                 var fileName = Path.GetFileName(context.Tree.FilePath);
-                if (string.CompareOrdinal(fileAttribute.Value, fileName) != 0)
+                if (!string.Equals(fileAttribute.Value, fileName, StringComparison.Ordinal))
                 {
                     var location = fileHeader.GetElementLocation(context.Tree, copyrightElement);
                     context.ReportDiagnostic(Diagnostic.Create(SA1638Descriptor, location));
@@ -364,7 +364,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     return;
                 }
 
-                if (string.CompareOrdinal(companyName, documentationSettings.CompanyName) != 0)
+                if (!string.Equals(companyName, documentationSettings.CompanyName, StringComparison.Ordinal))
                 {
                     var location = fileHeader.GetElementLocation(context.Tree, copyrightElement);
                     context.ReportDiagnostic(Diagnostic.Create(SA1641Descriptor, location));
@@ -402,7 +402,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 // compare line by line, ignoring leading and trailing whitespace on each line.
                 for (var i = 0; i < reformattedCopyrightTextParts.Length; i++)
                 {
-                    if (string.CompareOrdinal(reformattedCopyrightTextParts[i].Trim(), fileHeaderCopyrightTextParts[i].Trim()) != 0)
+                    if (!string.Equals(reformattedCopyrightTextParts[i].Trim(), fileHeaderCopyrightTextParts[i].Trim(), StringComparison.Ordinal))
                     {
                         return false;
                     }

@@ -118,7 +118,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 for (var i = 0; i < calledMethodParameters.Length; ++i)
                 {
-                    if (string.Equals(calledMethodParameters[i].Name, argumentIdentifier))
+                    if (string.Equals(calledMethodParameters[i].Name, argumentIdentifier, StringComparison.Ordinal))
                     {
                         return i;
                     }

@@ -343,7 +343,7 @@ namespace StyleCop.Analyzers.Lightup
 
         private sealed class UnsupportedSyntaxList : SeparatedSyntaxListWrapper<TNode>
         {
-            private static readonly SeparatedSyntaxList<SyntaxNode> SyntaxList = default;
+            private static readonly SeparatedSyntaxList<SyntaxNode> SyntaxList;
 
             public UnsupportedSyntaxList()
             {

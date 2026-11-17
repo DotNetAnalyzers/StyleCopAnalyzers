@@ -9,12 +9,13 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
 
+#pragma warning disable CS1574 // XML comment has cref attribute that could not be resolved
     /// <summary>
-    /// A call to <see cref="O:System.Diagnostics.Debug.Fail"/> in C# code does not include a descriptive message.
+    /// A call to <see cref="System.Diagnostics.Debug.Fail(string)"/> in C# code does not include a descriptive message.
     /// </summary>
     /// <remarks>
     /// <para>A violation of this rule occurs when the code contains a call to
-    /// <see cref="O:System.Diagnostics.Debug.Fail"/> which does not provide a description for the end-user. For
+    /// <see cref="System.Diagnostics.Debug.Fail(string)"/> which does not provide a description for the end-user. For
     /// example, the following call includes a description message:</para>
     ///
     /// <code language="csharp">
@@ -22,6 +23,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
+#pragma warning restore CS1574 // XML comment has cref attribute that could not be resolved
     [NoCodeFix("No message is available for Debug.Fail")]
     internal class SA1406DebugFailMustProvideMessageText : SystemDiagnosticsDebugDiagnosticBase
     {
@@ -35,7 +37,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(MaintainabilityResources.SA1406Description), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<SyntaxNodeAnalysisContext> InvocationExpressionAction = HandleInvocationExpression;
 

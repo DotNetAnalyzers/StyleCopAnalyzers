@@ -86,10 +86,10 @@ namespace StyleCop.Analyzers.DocumentationRules
                 var fileName = FileNameHelpers.GetFileNameAndSuffix(context.Tree.FilePath, out suffix);
                 var expectedFileName = FileNameHelpers.GetConventionalFileNameWithDecodedIdentifier(firstTypeDeclaration, settings.DocumentationRules.FileNamingConvention);
 
-                if (string.Compare(fileName, expectedFileName, StringComparison.OrdinalIgnoreCase) != 0)
+                if (!string.Equals(fileName, expectedFileName, StringComparison.OrdinalIgnoreCase))
                 {
                     if (settings.DocumentationRules.FileNamingConvention == FileNamingConvention.StyleCop
-                        && string.Compare(fileName, FileNameHelpers.GetIdentifierValueText(firstTypeDeclaration), StringComparison.OrdinalIgnoreCase) == 0)
+                        && string.Equals(fileName, FileNameHelpers.GetIdentifierValueText(firstTypeDeclaration), StringComparison.OrdinalIgnoreCase))
                     {
                         return;
                     }

@@ -11,11 +11,11 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
-    /// A call to <see cref="O:System.Diagnostics.Debug.Assert"/> in C# code does not include a descriptive message.
+    /// A call to <see cref="System.Diagnostics.Debug.Assert(bool, string)"/> in C# code does not include a descriptive message.
     /// </summary>
     /// <remarks>
     /// <para>A violation of this rule occurs when the code contains a call to
-    /// <see cref="O:System.Diagnostics.Debug.Assert"/> which does not provide a description for the end-user. For
+    /// <see cref="System.Diagnostics.Debug.Assert(bool, string)"/> which does not provide a description for the end-user. For
     /// example, the following assert includes a description message:</para>
     ///
     /// <code language="csharp">

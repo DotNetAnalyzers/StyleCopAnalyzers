@@ -117,7 +117,7 @@ namespace StyleCop.Analyzers.SpacingRules
         private static void HandleSingleLineCommentTrivia(SyntaxTreeAnalysisContext context, SyntaxTrivia trivia, bool isFirstSingleLineTrivia)
         {
             string text = trivia.ToFullString();
-            if (text.Equals(@"//"))
+            if (text.Equals(@"//", StringComparison.Ordinal))
             {
                 return;
             }
