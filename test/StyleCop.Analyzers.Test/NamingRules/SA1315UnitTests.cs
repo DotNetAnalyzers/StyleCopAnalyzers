@@ -335,6 +335,31 @@ public class TypeName : BaseType, IType
         }
 
         [Fact]
+        public async Task TestNoDiagnosticForObjNameOrGenericTypeParameterAsync()
+        {
+            var testCode = @"public interface IFoo<T>
+{
+    void Hi(object obj);
+    bool Equal(T other);
+    void Method<U>(U item);
+    void Other(int number);
+}
+
+public class Foo : IFoo<string>
+{
+    public void Hi(object friend) { }
+
+    public bool Equal(string otherString) => true;
+
+    public void Method<U>(U renamed) { }
+
+    public void Other(int {|#0:renamed|}) { }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, Diagnostic().WithArguments("renamed", "number").WithLocation(0)).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(1949, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1949")]
         public async Task TestOverrideUsesBaseMethodFromIntermediateTypeAsync()
         {
