@@ -360,6 +360,52 @@ public class Foo : IFoo<string>
         }
 
         [Fact]
+        public async Task TestExemptNamesDoNotHideNonExemptNamesFromOtherInterfacesAsync()
+        {
+            var testCode = @"public interface IObj
+{
+    void ObjMethod(object obj);
+}
+
+public interface IObjNamed
+{
+    void ObjMethod(object value);
+}
+
+public interface IGeneric<T>
+{
+    void GenericMethod(T item);
+}
+
+public interface IGenericNamed
+{
+    void GenericMethod(string name);
+}
+
+public class Foo : IObj, IObjNamed, IGeneric<string>, IGenericNamed
+{
+    public void ObjMethod(object {|#0:other|}) { }
+
+    public void GenericMethod(string {|#1:other|}) { }
+}
+
+public class Bar : IObj, IObjNamed, IGeneric<string>, IGenericNamed
+{
+    public void ObjMethod(object value) { }
+
+    public void GenericMethod(string name) { }
+}";
+
+            await VerifyCSharpDiagnosticAsync(
+                testCode,
+                new[]
+                {
+                    Diagnostic().WithArguments("other", "value").WithLocation(0),
+                    Diagnostic().WithArguments("other", "name").WithLocation(1),
+                }).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(1949, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1949")]
         public async Task TestOverrideUsesBaseMethodFromIntermediateTypeAsync()
         {
