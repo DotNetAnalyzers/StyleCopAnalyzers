@@ -11,22 +11,13 @@ namespace StyleCop.Analyzers.Lightup
     internal readonly struct AnalyzerConfigOptionsProviderWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptionsProvider";
-        private static readonly Type? WrappedType;
+        private static readonly Type? WrappedType = WrapperHelper.GetWrappedType(typeof(AnalyzerConfigOptionsProviderWrapper));
 
-        private static readonly Func<object, object?> GlobalOptionsAccessor;
-        private static readonly Func<object, SyntaxTree, object?> GetOptionsSyntaxTreeAccessor;
-        private static readonly Func<object, AdditionalText, object?> GetOptionsAdditionalTextAccessor;
+        private static readonly Func<object, object?> GlobalOptionsAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<object, object?>(WrappedType, nameof(GlobalOptions));
+        private static readonly Func<object, SyntaxTree, object?> GetOptionsSyntaxTreeAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<object, SyntaxTree, object?>(WrappedType, typeof(SyntaxTree), nameof(GetOptions));
+        private static readonly Func<object, AdditionalText, object?> GetOptionsAdditionalTextAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<object, AdditionalText, object?>(WrappedType, typeof(AdditionalText), nameof(GetOptions));
 
         private readonly object? node;
-
-        static AnalyzerConfigOptionsProviderWrapper()
-        {
-            WrappedType = WrapperHelper.GetWrappedType(typeof(AnalyzerConfigOptionsProviderWrapper));
-
-            GlobalOptionsAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<object, object?>(WrappedType, nameof(GlobalOptions));
-            GetOptionsSyntaxTreeAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<object, SyntaxTree, object?>(WrappedType, typeof(SyntaxTree), nameof(GetOptions));
-            GetOptionsAdditionalTextAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<object, AdditionalText, object?>(WrappedType, typeof(AdditionalText), nameof(GetOptions));
-        }
 
         private AnalyzerConfigOptionsProviderWrapper(object node)
         {

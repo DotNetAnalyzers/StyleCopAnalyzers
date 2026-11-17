@@ -37,12 +37,16 @@ namespace StyleCop.Analyzers.Lightup
 
         public bool Equals(ImmutableArrayWrapper<T>? other)
         {
+#pragma warning disable CA1065 // Do not raise exceptions in unexpected locations
             throw new NotImplementedException();
+#pragma warning restore CA1065 // Do not raise exceptions in unexpected locations
         }
 
         public override bool Equals(object obj)
         {
+#pragma warning disable CA1065 // Do not raise exceptions in unexpected locations
             throw new NotImplementedException();
+#pragma warning restore CA1065 // Do not raise exceptions in unexpected locations
         }
 
         public Enumerator GetEnumerator()
@@ -62,18 +66,11 @@ namespace StyleCop.Analyzers.Lightup
 
         public override abstract int GetHashCode();
 
-        public struct Enumerator : IEnumerator<T>
+        public struct Enumerator(ImmutableArrayWrapper<T> wrapper) : IEnumerator<T>
         {
-            private readonly ImmutableArrayWrapper<T> wrapper;
-            private int index;
-            private T current;
-
-            public Enumerator(ImmutableArrayWrapper<T> wrapper)
-            {
-                this.wrapper = wrapper;
-                this.index = -1;
-                this.current = default!;
-            }
+            private readonly ImmutableArrayWrapper<T> wrapper = wrapper;
+            private int index = -1;
+            private T current = default!;
 
 #pragma warning disable IDE0251 // Make member 'readonly'
             public T Current => this.current;
@@ -139,18 +136,13 @@ namespace StyleCop.Analyzers.Lightup
             }
         }
 
-        internal sealed class AutoWrapImmutableArray<TElement> : ImmutableArrayWrapper<T>
+        internal sealed class AutoWrapImmutableArray<TElement>(ImmutableArray<TElement> array) : ImmutableArrayWrapper<T>
         {
-            private readonly ImmutableArray<TElement> array;
+            private readonly ImmutableArray<TElement> array = array;
 
             public AutoWrapImmutableArray()
                 : this(default)
             {
-            }
-
-            public AutoWrapImmutableArray(ImmutableArray<TElement> array)
-            {
-                this.array = array;
             }
 
             public override int Length => this.array.Length;
