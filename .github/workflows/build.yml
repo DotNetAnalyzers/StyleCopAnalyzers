@@ -36,7 +36,7 @@ jobs:
       uses: actions/checkout@v7
 
     - name: Markup Link Checker (mlc)
-      uses: becheran/mlc@d791bd6ae91ea883f02172e21f453ba8da45dfcd # v1.3.0
+      uses: becheran/mlc@b74268b49f87c6aaf6ee8d4c6a48d9250cb95b01 # v2.0.0
 
   documentation:
     name: Build documentation
