@@ -221,10 +221,57 @@ public class TestClass
 {
     public void TestMethod(int x, int y)
     {
-        var (firstName, secondName) = (y, x);
+        var (((firstName, secondName), thirdName), fourthName) = (((y, x), y), x);
 
         int z = 0;
-        ((x, y), z) = ((y, x), z);
+        ((x, y), z) = (((y, x)), z);
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp7_1.OrLaterDefault(), testCode, PascalCaseInferredTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Validates tuple element names are still checked when a nested tuple is captured by a variable.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(4425, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4425")]
+        public async Task ValidateTupleElementNamesInCapturedNestedTupleAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var (pair, n) = (([|badName|]: 1, [|otherName|]: 2), 0);
+    }
+}
+";
+
+            DiagnosticResult[] expectedDiagnostics =
+            {
+                // diagnostics are specified inline
+            };
+
+            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp7_1.OrLaterDefault(), testCode, PascalCaseInferredTestSettings, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Validates parenthesized tuple expressions in a swap deconstruction will not produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(4425, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4425")]
+        public async Task ValidateInferredTupleElementNamesInParenthesizedSwapDeconstructionAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod(int x, int y)
+    {
+        (x, y) = ((y, x));
     }
 }
 ";

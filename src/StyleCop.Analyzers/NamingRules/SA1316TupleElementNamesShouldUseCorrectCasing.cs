@@ -84,13 +84,26 @@ namespace StyleCop.Analyzers.NamingRules
                 && context.SupportsInferredTupleElementNames();
 
             var tupleExpression = (TupleExpressionSyntaxWrapper)context.Node;
-            if (IsInDeconstruction(context.Node))
-            {
-                return;
-            }
-
+            bool checkedDeconstruction = false;
+            bool isInDeconstruction = false;
             foreach (var argument in tupleExpression.Arguments)
             {
+                if (argument.NameColon == null && !includeInferredNames)
+                {
+                    continue;
+                }
+
+                if (!checkedDeconstruction)
+                {
+                    isInDeconstruction = IsInDeconstruction(context.Node);
+                    checkedDeconstruction = true;
+                }
+
+                if (isInDeconstruction)
+                {
+                    return;
+                }
+
                 if (argument.NameColon != null)
                 {
                     // Explicit element names are always checked, and can be fixed.
@@ -110,18 +123,31 @@ namespace StyleCop.Analyzers.NamingRules
 
         private static bool IsInDeconstruction(SyntaxNode tupleExpression)
         {
-            while (tupleExpression.Parent is ArgumentSyntax argument)
+            var deconstructionOperand = tupleExpression;
+            while (true)
             {
-                var enclosingTuple = argument.Parent;
-                if (enclosingTuple == null || !enclosingTuple.IsKind(SyntaxKindEx.TupleExpression))
+                var currentParent = deconstructionOperand.Parent;
+                if (currentParent is ParenthesizedExpressionSyntax)
+                {
+                    deconstructionOperand = currentParent;
+                }
+                else if (currentParent is ArgumentSyntax argument)
+                {
+                    var enclosingTuple = argument.Parent;
+                    if (enclosingTuple == null || !enclosingTuple.IsKind(SyntaxKindEx.TupleExpression))
+                    {
+                        break;
+                    }
+
+                    deconstructionOperand = enclosingTuple;
+                }
+                else
                 {
                     break;
                 }
-
-                tupleExpression = enclosingTuple;
             }
 
-            var parent = tupleExpression.Parent;
+            var parent = deconstructionOperand.Parent;
             if (parent == null)
             {
                 return false;
@@ -130,26 +156,157 @@ namespace StyleCop.Analyzers.NamingRules
             if (parent.IsKind(SyntaxKind.SimpleAssignmentExpression))
             {
                 var assignmentExpression = (AssignmentExpressionSyntax)parent;
-                if (assignmentExpression.Left == tupleExpression)
+                var left = UnwrapParenthesizedExpression(assignmentExpression.Left);
+                var operand = UnwrapParenthesizedExpression(deconstructionOperand);
+                if (left == operand)
                 {
-                    return true;
+                    return IsDeconstructionTarget(left);
                 }
 
-                if (assignmentExpression.Right == tupleExpression
-                    && (assignmentExpression.Left.IsKind(SyntaxKindEx.TupleExpression)
-                        || assignmentExpression.Left.IsKind(SyntaxKindEx.DeclarationExpression)))
+                if (UnwrapParenthesizedExpression(assignmentExpression.Right) == operand)
                 {
-                    return true;
+                    return IsTupleExpressionDeconstructedByTarget(operand, left, tupleExpression);
                 }
             }
 
             if (parent.IsKind(SyntaxKindEx.ForEachVariableStatement))
             {
                 var forEachVariableStatement = (ForEachVariableStatementSyntaxWrapper)parent;
-                return forEachVariableStatement.Variable == tupleExpression;
+                var variable = UnwrapParenthesizedExpression(forEachVariableStatement.Variable);
+                return variable == UnwrapParenthesizedExpression(deconstructionOperand)
+                    && IsDeconstructionTarget(variable);
             }
 
             return false;
+        }
+
+        private static bool IsTupleExpressionDeconstructedByTarget(SyntaxNode sourceTuple, SyntaxNode target, SyntaxNode tupleExpression)
+        {
+            while (true)
+            {
+                sourceTuple = UnwrapParenthesizedExpression(sourceTuple);
+                if (sourceTuple == tupleExpression)
+                {
+                    return IsDeconstructionTarget(target);
+                }
+
+                if (!sourceTuple.IsKind(SyntaxKindEx.TupleExpression))
+                {
+                    return false;
+                }
+
+                var tuple = (TupleExpressionSyntaxWrapper)sourceTuple;
+                var argument = GetArgumentContaining(sourceTuple, tupleExpression);
+                if (argument == null)
+                {
+                    return false;
+                }
+
+                var index = tuple.Arguments.IndexOf(argument);
+                if (index < 0)
+                {
+                    return false;
+                }
+
+                var targetElement = GetTargetElement(target, index);
+                if (targetElement == null)
+                {
+                    return false;
+                }
+
+                target = targetElement;
+                sourceTuple = argument.Expression;
+            }
+        }
+
+        private static ArgumentSyntax? GetArgumentContaining(SyntaxNode tupleExpression, SyntaxNode descendant)
+        {
+            var current = descendant;
+            while (current.Parent != null)
+            {
+                if (current.Parent is ParenthesizedExpressionSyntax parenthesizedExpression)
+                {
+                    current = parenthesizedExpression;
+                }
+                else if (current.Parent is ArgumentSyntax argument)
+                {
+                    if (argument.Parent == tupleExpression)
+                    {
+                        return argument;
+                    }
+
+                    if (argument.Parent != null && argument.Parent.IsKind(SyntaxKindEx.TupleExpression))
+                    {
+                        current = argument.Parent;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+            return null;
+        }
+
+        private static SyntaxNode? GetTargetElement(SyntaxNode target, int index)
+        {
+            target = UnwrapParenthesizedExpression(target);
+            if (target.IsKind(SyntaxKindEx.TupleExpression))
+            {
+                var tuple = (TupleExpressionSyntaxWrapper)target;
+                return index < tuple.Arguments.Count ? tuple.Arguments[index].Expression : null;
+            }
+
+            if (target.IsKind(SyntaxKindEx.DeclarationExpression))
+            {
+                var designation = ((DeclarationExpressionSyntaxWrapper)target).Designation.SyntaxNode;
+                if (designation == null)
+                {
+                    return null;
+                }
+
+                target = designation;
+            }
+
+            if (target.IsKind(SyntaxKindEx.ParenthesizedVariableDesignation))
+            {
+                var designation = (ParenthesizedVariableDesignationSyntaxWrapper)target;
+                return index < designation.Variables.Count ? designation.Variables[index].SyntaxNode : null;
+            }
+
+            return null;
+        }
+
+        private static bool IsDeconstructionTarget(SyntaxNode target)
+        {
+            target = UnwrapParenthesizedExpression(target);
+            if (target.IsKind(SyntaxKindEx.TupleExpression))
+            {
+                return true;
+            }
+
+            if (target.IsKind(SyntaxKindEx.DeclarationExpression))
+            {
+                var designation = ((DeclarationExpressionSyntaxWrapper)target).Designation.SyntaxNode;
+                return designation != null && designation.IsKind(SyntaxKindEx.ParenthesizedVariableDesignation);
+            }
+
+            return target.IsKind(SyntaxKindEx.ParenthesizedVariableDesignation);
+        }
+
+        private static SyntaxNode UnwrapParenthesizedExpression(SyntaxNode expression)
+        {
+            while (expression is ParenthesizedExpressionSyntax parenthesizedExpression)
+            {
+                expression = parenthesizedExpression.Expression;
+            }
+
+            return expression;
         }
 
         private static void CheckTupleElement(SyntaxNodeAnalysisContext context, StyleCopSettings settings, TupleElementSyntaxWrapper tupleElement)
