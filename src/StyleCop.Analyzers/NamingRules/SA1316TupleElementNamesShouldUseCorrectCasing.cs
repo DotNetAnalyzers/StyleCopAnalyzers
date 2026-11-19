@@ -81,10 +81,14 @@ namespace StyleCop.Analyzers.NamingRules
             }
 
             bool includeInferredNames = settings.NamingRules.IncludeInferredTupleElementNames
-                && context.SupportsInferredTupleElementNames()
-                && !IsDeconstructionTarget(context.Node);
+                && context.SupportsInferredTupleElementNames();
 
             var tupleExpression = (TupleExpressionSyntaxWrapper)context.Node;
+            if (IsInDeconstruction(context.Node))
+            {
+                return;
+            }
+
             foreach (var argument in tupleExpression.Arguments)
             {
                 if (argument.NameColon != null)
@@ -104,21 +108,48 @@ namespace StyleCop.Analyzers.NamingRules
             }
         }
 
-        /// <summary>
-        /// Determines whether a tuple expression is the target of a deconstruction assignment, either directly or
-        /// nested in another tuple expression, such as <c>(a, b)</c> in <c>((a, b), c) = value</c>.
-        /// </summary>
-        private static bool IsDeconstructionTarget(SyntaxNode tupleExpression)
+        private static bool IsInDeconstruction(SyntaxNode tupleExpression)
         {
-            var node = tupleExpression;
-            while (node.Parent is ArgumentSyntax argument && argument.Parent.IsKind(SyntaxKindEx.TupleExpression))
+            while (tupleExpression.Parent is ArgumentSyntax argument)
             {
-                node = argument.Parent;
+                var enclosingTuple = argument.Parent;
+                if (enclosingTuple == null || !enclosingTuple.IsKind(SyntaxKindEx.TupleExpression))
+                {
+                    break;
+                }
+
+                tupleExpression = enclosingTuple;
             }
 
-            return node.Parent is AssignmentExpressionSyntax assignment
-                && assignment.IsKind(SyntaxKind.SimpleAssignmentExpression)
-                && assignment.Left == node;
+            var parent = tupleExpression.Parent;
+            if (parent == null)
+            {
+                return false;
+            }
+
+            if (parent.IsKind(SyntaxKind.SimpleAssignmentExpression))
+            {
+                var assignmentExpression = (AssignmentExpressionSyntax)parent;
+                if (assignmentExpression.Left == tupleExpression)
+                {
+                    return true;
+                }
+
+                if (assignmentExpression.Right == tupleExpression
+                    && (assignmentExpression.Left.IsKind(SyntaxKindEx.TupleExpression)
+                        || assignmentExpression.Left.IsKind(SyntaxKindEx.DeclarationExpression)))
+                {
+                    return true;
+                }
+            }
+
+            if (parent.IsKind(SyntaxKindEx.ForEachVariableStatement))
+            {
+                var forEachVariableStatement = (ForEachVariableStatementSyntaxWrapper)parent;
+                return forEachVariableStatement.Variable == tupleExpression;
+            }
+
+            return false;
         }
 
         private static void CheckTupleElement(SyntaxNodeAnalysisContext context, StyleCopSettings settings, TupleElementSyntaxWrapper tupleElement)
