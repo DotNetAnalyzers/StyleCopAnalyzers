@@ -29,14 +29,14 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
     /// <seealso cref="SA1316CodeFixProvider"/>
     public class SA1316CSharp7UnitTests
     {
-        private const string DefaultTestSettings = @"
+        protected const string DefaultTestSettings = @"
 {
   ""settings"": {
   }
 }
 ";
 
-        private const string CamelCaseTestSettings = @"
+        protected const string CamelCaseTestSettings = @"
 {
   ""settings"": {
     ""namingRules"": {
@@ -46,7 +46,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
 }
 ";
 
-        private const string PascalCaseTestSettings = @"
+        protected const string PascalCaseTestSettings = @"
 {
   ""settings"": {
     ""namingRules"": {
@@ -56,7 +56,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
 }
 ";
 
-        private const string CamelCaseInferredTestSettings = @"
+        protected const string CamelCaseInferredTestSettings = @"
 {
   ""settings"": {
     ""namingRules"": {
@@ -67,7 +67,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
 }
 ";
 
-        private const string PascalCaseInferredTestSettings = @"
+        protected const string PascalCaseInferredTestSettings = @"
 {
   ""settings"": {
     ""namingRules"": {
@@ -78,7 +78,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
 }
 ";
 
-        private const string CamelCaseExplicitOnlyTestSettings = @"
+        protected const string CamelCaseExplicitOnlyTestSettings = @"
 {
   ""settings"": {
     ""namingRules"": {
@@ -89,7 +89,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
 }
 ";
 
-        private const string PascalCaseExplicitOnlyTestSettings = @"
+        protected const string PascalCaseExplicitOnlyTestSettings = @"
 {
   ""settings"": {
     ""namingRules"": {
@@ -450,6 +450,37 @@ public class TypeName
 ";
 
             await VerifyCSharpDiagnosticAsync(languageVersion: null, testCode, PascalCaseTestSettings, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that deconstruction into existing variables does not produce diagnostics, regardless of settings.
+        /// </summary>
+        /// <param name="settings">The test settings to use.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData(DefaultTestSettings)]
+        [InlineData(CamelCaseTestSettings)]
+        [InlineData(PascalCaseTestSettings)]
+        [InlineData(CamelCaseInferredTestSettings)]
+        [InlineData(PascalCaseInferredTestSettings)]
+        [InlineData(CamelCaseExplicitOnlyTestSettings)]
+        [InlineData(PascalCaseExplicitOnlyTestSettings)]
+        [WorkItem(4418, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4418")]
+        public async Task TestTupleDeconstructionIntoExistingVariablesAsync(string settings)
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        string name, Value, other;
+        (name, Value) = (""a"", ""b"");
+        ((name, Value), other) = ((""a"", ""b""), ""c"");
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp7_1.OrLaterDefault(), testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
