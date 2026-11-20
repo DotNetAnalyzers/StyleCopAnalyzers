@@ -114,6 +114,8 @@ namespace StyleCop.Analyzers.OrderingRules
         /// The ID for diagnostics produced by the <see cref="SA1201ElementsMustAppearInTheCorrectOrder"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1201";
+        internal const string MemberNameOrderProperty = "MemberNameOrder";
+
         private static readonly string HelpLink = HelpLinkHelper.GetHelpLink(DiagnosticId);
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(OrderingResources.SA1201Title), OrderingResources.ResourceManager, typeof(OrderingResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(OrderingResources.SA1201MessageFormat), OrderingResources.ResourceManager, typeof(OrderingResources));
@@ -124,6 +126,12 @@ namespace StyleCop.Analyzers.OrderingRules
 
         private static readonly DiagnosticDescriptor InterruptedGroupDescriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, new LocalizableResourceString(nameof(OrderingResources.SA1201InterruptedGroupMessageFormat), OrderingResources.ResourceManager, typeof(OrderingResources)), AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
+        private static readonly DiagnosticDescriptor MemberNameOrderDescriptor =
+            new DiagnosticDescriptor(DiagnosticId, Title, new LocalizableResourceString(nameof(OrderingResources.SA1201MemberNameOrderMessageFormat), OrderingResources.ResourceManager, typeof(OrderingResources)), AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
+        private static readonly ImmutableDictionary<string, string> MemberNameOrderProperties =
+            ImmutableDictionary<string, string>.Empty.Add(MemberNameOrderProperty, string.Empty);
 
         // extern alias and usings are missing here because the compiler itself is enforcing the right order.
         private static readonly ImmutableArray<SyntaxKind> OuterOrder = ImmutableArray.Create(
@@ -183,7 +191,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-            ImmutableArray.Create(Descriptor, InterruptedGroupDescriptor);
+            ImmutableArray.Create(Descriptor, InterruptedGroupDescriptor, MemberNameOrderDescriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -203,13 +211,17 @@ namespace StyleCop.Analyzers.OrderingRules
         private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             var elementOrder = settings.OrderingRules.ElementOrder;
+            var typeDeclaration = (TypeDeclarationSyntax)context.Node;
+            if (elementOrder.Contains(OrderingTrait.Name))
+            {
+                HandleMemberNameOrder(context, typeDeclaration, elementOrder, settings.OrderingRules.AccessibilityOrder);
+            }
+
             int kindIndex = elementOrder.IndexOf(OrderingTrait.Kind);
             if (kindIndex < 0)
             {
                 return;
             }
-
-            var typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
             if (settings.OrderingRules.MemberKindOrder is { } configuredOrder)
             {
@@ -218,6 +230,66 @@ namespace StyleCop.Analyzers.OrderingRules
             }
 
             HandleMemberList(context, elementOrder, kindIndex, typeDeclaration.Members, TypeMemberOrder);
+        }
+
+        private static void HandleMemberNameOrder(
+            SyntaxNodeAnalysisContext context,
+            TypeDeclarationSyntax type,
+            ImmutableArray<OrderingTrait> elementOrder,
+            ImmutableArray<AccessLevel> accessibilityOrder)
+        {
+            var members = type.Members;
+            bool? isComType = null;
+            bool? preserveInstanceOrder = null;
+            for (var i = 1; i < members.Count; i++)
+            {
+                context.CancellationToken.ThrowIfCancellationRequested();
+                var current = members[i];
+                var previous = members[i - 1];
+                if (current.RawKind != previous.RawKind)
+                {
+                    continue;
+                }
+
+                var currentIdentifier = MemberNameOrder.GetSortableIdentifier(current);
+                var previousIdentifier = MemberNameOrder.GetSortableIdentifier(previous);
+                if (currentIdentifier.RawKind == 0
+                    || previousIdentifier.RawKind == 0
+                    || string.CompareOrdinal(currentIdentifier.ValueText, previousIdentifier.ValueText) >= 0
+                    || MemberKindOrder.GetPriority(current, elementOrder, accessibilityOrder) != MemberKindOrder.GetPriority(previous, elementOrder, accessibilityOrder)
+                    || (MemberNameOrder.HasRuntimeInitializer(current) && MemberNameOrder.HasRuntimeInitializer(previous)))
+                {
+                    continue;
+                }
+
+                isComType ??= MemberNameOrder.IsComType(type, context.SemanticModel, context.CancellationToken);
+                if (isComType.Value)
+                {
+                    return;
+                }
+
+                if (MemberNameOrder.ContainsModuleInitializer(current, context.SemanticModel, context.CancellationToken)
+                    || MemberNameOrder.ContainsModuleInitializer(previous, context.SemanticModel, context.CancellationToken))
+                {
+                    continue;
+                }
+
+                if (MemberNameOrder.RequiresAutoLayout(current) || MemberNameOrder.RequiresAutoLayout(previous))
+                {
+                    preserveInstanceOrder ??= MemberNameOrder.RequiresStableInstanceOrder(type, context.SemanticModel, context.CancellationToken);
+                    if (preserveInstanceOrder.Value)
+                    {
+                        continue;
+                    }
+                }
+
+                context.ReportDiagnostic(Diagnostic.Create(
+                    MemberNameOrderDescriptor,
+                    currentIdentifier.GetLocation(),
+                    MemberNameOrderProperties,
+                    currentIdentifier.ValueText,
+                    previousIdentifier.ValueText));
+            }
         }
 
         private static void HandleConfiguredMemberList(SyntaxNodeAnalysisContext context, SyntaxList<MemberDeclarationSyntax> members, MemberKindOrder order)
