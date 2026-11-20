@@ -7,13 +7,20 @@ on:
     - 'v*.*'
     - validate/*
   pull_request:
+    # Retargeting a pull request is an "edited" event. The default pull_request types omit it,
+    # so checks from the previous base stay attached to the head SHA. Every edit re-runs the
+    # whole workflow: a job-level if that skips non-base edits would publish "skipped" under
+    # the required check names and could mask a real failure.
+    types: [opened, synchronize, reopened, edited]
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  # One group per pull request. Pushes have no pull_request number and fall back to the ref.
+  # cancel-in-progress is limited to pull_request so pushes to master and v* are not cancelled.
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
