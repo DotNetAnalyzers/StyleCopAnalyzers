@@ -188,6 +188,98 @@ public class TestClass
         }
 
         /// <summary>
+        /// Validates inferred tuple element names in a swap deconstruction will not produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(4425, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4425")]
+        public async Task ValidateInferredTupleElementNamesInSwapDeconstructionAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod(int x, int y)
+    {
+        (x, y) = (y, x);
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp7_1.OrLaterDefault(), testCode, PascalCaseInferredTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Validates inferred tuple element names in nested and declaration deconstructions will not produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(4425, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4425")]
+        public async Task ValidateInferredTupleElementNamesInNestedDeconstructionAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod(int x, int y)
+    {
+        var (((firstName, secondName), thirdName), fourthName) = (((y, x), y), x);
+
+        int z = 0;
+        ((x, y), z) = (((y, x)), z);
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp7_1.OrLaterDefault(), testCode, PascalCaseInferredTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Validates tuple element names are still checked when a nested tuple is captured by a variable.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(4425, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4425")]
+        public async Task ValidateTupleElementNamesInCapturedNestedTupleAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var (pair, n) = (([|badName|]: 1, [|otherName|]: 2), 0);
+    }
+}
+";
+
+            DiagnosticResult[] expectedDiagnostics =
+            {
+                // diagnostics are specified inline
+            };
+
+            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp7_1.OrLaterDefault(), testCode, PascalCaseInferredTestSettings, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Validates parenthesized tuple expressions in a swap deconstruction will not produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(4425, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4425")]
+        public async Task ValidateInferredTupleElementNamesInParenthesizedSwapDeconstructionAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod(int x, int y)
+    {
+        (x, y) = ((y, x));
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp7_1.OrLaterDefault(), testCode, PascalCaseInferredTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Validates the properly explicitly named tuple elements, even when using inferred tuple element names, will not produce diagnostics.
         /// </summary>
         /// <param name="settings">The test settings to use.</param>
@@ -433,9 +525,11 @@ public class TypeName
             await VerifyCSharpDiagnosticAsync(languageVersion: null, testCode, PascalCaseTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
+        [Theory]
+        [InlineData(PascalCaseTestSettings)]
+        [InlineData(PascalCaseInferredTestSettings)]
         [WorkItem(3031, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3031")]
-        public async Task TestTupleDesconstructionPascalCaseListAsync()
+        public async Task TestTupleDesconstructionPascalCaseListAsync(string settings)
         {
             var testCode = @"
 using System.Collections.Generic;
@@ -450,7 +544,7 @@ public class TypeName
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(languageVersion: null, testCode, PascalCaseTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(languageVersion: null, testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
