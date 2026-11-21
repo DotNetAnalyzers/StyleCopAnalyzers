@@ -29,5 +29,10 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// Readonly elements are ordered before non-readonly elements.
         /// </summary>
         Readonly,
+
+        /// <summary>
+        /// Members in the same ordering group are ordered by name.
+        /// </summary>
+        Name,
     }
 }

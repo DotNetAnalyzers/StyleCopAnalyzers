@@ -34,6 +34,8 @@ namespace StyleCop.Analyzers.OrderingRules
         public static string @SA1201MessageFormat => GetResourceString("SA1201MessageFormat")!;
         /// <summary>Members of kind '{0}' have no configured order, but must not appear between declarations of kind '{1}', which has a configured order</summary>
         public static string @SA1201InterruptedGroupMessageFormat => GetResourceString("SA1201InterruptedGroupMessageFormat")!;
+        /// <summary>Member '{0}' should appear before member '{1}'</summary>
+        public static string @SA1201MemberNameOrderMessageFormat => GetResourceString("SA1201MemberNameOrderMessageFormat")!;
         /// <summary>Elements should appear in the correct order</summary>
         public static string @SA1201Title => GetResourceString("SA1201Title")!;
         /// <summary>An element within a C# code file is out of order in relation to other elements in the code.</summary>

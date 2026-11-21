@@ -83,7 +83,7 @@ setting are in the sections that follow.
 | Indentation | `indentation.tabSize` | `tab_width` | integer | `4` |
 | Indentation | `indentation.useTabs` | `indent_style` | `true`/`false` ⇄ `tab`/`space` | `false` / `space` |
 | Readability | `readabilityRules.allowBuiltInTypeAliases` | `stylecop.readability.allowBuiltInTypeAliases` | boolean | `false` |
-| Ordering | `orderingRules.elementOrder` | `stylecop.ordering.elementOrder` | list of `kind`, `accessibility`, `constant`, `static`, `readonly` | `kind, accessibility, constant, static, readonly` |
+| Ordering | `orderingRules.elementOrder` | `stylecop.ordering.elementOrder` | list of `kind`, `accessibility`, `constant`, `static`, `readonly`, `name` | `kind, accessibility, constant, static, readonly` |
 | Ordering | `orderingRules.accessibilityOrder` | `stylecop.ordering.accessibilityOrder` | list of all six access levels (see [Accessibility Order](#accessibility-order)) | `public, internal, protectedInternal, protected, privateProtected, private` |
 | Ordering | `orderingRules.memberKindOrder` | `stylecop.ordering.memberKindOrder` | list of member kinds (see [Member Kind Order](#member-kind-order)) | predefined SA1201 order |
 | Ordering | `orderingRules.systemUsingDirectivesFirst` | `dotnet_sort_system_directives_first` | boolean | `true` |
@@ -354,6 +354,9 @@ traits are supported:
 * `constant`: Constant elements are ordered before non-constant elements
 * `static`: Static elements are ordered before non-static elements
 * `readonly`: Readonly elements are ordered before non-readonly elements
+* `name`: SA1201 orders adjacent declarations of the same kind and ordering group by case-sensitive ordinal name. This optional tie-breaker applies after all other traits and supports methods, properties, single-variable fields (including constants), events, nested types, and delegates. Equal names keep their relative order. Declarations containing directives or multiple variables are excluded. Name sorting skips types marked for COM interop, including public types exposed by assembly-level COM visibility. Module initializers and nested types containing them act as boundaries. In types with fixed layout and in records, instance fields, properties, and field-like events retain their order. Runtime initializers retain their relative order. When fixing all SA1201 violations, the name-ordering pass preserves member order in regions where `#pragma warning disable` suppresses SA1201.
+
+For example, set `stylecop.ordering.elementOrder = kind, constant, accessibility, static, readonly, name` in `.editorconfig` to enable member-name ordering.
 
 This configuration property allows for a wide variety of ordering configurations, as shown in the following examples.
 
