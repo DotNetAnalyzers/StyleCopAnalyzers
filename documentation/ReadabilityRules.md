@@ -51,3 +51,4 @@ Identifier | Name | Description
 [SA1141](SA1141.md) | UseTupleSyntax | Use tuple syntax instead of the underlying ValueTuple implementation type.
 [SA1142](SA1142.md) | ReferToTupleElementsByName | An element of a tuple was referenced by its metadata name when an element name is available.
 [SA1143](SA1143.md) | ConditionalExpressionsMustBeFormattedConsistently | A conditional expression does not use a supported single-line or indented multiline layout.
+[SA1144](SA1144.md) | ZeroWidthCharactersInLiteralsMustBeEscaped | A string or character literal contains a zero-width character.
