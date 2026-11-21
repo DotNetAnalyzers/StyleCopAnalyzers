@@ -92,21 +92,38 @@ class C
         }
 
         /// <summary>
-        /// Verifies that verbatim strings are reported, but no fix is offered because they don't support escapes.
+        /// Verifies that the removal code fix applies to every kind of string literal, and not to character literals.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestVerbatimStringsAreReportedWithoutFixAsync()
+        public async Task TestRemoveCodeFixAsync()
         {
             var testCode = @"
 class C
 {
-    string A = {|#0:@""a" + ZeroWidthSpace + @"b""|};
-    string B = $@""{|#1:a" + ZeroWidthSpace + @"|}{1}"";
+    string A = {|#0:""a" + ZeroWidthSpace + "\uFEFF" + @"b""|};
+    string B = {|#1:@""a" + ZeroWidthSpace + @"b""|};
+    string D = $@""{|#2:a" + ZeroWidthSpace + @"|}{1}"";
+}
+";
+            var fixedCode = @"
+class C
+{
+    string A = ""ab"";
+    string B = @""ab"";
+    string D = $@""a{1}"";
 }
 ";
 
-            await VerifyCSharpFixAsync(testCode, new[] { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1) }, testCode).ConfigureAwait(false);
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                CodeActionEquivalenceKey = nameof(SA1144CodeFixProvider) + "Remove",
+            };
+
+            test.ExpectedDiagnostics.AddRange(new[] { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1), Diagnostic().WithLocation(2) });
+            await test.RunAsync().ConfigureAwait(false);
         }
     }
 }

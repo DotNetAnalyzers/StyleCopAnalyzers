@@ -334,6 +334,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         public static string @SA1143Title => GetResourceString("SA1143Title")!;
         /// <summary>Replace zero-width characters with escape sequences</summary>
         public static string @SA1144CodeFix => GetResourceString("SA1144CodeFix")!;
+        /// <summary>Remove zero-width characters</summary>
+        public static string @SA1144CodeFixRemove => GetResourceString("SA1144CodeFixRemove")!;
         /// <summary>Zero-width characters in string and character literals are invisible in most editors and can be introduced accidentally. Write them as escape sequences instead.</summary>
         public static string @SA1144Description => GetResourceString("SA1144Description")!;
         /// <summary>Zero-width characters in literals must be escaped</summary>

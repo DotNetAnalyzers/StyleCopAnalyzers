@@ -597,6 +597,9 @@
   <data name="SA1144CodeFix" xml:space="preserve">
     <value>Replace zero-width characters with escape sequences</value>
   </data>
+  <data name="SA1144CodeFixRemove" xml:space="preserve">
+    <value>Remove zero-width characters</value>
+  </data>
   <data name="SA1144Description" xml:space="preserve">
     <value>Zero-width characters in string and character literals are invisible in most editors and can be introduced accidentally. Write them as escape sequences instead.</value>
   </data>

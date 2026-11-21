@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
 using StyleCop.Analyzers.Helpers;
 
@@ -36,22 +37,35 @@ internal class SA1144CodeFixProvider : CodeFixProvider
         foreach (var diagnostic in context.Diagnostics)
         {
             var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
-            if (token.Span != diagnostic.Location.SourceSpan
-                || !SA1144ZeroWidthCharactersInLiteralsMustBeEscaped.SupportsEscapeSequences(token))
+            if (token.Span != diagnostic.Location.SourceSpan)
             {
                 continue;
             }
 
-            context.RegisterCodeFix(
-                CodeAction.Create(
-                    ReadabilityResources.SA1144CodeFix,
-                    cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
-                    nameof(SA1144CodeFixProvider)),
-                diagnostic);
+            if (SA1144ZeroWidthCharactersInLiteralsMustBeEscaped.SupportsEscapeSequences(token))
+            {
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        ReadabilityResources.SA1144CodeFix,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, escape: true, cancellationToken),
+                        nameof(SA1144CodeFixProvider) + "Escape"),
+                    diagnostic);
+            }
+
+            // Removing the only character of a character literal would leave an invalid literal.
+            if (!token.IsKind(SyntaxKind.CharacterLiteralToken))
+            {
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        ReadabilityResources.SA1144CodeFixRemove,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, escape: false, cancellationToken),
+                        nameof(SA1144CodeFixProvider) + "Remove"),
+                    diagnostic);
+            }
         }
     }
 
-    private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+    private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, bool escape, CancellationToken cancellationToken)
     {
         var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
         var span = diagnostic.Location.SourceSpan;
@@ -61,7 +75,7 @@ internal class SA1144CodeFixProvider : CodeFixProvider
             var c = text[position];
             if (SA1144ZeroWidthCharactersInLiteralsMustBeEscaped.IsZeroWidthCharacter(c))
             {
-                changes.Add(new TextChange(new TextSpan(position, 1), SA1144ZeroWidthCharactersInLiteralsMustBeEscaped.GetEscapeSequence(c)));
+                changes.Add(new TextChange(new TextSpan(position, 1), escape ? SA1144ZeroWidthCharactersInLiteralsMustBeEscaped.GetEscapeSequence(c) : string.Empty));
             }
         }
 
