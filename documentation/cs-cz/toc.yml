@@ -90,6 +90,7 @@ items:
     - href: SA1141.md
     - href: SA1142.md
     - href: SA1143.md
+    - href: SA1144.md
   - name: Pravidla uspořádání
     href: OrderingRules.md
     items:

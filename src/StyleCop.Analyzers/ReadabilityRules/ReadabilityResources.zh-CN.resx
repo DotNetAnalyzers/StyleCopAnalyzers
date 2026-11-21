@@ -594,6 +594,21 @@
   <data name="SA1143Title" xml:space="preserve">
     <value>条件表达式的格式必须一致</value>
   </data>
+  <data name="SA1144CodeFix" xml:space="preserve">
+    <value>将零宽字符替换为转义序列</value>
+  </data>
+  <data name="SA1144CodeFixRemove" xml:space="preserve">
+    <value>删除零宽字符</value>
+  </data>
+  <data name="SA1144Description" xml:space="preserve">
+    <value>字符串和字符字面量中的零宽字符在大多数编辑器中不可见，可能被意外引入。请改用转义序列书写。</value>
+  </data>
+  <data name="SA1144MessageFormat" xml:space="preserve">
+    <value>字面量中的零宽字符必须转义</value>
+  </data>
+  <data name="SA1144Title" xml:space="preserve">
+    <value>字面量中的零宽字符必须转义</value>
+  </data>
   <data name="SX1101CodeFix" xml:space="preserve">
     <value>删除 'this.' 前缀</value>
   </data>

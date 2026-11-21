@@ -594,6 +594,21 @@
   <data name="SA1143Title" xml:space="preserve">
     <value>Условные выражения должны быть единообразно оформлены</value>
   </data>
+  <data name="SA1144CodeFix" xml:space="preserve">
+    <value>Заменить символы нулевой ширины escape-последовательностями</value>
+  </data>
+  <data name="SA1144CodeFixRemove" xml:space="preserve">
+    <value>Удалить символы нулевой ширины</value>
+  </data>
+  <data name="SA1144Description" xml:space="preserve">
+    <value>Символы нулевой ширины в строковых и символьных литералах невидимы в большинстве редакторов и могут быть добавлены случайно. Записывайте их в виде escape-последовательностей.</value>
+  </data>
+  <data name="SA1144MessageFormat" xml:space="preserve">
+    <value>Символы нулевой ширины в литералах должны быть экранированы</value>
+  </data>
+  <data name="SA1144Title" xml:space="preserve">
+    <value>Символы нулевой ширины в литералах должны быть экранированы</value>
+  </data>
   <data name="SX1101CodeFix" xml:space="preserve">
     <value>Удалить префикс 'this.'</value>
   </data>
