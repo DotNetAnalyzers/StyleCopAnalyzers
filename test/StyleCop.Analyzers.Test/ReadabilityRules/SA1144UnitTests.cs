@@ -125,5 +125,77 @@ class C
             test.ExpectedDiagnostics.AddRange(new[] { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1), Diagnostic().WithLocation(2) });
             await test.RunAsync().ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that zero-width characters in interpolation format clauses are reported and fixed.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestInterpolationFormatClauseAsync()
+        {
+            var testCode = @"
+class C
+{
+    string A = $""{1:{|#0:0" + ZeroWidthSpace + @"|}}"";
+}
+";
+            var removedCode = @"
+class C
+{
+    string A = $""{1:0}"";
+}
+";
+            var escapedCode = @"
+class C
+{
+    string A = $""{1:0\u200B}"";
+}
+";
+
+            foreach (var (fixedCode, key) in new[] { (removedCode, "Remove"), (escapedCode, "Escape") })
+            {
+                var test = new CSharpTest
+                {
+                    TestCode = testCode,
+                    FixedCode = fixedCode,
+                    CodeActionEquivalenceKey = nameof(SA1144CodeFixProvider) + key,
+                };
+
+                test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0));
+                await test.RunAsync().ConfigureAwait(false);
+            }
+        }
+
+        /// <summary>
+        /// Verifies that removal is not offered when it would extend a hexadecimal escape sequence.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestRemovalWithheldAfterHexEscapeAsync()
+        {
+            var testCode = @"
+class C
+{
+    string A = {|#0:""\x1" + ZeroWidthSpace + @"A""|};
+    string B = $""{1}{|#1:\x1" + ZeroWidthSpace + @"A|}"";
+}
+";
+            var fixedCode = @"
+class C
+{
+    string A = ""\x1\u200BA"";
+    string B = $""{1}\x1\u200BA"";
+}
+";
+
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+            };
+
+            test.ExpectedDiagnostics.AddRange(new[] { Diagnostic().WithLocation(0), Diagnostic().WithLocation(1) });
+            await test.RunAsync().ConfigureAwait(false);
+        }
     }
 }

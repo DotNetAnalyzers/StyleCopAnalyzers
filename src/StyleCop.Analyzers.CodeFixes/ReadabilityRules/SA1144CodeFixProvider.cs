@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
 using StyleCop.Analyzers.Helpers;
 
@@ -52,8 +51,7 @@ internal class SA1144CodeFixProvider : CodeFixProvider
                     diagnostic);
             }
 
-            // Removing the only character of a character literal would leave an invalid literal.
-            if (!token.IsKind(SyntaxKind.CharacterLiteralToken))
+            if (SA1144ZeroWidthCharactersInLiteralsMustBeEscaped.SupportsRemoval(token))
             {
                 context.RegisterCodeFix(
                     CodeAction.Create(

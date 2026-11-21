@@ -30,6 +30,7 @@ internal class SA1144ZeroWidthCharactersInLiteralsMustBeEscaped : DiagnosticAnal
     private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
     private static readonly Action<SyntaxNodeAnalysisContext> LiteralExpressionAction = HandleLiteralExpression;
     private static readonly Action<SyntaxNodeAnalysisContext> InterpolatedStringTextAction = HandleInterpolatedStringText;
+    private static readonly Action<SyntaxNodeAnalysisContext> InterpolationFormatClauseAction = HandleInterpolationFormatClause;
 
     /// <inheritdoc/>
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -42,6 +43,7 @@ internal class SA1144ZeroWidthCharactersInLiteralsMustBeEscaped : DiagnosticAnal
         context.EnableConcurrentExecution();
         context.RegisterSyntaxNodeAction(LiteralExpressionAction, SyntaxKind.StringLiteralExpression, SyntaxKind.CharacterLiteralExpression, SyntaxKindEx.Utf8StringLiteralExpression);
         context.RegisterSyntaxNodeAction(InterpolatedStringTextAction, SyntaxKind.InterpolatedStringText);
+        context.RegisterSyntaxNodeAction(InterpolationFormatClauseAction, SyntaxKind.InterpolationFormatClause);
     }
 
     /// <summary>
@@ -93,12 +95,68 @@ internal class SA1144ZeroWidthCharactersInLiteralsMustBeEscaped : DiagnosticAnal
             return true;
 
         case SyntaxKind.InterpolatedStringTextToken:
-            return token.Parent?.Parent is InterpolatedStringExpressionSyntax interpolatedString
-                && interpolatedString.StringStartToken.Text == "$\"";
+            return GetInterpolatedString(token)?.StringStartToken.Text == "$\"";
 
         default:
             return text.Length > 0 && text[0] == '"' && !text.StartsWith("\"\"\"", StringComparison.Ordinal);
         }
+    }
+
+    /// <summary>
+    /// Determines whether removing the zero-width characters from the token keeps the remaining literal valid and
+    /// unchanged in meaning.
+    /// </summary>
+    /// <param name="token">The literal token.</param>
+    /// <returns><see langword="true"/> if the characters can be removed safely.</returns>
+    internal static bool SupportsRemoval(SyntaxToken token)
+    {
+        var text = token.Text;
+        if (token.IsKind(SyntaxKind.CharacterLiteralToken))
+        {
+            return false;
+        }
+
+        if (token.IsKind(SyntaxKind.InterpolatedStringTextToken))
+        {
+            if (GetInterpolatedString(token)?.StringStartToken.Text.EndsWith("\"\"\"", StringComparison.Ordinal) != false)
+            {
+                return false;
+            }
+        }
+        else if (text.StartsWith("\"\"\"", StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        // Removing a character after a hexadecimal digit of a \x escape could extend the escape sequence.
+        if (text.Contains("\\x"))
+        {
+            for (var i = 1; i < text.Length; i++)
+            {
+                if (IsZeroWidthCharacter(text[i]) && IsHexDigit(text[i - 1]))
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private static bool IsHexDigit(char c)
+        => (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
+
+    private static InterpolatedStringExpressionSyntax? GetInterpolatedString(SyntaxToken token)
+    {
+        for (var node = token.Parent; node != null; node = node.Parent)
+        {
+            if (node is InterpolatedStringExpressionSyntax interpolatedString)
+            {
+                return interpolatedString;
+            }
+        }
+
+        return null;
     }
 
     private static void HandleLiteralExpression(SyntaxNodeAnalysisContext context)
@@ -110,6 +168,12 @@ internal class SA1144ZeroWidthCharactersInLiteralsMustBeEscaped : DiagnosticAnal
     private static void HandleInterpolatedStringText(SyntaxNodeAnalysisContext context)
     {
         var token = ((InterpolatedStringTextSyntax)context.Node).TextToken;
+        ReportIfNeeded(context, token);
+    }
+
+    private static void HandleInterpolationFormatClause(SyntaxNodeAnalysisContext context)
+    {
+        var token = ((InterpolationFormatClauseSyntax)context.Node).FormatStringToken;
         ReportIfNeeded(context, token);
     }
 
