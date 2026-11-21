@@ -332,6 +332,16 @@ namespace StyleCop.Analyzers.ReadabilityRules
         public static string @SA1143MessageFormat => GetResourceString("SA1143MessageFormat")!;
         /// <summary>Conditional expressions must be formatted consistently</summary>
         public static string @SA1143Title => GetResourceString("SA1143Title")!;
+        /// <summary>Replace zero-width characters with escape sequences</summary>
+        public static string @SA1144CodeFix => GetResourceString("SA1144CodeFix")!;
+        /// <summary>Remove zero-width characters</summary>
+        public static string @SA1144CodeFixRemove => GetResourceString("SA1144CodeFixRemove")!;
+        /// <summary>Zero-width characters in string and character literals are invisible in most editors and can be introduced accidentally. Write them as escape sequences instead.</summary>
+        public static string @SA1144Description => GetResourceString("SA1144Description")!;
+        /// <summary>Zero-width characters in literals must be escaped</summary>
+        public static string @SA1144MessageFormat => GetResourceString("SA1144MessageFormat")!;
+        /// <summary>Zero-width characters in literals must be escaped</summary>
+        public static string @SA1144Title => GetResourceString("SA1144Title")!;
         /// <summary>An assignment expression should not be used as a condition or as an operand of '&amp;&amp;', '||', or '!'. Use a comparison, or move the assignment into its own statement.</summary>
         public static string @SA1145Description => GetResourceString("SA1145Description")!;
         /// <summary>Do not use assignment as condition</summary>
