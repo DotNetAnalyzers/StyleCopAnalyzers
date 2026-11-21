@@ -9,6 +9,7 @@ SA1141 | StyleCop.CSharp.ReadabilityRules | Warning | SA1141UseTupleSyntax, [Doc
 SA1142 | StyleCop.CSharp.ReadabilityRules | Warning | SA1142ReferToTupleElementsByName, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1142.html)
 SA1143 | StyleCop.CSharp.ReadabilityRules | Warning | SA1143ConditionalExpressionsMustBeFormattedConsistently, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1143.html)
 SA1144 | StyleCop.CSharp.ReadabilityRules | Warning | SA1144ZeroWidthCharactersInLiteralsMustBeEscaped, [Documentation](../../documentation/SA1144.md)
+SA1145 | StyleCop.CSharp.ReadabilityRules | Warning | SA1145DoNotUseAssignmentAsCondition, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1145.html)
 SA1315 | StyleCop.CSharp.NamingRules | Warning | SA1315ParametersShouldMatchInheritedNames, [Documentation](../../documentation/SA1315.md)
 SA1316 | StyleCop.CSharp.NamingRules | Warning | SA1316TupleElementNamesShouldUseCorrectCasing, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1316.html)
 SA1317 | StyleCop.CSharp.NamingRules | Warning | SA1317IdentifierShouldBeNamedOnlyWithLatinLetters, [Documentation](https://dotnetanalyzers.github.io/StyleCopAnalyzers/SA1317.html)

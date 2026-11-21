@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -608,6 +608,15 @@
   </data>
   <data name="SA1144Title" xml:space="preserve">
     <value>字面量中的零宽字符必须转义</value>
+  </data>
+  <data name="SA1145Description" xml:space="preserve">
+    <value>赋值表达式不应用作条件，也不应用作 '&amp;&amp;'、'||' 或 '!' 的操作数。请使用比较表达式，或将赋值移到单独的语句中。</value>
+  </data>
+  <data name="SA1145MessageFormat" xml:space="preserve">
+    <value>不要将赋值用作条件</value>
+  </data>
+  <data name="SA1145Title" xml:space="preserve">
+    <value>不要将赋值用作条件</value>
   </data>
   <data name="SX1101CodeFix" xml:space="preserve">
     <value>删除 'this.' 前缀</value>

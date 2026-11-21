@@ -342,6 +342,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
         public static string @SA1144MessageFormat => GetResourceString("SA1144MessageFormat")!;
         /// <summary>Zero-width characters in literals must be escaped</summary>
         public static string @SA1144Title => GetResourceString("SA1144Title")!;
+        /// <summary>An assignment expression should not be used as a condition or as an operand of '&amp;&amp;', '||', or '!'. Use a comparison, or move the assignment into its own statement.</summary>
+        public static string @SA1145Description => GetResourceString("SA1145Description")!;
+        /// <summary>Do not use assignment as condition</summary>
+        public static string @SA1145MessageFormat => GetResourceString("SA1145MessageFormat")!;
+        /// <summary>Do not use assignment as condition</summary>
+        public static string @SA1145Title => GetResourceString("SA1145Title")!;
         /// <summary>Remove 'this.' prefix</summary>
         public static string @SX1101CodeFix => GetResourceString("SX1101CodeFix")!;
         /// <summary>A call to an instance member of the local class or a base class is prefixed with `this.`.</summary>
