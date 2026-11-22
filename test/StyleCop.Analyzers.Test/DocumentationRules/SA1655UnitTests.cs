@@ -155,4 +155,63 @@ public class TestClass
 
         await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
     }
+
+    [Fact]
+    public async Task TestSlashInTextIsNotCommentExteriorAsync()
+    {
+        var testCode = @"/// <summary>
+/// / {|#0:<b>|}
+/// bold
+/// </b>
+/// </summary>
+public class TestClass
+{
+}";
+
+        var expected = Diagnostic().WithLocation(0).WithArguments("b");
+        await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestSlashInTextBeforeBothTagsIsAcceptedAsync()
+    {
+        var testCode = @"/// <summary>
+/// / <b>
+/// bold
+/// / </b>
+/// </summary>
+public class TestClass
+{
+}";
+
+        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestBlockCommentTerminatorIsNotTextAfterClosingTagAsync()
+    {
+        var testCode = @"/**
+ * <summary>
+ * Summary text.
+ * </summary> */
+public class TestClass
+{
+}";
+
+        await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestBlockCommentWithMisplacedClosingTagAsync()
+    {
+        var testCode = @"/**
+ * <summary>
+ * Summary text.{|#0:</summary>|} */
+public class TestClass
+{
+}";
+
+        var expected = Diagnostic().WithLocation(0).WithArguments("summary");
+        await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
+    }
 }

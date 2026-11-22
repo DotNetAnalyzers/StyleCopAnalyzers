@@ -4,6 +4,7 @@
 namespace StyleCop.Analyzers.DocumentationRules;
 
 using System.Collections.Immutable;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -66,8 +67,9 @@ internal class SA1655DocumentationElementTagsMustBeConsistentlyPlaced : Diagnost
             return;
         }
 
-        bool startAlone = IsAloneOnLine(text, startTag.LessThanToken.SpanStart, startTag.GreaterThanToken.Span.End);
-        bool endAlone = IsAloneOnLine(text, endTag.LessThanSlashToken.SpanStart, endTag.GreaterThanToken.Span.End);
+        bool isBlockComment = element.Ancestors().Any(n => n.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia));
+        bool startAlone = IsAloneOnLine(text, startTag.LessThanToken, startTag.GreaterThanToken, isBlockComment);
+        bool endAlone = IsAloneOnLine(text, endTag.LessThanSlashToken, endTag.GreaterThanToken, isBlockComment);
         if (startAlone == endAlone)
         {
             return;
@@ -77,22 +79,45 @@ internal class SA1655DocumentationElementTagsMustBeConsistentlyPlaced : Diagnost
         context.ReportDiagnostic(Diagnostic.Create(Descriptor, location, startTag.Name.ToString()));
     }
 
-    private static bool IsAloneOnLine(SourceText text, int tagStart, int tagEnd)
+    private static bool IsAloneOnLine(SourceText text, SyntaxToken firstToken, SyntaxToken lastToken, bool isBlockComment)
     {
+        int tagStart = firstToken.SpanStart;
+        int tagEnd = lastToken.Span.End;
         var firstLine = text.Lines.GetLineFromPosition(tagStart);
         var lastLine = text.Lines.GetLineFromPosition(tagEnd);
 
-        for (int i = firstLine.Start; i < tagStart; i++)
+        // Only the documentation comment exterior trivia may precede the tag on its line.
+        int prefixStart = firstLine.Start;
+        for (var token = firstToken; !token.IsKind(SyntaxKind.None) && token.FullSpan.End > firstLine.Start; token = token.GetPreviousToken(includeZeroWidth: true))
         {
-            // Only the documentation comment exterior ("///", "/**" or "*") may precede the tag.
-            char c = text[i];
-            if (!char.IsWhiteSpace(c) && c != '/' && c != '*')
+            var exterior = token.LeadingTrivia.LastOrDefault(t => t.IsKind(SyntaxKind.DocumentationCommentExteriorTrivia) && t.SpanStart >= firstLine.Start);
+            if (exterior.IsKind(SyntaxKind.DocumentationCommentExteriorTrivia))
+            {
+                prefixStart = exterior.Span.End;
+                break;
+            }
+        }
+
+        for (int i = prefixStart; i < tagStart; i++)
+        {
+            if (!char.IsWhiteSpace(text[i]))
             {
                 return false;
             }
         }
 
-        for (int i = tagEnd; i < lastLine.End; i++)
+        int suffixEnd = lastLine.End;
+        if (isBlockComment)
+        {
+            // The block comment terminator is not XML content.
+            int terminator = text.ToString(TextSpan.FromBounds(tagEnd, suffixEnd)).IndexOf("*/", System.StringComparison.Ordinal);
+            if (terminator >= 0)
+            {
+                suffixEnd = tagEnd + terminator;
+            }
+        }
+
+        for (int i = tagEnd; i < suffixEnd; i++)
         {
             if (!char.IsWhiteSpace(text[i]))
             {
