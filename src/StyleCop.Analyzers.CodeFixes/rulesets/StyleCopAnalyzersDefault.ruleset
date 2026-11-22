@@ -221,5 +221,6 @@
         <Rule Id="SA1650"  Action="None" />             <!-- Element documentation should be spelled correctly -->
         <Rule Id="SA1651"  Action="Warning" />          <!-- Do not use placeholder elements -->
         <Rule Id="SA1653"  Action="Warning" />          <!-- Only one partial declaration should contain summary documentation -->
+        <Rule Id="SA1655"  Action="Warning" />          <!-- Documentation element tags must be consistently placed -->
     </Rules>
 </RuleSet>

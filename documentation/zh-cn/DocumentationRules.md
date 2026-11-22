@@ -64,3 +64,4 @@ dotnet_analyzer_diagnostic.category-StyleCop.CSharp.DocumentationRules.severity 
 [SA1652](SA1652.md) | EnableXmlDocumentationOutput | 此规则已移至 [SA0001](SA0001.md)。
 [SA1653](SA1653.md) | OnlyOnePartialDeclarationShouldContainSummaryDocumentation | 分部类型的多个声明包含摘要文档注释。
 [SA1654](SA1654.md) | ProperlyEncodeGenericBrackets | cref 属性中的泛型类型参数应使用大括号，而不是转义的尖括号。
+[SA1655](SA1655.md) | DocumentationElementTagsMustBeConsistentlyPlaced | 文档元素的开始标记和结束标记没有一致地单独占行。
