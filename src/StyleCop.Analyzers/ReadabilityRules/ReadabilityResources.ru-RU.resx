@@ -609,6 +609,15 @@
   <data name="SA1144Title" xml:space="preserve">
     <value>Символы нулевой ширины в литералах должны быть экранированы</value>
   </data>
+  <data name="SA1145Description" xml:space="preserve">
+    <value>Выражение присваивания не должно использоваться как условие или как операнд '&amp;&amp;', '||' или '!'. Используйте сравнение или вынесите присваивание в отдельную инструкцию.</value>
+  </data>
+  <data name="SA1145MessageFormat" xml:space="preserve">
+    <value>Не используйте присваивание в качестве условия</value>
+  </data>
+  <data name="SA1145Title" xml:space="preserve">
+    <value>Не используйте присваивание в качестве условия</value>
+  </data>
   <data name="SX1101CodeFix" xml:space="preserve">
     <value>Удалить префикс 'this.'</value>
   </data>

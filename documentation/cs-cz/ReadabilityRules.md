@@ -51,3 +51,4 @@ Identifikátor | Název | Popis
 [SA1142](SA1142.md) | ReferToTupleElementsByName | Prvek tuple byl odkazován podle metadatového názvu, když je k dispozici jméno prvku.
 [SA1143](SA1143.md) | ConditionalExpressionsMustBeFormattedConsistently | A conditional expression does not use a supported single-line or indented multiline layout.
 [SA1144](SA1144.md) | ZeroWidthCharactersInLiteralsMustBeEscaped | Řetězcový nebo znakový literál obsahuje znak s nulovou šířkou.
+[SA1145](SA1145.md) | DoNotUseAssignmentAsCondition | Výraz přiřazení je použit jako podmínka nebo jako operand logického operátoru.

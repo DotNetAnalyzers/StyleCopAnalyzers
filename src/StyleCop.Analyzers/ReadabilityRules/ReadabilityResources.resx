@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -608,6 +608,15 @@
   </data>
   <data name="SA1144Title" xml:space="preserve">
     <value>Zero-width characters in literals must be escaped</value>
+  </data>
+  <data name="SA1145Description" xml:space="preserve">
+    <value>An assignment expression should not be used as a condition or as an operand of '&amp;&amp;', '||', or '!'. Use a comparison, or move the assignment into its own statement.</value>
+  </data>
+  <data name="SA1145MessageFormat" xml:space="preserve">
+    <value>Do not use assignment as condition</value>
+  </data>
+  <data name="SA1145Title" xml:space="preserve">
+    <value>Do not use assignment as condition</value>
   </data>
   <data name="SX1101CodeFix" xml:space="preserve">
     <value>Remove 'this.' prefix</value>
