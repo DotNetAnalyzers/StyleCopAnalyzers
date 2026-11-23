@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Globalization;
     using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -186,8 +187,8 @@ namespace StyleCop.Analyzers.DocumentationRules
             {
                 HandleDeclaration(
                     context,
-                    string.Format(resourceManager.GetString(GetStaticConstructorFirstPartResourceName(constructorDeclarationSyntax.Parent), culture), typeKindText),
-                    string.Format(resourceManager.GetString(GetStaticConstructorSecondPartResourceName(constructorDeclarationSyntax.Parent), culture), typeKindText),
+                    string.Format(culture, resourceManager.GetString(GetStaticConstructorFirstPartResourceName(constructorDeclarationSyntax.Parent), culture), typeKindText),
+                    string.Format(culture, resourceManager.GetString(GetStaticConstructorSecondPartResourceName(constructorDeclarationSyntax.Parent), culture), typeKindText),
                     Descriptor,
                     allowLangwordStandardText: true,
                     documentationCulture: culture,
@@ -197,10 +198,8 @@ namespace StyleCop.Analyzers.DocumentationRules
             {
                 var privateConstructorMatch = HandleDeclaration(
                     context,
-                    string.Format(resourceManager.GetString(nameof(DocumentationResources.PrivateConstructorStandardTextFirstPart), culture), typeKindText),
-                    string.Format(
-                        resourceManager.GetString(nameof(DocumentationResources.PrivateConstructorStandardTextSecondPart), culture),
-                        typeKindText),
+                    string.Format(culture, resourceManager.GetString(nameof(DocumentationResources.PrivateConstructorStandardTextFirstPart), culture), typeKindText),
+                    string.Format(culture, resourceManager.GetString(nameof(DocumentationResources.PrivateConstructorStandardTextSecondPart), culture), typeKindText),
                     null,
                     allowLangwordStandardText: true,
                     typeKindText: typeKindText);
@@ -213,12 +212,8 @@ namespace StyleCop.Analyzers.DocumentationRules
                 // also allow the non-private wording for private constructors
                 HandleDeclaration(
                     context,
-                    string.Format(
-                        resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextFirstPart), culture),
-                        typeKindText),
-                    string.Format(
-                        resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextSecondPart), culture),
-                        typeKindText),
+                    string.Format(culture, resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextFirstPart), culture), typeKindText),
+                    string.Format(culture, resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextSecondPart), culture), typeKindText),
                     Descriptor,
                     allowLangwordStandardText: true,
                     typeKindText: typeKindText);
@@ -227,12 +222,8 @@ namespace StyleCop.Analyzers.DocumentationRules
             {
                 HandleDeclaration(
                     context,
-                    string.Format(
-                        resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextFirstPart), culture),
-                        typeKindText),
-                    string.Format(
-                        resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextSecondPart), culture),
-                        typeKindText),
+                    string.Format(culture, resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextFirstPart), culture), typeKindText),
+                    string.Format(culture, resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextSecondPart), culture), typeKindText),
                     Descriptor,
                     allowLangwordStandardText: true,
                     typeKindText: typeKindText);

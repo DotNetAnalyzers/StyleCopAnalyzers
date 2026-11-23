@@ -131,7 +131,7 @@ namespace StyleCop.Analyzers.SpacingRules
                     break;
 
                 case SyntaxKind.DocumentationCommentExteriorTrivia:
-                    if (lastLeadingTrivia.ToFullString().EndsWith(" "))
+                    if (lastLeadingTrivia.ToFullString().EndsWith(" ", StringComparison.Ordinal))
                     {
                         return;
                     }
@@ -163,7 +163,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 {
                     return;
                 }
-                else if (trivia.ToFullString().EndsWith(" "))
+                else if (trivia.ToFullString().EndsWith(" ", StringComparison.Ordinal))
                 {
                     // javadoc-style documentation comments without a leading * on one of the lines.
                     return;

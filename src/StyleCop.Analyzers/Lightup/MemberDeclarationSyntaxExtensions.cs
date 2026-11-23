@@ -54,6 +54,7 @@ namespace StyleCop.Analyzers.Lightup
 
         private static SyntaxList<AttributeListSyntax> AttributeListsFallback(MemberDeclarationSyntax syntax)
         {
+#pragma warning disable CA2201 // Do not raise reserved exception types
             return syntax switch
             {
                 BaseMethodDeclarationSyntax declaration => declaration.AttributeLists,
@@ -66,10 +67,12 @@ namespace StyleCop.Analyzers.Lightup
                 null => throw new NullReferenceException(),
                 _ => default,
             };
+#pragma warning restore CA2201 // Do not raise reserved exception types
         }
 
         private static MemberDeclarationSyntax WithAttributeListsFallback(MemberDeclarationSyntax syntax, SyntaxList<AttributeListSyntax> attributeLists)
         {
+#pragma warning disable CA2201 // Do not raise reserved exception types
             return syntax switch
             {
                 MethodDeclarationSyntax declaration => declaration.WithAttributeLists(attributeLists),
@@ -93,10 +96,12 @@ namespace StyleCop.Analyzers.Lightup
                 _ when attributeLists.Count == 0 => syntax,
                 _ => throw new NotSupportedException(),
             };
+#pragma warning restore CA2201 // Do not raise reserved exception types
         }
 
         private static SyntaxTokenList ModifiersFallback(MemberDeclarationSyntax syntax)
         {
+#pragma warning disable CA2201 // Do not raise reserved exception types
             return syntax switch
             {
                 BaseMethodDeclarationSyntax declaration => declaration.Modifiers,
@@ -108,10 +113,12 @@ namespace StyleCop.Analyzers.Lightup
                 null => throw new NullReferenceException(),
                 _ => default,
             };
+#pragma warning restore CA2201 // Do not raise reserved exception types
         }
 
         private static MemberDeclarationSyntax WithModifiersFallback(MemberDeclarationSyntax syntax, SyntaxTokenList modifiers)
         {
+#pragma warning disable CA2201 // Do not raise reserved exception types
             return syntax switch
             {
                 MethodDeclarationSyntax declaration => declaration.WithModifiers(modifiers),
@@ -134,6 +141,7 @@ namespace StyleCop.Analyzers.Lightup
                 _ when modifiers.Count == 0 => syntax,
                 _ => throw new NotSupportedException(),
             };
+#pragma warning restore CA2201 // Do not raise reserved exception types
         }
     }
 }

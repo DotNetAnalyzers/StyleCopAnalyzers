@@ -22,7 +22,9 @@ namespace StyleCop.Analyzers.Lightup
                 {
                     // Unlike an extension method which would throw ArgumentNullException here, the light-up
                     // behavior needs to match behavior of the underlying property.
+#pragma warning disable CA2201 // Do not raise reserved exception types
                     throw new NullReferenceException();
+#pragma warning restore CA2201 // Do not raise reserved exception types
                 }
 
                 return null;

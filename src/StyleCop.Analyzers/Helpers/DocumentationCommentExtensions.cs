@@ -246,7 +246,7 @@ namespace StyleCop.Analyzers.Helpers
         private static SyntaxTrivia SelectExteriorTrivia(SyntaxTrivia rewrittenTrivia, SyntaxTrivia trivia, SyntaxTrivia triviaWithSpace)
         {
             // if the trivia had a trailing space, make sure to preserve it
-            if (rewrittenTrivia.ToString().EndsWith(" "))
+            if (rewrittenTrivia.ToString().EndsWith(" ", StringComparison.Ordinal))
             {
                 return triviaWithSpace;
             }

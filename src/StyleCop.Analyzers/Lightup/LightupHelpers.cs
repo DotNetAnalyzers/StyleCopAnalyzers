@@ -159,7 +159,9 @@ namespace StyleCop.Analyzers.Lightup
                 {
                     // Unlike an extension method which would throw ArgumentNullException here, the light-up
                     // behavior needs to match behavior of the underlying property.
+#pragma warning disable CA2201 // Do not raise reserved exception types
                     throw new NullReferenceException();
+#pragma warning restore CA2201 // Do not raise reserved exception types
                 }
 
                 return default!;
@@ -258,7 +260,9 @@ namespace StyleCop.Analyzers.Lightup
                 {
                     // Unlike an extension method which would throw ArgumentNullException here, the light-up
                     // behavior needs to match behavior of the underlying property.
+#pragma warning disable CA2201 // Do not raise reserved exception types
                     throw new NullReferenceException();
+#pragma warning restore CA2201 // Do not raise reserved exception types
                 }
 
                 return ImmutableArray<IOperation>.Empty;
@@ -346,7 +350,9 @@ namespace StyleCop.Analyzers.Lightup
                 {
                     // Unlike an extension method which would throw ArgumentNullException here, the light-up
                     // behavior needs to match behavior of the underlying property.
+#pragma warning disable CA2201 // Do not raise reserved exception types
                     throw new NullReferenceException();
+#pragma warning restore CA2201 // Do not raise reserved exception types
                 }
 
                 return default!;
@@ -394,7 +400,9 @@ namespace StyleCop.Analyzers.Lightup
                 {
                     // Unlike an extension method which would throw ArgumentNullException here, the light-up
                     // behavior needs to match behavior of the underlying property.
+#pragma warning disable CA2201 // Do not raise reserved exception types
                     throw new NullReferenceException();
+#pragma warning restore CA2201 // Do not raise reserved exception types
                 }
 
                 return default!;
@@ -469,7 +477,9 @@ namespace StyleCop.Analyzers.Lightup
                 {
                     // Unlike an extension method which would throw ArgumentNullException here, the light-up
                     // behavior needs to match behavior of the underlying property.
+#pragma warning disable CA2201 // Do not raise reserved exception types
                     throw new NullReferenceException();
+#pragma warning restore CA2201 // Do not raise reserved exception types
                 }
 
                 return default!;
@@ -645,7 +655,9 @@ namespace StyleCop.Analyzers.Lightup
                 {
                     // Unlike an extension method which would throw ArgumentNullException here, the light-up
                     // behavior needs to match behavior of the underlying property.
+#pragma warning disable CA2201 // Do not raise reserved exception types
                     throw new NullReferenceException();
+#pragma warning restore CA2201 // Do not raise reserved exception types
                 }
 
                 value = default;
@@ -724,7 +736,9 @@ namespace StyleCop.Analyzers.Lightup
                 {
                     // Unlike an extension method which would throw ArgumentNullException here, the light-up
                     // behavior needs to match behavior of the underlying property.
+#pragma warning disable CA2201 // Do not raise reserved exception types
                     throw new NullReferenceException();
+#pragma warning restore CA2201 // Do not raise reserved exception types
                 }
 
                 return ImmutableArrayWrapper<TResult>.UnsupportedDefault;
@@ -823,7 +837,9 @@ namespace StyleCop.Analyzers.Lightup
                 {
                     // Unlike an extension method which would throw ArgumentNullException here, the light-up
                     // behavior needs to match behavior of the underlying property.
+#pragma warning disable CA2201 // Do not raise reserved exception types
                     throw new NullReferenceException();
+#pragma warning restore CA2201 // Do not raise reserved exception types
                 }
 
                 return SeparatedSyntaxListWrapper<TProperty>.UnsupportedEmpty;
@@ -883,7 +899,9 @@ namespace StyleCop.Analyzers.Lightup
                 {
                     // Unlike an extension method which would throw ArgumentNullException here, the light-up
                     // behavior needs to match behavior of the underlying property.
+#pragma warning disable CA2201 // Do not raise reserved exception types
                     throw new NullReferenceException();
+#pragma warning restore CA2201 // Do not raise reserved exception types
                 }
 
                 if (Equals(newValue, default(TProperty)))
@@ -949,7 +967,9 @@ namespace StyleCop.Analyzers.Lightup
                 {
                     // Unlike an extension method which would throw ArgumentNullException here, the light-up
                     // behavior needs to match behavior of the underlying property.
+#pragma warning disable CA2201 // Do not raise reserved exception types
                     throw new NullReferenceException();
+#pragma warning restore CA2201 // Do not raise reserved exception types
                 }
 
                 if (newValue is null)

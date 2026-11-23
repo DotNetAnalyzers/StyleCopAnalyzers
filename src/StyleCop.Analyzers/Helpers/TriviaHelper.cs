@@ -583,7 +583,7 @@ namespace StyleCop.Analyzers.Helpers
                     }
                     else
                     {
-                        throw new IndexOutOfRangeException();
+                        throw new ArgumentOutOfRangeException(nameof(index));
                     }
                 }
             }

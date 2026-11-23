@@ -119,7 +119,7 @@ namespace StyleCop.Analyzers.Helpers
             var headerSourceText = syntaxTree.GetText().GetSubText(TextSpan.FromBounds(this.fileHeaderStart, this.fileHeaderEnd)).ToString();
 
             var tagStart = "<" + element.Name.LocalName;
-            var index = headerSourceText.IndexOf(tagStart);
+            var index = headerSourceText.IndexOf(tagStart, StringComparison.Ordinal);
 
             var textSpan = TextSpan.FromBounds(this.fileHeaderStart + index, this.fileHeaderStart + index + tagStart.Length);
             return Location.Create(syntaxTree, textSpan);

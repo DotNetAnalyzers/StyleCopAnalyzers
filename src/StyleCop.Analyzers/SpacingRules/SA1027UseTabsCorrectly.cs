@@ -187,7 +187,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 }
                 else if (trivia.IsKind(SyntaxKind.SingleLineCommentTrivia))
                 {
-                    if (trivia.ToString().StartsWith("////"))
+                    if (trivia.ToString().StartsWith("////", StringComparison.Ordinal))
                     {
                         // Exclude comments starting with //// because they could contain commented code which contains
                         // string or character literals, and we don't want to change the contents of those strings.

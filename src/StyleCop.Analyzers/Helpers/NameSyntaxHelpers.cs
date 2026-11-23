@@ -78,7 +78,7 @@ namespace StyleCop.Analyzers.Helpers
             else if (nameSyntax.IsKind(SyntaxKind.GenericName))
             {
                 var genericNameSyntax = (GenericNameSyntax)nameSyntax;
-                builder.AppendFormat("{0}{1}", genericNameSyntax.Identifier.ValueText, genericNameSyntax.TypeArgumentList);
+                builder.AppendFormat(CultureInfo.InvariantCulture, "{0}{1}", genericNameSyntax.Identifier.ValueText, genericNameSyntax.TypeArgumentList);
             }
             else if (nameSyntax.IsKind(SyntaxKind.AliasQualifiedName))
             {
