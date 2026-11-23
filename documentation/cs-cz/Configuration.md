@@ -342,6 +342,8 @@ Tato část popisuje nastavení, která pravidlům sdělují, na které framewor
 }
 ```
 
+<a id="multi-targeting-legacy-frameworks"></a>
+
 ### Multi-targeting starších frameworků
 
 | Vlastnost | Výchozí hodnota | Popis |
