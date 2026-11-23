@@ -277,7 +277,7 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
     }
 
     // ASP.NET Core only discovers controller actions that are public.
-    private static bool IsHttpMethodAction(ISymbol symbol)
+    internal static bool IsHttpMethodAction(ISymbol symbol)
     {
         if (symbol is not IMethodSymbol)
         {
@@ -755,7 +755,7 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
     private static bool SymbolMustRemainPublic(InheritedImplementationLookup lookup, ISymbol symbol, CancellationToken cancellationToken)
     {
         var root = RootSymbol(DefinitionPart(symbol));
-        if (TypeIsExternallyVisible(root.ContainingType) || ImplementsInterface(root))
+        if (IsHttpMethodAction(DefinitionPart(symbol)) || TypeIsExternallyVisible(root.ContainingType) || ImplementsInterface(root))
         {
             return true;
         }

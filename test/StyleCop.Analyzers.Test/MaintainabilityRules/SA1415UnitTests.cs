@@ -1722,6 +1722,43 @@ namespace Test
         await VerifyAsync(testCode, fixedCode, Diagnostic().WithLocation(0)).ConfigureAwait(false);
     }
 
+    [Fact]
+    [WorkItem(4439, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4439")]
+    public async Task TestOverrideWithHttpMethodAttributeKeepsBaseMethodPublicAsync()
+    {
+        var testCode = @"
+namespace Microsoft.AspNetCore.Mvc.Routing
+{
+    public abstract class HttpMethodAttribute : System.Attribute
+    {
+    }
+}
+
+namespace Microsoft.AspNetCore.Mvc
+{
+    public class HttpPostAttribute : Microsoft.AspNetCore.Mvc.Routing.HttpMethodAttribute
+    {
+    }
+}
+
+namespace Test
+{
+    internal class BaseController
+    {
+        {|#0:public|} virtual int Check(int value) => value;
+    }
+
+    internal sealed class DerivedController : BaseController
+    {
+        [Microsoft.AspNetCore.Mvc.HttpPost]
+        public override int Check(int value) => value;
+    }
+}
+";
+
+        await VerifyNoFixAsync(testCode, Diagnostic().WithLocation(0)).ConfigureAwait(false);
+    }
+
     private static Task VerifyNoFixAsync(string testCode, params DiagnosticResult[] expected)
     {
         var test = new CSharpTest
