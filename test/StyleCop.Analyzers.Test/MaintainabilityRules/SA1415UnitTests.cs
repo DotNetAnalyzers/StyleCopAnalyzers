@@ -1680,6 +1680,48 @@ internal class DerivedName : BaseName
         await VerifyNoFixAsync(testCode, Diagnostic().WithLocation(0)).ConfigureAwait(false);
     }
 
+    // Verifies that methods decorated with an HttpMethodAttribute-derived attribute are not reported,
+    // because ASP.NET Core only discovers action methods that are public.
+    [Fact]
+    [WorkItem(4439, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4439")]
+    public async Task TestHttpMethodAttributeMethodIsNotReportedAsync()
+    {
+        var testCode = @"
+namespace Microsoft.AspNetCore.Mvc.Routing
+{
+    public abstract class HttpMethodAttribute : System.Attribute
+    {
+    }
+}
+
+namespace Microsoft.AspNetCore.Mvc
+{
+    public class HttpPostAttribute : Microsoft.AspNetCore.Mvc.Routing.HttpMethodAttribute
+    {
+    }
+}
+
+namespace Test
+{
+    public class OtherAttribute : System.Attribute
+    {
+    }
+
+    internal sealed class ValidateController<T>
+    {
+        [Microsoft.AspNetCore.Mvc.HttpPost]
+        public T Check(T t) => t;
+
+        [Other]
+        {|#0:public|} T Other(T t) => t;
+    }
+}
+";
+        var fixedCode = testCode.Replace("{|#0:public|} T Other", "internal T Other");
+
+        await VerifyAsync(testCode, fixedCode, Diagnostic().WithLocation(0)).ConfigureAwait(false);
+    }
+
     private static Task VerifyNoFixAsync(string testCode, params DiagnosticResult[] expected)
     {
         var test = new CSharpTest
