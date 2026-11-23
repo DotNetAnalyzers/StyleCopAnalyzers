@@ -348,6 +348,9 @@
   <data name="SA1121CodeFix" xml:space="preserve">
     <value>替换为内置类型</value>
   </data>
+  <data name="SA1121MultiTargetsLegacyFrameworksCodeFix" xml:space="preserve">
+    <value>在 {0} 中将 'multiTargetsLegacyFrameworks' 设置为 true</value>
+  </data>
   <data name="SA1121Description" xml:space="preserve">
     <value>代码使用了某个 C# 基本类型，但没有使用该类型的内置别名。</value>
   </data>

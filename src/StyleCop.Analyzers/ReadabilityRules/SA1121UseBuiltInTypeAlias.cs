@@ -214,6 +214,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
 
                 bool allowBuiltInTypeAliases = settings.ReadabilityRules.AllowBuiltInTypeAliases;
+
+                // Other target frameworks of a multi-targeted project may not support nint and nuint.
+                bool supportsNativeSizedIntegers = this.supportsNativeSizedIntegers && !settings.Compatibility.MultiTargetsLegacyFrameworks;
                 switch (identifierNameSyntax.Identifier.ValueText)
                 {
                 case nameof(Boolean):
@@ -233,7 +236,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 case nameof(UInt64):
                     break;
 
-                case nameof(IntPtr) or nameof(UIntPtr) when this.supportsNativeSizedIntegers:
+                case nameof(IntPtr) or nameof(UIntPtr) when supportsNativeSizedIntegers:
                     // Unlike predefined type keywords, nint and nuint are not recognized in cref attributes.
                     if (identifierNameSyntax.FirstAncestorOrSelf<CrefSyntax>() != null)
                     {
@@ -269,7 +272,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 case SpecialType.System_UInt16:
                 case SpecialType.System_UInt32:
                 case SpecialType.System_UInt64:
-                case SpecialType.System_IntPtr or SpecialType.System_UIntPtr when this.supportsNativeSizedIntegers:
+                case SpecialType.System_IntPtr or SpecialType.System_UIntPtr when supportsNativeSizedIntegers:
                     break;
 
                 default:
@@ -285,7 +288,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 if (allowBuiltInTypeAliases
                     && usingDirective?.Alias != null
                     && IsBuiltInAliasTarget(usingDirective, identifierNameSyntax)
-                    && !IsBuiltInTypeName(usingDirective.Alias.Name.Identifier.ValueText, this.supportsNativeSizedIntegers))
+                    && !IsBuiltInTypeName(usingDirective.Alias.Name.Identifier.ValueText, supportsNativeSizedIntegers))
                 {
                     return;
                 }

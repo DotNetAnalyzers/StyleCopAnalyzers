@@ -348,6 +348,9 @@
   <data name="SA1121CodeFix" xml:space="preserve">
     <value>Заменить на встроенный тип</value>
   </data>
+  <data name="SA1121MultiTargetsLegacyFrameworksCodeFix" xml:space="preserve">
+    <value>Установить для 'multiTargetsLegacyFrameworks' значение true в {0}</value>
+  </data>
   <data name="SA1121Description" xml:space="preserve">
     <value>В коде используется один из основных типов C#, но не используется встроенный псевдоним для этого типа.</value>
   </data>

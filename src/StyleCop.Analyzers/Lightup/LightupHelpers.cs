@@ -553,6 +553,90 @@ namespace StyleCop.Analyzers.Lightup
             return expression.Compile();
         }
 
+        internal static Func<TSyntax, TArg1, TArg2, TArg3, TProperty> CreateSyntaxPropertyAccessor<TSyntax, TArg1, TArg2, TArg3, TProperty>(Type? type, Type argumentType1, Type argumentType2, Type argumentType3, string accessorMethodName)
+        {
+            static TProperty FallbackAccessor(TSyntax syntax, TArg1 argument1, TArg2 argument2, TArg3 argument3)
+            {
+                if (syntax == null)
+                {
+                    // Unlike an extension method which would throw ArgumentNullException here, the light-up
+                    // behavior needs to match behavior of the underlying property.
+                    throw new NullReferenceException();
+                }
+
+                return default!;
+            }
+
+            if (type == null)
+            {
+                return FallbackAccessor;
+            }
+
+            if (!typeof(TSyntax).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo())
+                || !typeof(TArg1).GetTypeInfo().IsAssignableFrom(argumentType1.GetTypeInfo())
+                || !typeof(TArg2).GetTypeInfo().IsAssignableFrom(argumentType2.GetTypeInfo())
+                || !typeof(TArg3).GetTypeInfo().IsAssignableFrom(argumentType3.GetTypeInfo()))
+            {
+                throw new InvalidOperationException();
+            }
+
+            var methods = type.GetTypeInfo().GetDeclaredMethods(accessorMethodName);
+            MethodInfo? method = null;
+            foreach (var candidate in methods)
+            {
+                var parameters = candidate.GetParameters();
+                if (parameters.Length != 3
+                    || !Equals(argumentType1, parameters[0].ParameterType)
+                    || !Equals(argumentType2, parameters[1].ParameterType)
+                    || !Equals(argumentType3, parameters[2].ParameterType))
+                {
+                    continue;
+                }
+
+                method = candidate;
+            }
+
+            if (method == null)
+            {
+                return FallbackAccessor;
+            }
+
+            if (!typeof(TProperty).GetTypeInfo().IsAssignableFrom(method.ReturnType.GetTypeInfo()))
+            {
+                throw new InvalidOperationException();
+            }
+
+            var syntaxParameter = Expression.Parameter(typeof(TSyntax), "syntax");
+            var arg1Parameter = Expression.Parameter(typeof(TArg1), "arg1");
+            var arg2Parameter = Expression.Parameter(typeof(TArg2), "arg2");
+            var arg3Parameter = Expression.Parameter(typeof(TArg3), "arg3");
+            Expression instance =
+                type.GetTypeInfo().IsAssignableFrom(typeof(TSyntax).GetTypeInfo())
+                    ? (Expression)syntaxParameter
+                    : Expression.Convert(syntaxParameter, type);
+            Expression argument1 =
+                argumentType1.GetTypeInfo().IsAssignableFrom(typeof(TArg1).GetTypeInfo())
+                    ? (Expression)arg1Parameter
+                    : Expression.Convert(arg1Parameter, argumentType1);
+            Expression argument2 =
+                argumentType2.GetTypeInfo().IsAssignableFrom(typeof(TArg2).GetTypeInfo())
+                    ? (Expression)arg2Parameter
+                    : Expression.Convert(arg2Parameter, argumentType2);
+            Expression argument3 =
+                argumentType3.GetTypeInfo().IsAssignableFrom(typeof(TArg3).GetTypeInfo())
+                    ? (Expression)arg3Parameter
+                    : Expression.Convert(arg3Parameter, argumentType3);
+
+            Expression<Func<TSyntax, TArg1, TArg2, TArg3, TProperty>> expression =
+                Expression.Lambda<Func<TSyntax, TArg1, TArg2, TArg3, TProperty>>(
+                    Expression.Call(instance, method, argument1, argument2, argument3),
+                    syntaxParameter,
+                    arg1Parameter,
+                    arg2Parameter,
+                    arg3Parameter);
+            return expression.Compile();
+        }
+
         internal static TryGetValueAccessor<TSyntax, TKey, TValue> CreateTryGetValueAccessor<TSyntax, TKey, TValue>(Type? type, Type keyType, string methodName)
         {
             static bool FallbackAccessor(TSyntax syntax, TKey key, [MaybeNullWhen(false)] out TValue value)

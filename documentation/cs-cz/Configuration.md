@@ -81,6 +81,7 @@ nastavení jsou v následujících oddílech.
 | Odsazení | `indentation.tabSize` | `tab_width` | celé číslo | `4` |
 | Odsazení | `indentation.useTabs` | `indent_style` | `true`/`false` ⇄ `tab`/`space` | `false` / `space` |
 | Čitelnost | `readabilityRules.allowBuiltInTypeAliases` | `stylecop.readability.allowBuiltInTypeAliases` | logická hodnota | `false` |
+| Kompatibilita | `compatibility.multiTargetsLegacyFrameworks` | `stylecop.compatibility.multiTargetsLegacyFrameworks` | logická hodnota | `false` |
 | Řazení | `orderingRules.elementOrder` | `stylecop.ordering.elementOrder` | seznam položek `kind`, `accessibility`, `constant`, `static`, `readonly` | `kind, accessibility, constant, static, readonly` |
 | Řazení | `orderingRules.accessibilityOrder` | `stylecop.ordering.accessibilityOrder` | seznam všech šesti úrovní přístupu | `public, internal, protectedInternal, protected, privateProtected, private` |
 | Řazení | `orderingRules.memberKindOrder` | `stylecop.ordering.memberKindOrder` | seznam druhů členů (viz [Pořadí druhů členů](#member-kind-order)) | předdefinované pořadí SA1201 |
@@ -128,6 +129,9 @@ indent_style = space                      # tab | space
 
 # Čitelnost
 stylecop.readability.allowBuiltInTypeAliases = false
+
+# Kompatibilita
+stylecop.compatibility.multiTargetsLegacyFrameworks = false
 
 # Řazení
 stylecop.ordering.elementOrder = kind, accessibility, constant, static, readonly
@@ -323,6 +327,34 @@ Konfigurační vlastnost `allowBuiltInTypeAliases` lze nastavit na `true`, aby s
 Při konfiguraci StyleCop Analyzers pomocí souboru **.editorconfig** lze použít následující vlastnost:
 ```ini
 stylecop.readability.allowBuiltInTypeAliases = true
+```
+
+## Kompatibilita
+
+Tato část popisuje nastavení, která pravidlům sdělují, na které frameworky projekt cílí. Nastavují se v objektu `compatibility` souboru **stylecop.json**, jak ukazuje následující příklad.
+
+```json
+{
+  "settings": {
+    "compatibility": {
+    }
+  }
+}
+```
+
+<a id="multi-targeting-legacy-frameworks"></a>
+
+### Multi-targeting starších frameworků
+
+| Vlastnost | Výchozí hodnota | Popis |
+| --- | --- | --- |
+| `multiTargetsLegacyFrameworks` | **false** | Určuje, zda projekt cílí také na starší frameworky (například .NET Framework nebo .NET Standard), které nemají novější rozhraní API. |
+
+Analyzátory vidí pouze kompilaci pro jeden cílový framework, a proto nemohou poznat, že projekt cílí na více frameworků. Nastavte `multiTargetsLegacyFrameworks` na `true`, aby pravidla nehlásila konstrukce, které starší cíle nedokážou zkompilovat. V současnosti se to týká SA1121, které pak nehlásí `IntPtr` a `UIntPtr`, pokud aktuální cíl podporuje `nint` a `nuint`.
+
+Při konfiguraci StyleCop Analyzers pomocí souboru **.editorconfig** lze použít následující vlastnost:
+```ini
+stylecop.compatibility.multiTargetsLegacyFrameworks = true
 ```
 
 ## Pravidla řazení

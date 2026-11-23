@@ -90,6 +90,7 @@ csharp_using_directive_placement = outside_namespace
 | 缩进 | `indentation.tabSize` | `tab_width` | 整数 | `4` |
 | 缩进 | `indentation.useTabs` | `indent_style` | `true`/`false` ⇄ `tab`/`space` | `false` / `space` |
 | 可读性 | `readabilityRules.allowBuiltInTypeAliases` | `stylecop.readability.allowBuiltInTypeAliases` | 布尔值 | `false` |
+| 兼容性 | `compatibility.multiTargetsLegacyFrameworks` | `stylecop.compatibility.multiTargetsLegacyFrameworks` | 布尔值 | `false` |
 | 排序 | `orderingRules.elementOrder` | `stylecop.ordering.elementOrder` | `kind`、`accessibility`、`constant`、`static`、`readonly` 的列表 | `kind, accessibility, constant, static, readonly` |
 | 排序 | `orderingRules.accessibilityOrder` | `stylecop.ordering.accessibilityOrder` | 包含全部六种访问级别的列表 | `public, internal, protectedInternal, protected, privateProtected, private` |
 | 排序 | `orderingRules.memberKindOrder` | `stylecop.ordering.memberKindOrder` | 成员种类列表（参阅[成员种类顺序](#member-kind-order)） | SA1201 的预定义顺序 |
@@ -139,6 +140,9 @@ indent_style = space                      # tab | space
 
 # Readability
 stylecop.readability.allowBuiltInTypeAliases = false
+
+# Compatibility
+stylecop.compatibility.multiTargetsLegacyFrameworks = false
 
 # Ordering
 stylecop.ordering.elementOrder = kind, accessibility, constant, static, readonly
@@ -357,6 +361,36 @@ HRESULT hr = SomeNativeOperation();
 使用 **.editorconfig** 文件配置 StyleCop Analyzers 时，可使用以下属性：
 ```ini
 stylecop.readability.allowBuiltInTypeAliases = true
+```
+
+<a id="compatibility"></a>
+
+## 兼容性
+
+本节介绍告知规则项目所面向框架的设置。它们在 **stylecop.json** 文件的 `compatibility` 对象中配置，如以下示例所示。
+
+```json
+{
+  "settings": {
+    "compatibility": {
+    }
+  }
+}
+```
+
+<a id="multi-targeting-legacy-frameworks"></a>
+
+### 多目标面向旧版框架
+
+| 属性 | 默认值 | 摘要 |
+| --- | --- | --- |
+| `multiTargetsLegacyFrameworks` | **false** | 指定项目是否还面向缺少较新 API 的旧版框架（例如 .NET Framework 或 .NET Standard）。 |
+
+分析器只能看到单个目标框架的编译，因此无法判断项目是否为多目标。将 `multiTargetsLegacyFrameworks` 设置为 `true`，可使规则不再报告旧目标无法编译的构造。目前这会影响 SA1121：当当前目标支持 `nint` 和 `nuint` 时，它不会报告 `IntPtr` 和 `UIntPtr`。
+
+使用 **.editorconfig** 文件配置 StyleCop Analyzers 时，可以使用以下属性：
+```ini
+stylecop.compatibility.multiTargetsLegacyFrameworks = true
 ```
 
 <a id="ordering-rules"></a>
