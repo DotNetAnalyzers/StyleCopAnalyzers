@@ -79,14 +79,19 @@ internal class SA1121MultiTargetsLegacyFrameworksCodeFixProvider : CodeFixProvid
 
         // stylecop.json values take precedence over .editorconfig values, so edit it when it exists.
         var settingsFile = project.AdditionalDocuments.FirstOrDefault(additionalDocument => SettingsHelper.IsStyleCopSettingsFile(additionalDocument.Name));
-        if (settingsFile != null && workspace.CanApplyChange(ApplyChangesKind.ChangeAdditionalDocument))
+        if (settingsFile != null)
         {
+            // An existing stylecop.json overrides editorconfig values, so a lower-priority edit would be ineffective.
+            if (!workspace.CanApplyChange(ApplyChangesKind.ChangeAdditionalDocument))
+            {
+                return null;
+            }
+
             var text = await settingsFile.GetTextAsync(cancellationToken).ConfigureAwait(false);
             var newText = SettingsFileEditor.SetJsonTrue(text.ToString(), "compatibility", "multiTargetsLegacyFrameworks");
-            if (newText != null)
-            {
-                return new Target(settingsFile.Name, settingsFile.Id, text, newText, isAnalyzerConfig: false);
-            }
+            return newText != null
+                ? new Target(settingsFile.Name, settingsFile.Id, text, newText, isAnalyzerConfig: false)
+                : null;
         }
 
         if (!Enum.TryParse<ApplyChangesKind>("ChangeAnalyzerConfigDocument", out var changeKind)
@@ -101,8 +106,7 @@ internal class SA1121MultiTargetsLegacyFrameworksCodeFixProvider : CodeFixProvid
         var editorConfig = configDocuments
             .Where(config => string.Equals(config.Name, ".editorconfig", StringComparison.OrdinalIgnoreCase)
                 && (documentDirectory == null || IsAncestorOrSame(GetDirectory(config.FilePath), documentDirectory)))
-            .OrderByDescending(config => config.Text.ToString().Contains("stylecop."))
-            .ThenBy(config => GetDirectory(config.FilePath)?.Length ?? 0)
+            .OrderByDescending(config => GetDirectory(config.FilePath)?.Length ?? 0)
             .Cast<AnalyzerConfigDocumentInfo?>()
             .FirstOrDefault();
         if (editorConfig != null)

@@ -41,6 +41,15 @@ class TestClass
         await test.RunAsync().ConfigureAwait(false);
     }
 
+    [Fact]
+    public async Task TestGlobalConfigIsUpdatedAsync()
+    {
+        var sharedPath = Path.Combine(Path.GetTempPath(), "SA1121.Settings.Shared.cs");
+        var test = CreateTest(sharedPath);
+        test.FixedState.AnalyzerConfigFiles.Add(("/.globalconfig", "is_global = true\r\n\r\nindent_size = 4\r\nindent_style = space\r\ntab_width = 4\r\nend_of_line = crlf\r\nstylecop.compatibility.multiTargetsLegacyFrameworks = true\r\n"));
+        await test.RunAsync().ConfigureAwait(false);
+    }
+
     private static CSharpTest CreateTest(string sharedPath)
     {
         var test = new CSharpTest
