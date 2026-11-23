@@ -55,6 +55,48 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
         context.RegisterCompilationStartAction(CompilationStartAction);
     }
 
+    // ASP.NET Core only discovers controller actions that are public.
+    internal static bool IsHttpMethodAction(ISymbol symbol)
+    {
+        if (symbol is not IMethodSymbol)
+        {
+            return false;
+        }
+
+        foreach (var attribute in symbol.GetAttributes())
+        {
+            for (var current = attribute.AttributeClass; current is not null; current = current.BaseType)
+            {
+                if (current is
+                    {
+                        Name: "HttpMethodAttribute",
+                        ContainingNamespace:
+                        {
+                            Name: "Routing",
+                            ContainingNamespace:
+                            {
+                                Name: "Mvc",
+                                ContainingNamespace:
+                                {
+                                    Name: "AspNetCore",
+                                    ContainingNamespace:
+                                    {
+                                        Name: "Microsoft",
+                                        ContainingNamespace: { IsGlobalNamespace: true },
+                                    },
+                                },
+                            },
+                        },
+                    })
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     private static void CompilationStartAction(CompilationStartAnalysisContext context)
     {
         var lookup = new InheritedImplementationLookup(context.Compilation);
@@ -188,7 +230,8 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
             }
 
             if (IsEnumerationPatternMember(symbol, lookup, cancellationToken)
-                || IsInterfaceImplementationOrOverride(symbol))
+                || IsInterfaceImplementationOrOverride(symbol)
+                || IsHttpMethodAction(symbol))
             {
                 return true;
             }
@@ -712,7 +755,7 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
     private static bool SymbolMustRemainPublic(InheritedImplementationLookup lookup, ISymbol symbol, CancellationToken cancellationToken)
     {
         var root = RootSymbol(DefinitionPart(symbol));
-        if (TypeIsExternallyVisible(root.ContainingType) || ImplementsInterface(root))
+        if (IsHttpMethodAction(DefinitionPart(symbol)) || TypeIsExternallyVisible(root.ContainingType) || ImplementsInterface(root))
         {
             return true;
         }
