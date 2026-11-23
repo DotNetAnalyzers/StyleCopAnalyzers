@@ -535,6 +535,9 @@ namespace StyleCop.Analyzers.Test.Settings
             Assert.NotNull(styleCopSettings.ReadabilityRules);
             Assert.False(styleCopSettings.ReadabilityRules.AllowBuiltInTypeAliases);
 
+            Assert.NotNull(styleCopSettings.Compatibility);
+            Assert.False(styleCopSettings.Compatibility.MultiTargetsLegacyFrameworks);
+
             Assert.NotNull(styleCopSettings.MaintainabilityRules);
             Assert.Equal(DefaultTopLevelTypes, styleCopSettings.MaintainabilityRules.TopLevelTypes);
 

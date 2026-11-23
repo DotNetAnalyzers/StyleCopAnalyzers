@@ -168,6 +168,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         public static string @SA1120Title => GetResourceString("SA1120Title")!;
         /// <summary>Replace with built-in type</summary>
         public static string @SA1121CodeFix => GetResourceString("SA1121CodeFix")!;
+        /// <summary>Set 'multiTargetsLegacyFrameworks' to true in {0}</summary>
+        public static string @SA1121MultiTargetsLegacyFrameworksCodeFix => GetResourceString("SA1121MultiTargetsLegacyFrameworksCodeFix")!;
         /// <summary>The code uses one of the basic C# types, but does not use the built-in alias for the type.</summary>
         public static string @SA1121Description => GetResourceString("SA1121Description")!;
         /// <summary>Use built-in type alias</summary>

@@ -548,6 +548,43 @@ class TestClass
         }
 
         /// <summary>
+        /// Verifies that <c>compatibility.multiTargetsLegacyFrameworks</c> suppresses native-sized integer diagnostics
+        /// without affecting other built-in types.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(4440, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/4440")]
+        public async Task TestNativeSizedIntegersDoNotReportWhenMultiTargetingLegacyFrameworksAsync()
+        {
+            var testCode = @"
+using System;
+
+class TestClass
+{
+    IntPtr field1;
+    System.UIntPtr field2;
+    [|String|] field3;
+}";
+
+            var fixedCode = @"
+using System;
+
+class TestClass
+{
+    IntPtr field1;
+    System.UIntPtr field2;
+    string field3;
+}";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                Settings = @"{ ""settings"": { ""compatibility"": { ""multiTargetsLegacyFrameworks"": true } } }",
+            }.RunAsync().ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that type arguments of generic attributes are reported and fixed.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>

@@ -348,6 +348,9 @@
   <data name="SA1121CodeFix" xml:space="preserve">
     <value>Replace with built-in type</value>
   </data>
+  <data name="SA1121MultiTargetsLegacyFrameworksCodeFix" xml:space="preserve">
+    <value>Set 'multiTargetsLegacyFrameworks' to true in {0}</value>
+  </data>
   <data name="SA1121Description" xml:space="preserve">
     <value>The code uses one of the basic C# types, but does not use the built-in alias for the type.</value>
   </data>

@@ -53,6 +53,18 @@
             }
           }
         },
+        "compatibility": {
+          "type": "object",
+          "description": "Configuration for rules affected by the frameworks a project targets",
+          "additionalProperties": false,
+          "properties": {
+            "multiTargetsLegacyFrameworks": {
+              "type": "boolean",
+              "description": "When true, the project also targets older frameworks, so rules do not report constructs that those targets cannot compile (such as nint and nuint for IntPtr and UIntPtr in SA1121).",
+              "default": false
+            }
+          }
+        },
         "orderingRules": {
           "type": "object",
           "description": "Configuration for ordering rules (SA1200-)",
