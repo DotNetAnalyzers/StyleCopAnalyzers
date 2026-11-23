@@ -55,6 +55,48 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
         context.RegisterCompilationStartAction(CompilationStartAction);
     }
 
+    // ASP.NET Core only discovers controller actions that are public.
+    internal static bool IsHttpMethodAction(ISymbol symbol)
+    {
+        if (symbol is not IMethodSymbol)
+        {
+            return false;
+        }
+
+        foreach (var attribute in symbol.GetAttributes())
+        {
+            for (var current = attribute.AttributeClass; current is not null; current = current.BaseType)
+            {
+                if (current is
+                    {
+                        Name: "HttpMethodAttribute",
+                        ContainingNamespace:
+                        {
+                            Name: "Routing",
+                            ContainingNamespace:
+                            {
+                                Name: "Mvc",
+                                ContainingNamespace:
+                                {
+                                    Name: "AspNetCore",
+                                    ContainingNamespace:
+                                    {
+                                        Name: "Microsoft",
+                                        ContainingNamespace: { IsGlobalNamespace: true },
+                                    },
+                                },
+                            },
+                        },
+                    })
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     private static void CompilationStartAction(CompilationStartAnalysisContext context)
     {
         var lookup = new InheritedImplementationLookup(context.Compilation);
@@ -270,48 +312,6 @@ internal sealed class SA1415DoNotUsePublicOnMembersOfInternalTypes : DiagnosticA
             if (level is AccessLevel.NotSpecified or AccessLevel.Public)
             {
                 return true;
-            }
-        }
-
-        return false;
-    }
-
-    // ASP.NET Core only discovers controller actions that are public.
-    internal static bool IsHttpMethodAction(ISymbol symbol)
-    {
-        if (symbol is not IMethodSymbol)
-        {
-            return false;
-        }
-
-        foreach (var attribute in symbol.GetAttributes())
-        {
-            for (var current = attribute.AttributeClass; current is not null; current = current.BaseType)
-            {
-                if (current is
-                    {
-                        Name: "HttpMethodAttribute",
-                        ContainingNamespace:
-                        {
-                            Name: "Routing",
-                            ContainingNamespace:
-                            {
-                                Name: "Mvc",
-                                ContainingNamespace:
-                                {
-                                    Name: "AspNetCore",
-                                    ContainingNamespace:
-                                    {
-                                        Name: "Microsoft",
-                                        ContainingNamespace: { IsGlobalNamespace: true },
-                                    },
-                                },
-                            },
-                        },
-                    })
-                {
-                    return true;
-                }
             }
         }
 
