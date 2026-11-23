@@ -200,14 +200,10 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             if (memberSyntax is ConstructorDeclarationSyntax constructorDeclarationSyntax && declaredSymbol is IMethodSymbol constructorMethodSymbol)
             {
-                if (constructorMethodSymbol.ContainingType != null)
+                if (constructorMethodSymbol.ContainingType?.BaseType is { } baseType
+                    && HasMatchingSignature(baseType.Constructors, constructorMethodSymbol))
                 {
-                    INamedTypeSymbol baseType = constructorMethodSymbol.ContainingType.BaseType;
-
-                    if (HasMatchingSignature(baseType.Constructors, constructorMethodSymbol))
-                    {
-                        return;
-                    }
+                    return;
                 }
             }
 

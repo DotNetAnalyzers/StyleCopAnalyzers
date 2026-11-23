@@ -34,5 +34,38 @@ public class TestClass : TestInterface
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestInterfaceStaticConstructorAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// An interface.
+/// </summary>
+public interface ITest
+{
+    /// <summary>
+    /// Initializes static members of the <see cref=""ITest""/> interface.
+    /// </summary>
+    static ITest()
+    {
+    }
+}
+
+/// <summary>
+/// A generic interface.
+/// </summary>
+/// <typeparam name=""T"">The type.</typeparam>
+public interface ITest<T>
+{
+    /// [|<inheritdoc/>|]
+    static ITest()
+    {
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
