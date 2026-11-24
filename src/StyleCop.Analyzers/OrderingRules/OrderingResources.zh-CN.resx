@@ -42,6 +42,9 @@
   <data name="SA1201InterruptedGroupMessageFormat" xml:space="preserve">
     <value>未为种类为 '{0}' 的成员配置顺序，但这些成员不应出现在已配置顺序的 '{1}' 种类的声明之间</value>
   </data>
+  <data name="SA1201MemberNameOrderMessageFormat" xml:space="preserve">
+    <value>成员“{0}”应位于成员“{1}”之前</value>
+  </data>
   <data name="SA1201Title" xml:space="preserve">
     <value>元素应按正确的顺序排列</value>
   </data>

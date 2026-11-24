@@ -34,6 +34,9 @@
   <data name="SA1201InterruptedGroupMessageFormat" xml:space="preserve">
     <value>Для членов вида '{0}' порядок не задан, но они не должны находиться между объявлениями вида '{1}', для которого порядок задан</value>
   </data>
+  <data name="SA1201MemberNameOrderMessageFormat" xml:space="preserve">
+    <value>Член «{0}» должен располагаться перед членом «{1}»</value>
+  </data>
   <data name="SA1201Title" xml:space="preserve">
     <value>Элементы должны располагаться в правильном порядке</value>
   </data>
