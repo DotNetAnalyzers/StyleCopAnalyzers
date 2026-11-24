@@ -84,7 +84,7 @@ setting are in the sections that follow.
 | Indentation | `indentation.useTabs` | `indent_style` | `true`/`false` ⇄ `tab`/`space` | `false` / `space` |
 | Readability | `readabilityRules.allowBuiltInTypeAliases` | `stylecop.readability.allowBuiltInTypeAliases` | boolean | `false` |
 | Compatibility | `compatibility.multiTargetsLegacyFrameworks` | `stylecop.compatibility.multiTargetsLegacyFrameworks` | boolean | `false` |
-| Ordering | `orderingRules.elementOrder` | `stylecop.ordering.elementOrder` | list of `kind`, `accessibility`, `constant`, `static`, `readonly` | `kind, accessibility, constant, static, readonly` |
+| Ordering | `orderingRules.elementOrder` | `stylecop.ordering.elementOrder` | list of `kind`, `accessibility`, `constant`, `static`, `readonly`, `name` | `kind, accessibility, constant, static, readonly` |
 | Ordering | `orderingRules.accessibilityOrder` | `stylecop.ordering.accessibilityOrder` | list of all six access levels (see [Accessibility Order](#accessibility-order)) | `public, internal, protectedInternal, protected, privateProtected, private` |
 | Ordering | `orderingRules.memberKindOrder` | `stylecop.ordering.memberKindOrder` | list of member kinds (see [Member Kind Order](#member-kind-order)) | predefined SA1201 order |
 | Ordering | `orderingRules.systemUsingDirectivesFirst` | `dotnet_sort_system_directives_first` | boolean | `true` |
@@ -384,6 +384,24 @@ traits are supported:
 * `constant`: Constant elements are ordered before non-constant elements
 * `static`: Static elements are ordered before non-static elements
 * `readonly`: Readonly elements are ordered before non-readonly elements
+* `name`: SA1201 orders adjacent declarations of the same SA1201 member kind and ordering group by case-sensitive ordinal name.
+  Field-like events and events with accessors share a kind. Record classes share a kind with classes, and record structs share a kind with structs.
+  This optional tie-breaker applies after all other traits and supports methods, properties, single-variable fields (including constants), events, nested types, and delegates.
+  With the default kind order, placing `static` before `kind` keeps constants and explicitly static fields in separate name-ordering groups.
+  When `static` follows the default `kind` order, classes and record classes stay in separate name-ordering groups to respect SA1204.
+  If a group starts with a member that is out of order under an earlier trait, name sorting keeps that member at the front of the group.
+  Equal names keep their relative order. Declarations containing directives or multiple variables are excluded.
+  Name sorting skips types marked for COM interop, including public types exposed by assembly-level COM visibility and public types covered by an explicitly configured assembly-level COM class interface.
+  An explicit `[ComVisible(false)]` at the assembly or type level takes precedence over the assembly-level class interface setting.
+  Name sorting also skips classes derived from `EventSource` to preserve implicit event IDs.
+  Module initializers and nested types containing them act as boundaries.
+  In types with fixed layout and in records, instance fields, properties, and field-like events retain their order.
+  Instance storage members in XML contracts marked with `[XmlRoot]` or `[XmlType]` also retain their order.
+  Runtime initializers retain their relative order.
+  The name-ordering code fix leaves generated declarations and declarations in `#line hidden` regions in place.
+  Name-ordering fixes respect `#pragma warning disable` and skip moving declarations suppressed by a local or global `SuppressMessage` attribute.
+
+For example, set `stylecop.ordering.elementOrder = kind, constant, accessibility, static, readonly, name` in `.editorconfig` to enable member-name ordering.
 
 This configuration property allows for a wide variety of ordering configurations, as shown in the following examples.
 

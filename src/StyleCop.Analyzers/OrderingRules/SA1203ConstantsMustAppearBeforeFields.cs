@@ -65,10 +65,7 @@ namespace StyleCop.Analyzers.OrderingRules
             var typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
             var members = typeDeclaration.Members;
-            var previousFieldConstant = true;
-            var previousFieldStatic = false;
-            var previousFieldReadonly = false;
-            var previousAccessLevel = AccessLevel.NotSpecified;
+            MemberOrderTraits? previous = null;
 
             foreach (var member in members)
             {
@@ -77,61 +74,14 @@ namespace StyleCop.Analyzers.OrderingRules
                     continue;
                 }
 
-                AccessLevel currentAccessLevel = MemberOrderHelper.GetAccessLevelForOrdering(field, field.Modifiers);
-                bool currentFieldConstant = field.Modifiers.Any(SyntaxKind.ConstKeyword);
-                bool currentFieldReadonly = currentFieldConstant || field.Modifiers.Any(SyntaxKind.ReadOnlyKeyword);
-                bool currentFieldStatic = currentFieldConstant || field.Modifiers.Any(SyntaxKind.StaticKeyword);
-                bool compareConst = true;
-                for (int j = 0; compareConst && j < constantIndex; j++)
+                var current = new MemberOrderTraits(field);
+                if (previous is { } precedingField
+                    && current.IsModifierOutOfOrder(precedingField, elementOrder, constantIndex, OrderingTrait.Constant))
                 {
-                    switch (elementOrder[j])
-                    {
-                    case OrderingTrait.Accessibility:
-                        if (currentAccessLevel != previousAccessLevel)
-                        {
-                            compareConst = false;
-                        }
-
-                        continue;
-
-                    case OrderingTrait.Readonly:
-                        if (currentFieldReadonly != previousFieldReadonly)
-                        {
-                            compareConst = false;
-                        }
-
-                        continue;
-
-                    case OrderingTrait.Static:
-                        if (currentFieldStatic != previousFieldStatic)
-                        {
-                            compareConst = false;
-                        }
-
-                        continue;
-
-                    case OrderingTrait.Kind:
-                        // Only fields may be marked const, and all fields have the same kind.
-                        continue;
-
-                    case OrderingTrait.Constant:
-                    default:
-                        continue;
-                    }
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(member)));
                 }
 
-                if (compareConst)
-                {
-                    if (!previousFieldConstant && currentFieldConstant)
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(member)));
-                    }
-                }
-
-                previousFieldConstant = currentFieldConstant;
-                previousFieldReadonly = currentFieldReadonly;
-                previousFieldStatic = currentFieldStatic;
-                previousAccessLevel = currentAccessLevel;
+                previous = current;
             }
         }
     }

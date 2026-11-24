@@ -16,24 +16,6 @@ namespace StyleCop.Analyzers.Helpers
     /// </summary>
     internal readonly struct MemberOrderHelper
     {
-        private static readonly ImmutableArray<SyntaxKind> TypeMemberOrder = ImmutableArray.Create(
-            SyntaxKind.ClassDeclaration,
-            SyntaxKind.StructDeclaration,
-            SyntaxKind.MethodDeclaration,
-            SyntaxKind.OperatorDeclaration,
-            SyntaxKind.ConversionOperatorDeclaration,
-            SyntaxKind.IndexerDeclaration,
-            SyntaxKind.PropertyDeclaration,
-            SyntaxKindEx.ExtensionBlockDeclaration,
-            SyntaxKind.InterfaceDeclaration,
-            SyntaxKind.EnumDeclaration,
-            SyntaxKind.EventDeclaration,
-            SyntaxKind.DelegateDeclaration,
-            SyntaxKind.DestructorDeclaration,
-            SyntaxKind.ConstructorDeclaration,
-            SyntaxKind.FieldDeclaration,
-            SyntaxKind.NamespaceDeclaration);
-
         /// <summary>
         /// Initializes a new instance of the <see cref="MemberOrderHelper"/> struct.
         /// </summary>
@@ -44,14 +26,7 @@ namespace StyleCop.Analyzers.Helpers
         {
             this.Member = member;
             var modifiers = member.GetModifiers();
-            var type = member.Kind() switch
-            {
-                SyntaxKind.EventFieldDeclaration => SyntaxKind.EventDeclaration,
-                SyntaxKindEx.RecordDeclaration => SyntaxKind.ClassDeclaration,
-                SyntaxKindEx.RecordStructDeclaration => SyntaxKind.StructDeclaration,
-                SyntaxKindEx.UnionDeclaration => SyntaxKind.StructDeclaration,
-                var kind => kind,
-            };
+            var kindOrder = MemberKindOrder.DefaultTypeOrder;
 
             this.Priority = 0;
             foreach (OrderingTrait trait in elementOrder)
@@ -59,9 +34,9 @@ namespace StyleCop.Analyzers.Helpers
                 switch (trait)
                 {
                 case OrderingTrait.Kind:
-                    // 4 bits are required to store this.
+                    // Store the reversed kind order in four bits, leaving unknown kinds last.
                     this.Priority <<= 4;
-                    this.Priority |= TypeMemberOrder.IndexOf(type) & 0x0F;
+                    this.Priority |= (kindOrder.Length - 1 - kindOrder.IndexOf(MemberKindOrder.Normalize(member.Kind()))) & 0x0F;
                     break;
 
                 case OrderingTrait.Accessibility:

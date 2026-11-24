@@ -62,14 +62,33 @@ internal sealed class MemberKindOrder
         this.followingTraits = kindIndex < 0 ? ImmutableArray<OrderingTrait>.Empty : elementOrder.RemoveRange(0, kindIndex + 1);
     }
 
+    internal static ImmutableArray<SyntaxKind> DefaultTypeOrder { get; } = ImmutableArray.Create(
+        SyntaxKind.FieldDeclaration,
+        SyntaxKind.ConstructorDeclaration,
+        SyntaxKind.DestructorDeclaration,
+        SyntaxKind.DelegateDeclaration,
+        SyntaxKind.EventDeclaration,
+        SyntaxKind.EnumDeclaration,
+        SyntaxKind.InterfaceDeclaration,
+        SyntaxKindEx.ExtensionBlockDeclaration,
+        SyntaxKind.PropertyDeclaration,
+        SyntaxKind.IndexerDeclaration,
+        SyntaxKind.ConversionOperatorDeclaration,
+        SyntaxKind.OperatorDeclaration,
+        SyntaxKind.MethodDeclaration,
+        SyntaxKind.StructDeclaration,
+        SyntaxKind.ClassDeclaration);
+
     internal static SyntaxKind Normalize(SyntaxKind kind) => kind switch
     {
-        SyntaxKind.EventFieldDeclaration => SyntaxKind.EventDeclaration,
         SyntaxKindEx.RecordDeclaration => SyntaxKind.ClassDeclaration,
         SyntaxKindEx.RecordStructDeclaration => SyntaxKind.StructDeclaration,
         SyntaxKindEx.UnionDeclaration => SyntaxKind.StructDeclaration,
-        _ => kind,
+        _ => NormalizeEventKind(kind),
     };
+
+    internal static SyntaxKind NormalizeEventKind(SyntaxKind kind)
+        => kind == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : kind;
 
     internal static string GetKindName(SyntaxKind kind) => Normalize(kind) switch
     {
@@ -91,15 +110,7 @@ internal sealed class MemberKindOrder
         _ => kind.ToString(),
     };
 
-    internal int GetRank(MemberDeclarationSyntax member) => this.kinds.IndexOf(Normalize(member.Kind()));
-
-    internal int GetPrecedingPriority(MemberDeclarationSyntax member) => this.precedingTraits.IsEmpty ? 0 : GetPriority(member, this.precedingTraits, this.accessibilityOrder);
-
-    internal int GetFollowingPriority(MemberDeclarationSyntax member) => this.followingTraits.IsEmpty ? 0 : GetPriority(member, this.followingTraits, this.accessibilityOrder);
-
-    internal int GetPriorityBefore(MemberDeclarationSyntax member, OrderingTrait orderingTrait) => GetPriority(member, this.elementOrder, this.accessibilityOrder, orderingTrait);
-
-    private static int GetPriority(MemberDeclarationSyntax member, ImmutableArray<OrderingTrait> traits, ImmutableArray<AccessLevel> accessibilityOrder, OrderingTrait? stopAt = null)
+    internal static int GetPriority(MemberDeclarationSyntax member, ImmutableArray<OrderingTrait> traits, ImmutableArray<AccessLevel> accessibilityOrder, OrderingTrait? stopAt = null)
     {
         var modifiers = member.GetModifiers();
         var isConstant = modifiers.Any(SyntaxKind.ConstKeyword);
@@ -133,4 +144,27 @@ internal sealed class MemberKindOrder
 
         return priority;
     }
+
+    internal static bool StartsNewGroup(MemberDeclarationSyntax member, int priority, int previousPriority)
+        => priority != previousPriority || member.IsKind(SyntaxKind.IncompleteMember);
+
+    internal static bool IsModifierOutOfOrder(int currentPriority, int previousPriority)
+        => (currentPriority & 1) != 0 && previousPriority == currentPriority - 1;
+
+    internal int GetModifierPriority(MemberDeclarationSyntax member, OrderingTrait trait, SyntaxKind modifier)
+    {
+        var modifiers = member.GetModifiers();
+        var hasModifier = modifiers.Any(SyntaxKind.ConstKeyword) || modifiers.Any(modifier);
+
+        // The low bit records the modifier. The remaining bits record the higher-priority traits.
+        return (this.GetPriorityBefore(member, trait) << 1) | (hasModifier ? 1 : 0);
+    }
+
+    internal int GetRank(MemberDeclarationSyntax member) => this.kinds.IndexOf(Normalize(member.Kind()));
+
+    internal int GetPrecedingPriority(MemberDeclarationSyntax member) => this.precedingTraits.IsEmpty ? 0 : GetPriority(member, this.precedingTraits, this.accessibilityOrder);
+
+    internal int GetFollowingPriority(MemberDeclarationSyntax member) => this.followingTraits.IsEmpty ? 0 : GetPriority(member, this.followingTraits, this.accessibilityOrder);
+
+    internal int GetPriorityBefore(MemberDeclarationSyntax member, OrderingTrait orderingTrait) => GetPriority(member, this.elementOrder, this.accessibilityOrder, orderingTrait);
 }

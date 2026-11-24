@@ -88,7 +88,8 @@
                   "kind",
                   "constant",
                   "static",
-                  "readonly"
+                  "readonly",
+                  "name"
                 ]
               },
               "uniqueItems": true

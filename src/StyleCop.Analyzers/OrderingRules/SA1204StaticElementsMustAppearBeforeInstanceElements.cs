@@ -129,109 +129,44 @@ namespace StyleCop.Analyzers.OrderingRules
             {
                 context.CancellationToken.ThrowIfCancellationRequested();
                 var priority = order.GetPrecedingPriority(member);
-                if (priority != precedingPriority || member.IsKind(SyntaxKind.IncompleteMember))
+                if (MemberKindOrder.StartsNewGroup(member, priority, precedingPriority))
                 {
                     previousByKind.Clear();
                 }
 
                 precedingPriority = priority;
                 var kind = MemberKindOrder.Normalize(member.Kind());
-                var modifiers = member.GetModifiers();
-                var isStatic = modifiers.Any(SyntaxKind.ConstKeyword) || modifiers.Any(SyntaxKind.StaticKeyword);
-                var higherPriority = order.GetPriorityBefore(member, OrderingTrait.Static);
-
-                // The low bit records staticness; the remaining bits record higher-priority traits.
+                var modifierPriority = order.GetModifierPriority(member, OrderingTrait.Static, SyntaxKind.StaticKeyword);
                 if (previousByKind.TryGetValue(kind, out var previous)
-                    && (previous >> 1) == higherPriority && (previous & 1) == 0 && isStatic)
+                    && MemberKindOrder.IsModifierOutOfOrder(modifierPriority, previous))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(
                         Descriptor,
                         NamedTypeHelpers.GetNameOrIdentifierLocation(member),
-                        AccessLevelHelper.GetName(MemberOrderHelper.GetAccessLevelForOrdering(member, modifiers))));
+                        AccessLevelHelper.GetName(MemberOrderHelper.GetAccessLevelForOrdering(member, member.GetModifiers()))));
                 }
 
-                previousByKind[kind] = (higherPriority << 1) | (isStatic ? 1 : 0);
+                previousByKind[kind] = modifierPriority;
             }
         }
 
         private static void HandleMemberList(SyntaxNodeAnalysisContext context, ImmutableArray<OrderingTrait> elementOrder, int staticIndex, SyntaxList<MemberDeclarationSyntax> members)
         {
-            var previousSyntaxKind = SyntaxKind.None;
-            var previousAccessLevel = AccessLevel.NotSpecified;
-            var previousMemberStatic = true;
-            var previousMemberConstant = false;
-            var previousMemberReadonly = false;
-
+            MemberOrderTraits? previous = null;
             foreach (var member in members)
             {
-                var modifiers = member.GetModifiers();
-
-                var currentSyntaxKind = member.Kind();
-                currentSyntaxKind = currentSyntaxKind == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : currentSyntaxKind;
-                var currentAccessLevel = MemberOrderHelper.GetAccessLevelForOrdering(member, modifiers);
-                bool currentMemberConstant = modifiers.Any(SyntaxKind.ConstKeyword);
-                bool currentMemberReadonly = currentMemberConstant || modifiers.Any(SyntaxKind.ReadOnlyKeyword);
-                bool currentMemberStatic = currentMemberConstant || modifiers.Any(SyntaxKind.StaticKeyword);
-                bool compareStatic = true;
-                for (int j = 0; compareStatic && j < staticIndex; j++)
+                var current = new MemberOrderTraits(member);
+                if (previous is { } precedingMember
+                    && current.IsModifierOutOfOrder(precedingMember, elementOrder, staticIndex, OrderingTrait.Static))
                 {
-                    switch (elementOrder[j])
-                    {
-                    case OrderingTrait.Accessibility:
-                        if (currentAccessLevel != previousAccessLevel)
-                        {
-                            compareStatic = false;
-                        }
-
-                        continue;
-
-                    case OrderingTrait.Readonly:
-                        if (currentMemberReadonly != previousMemberReadonly)
-                        {
-                            compareStatic = false;
-                        }
-
-                        continue;
-
-                    case OrderingTrait.Constant:
-                        if (currentMemberConstant != previousMemberConstant)
-                        {
-                            compareStatic = false;
-                        }
-
-                        continue;
-
-                    case OrderingTrait.Kind:
-                        if (previousSyntaxKind != currentSyntaxKind)
-                        {
-                            compareStatic = false;
-                        }
-
-                        continue;
-
-                    case OrderingTrait.Static:
-                    default:
-                        continue;
-                    }
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            Descriptor,
+                            NamedTypeHelpers.GetNameOrIdentifierLocation(member),
+                            AccessLevelHelper.GetName(current.AccessLevel)));
                 }
 
-                if (compareStatic)
-                {
-                    if (currentMemberStatic && !previousMemberStatic)
-                    {
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                Descriptor,
-                                NamedTypeHelpers.GetNameOrIdentifierLocation(member),
-                                AccessLevelHelper.GetName(currentAccessLevel)));
-                    }
-                }
-
-                previousSyntaxKind = currentSyntaxKind;
-                previousAccessLevel = currentAccessLevel;
-                previousMemberStatic = currentMemberStatic;
-                previousMemberConstant = currentMemberConstant;
-                previousMemberReadonly = currentMemberReadonly;
+                previous = current;
             }
         }
     }

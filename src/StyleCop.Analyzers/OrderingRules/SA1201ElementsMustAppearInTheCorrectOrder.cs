@@ -114,6 +114,8 @@ namespace StyleCop.Analyzers.OrderingRules
         /// The ID for diagnostics produced by the <see cref="SA1201ElementsMustAppearInTheCorrectOrder"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1201";
+        internal const string MemberNameOrderProperty = "MemberNameOrder";
+
         private static readonly string HelpLink = HelpLinkHelper.GetHelpLink(DiagnosticId);
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(OrderingResources.SA1201Title), OrderingResources.ResourceManager, typeof(OrderingResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(OrderingResources.SA1201MessageFormat), OrderingResources.ResourceManager, typeof(OrderingResources));
@@ -125,6 +127,9 @@ namespace StyleCop.Analyzers.OrderingRules
         private static readonly DiagnosticDescriptor InterruptedGroupDescriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, new LocalizableResourceString(nameof(OrderingResources.SA1201InterruptedGroupMessageFormat), OrderingResources.ResourceManager, typeof(OrderingResources)), AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
+        private static readonly ImmutableDictionary<string, string> MemberNameOrderProperties =
+            ImmutableDictionary<string, string>.Empty.Add(MemberNameOrderProperty, string.Empty);
+
         // extern alias and usings are missing here because the compiler itself is enforcing the right order.
         private static readonly ImmutableArray<SyntaxKind> OuterOrder = ImmutableArray.Create(
             SyntaxKindEx.FileScopedNamespaceDeclaration,
@@ -132,23 +137,6 @@ namespace StyleCop.Analyzers.OrderingRules
             SyntaxKind.DelegateDeclaration,
             SyntaxKind.EnumDeclaration,
             SyntaxKind.InterfaceDeclaration,
-            SyntaxKind.StructDeclaration,
-            SyntaxKind.ClassDeclaration);
-
-        private static readonly ImmutableArray<SyntaxKind> TypeMemberOrder = ImmutableArray.Create(
-            SyntaxKind.FieldDeclaration,
-            SyntaxKind.ConstructorDeclaration,
-            SyntaxKind.DestructorDeclaration,
-            SyntaxKind.DelegateDeclaration,
-            SyntaxKind.EventDeclaration,
-            SyntaxKind.EnumDeclaration,
-            SyntaxKind.InterfaceDeclaration,
-            SyntaxKindEx.ExtensionBlockDeclaration,
-            SyntaxKind.PropertyDeclaration,
-            SyntaxKind.IndexerDeclaration,
-            SyntaxKind.ConversionOperatorDeclaration,
-            SyntaxKind.OperatorDeclaration,
-            SyntaxKind.MethodDeclaration,
             SyntaxKind.StructDeclaration,
             SyntaxKind.ClassDeclaration);
 
@@ -183,7 +171,10 @@ namespace StyleCop.Analyzers.OrderingRules
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-            ImmutableArray.Create(Descriptor, InterruptedGroupDescriptor);
+            ImmutableArray.Create(Descriptor, InterruptedGroupDescriptor, MemberNameOrderDescriptor);
+
+        internal static DiagnosticDescriptor MemberNameOrderDescriptor { get; } =
+            new DiagnosticDescriptor(DiagnosticId, Title, new LocalizableResourceString(nameof(OrderingResources.SA1201MemberNameOrderMessageFormat), OrderingResources.ResourceManager, typeof(OrderingResources)), AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -203,13 +194,17 @@ namespace StyleCop.Analyzers.OrderingRules
         private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             var elementOrder = settings.OrderingRules.ElementOrder;
+            var typeDeclaration = (TypeDeclarationSyntax)context.Node;
+            if (elementOrder.Contains(OrderingTrait.Name))
+            {
+                HandleMemberNameOrder(context, typeDeclaration, settings.OrderingRules);
+            }
+
             int kindIndex = elementOrder.IndexOf(OrderingTrait.Kind);
             if (kindIndex < 0)
             {
                 return;
             }
-
-            var typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
             if (settings.OrderingRules.MemberKindOrder is { } configuredOrder)
             {
@@ -217,7 +212,82 @@ namespace StyleCop.Analyzers.OrderingRules
                 return;
             }
 
-            HandleMemberList(context, elementOrder, kindIndex, typeDeclaration.Members, TypeMemberOrder);
+            HandleMemberList(context, elementOrder, kindIndex, typeDeclaration.Members, MemberKindOrder.DefaultTypeOrder);
+        }
+
+        private static void HandleMemberNameOrder(
+            SyntaxNodeAnalysisContext context,
+            TypeDeclarationSyntax type,
+            OrderingSettings orderingSettings)
+        {
+            var members = type.Members;
+            var ordersFieldAccessibility = orderingSettings.ElementOrder.Contains(OrderingTrait.Accessibility);
+            Dictionary<string, ImmutableHashSet<string>>? fieldDependencies = null;
+            bool? preserveMemberOrder = null;
+            bool? preserveInstanceOrder = null;
+            for (var i = 1; i < members.Count; i++)
+            {
+                context.CancellationToken.ThrowIfCancellationRequested();
+                var current = members[i];
+                var previous = members[i - 1];
+                if (MemberNameOrder.GetGroupKind(current, orderingSettings) != MemberNameOrder.GetGroupKind(previous, orderingSettings))
+                {
+                    continue;
+                }
+
+                var currentIdentifier = MemberNameOrder.GetSortableIdentifier(current);
+                var previousIdentifier = MemberNameOrder.GetSortableIdentifier(previous);
+                if (currentIdentifier.RawKind == 0
+                    || previousIdentifier.RawKind == 0
+                    || string.CompareOrdinal(currentIdentifier.ValueText, previousIdentifier.ValueText) >= 0
+                    || MemberNameOrder.GetGroupPriority(current, orderingSettings) != MemberNameOrder.GetGroupPriority(previous, orderingSettings)
+                    || MemberNameOrder.HasOrderSensitiveInitializers(current, previous)
+                    || MemberNameOrder.StartsOutOfOrderGroup(members, i - 1, orderingSettings))
+                {
+                    continue;
+                }
+
+                preserveMemberOrder ??= MemberNameOrder.RequiresStableMemberOrder(type, context.SemanticModel, context.CancellationToken);
+                if (preserveMemberOrder.Value)
+                {
+                    return;
+                }
+
+                if (MemberNameOrder.IsInHiddenRegion(currentIdentifier, context.CancellationToken)
+                    || MemberNameOrder.IsInHiddenRegion(previousIdentifier, context.CancellationToken)
+                    || MemberNameOrder.IsGeneratedDeclaration(current, context.SemanticModel, context.CancellationToken)
+                    || MemberNameOrder.ContainsModuleInitializer(current, context.SemanticModel, context.CancellationToken)
+                    || MemberNameOrder.ContainsModuleInitializer(previous, context.SemanticModel, context.CancellationToken))
+                {
+                    continue;
+                }
+
+                if (MemberNameOrder.RequiresAutoLayout(current) || MemberNameOrder.RequiresAutoLayout(previous))
+                {
+                    preserveInstanceOrder ??= MemberNameOrder.RequiresStableInstanceOrder(type, context.SemanticModel, context.CancellationToken);
+                    if (preserveInstanceOrder.Value)
+                    {
+                        continue;
+                    }
+                }
+
+                if (ordersFieldAccessibility && current is FieldDeclarationSyntax field && !field.Modifiers.Any(SyntaxKind.ConstKeyword))
+                {
+                    fieldDependencies ??= FieldDependencyHelper.ComputeFieldDependencies(context.SemanticModel, members, context.CancellationToken);
+                    if (FieldDependencyHelper.IsDependency(field, fieldDependencies)
+                        && MemberNameOrder.CouldExposeFieldAccessibilityInversion(members, i, i - 1, orderingSettings, fieldDependencies))
+                    {
+                        continue;
+                    }
+                }
+
+                context.ReportDiagnostic(Diagnostic.Create(
+                    MemberNameOrderDescriptor,
+                    currentIdentifier.GetLocation(),
+                    MemberNameOrderProperties,
+                    currentIdentifier.ValueText,
+                    previousIdentifier.ValueText));
+            }
         }
 
         private static void HandleConfiguredMemberList(SyntaxNodeAnalysisContext context, SyntaxList<MemberDeclarationSyntax> members, MemberKindOrder order)
@@ -232,7 +302,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 context.CancellationToken.ThrowIfCancellationRequested();
                 var member = members[i];
                 var priority = order.GetPrecedingPriority(member);
-                if (member.IsKind(SyntaxKind.IncompleteMember) || priority != previousPriority)
+                if (MemberKindOrder.StartsNewGroup(member, priority, previousPriority))
                 {
                     previousNamedIndex = -1;
                     firstUnnamedIndex = -1;
@@ -326,59 +396,18 @@ namespace StyleCop.Analyzers.OrderingRules
                     continue;
                 }
 
-                bool compareKind = true;
-                for (int j = 0; compareKind && j < kindIndex; j++)
+                var previous = members[i];
+                var current = members[i + 1];
+                if (MemberOrderTraits.IsDefaultKindOutOfOrder(current, previous, elementOrder, kindIndex, order))
                 {
-                    switch (elementOrder[j])
-                    {
-                    case OrderingTrait.Accessibility:
-                        if (MemberOrderHelper.GetAccessLevelForOrdering(members[i + 1], members[i + 1].GetModifiers())
-                            != MemberOrderHelper.GetAccessLevelForOrdering(members[i], members[i].GetModifiers()))
-                        {
-                            compareKind = false;
-                        }
+                    var elementSyntaxKind = previous.Kind();
+                    var nextElementSyntaxKind = current.Kind();
 
-                        continue;
-
-                    case OrderingTrait.Constant:
-                    case OrderingTrait.Readonly:
-                        // Only fields may be marked const or readonly, and all fields have the same kind.
-                        continue;
-
-                    case OrderingTrait.Static:
-                        bool currentIsStatic = members[i].GetModifiers().Any(SyntaxKind.StaticKeyword);
-                        bool nextIsStatic = members[i + 1].GetModifiers().Any(SyntaxKind.StaticKeyword);
-                        if (currentIsStatic != nextIsStatic)
-                        {
-                            compareKind = false;
-                        }
-
-                        continue;
-
-                    case OrderingTrait.Kind:
-                    default:
-                        continue;
-                    }
-                }
-
-                if (!compareKind)
-                {
-                    continue;
-                }
-
-                var elementSyntaxKind = members[i].Kind();
-                int index = order.IndexOf(GetSyntaxKindForOrdering(elementSyntaxKind));
-
-                var nextElementSyntaxKind = members[i + 1].Kind();
-                int nextIndex = order.IndexOf(GetSyntaxKindForOrdering(nextElementSyntaxKind));
-
-                if (index > nextIndex)
-                {
                     // [Issue #3160] Added hardening here to make sure that this won't crash when working with invalid code.
                     var nextElementMemberName = Capitalize(MemberNames.GetValueOrDefault(nextElementSyntaxKind, "<unknown>"));
                     var elementMemberName = MemberNames.GetValueOrDefault(elementSyntaxKind, "<unknown>");
 
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(members[i + 1]), nextElementMemberName, elementMemberName));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(current), nextElementMemberName, elementMemberName));
                 }
             }
         }
@@ -386,20 +415,6 @@ namespace StyleCop.Analyzers.OrderingRules
         private static string Capitalize(string value)
         {
             return char.ToUpperInvariant(value[0]) + value.Substring(1);
-        }
-
-        private static SyntaxKind GetSyntaxKindForOrdering(SyntaxKind syntaxKind)
-        {
-            return syntaxKind switch
-            {
-                SyntaxKind.EventFieldDeclaration => SyntaxKind.EventDeclaration,
-                SyntaxKindEx.RecordDeclaration => SyntaxKind.ClassDeclaration,
-                SyntaxKindEx.RecordStructDeclaration => SyntaxKind.StructDeclaration,
-
-                // A union declaration declares a struct (C# 15).
-                SyntaxKindEx.UnionDeclaration => SyntaxKind.StructDeclaration,
-                _ => syntaxKind,
-            };
         }
     }
 }

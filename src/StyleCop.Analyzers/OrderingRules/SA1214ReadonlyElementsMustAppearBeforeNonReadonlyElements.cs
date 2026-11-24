@@ -76,87 +76,23 @@ namespace StyleCop.Analyzers.OrderingRules
                 return;
             }
 
-            // This variable is null when the previous member is not a field.
-            FieldDeclarationSyntax? previousField = null;
-            var previousFieldConst = true;
-            var previousFieldStatic = false;
-            var previousFieldReadonly = false;
-            var previousAccessLevel = AccessLevel.NotSpecified;
+            MemberOrderTraits? previous = null;
             foreach (var member in typeDeclaration.Members)
             {
                 if (!(member is FieldDeclarationSyntax field))
                 {
-                    previousField = null;
+                    previous = null;
                     continue;
                 }
 
-                var modifiers = member.GetModifiers();
-                var currentAccessLevel = MemberOrderHelper.GetAccessLevelForOrdering(member, modifiers);
-                bool currentFieldConst = modifiers.Any(SyntaxKind.ConstKeyword);
-                bool currentFieldStatic = currentFieldConst || modifiers.Any(SyntaxKind.StaticKeyword);
-                bool currentFieldReadonly = currentFieldConst || modifiers.Any(SyntaxKind.ReadOnlyKeyword);
-                if (previousField == null)
+                var current = new MemberOrderTraits(field);
+                if (previous is { } precedingField
+                    && current.IsModifierOutOfOrder(precedingField, elementOrder, readonlyIndex, OrderingTrait.Readonly))
                 {
-                    previousField = field;
-                    previousFieldConst = currentFieldConst;
-                    previousFieldStatic = currentFieldStatic;
-                    previousFieldReadonly = currentFieldReadonly;
-                    previousAccessLevel = currentAccessLevel;
-                    continue;
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(member)));
                 }
 
-                bool compareReadonly = true;
-                for (int j = 0; compareReadonly && j < readonlyIndex; j++)
-                {
-                    switch (elementOrder[j])
-                    {
-                    case OrderingTrait.Kind:
-                        // This analyzer only ever looks at sequences of fields.
-                        continue;
-
-                    case OrderingTrait.Accessibility:
-                        if (previousAccessLevel != currentAccessLevel)
-                        {
-                            compareReadonly = false;
-                        }
-
-                        continue;
-
-                    case OrderingTrait.Constant:
-                        if (previousFieldConst != currentFieldConst)
-                        {
-                            compareReadonly = false;
-                        }
-
-                        continue;
-
-                    case OrderingTrait.Static:
-                        if (previousFieldStatic != currentFieldStatic)
-                        {
-                            compareReadonly = false;
-                        }
-
-                        continue;
-
-                    case OrderingTrait.Readonly:
-                    default:
-                        continue;
-                    }
-                }
-
-                if (compareReadonly)
-                {
-                    if (currentFieldReadonly && !previousFieldReadonly)
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(member)));
-                    }
-                }
-
-                previousField = field;
-                previousFieldConst = currentFieldConst;
-                previousFieldStatic = currentFieldStatic;
-                previousFieldReadonly = currentFieldReadonly;
-                previousAccessLevel = currentAccessLevel;
+                previous = current;
             }
         }
 
@@ -164,12 +100,11 @@ namespace StyleCop.Analyzers.OrderingRules
         {
             var precedingPriority = 0;
             var previousPriority = -1;
-            var previousReadonly = true;
             foreach (var member in members)
             {
                 context.CancellationToken.ThrowIfCancellationRequested();
                 var priority = order.GetPrecedingPriority(member);
-                if (priority != precedingPriority || member.IsKind(SyntaxKind.IncompleteMember))
+                if (MemberKindOrder.StartsNewGroup(member, priority, precedingPriority))
                 {
                     previousPriority = -1;
                 }
@@ -180,15 +115,13 @@ namespace StyleCop.Analyzers.OrderingRules
                     continue;
                 }
 
-                var higherPriority = order.GetPriorityBefore(member, OrderingTrait.Readonly);
-                var isReadonly = field.Modifiers.Any(SyntaxKind.ConstKeyword) || field.Modifiers.Any(SyntaxKind.ReadOnlyKeyword);
-                if (previousPriority == higherPriority && !previousReadonly && isReadonly)
+                var modifierPriority = order.GetModifierPriority(field, OrderingTrait.Readonly, SyntaxKind.ReadOnlyKeyword);
+                if (MemberKindOrder.IsModifierOutOfOrder(modifierPriority, previousPriority))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(member)));
                 }
 
-                previousPriority = higherPriority;
-                previousReadonly = isReadonly;
+                previousPriority = modifierPriority;
             }
         }
     }
