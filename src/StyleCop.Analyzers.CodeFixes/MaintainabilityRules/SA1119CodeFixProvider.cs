@@ -65,7 +65,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             }
         }
 
-        private static SyntaxNode GetReplacement(ParenthesizedExpressionSyntax oldNode)
+        private static ExpressionSyntax GetReplacement(ParenthesizedExpressionSyntax oldNode)
         {
             var leadingTrivia = SyntaxFactory.TriviaList(oldNode.OpenParenToken.GetAllTrivia().Concat(oldNode.Expression.GetLeadingTrivia()));
             var trailingTrivia = oldNode.Expression.GetTrailingTrivia().AddRange(oldNode.CloseParenToken.GetAllTrivia());

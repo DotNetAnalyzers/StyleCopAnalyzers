@@ -78,7 +78,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
         }
 
-        private static IEnumerable<XmlNodeSyntax> RemovePlaceHolder(XmlElementSyntax elementSyntax)
+        private static SyntaxList<XmlNodeSyntax> RemovePlaceHolder(XmlElementSyntax elementSyntax)
         {
             SyntaxList<XmlNodeSyntax> content = elementSyntax.Content;
 

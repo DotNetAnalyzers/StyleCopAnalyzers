@@ -185,7 +185,7 @@ internal class SA1612CodeFixProvider : CodeFixProvider
             ?? (SyntaxNode?)node.FirstAncestorOrSelf<TypeDeclarationSyntax>();
     }
 
-    private static IEnumerable<ParameterSyntax>? GetParameters(SyntaxNode declaration)
+    private static SeparatedSyntaxList<ParameterSyntax>? GetParameters(SyntaxNode declaration)
     {
         return (declaration as BaseMethodDeclarationSyntax)?.ParameterList.Parameters
             ?? (declaration as IndexerDeclarationSyntax)?.ParameterList.Parameters

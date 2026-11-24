@@ -58,7 +58,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
 
-        private static SyntaxNode GenerateReplacementNode(ThisExpressionSyntax node)
+        private static SimpleNameSyntax GenerateReplacementNode(ThisExpressionSyntax node)
         {
             var parent = (MemberAccessExpressionSyntax)node.Parent;
             return parent.Name.WithTriviaFrom(parent);

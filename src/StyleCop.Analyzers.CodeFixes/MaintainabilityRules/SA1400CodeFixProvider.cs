@@ -140,7 +140,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             return Task.FromResult(document.WithSyntaxRoot(newSyntaxRoot));
         }
 
-        private static SyntaxNode? HandleClassDeclaration(ClassDeclarationSyntax node)
+        private static ClassDeclarationSyntax? HandleClassDeclaration(ClassDeclarationSyntax node)
         {
             SyntaxToken triviaToken = node.Keyword;
             if (triviaToken.IsMissing)
@@ -156,7 +156,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 .WithoutFormatting();
         }
 
-        private static SyntaxNode? HandleInterfaceDeclaration(InterfaceDeclarationSyntax node)
+        private static InterfaceDeclarationSyntax? HandleInterfaceDeclaration(InterfaceDeclarationSyntax node)
         {
             SyntaxToken triviaToken = node.Keyword;
             if (triviaToken.IsMissing)
@@ -172,7 +172,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 .WithoutFormatting();
         }
 
-        private static SyntaxNode? HandleEnumDeclaration(EnumDeclarationSyntax node)
+        private static EnumDeclarationSyntax? HandleEnumDeclaration(EnumDeclarationSyntax node)
         {
             SyntaxToken triviaToken = node.EnumKeyword;
             if (triviaToken.IsMissing)
@@ -188,7 +188,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 .WithoutFormatting();
         }
 
-        private static SyntaxNode? HandleStructDeclaration(StructDeclarationSyntax node)
+        private static StructDeclarationSyntax? HandleStructDeclaration(StructDeclarationSyntax node)
         {
             SyntaxToken triviaToken = node.Keyword;
             if (triviaToken.IsMissing)
@@ -204,7 +204,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 .WithoutFormatting();
         }
 
-        private static SyntaxNode? HandleRecordDeclaration(RecordDeclarationSyntaxWrapper node)
+        private static TypeDeclarationSyntax? HandleRecordDeclaration(RecordDeclarationSyntaxWrapper node)
         {
             SyntaxToken triviaToken = node.Keyword;
             if (triviaToken.IsMissing)
@@ -221,7 +221,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 .WithoutFormatting();
         }
 
-        private static SyntaxNode? HandleUnionDeclaration(UnionDeclarationSyntaxWrapper node)
+        private static TypeDeclarationSyntax? HandleUnionDeclaration(UnionDeclarationSyntaxWrapper node)
         {
             SyntaxToken triviaToken = node.Keyword;
             if (triviaToken.IsMissing)
@@ -238,7 +238,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 .WithoutFormatting();
         }
 
-        private static SyntaxNode? HandleDelegateDeclaration(DelegateDeclarationSyntax node)
+        private static DelegateDeclarationSyntax? HandleDelegateDeclaration(DelegateDeclarationSyntax node)
         {
             SyntaxToken triviaToken = node.DelegateKeyword;
             if (triviaToken.IsMissing)
@@ -254,7 +254,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 .WithoutFormatting();
         }
 
-        private static SyntaxNode? HandleEventDeclaration(EventDeclarationSyntax node)
+        private static EventDeclarationSyntax? HandleEventDeclaration(EventDeclarationSyntax node)
         {
             SyntaxToken triviaToken = node.EventKeyword;
             if (triviaToken.IsMissing)
@@ -269,7 +269,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 .WithoutFormatting();
         }
 
-        private static SyntaxNode? HandleEventFieldDeclaration(EventFieldDeclarationSyntax node)
+        private static EventFieldDeclarationSyntax? HandleEventFieldDeclaration(EventFieldDeclarationSyntax node)
         {
             SyntaxToken triviaToken = node.EventKeyword;
             if (triviaToken.IsMissing)
@@ -284,7 +284,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 .WithoutFormatting();
         }
 
-        private static SyntaxNode? HandleMethodDeclaration(MethodDeclarationSyntax node)
+        private static MethodDeclarationSyntax? HandleMethodDeclaration(MethodDeclarationSyntax node)
         {
             TypeSyntax type = node.ReturnType;
             if (type == null || type.IsMissing)
@@ -299,7 +299,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 .WithoutFormatting();
         }
 
-        private static SyntaxNode? HandlePropertyDeclaration(PropertyDeclarationSyntax node)
+        private static PropertyDeclarationSyntax? HandlePropertyDeclaration(PropertyDeclarationSyntax node)
         {
             TypeSyntax type = node.Type;
             if (type == null || type.IsMissing)
@@ -314,7 +314,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 .WithoutFormatting();
         }
 
-        private static SyntaxNode? HandleFieldDeclaration(FieldDeclarationSyntax node)
+        private static FieldDeclarationSyntax? HandleFieldDeclaration(FieldDeclarationSyntax node)
         {
             VariableDeclarationSyntax declaration = node.Declaration;
             if (declaration == null || declaration.IsMissing)
@@ -329,7 +329,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 .WithoutFormatting();
         }
 
-        private static SyntaxNode? HandleOperatorDeclaration(OperatorDeclarationSyntax node)
+        private static OperatorDeclarationSyntax? HandleOperatorDeclaration(OperatorDeclarationSyntax node)
         {
             TypeSyntax type = node.ReturnType;
             if (type == null || type.IsMissing)
@@ -344,7 +344,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 .WithoutFormatting();
         }
 
-        private static SyntaxNode? HandleConversionOperatorDeclaration(ConversionOperatorDeclarationSyntax node)
+        private static ConversionOperatorDeclarationSyntax? HandleConversionOperatorDeclaration(ConversionOperatorDeclarationSyntax node)
         {
             SyntaxToken triviaToken = node.ImplicitOrExplicitKeyword;
             if (triviaToken.IsMissing)
@@ -359,7 +359,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 .WithoutFormatting();
         }
 
-        private static SyntaxNode? HandleIndexerDeclaration(IndexerDeclarationSyntax node)
+        private static IndexerDeclarationSyntax? HandleIndexerDeclaration(IndexerDeclarationSyntax node)
         {
             TypeSyntax type = node.Type;
             if (type == null || type.IsMissing)
@@ -374,7 +374,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 .WithoutFormatting();
         }
 
-        private static SyntaxNode? HandleConstructorDeclaration(ConstructorDeclarationSyntax node)
+        private static ConstructorDeclarationSyntax? HandleConstructorDeclaration(ConstructorDeclarationSyntax node)
         {
             SyntaxToken triviaToken = node.Identifier;
             if (triviaToken.IsMissing)

@@ -74,7 +74,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 });
         }
 
-        private static IEnumerable<SyntaxTrivia> GetPreviousEmptyLines(SyntaxToken openBrace)
+        private static List<SyntaxTrivia> GetPreviousEmptyLines(SyntaxToken openBrace)
         {
             var result = new List<SyntaxTrivia>();
 
