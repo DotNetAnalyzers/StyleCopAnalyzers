@@ -88,22 +88,6 @@ namespace StyleCop.Analyzers.NamingRules
             bool isInDeconstruction = false;
             foreach (var argument in tupleExpression.Arguments)
             {
-                if (argument.NameColon == null && !includeInferredNames)
-                {
-                    continue;
-                }
-
-                if (!checkedDeconstruction)
-                {
-                    isInDeconstruction = IsInDeconstruction(context.Node);
-                    checkedDeconstruction = true;
-                }
-
-                if (isInDeconstruction)
-                {
-                    return;
-                }
-
                 if (argument.NameColon != null)
                 {
                     // Explicit element names are always checked, and can be fixed.
@@ -115,7 +99,16 @@ namespace StyleCop.Analyzers.NamingRules
                     var inferredMemberName = SyntaxFactsEx.TryGetInferredMemberName(argument.Expression);
                     if (inferredMemberName != null)
                     {
-                        CheckName(context, settings, tupleElement: null, inferredMemberName, argument.Expression.GetLocation(), false);
+                        if (!checkedDeconstruction)
+                        {
+                            isInDeconstruction = IsInDeconstruction(context.Node);
+                            checkedDeconstruction = true;
+                        }
+
+                        if (!isInDeconstruction)
+                        {
+                            CheckName(context, settings, tupleElement: null, inferredMemberName, argument.Expression.GetLocation(), false);
+                        }
                     }
                 }
             }

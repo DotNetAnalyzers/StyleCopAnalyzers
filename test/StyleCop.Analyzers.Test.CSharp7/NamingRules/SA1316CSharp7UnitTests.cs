@@ -280,6 +280,100 @@ public class TestClass
         }
 
         /// <summary>
+        /// Validates explicit tuple names in deconstructed values are checked independently of inferred names.
+        /// </summary>
+        /// <param name="settings">The test settings to use.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData(PascalCaseExplicitOnlyTestSettings)]
+        [InlineData(PascalCaseInferredTestSettings)]
+        public async Task ValidateExplicitTupleNamesInDeconstructedValuesAsync(string settings)
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod(int x, int y)
+    {
+        (x, y) = ([|first|]: x, y);
+        (x, y) = (x, [|fifth|]: y);
+        var ((a, b), c) = (([|second|]: x, y), [|third|]: x);
+        var (pair, n) = (([|fourth|]: x, 2), x);
+    }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    public void TestMethod(int x, int y)
+    {
+        (x, y) = (First: x, y);
+        (x, y) = (x, Fifth: y);
+        var ((a, b), c) = ((Second: x, y), Third: x);
+        var (pair, n) = ((Fourth: x, 2), x);
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_1.OrLaterDefault(), testCode, settings, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Validates deconstructing foreach declarations and tuple names in their enumerable expressions.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task ValidateTupleNamesInDeconstructingForeachAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod(int x, int y, int z)
+    {
+        foreach ((int a, int b) in new[] { ([|x|], [|y|]) })
+        {
+        }
+
+        foreach (var (a, (b, c)) in new[] { ([|x|], ([|y|], [|z|])) })
+        {
+        }
+
+        foreach ((int a, (int b, int c)) in new[] { ([|x|], ([|y|], [|z|])) })
+        {
+        }
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp7_1.OrLaterDefault(), testCode, PascalCaseInferredTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Validates inferred names in nested tuples that are captured or passed to a method.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task ValidateInferredNamesInNestedTupleValuesAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod(int x, int y, int z)
+    {
+        var (pair, n) = (([|x|], [|y|]), z);
+        (pair, n) = (([|x|], [|y|]), z);
+        ((x, y), z) = ((x, y), z);
+        (pair, n) = (Identity(([|x|], [|y|])), z);
+    }
+
+    private static (int, int) Identity((int, int) value) => value;
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp7_1.OrLaterDefault(), testCode, PascalCaseInferredTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Validates the properly explicitly named tuple elements, even when using inferred tuple element names, will not produce diagnostics.
         /// </summary>
         /// <param name="settings">The test settings to use.</param>
