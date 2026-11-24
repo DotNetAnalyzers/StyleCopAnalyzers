@@ -57,7 +57,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private static async Task<bool> IsUnsupportedLinkedNativeSizedIntegerAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        internal static async Task<bool> IsUnsupportedLinkedNativeSizedIntegerAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var linkedDocumentIds = document.GetLinkedDocumentIds();
             if (linkedDocumentIds.IsEmpty || diagnostic.Location.SourceTree == null)

@@ -91,6 +91,7 @@ csharp_using_directive_placement = outside_namespace
 | Отступы | `indentation.tabSize` | `tab_width` | целое число | `4` |
 | Отступы | `indentation.useTabs` | `indent_style` | `true`/`false` ⇄ `tab`/`space` | `false` / `space` |
 | Читаемость | `readabilityRules.allowBuiltInTypeAliases` | `stylecop.readability.allowBuiltInTypeAliases` | логическое | `false` |
+| Совместимость | `compatibility.multiTargetsLegacyFrameworks` | `stylecop.compatibility.multiTargetsLegacyFrameworks` | логическое | `false` |
 | Упорядочивание | `orderingRules.elementOrder` | `stylecop.ordering.elementOrder` | список из `kind`, `accessibility`, `constant`, `static`, `readonly` | `kind, accessibility, constant, static, readonly` |
 | Упорядочивание | `orderingRules.accessibilityOrder` | `stylecop.ordering.accessibilityOrder` | список из шести уровней доступа | `public, internal, protectedInternal, protected, privateProtected, private` |
 | Упорядочивание | `orderingRules.memberKindOrder` | `stylecop.ordering.memberKindOrder` | список видов членов (см. [Порядок видов членов](#member-kind-order)) | стандартный порядок SA1201 |
@@ -142,6 +143,9 @@ indent_style = space                      # tab | space
 
 # Readability
 stylecop.readability.allowBuiltInTypeAliases = false
+
+# Compatibility
+stylecop.compatibility.multiTargetsLegacyFrameworks = false
 
 # Ordering
 stylecop.ordering.elementOrder = kind, accessibility, constant, static, readonly
@@ -371,6 +375,36 @@ HRESULT hr = SomeNativeOperation();
 
 ```ini
 stylecop.readability.allowBuiltInTypeAliases = true
+```
+
+<a id="compatibility"></a>
+
+## Совместимость
+
+В этом разделе описаны параметры, сообщающие правилам, на какие платформы ориентирован проект. Они задаются в объекте `compatibility` файла **stylecop.json**, показанном в следующем примере.
+
+```json
+{
+  "settings": {
+    "compatibility": {
+    }
+  }
+}
+```
+
+<a id="multi-targeting-legacy-frameworks"></a>
+
+### Мультитаргетинг устаревших платформ
+
+| Свойство | Значение по умолчанию | Описание |
+| --- | --- | --- |
+| `multiTargetsLegacyFrameworks` | **false** | Определяет, ориентирован ли проект также на более старые платформы (например, .NET Framework или .NET Standard), в которых нет новых API. |
+
+Анализаторы видят только компиляцию для одной целевой платформы, поэтому не могут определить, что проект ориентирован на несколько платформ. Установите `multiTargetsLegacyFrameworks` в `true`, чтобы правила не сообщали о конструкциях, которые старые целевые платформы не могут скомпилировать. Сейчас это влияет на SA1121: правило не сообщает о `IntPtr` и `UIntPtr`, если текущая целевая платформа поддерживает `nint` и `nuint`.
+
+При настройке StyleCop Analyzers с помощью файла **.editorconfig** можно использовать следующее свойство:
+```ini
+stylecop.compatibility.multiTargetsLegacyFrameworks = true
 ```
 
 <a id="ordering-rules"></a>

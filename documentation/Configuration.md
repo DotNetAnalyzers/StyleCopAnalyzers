@@ -83,6 +83,7 @@ setting are in the sections that follow.
 | Indentation | `indentation.tabSize` | `tab_width` | integer | `4` |
 | Indentation | `indentation.useTabs` | `indent_style` | `true`/`false` ⇄ `tab`/`space` | `false` / `space` |
 | Readability | `readabilityRules.allowBuiltInTypeAliases` | `stylecop.readability.allowBuiltInTypeAliases` | boolean | `false` |
+| Compatibility | `compatibility.multiTargetsLegacyFrameworks` | `stylecop.compatibility.multiTargetsLegacyFrameworks` | boolean | `false` |
 | Ordering | `orderingRules.elementOrder` | `stylecop.ordering.elementOrder` | list of `kind`, `accessibility`, `constant`, `static`, `readonly`, `name` | `kind, accessibility, constant, static, readonly` |
 | Ordering | `orderingRules.accessibilityOrder` | `stylecop.ordering.accessibilityOrder` | list of all six access levels (see [Accessibility Order](#accessibility-order)) | `public, internal, protectedInternal, protected, privateProtected, private` |
 | Ordering | `orderingRules.memberKindOrder` | `stylecop.ordering.memberKindOrder` | list of member kinds (see [Member Kind Order](#member-kind-order)) | predefined SA1201 order |
@@ -130,6 +131,9 @@ indent_style = space                      # tab | space
 
 # Readability
 stylecop.readability.allowBuiltInTypeAliases = false
+
+# Compatibility
+stylecop.compatibility.multiTargetsLegacyFrameworks = false
 
 # Ordering
 stylecop.ordering.elementOrder = kind, accessibility, constant, static, readonly
@@ -320,6 +324,32 @@ The `allowBuiltInTypeAliases` configuration property can be set to `true` to all
 When using an **.editorconfig** file to configure StyleCop Analyzers, the following property can be used:
 ```ini
 stylecop.readability.allowBuiltInTypeAliases = true
+```
+
+## Compatibility
+
+This section describes settings that tell rules about the frameworks a project targets. They are configured in the `compatibility` object of the **stylecop.json** file, which is shown in the following sample.
+
+```json
+{
+  "settings": {
+    "compatibility": {
+    }
+  }
+}
+```
+
+### Multi-targeting legacy frameworks
+
+| Property | Default Value | Summary |
+| --- | --- | --- |
+| `multiTargetsLegacyFrameworks` | **false** | Specifies whether the project also targets older frameworks (such as .NET Framework or .NET Standard) that lack newer APIs. |
+
+Analyzers see only the compilation for a single target framework, so they cannot tell that a project multi-targets. Set `multiTargetsLegacyFrameworks` to `true` so that rules avoid reporting constructs that the older targets cannot compile. Currently this affects SA1121, which then does not report `IntPtr` and `UIntPtr` when the current target supports `nint` and `nuint`.
+
+When using an **.editorconfig** file to configure StyleCop Analyzers, the following property can be used:
+```ini
+stylecop.compatibility.multiTargetsLegacyFrameworks = true
 ```
 
 ## Ordering Rules

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -348,6 +348,9 @@
   <data name="SA1121CodeFix" xml:space="preserve">
     <value>替换为内置类型</value>
   </data>
+  <data name="SA1121MultiTargetsLegacyFrameworksCodeFix" xml:space="preserve">
+    <value>在 {0} 中将 'multiTargetsLegacyFrameworks' 设置为 true</value>
+  </data>
   <data name="SA1121Description" xml:space="preserve">
     <value>代码使用了某个 C# 基本类型，但没有使用该类型的内置别名。</value>
   </data>
@@ -593,6 +596,30 @@
   </data>
   <data name="SA1143Title" xml:space="preserve">
     <value>条件表达式的格式必须一致</value>
+  </data>
+  <data name="SA1144CodeFix" xml:space="preserve">
+    <value>将零宽字符替换为转义序列</value>
+  </data>
+  <data name="SA1144CodeFixRemove" xml:space="preserve">
+    <value>删除零宽字符</value>
+  </data>
+  <data name="SA1144Description" xml:space="preserve">
+    <value>字符串和字符字面量中的零宽字符在大多数编辑器中不可见，可能被意外引入。请改用转义序列书写。</value>
+  </data>
+  <data name="SA1144MessageFormat" xml:space="preserve">
+    <value>字面量中的零宽字符必须转义</value>
+  </data>
+  <data name="SA1144Title" xml:space="preserve">
+    <value>字面量中的零宽字符必须转义</value>
+  </data>
+  <data name="SA1145Description" xml:space="preserve">
+    <value>赋值表达式不应用作条件，也不应用作 '&amp;&amp;'、'||' 或 '!' 的操作数。请使用比较表达式，或将赋值移到单独的语句中。</value>
+  </data>
+  <data name="SA1145MessageFormat" xml:space="preserve">
+    <value>不要将赋值用作条件</value>
+  </data>
+  <data name="SA1145Title" xml:space="preserve">
+    <value>不要将赋值用作条件</value>
   </data>
   <data name="SX1101CodeFix" xml:space="preserve">
     <value>删除 'this.' 前缀</value>

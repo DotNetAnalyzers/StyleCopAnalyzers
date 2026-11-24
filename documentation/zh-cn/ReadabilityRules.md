@@ -50,3 +50,5 @@ dotnet_analyzer_diagnostic.category-StyleCop.CSharp.ReadabilityRules.severity = 
 [SA1141](SA1141.md) | UseTupleSyntax | 应使用元组语法，而不是底层的 ValueTuple 实现类型。
 [SA1142](SA1142.md) | ReferToTupleElementsByName | 某个元组元素具有可用的元素名称，但引用时使用了其元数据名称。
 [SA1143](SA1143.md) | ConditionalExpressionsMustBeFormattedConsistently | 条件表达式未使用支持的单行格式或带缩进的多行格式。
+[SA1144](SA1144.md) | ZeroWidthCharactersInLiteralsMustBeEscaped | 字符串或字符字面量包含零宽字符。
+[SA1145](SA1145.md) | DoNotUseAssignmentAsCondition | 赋值表达式被用作条件或逻辑运算符的操作数。

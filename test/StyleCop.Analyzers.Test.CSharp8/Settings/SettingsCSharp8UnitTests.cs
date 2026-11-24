@@ -68,6 +68,27 @@ namespace StyleCop.Analyzers.Test.CSharp8.Settings
             Assert.Equal(BracelessIfStatements.Off, context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken).LayoutRules.AllowBracelessIfStatements);
         }
 
+        /// <summary>
+        /// Verifies the multi-targeting compatibility setting from EditorConfig, including JSON precedence.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        [Fact]
+        public async Task VerifyMultiTargetsLegacyFrameworksEditorConfigAsync()
+        {
+            var editorConfig = """
+                root = true
+
+                [*]
+                stylecop.compatibility.multiTargetsLegacyFrameworks = true
+                """;
+            var context = await this.CreateAnalysisContextFromEditorConfigAsync(editorConfig).ConfigureAwait(false);
+            Assert.True(context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken).Compatibility.MultiTargetsLegacyFrameworks);
+
+            var json = """{ "settings": { "compatibility": { "multiTargetsLegacyFrameworks": false } } }""";
+            context = await this.CreateAnalysisContextFromEditorConfigAsync(editorConfig, json).ConfigureAwait(false);
+            Assert.False(context.GetStyleCopSettingsInTests(TestContext.Current.CancellationToken).Compatibility.MultiTargetsLegacyFrameworks);
+        }
+
         [Fact]
         public void TestOptionsWrapperValues()
         {

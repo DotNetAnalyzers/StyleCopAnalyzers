@@ -90,6 +90,8 @@ items:
     - href: SA1141.md
     - href: SA1142.md
     - href: SA1143.md
+    - href: SA1144.md
+    - href: SA1145.md
   - name: Правила порядка элементов
     href: OrderingRules.md
     items:

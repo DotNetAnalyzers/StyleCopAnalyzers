@@ -77,6 +77,8 @@
         <Rule Id="SA1139"  Action="Warning" />          <!-- Use literal suffix notation instead of casting -->
         <Rule Id="SA1141"  Action="Warning" />          <!-- Use tuple syntax -->
         <Rule Id="SA1142"  Action="Warning" />          <!-- Refer to tuple fields by name -->
+        <Rule Id="SA1144"  Action="Warning" />          <!-- Zero-width characters in literals must be escaped -->
+        <Rule Id="SA1145"  Action="Warning" />          <!-- Do not use assignment as condition -->
         <Rule Id="SX1101"  Action="None" />             <!-- Do not prefix local calls with 'this.' -->
     </Rules>
 	

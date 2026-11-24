@@ -49,6 +49,11 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         private readonly DocumentationSettings documentationRules;
 
         /// <summary>
+        /// This is the backing field for the <see cref="Compatibility"/> property.
+        /// </summary>
+        private readonly CompatibilitySettings compatibility;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="StyleCopSettings"/> class.
         /// </summary>
         protected internal StyleCopSettings()
@@ -62,6 +67,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.maintainabilityRules = new MaintainabilitySettings();
             this.layoutRules = new LayoutSettings();
             this.documentationRules = new DocumentationSettings();
+            this.compatibility = new CompatibilitySettings();
         }
 
         protected internal StyleCopSettings(JsonObject settingsObject, AnalyzerConfigOptionsWrapper analyzerConfigOptions)
@@ -112,6 +118,11 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                     this.documentationRules = new DocumentationSettings(childSettingsObject, analyzerConfigOptions);
                     break;
 
+                case "compatibility":
+                    kvp.AssertIsObject();
+                    this.compatibility = new CompatibilitySettings(childSettingsObject, analyzerConfigOptions);
+                    break;
+
                 default:
                     break;
                 }
@@ -126,6 +137,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.maintainabilityRules ??= new MaintainabilitySettings(new JsonObject(), analyzerConfigOptions);
             this.layoutRules ??= new LayoutSettings(new JsonObject(), analyzerConfigOptions);
             this.documentationRules ??= new DocumentationSettings(new JsonObject(), analyzerConfigOptions);
+            this.compatibility ??= new CompatibilitySettings(new JsonObject(), analyzerConfigOptions);
         }
 
         public IndentationSettings Indentation =>
@@ -151,5 +163,8 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
         public DocumentationSettings DocumentationRules =>
             this.documentationRules;
+
+        public CompatibilitySettings Compatibility =>
+            this.compatibility;
     }
 }

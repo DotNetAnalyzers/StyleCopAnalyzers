@@ -214,6 +214,12 @@ internal sealed class SA1415CodeFixProvider : CodeFixProvider
                 if (compilation is not null
                     && requirements.MustRemainPublic(compilation, symbol, cancellationToken))
                 {
+                    // An override must match its base accessibility, so the whole family has to stay public.
+                    if (SA1415DoNotUsePublicOnMembersOfInternalTypes.IsHttpMethodAction(symbol))
+                    {
+                        return null;
+                    }
+
                     keep.Add(symbol.Name);
                 }
                 else
