@@ -140,23 +140,6 @@ namespace StyleCop.Analyzers.OrderingRules
             SyntaxKind.StructDeclaration,
             SyntaxKind.ClassDeclaration);
 
-        private static readonly ImmutableArray<SyntaxKind> TypeMemberOrder = ImmutableArray.Create(
-            SyntaxKind.FieldDeclaration,
-            SyntaxKind.ConstructorDeclaration,
-            SyntaxKind.DestructorDeclaration,
-            SyntaxKind.DelegateDeclaration,
-            SyntaxKind.EventDeclaration,
-            SyntaxKind.EnumDeclaration,
-            SyntaxKind.InterfaceDeclaration,
-            SyntaxKindEx.ExtensionBlockDeclaration,
-            SyntaxKind.PropertyDeclaration,
-            SyntaxKind.IndexerDeclaration,
-            SyntaxKind.ConversionOperatorDeclaration,
-            SyntaxKind.OperatorDeclaration,
-            SyntaxKind.MethodDeclaration,
-            SyntaxKind.StructDeclaration,
-            SyntaxKind.ClassDeclaration);
-
         private static readonly Dictionary<SyntaxKind, string> MemberNames = new Dictionary<SyntaxKind, string>
         {
             [SyntaxKind.NamespaceDeclaration] = "a namespace",
@@ -229,7 +212,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 return;
             }
 
-            HandleMemberList(context, elementOrder, kindIndex, typeDeclaration.Members, TypeMemberOrder);
+            HandleMemberList(context, elementOrder, kindIndex, typeDeclaration.Members, MemberKindOrder.DefaultTypeOrder);
         }
 
         private static void HandleMemberNameOrder(
@@ -307,7 +290,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 context.CancellationToken.ThrowIfCancellationRequested();
                 var member = members[i];
                 var priority = order.GetPrecedingPriority(member);
-                if (member.IsKind(SyntaxKind.IncompleteMember) || priority != previousPriority)
+                if (MemberKindOrder.StartsNewGroup(member, priority, previousPriority))
                 {
                     previousNamedIndex = -1;
                     firstUnnamedIndex = -1;
@@ -401,59 +384,18 @@ namespace StyleCop.Analyzers.OrderingRules
                     continue;
                 }
 
-                bool compareKind = true;
-                for (int j = 0; compareKind && j < kindIndex; j++)
+                var previous = members[i];
+                var current = members[i + 1];
+                if (MemberOrderTraits.IsDefaultKindOutOfOrder(current, previous, elementOrder, kindIndex, order))
                 {
-                    switch (elementOrder[j])
-                    {
-                    case OrderingTrait.Accessibility:
-                        if (MemberOrderHelper.GetAccessLevelForOrdering(members[i + 1], members[i + 1].GetModifiers())
-                            != MemberOrderHelper.GetAccessLevelForOrdering(members[i], members[i].GetModifiers()))
-                        {
-                            compareKind = false;
-                        }
+                    var elementSyntaxKind = previous.Kind();
+                    var nextElementSyntaxKind = current.Kind();
 
-                        continue;
-
-                    case OrderingTrait.Constant:
-                    case OrderingTrait.Readonly:
-                        // Only fields may be marked const or readonly, and all fields have the same kind.
-                        continue;
-
-                    case OrderingTrait.Static:
-                        bool currentIsStatic = members[i].GetModifiers().Any(SyntaxKind.StaticKeyword);
-                        bool nextIsStatic = members[i + 1].GetModifiers().Any(SyntaxKind.StaticKeyword);
-                        if (currentIsStatic != nextIsStatic)
-                        {
-                            compareKind = false;
-                        }
-
-                        continue;
-
-                    case OrderingTrait.Kind:
-                    default:
-                        continue;
-                    }
-                }
-
-                if (!compareKind)
-                {
-                    continue;
-                }
-
-                var elementSyntaxKind = members[i].Kind();
-                int index = order.IndexOf(GetSyntaxKindForOrdering(elementSyntaxKind));
-
-                var nextElementSyntaxKind = members[i + 1].Kind();
-                int nextIndex = order.IndexOf(GetSyntaxKindForOrdering(nextElementSyntaxKind));
-
-                if (index > nextIndex)
-                {
                     // [Issue #3160] Added hardening here to make sure that this won't crash when working with invalid code.
                     var nextElementMemberName = Capitalize(MemberNames.GetValueOrDefault(nextElementSyntaxKind, "<unknown>"));
                     var elementMemberName = MemberNames.GetValueOrDefault(elementSyntaxKind, "<unknown>");
 
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(members[i + 1]), nextElementMemberName, elementMemberName));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(current), nextElementMemberName, elementMemberName));
                 }
             }
         }
@@ -461,20 +403,6 @@ namespace StyleCop.Analyzers.OrderingRules
         private static string Capitalize(string value)
         {
             return char.ToUpperInvariant(value[0]) + value.Substring(1);
-        }
-
-        private static SyntaxKind GetSyntaxKindForOrdering(SyntaxKind syntaxKind)
-        {
-            return syntaxKind switch
-            {
-                SyntaxKind.EventFieldDeclaration => SyntaxKind.EventDeclaration,
-                SyntaxKindEx.RecordDeclaration => SyntaxKind.ClassDeclaration,
-                SyntaxKindEx.RecordStructDeclaration => SyntaxKind.StructDeclaration,
-
-                // A union declaration declares a struct (C# 15).
-                SyntaxKindEx.UnionDeclaration => SyntaxKind.StructDeclaration,
-                _ => syntaxKind,
-            };
         }
     }
 }
