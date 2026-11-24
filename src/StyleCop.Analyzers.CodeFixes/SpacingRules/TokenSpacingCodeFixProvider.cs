@@ -84,7 +84,7 @@ namespace StyleCop.Analyzers.SpacingRules
 
             UpdateReplaceMap(replaceMap, token, diagnostic);
 
-            if (replaceMap.Any())
+            if (replaceMap.Count != 0)
             {
                 var newSyntaxRoot = syntaxRoot.ReplaceTokens(replaceMap.Keys, (t1, t2) => replaceMap[t1]);
                 return document.WithSyntaxRoot(newSyntaxRoot);
@@ -229,7 +229,7 @@ namespace StyleCop.Analyzers.SpacingRules
                     {
                         // If the token is already present in the map and it has trailing trivia, then it has already been
                         // processed during an earlier step in the fix all process, so no additional processing is needed.
-                        if (!replaceMap.ContainsKey(token) || (replaceMap[token].TrailingTrivia.Count == 0))
+                        if (!replaceMap.TryGetValue(token, out SyntaxToken value1) || (value1.TrailingTrivia.Count == 0))
                         {
                             UpdateReplaceMap(replaceMap, token, t => t.WithTrailingTrivia(t.TrailingTrivia.Insert(0, SyntaxFactory.Space)));
                         }

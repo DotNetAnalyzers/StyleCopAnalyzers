@@ -80,7 +80,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             var endOfLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(memberDeclaration.GetFirstToken(), sourceText, document.Project.Solution.Workspace.Options);
-            var updatedRoot = UpdateSyntaxRoot(memberDeclaration, elementOrder, syntaxRoot, settings.Indentation, endOfLineTrivia, settings.OrderingRules.MemberKindOrder, settings.OrderingRules.AccessibilityOrder, semanticModel, cancellationToken);
+            var updatedRoot = UpdateSyntaxRoot(memberDeclaration, elementOrder, syntaxRoot, settings.Indentation, endOfLineTrivia, settings.OrderingRules.MemberKindOrder, settings.OrderingRules.AccessibilityOrder, semanticModel, cancellationToken: cancellationToken);
             if (updatedRoot == syntaxRoot)
             {
                 return document;
@@ -98,15 +98,15 @@ namespace StyleCop.Analyzers.OrderingRules
             MemberKindOrder? configuredOrder,
             ImmutableArray<AccessLevel> accessibilityOrder,
             SemanticModel? semanticModel = null,
-            CancellationToken cancellationToken = default,
-            Dictionary<string, Dictionary<string, ImmutableHashSet<string>>>? fieldDependenciesByType = null)
+            Dictionary<string, Dictionary<string, ImmutableHashSet<string>>>? fieldDependenciesByType = null,
+            CancellationToken cancellationToken = default)
         {
             var parentDeclaration = memberDeclaration.Parent;
             var memberToMove = new MemberOrderHelper(memberDeclaration, elementOrder, accessibilityOrder);
 
             if (parentDeclaration is TypeDeclarationSyntax syntax)
             {
-                return HandleTypeDeclaration(memberToMove, syntax, elementOrder, syntaxRoot, indentationSettings, endOfLineTrivia, configuredOrder, accessibilityOrder, semanticModel, cancellationToken, fieldDependenciesByType);
+                return HandleTypeDeclaration(memberToMove, syntax, elementOrder, syntaxRoot, indentationSettings, endOfLineTrivia, configuredOrder, accessibilityOrder, semanticModel, fieldDependenciesByType, cancellationToken);
             }
 
             if (BaseNamespaceDeclarationSyntaxWrapper.IsInstance(parentDeclaration))
@@ -132,8 +132,8 @@ namespace StyleCop.Analyzers.OrderingRules
             MemberKindOrder? configuredOrder,
             ImmutableArray<AccessLevel> accessibilityOrder,
             SemanticModel? semanticModel,
-            CancellationToken cancellationToken,
-            Dictionary<string, Dictionary<string, ImmutableHashSet<string>>>? fieldDependenciesByType)
+            Dictionary<string, Dictionary<string, ImmutableHashSet<string>>>? fieldDependenciesByType,
+            CancellationToken cancellationToken)
         {
             Dictionary<string, ImmutableHashSet<string>>? fieldDependencies = null;
             if (fieldDependenciesByType != null)
@@ -571,7 +571,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 {
                     var memberDeclaration = syntaxRoot.GetCurrentNode(member);
                     var endOfLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(memberDeclaration.GetFirstToken(), sourceText, document.Project.Solution.Workspace.Options);
-                    syntaxRoot = UpdateSyntaxRoot(memberDeclaration, elementOrder, syntaxRoot, settings.Indentation, endOfLineTrivia, settings.OrderingRules.MemberKindOrder, settings.OrderingRules.AccessibilityOrder, semanticModel, fixAllContext.CancellationToken, fieldDependenciesByType);
+                    syntaxRoot = UpdateSyntaxRoot(memberDeclaration, elementOrder, syntaxRoot, settings.Indentation, endOfLineTrivia, settings.OrderingRules.MemberKindOrder, settings.OrderingRules.AccessibilityOrder, semanticModel, fieldDependenciesByType, fixAllContext.CancellationToken);
                 }
 
                 return syntaxRoot;

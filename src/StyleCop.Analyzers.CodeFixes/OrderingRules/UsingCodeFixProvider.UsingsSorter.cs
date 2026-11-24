@@ -191,6 +191,31 @@ namespace StyleCop.Analyzers.OrderingRules
                 return SyntaxFactory.List(usingList);
             }
 
+            private static void AddUsingDirective(Dictionary<TreeTextSpan, List<UsingDirectiveSyntax>> container, UsingDirectiveSyntax usingDirective, TreeTextSpan containingSpan)
+            {
+                List<UsingDirectiveSyntax> usingList;
+
+                if (!container.TryGetValue(containingSpan, out usingList))
+                {
+                    usingList = new List<UsingDirectiveSyntax>();
+                    container.Add(containingSpan, usingList);
+                }
+
+                usingList.Add(usingDirective);
+            }
+
+            private static List<UsingDirectiveSyntax> FilterRelevantUsings(Dictionary<TreeTextSpan, List<UsingDirectiveSyntax>> usingsGroup, List<UsingDirectiveSyntax> usingsList)
+            {
+                List<UsingDirectiveSyntax> groupList;
+
+                if (!usingsGroup.TryGetValue(TreeTextSpan.Empty, out groupList))
+                {
+                    return EmptyUsingsList;
+                }
+
+                return groupList.Where(u => usingsList.Contains(u)).ToList();
+            }
+
             private List<UsingDirectiveSyntax> GenerateUsings(Dictionary<TreeTextSpan, List<UsingDirectiveSyntax>> usingsGroup, TreeTextSpan directiveSpan, string indentation, SyntaxTrivia endOfLine, List<SyntaxTrivia> triviaToMove, bool qualifyNames, bool isGlobal, bool expandAliases)
             {
                 List<UsingDirectiveSyntax> result = new List<UsingDirectiveSyntax>();
@@ -208,7 +233,7 @@ namespace StyleCop.Analyzers.OrderingRules
             {
                 List<UsingDirectiveSyntax> result = new List<UsingDirectiveSyntax>();
 
-                if (!usingsList.Any())
+                if (usingsList.Count == 0)
                 {
                     return result;
                 }
@@ -706,60 +731,35 @@ namespace StyleCop.Analyzers.OrderingRules
 
                     if (usingDirective.Alias != null)
                     {
-                        this.AddUsingDirective(this.aliases, usingDirective, containingSpan);
+                        AddUsingDirective(this.aliases, usingDirective, containingSpan);
                     }
                     else if (usingDirective.StaticKeyword.IsKind(SyntaxKind.StaticKeyword))
                     {
                         if (this.IsSeparatedStaticSystemUsing(usingDirective))
                         {
-                            this.AddUsingDirective(this.systemStaticImports, usingDirective, containingSpan);
+                            AddUsingDirective(this.systemStaticImports, usingDirective, containingSpan);
                         }
                         else
                         {
-                            this.AddUsingDirective(this.staticImports, usingDirective, containingSpan);
+                            AddUsingDirective(this.staticImports, usingDirective, containingSpan);
                         }
                     }
                     else if (this.IsSeparatedSystemUsing(usingDirective))
                     {
-                        this.AddUsingDirective(this.systemUsings, usingDirective, containingSpan);
+                        AddUsingDirective(this.systemUsings, usingDirective, containingSpan);
                     }
                     else
                     {
-                        this.AddUsingDirective(this.namespaceUsings, usingDirective, containingSpan);
+                        AddUsingDirective(this.namespaceUsings, usingDirective, containingSpan);
                     }
                 }
-            }
-
-            private void AddUsingDirective(Dictionary<TreeTextSpan, List<UsingDirectiveSyntax>> container, UsingDirectiveSyntax usingDirective, TreeTextSpan containingSpan)
-            {
-                List<UsingDirectiveSyntax> usingList;
-
-                if (!container.TryGetValue(containingSpan, out usingList))
-                {
-                    usingList = new List<UsingDirectiveSyntax>();
-                    container.Add(containingSpan, usingList);
-                }
-
-                usingList.Add(usingDirective);
             }
 
             private List<UsingDirectiveSyntax> GenerateUsings(Dictionary<TreeTextSpan, List<UsingDirectiveSyntax>> usingsGroup, List<UsingDirectiveSyntax> usingsList, string indentation, SyntaxTrivia endOfLine, List<SyntaxTrivia> triviaToMove, bool qualifyNames, bool isGlobal)
             {
-                var filteredUsingsList = this.FilterRelevantUsings(usingsGroup, usingsList);
+                var filteredUsingsList = FilterRelevantUsings(usingsGroup, usingsList);
 
                 return this.GenerateUsings(filteredUsingsList, indentation, endOfLine, triviaToMove, qualifyNames, isGlobal);
-            }
-
-            private List<UsingDirectiveSyntax> FilterRelevantUsings(Dictionary<TreeTextSpan, List<UsingDirectiveSyntax>> usingsGroup, List<UsingDirectiveSyntax> usingsList)
-            {
-                List<UsingDirectiveSyntax> groupList;
-
-                if (!usingsGroup.TryGetValue(TreeTextSpan.Empty, out groupList))
-                {
-                    return EmptyUsingsList;
-                }
-
-                return groupList.Where(u => usingsList.Contains(u)).ToList();
             }
 
             private sealed class AliasReferenceExpander : CSharpSyntaxRewriter

@@ -87,7 +87,7 @@ namespace StyleCop.Analyzers.LayoutRules
                     .Where(t => t.GetLineSpan().StartLinePosition.Line == lineToCheck)
                     .ToList();
                 var endOfLineTrivia = trivias.Where(t => t.IsKind(SyntaxKind.EndOfLineTrivia)).ToList();
-                if (endOfLineTrivia.Any() && trivias.Except(endOfLineTrivia).All(t => t.IsKind(SyntaxKind.WhitespaceTrivia)))
+                if (endOfLineTrivia.Count != 0 && trivias.Except(endOfLineTrivia).All(t => t.IsKind(SyntaxKind.WhitespaceTrivia)))
                 {
                     lineToCheck--;
                     result.AddRange(trivias);

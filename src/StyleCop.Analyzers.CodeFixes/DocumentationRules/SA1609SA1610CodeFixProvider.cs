@@ -48,7 +48,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     context.RegisterCodeFix(
                         CodeAction.Create(
                             DocumentationResources.SA1609SA1610CodeFix,
-                            cancellationToken => this.GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
+                            cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
                             nameof(SA1609SA1610CodeFixProvider)),
                         diagnostic);
                 }
@@ -79,7 +79,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 .LastOrDefault(trivia => trivia.IsKind(SyntaxKind.DocumentationCommentExteriorTrivia));
         }
 
-        private async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var documentRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             SyntaxNode syntax = documentRoot.FindNode(diagnostic.Location.SourceSpan);
@@ -106,11 +106,11 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             SyntaxList<XmlNodeSyntax> summaryContent = summaryElement.Content;
-            if (!this.TryRemoveSummaryPrefix(ref summaryContent, "Gets or sets "))
+            if (!TryRemoveSummaryPrefix(ref summaryContent, "Gets or sets "))
             {
-                if (!this.TryRemoveSummaryPrefix(ref summaryContent, "Gets "))
+                if (!TryRemoveSummaryPrefix(ref summaryContent, "Gets "))
                 {
-                    this.TryRemoveSummaryPrefix(ref summaryContent, "Sets ");
+                    TryRemoveSummaryPrefix(ref summaryContent, "Sets ");
                 }
             }
 
@@ -158,7 +158,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             return document.WithSyntaxRoot(newRoot);
         }
 
-        private bool TryRemoveSummaryPrefix(ref SyntaxList<XmlNodeSyntax> summaryContent, string prefix)
+        private static bool TryRemoveSummaryPrefix(ref SyntaxList<XmlNodeSyntax> summaryContent, string prefix)
         {
             XmlNodeSyntax firstContent = summaryContent.FirstOrDefault(IsContentElement);
             if (!(firstContent is XmlTextSyntax firstText))

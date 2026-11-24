@@ -72,7 +72,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         DocumentationResources.SA1651CodeFix,
-                        cancellationToken => this.GetTransformedDocumentAsync(context.Document, xmlElementSyntax, cancellationToken),
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, xmlElementSyntax, cancellationToken),
                         nameof(SA1651CodeFixProvider)),
                     diagnostic);
             }
@@ -95,7 +95,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             return content;
         }
 
-        private async Task<Document> GetTransformedDocumentAsync(Document document, XmlElementSyntax elementSyntax, CancellationToken cancellationToken)
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, XmlElementSyntax elementSyntax, CancellationToken cancellationToken)
         {
             if (elementSyntax.Content.Count == 0)
             {

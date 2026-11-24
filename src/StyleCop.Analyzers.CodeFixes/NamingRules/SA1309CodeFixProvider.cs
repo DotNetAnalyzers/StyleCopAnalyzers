@@ -51,7 +51,7 @@ namespace StyleCop.Analyzers.NamingRules
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (!string.IsNullOrEmpty(token.ValueText))
                 {
-                    var newName = token.ValueText.TrimStart(new[] { '_' });
+                    var newName = token.ValueText.TrimStart(['_']);
 
                     if (!SyntaxFacts.IsValidIdentifier(newName))
                     {

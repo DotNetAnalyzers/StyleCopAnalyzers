@@ -360,10 +360,10 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static void AddReplacement(Dictionary<SyntaxToken, SyntaxToken> tokenReplacements, SyntaxToken originalToken, SyntaxToken replacementToken)
         {
-            if (tokenReplacements.ContainsKey(originalToken))
+            if (tokenReplacements.TryGetValue(originalToken, out SyntaxToken value1))
             {
                 // This will only happen when a single keyword (like else) has invalid brace tokens before and after it.
-                tokenReplacements[originalToken] = tokenReplacements[originalToken].WithTrailingTrivia(replacementToken.TrailingTrivia);
+                tokenReplacements[originalToken] = value1.WithTrailingTrivia(replacementToken.TrailingTrivia);
             }
             else
             {

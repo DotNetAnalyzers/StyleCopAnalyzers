@@ -61,7 +61,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, bool alignWithOpeningBracket, CancellationToken cancellationToken)
         {
-            var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+            var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
             var settings = SettingsHelper.GetStyleCopSettingsInCodeFix(document.Project.AnalyzerOptions, syntaxRoot.SyntaxTree, cancellationToken);
 

@@ -66,7 +66,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 return document;
             }
 
-            var symbol = semanticModel.GetDeclaredSymbol(typeDeclarationNode);
+            var symbol = semanticModel.GetDeclaredSymbol(typeDeclarationNode, cancellationToken: CancellationToken.None);
             var accessModifierKinds = GetMissingAccessModifiers(symbol.DeclaredAccessibility);
 
             var keywordToken = typeDeclarationNode.Keyword;

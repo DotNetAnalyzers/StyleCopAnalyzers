@@ -138,14 +138,14 @@ namespace StyleCop.Analyzers.OrderingRules
 
             if (usingDirectivesPlacement == UsingDirectivesPlacement.InsideNamespace)
             {
-                newSyntaxRoot = AddUsingsToNamespace(newSyntaxRoot, endOfLine, usingsHelper, usingsIndentation, replaceMap.Any());
+                newSyntaxRoot = AddUsingsToNamespace(newSyntaxRoot, endOfLine, usingsHelper, usingsIndentation, replaceMap.Count != 0);
                 newSyntaxRoot = MoveExternAliasesToNamespace(newSyntaxRoot, endOfLine, usingsIndentation, compilationUnit.Usings);
             }
 
             if (usingDirectivesPlacement != UsingDirectivesPlacement.Preserve)
             {
                 bool onlyGlobal = usingDirectivesPlacement == UsingDirectivesPlacement.InsideNamespace;
-                newSyntaxRoot = AddUsingsToCompilationRoot(newSyntaxRoot, endOfLine, usingsHelper, replaceMap.Any(), onlyGlobal);
+                newSyntaxRoot = AddUsingsToCompilationRoot(newSyntaxRoot, endOfLine, usingsHelper, replaceMap.Count != 0, onlyGlobal);
 
                 if (usingDirectivesPlacement == UsingDirectivesPlacement.OutsideNamespace)
                 {
@@ -646,10 +646,8 @@ namespace StyleCop.Analyzers.OrderingRules
 
             public override SyntaxToken VisitToken(SyntaxToken token)
             {
-                if (this.tokensToStrip.Contains(token))
+                if (this.tokensToStrip.Remove(token))
                 {
-                    this.tokensToStrip.Remove(token);
-
                     var index = TriviaHelper.IndexOfFirstNonBlankLineTrivia(token.LeadingTrivia);
                     var newLeadingTrivia = (index == -1) ? SyntaxFactory.TriviaList() : SyntaxFactory.TriviaList(token.LeadingTrivia.Skip(index));
                     return token.WithLeadingTrivia(newLeadingTrivia);
