@@ -214,7 +214,7 @@ namespace StyleCop.Analyzers.OrderingRules
             var typeDeclaration = (TypeDeclarationSyntax)context.Node;
             if (elementOrder.Contains(OrderingTrait.Name))
             {
-                HandleMemberNameOrder(context, typeDeclaration, elementOrder, settings.OrderingRules.AccessibilityOrder);
+                HandleMemberNameOrder(context, typeDeclaration, settings.OrderingRules);
             }
 
             int kindIndex = elementOrder.IndexOf(OrderingTrait.Kind);
@@ -235,8 +235,7 @@ namespace StyleCop.Analyzers.OrderingRules
         private static void HandleMemberNameOrder(
             SyntaxNodeAnalysisContext context,
             TypeDeclarationSyntax type,
-            ImmutableArray<OrderingTrait> elementOrder,
-            ImmutableArray<AccessLevel> accessibilityOrder)
+            OrderingSettings orderingSettings)
         {
             var members = type.Members;
             bool? preserveMemberOrder = null;
@@ -246,7 +245,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 context.CancellationToken.ThrowIfCancellationRequested();
                 var current = members[i];
                 var previous = members[i - 1];
-                if (MemberKindOrder.Normalize(current.Kind()) != MemberKindOrder.Normalize(previous.Kind()))
+                if (MemberNameOrder.GetGroupKind(current, orderingSettings) != MemberNameOrder.GetGroupKind(previous, orderingSettings))
                 {
                     continue;
                 }
@@ -256,8 +255,9 @@ namespace StyleCop.Analyzers.OrderingRules
                 if (currentIdentifier.RawKind == 0
                     || previousIdentifier.RawKind == 0
                     || string.CompareOrdinal(currentIdentifier.ValueText, previousIdentifier.ValueText) >= 0
-                    || MemberKindOrder.GetPriority(current, elementOrder, accessibilityOrder) != MemberKindOrder.GetPriority(previous, elementOrder, accessibilityOrder)
-                    || MemberNameOrder.HasOrderSensitiveInitializers(current, previous))
+                    || MemberNameOrder.GetGroupPriority(current, orderingSettings) != MemberNameOrder.GetGroupPriority(previous, orderingSettings)
+                    || MemberNameOrder.HasOrderSensitiveInitializers(current, previous)
+                    || MemberNameOrder.StartsOutOfOrderGroup(members, i - 1, orderingSettings))
                 {
                     continue;
                 }

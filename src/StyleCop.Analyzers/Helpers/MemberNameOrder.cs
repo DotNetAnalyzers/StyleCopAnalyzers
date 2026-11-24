@@ -9,12 +9,15 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using StyleCop.Analyzers.Lightup;
+using StyleCop.Analyzers.Settings.ObjectModel;
 
 /// <summary>
 /// Identifies named members and guards their relative order when moving them would change semantics.
 /// </summary>
 internal static class MemberNameOrder
 {
+    private static readonly ImmutableArray<OrderingTrait> KindOnly = ImmutableArray.Create(OrderingTrait.Kind);
+
     internal static SyntaxToken GetSortableIdentifier(MemberDeclarationSyntax member)
     {
         if (member.ContainsDirectives)
@@ -34,6 +37,68 @@ internal static class MemberNameOrder
         };
 
         return identifier.IsMissing ? default : identifier;
+    }
+
+    internal static int GetGroupPriority(MemberDeclarationSyntax member, OrderingSettings settings)
+    {
+        var elementOrder = settings.ElementOrder;
+        var priority = MemberKindOrder.GetPriority(member, elementOrder, settings.AccessibilityOrder);
+        var staticIndex = elementOrder.IndexOf(OrderingTrait.Static);
+        if (settings.MemberKindOrder == null && staticIndex >= 0 && staticIndex < elementOrder.IndexOf(OrderingTrait.Kind))
+        {
+            // The default kind analyzer partitions by the explicit static modifier before comparing kinds.
+            // Preserve that boundary as well as the effective static group used by the other ordering rules.
+            priority = (priority << 1) | (member.GetModifiers().Any(SyntaxKind.StaticKeyword) ? 1 : 0);
+        }
+
+        return priority;
+    }
+
+    internal static SyntaxKind GetGroupKind(MemberDeclarationSyntax member, OrderingSettings settings)
+    {
+        var kind = member.Kind();
+        if (kind == SyntaxKindEx.RecordDeclaration && settings.MemberKindOrder == null)
+        {
+            var kindIndex = settings.ElementOrder.IndexOf(OrderingTrait.Kind);
+            if (kindIndex >= 0 && kindIndex < settings.ElementOrder.IndexOf(OrderingTrait.Static))
+            {
+                // The default static rule distinguishes adjacent classes and records when kind precedes static.
+                return kind;
+            }
+        }
+
+        return MemberKindOrder.Normalize(kind);
+    }
+
+    internal static bool StartsOutOfOrderGroup(SyntaxList<MemberDeclarationSyntax> members, int index, OrderingSettings settings)
+    {
+        if (index == 0 || members[index - 1].IsKind(SyntaxKind.IncompleteMember))
+        {
+            return false;
+        }
+
+        var member = members[index];
+        var previous = members[index - 1];
+        var sameKind = MemberKindOrder.Normalize(member.Kind()) == MemberKindOrder.Normalize(previous.Kind());
+        var elementOrder = settings.ElementOrder;
+        var accessibilityOrder = settings.AccessibilityOrder;
+        if (sameKind)
+        {
+            var priority = MemberKindOrder.GetPriority(member, elementOrder, accessibilityOrder);
+            var previousPriority = MemberKindOrder.GetPriority(previous, elementOrder, accessibilityOrder);
+            return priority > previousPriority || HasEarlierAccessibilityInversion(members, index, settings);
+        }
+
+        var kindIndex = elementOrder.IndexOf(OrderingTrait.Kind);
+        var kindInversion = kindIndex >= 0
+            && (settings.MemberKindOrder is { } order
+                ? StartsConfiguredKindViolation(members, index, order)
+                : StartsDefaultKindInversion(member, previous, settings, kindIndex));
+
+        return kindInversion
+            || HasStaticInversion(members, index, settings, kindIndex)
+            || HasEarlierFieldInversion(members, index, settings, kindIndex)
+            || HasEarlierAccessibilityInversion(members, index, settings);
     }
 
     internal static bool RequiresAutoLayout(MemberDeclarationSyntax member)
@@ -92,6 +157,14 @@ internal static class MemberNameOrder
 
     internal static bool RequiresStableMemberOrder(TypeDeclarationSyntax type, SemanticModel? semanticModel, CancellationToken cancellationToken)
     {
+        for (var ancestor = type.Parent as TypeDeclarationSyntax; ancestor != null; ancestor = ancestor.Parent as TypeDeclarationSyntax)
+        {
+            if (IsGeneratedDeclaration(ancestor, semanticModel, cancellationToken))
+            {
+                return true;
+            }
+        }
+
         var isPartial = type.Modifiers.Any(SyntaxKind.PartialKeyword);
 
         // A different declaration can supply the public modifier or base type.
@@ -107,6 +180,11 @@ internal static class MemberNameOrder
 
         var symbol = semanticModel?.GetDeclaredSymbol(type, cancellationToken);
         if (symbol == null)
+        {
+            return true;
+        }
+
+        if (type.AttributeLists.Count > 0 && HasGeneratedCodeAttribute(type, symbol))
         {
             return true;
         }
@@ -174,7 +252,7 @@ internal static class MemberNameOrder
 
     internal static bool IsGeneratedDeclaration(MemberDeclarationSyntax member, SemanticModel? semanticModel, CancellationToken cancellationToken)
     {
-        if (!member.GetFirstToken().IsKind(SyntaxKind.OpenBracketToken) && !member.GetModifiers().Any(SyntaxKind.PartialKeyword))
+        if (!member.GetFirstToken().IsKind(SyntaxKind.OpenBracketToken))
         {
             return false;
         }
@@ -183,21 +261,7 @@ internal static class MemberNameOrder
             ? (SyntaxNode)field.Declaration.Variables[0]
             : member;
         var symbol = semanticModel?.GetDeclaredSymbol(declaration, cancellationToken);
-        if (symbol == null || symbol.DeclaringSyntaxReferences.Length > 1)
-        {
-            return false;
-        }
-
-        foreach (var attribute in symbol.GetAttributes())
-        {
-            if (attribute.AttributeClass is { Name: "GeneratedCodeAttribute" } attributeClass
-                && attributeClass.ContainingNamespace.ToDisplayString() == "System.CodeDom.Compiler")
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return symbol != null && HasGeneratedCodeAttribute(member, symbol);
     }
 
     internal static bool HasOrderSensitiveInitializers(MemberDeclarationSyntax first, MemberDeclarationSyntax second)
@@ -223,6 +287,220 @@ internal static class MemberNameOrder
                 {
                     return true;
                 }
+            }
+        }
+
+        return false;
+    }
+
+    private static bool StartsDefaultKindInversion(MemberDeclarationSyntax member, MemberDeclarationSyntax previous, OrderingSettings settings, int kindIndex)
+    {
+        var currentModifiers = member.GetModifiers();
+        var previousModifiers = previous.GetModifiers();
+        var traits = settings.ElementOrder;
+        var accessibilityIndex = traits.IndexOf(OrderingTrait.Accessibility);
+        if (accessibilityIndex >= 0 && accessibilityIndex < kindIndex
+            && MemberOrderHelper.GetAccessLevelForOrdering(member, currentModifiers)
+                != MemberOrderHelper.GetAccessLevelForOrdering(previous, previousModifiers))
+        {
+            return false;
+        }
+
+        var staticIndex = traits.IndexOf(OrderingTrait.Static);
+        return (staticIndex < 0 || staticIndex > kindIndex
+                || currentModifiers.Any(SyntaxKind.StaticKeyword) == previousModifiers.Any(SyntaxKind.StaticKeyword))
+            && new MemberOrderHelper(member, KindOnly, settings.AccessibilityOrder).Priority
+                > new MemberOrderHelper(previous, KindOnly, settings.AccessibilityOrder).Priority;
+    }
+
+    private static bool StartsConfiguredKindViolation(SyntaxList<MemberDeclarationSyntax> members, int index, MemberKindOrder order)
+    {
+        var member = members[index];
+        var priority = order.GetPrecedingPriority(member);
+        var rank = order.GetRank(member);
+        if (rank < 0)
+        {
+            // An interrupted configured group reports the first unranked declaration.
+            var previous = members[index - 1];
+            var previousRank = order.GetRank(previous);
+            return previousRank >= 0 && order.GetPrecedingPriority(previous) == priority
+                && FindConfiguredRank(members, index + 1, 1, order, priority) == previousRank;
+        }
+
+        return FindConfiguredRank(members, index - 1, -1, order, priority) > rank;
+    }
+
+    private static int FindConfiguredRank(SyntaxList<MemberDeclarationSyntax> members, int start, int step, MemberKindOrder order, int priority)
+    {
+        for (var i = start; i >= 0 && i < members.Count; i += step)
+        {
+            var member = members[i];
+            if (member.IsKind(SyntaxKind.IncompleteMember) || order.GetPrecedingPriority(member) != priority)
+            {
+                break;
+            }
+
+            var rank = order.GetRank(member);
+            if (rank >= 0)
+            {
+                return rank;
+            }
+        }
+
+        return -1;
+    }
+
+    private static bool HasStaticInversion(SyntaxList<MemberDeclarationSyntax> members, int index, OrderingSettings settings, int kindIndex)
+    {
+        var elementOrder = settings.ElementOrder;
+        var staticIndex = elementOrder.IndexOf(OrderingTrait.Static);
+        if (staticIndex < 0 || !HasEffectiveModifier(members[index], SyntaxKind.StaticKeyword))
+        {
+            return false;
+        }
+
+        if (kindIndex >= 0 && kindIndex < staticIndex)
+        {
+            return settings.MemberKindOrder is { } order
+                && HasConfiguredTraitInversion(members, index, order, OrderingTrait.Static, SyntaxKind.StaticKeyword);
+        }
+
+        var member = members[index];
+        var previous = members[index - 1];
+        return !HasEffectiveModifier(previous, SyntaxKind.StaticKeyword)
+            && MemberKindOrder.GetPriority(member, elementOrder, settings.AccessibilityOrder, OrderingTrait.Static)
+                == MemberKindOrder.GetPriority(previous, elementOrder, settings.AccessibilityOrder, OrderingTrait.Static);
+    }
+
+    private static bool HasEarlierFieldInversion(SyntaxList<MemberDeclarationSyntax> members, int index, OrderingSettings settings, int kindIndex)
+    {
+        if (members[index] is not FieldDeclarationSyntax field)
+        {
+            return false;
+        }
+
+        var traits = settings.ElementOrder;
+        if (traits.Contains(OrderingTrait.Constant) && field.Modifiers.Any(SyntaxKind.ConstKeyword))
+        {
+            // Constant ordering compares consecutive fields even when another member lies between them.
+            for (var i = index - 1; i >= 0; i--)
+            {
+                if (members[i] is FieldDeclarationSyntax previous)
+                {
+                    if (!previous.Modifiers.Any(SyntaxKind.ConstKeyword)
+                        && MemberKindOrder.GetPriority(field, traits, settings.AccessibilityOrder, OrderingTrait.Constant)
+                            == MemberKindOrder.GetPriority(previous, traits, settings.AccessibilityOrder, OrderingTrait.Constant))
+                    {
+                        return true;
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        return kindIndex >= 0 && kindIndex < traits.IndexOf(OrderingTrait.Readonly)
+            && settings.MemberKindOrder is { } order && HasEffectiveModifier(field, SyntaxKind.ReadOnlyKeyword)
+            && HasConfiguredTraitInversion(members, index, order, OrderingTrait.Readonly, SyntaxKind.ReadOnlyKeyword);
+    }
+
+    private static bool HasConfiguredTraitInversion(SyntaxList<MemberDeclarationSyntax> members, int index, MemberKindOrder order, OrderingTrait trait, SyntaxKind modifier)
+    {
+        var member = members[index];
+        var kind = MemberKindOrder.Normalize(member.Kind());
+        var precedingPriority = order.GetPrecedingPriority(member);
+        for (var i = index - 1; i >= 0; i--)
+        {
+            var previous = members[i];
+            if (previous.IsKind(SyntaxKind.IncompleteMember) || order.GetPrecedingPriority(previous) != precedingPriority)
+            {
+                break;
+            }
+
+            if (MemberKindOrder.Normalize(previous.Kind()) == kind)
+            {
+                return !HasEffectiveModifier(previous, modifier)
+                    && order.GetPriorityBefore(member, trait) == order.GetPriorityBefore(previous, trait);
+            }
+        }
+
+        return false;
+    }
+
+    private static bool HasEffectiveModifier(MemberDeclarationSyntax member, SyntaxKind modifier)
+    {
+        var modifiers = member.GetModifiers();
+        return modifiers.Any(modifier) || modifiers.Any(SyntaxKind.ConstKeyword);
+    }
+
+    private static bool HasEarlierAccessibilityInversion(SyntaxList<MemberDeclarationSyntax> members, int index, OrderingSettings settings)
+    {
+        var traits = settings.ElementOrder;
+        var accessibilityIndex = traits.IndexOf(OrderingTrait.Accessibility);
+        if (accessibilityIndex < 0)
+        {
+            return false;
+        }
+
+        var member = members[index];
+        var modifiers = member.GetModifiers();
+        var priority = MemberOrderHelper.GetAccessibilityPriority(settings.AccessibilityOrder, MemberOrderHelper.GetAccessLevelForOrdering(member, modifiers));
+        for (var i = index - 1; i >= 0; i--)
+        {
+            var previous = members[i];
+            var previousModifiers = previous.GetModifiers();
+            if (previous.IsKind(SyntaxKind.IncompleteMember)
+                || !MatchesAccessibilityPrefix(member, previous, modifiers, previousModifiers, traits, accessibilityIndex))
+            {
+                continue;
+            }
+
+            var previousPriority = MemberOrderHelper.GetAccessibilityPriority(settings.AccessibilityOrder, MemberOrderHelper.GetAccessLevelForOrdering(previous, previousModifiers));
+            return priority > previousPriority;
+        }
+
+        return false;
+    }
+
+    private static bool MatchesAccessibilityPrefix(MemberDeclarationSyntax member, MemberDeclarationSyntax previous, SyntaxTokenList modifiers, SyntaxTokenList previousModifiers, ImmutableArray<OrderingTrait> traits, int accessibilityIndex)
+    {
+        for (var i = 0; i < accessibilityIndex; i++)
+        {
+            // Match the default accessibility analyzer, which only normalizes the two event forms.
+            var matches = traits[i] switch
+            {
+                OrderingTrait.Kind => GetAccessibilityKind(member) == GetAccessibilityKind(previous),
+                OrderingTrait.Constant => modifiers.Any(SyntaxKind.ConstKeyword) == previousModifiers.Any(SyntaxKind.ConstKeyword),
+                OrderingTrait.Static => modifiers.Any(SyntaxKind.StaticKeyword) == previousModifiers.Any(SyntaxKind.StaticKeyword),
+                OrderingTrait.Readonly => modifiers.Any(SyntaxKind.ReadOnlyKeyword) == previousModifiers.Any(SyntaxKind.ReadOnlyKeyword),
+                _ => true,
+            };
+            if (!matches)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static SyntaxKind GetAccessibilityKind(MemberDeclarationSyntax member)
+    {
+        return member.IsKind(SyntaxKind.EventFieldDeclaration) ? SyntaxKind.EventDeclaration : member.Kind();
+    }
+
+    private static bool HasGeneratedCodeAttribute(MemberDeclarationSyntax member, ISymbol symbol)
+    {
+        foreach (var attribute in symbol.GetAttributes())
+        {
+            if (attribute.AttributeClass is { Name: "GeneratedCodeAttribute" } attributeClass
+                && attributeClass.ContainingNamespace.ToDisplayString() == "System.CodeDom.Compiler"
+                && attribute.ApplicationSyntaxReference is { } syntax
+                && syntax.SyntaxTree == member.SyntaxTree
+                && member.Span.Contains(syntax.Span))
+            {
+                // A partial symbol may have an attribute that belongs to a different declaration.
+                return true;
             }
         }
 

@@ -387,6 +387,9 @@ traits are supported:
 * `name`: SA1201 orders adjacent declarations of the same SA1201 member kind and ordering group by case-sensitive ordinal name.
   Field-like events and events with accessors share a kind. Record classes share a kind with classes, and record structs share a kind with structs.
   This optional tie-breaker applies after all other traits and supports methods, properties, single-variable fields (including constants), events, nested types, and delegates.
+  With the default kind order, placing `static` before `kind` keeps constants and explicitly static fields in separate name-ordering groups.
+  When `static` follows the default `kind` order, classes and record classes stay in separate name-ordering groups to respect SA1204.
+  If a group starts with a member that is out of order under an earlier trait, name sorting keeps that member at the front of the group.
   Equal names keep their relative order. Declarations containing directives or multiple variables are excluded.
   Name sorting skips types marked for COM interop, including public types exposed by assembly-level COM visibility and public types covered by an explicitly configured assembly-level COM class interface.
   An explicit `[ComVisible(false)]` at the assembly or type level takes precedence over the assembly-level class interface setting.

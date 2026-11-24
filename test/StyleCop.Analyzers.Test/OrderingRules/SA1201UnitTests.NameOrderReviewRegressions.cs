@@ -482,4 +482,252 @@ public partial class SA1201UnitTests
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithMessage("Member 'Bravo' should appear before member 'Zulu'"));
         await test.RunAsync().ConfigureAwait(false);
     }
+
+    [Fact]
+    public async Task TestFixAllDoesNotCrossDefaultKindStaticBoundaryAsync()
+    {
+        var test = new CSharpTest
+        {
+            Settings = """{ "settings": { "orderingRules": { "elementOrder": ["static", "kind", "name"] } } }""",
+            TestCode = """
+                public class C
+                {
+                    public static void M() { }
+                    public const int Zulu = 1;
+                    public static int Alpha;
+                    public static void Yankee() { }
+                    public static void {|#0:Bravo|}() { }
+                }
+                """,
+            FixedCode = """
+                public class C
+                {
+                    public static void M() { }
+                    public const int Zulu = 1;
+                    public static int Alpha;
+                    public static void Bravo() { }
+                    public static void Yankee() { }
+                }
+                """,
+            NumberOfIncrementalIterations = 1,
+            NumberOfFixAllIterations = 1,
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithMessage("Member 'Bravo' should appear before member 'Yankee'"));
+        await test.RunAsync().ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestNameOrderFixPreservesGeneratedPartialDeclarationAsync()
+    {
+        var test = new CSharpTest
+        {
+            Settings = """{ "settings": { "orderingRules": { "elementOrder": ["name"] } } }""",
+            TestCode = """
+                using System.CodeDom.Compiler;
+
+                public partial class C
+                {
+                    public class Zulu { }
+                    public class {|#0:Bravo|} { }
+                    [GeneratedCode("Tool", "1")]
+                    public partial class Alpha { }
+                }
+
+                public partial class C
+                {
+                    public partial class Alpha { }
+                }
+                """,
+            FixedCode = """
+                using System.CodeDom.Compiler;
+
+                public partial class C
+                {
+                    public class Bravo { }
+                    public class Zulu { }
+                    [GeneratedCode("Tool", "1")]
+                    public partial class Alpha { }
+                }
+
+                public partial class C
+                {
+                    public partial class Alpha { }
+                }
+                """,
+            NumberOfIncrementalIterations = 1,
+            NumberOfFixAllIterations = 1,
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithMessage("Member 'Bravo' should appear before member 'Zulu'"));
+        await test.RunAsync().ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestNameOrderFixCanMoveAnotherPartOfGeneratedPartialTypeAsync()
+    {
+        var test = new CSharpTest
+        {
+            Settings = """{ "settings": { "orderingRules": { "elementOrder": ["name"] } } }""",
+            TestCode = """
+                using System.CodeDom.Compiler;
+
+                public partial class C
+                {
+                    [GeneratedCode("Tool", "1")]
+                    public partial class Alpha { }
+                }
+
+                public partial class C
+                {
+                    public class Zulu { }
+                    public partial class {|#0:Alpha|} { }
+                }
+                """,
+            FixedCode = """
+                using System.CodeDom.Compiler;
+
+                public partial class C
+                {
+                    [GeneratedCode("Tool", "1")]
+                    public partial class Alpha { }
+                }
+
+                public partial class C
+                {
+                    public partial class Alpha { }
+                    public class Zulu { }
+                }
+                """,
+            NumberOfIncrementalIterations = 1,
+            NumberOfFixAllIterations = 1,
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithMessage("Member 'Alpha' should appear before member 'Zulu'"));
+        await test.RunAsync().ConfigureAwait(false);
+    }
+
+    [Theory]
+    [InlineData("""{ "settings": { "orderingRules": { "elementOrder": ["kind", "static", "name"] } } }""")]
+    [InlineData("""{ "settings": { "orderingRules": { "elementOrder": ["static", "kind", "name"], "memberKindOrder": ["field"] } } }""")]
+    public async Task TestNameOrderUsesEffectiveStaticWhenKindHasNoExplicitStaticBoundaryAsync(string settings)
+    {
+        var test = new CSharpTest
+        {
+            Settings = settings,
+            TestCode = """
+                public class C
+                {
+                    public const int Zulu = 1;
+                    public static int {|#0:Alpha|};
+                }
+                """,
+            FixedCode = """
+                public class C
+                {
+                    public static int Alpha;
+                    public const int Zulu = 1;
+                }
+                """,
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithMessage("Member 'Alpha' should appear before member 'Zulu'"));
+        await test.RunAsync().ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestNameOrderFixPreservesContentsOfGeneratedPartialDeclarationAsync()
+    {
+        var test = new CSharpTest
+        {
+            Settings = """{ "settings": { "orderingRules": { "elementOrder": ["name"] } } }""",
+            TestCode = """
+                using System.CodeDom.Compiler;
+
+                [GeneratedCode("Tool", "1")]
+                public partial class C
+                {
+                    public void Zulu() { }
+                    public void Alpha() { }
+                }
+
+                public partial class C
+                {
+                    public void Yankee() { }
+                    public void {|#0:Bravo|}() { }
+                }
+                """,
+            FixedCode = """
+                using System.CodeDom.Compiler;
+
+                [GeneratedCode("Tool", "1")]
+                public partial class C
+                {
+                    public void Zulu() { }
+                    public void Alpha() { }
+                }
+
+                public partial class C
+                {
+                    public void Bravo() { }
+                    public void Yankee() { }
+                }
+                """,
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithMessage("Member 'Bravo' should appear before member 'Yankee'"));
+        await test.RunAsync().ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestNameOrderFixPreservesNestedTypesInsideGeneratedPartialDeclarationAsync()
+    {
+        var test = new CSharpTest
+        {
+            Settings = """{ "settings": { "orderingRules": { "elementOrder": ["name"] } } }""",
+            TestCode = """
+                using System.CodeDom.Compiler;
+
+                [GeneratedCode("Tool", "1")]
+                public partial class C
+                {
+                    private class Nested
+                    {
+                        public void Zulu() { }
+                        public void Alpha() { }
+                    }
+                }
+
+                public partial class C
+                {
+                    private class Other
+                    {
+                        public void Yankee() { }
+                        public void {|#0:Bravo|}() { }
+                    }
+                }
+                """,
+            FixedCode = """
+                using System.CodeDom.Compiler;
+
+                [GeneratedCode("Tool", "1")]
+                public partial class C
+                {
+                    private class Nested
+                    {
+                        public void Zulu() { }
+                        public void Alpha() { }
+                    }
+                }
+
+                public partial class C
+                {
+                    private class Other
+                    {
+                        public void Bravo() { }
+                        public void Yankee() { }
+                    }
+                }
+                """,
+            NumberOfIncrementalIterations = 1,
+            NumberOfFixAllIterations = 1,
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithMessage("Member 'Bravo' should appear before member 'Yankee'"));
+        await test.RunAsync().ConfigureAwait(false);
+    }
 }

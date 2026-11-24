@@ -94,7 +94,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
                 var preserveInstanceOrder = MemberNameOrder.RequiresStableInstanceOrder(type, semanticModel, cancellationToken);
                 var trackedRoot = TrackNameOrderMembers(syntaxRoot, new[] { memberDeclaration }, type.Members, semanticModel, cancellationToken);
-                var reordered = OrderMemberGroupByName(trackedRoot, trackedRoot.GetCurrentNode(memberDeclaration), elementOrder, settings.OrderingRules.AccessibilityOrder, settings.Indentation, endOfLineTrivia, preserveInstanceOrder, cancellationToken);
+                var reordered = OrderMemberGroupByName(trackedRoot, trackedRoot.GetCurrentNode(memberDeclaration), settings.OrderingRules, settings.Indentation, endOfLineTrivia, preserveInstanceOrder, cancellationToken);
                 return reordered == trackedRoot ? document : document.WithSyntaxRoot(reordered);
             }
 
@@ -110,8 +110,7 @@ namespace StyleCop.Analyzers.OrderingRules
         private static SyntaxNode OrderMemberGroupByName(
             SyntaxNode syntaxRoot,
             MemberDeclarationSyntax member,
-            ImmutableArray<OrderingTrait> elementOrder,
-            ImmutableArray<AccessLevel> accessibilityOrder,
+            OrderingSettings orderingSettings,
             IndentationSettings indentationSettings,
             SyntaxTrivia endOfLineTrivia,
             bool preserveInstanceOrder,
@@ -123,16 +122,16 @@ namespace StyleCop.Analyzers.OrderingRules
             }
 
             var members = type.Members;
-            var priority = MemberKindOrder.GetPriority(member, elementOrder, accessibilityOrder);
-            var kind = MemberKindOrder.Normalize(member.Kind());
+            var priority = MemberNameOrder.GetGroupPriority(member, orderingSettings);
+            var kind = MemberNameOrder.GetGroupKind(member, orderingSettings);
             var start = members.IndexOf(member);
-            while (start > 0 && IsInNameOrderGroup(members[start - 1], kind, priority, elementOrder, accessibilityOrder, preserveInstanceOrder))
+            while (start > 0 && IsInNameOrderGroup(members[start - 1], kind, priority, orderingSettings, preserveInstanceOrder))
             {
                 start--;
             }
 
             var group = new List<MemberDeclarationSyntax>();
-            for (var i = start; i < members.Count && IsInNameOrderGroup(members[i], kind, priority, elementOrder, accessibilityOrder, preserveInstanceOrder); i++)
+            for (var i = start; i < members.Count && IsInNameOrderGroup(members[i], kind, priority, orderingSettings, preserveInstanceOrder); i++)
             {
                 group.Add(members[i]);
             }
@@ -141,7 +140,7 @@ namespace StyleCop.Analyzers.OrderingRules
             foreach (var item in group)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                syntaxRoot = OrderMemberByName(syntaxRoot, syntaxRoot.GetCurrentNode(item), elementOrder, accessibilityOrder, indentationSettings, endOfLineTrivia, preserveInstanceOrder);
+                syntaxRoot = OrderMemberByName(syntaxRoot, syntaxRoot.GetCurrentNode(item), orderingSettings, indentationSettings, endOfLineTrivia, preserveInstanceOrder);
             }
 
             return syntaxRoot;
@@ -221,20 +220,18 @@ namespace StyleCop.Analyzers.OrderingRules
             MemberDeclarationSyntax member,
             SyntaxKind kind,
             int priority,
-            ImmutableArray<OrderingTrait> elementOrder,
-            ImmutableArray<AccessLevel> accessibilityOrder,
+            OrderingSettings orderingSettings,
             bool preserveInstanceOrder)
         {
-            return MemberKindOrder.Normalize(member.Kind()) == kind
+            return MemberNameOrder.GetGroupKind(member, orderingSettings) == kind
                 && CanOrderByName(member, preserveInstanceOrder)
-                && MemberKindOrder.GetPriority(member, elementOrder, accessibilityOrder) == priority;
+                && MemberNameOrder.GetGroupPriority(member, orderingSettings) == priority;
         }
 
         private static SyntaxNode OrderMemberByName(
             SyntaxNode syntaxRoot,
             MemberDeclarationSyntax member,
-            ImmutableArray<OrderingTrait> elementOrder,
-            ImmutableArray<AccessLevel> accessibilityOrder,
+            OrderingSettings orderingSettings,
             IndentationSettings indentationSettings,
             SyntaxTrivia endOfLineTrivia,
             bool preserveInstanceOrder)
@@ -248,17 +245,18 @@ namespace StyleCop.Analyzers.OrderingRules
             }
 
             var members = type.Members;
-            var priority = MemberKindOrder.GetPriority(member, elementOrder, accessibilityOrder);
+            var priority = MemberNameOrder.GetGroupPriority(member, orderingSettings);
             var name = MemberNameOrder.GetSortableIdentifier(member).ValueText;
-            var kind = MemberKindOrder.Normalize(member.Kind());
+            var kind = MemberNameOrder.GetGroupKind(member, orderingSettings);
             MemberDeclarationSyntax? target = null;
 
             for (var i = members.IndexOf(member) - 1; i >= 0; i--)
             {
                 var previous = members[i];
-                if (!IsInNameOrderGroup(previous, kind, priority, elementOrder, accessibilityOrder, preserveInstanceOrder)
+                if (!IsInNameOrderGroup(previous, kind, priority, orderingSettings, preserveInstanceOrder)
                     || string.CompareOrdinal(MemberNameOrder.GetSortableIdentifier(previous).ValueText, name) <= 0
-                    || MemberNameOrder.HasOrderSensitiveInitializers(member, previous))
+                    || MemberNameOrder.HasOrderSensitiveInitializers(member, previous)
+                    || MemberNameOrder.StartsOutOfOrderGroup(members, i, orderingSettings))
                 {
                     break;
                 }
@@ -764,7 +762,7 @@ namespace StyleCop.Analyzers.OrderingRules
                         fixAllContext.CancellationToken.ThrowIfCancellationRequested();
                         var trackedMember = syntaxRoot.GetCurrentNode(member);
                         var endOfLineTrivia = FormattingHelper.GetEndOfLineForCodeFix(member.GetFirstToken(), reorderedText, document.Project.Solution.Workspace.Options);
-                        syntaxRoot = OrderMemberByName(syntaxRoot, trackedMember, elementOrder, settings.OrderingRules.AccessibilityOrder, settings.Indentation, endOfLineTrivia, entry.Value);
+                        syntaxRoot = OrderMemberByName(syntaxRoot, trackedMember, settings.OrderingRules, settings.Indentation, endOfLineTrivia, entry.Value);
                     }
                 }
 

@@ -3,7 +3,10 @@
 
 namespace StyleCop.Analyzers.Test.CSharp9.OrderingRules;
 
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Diagnostics;
+using StyleCop.Analyzers.OrderingRules;
 using Xunit;
 using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
     StyleCop.Analyzers.OrderingRules.SA1201ElementsMustAppearInTheCorrectOrder,
@@ -121,5 +124,50 @@ public partial class SA1201CSharp9UnitTests
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithMessage("Member 'Alpha' should appear before member 'Zulu'"));
         await test.RunAsync().ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestNameOrderPreservesClassRecordBoundaryWhenStaticFollowsDefaultKindAsync()
+    {
+        var test = new NameAndStaticOrderingTest
+        {
+            Settings = """{ "settings": { "orderingRules": { "elementOrder": ["kind", "static", "name"] } } }""",
+            TestCode = """
+                public class Outer
+                {
+                    public void ZuluMethod() { }
+                    public void {|#0:AlphaMethod|}() { }
+                    public class Zulu { }
+                    public record Alpha { }
+                    public static class Tail { }
+                }
+                """,
+            FixedCode = """
+                public class Outer
+                {
+                    public void AlphaMethod() { }
+                    public void ZuluMethod() { }
+                    public class Zulu { }
+                    public record Alpha { }
+                    public static class Tail { }
+                }
+                """,
+            NumberOfIncrementalIterations = 1,
+            NumberOfFixAllIterations = 1,
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithMessage("Member 'AlphaMethod' should appear before member 'ZuluMethod'"));
+        await test.RunAsync().ConfigureAwait(false);
+    }
+
+    private sealed class NameAndStaticOrderingTest : CSharpTest
+    {
+        protected override IEnumerable<DiagnosticAnalyzer> GetDiagnosticAnalyzers()
+        {
+            return new DiagnosticAnalyzer[]
+            {
+                new SA1201ElementsMustAppearInTheCorrectOrder(),
+                new SA1204StaticElementsMustAppearBeforeInstanceElements(),
+            };
+        }
     }
 }
