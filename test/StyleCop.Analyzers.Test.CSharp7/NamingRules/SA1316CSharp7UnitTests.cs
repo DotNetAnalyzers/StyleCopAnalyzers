@@ -364,9 +364,34 @@ public class TestClass
         (pair, n) = (([|x|], [|y|]), z);
         ((x, y), z) = ((x, y), z);
         (pair, n) = (Identity(([|x|], [|y|])), z);
+        var (first, (second, third), last) = (x, ((y, z)), x);
+        var (alpha, captured, omega) = (x, (([|y|], [|z|])), z);
     }
 
     private static (int, int) Identity((int, int) value) => value;
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp7_1.OrLaterDefault(), testCode, PascalCaseInferredTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Validates deeply nested deconstruction and captured tuple values.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task ValidateInferredNamesInDeeplyNestedDeconstructionAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod(int x, int y, int z)
+    {
+        var (((((a, b), c), d), e), f) = (((((x, y), z), x), y), z);
+        var ((((pair, g), h), i), j) = ((((([|x|], [|y|]), z), x), y), z);
+        var (l, (m, (n, (o, pair2)))) = (x, (y, (z, (x, (([|y|], [|z|]))))));
+        (x, (y, (z, (x, (y, z))))) = (x, (y, (z, (x, (y, z)))));
+    }
 }
 ";
 

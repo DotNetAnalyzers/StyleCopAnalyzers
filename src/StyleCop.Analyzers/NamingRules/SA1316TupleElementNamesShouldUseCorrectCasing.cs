@@ -4,6 +4,7 @@
 namespace StyleCop.Analyzers.NamingRules
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Diagnostics;
     using Microsoft.CodeAnalysis;
@@ -11,6 +12,7 @@ namespace StyleCop.Analyzers.NamingRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Helpers.ObjectPools;
     using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
@@ -117,6 +119,7 @@ namespace StyleCop.Analyzers.NamingRules
         private static bool IsInDeconstruction(SyntaxNode tupleExpression)
         {
             var deconstructionOperand = tupleExpression;
+            int nestingDepth = 0;
             while (true)
             {
                 var currentParent = deconstructionOperand.Parent;
@@ -133,6 +136,7 @@ namespace StyleCop.Analyzers.NamingRules
                     }
 
                     deconstructionOperand = enclosingTuple;
+                    nestingDepth++;
                 }
                 else
                 {
@@ -158,6 +162,12 @@ namespace StyleCop.Analyzers.NamingRules
 
                 if (UnwrapParenthesizedExpression(assignmentExpression.Right) == operand)
                 {
+                    // Bound repeated ancestor walks without pooling a path for shallow tuples.
+                    if (nestingDepth >= 4)
+                    {
+                        return IsDeepTupleExpressionDeconstructedByTarget(operand, left, tupleExpression);
+                    }
+
                     return IsTupleExpressionDeconstructedByTarget(operand, left, tupleExpression);
                 }
             }
@@ -171,6 +181,58 @@ namespace StyleCop.Analyzers.NamingRules
             }
 
             return false;
+        }
+
+        private static bool IsDeepTupleExpressionDeconstructedByTarget(SyntaxNode sourceTuple, SyntaxNode target, SyntaxNode tupleExpression)
+        {
+            var pool = SharedPools.Default<List<int>>();
+            var path = pool.AllocateAndClear();
+            try
+            {
+                var current = tupleExpression;
+                while (current != sourceTuple)
+                {
+                    if (current.Parent is ParenthesizedExpressionSyntax parenthesized)
+                    {
+                        current = parenthesized;
+                    }
+                    else if (current.Parent is ArgumentSyntax argument
+                        && argument.Parent != null
+                        && argument.Parent.IsKind(SyntaxKindEx.TupleExpression))
+                    {
+                        var tuple = (TupleExpressionSyntaxWrapper)argument.Parent;
+                        var index = tuple.Arguments.IndexOf(argument);
+                        if (index < 0)
+                        {
+                            return false;
+                        }
+
+                        path.Add(index);
+                        current = argument.Parent;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+
+                for (int i = path.Count - 1; i >= 0; i--)
+                {
+                    var targetElement = GetTargetElement(target, path[i]);
+                    if (targetElement == null)
+                    {
+                        return false;
+                    }
+
+                    target = targetElement;
+                }
+
+                return IsDeconstructionTarget(target);
+            }
+            finally
+            {
+                pool.ClearAndFree(path);
+            }
         }
 
         private static bool IsTupleExpressionDeconstructedByTarget(SyntaxNode sourceTuple, SyntaxNode target, SyntaxNode tupleExpression)
