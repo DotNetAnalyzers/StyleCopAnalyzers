@@ -384,7 +384,19 @@ traits are supported:
 * `constant`: Constant elements are ordered before non-constant elements
 * `static`: Static elements are ordered before non-static elements
 * `readonly`: Readonly elements are ordered before non-readonly elements
-* `name`: SA1201 orders adjacent declarations of the same kind and ordering group by case-sensitive ordinal name. This optional tie-breaker applies after all other traits and supports methods, properties, single-variable fields (including constants), events, nested types, and delegates. Equal names keep their relative order. Declarations containing directives or multiple variables are excluded. Name sorting skips types marked for COM interop, including public types exposed by assembly-level COM visibility. Module initializers and nested types containing them act as boundaries. In types with fixed layout and in records, instance fields, properties, and field-like events retain their order. Runtime initializers retain their relative order. When fixing all SA1201 violations, the name-ordering pass preserves member order in regions where `#pragma warning disable` suppresses SA1201.
+* `name`: SA1201 orders adjacent declarations of the same SA1201 member kind and ordering group by case-sensitive ordinal name.
+  Field-like events and events with accessors share a kind. Record classes share a kind with classes, and record structs share a kind with structs.
+  This optional tie-breaker applies after all other traits and supports methods, properties, single-variable fields (including constants), events, nested types, and delegates.
+  Equal names keep their relative order. Declarations containing directives or multiple variables are excluded.
+  Name sorting skips types marked for COM interop, including public types exposed by assembly-level COM visibility and public types covered by an explicitly configured assembly-level COM class interface.
+  An explicit `[ComVisible(false)]` at the assembly or type level takes precedence over the assembly-level class interface setting.
+  Name sorting also skips classes derived from `EventSource` to preserve implicit event IDs.
+  Module initializers and nested types containing them act as boundaries.
+  In types with fixed layout and in records, instance fields, properties, and field-like events retain their order.
+  Instance storage members in XML contracts marked with `[XmlRoot]` or `[XmlType]` also retain their order.
+  Runtime initializers retain their relative order.
+  The name-ordering code fix leaves generated declarations and declarations in `#line hidden` regions in place.
+  Name-ordering fixes respect `#pragma warning disable` and skip moving declarations suppressed by a local or global `SuppressMessage` attribute.
 
 For example, set `stylecop.ordering.elementOrder = kind, constant, accessibility, static, readonly, name` in `.editorconfig` to enable member-name ordering.
 

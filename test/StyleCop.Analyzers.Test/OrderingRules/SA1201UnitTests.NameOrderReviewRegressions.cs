@@ -43,17 +43,20 @@ public partial class SA1201UnitTests
     /// <summary>
     /// Verifies that assembly-level COM visibility protects exported interfaces and leaves hidden interfaces sortable.
     /// </summary>
+    /// <param name="assemblyAttribute">The attribute that makes public types visible to COM.</param>
     /// <returns>A task representing the asynchronous test.</returns>
-    [Fact]
-    public async Task TestReviewRegressionPreservesAssemblyComVisibleInterfaceOrderAsync()
+    [Theory]
+    [InlineData("[assembly: ComVisible(true)]")]
+    [InlineData("[assembly: ClassInterface(ClassInterfaceType.AutoDual)]")]
+    public async Task TestReviewRegressionPreservesAssemblyComVisibleInterfaceOrderAsync(string assemblyAttribute)
     {
         var test = new CSharpTest
         {
             Settings = """{ "settings": { "orderingRules": { "elementOrder": ["name"] } } }""",
-            TestCode = """
+            TestCode = $$"""
                 using System.Runtime.InteropServices;
 
-                [assembly: ComVisible(true)]
+                {{assemblyAttribute}}
 
                 public interface IExported
                 {
@@ -74,10 +77,10 @@ public partial class SA1201UnitTests
                     void {|#1:Alpha|}();
                 }
                 """,
-            FixedCode = """
+            FixedCode = $$"""
                 using System.Runtime.InteropServices;
 
-                [assembly: ComVisible(true)]
+                {{assemblyAttribute}}
 
                 public interface IExported
                 {
@@ -103,6 +106,45 @@ public partial class SA1201UnitTests
         };
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithMessage("Member 'Alpha' should appear before member 'Zulu'"));
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(1).WithMessage("Member 'Alpha' should appear before member 'Zulu'"));
+        await test.RunAsync().ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Verifies that an explicit assembly COM opt-out takes precedence over the class-interface setting.
+    /// </summary>
+    /// <returns>A task representing the asynchronous test.</returns>
+    [Fact]
+    public async Task TestNameOrderFixHonorsAssemblyComVisibleFalseAsync()
+    {
+        var test = new CSharpTest
+        {
+            Settings = """{ "settings": { "orderingRules": { "elementOrder": ["name"] } } }""",
+            TestCode = """
+                using System.Runtime.InteropServices;
+
+                [assembly: ClassInterface(ClassInterfaceType.AutoDual)]
+                [assembly: ComVisible(false)]
+
+                public interface IApi
+                {
+                    void Zulu();
+                    void {|#0:Alpha|}();
+                }
+                """,
+            FixedCode = """
+                using System.Runtime.InteropServices;
+
+                [assembly: ClassInterface(ClassInterfaceType.AutoDual)]
+                [assembly: ComVisible(false)]
+
+                public interface IApi
+                {
+                    void Alpha();
+                    void Zulu();
+                }
+                """,
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithMessage("Member 'Alpha' should appear before member 'Zulu'"));
         await test.RunAsync().ConfigureAwait(false);
     }
 
@@ -196,6 +238,98 @@ public partial class SA1201UnitTests
     }
 
     /// <summary>
+    /// Verifies that both name-order fixes leave a locally suppressed method in place.
+    /// </summary>
+    /// <returns>A task representing the asynchronous test.</returns>
+    [Fact]
+    public async Task TestNameOrderFixPreservesMethodWithSuppressionAttributeAsync()
+    {
+        var test = new CSharpTest
+        {
+            Settings = """{ "settings": { "orderingRules": { "elementOrder": ["name"] } } }""",
+            TestCode = """
+                #define CODE_ANALYSIS
+                using System.Diagnostics.CodeAnalysis;
+
+                public class C
+                {
+                    public void Zulu() { }
+
+                    public void {|#0:Bravo|}() { }
+
+                    [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201")]
+                    public void Alpha() { }
+                }
+                """,
+            FixedCode = """
+                #define CODE_ANALYSIS
+                using System.Diagnostics.CodeAnalysis;
+
+                public class C
+                {
+                    public void Bravo() { }
+
+                    public void Zulu() { }
+
+                    [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201")]
+                    public void Alpha() { }
+                }
+                """,
+            NumberOfIncrementalIterations = 1,
+            NumberOfFixAllIterations = 1,
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithMessage("Member 'Bravo' should appear before member 'Zulu'"));
+        await test.RunAsync().ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Verifies that both name-order fixes honor a targeted global suppression even if the initial order of that member is correct.
+    /// </summary>
+    /// <returns>A task representing the asynchronous test.</returns>
+    [Fact]
+    public async Task TestNameOrderFixPreservesMethodWithGlobalSuppressionAsync()
+    {
+        var test = new CSharpTest
+        {
+            Settings = """{ "settings": { "orderingRules": { "elementOrder": ["name"] } } }""",
+            TestCode = """
+                #define CODE_ANALYSIS
+                using System.Diagnostics.CodeAnalysis;
+
+                [assembly: SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Scope = "member", Target = "~M:C.Bravo")]
+
+                public class C
+                {
+                    public void Zulu() { }
+
+                    public void {|#0:Alpha|}() { }
+
+                    public void Bravo() { }
+                }
+                """,
+            FixedCode = """
+                #define CODE_ANALYSIS
+                using System.Diagnostics.CodeAnalysis;
+
+                [assembly: SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Scope = "member", Target = "~M:C.Bravo")]
+
+                public class C
+                {
+                    public void Alpha() { }
+
+                    public void Zulu() { }
+
+                    public void Bravo() { }
+                }
+                """,
+            NumberOfIncrementalIterations = 1,
+            NumberOfFixAllIterations = 1,
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithMessage("Member 'Alpha' should appear before member 'Zulu'"));
+        await test.RunAsync().ConfigureAwait(false);
+    }
+
+    /// <summary>
     /// Verifies that an unrelated pragma does not turn an attributed member into a name-order boundary.
     /// </summary>
     /// <returns>A task representing the asynchronous test.</returns>
@@ -264,6 +398,88 @@ public partial class SA1201UnitTests
                 """,
         };
         test.ExpectedDiagnostics.Add(AccessOrderVerifier.Diagnostic().WithLocation(0).WithArguments("public", "private"));
+        await test.RunAsync().ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Verifies that name-order fixes do not move another tool's generated declarations.
+    /// </summary>
+    /// <returns>A task representing the asynchronous test.</returns>
+    [Fact]
+    public async Task TestNameOrderFixPreservesGeneratedMethodAsync()
+    {
+        var test = new CSharpTest
+        {
+            Settings = """{ "settings": { "orderingRules": { "elementOrder": ["name"] } } }""",
+            TestCode = """
+                using System.CodeDom.Compiler;
+
+                public class C
+                {
+                    public void Zulu() { }
+
+                    public void {|#0:Bravo|}() { }
+
+                    [GeneratedCode("Tool", "1")]
+                    public void Alpha() { }
+                }
+                """,
+            FixedCode = """
+                using System.CodeDom.Compiler;
+
+                public class C
+                {
+                    public void Bravo() { }
+
+                    public void Zulu() { }
+
+                    [GeneratedCode("Tool", "1")]
+                    public void Alpha() { }
+                }
+                """,
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithMessage("Member 'Bravo' should appear before member 'Zulu'"));
+        await test.RunAsync().ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Verifies that Fix All does not sort members inside a hidden source region.
+    /// </summary>
+    /// <returns>A task representing the asynchronous test.</returns>
+    [Fact]
+    public async Task TestNameOrderFixAllPreservesHiddenMemberOrderAsync()
+    {
+        var test = new CSharpTest
+        {
+            Settings = """{ "settings": { "orderingRules": { "elementOrder": ["name"] } } }""",
+            TestCode = """
+                #line 1
+                public class C
+                {
+                    public void Zulu() { }
+                    public void {|#0:Bravo|}() { }
+                #line hidden
+                    public void Marker() { }
+                    public void Zed() { }
+                    public void Alpha() { }
+                #line default
+                }
+                """,
+            FixedCode = """
+                #line 1
+                public class C
+                {
+                    public void Bravo() { }
+                    public void Zulu() { }
+                #line hidden
+                    public void Marker() { }
+                    public void Zed() { }
+                    public void Alpha() { }
+                #line default
+                }
+                """,
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithMessage("Member 'Bravo' should appear before member 'Zulu'"));
         await test.RunAsync().ConfigureAwait(false);
     }
 }

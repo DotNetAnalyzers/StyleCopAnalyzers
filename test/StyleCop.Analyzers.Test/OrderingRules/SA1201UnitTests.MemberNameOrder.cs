@@ -96,6 +96,40 @@ public partial class SA1201UnitTests
     }
 
     [Fact]
+    public async Task TestMemberNameOrderFixPreservesRuntimeInitializerOrderAsync()
+    {
+        var test = new CSharpTest
+        {
+            Settings = """{ "settings": { "orderingRules": { "elementOrder": ["name"] } } }""",
+            TestCode = """
+                public class C
+                {
+                    public static int Zulu = GetValue();
+                    public static int {|#0:Tango|};
+                    public static int {|#1:Alpha|} = GetValue();
+
+                    private static int GetValue() => 1;
+                }
+                """,
+            FixedCode = """
+                public class C
+                {
+                    public static int Tango;
+                    public static int Zulu = GetValue();
+                    public static int Alpha = GetValue();
+
+                    private static int GetValue() => 1;
+                }
+                """,
+            NumberOfIncrementalIterations = 1,
+            NumberOfFixAllIterations = 1,
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithMessage("Member 'Tango' should appear before member 'Zulu'"));
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(1).WithMessage("Member 'Alpha' should appear before member 'Tango'"));
+        await test.RunAsync().ConfigureAwait(false);
+    }
+
+    [Fact]
     public async Task TestMemberNameOrderPreservesInstanceStorageLayoutAsync()
     {
         await new CSharpTest
@@ -184,5 +218,38 @@ public partial class SA1201UnitTests
                 }
                 """,
         }.RunAsync().ConfigureAwait(false);
+    }
+
+    [Theory]
+    [InlineData("decimal")]
+    [InlineData("DecimalAlias")]
+    public async Task TestMemberNameOrderPreservesDecimalConstantInitializationAsync(string constantType)
+    {
+        var test = new CSharpTest
+        {
+            Settings = """{ "settings": { "orderingRules": { "elementOrder": ["name"] } } }""",
+            TestCode = $$"""
+                using DecimalAlias = System.Decimal;
+
+                public class C
+                {
+                    public const {{constantType}} Zulu = 3.5m;
+                    public static decimal Alpha = (decimal)typeof(C).GetField("Zulu").GetValue(null);
+                    public static decimal {|#0:Aardvark|};
+                }
+                """,
+            FixedCode = $$"""
+                using DecimalAlias = System.Decimal;
+
+                public class C
+                {
+                    public static decimal Aardvark;
+                    public const {{constantType}} Zulu = 3.5m;
+                    public static decimal Alpha = (decimal)typeof(C).GetField("Zulu").GetValue(null);
+                }
+                """,
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithMessage("Member 'Aardvark' should appear before member 'Alpha'"));
+        await test.RunAsync().ConfigureAwait(false);
     }
 }

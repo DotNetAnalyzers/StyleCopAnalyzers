@@ -97,4 +97,29 @@ public partial class SA1201CSharp9UnitTests
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithMessage("Member 'Alpha' should appear before member 'Tango'"));
         await test.RunAsync().ConfigureAwait(false);
     }
+
+    [Fact]
+    public async Task TestMemberNameOrderFixesMixedClassAndRecordDeclarationsAsync()
+    {
+        var test = new CSharpTest
+        {
+            Settings = """{ "settings": { "orderingRules": { "elementOrder": ["kind", "name"] } } }""",
+            TestCode = """
+                public class Outer
+                {
+                    public class Zulu { }
+                    public record {|#0:Alpha|} { }
+                }
+                """,
+            FixedCode = """
+                public class Outer
+                {
+                    public record Alpha { }
+                    public class Zulu { }
+                }
+                """,
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithMessage("Member 'Alpha' should appear before member 'Zulu'"));
+        await test.RunAsync().ConfigureAwait(false);
+    }
 }

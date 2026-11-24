@@ -196,4 +196,97 @@ public partial class SA1201UnitTests
         test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithMessage("Member 'Bravo' should appear before member 'Yankee'"));
         await test.RunAsync().ConfigureAwait(false);
     }
+
+    [Fact]
+    public async Task TestMemberNameOrderFixesMixedEventDeclarationsAsync()
+    {
+        var test = new CSharpTest
+        {
+            Settings = """{ "settings": { "orderingRules": { "elementOrder": ["kind", "name"] } } }""",
+            TestCode = """
+                public class C
+                {
+                    public event System.Action Zulu;
+                    public event System.Action {|#0:Alpha|} { add { } remove { } }
+                }
+                """,
+            FixedCode = """
+                public class C
+                {
+                    public event System.Action Alpha { add { } remove { } }
+                    public event System.Action Zulu;
+                }
+                """,
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithMessage("Member 'Alpha' should appear before member 'Zulu'"));
+        await test.RunAsync().ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestMemberNameOrderPreservesEventSourceEventIdsAsync()
+    {
+        var test = new CSharpTest
+        {
+            Settings = """{ "settings": { "orderingRules": { "elementOrder": ["kind", "name"] } } }""",
+            TestCode = """
+                using System.Diagnostics.Tracing;
+
+                [EventSource(Name = "OrderingSource")]
+                internal sealed class OrderingSource : EventSource
+                {
+                    public void Zulu(int value) { WriteEvent(1, value); }
+                    public void Alpha(string value) { WriteEvent(2, value); }
+                    public int {|#0:Count|} { get; }
+                }
+                """,
+            FixedCode = """
+                using System.Diagnostics.Tracing;
+
+                [EventSource(Name = "OrderingSource")]
+                internal sealed class OrderingSource : EventSource
+                {
+                    public int Count { get; }
+                    public void Zulu(int value) { WriteEvent(1, value); }
+                    public void Alpha(string value) { WriteEvent(2, value); }
+                }
+                """,
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithArguments("A property", "a method"));
+        await test.RunAsync().ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task TestMemberNameOrderPreservesExplicitXmlContractOrderAsync()
+    {
+        var test = new CSharpTest
+        {
+            Settings = """{ "settings": { "orderingRules": { "elementOrder": ["name"] } } }""",
+            TestCode = """
+                using System.Xml.Serialization;
+
+                [XmlRoot("contract")]
+                public class C
+                {
+                    public int Zulu { get; set; }
+                    public int Alpha { get; set; }
+                    public void Yankee() { }
+                    public void {|#0:Bravo|}() { }
+                }
+                """,
+            FixedCode = """
+                using System.Xml.Serialization;
+
+                [XmlRoot("contract")]
+                public class C
+                {
+                    public int Zulu { get; set; }
+                    public int Alpha { get; set; }
+                    public void Bravo() { }
+                    public void Yankee() { }
+                }
+                """,
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithMessage("Member 'Bravo' should appear before member 'Yankee'"));
+        await test.RunAsync().ConfigureAwait(false);
+    }
 }

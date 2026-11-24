@@ -127,9 +127,6 @@ namespace StyleCop.Analyzers.OrderingRules
         private static readonly DiagnosticDescriptor InterruptedGroupDescriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, new LocalizableResourceString(nameof(OrderingResources.SA1201InterruptedGroupMessageFormat), OrderingResources.ResourceManager, typeof(OrderingResources)), AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly DiagnosticDescriptor MemberNameOrderDescriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, new LocalizableResourceString(nameof(OrderingResources.SA1201MemberNameOrderMessageFormat), OrderingResources.ResourceManager, typeof(OrderingResources)), AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
-
         private static readonly ImmutableDictionary<string, string> MemberNameOrderProperties =
             ImmutableDictionary<string, string>.Empty.Add(MemberNameOrderProperty, string.Empty);
 
@@ -193,6 +190,9 @@ namespace StyleCop.Analyzers.OrderingRules
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(Descriptor, InterruptedGroupDescriptor, MemberNameOrderDescriptor);
 
+        internal static DiagnosticDescriptor MemberNameOrderDescriptor { get; } =
+            new DiagnosticDescriptor(DiagnosticId, Title, new LocalizableResourceString(nameof(OrderingResources.SA1201MemberNameOrderMessageFormat), OrderingResources.ResourceManager, typeof(OrderingResources)), AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
@@ -239,14 +239,14 @@ namespace StyleCop.Analyzers.OrderingRules
             ImmutableArray<AccessLevel> accessibilityOrder)
         {
             var members = type.Members;
-            bool? isComType = null;
+            bool? preserveMemberOrder = null;
             bool? preserveInstanceOrder = null;
             for (var i = 1; i < members.Count; i++)
             {
                 context.CancellationToken.ThrowIfCancellationRequested();
                 var current = members[i];
                 var previous = members[i - 1];
-                if (current.RawKind != previous.RawKind)
+                if (MemberKindOrder.Normalize(current.Kind()) != MemberKindOrder.Normalize(previous.Kind()))
                 {
                     continue;
                 }
@@ -257,18 +257,21 @@ namespace StyleCop.Analyzers.OrderingRules
                     || previousIdentifier.RawKind == 0
                     || string.CompareOrdinal(currentIdentifier.ValueText, previousIdentifier.ValueText) >= 0
                     || MemberKindOrder.GetPriority(current, elementOrder, accessibilityOrder) != MemberKindOrder.GetPriority(previous, elementOrder, accessibilityOrder)
-                    || (MemberNameOrder.HasRuntimeInitializer(current) && MemberNameOrder.HasRuntimeInitializer(previous)))
+                    || MemberNameOrder.HasOrderSensitiveInitializers(current, previous))
                 {
                     continue;
                 }
 
-                isComType ??= MemberNameOrder.IsComType(type, context.SemanticModel, context.CancellationToken);
-                if (isComType.Value)
+                preserveMemberOrder ??= MemberNameOrder.RequiresStableMemberOrder(type, context.SemanticModel, context.CancellationToken);
+                if (preserveMemberOrder.Value)
                 {
                     return;
                 }
 
-                if (MemberNameOrder.ContainsModuleInitializer(current, context.SemanticModel, context.CancellationToken)
+                if (MemberNameOrder.IsInHiddenRegion(currentIdentifier, context.CancellationToken)
+                    || MemberNameOrder.IsInHiddenRegion(previousIdentifier, context.CancellationToken)
+                    || MemberNameOrder.IsGeneratedDeclaration(current, context.SemanticModel, context.CancellationToken)
+                    || MemberNameOrder.ContainsModuleInitializer(current, context.SemanticModel, context.CancellationToken)
                     || MemberNameOrder.ContainsModuleInitializer(previous, context.SemanticModel, context.CancellationToken))
                 {
                     continue;

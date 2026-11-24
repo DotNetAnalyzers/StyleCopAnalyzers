@@ -56,7 +56,7 @@ internal static class MemberNameOrder
             return false;
         }
 
-        // A layout attribute can occur in another declaration of a partial type.
+        // An attribute can occur in another declaration of a partial type.
         var symbol = semanticModel?.GetDeclaredSymbol(type, cancellationToken);
         if (symbol == null)
         {
@@ -65,28 +65,42 @@ internal static class MemberNameOrder
 
         foreach (var attribute in symbol.GetAttributes())
         {
-            if (attribute.AttributeClass is { Name: "StructLayoutAttribute" } attributeClass
-                && attributeClass.ContainingNamespace.ToDisplayString() == "System.Runtime.InteropServices")
+            if (attribute.AttributeClass is not { } attributeClass)
             {
-                // LayoutKind.Auto has the value 3. The attribute also has a short-valued overload.
-                return attribute.ConstructorArguments.Length == 0
-                    || (attribute.ConstructorArguments[0].Value is not 3 && attribute.ConstructorArguments[0].Value is not (short)3);
+                continue;
+            }
+
+            if (attributeClass.Name is "XmlRootAttribute" or "XmlTypeAttribute"
+                && attributeClass.ContainingNamespace.ToDisplayString() == "System.Xml.Serialization")
+            {
+                // XmlSerializer can emit elements in declaration order when no order is specified.
+                return true;
+            }
+
+            // LayoutKind.Auto has the value 3. The attribute also has a short-valued overload.
+            if (attributeClass.Name == "StructLayoutAttribute"
+                && attributeClass.ContainingNamespace.ToDisplayString() == "System.Runtime.InteropServices"
+                && (attribute.ConstructorArguments.IsEmpty
+                    || (attribute.ConstructorArguments[0].Value is not 3 && attribute.ConstructorArguments[0].Value is not (short)3)))
+            {
+                return true;
             }
         }
 
         return false;
     }
 
-    internal static bool IsComType(TypeDeclarationSyntax type, SemanticModel? semanticModel, CancellationToken cancellationToken)
+    internal static bool RequiresStableMemberOrder(TypeDeclarationSyntax type, SemanticModel? semanticModel, CancellationToken cancellationToken)
     {
         var isPartial = type.Modifiers.Any(SyntaxKind.PartialKeyword);
 
-        // A different declaration of this type can supply its public modifier.
+        // A different declaration can supply the public modifier or base type.
         var canBePublic = isPartial || type.Modifiers.Any(SyntaxKind.PublicKeyword) || type.Parent is InterfaceDeclarationSyntax;
+        var canDeriveFromEventSource = type.IsKind(SyntaxKind.ClassDeclaration) && (isPartial || type.BaseList != null);
         var assemblyIsComVisible = canBePublic
             && semanticModel != null
-            && GetComVisibility(semanticModel.Compilation.Assembly.GetAttributes()) == true;
-        if (!assemblyIsComVisible && type.AttributeLists.Count == 0 && !isPartial)
+            && IsComVisibleAssembly(semanticModel.Compilation.Assembly.GetAttributes());
+        if (!assemblyIsComVisible && !canDeriveFromEventSource && type.AttributeLists.Count == 0 && !isPartial)
         {
             return false;
         }
@@ -94,6 +108,12 @@ internal static class MemberNameOrder
         var symbol = semanticModel?.GetDeclaredSymbol(type, cancellationToken);
         if (symbol == null)
         {
+            return true;
+        }
+
+        if (canDeriveFromEventSource && DerivesFromEventSource(symbol))
+        {
+            // EventSource assigns implicit event IDs in declaration order.
             return true;
         }
 
@@ -147,6 +167,47 @@ internal static class MemberNameOrder
         return false;
     }
 
+    internal static bool IsInHiddenRegion(SyntaxToken identifier, CancellationToken cancellationToken)
+    {
+        return identifier.SyntaxTree.GetLineVisibility(identifier.SpanStart, cancellationToken) == LineVisibility.Hidden;
+    }
+
+    internal static bool IsGeneratedDeclaration(MemberDeclarationSyntax member, SemanticModel? semanticModel, CancellationToken cancellationToken)
+    {
+        if (!member.GetFirstToken().IsKind(SyntaxKind.OpenBracketToken) && !member.GetModifiers().Any(SyntaxKind.PartialKeyword))
+        {
+            return false;
+        }
+
+        var declaration = member is BaseFieldDeclarationSyntax field && field.Declaration.Variables.Count == 1
+            ? (SyntaxNode)field.Declaration.Variables[0]
+            : member;
+        var symbol = semanticModel?.GetDeclaredSymbol(declaration, cancellationToken);
+        if (symbol == null || symbol.DeclaringSyntaxReferences.Length > 1)
+        {
+            return false;
+        }
+
+        foreach (var attribute in symbol.GetAttributes())
+        {
+            if (attribute.AttributeClass is { Name: "GeneratedCodeAttribute" } attributeClass
+                && attributeClass.ContainingNamespace.ToDisplayString() == "System.CodeDom.Compiler")
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    internal static bool HasOrderSensitiveInitializers(MemberDeclarationSyntax first, MemberDeclarationSyntax second)
+    {
+        var firstHasInitializer = HasRuntimeInitializer(first);
+        var secondHasInitializer = HasRuntimeInitializer(second);
+        return (firstHasInitializer && (secondHasInitializer || IsPotentialDecimalConstant(second)))
+            || (secondHasInitializer && IsPotentialDecimalConstant(first));
+    }
+
     internal static bool HasRuntimeInitializer(MemberDeclarationSyntax member)
     {
         if (member is PropertyDeclarationSyntax property)
@@ -162,6 +223,46 @@ internal static class MemberNameOrder
                 {
                     return true;
                 }
+            }
+        }
+
+        return false;
+    }
+
+    private static bool IsPotentialDecimalConstant(MemberDeclarationSyntax member)
+    {
+        // Decimal constants emit a runtime assignment. A named constant type could be an alias for decimal.
+        return member is FieldDeclarationSyntax field
+            && field.Modifiers.Any(SyntaxKind.ConstKeyword)
+            && (field.Declaration.Type is not PredefinedTypeSyntax predefined || predefined.Keyword.IsKind(SyntaxKind.DecimalKeyword));
+    }
+
+    private static bool IsComVisibleAssembly(ImmutableArray<AttributeData> attributes)
+    {
+        if (GetComVisibility(attributes) is bool visible)
+        {
+            return visible;
+        }
+
+        foreach (var attribute in attributes)
+        {
+            if (attribute.AttributeClass is { Name: "ClassInterfaceAttribute" } attributeClass
+                && attributeClass.ContainingNamespace.ToDisplayString() == "System.Runtime.InteropServices")
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool DerivesFromEventSource(INamedTypeSymbol symbol)
+    {
+        for (var current = symbol.BaseType; current != null; current = current.BaseType)
+        {
+            if (current.Name == "EventSource" && current.ContainingNamespace.ToDisplayString() == "System.Diagnostics.Tracing")
+            {
+                return true;
             }
         }
 
