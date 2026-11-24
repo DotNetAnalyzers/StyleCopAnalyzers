@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Helpers;
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
 using Microsoft.CodeAnalysis;
@@ -270,6 +271,95 @@ internal static class MemberNameOrder
             || (secondHasInitializer && IsPotentialDecimalConstant(first));
     }
 
+    internal static bool CouldExposeFieldAccessibilityInversion(
+        SyntaxList<MemberDeclarationSyntax> members,
+        int index,
+        int targetIndex,
+        OrderingSettings settings,
+        Dictionary<string, ImmutableHashSet<string>> fieldDependencies)
+    {
+        var elementOrder = settings.ElementOrder;
+        var accessibilityIndex = elementOrder.IndexOf(OrderingTrait.Accessibility);
+        if (accessibilityIndex < 0)
+        {
+            return false;
+        }
+
+        var current = (FieldDeclarationSyntax)members[index];
+        var previousTraits = new MemberOrderTraits(members[targetIndex]);
+        var priority = MemberOrderHelper.GetAccessibilityPriority(settings.AccessibilityOrder, previousTraits.AccessLevel);
+        Dictionary<string, FieldDependencyHelper.FieldOrderingInfo>? originalOrder = null;
+        Dictionary<string, FieldDependencyHelper.FieldOrderingInfo>? newOrder = null;
+        for (var i = index + 1; i < members.Count; i++)
+        {
+            if (members[i] is not FieldDeclarationSyntax dependent || !FieldDependencyHelper.DependsOn(dependent, current, fieldDependencies))
+            {
+                continue;
+            }
+
+            var dependentTraits = new MemberOrderTraits(dependent);
+            var dependentPriority = MemberOrderHelper.GetAccessibilityPriority(settings.AccessibilityOrder, dependentTraits.AccessLevel);
+            if (dependentPriority <= priority || !dependentTraits.MatchesAccessibilityPrefix(previousTraits, elementOrder, accessibilityIndex))
+            {
+                continue;
+            }
+
+            // Evaluate the dependent in both orders. Another dependency or a nearer member may
+            // still keep SA1202 from reporting an inversion after the move.
+            newOrder ??= GetFieldOrderingInfo(members, settings.AccessibilityOrder, index, targetIndex);
+            if (HasFieldAccessibilityInversion(i, targetIndex, newOrder))
+            {
+                originalOrder ??= GetFieldOrderingInfo(members, settings.AccessibilityOrder, index, index);
+                if (!HasFieldAccessibilityInversion(i, index, originalOrder))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+
+        bool HasFieldAccessibilityInversion(int dependentIndex, int insertionIndex, Dictionary<string, FieldDependencyHelper.FieldOrderingInfo> positions)
+        {
+            var dependent = (FieldDeclarationSyntax)members[dependentIndex];
+            var dependentTraits = new MemberOrderTraits(dependent);
+            var dependentPriority = MemberOrderHelper.GetAccessibilityPriority(settings.AccessibilityOrder, dependentTraits.AccessLevel);
+            var hasExcusedInversion = false;
+            for (var i = dependentIndex - 1; i >= 0; i--)
+            {
+                var previous = members[GetOriginalMemberIndex(i, index, insertionIndex)];
+                if (!MemberOrderTraits.SupportsAccessibilityOrdering(previous))
+                {
+                    continue;
+                }
+
+                var traits = new MemberOrderTraits(previous);
+                if (!dependentTraits.MatchesAccessibilityPrefix(traits, elementOrder, accessibilityIndex))
+                {
+                    continue;
+                }
+
+                var previousPriority = MemberOrderHelper.GetAccessibilityPriority(settings.AccessibilityOrder, traits.AccessLevel);
+                if (dependentPriority > previousPriority)
+                {
+                    if (previous is not FieldDeclarationSyntax previousField
+                        || !FieldDependencyHelper.IsAccessibilityInversionExcused(dependent, previousField, previousPriority, i, fieldDependencies, positions))
+                    {
+                        return true;
+                    }
+
+                    hasExcusedInversion = true;
+                }
+                else if (!hasExcusedInversion)
+                {
+                    break;
+                }
+            }
+
+            return false;
+        }
+    }
+
     internal static bool HasRuntimeInitializer(MemberDeclarationSyntax member)
     {
         if (member is PropertyDeclarationSyntax property)
@@ -289,6 +379,36 @@ internal static class MemberNameOrder
         }
 
         return false;
+    }
+
+    private static Dictionary<string, FieldDependencyHelper.FieldOrderingInfo> GetFieldOrderingInfo(
+        SyntaxList<MemberDeclarationSyntax> members, ImmutableArray<AccessLevel> accessibilityOrder, int index, int insertionIndex)
+    {
+        var result = new Dictionary<string, FieldDependencyHelper.FieldOrderingInfo>();
+        for (var i = 0; i < members.Count; i++)
+        {
+            if (members[GetOriginalMemberIndex(i, index, insertionIndex)] is FieldDeclarationSyntax field)
+            {
+                var accessLevel = MemberOrderHelper.GetAccessLevelForOrdering(field, field.Modifiers);
+                var priority = MemberOrderHelper.GetAccessibilityPriority(accessibilityOrder, accessLevel);
+                foreach (var variable in field.Declaration.Variables)
+                {
+                    result[variable.Identifier.ValueText] = new FieldDependencyHelper.FieldOrderingInfo(priority, i);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private static int GetOriginalMemberIndex(int position, int index, int insertionIndex)
+    {
+        if (position == insertionIndex)
+        {
+            return index;
+        }
+
+        return position > insertionIndex && position <= index ? position - 1 : position;
     }
 
     private static bool StartsConfiguredKindViolation(SyntaxList<MemberDeclarationSyntax> members, int index, MemberKindOrder order)
@@ -409,7 +529,7 @@ internal static class MemberNameOrder
     {
         var traits = settings.ElementOrder;
         var accessibilityIndex = traits.IndexOf(OrderingTrait.Accessibility);
-        if (accessibilityIndex < 0)
+        if (accessibilityIndex < 0 || !MemberOrderTraits.SupportsAccessibilityOrdering(members[index]))
         {
             return false;
         }
@@ -419,7 +539,7 @@ internal static class MemberNameOrder
         for (var i = index - 1; i >= 0; i--)
         {
             var previous = members[i];
-            if (previous.IsKind(SyntaxKind.IncompleteMember))
+            if (!MemberOrderTraits.SupportsAccessibilityOrdering(previous))
             {
                 continue;
             }

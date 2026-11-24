@@ -371,6 +371,189 @@ public partial class SA1201UnitTests
     }
 
     /// <summary>
+    /// Verifies that a destructor does not prevent name sorting of the following public methods.
+    /// </summary>
+    /// <returns>A task representing the asynchronous test.</returns>
+    [Fact]
+    public async Task TestNameOrderIgnoresDestructorInAccessibilityComparisonAsync()
+    {
+        var test = new ConfiguredOrderingTest
+        {
+            Settings = """{ "settings": { "orderingRules": { "elementOrder": ["accessibility", "name"] } } }""",
+            TestCode = """
+                public class C
+                {
+                    ~C() { }
+                    public void Zulu() { }
+                    public void {|#0:Alpha|}() { }
+                }
+                """,
+            FixedCode = """
+                public class C
+                {
+                    ~C() { }
+                    public void Alpha() { }
+                    public void Zulu() { }
+                }
+                """,
+            NumberOfIncrementalIterations = 1,
+            NumberOfFixAllIterations = 1,
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithMessage("Member 'Alpha' should appear before member 'Zulu'"));
+        await test.RunAsync().ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Verifies that both name-order fixes keep a suppressed accessibility inversion after a destructor on the same member.
+    /// </summary>
+    /// <returns>A task representing the asynchronous test.</returns>
+    [Fact]
+    public async Task TestNameOrderFixPreservesSuppressedAccessibilityInversionAcrossDestructorAsync()
+    {
+        var test = new ConfiguredOrderingTest
+        {
+            Settings = """
+                {
+                  "settings": {
+                    "orderingRules": {
+                      "elementOrder": ["accessibility", "name"],
+                      "accessibilityOrder": ["private", "public", "internal", "protectedInternal", "protected", "privateProtected"]
+                    }
+                  }
+                }
+                """,
+            TestCode = """
+                #define CODE_ANALYSIS
+                using System.Diagnostics.CodeAnalysis;
+
+                public class C
+                {
+                    internal void Marker() { }
+                    ~C() { }
+
+                    [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1202")]
+                    public void Zulu() { }
+                    public void Yankee() { }
+                    public void {|#0:Alpha|}() { }
+                }
+                """,
+            FixedCode = """
+                #define CODE_ANALYSIS
+                using System.Diagnostics.CodeAnalysis;
+
+                public class C
+                {
+                    internal void Marker() { }
+                    ~C() { }
+
+                    [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1202")]
+                    public void Zulu() { }
+                    public void Alpha() { }
+                    public void Yankee() { }
+                }
+                """,
+            NumberOfIncrementalIterations = 1,
+            NumberOfFixAllIterations = 1,
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithMessage("Member 'Alpha' should appear before member 'Yankee'"));
+        await test.RunAsync().ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Verifies that name sorting preserves the order required by an accessibility exception for a dependent field.
+    /// </summary>
+    /// <returns>A task representing the asynchronous test.</returns>
+    [Fact]
+    public async Task TestNameOrderFixPreservesFieldAccessibilityDependencyAcrossDestructorAsync()
+    {
+        var test = new ConfiguredOrderingTest
+        {
+            Settings = """{ "settings": { "orderingRules": { "elementOrder": ["accessibility", "name"] } } }""",
+            TestCode = """
+                public class C
+                {
+                    ~C() { }
+                    internal static int Gamma;
+                    internal static int {|#0:Bravo|};
+                    internal static int Zulu;
+                    internal static int Alpha = 1;
+                    public static int Dependent = Alpha;
+                }
+
+                public class C<T>
+                {
+                    internal static int X;
+                    internal static int Y = X;
+                }
+                """,
+            FixedCode = """
+                public class C
+                {
+                    ~C() { }
+                    internal static int Bravo;
+                    internal static int Gamma;
+                    internal static int Zulu;
+                    internal static int Alpha = 1;
+                    public static int Dependent = Alpha;
+                }
+
+                public class C<T>
+                {
+                    internal static int X;
+                    internal static int Y = X;
+                }
+                """,
+            NumberOfIncrementalIterations = 1,
+            NumberOfFixAllIterations = 1,
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithMessage("Member 'Bravo' should appear before member 'Gamma'"));
+        await test.RunAsync().ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Verifies that name ordering can move a field when the dependent remains in accessibility order.
+    /// </summary>
+    /// <param name="declarations">The declarations following the moved field.</param>
+    /// <returns>A task representing the asynchronous test.</returns>
+    [Theory]
+    [InlineData("""
+        internal static int Zulu2;
+        public static int Dependent = Alpha + Zulu2;
+        """)]
+    [InlineData("""
+        internal static int Zzz;
+        public static int Anchor = Zzz;
+        public static int Dependent = Alpha;
+        """)]
+    public async Task TestNameOrderCanMoveFieldWithAccessibilityExceptionAsync(string declarations)
+    {
+        var test = new ConfiguredOrderingTest
+        {
+            Settings = """{ "settings": { "orderingRules": { "elementOrder": ["accessibility", "name"] } } }""",
+            TestCode = $$"""
+                public class C
+                {
+                    internal static int Zulu;
+                    internal static int {|#0:Alpha|} = 1;
+                    {{declarations.Replace("\n", "\n    ")}}
+                }
+                """,
+            FixedCode = $$"""
+                public class C
+                {
+                    internal static int Alpha = 1;
+                    internal static int Zulu;
+                    {{declarations.Replace("\n", "\n    ")}}
+                }
+                """,
+            NumberOfIncrementalIterations = 1,
+            NumberOfFixAllIterations = 1,
+        };
+        test.ExpectedDiagnostics.Add(Diagnostic().WithLocation(0).WithMessage("Member 'Alpha' should appear before member 'Zulu'"));
+        await test.RunAsync().ConfigureAwait(false);
+    }
+
+    /// <summary>
     /// Verifies that fixing SA1202 preserves sibling name order when SA1201 is absent.
     /// </summary>
     /// <returns>A task representing the asynchronous test.</returns>

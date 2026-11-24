@@ -197,6 +197,64 @@ internal static class FieldDependencyHelper
         return false;
     }
 
+    internal static bool IsDependency(FieldDeclarationSyntax field, Dictionary<string, ImmutableHashSet<string>>? fieldDependencies)
+    {
+        if (fieldDependencies is null)
+        {
+            return false;
+        }
+
+        foreach (var dependencies in fieldDependencies.Values)
+        {
+            foreach (var variable in field.Declaration.Variables)
+            {
+                if (dependencies.Contains(variable.Identifier.ValueText))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    internal static bool IsAccessibilityInversionExcused(
+        FieldDeclarationSyntax currentField,
+        FieldDeclarationSyntax precedingField,
+        int precedingAccessibilityPriority,
+        int precedingPosition,
+        Dictionary<string, ImmutableHashSet<string>> fieldDependencies,
+        Dictionary<string, FieldOrderingInfo> variableInfos)
+    {
+        if (fieldDependencies.Count == 0)
+        {
+            return false;
+        }
+
+        if (DependsOn(currentField, precedingField, fieldDependencies))
+        {
+            return true;
+        }
+
+        foreach (var variable in currentField.Declaration.Variables)
+        {
+            if (fieldDependencies.TryGetValue(variable.Identifier.ValueText, out var dependencies))
+            {
+                foreach (var dependency in dependencies)
+                {
+                    if (variableInfos.TryGetValue(dependency, out var info)
+                        && precedingPosition < info.Position
+                        && precedingAccessibilityPriority >= info.AccessibilityPriority)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
     private static bool HasCandidateIdentifier(SyntaxNode expression, HashSet<string> fieldNames)
     {
         foreach (var node in expression.DescendantNodesAndSelf())
@@ -236,5 +294,18 @@ internal static class FieldDependencyHelper
         }
 
         return false;
+    }
+
+    internal readonly struct FieldOrderingInfo
+    {
+        internal FieldOrderingInfo(int accessibilityPriority, int position)
+        {
+            this.AccessibilityPriority = accessibilityPriority;
+            this.Position = position;
+        }
+
+        internal int AccessibilityPriority { get; }
+
+        internal int Position { get; }
     }
 }

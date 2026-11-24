@@ -221,6 +221,8 @@ namespace StyleCop.Analyzers.OrderingRules
             OrderingSettings orderingSettings)
         {
             var members = type.Members;
+            var ordersFieldAccessibility = orderingSettings.ElementOrder.Contains(OrderingTrait.Accessibility);
+            Dictionary<string, ImmutableHashSet<string>>? fieldDependencies = null;
             bool? preserveMemberOrder = null;
             bool? preserveInstanceOrder = null;
             for (var i = 1; i < members.Count; i++)
@@ -264,6 +266,16 @@ namespace StyleCop.Analyzers.OrderingRules
                 {
                     preserveInstanceOrder ??= MemberNameOrder.RequiresStableInstanceOrder(type, context.SemanticModel, context.CancellationToken);
                     if (preserveInstanceOrder.Value)
+                    {
+                        continue;
+                    }
+                }
+
+                if (ordersFieldAccessibility && current is FieldDeclarationSyntax field && !field.Modifiers.Any(SyntaxKind.ConstKeyword))
+                {
+                    fieldDependencies ??= FieldDependencyHelper.ComputeFieldDependencies(context.SemanticModel, members, context.CancellationToken);
+                    if (FieldDependencyHelper.IsDependency(field, fieldDependencies)
+                        && MemberNameOrder.CouldExposeFieldAccessibilityInversion(members, i, i - 1, orderingSettings, fieldDependencies))
                     {
                         continue;
                     }

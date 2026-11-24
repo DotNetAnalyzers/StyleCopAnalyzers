@@ -7,6 +7,7 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using StyleCop.Analyzers.Lightup;
 using StyleCop.Analyzers.Settings.ObjectModel;
 
 /// <summary>
@@ -30,6 +31,29 @@ internal readonly struct MemberOrderTraits
     }
 
     internal AccessLevel AccessLevel { get; }
+
+    internal static bool SupportsAccessibilityOrdering(MemberDeclarationSyntax member)
+        => member.Kind() switch
+        {
+            SyntaxKind.DelegateDeclaration
+                or SyntaxKind.EnumDeclaration
+                or SyntaxKind.InterfaceDeclaration
+                or SyntaxKind.StructDeclaration
+                or SyntaxKind.ClassDeclaration
+                or SyntaxKind.FieldDeclaration
+                or SyntaxKind.ConstructorDeclaration
+                or SyntaxKind.EventDeclaration
+                or SyntaxKind.EventFieldDeclaration
+                or SyntaxKind.PropertyDeclaration
+                or SyntaxKind.IndexerDeclaration
+                or SyntaxKind.MethodDeclaration
+                or SyntaxKind.ConversionOperatorDeclaration
+                or SyntaxKind.OperatorDeclaration
+                or SyntaxKindEx.RecordDeclaration
+                or SyntaxKindEx.RecordStructDeclaration
+                or SyntaxKindEx.UnionDeclaration => true,
+            _ => false,
+        };
 
     internal static bool IsDefaultKindOutOfOrder(
         MemberDeclarationSyntax current,

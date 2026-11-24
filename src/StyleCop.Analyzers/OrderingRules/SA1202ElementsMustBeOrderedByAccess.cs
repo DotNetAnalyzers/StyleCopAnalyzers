@@ -52,24 +52,6 @@ namespace StyleCop.Analyzers.OrderingRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly ImmutableHashSet<SyntaxKind> MemberKinds = ImmutableHashSet.Create(
-            SyntaxKind.DelegateDeclaration,
-            SyntaxKind.EnumDeclaration,
-            SyntaxKind.InterfaceDeclaration,
-            SyntaxKind.StructDeclaration,
-            SyntaxKind.ClassDeclaration,
-            SyntaxKind.FieldDeclaration,
-            SyntaxKind.ConstructorDeclaration,
-            SyntaxKind.EventDeclaration,
-            SyntaxKind.PropertyDeclaration,
-            SyntaxKind.IndexerDeclaration,
-            SyntaxKind.MethodDeclaration,
-            SyntaxKind.ConversionOperatorDeclaration,
-            SyntaxKind.OperatorDeclaration,
-            SyntaxKindEx.RecordDeclaration,
-            SyntaxKindEx.RecordStructDeclaration,
-            SyntaxKindEx.UnionDeclaration);
-
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CompilationUnitAction = HandleCompilationUnit;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> BaseNamespaceDeclarationAction = HandleBaseNamespaceDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> TypeDeclarationAction = HandleTypeDeclaration;
@@ -139,15 +121,11 @@ namespace StyleCop.Analyzers.OrderingRules
         {
             var handledMembers = new List<MemberInfo>();
             Dictionary<string, ImmutableHashSet<string>>? fieldDependencies = null;
-            Dictionary<string, FieldVariableInfo>? fieldVariableInfos = null;
+            Dictionary<string, FieldDependencyHelper.FieldOrderingInfo>? fieldVariableInfos = null;
 
             foreach (var member in members)
             {
-                var currentSyntaxKind = MemberKindOrder.NormalizeEventKind(member.Kind());
-
-                // if the SyntaxKind of this member (e.g. SyntaxKind.IncompleteMember) will not
-                // be handled, skip early.
-                if (!MemberKinds.Contains(currentSyntaxKind))
+                if (!MemberOrderTraits.SupportsAccessibilityOrdering(member))
                 {
                     continue;
                 }
@@ -176,7 +154,7 @@ namespace StyleCop.Analyzers.OrderingRules
                             {
                                 if (fieldDependencies == null)
                                 {
-                                    fieldVariableInfos = new Dictionary<string, FieldVariableInfo>();
+                                    fieldVariableInfos = new Dictionary<string, FieldDependencyHelper.FieldOrderingInfo>();
                                     foreach (var m in members)
                                     {
                                         if (m is FieldDeclarationSyntax f)
@@ -186,7 +164,7 @@ namespace StyleCop.Analyzers.OrderingRules
                                             var spanStart = f.SpanStart;
                                             foreach (var v in f.Declaration.Variables)
                                             {
-                                                fieldVariableInfos[v.Identifier.ValueText] = new FieldVariableInfo(accessibilityPriority, spanStart);
+                                                fieldVariableInfos[v.Identifier.ValueText] = new FieldDependencyHelper.FieldOrderingInfo(accessibilityPriority, spanStart);
                                             }
                                         }
                                     }
@@ -194,7 +172,7 @@ namespace StyleCop.Analyzers.OrderingRules
                                     fieldDependencies = FieldDependencyHelper.ComputeFieldDependencies(context.SemanticModel, members, context.CancellationToken);
                                 }
 
-                                isExcused = IsRequiredToAppearAfter(currentField, previousField, previousInfo.AccessibilityPriority, fieldDependencies, fieldVariableInfos!);
+                                isExcused = FieldDependencyHelper.IsAccessibilityInversionExcused(currentField, previousField, previousInfo.AccessibilityPriority, previousField.SpanStart, fieldDependencies, fieldVariableInfos!);
                             }
 
                             if (isExcused)
@@ -220,56 +198,6 @@ namespace StyleCop.Analyzers.OrderingRules
 
                 handledMembers.Add(currentInfo);
             }
-        }
-
-        private static bool IsRequiredToAppearAfter(
-            FieldDeclarationSyntax currentField,
-            FieldDeclarationSyntax precedingField,
-            int precedingAccessibilityPriority,
-            Dictionary<string, ImmutableHashSet<string>> fieldDependencies,
-            Dictionary<string, FieldVariableInfo> variableInfos)
-        {
-            if (fieldDependencies == null || fieldDependencies.Count == 0)
-            {
-                return false;
-            }
-
-            if (FieldDependencyHelper.DependsOn(currentField, precedingField, fieldDependencies))
-            {
-                return true;
-            }
-
-            foreach (var variable in currentField.Declaration.Variables)
-            {
-                if (fieldDependencies.TryGetValue(variable.Identifier.ValueText, out var deps))
-                {
-                    foreach (var dep in deps)
-                    {
-                        if (variableInfos.TryGetValue(dep, out var depInfo))
-                        {
-                            if (precedingField.SpanStart < depInfo.SpanStart && precedingAccessibilityPriority >= depInfo.AccessibilityPriority)
-                            {
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        private readonly struct FieldVariableInfo
-        {
-            public FieldVariableInfo(int accessibilityPriority, int spanStart)
-            {
-                this.AccessibilityPriority = accessibilityPriority;
-                this.SpanStart = spanStart;
-            }
-
-            public int AccessibilityPriority { get; }
-
-            public int SpanStart { get; }
         }
 
         private readonly struct MemberInfo
