@@ -194,7 +194,7 @@ namespace StyleCop.Analyzers.LayoutRules
                     && statement is ExpressionStatementSyntax);
         }
 
-        private static SyntaxNode ReformatAccessorAsSingleLine(IndentationSettings indentationSettings, AccessorDeclarationSyntax accessor, bool convertBlockBodyToExpressionBody, SyntaxTrivia endOfLineTrivia)
+        private static AccessorDeclarationSyntax ReformatAccessorAsSingleLine(IndentationSettings indentationSettings, AccessorDeclarationSyntax accessor, bool convertBlockBodyToExpressionBody, SyntaxTrivia endOfLineTrivia)
         {
             var newAccessor = accessor
                 .WithModifiers(ReformatModifiersAsSingleLine(accessor.Modifiers))
@@ -333,7 +333,7 @@ namespace StyleCop.Analyzers.LayoutRules
             return document.WithSyntaxRoot(newSyntaxRoot.WithoutFormatting());
         }
 
-        private static SyntaxNode ReformatAccessorAsMultipleLines(IndentationSettings indentationSettings, AccessorDeclarationSyntax accessor, SyntaxTrivia endOfLineTrivia)
+        private static AccessorDeclarationSyntax ReformatAccessorAsMultipleLines(IndentationSettings indentationSettings, AccessorDeclarationSyntax accessor, SyntaxTrivia endOfLineTrivia)
         {
             var accessorList = (AccessorListSyntax)accessor.Parent;
             var indentationSteps = IndentationHelper.GetIndentationSteps(indentationSettings, accessorList.OpenBraceToken) + 1;

@@ -192,7 +192,7 @@ namespace StyleCop.Analyzers.NamingRules
             return declarator;
         }
 
-        private static SyntaxNode PreserveInferredAnonymousName(AnonymousObjectMemberDeclaratorSyntax declarator, SyntaxAnnotation annotation, string fixedTupleElementName)
+        private static AnonymousObjectMemberDeclaratorSyntax? PreserveInferredAnonymousName(AnonymousObjectMemberDeclaratorSyntax declarator, SyntaxAnnotation annotation, string fixedTupleElementName)
         {
             SyntaxToken? nameToken = null;
             foreach (var token in declarator.GetAnnotatedTokens(annotation))
@@ -300,7 +300,7 @@ namespace StyleCop.Analyzers.NamingRules
             return default;
         }
 
-        private static SyntaxNode PreserveInferredTupleName(ArgumentSyntax argument, SyntaxAnnotation annotation, string fixedTupleElementName)
+        private static ArgumentSyntax? PreserveInferredTupleName(ArgumentSyntax argument, SyntaxAnnotation annotation, string fixedTupleElementName)
         {
             SyntaxToken? nameToken = null;
             foreach (var token in argument.GetAnnotatedTokens(annotation))

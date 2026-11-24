@@ -224,7 +224,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <param name="typeSyntax">The type syntax from the original constructor.</param>
         /// <param name="memberName">The member name.</param>
         /// <returns>A new member access expression.</returns>
-        private static SyntaxNode ConstructMemberAccessSyntax(TypeSyntax typeSyntax, string memberName)
+        private static MemberAccessExpressionSyntax ConstructMemberAccessSyntax(TypeSyntax typeSyntax, string memberName)
         {
             // NOTE: This creates the correct source code when applied, but these are not necessarily the syntax
             // nodes that the compiler would create from that source code. For example, the type syntax can

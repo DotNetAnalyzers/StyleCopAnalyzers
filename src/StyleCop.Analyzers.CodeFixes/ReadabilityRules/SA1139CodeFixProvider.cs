@@ -61,7 +61,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             return newDocument;
         }
 
-        private static SyntaxNode GenerateReplacementNode(CastExpressionSyntax node)
+        private static ExpressionSyntax GenerateReplacementNode(CastExpressionSyntax node)
         {
             var literalExpressionSyntax =
                 !(node.Expression.WalkDownParentheses() is PrefixUnaryExpressionSyntax plusMinusSyntax)

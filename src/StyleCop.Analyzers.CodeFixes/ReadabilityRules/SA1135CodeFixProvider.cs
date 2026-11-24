@@ -61,7 +61,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
 
-        private static SyntaxNode GetReplacementNode(SemanticModel semanticModel, UsingDirectiveSyntax node, CancellationToken cancellationToken)
+        private static UsingDirectiveSyntax GetReplacementNode(SemanticModel semanticModel, UsingDirectiveSyntax node, CancellationToken cancellationToken)
         {
             SymbolInfo symbolInfo = semanticModel.GetSymbolInfo(node.Name, cancellationToken);
             var symbolNameSyntax = SyntaxFactory.ParseName(symbolInfo.Symbol.ToQualifiedString(node.Name));
