@@ -717,6 +717,15 @@
   <data name="SA1654Title" xml:space="preserve">
     <value>Properly encode generic brackets</value>
   </data>
+  <data name="SA1655Description" xml:space="preserve">
+    <value>The opening and closing tags of an XML documentation element must either both be on lines by themselves, or neither must be. The tags of an element may span multiple lines without being on lines by themselves.</value>
+  </data>
+  <data name="SA1655MessageFormat" xml:space="preserve">
+    <value>The opening and closing tags of element '{0}' must either both be on lines by themselves, or neither must be</value>
+  </data>
+  <data name="SA1655Title" xml:space="preserve">
+    <value>Documentation element tags must be consistently placed</value>
+  </data>
   <data name="StaticConstructorStandardTextFirstPart" xml:space="preserve">
     <value>Initializes static members of the </value>
   </data>

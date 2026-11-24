@@ -64,3 +64,4 @@ Identifikátor | Název | Popis
 [SA1652](SA1652.md) | EnableXmlDocumentationOutput | Toto pravidlo bylo přesunuto do [SA0001](SA0001.md)
 [SA1653](SA1653.md) | OnlyOnePartialDeclarationShouldContainSummaryDocumentation | Více než jedna deklarace částečného typu obsahuje souhrnnou dokumentaci.
 [SA1654](SA1654.md) | ProperlyEncodeGenericBrackets | Argumenty obecných typů v atributu cref mají používat složené závorky místo escapovaných ostrých závorek.
+[SA1655](SA1655.md) | DocumentationElementTagsMustBeConsistentlyPlaced | Úvodní a koncová značka prvku dokumentace nejsou konzistentně umístěny na samostatných řádcích.

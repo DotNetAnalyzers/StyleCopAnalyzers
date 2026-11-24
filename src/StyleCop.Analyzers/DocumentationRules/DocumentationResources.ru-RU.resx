@@ -198,6 +198,15 @@
   <data name="SA1654Title" xml:space="preserve">
     <value>Правильно оформляйте скобки обобщенных типов</value>
   </data>
+  <data name="SA1655Description" xml:space="preserve">
+    <value>Открывающий и закрывающий теги элемента XML-документации должны либо оба находиться на отдельных строках, либо оба не находиться на них. Теги элемента могут занимать несколько строк, не находясь на отдельных строках.</value>
+  </data>
+  <data name="SA1655MessageFormat" xml:space="preserve">
+    <value>Открывающий и закрывающий теги элемента '{0}' должны либо оба находиться на отдельных строках, либо оба не находиться на них</value>
+  </data>
+  <data name="SA1655Title" xml:space="preserve">
+    <value>Теги элементов документации должны размещаться согласованно</value>
+  </data>
   <data name="StaticConstructorStandardTextFirstPart" xml:space="preserve">
     <value>Инициализирует статические члены {0} </value>
   </data>

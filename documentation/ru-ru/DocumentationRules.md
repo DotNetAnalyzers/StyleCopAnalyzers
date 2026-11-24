@@ -64,3 +64,4 @@ dotnet_analyzer_diagnostic.category-StyleCop.CSharp.DocumentationRules.severity 
 [SA1652](SA1652.md) | EnableXmlDocumentationOutput | Это правило перенесено в [SA0001](SA0001.md).
 [SA1653](SA1653.md) | OnlyOnePartialDeclarationShouldContainSummaryDocumentation | Несколько объявлений частичного типа содержат краткое описание.
 [SA1654](SA1654.md) | ProperlyEncodeGenericBrackets | Аргументы обобщенного типа в атрибуте cref следует заключать в фигурные скобки вместо экранированных угловых скобок.
+[SA1655](SA1655.md) | DocumentationElementTagsMustBeConsistentlyPlaced | Открывающий и закрывающий теги элемента документации размещены на отдельных строках непоследовательно.

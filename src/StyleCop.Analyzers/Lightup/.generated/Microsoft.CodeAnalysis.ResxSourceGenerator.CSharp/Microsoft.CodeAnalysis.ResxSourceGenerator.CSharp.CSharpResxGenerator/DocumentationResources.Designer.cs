@@ -414,6 +414,12 @@ namespace StyleCop.Analyzers.DocumentationRules
         public static string @SA1654MessageFormat => GetResourceString("SA1654MessageFormat")!;
         /// <summary>Properly encode generic brackets</summary>
         public static string @SA1654Title => GetResourceString("SA1654Title")!;
+        /// <summary>The opening and closing tags of an XML documentation element must either both be on lines by themselves, or neither must be. The tags of an element may span multiple lines without being on lines by themselves.</summary>
+        public static string @SA1655Description => GetResourceString("SA1655Description")!;
+        /// <summary>The opening and closing tags of element '{0}' must either both be on lines by themselves, or neither must be</summary>
+        public static string @SA1655MessageFormat => GetResourceString("SA1655MessageFormat")!;
+        /// <summary>Documentation element tags must be consistently placed</summary>
+        public static string @SA1655Title => GetResourceString("SA1655Title")!;
         /// <summary>Initializes static members of the</summary>
         public static string @StaticConstructorStandardTextFirstPart => GetResourceString("StaticConstructorStandardTextFirstPart")!;
         /// <summary>Initializes static members of the</summary>

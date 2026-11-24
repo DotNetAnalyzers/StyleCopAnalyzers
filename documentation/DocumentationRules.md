@@ -65,3 +65,4 @@ Identifier | Name | Description
 [SA1652](SA1652.md) | EnableXmlDocumentationOutput | This rule was moved to [SA0001](SA0001.md)
 [SA1653](SA1653.md) | OnlyOnePartialDeclarationShouldContainSummaryDocumentation | More than one declaration of a partial type contains summary documentation.
 [SA1654](SA1654.md) | ProperlyEncodeGenericBrackets | Generic type arguments in cref attributes should use braces instead of escaped angle brackets.
+[SA1655](SA1655.md) | DocumentationElementTagsMustBeConsistentlyPlaced | The opening and closing tags of a documentation element are not consistently placed on lines by themselves.
